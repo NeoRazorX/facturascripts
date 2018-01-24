@@ -112,7 +112,7 @@ class Translator
      */
     public function customTrans($lang, $txt, array $parameters = [])
     {
-        if(!in_array($lang, self::$languages)) {
+        if (!in_array($lang, self::$languages)) {
             $this->locateFiles($lang);
         }
 
@@ -124,7 +124,7 @@ class Translator
         }
 
         self::$missingStrings[$txt] = $txt;
-        if($lang === self::FALLBACK_LANG) {
+        if ($lang === self::FALLBACK_LANG) {
             return $txt;
         }
 

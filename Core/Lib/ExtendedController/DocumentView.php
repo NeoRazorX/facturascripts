@@ -33,12 +33,14 @@ class DocumentView extends BaseView
 {
 
     /**
+     * Document type (sale/purchase)
      *
      * @var string
      */
     public $documentType;
 
     /**
+     * Model name for the line of this document type.
      *
      * @var string
      */
@@ -46,7 +48,7 @@ class DocumentView extends BaseView
 
     /**
      * Line columns from xmlview.
-     * 
+     *
      * @var array
      */
     private $lineOptions;
@@ -54,10 +56,19 @@ class DocumentView extends BaseView
     /**
      * Lines of document, the body.
      *
-     * @var Base\LineaDocumentoVenta[]|Base\LineaDocumentoCompra[]
+     * @var \FacturaScripts\Core\Model\Base\LineaDocumentoVenta[]|\FacturaScripts\Core\Model\Base\LineaDocumentoCompra[]
      */
     public $lines;
 
+    /**
+     * DocumentView constructor and initialization.
+     *
+     * @param string $title
+     * @param string $modelName
+     * @param string $lineModelName
+     * @param string $lineXMLView
+     * @param string $userNick
+     */
     public function __construct($title, $modelName, $lineModelName, $lineXMLView, $userNick)
     {
         parent::__construct($title, $modelName);
@@ -75,6 +86,12 @@ class DocumentView extends BaseView
         $this->lines = [];
     }
 
+    /**
+     * Establishes de view/edit state of a column
+     *
+     * @param string $columnName
+     * @param bool   $disabled
+     */
     public function disableColumn($columnName, $disabled)
     {
     }
@@ -132,6 +149,16 @@ class DocumentView extends BaseView
         $exportManager->generateDocumentPage($this->model);
     }
 
+    /**
+     * Load the data in the cursor property, according to the where filter specified.
+     * Adds an empty row/model at the end of the loaded data.
+     *
+     * @param bool $code
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
+     */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
@@ -154,6 +181,13 @@ class DocumentView extends BaseView
         $this->title = $this->model->codigo;
     }
 
+    /**
+     * Save all document related data.
+     *
+     * @param $data
+     *
+     * @return string
+     */
     public function saveDocument(&$data)
     {
         $result = 'OK';
@@ -203,6 +237,15 @@ class DocumentView extends BaseView
         return $result;
     }
 
+    /**
+     * Set the customer for this model.
+     *
+     * @param string $codcliente
+     * @param string $newCliente
+     * @param string $newCifnif
+     *
+     * @return string
+     */
     private function setCustomer($codcliente, $newCliente = '', $newCifnif = '')
     {
         if ($this->model->codcliente === $codcliente && !empty($this->model->codcliente)) {
@@ -226,6 +269,15 @@ class DocumentView extends BaseView
         return 'ERROR: NO CUSTOMER';
     }
 
+    /**
+     * Set the supplier for this model.
+     *
+     * @param string $codproveedor
+     * @param string $newProveedor
+     * @param string $newCifnif
+     *
+     * @return string
+     */
     private function setSupplier($codproveedor, $newProveedor = '', $newCifnif = '')
     {
         if ($this->model->codproveedor === $codproveedor && !empty($this->model->codproveedor)) {
@@ -249,6 +301,13 @@ class DocumentView extends BaseView
         return 'ERROR: NO SUPPLIER';
     }
 
+    /**
+     * Saves the lines for the document.
+     *
+     * @param $newLines
+     *
+     * @return string
+     */
     private function saveLines(&$newLines)
     {
         $result = 'OK';
@@ -290,16 +349,19 @@ class DocumentView extends BaseView
         return $result;
     }
 
+    /**
+     * Set new code to the document.
+     */
     public function setNewCode()
     {
     }
 
     /**
      * Updates oldLine with newLine data.
-     * 
+     *
      * @param mixed $oldLine
      * @param array $newLine
-     * 
+     *
      * @return bool
      */
     protected function updateLine($oldLine, $newLine)
@@ -317,9 +379,9 @@ class DocumentView extends BaseView
     /**
      * Process form lines to assign column keys instead of numbers.
      * Also adds order column.
-     * 
+     *
      * @param array $formLines
-     * 
+     *
      * @return array
      */
     protected function processFormLines($formLines)

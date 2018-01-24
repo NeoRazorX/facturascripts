@@ -70,7 +70,7 @@ class CSVImport
      */
     private static function valueToSql($value)
     {
-        if($value === 'false' || $value === 'true') {
+        if ($value === 'false' || $value === 'true') {
             return $value;
         }
 

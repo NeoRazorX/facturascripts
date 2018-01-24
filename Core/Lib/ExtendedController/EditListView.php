@@ -104,7 +104,7 @@ class EditListView extends BaseView
      */
     public function isBasicEditList()
     {
-        if(count($this->pageOption->columns) !== 1) {
+        if (count($this->pageOption->columns) !== 1) {
             return false;
         }
 

@@ -30,6 +30,7 @@ use FacturaScripts\Core\Model\Subcuenta;
 class BalanceAmmounts extends AccountingBase
 {
     /**
+     * Model with related information.
      *
      * @var Subcuenta
      */
@@ -47,8 +48,8 @@ class BalanceAmmounts extends AccountingBase
     /**
      * Generate the balance ammounts between two dates.
      *
-     * @param date $dateFrom
-     * @param date $dateTo
+     * @param string $dateFrom
+     * @param string $dateTo
      *
      * @return array
      */
