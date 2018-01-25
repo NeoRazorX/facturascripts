@@ -7,18 +7,21 @@ php:
   - 7.2
   - nightly
 
+env:
+  - DB=postgres
+
 install: travis_retry composer install --no-interaction --prefer-source
 
 services:
   - memcached
   - postgresql
 
-before_script:
-  - psql -c 'DROP DATABASE IF EXISTS facturascripts;' -U postgres"
-  - psql -c 'CREATE DATABASE facturascripts;' -U postgres
-
 addons:
   postgresql: "9.4"
+
+before_script:
+  - sh -c "if [ '$DB' = 'postgres' ]; then psql -c 'DROP DATABASE IF EXISTS facturascripts;' -U postgres; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then psql -c 'CREATE DATABASE facturascripts;' -U postgres; fi"
 
 script:
 # Run PHP-CS Beautifier and Fixer: to format some common non PSR code that can be auto-fixed.
