@@ -39,11 +39,6 @@ final class LineaTransferenciaStockTest extends TestCase
         $this->assertEquals(0, $model->cantidad);
         $this->assertEquals('', $model->descripcion);
         $this->assertTrue($model->test());
-
-        $model->nombre = 'Test name';
-        $model->codalmacen = 'ALG';
-
-        $this->assertTrue($model->test());
     }
 
     public function testTable()

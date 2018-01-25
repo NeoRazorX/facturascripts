@@ -44,8 +44,7 @@ final class ArticuloTest extends TestCase
         $this->assertEquals(0.0, $model->stockmin);
         $this->assertTrue($model->test());
 
-        $model->nombre = 'Test name';
-        $model->codalmacen = 'ALG';
+        $model->descripcion = 'Test name';
 
         $this->assertTrue($model->test());
     }
