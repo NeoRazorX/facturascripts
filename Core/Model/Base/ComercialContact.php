@@ -163,8 +163,8 @@ abstract class ComercialContact extends Contact
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->debaja = false;
         $this->personafisica = true;
-        $this->regimeniva = self::$regimenIVA::defaultValue();
-        $this->tipoidfiscal = self::$idFiscal::defaultValue();
+        $this->regimeniva = self::$regimenIVA->defaultValue();
+        $this->tipoidfiscal = self::$idFiscal->defaultValue();
     }
 
     /**
