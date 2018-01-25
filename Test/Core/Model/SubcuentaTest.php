@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Subcuenta
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class SubcuentaTest extends TestCase
 {

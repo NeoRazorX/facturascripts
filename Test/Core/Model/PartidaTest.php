@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Partida
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class PartidaTest extends TestCase
 {
