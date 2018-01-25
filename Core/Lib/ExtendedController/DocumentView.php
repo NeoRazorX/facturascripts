@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\DocumentCalculator;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 
 /**
  * Description of DocumentView
@@ -57,7 +58,7 @@ class DocumentView extends BaseView
     /**
      * Lines of document, the body.
      *
-     * @var \FacturaScripts\Core\Model\Base\SalesDocumentLine[]|\FacturaScripts\Core\Model\Base\LineaDocumentoCompra[]
+     * @var SalesDocumentLine[]
      */
     public $lines;
 
