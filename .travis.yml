@@ -9,6 +9,17 @@ php:
 
 install: travis_retry composer install --no-interaction --prefer-source
 
+services:
+  - memcached
+  - postgresql
+
+before_script:
+  - psql -c 'DROP DATABASE IF EXISTS facturascripts;' -U postgres"
+  - psql -c 'CREATE DATABASE facturascripts;' -U postgres
+
+addons:
+  postgresql: "9.4"
+
 script:
 # Run PHP-CS Beautifier and Fixer: to format some common non PSR code that can be auto-fixed.
   - vendor/bin/phpcbf --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
