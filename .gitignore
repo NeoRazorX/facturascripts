@@ -1,3 +1,10 @@
+###> symfony/framework-bundle ###
+.env
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
 /.idea/
 /cache/
 /Cache/
