@@ -45,8 +45,7 @@ final class SubcuentaTest extends TestCase
         $this->assertEquals(0.0, $model->iva);
         $this->assertFalse($model->test());
 
-        $model->nombre = 'Test name';
-        $model->codalmacen = 'ALG';
+        $model->descripcion = 'Test description';
     }
 
     public function testTable()
