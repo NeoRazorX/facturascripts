@@ -152,7 +152,7 @@ class XLSExport implements ExportInterface
     {
         $this->writer->writeSheetRow('sheet1', $headers);
 
-        foreach ($rows as $row){
+        foreach ($rows as $row) {
             $this->writer->writeSheetRow('sheet1', $row);
         }
     }
