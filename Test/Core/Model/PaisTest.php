@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Pais
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class PaisTest extends TestCase
 {

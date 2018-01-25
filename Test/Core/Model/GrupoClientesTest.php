@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \GrupoClientes
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class GrupoClientesTest extends TestCase
 {

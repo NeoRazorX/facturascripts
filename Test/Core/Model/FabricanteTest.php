@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Fabricante
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class FabricanteTest extends TestCase
 {

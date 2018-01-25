@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \RoleAccess
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class RoleAccessTest extends TestCase
 {

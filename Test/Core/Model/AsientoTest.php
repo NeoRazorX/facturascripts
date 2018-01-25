@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Asiento
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 final class AsientoTest extends TestCase
 {
