@@ -46,7 +46,10 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
      * @var int
      */
     public $orden;
-    
+
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();

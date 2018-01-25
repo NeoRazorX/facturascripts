@@ -100,7 +100,12 @@ class Atributo extends Base\ModelClass
 
         return false;
     }
-    
+
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->nombre = Utils::noHtml($this->nombre);

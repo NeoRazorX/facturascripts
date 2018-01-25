@@ -84,12 +84,20 @@ abstract class Contact extends ModelClass
      */
     public $telefono2;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
         $this->fechaalta = date('d-m-Y');
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->cifnif = Utils::noHtml($this->cifnif);
@@ -99,5 +107,7 @@ abstract class Contact extends ModelClass
         $this->observaciones = Utils::noHtml($this->observaciones);
         $this->telefono1 = Utils::noHtml($this->telefono1);
         $this->telefono2 = Utils::noHtml($this->telefono2);
+
+        return true;
     }
 }

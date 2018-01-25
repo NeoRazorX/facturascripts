@@ -197,8 +197,16 @@ abstract class BusinessDocument extends ModelClass
      */
     public $idestado;
 
+    /**
+     * Returns the lines associated with the document.
+     *
+     * @return mixed
+     */
     abstract public function getLineas();
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -290,6 +298,11 @@ abstract class BusinessDocument extends ModelClass
         }
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->observaciones = Utils::noHtml($this->observaciones);

@@ -119,6 +119,9 @@ abstract class BusinessDocumentLine extends ModelClass
      */
     public $referencia;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -143,6 +146,11 @@ abstract class BusinessDocumentLine extends ModelClass
         return 'idlinea';
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->descripcion = Utils::noHtml($this->descripcion);

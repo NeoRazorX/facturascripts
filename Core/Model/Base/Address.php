@@ -70,6 +70,11 @@ abstract class Address extends ModelClass
      */
     public $provincia;
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->apartado = Utils::noHtml($this->apartado);

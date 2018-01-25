@@ -27,7 +27,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\ComercialContact
 {
-
     use Base\ModelTrait;
 
     /**
@@ -58,6 +57,11 @@ class Proveedor extends Base\ComercialContact
         return 'codproveedor';
     }
 
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'nombre';

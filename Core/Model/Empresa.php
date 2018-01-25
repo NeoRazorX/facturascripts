@@ -28,7 +28,6 @@ use FacturaScripts\Core\Lib\RegimenIVA;
  */
 class Empresa extends Base\Contact
 {
-
     use Base\ModelTrait;
 
     /**
@@ -135,17 +134,25 @@ class Empresa extends Base\Contact
         return 'id';
     }
 
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'nombre';
     }
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
 
         $regimenIVA = new RegimenIVA();
-        $this->regimeniva = $regimenIVA->defaultValue();
+        $this->regimeniva = $regimenIVA::defaultValue();
     }
 
     /**

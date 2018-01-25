@@ -62,7 +62,15 @@ class CuentaEspecial extends Base\ModelClass
     {
         return 'idcuentaesp';
     }
-    
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url($type = 'auto', $list = 'List')
     {
         return parent::url($type, 'ListCuenta&active=List');

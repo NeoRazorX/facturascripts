@@ -272,7 +272,7 @@ class User extends Base\ModelClass
             return false;
         }
 
-        if (isset($this->newPassword) && isset($this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
             if ($this->newPassword !== $this->newPassword2) {
                 self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
 

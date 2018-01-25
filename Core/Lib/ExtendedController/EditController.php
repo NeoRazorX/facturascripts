@@ -191,7 +191,7 @@ abstract class EditController extends Base\Controller
         $term = $this->request->get('term');
 
         $results = [];
-        foreach($this->codeModel->search($source, $field, $title, $term) as $value) {
+        foreach ($this->codeModel->search($source, $field, $title, $term) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         $this->response->setContent(json_encode($results));

@@ -107,7 +107,15 @@ class ArticuloProveedor extends Base\Product
         $this->precio = 0.0;
         $this->dto = 0.0;
     }
-    
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url($type = 'auto', $list = 'List')
     {
         return parent::url($type, 'ListArticulo&active=List');

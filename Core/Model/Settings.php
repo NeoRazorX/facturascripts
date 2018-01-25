@@ -98,7 +98,7 @@ class Settings extends Base\ModelClass
     }
 
     /**
-     * Check that a data array have correct struct of model
+     * Check an array of data so that it has the correct structure of the model.
      *
      * @param array $data
      */
@@ -118,6 +118,7 @@ class Settings extends Base\ModelClass
      * Load data from array
      *
      * @param array $data
+     * @param array $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
     {

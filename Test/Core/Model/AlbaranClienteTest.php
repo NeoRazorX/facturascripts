@@ -88,7 +88,7 @@ final class AlbaranClienteTest extends TestCase
     public function testPrimaryColumn()
     {
         $model = new AlbaranCliente();
-        $this->assertInternalType('string', $model->primaryColumn());
+        $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()

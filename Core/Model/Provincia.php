@@ -104,13 +104,26 @@ class Provincia extends Base\ModelClass
         return 'idprovincia';
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->provincia = Utils::noHtml($this->provincia);
 
         return true;
     }
-    
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url($type = 'auto', $list = 'List')
     {
         return parent::url($type, 'ListPais&active=List');

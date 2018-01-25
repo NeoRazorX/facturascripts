@@ -183,6 +183,9 @@ abstract class SalesDocument extends BusinessDocument
      */
     public $provinciaenv;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -213,6 +216,11 @@ abstract class SalesDocument extends BusinessDocument
         }
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->apartado = Utils::noHtml($this->apartado);

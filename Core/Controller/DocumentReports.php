@@ -201,7 +201,7 @@ class DocumentReports extends Controller
                 $concat[] = 'CAST(EXTRACT(YEAR FROM fecha) AS CHAR(10))';
         }
 
-        if(strtolower(FS_DB_TYPE) === 'mysql') {
+        if (strtolower(FS_DB_TYPE) === 'mysql') {
             return 'CONCAT(' . implode(', ', $concat) . ')';
         }
 
