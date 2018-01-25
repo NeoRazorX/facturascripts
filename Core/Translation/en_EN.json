@@ -428,7 +428,7 @@
     "save-data":"Save data",
     "search":"Search",
     "seat-date-not-in-exercise-range":"Seat date not in exercise range.",
-    "seat-possible-duplicated":"Seat possible duplicated of this other. If there isn't, to avoid this message, simply change the concept.",
+    "seat-possible-duplicated":"Seat possible duplicated of <a href='index.php?page=ContabilidadAsiento&id=%seatId%'>this other</a>. If there isn't, to avoid this message, simply change the concept.",
     "seat-within-regularization":"The seat is within a regularization of %tax%. It cann't be deleted.",
     "select-language":"Select language",
     "select-timezone":"Select timezone",
