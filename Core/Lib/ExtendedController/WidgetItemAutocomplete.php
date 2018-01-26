@@ -114,7 +114,8 @@ class WidgetItemAutocomplete extends WidgetItem
             . '<div class="input-group">';
 
         if (empty($value) || $this->required) {
-            $html .= '<span class="input-group-addon"><i class="fa fa-keyboard-o" aria-hidden="true"></i></span>';
+            $html .= '<span class="input-group-prepend"><span class="input-group-text">'
+                . '<i class="fa fa-keyboard-o" aria-hidden="true"></i></span></span>';
         } else {
             $html .= '<span class="input-group-btn">'
                 . '<button type="button" class="btn btn-warning" onclick="$(\'#' . $this->fieldName . 'Autocomplete, #' . $this->fieldName . 'Autocomplete2\').val(\'\');">'
@@ -125,7 +126,7 @@ class WidgetItemAutocomplete extends WidgetItem
 
         $html .= '<input type="text" id="' . $this->fieldName . 'Autocomplete2" value="' . $this->getTextValue($value) . '" class="form-control autocomplete"'
             . ' data-source="' . $this->values[0]['source'] . '" data-field="' . $this->values[0]['fieldcode'] . '"'
-            . ' data-title="' . $this->values[0]['fieldtitle'] . '"' . $specialAttributes . '/>'
+            . ' data-title="' . $this->values[0]['fieldtitle'] . '" ' . $specialAttributes . ' />'
             . '</div>';
 
         return $html;

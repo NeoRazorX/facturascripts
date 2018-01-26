@@ -36,10 +36,9 @@ final class AlbaranProveedorTest extends TestCase
 
         $this->assertInstanceOf(AlbaranProveedor::class, $model);
         $this->assertNull($model->cifnif);
-        $this->assertNull($model->codagente);
         $this->assertEquals(AppSettings::get('default', 'codalmacen'), $model->codalmacen);
         $this->assertEquals(null, $model->codproveedor);
-        $this->assertEquals(null, $model->coddivisa);
+        $this->assertEquals(AppSettings::get('default', 'coddivisa'), $model->coddivisa);
         $this->assertEquals(null, $model->codejercicio);
         $this->assertEquals(null, $model->codigo);
         $this->assertEquals(AppSettings::get('default', 'codpago'), $model->codpago);
@@ -75,7 +74,7 @@ final class AlbaranProveedorTest extends TestCase
     {
         $model = new AlbaranProveedor();
 
-        $this->assertInternalType('string', $model->primaryColumn());
+        $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()

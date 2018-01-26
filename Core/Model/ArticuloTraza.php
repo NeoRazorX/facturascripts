@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2016      Luismipr               <luismipr@gmail.com>.
- * Copyright (C) 2016-2017 Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018 Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Model;
  * @author Luismipr              <luismipr@gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
-class ArticuloTraza
+class ArticuloTraza extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -117,7 +117,7 @@ class ArticuloTraza
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -243,7 +243,7 @@ class ArticuloTraza
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string

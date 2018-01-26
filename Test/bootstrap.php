@@ -24,6 +24,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
     echo 'Executing on scrutinizer ...' . "\n\n";
     require_once __DIR__ . '/config-scrutinizer.php';
+} elseif (__DIR__ === '/home/travis/build/NeoRazorX/facturascripts/Test') {
+    echo 'Executing on travis ...' . "\n\n";
+    require_once __DIR__ . '/config-travis.php';
 } else {
     // Local config, to use the same database connection
     $config = __DIR__ . '/../config.php';

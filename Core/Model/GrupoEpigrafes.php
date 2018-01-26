@@ -16,21 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * First level of the accounting plan.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class GrupoEpigrafes
+class GrupoEpigrafes extends Base\ModelClass
 {
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -40,7 +39,7 @@ class GrupoEpigrafes
     public $idgrupo;
 
     /**
-     *Identificacion de la empresa
+     * Identificacion de la empresa
      *
      * @var int
      */
@@ -82,14 +81,14 @@ class GrupoEpigrafes
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idgrupo';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -142,7 +141,7 @@ class GrupoEpigrafes
      */
     public function test()
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (strlen($this->codejercicio) > 0 && strlen($this->codgrupo) > 0 && strlen($this->descripcion) > 0) {
             return true;
@@ -154,14 +153,15 @@ class GrupoEpigrafes
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, 'ListCuenta&active=List');
+        return parent::url($type, 'ListCuenta&active=List');
     }
 }

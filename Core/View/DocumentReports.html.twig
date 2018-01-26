@@ -1,0 +1,162 @@
+{#
+   /**
+     * Document Reports view template.
+     *
+     * Graphic statistics on the information of purchase and sale documents.
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     *
+    */
+#}
+
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block body %}
+{# Calculate texts according to language #}
+{% set refresh = i18n.trans('refresh-page') %}
+{% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
+{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+{% set choose_source, start_date, end_date = i18n.trans('choose-source'), i18n.trans('start-date'), i18n.trans('end-date') %}
+
+{# Macros Template Imports #}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+{% import 'Macro/Forms.html.twig' as forms %}
+
+{# Others working values #}
+{% set select_attr = {onchange: 'this.form.submit()'} %}
+{% set input_attr = {class: 'form-control datepicker', onchange: 'this.form.submit()'} %}
+
+{# Page Header #}
+<div class="container-fluid d-print-none">
+    {{ parent() }}
+
+    {# Header Row #}
+    <div class="row">
+        <div class="col-sm-7 col-6">
+            <div class="btn-group d-xs-none">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+                {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                    <i class="fa fa-bookmark" aria-hidden="true"></i>
+                </a>
+                {% else %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-sm-5 col-6 text-right">
+            <h1 style="margin-top: 0px; margin-bottom: 0px;">
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+            </h1>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+{# Filters for Data #}
+<div class="container-fluid">
+    <form name="f_search" id="formSearch" action="{{ fsc.url() }}" method="post" class="form">
+        <input name="action" id="action" type="hidden" value="reload"/>
+        {% for index, source in fsc.sources %}
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ forms.simpleSelect('source' ~ index, 'source' ~ index, source.source, fsc.getDocumentTypes(), choose_source ~ ' ' ~ index, 'fa-files-o', select_attr) }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ forms.simpleInput('date-from' ~ index, 'date-from' ~ index, source.dateFrom.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ forms.simpleInput('date-to' ~ index, 'date-to' ~ index, source.dateTo.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row">
+        {% for index, filter in fsc.filters %}
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ forms.simpleSelect(index, index, filter.selectedValue, filter.listValues, i18n.trans(index), filter.icon, select_attr) }}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </form>
+</div>
+
+<hr>
+
+{# Main Data #}
+<div class="container-fluid">
+    {# Group Title #}
+    <div class="row">
+        <div class="col-12 text-center">
+            <h3>{{ i18n.trans(fsc.grouped) }}</h3>
+        </div>
+    </div>
+
+    {# Data Table #}
+    <div class="row">
+        {% for source in fsc.sources %}
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        {# Data Group Title #}
+                        <th class="text-left" colspan="3">
+                            {{ i18n.trans(source.source) }} <br />
+                            <small>(
+                                {{source.dateFrom.format('d-m-Y') }}
+                                &nbsp;&nbsp;-&nbsp;&nbsp;
+                                {{ source.dateTo.format('d-m-Y') }})
+                            </small>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-left">Code</th>
+                        <th class="text-left">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {# Data #}
+                    {% for code, total in fsc.dataTable[source.source] %}
+                    <tr class="table-light">
+                        <td class="text-left">{{ code }}</td>
+                        <td class="text-left">{{ total }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

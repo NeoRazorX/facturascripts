@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -24,8 +23,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ContactoCliente
+class ContactoCliente extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -49,24 +49,22 @@ class ContactoCliente
      */
     public $codcontacto;
 
-
     /**
      * Returns the name of the table that uses this model.
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'contactosclientes';
     }
-
 
     /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }

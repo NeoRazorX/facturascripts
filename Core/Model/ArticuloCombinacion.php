@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ArticuloCombinacion
+class ArticuloCombinacion extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -49,7 +49,7 @@ class ArticuloCombinacion
 
     /**
      * Identifier of the combination.
-          * Note that the combination is the sum of all attribute-value pairs.
+     * Note that the combination is the sum of all attribute-value pairs.
      *
      * @var string
      */
@@ -57,7 +57,7 @@ class ArticuloCombinacion
 
     /**
      * Second identifier for the combination, to facilitate synchronization
-          * with woocommerce or prestashop.
+     * with woocommerce or prestashop.
      *
      * @var string
      */
@@ -134,22 +134,20 @@ class ArticuloCombinacion
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
      */
     public function install()
     {
-        /// nos aseguramos de que existan las tablas necesarias
-        //new Atributo();
         new AtributoValor();
 
         return '';
@@ -160,15 +158,7 @@ class ArticuloCombinacion
      */
     public function clear()
     {
-        $this->id = null;
-        $this->codigo = null;
-        $this->codigo2 = null;
-        $this->referencia = null;
-        $this->idvalor = null;
-        $this->nombreatributo = null;
-        $this->valor = null;
-        $this->refcombinacion = null;
-        $this->codbarras = null;
+        parent::clear();
         $this->impactoprecio = 0;
         $this->stockfis = 0;
     }
@@ -179,24 +169,8 @@ class ArticuloCombinacion
     public function test()
     {
         if ($this->codigo === null) {
-            $this->codigo = (string) $this->getNewCodigo();
+            $this->codigo = (string) $this->newCode();
         }
-    }
-
-    /**
-     * Devuelve un nuevo código para una combinación de artículo
-     *
-     * @return int
-     */
-    private function getNewCodigo()
-    {
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codigo') . ') as cod FROM ' . static::tableName() . ';';
-        $cod = self::$dataBase->select($sql);
-        if (!empty($cod)) {
-            return 1 + (int) $cod[0]['cod'];
-        }
-
-        return 1;
     }
 
     /**

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Element of the third level of the accounting plan.
@@ -28,7 +29,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Cuenta
+class Cuenta extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -103,14 +104,14 @@ class Cuenta
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idcuenta';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -196,7 +197,7 @@ class Cuenta
      */
     public function test()
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (strlen($this->codcuenta) > 0 && strlen($this->descripcion) > 0) {
             return true;
@@ -294,33 +295,6 @@ class Cuenta
         if (!empty($data)) {
             foreach ($data as $cue) {
                 $cuenlist[] = new self($cue);
-            }
-        }
-
-        return $cuenlist;
-    }
-
-    /**
-     * Returns an array with the combinations containing $ query in its description
-          * or that matches your account code.
-     *
-     * @param string $query
-     * @param int    $offset
-     *
-     * @return self[]
-     */
-    public function search($query, $offset = 0)
-    {
-        $cuenlist = [];
-        $query = mb_strtolower(self::noHtml($query), 'UTF8');
-        $sql = 'SELECT * FROM ' . static::tableName() .
-            " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
-            ' ORDER BY codejercicio DESC, codcuenta ASC';
-
-        $data = self::$dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $c) {
-                $cuenlist[] = new self($c);
             }
         }
 

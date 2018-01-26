@@ -20,11 +20,30 @@ var documentLineData = [];
 var documentUrl = "";
 var hsTable = null;
 
+function documentCalculate() {
+    var data = {};
+    $.each($("form[name=f_document_primary]").serializeArray(), function (key, value) {
+        data[value.name] = value.value;
+    });
+    data.action = "calculate-document";
+    data.lines = hsTable.getData();
+    console.log(data);
+    $.ajax({
+        type: "POST",
+        url: documentUrl,
+        dataType: "text",
+        data: data,
+        success: function (results) {
+            $("#doc_total").val(results);
+        }
+    });
+}
+
 function documentSave() {
     $("#btn-document-save").prop("disabled", true);
-    
+
     var data = {};
-    $.each($("form[name=f_document_primary]").serializeArray(), function(key, value) {
+    $.each($("form[name=f_document_primary]").serializeArray(), function (key, value) {
         data[value.name] = value.value;
     });
     data.action = "save-document";
@@ -36,9 +55,9 @@ function documentSave() {
         dataType: "text",
         data: data,
         success: function (results) {
-            if(results == "OK") {
+            if (results == "OK") {
                 location.reload();
-            } else if(results.substring(0, 4) == "NEW:") {
+            } else if (results.substring(0, 4) == "NEW:") {
                 location.href = results.substring(4);
             } else {
                 alert(results);
@@ -68,4 +87,6 @@ $(document).ready(function () {
         preventOverflow: "horizontal",
         minSpareRows: 1,
     });
+
+    Handsontable.hooks.add('afterChange', documentCalculate);
 });

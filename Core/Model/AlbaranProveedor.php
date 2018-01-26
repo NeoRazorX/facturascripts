@@ -28,9 +28,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AlbaranProveedor
+class AlbaranProveedor extends Base\PurchaseDocument
 {
-    use Base\DocumentoCompra;
+    use Base\ModelTrait;
 
     /**
      * Primary key. Integer
@@ -61,33 +61,24 @@ class AlbaranProveedor
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idalbaran';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
      */
     public function install()
     {
-        /// nos aseguramos de que se comprueban las tablas de facturas y series antes
-        new Serie();
+        parent::install();
         new FacturaProveedor();
 
         return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoCompra();
     }
 
     /**
@@ -100,16 +91,6 @@ class AlbaranProveedor
         $lineaModel = new LineaAlbaranProveedor();
 
         return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
-    }
-
-    /**
-     * Check the delivery note data, return True if it is correct.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return $this->testTrait();
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,16 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Un atributo para artículos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Atributo
+class Atributo extends Base\ModelClass
 {
-    use Base\ModelTrait {
-        save as private traitSave;
-    }
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -59,7 +59,7 @@ class Atributo
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codatributo';
     }
@@ -102,14 +102,14 @@ class Atributo
     }
 
     /**
-     * Stores the model data in the database.
+     * Returns True if there is no errors on properties values.
      *
      * @return bool
      */
-    public function save()
+    public function test()
     {
-        $this->nombre = self::noHtml($this->nombre);
-
-        return $this->traitSave();
+        $this->nombre = Utils::noHtml($this->nombre);
+        
+        return true;
     }
 }

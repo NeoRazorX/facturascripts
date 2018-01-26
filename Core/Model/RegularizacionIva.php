@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class RegularizacionIva
+class RegularizacionIva extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -94,7 +94,7 @@ class RegularizacionIva
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idregiva';
     }

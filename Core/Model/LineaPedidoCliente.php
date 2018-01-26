@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018    Carlos Garcia Gomez        <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,9 +24,10 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaPedidoCliente
+class LineaPedidoCliente extends Base\SalesDocumentLine
 {
-    use Base\LineaDocumentoVenta;
+
+    use Base\ModelTrait;
 
     /**
      * Related line ID in the related order, if any.
@@ -58,16 +58,5 @@ class LineaPedidoCliente
     public static function tableName()
     {
         return 'lineaspedidoscli';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearLinea();
-        $this->idlineapresupuesto = null;
-        $this->idpedido = null;
-        $this->idpresupuesto = null;
     }
 }

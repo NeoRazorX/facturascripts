@@ -153,8 +153,8 @@ class AccountingReports extends Controller
     private function exportData(&$pages, $format)
     {
         $this->exportManager->newDoc($format);
-        
-        foreach($pages as $data) {
+
+        foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->generateTablePage($headers, $data);
         }

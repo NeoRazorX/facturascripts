@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,13 +20,14 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A Value for an article attribute.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AtributoValor
+class AtributoValor extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -66,14 +67,14 @@ class AtributoValor
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -92,7 +93,7 @@ class AtributoValor
      */
     public function test()
     {
-        $this->valor = self::noHtml($this->valor);
+        $this->valor = Utils::noHtml($this->valor);
 
         return true;
     }

@@ -94,13 +94,13 @@ class AccountingGenerator
                     $partida->idsubcuenta = $subcuentas[$num2]->idsubcuenta;
                     $partida->codsubcuenta = $subcuentas[$num2]->codsubcuenta;
                     $partida->concepto = $asiento->concepto;
-                    if($debe) {
+                    if ($debe) {
                         $partida->debe = $asiento->importe;
                     } else {
                         $partida->haber = $asiento->importe;
                     }
 
-                    if($partida->save()) {
+                    if ($partida->save()) {
                         $debe = !$debe;
                     }
                 }

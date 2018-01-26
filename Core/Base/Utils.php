@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -24,8 +23,9 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-trait Utils
+class Utils
 {
+
     /**
      * Convert a variable with binary content to text.
      * It does it in base64.
@@ -150,9 +150,7 @@ trait Utils
     public static function noHtml($txt)
     {
         $newt = str_replace(
-            ['<', '>', '"', "'"],
-            ['&lt;', '&gt;', '&quot;', '&#39;'],
-            $txt
+            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
         );
 
         return trim($newt);
@@ -186,7 +184,7 @@ trait Utils
      *
      * @return bool
      */
-    public function str2bool($val)
+    public static function str2bool($val)
     {
         return in_array(strtolower($val), ['true', 't', '1'], false);
     }
@@ -198,7 +196,7 @@ trait Utils
      *
      * @return string
      */
-    public function bool2str($val)
+    public static function bool2str($val)
     {
         switch ($val) {
             case true:

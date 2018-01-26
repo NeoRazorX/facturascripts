@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class RegularizacionStock
+class RegularizacionStock extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -106,7 +106,7 @@ class RegularizacionStock
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -116,20 +116,17 @@ class RegularizacionStock
      */
     public function clear()
     {
-        $this->id = null;
-        $this->idstock = null;
+        parent::clear();
         $this->cantidadini = 0;
         $this->cantidadfin = 0;
-        $this->codalmacendest = null;
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->motivo = '';
-        $this->nick = null;
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string

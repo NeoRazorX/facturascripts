@@ -312,11 +312,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     private function checkboxHTMLColumn($header, $value, $data)
     {
         $input = $this->widget->getEditHTML($value);
-        $label = $header !== null ? '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2'
+        $label = !empty($header) ? '<label class="form-check-label mb-2 mr-sm-2'
             . ' mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>' : '';
 
-        $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
-            . '<div class="form-check col">' . $label . $data['ColumnDescription'] . '</div>'
+        $result = '<div class="' . $data['ColumnClass'] . '">'
+            . '<div class="form-check">' . $label . $data['ColumnDescription'] . '</div>'
             . $data['ColumnRequired']
             . '</div>';
 

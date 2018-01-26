@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -24,11 +23,10 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ArticuloProveedor
+class ArticuloProveedor extends Base\Product
 {
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -36,13 +34,6 @@ class ArticuloProveedor
      * @var int
      */
     public $id;
-
-    /**
-     * Referencia del artículo en nuestro catálogo. Puede no estar actualmente.
-     *
-     * @var string
-     */
-    public $referencia;
 
     /**
      * Código del proveedor asociado.
@@ -59,13 +50,6 @@ class ArticuloProveedor
     public $refproveedor;
 
     /**
-     * Descripción del artículo
-     *
-     * @var string
-     */
-    public $descripcion;
-
-    /**
      * Precio neto al que nos ofrece el proveedor este producto.
      *
      * @var float|int
@@ -78,41 +62,6 @@ class ArticuloProveedor
      * @var float|int
      */
     public $dto;
-
-    /**
-     * Impuesto asignado. Clase impuesto.
-     *
-     * @var string
-     */
-    public $codimpuesto;
-
-    /**
-     * Stock del artículo en el almacén del proveedor.
-     *
-     * @var float|int
-     */
-    public $stock;
-
-    /**
-     * True -> The item does not offer stock.
-     *
-     * @var bool
-     */
-    public $nostock;
-
-    /**
-     * Barcode of the article.
-     *
-     * @var string
-     */
-    public $codbarras;
-
-    /**
-     * Part Number.
-     *
-     * @var string
-     */
-    public $partnumber;
 
     /**
      * Returns the name of the table that uses this model.
@@ -129,7 +78,7 @@ class ArticuloProveedor
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -154,65 +103,21 @@ class ArticuloProveedor
      */
     public function clear()
     {
-        $this->id = null;
-        $this->referencia = null;
-        $this->codproveedor = null;
-        $this->refproveedor = null;
-        $this->descripcion = null;
-        $this->precio = 0;
-        $this->dto = 0;
-        $this->codimpuesto = null;
-        $this->stock = 0;
-        $this->nostock = true;
-        $this->codbarras = null;
-        $this->partnumber = null;
+        parent::clear();
+        $this->precio = 0.0;
+        $this->dto = 0.0;
     }
 
     /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        $this->descripcion = self::noHtml($this->descripcion);
-
-        if ($this->nostock) {
-            $this->stock = 0;
-        }
-
-        if ($this->refproveedor === null || empty($this->refproveedor) || strlen($this->refproveedor) > 25) {
-            self::$miniLog->alert(self::$i18n->trans('supplier-reference-valid-length'));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, 'ListArticulo&active=List');
-    }
-
-    /**
-     * Apply corrections to the table.
-     */
-    public function fixDb()
-    {
-        $fixes = [
-            'DELETE FROM articulosprov WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);',
-            'UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;',
-        ];
-        foreach ($fixes as $sql) {
-            self::$dataBase->exec($sql);
-        }
+        return parent::url($type, 'ListArticulo&active=List');
     }
 }

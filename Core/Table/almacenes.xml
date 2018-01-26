@@ -9,7 +9,6 @@
     <column>
         <name>apartado</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codalmacen</name>
@@ -19,32 +18,14 @@
     <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostal</name>
         <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>contacto</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>direccion</name>
         <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>fax</name>
-        <type>character varying(50)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idprovincia</name>
-        <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nombre</name>
@@ -52,34 +33,16 @@
         <null>NO</null>
     </column>
     <column>
-        <name>observaciones</name>
-        <type>text</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>poblacion</name>
+        <name>ciudad</name>
         <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>porpvp</name>
-        <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>provincia</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>telefono</name>
         <type>character varying(50)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>tipovaloracion</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>almacenes_pkey</name>

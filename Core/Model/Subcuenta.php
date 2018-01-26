@@ -16,19 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The fourth level of an accounting plan. It is related to a single account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Subcuenta
+class Subcuenta extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -144,7 +145,7 @@ class Subcuenta
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idsubcuenta';
     }
@@ -169,13 +170,8 @@ class Subcuenta
      */
     public function clear()
     {
-        $this->idsubcuenta = null;
-        $this->codsubcuenta = null;
-        $this->idcuenta = null;
-        $this->codcuenta = null;
-        $this->codejercicio = null;
+        parent::clear();
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
-        $this->codimpuesto = null;
         $this->descripcion = '';
         $this->debe = 0.0;
         $this->haber = 0.0;
@@ -330,7 +326,7 @@ class Subcuenta
 
     /**
      * Returns the first subaccount of the exercise $codeje whose parent account
-          * is marked as special account $id.
+     * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -358,7 +354,7 @@ class Subcuenta
      */
     public function tieneSaldo()
     {
-        return !static::floatcmp($this->debe, $this->haber, FS_NF0, true);
+        return !Utils::floatcmp($this->debe, $this->haber, (int) FS_NF0, true);
     }
 
     /**
@@ -368,7 +364,7 @@ class Subcuenta
      */
     public function test()
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
         $totales = $this->getTotales();
 
         if (abs($this->debe - $totales['debe']) > .001) {
@@ -414,7 +410,7 @@ class Subcuenta
 
     /**
      * Returns the sub-accounts of the fiscal year $codeje whose parent account
-          * is marked as special account $id.
+     * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -436,65 +432,5 @@ class Subcuenta
         }
 
         return $cuentas;
-    }
-
-    /**
-     * Returns an array with the combinations containing $query in its codsubcuenta
-          * or description.
-     *
-     * @param string $query
-     *
-     * @return self[]
-     */
-    public function search($query)
-    {
-        $sublist = [];
-        $query = mb_strtolower(self::noHtml($query), 'UTF8');
-        $sql = 'SELECT * FROM ' . static::tableName() . " WHERE codsubcuenta LIKE '" . $query . "%'"
-            . " OR codsubcuenta LIKE '%" . $query . "'"
-            . " OR lower(descripcion) LIKE '%" . $query . "%'"
-            . ' ORDER BY codejercicio DESC, codcuenta ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $s) {
-                $sublist[] = new self($s);
-            }
-        }
-
-        return $sublist;
-    }
-
-    /**
-     * Returns the results of the $ query search on the subaccounts of the
-          * exercise $codejercicio
-     *
-     * @param string $codejercicio
-     * @param string $query
-     *
-     * @return Subcuenta
-     */
-    public function searchByEjercicio($codejercicio, $query)
-    {
-        $query = self::$dataBase->escapeString(mb_strtolower(trim($query), 'UTF8'));
-
-        $sublist = self::$cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
-        if (count($sublist) < 1) {
-            $sql = 'SELECT * FROM ' . static::tableName()
-                . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
-                . " AND (codsubcuenta LIKE '" . $query . "%' OR codsubcuenta LIKE '%" . $query . "'"
-                . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
-
-            $data = self::$dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $s) {
-                    $sublist[] = new self($s);
-                }
-            }
-
-            self::$cache->set('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query, $sublist);
-        }
-
-        return $sublist;
     }
 }

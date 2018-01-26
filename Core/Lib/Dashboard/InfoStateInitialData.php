@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\Dashboard;
 class InfoStateInitialData
 {
     /**
-     * TODO: Uncomplete
+     * Generate some sample data.
      *
      * @param InfoStateComponent $parent
      */
@@ -40,7 +40,7 @@ class InfoStateInitialData
     }
 
     /**
-     * TODO: Uncomplete
+     * Return customer related data.
      *
      * @return mixed
      */
@@ -59,7 +59,7 @@ class InfoStateInitialData
     }
 
     /**
-     * TODO: Uncomplete
+     * Return supplier related data.
      *
      * @return mixed
      */
@@ -78,7 +78,7 @@ class InfoStateInitialData
     }
 
     /**
-     * TODO: Uncomplete
+     * Return product related data.
      *
      * @return mixed
      */

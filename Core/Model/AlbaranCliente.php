@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,9 +27,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AlbaranCliente
+class AlbaranCliente extends Base\SalesDocument
 {
-    use Base\DocumentoVenta;
+
+    use Base\ModelTrait;
 
     /**
      * Primary key. Integer.
@@ -61,32 +61,25 @@ class AlbaranCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idalbaran';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
-          * default.
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// we force the checking of the bill tablecli.
+        parent::install();
+
         new FacturaCliente();
 
         return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoVenta();
     }
 
     /**
@@ -101,15 +94,5 @@ class AlbaranCliente
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
         return $lineaModel->all($where, $order);
-    }
-
-    /**
-     * Check the data of the delivery note, return True if they are correct.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return $this->testTrait();
     }
 }

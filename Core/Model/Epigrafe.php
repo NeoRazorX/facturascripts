@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Second level of the accounting plan.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Epigrafe
+class Epigrafe extends Base\ModelClass
 {
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * List of groups.
@@ -45,7 +45,7 @@ class Epigrafe
     public $idepigrafe;
 
     /**
-     *Identificacion de la empresa
+     * Identificacion de la empresa
      *
      * @var int
      */
@@ -53,10 +53,10 @@ class Epigrafe
 
     /**
      * There are several versions of the accounting of Eneboo / Abanq,
-          * in one we have groups, epigraphs, accounts and sub-accounts: 4 levels.
-          * In the other we have epigraphs (with children), accounts and sub-accounts: multi-level.
-          * FacturaScripts uses a hybrid: groups, epigraphs (with children), accounts
-          * and subaccounts.
+     * in one we have groups, epigraphs, accounts and sub-accounts: 4 levels.
+     * In the other we have epigraphs (with children), accounts and sub-accounts: multi-level.
+     * FacturaScripts uses a hybrid: groups, epigraphs (with children), accounts
+     * and subaccounts.
      *
      * @var int
      */
@@ -112,7 +112,7 @@ class Epigrafe
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idepigrafe';
     }
@@ -197,7 +197,7 @@ class Epigrafe
      */
     public function test()
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (strlen($this->codepigrafe) > 0 && strlen($this->descripcion) > 0) {
             return true;
@@ -231,18 +231,8 @@ class Epigrafe
     }
 
     /**
-     * Apply corrections to the table.
-     */
-    public function fixDb()
-    {
-        $sql = 'UPDATE ' . static::tableName()
-            . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
-        self::$dataBase->exec($sql);
-    }
-
-    /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -256,14 +246,15 @@ class Epigrafe
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, 'ListCuenta&active=List');
+        return parent::url($type, 'ListCuenta&active=List');
     }
 }

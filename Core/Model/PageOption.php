@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -28,13 +27,11 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class PageOption
+class PageOption extends Base\ModelClass
 {
+
     use Base\ModelTrait {
-        clear as traitClear;
         loadFromData as traitLoadFromData;
-        saveInsert as traitSaveInsert;
-        saveUpdate as traitSaveUpdate;
     }
 
     /**
@@ -92,7 +89,7 @@ class PageOption
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_pages_options';
     }
@@ -102,7 +99,7 @@ class PageOption
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -127,7 +124,7 @@ class PageOption
      */
     public function clear()
     {
-        $this->traitClear();
+        parent::clear();
         $this->columns = [];
         $this->modals = [];
         $this->filters = [];
@@ -167,27 +164,31 @@ class PageOption
     }
 
     /**
-     * Update the model data in the database.
+     * Insert the model data in the database.
+     *
+     * @param array $values
      *
      * @return bool
      */
-    private function saveUpdate()
+    protected function saveInsert($values = array())
     {
         $values = $this->getEncodeValues();
 
-        return $this->traitSaveUpdate($values);
+        return parent::saveInsert($values);
     }
 
     /**
-     * Insert the model data in the database.
+     * Update the model data in the database.
+     *
+     * @param array $values
      *
      * @return bool
      */
-    private function saveInsert()
+    protected function saveUpdate($values = array())
     {
         $values = $this->getEncodeValues();
 
-        return $this->traitSaveInsert($values);
+        return parent::saveUpdate($values);
     }
 
     /**

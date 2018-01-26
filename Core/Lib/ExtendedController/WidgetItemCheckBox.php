@@ -85,9 +85,8 @@ class WidgetItemCheckBox extends WidgetItem
 
         $html = $this->getIconHTML()
             . '<input name="' . $this->fieldName . '" id="' . $this->fieldName
-            . '" class="custom-control-input form-check-input" type="checkbox" value="true" '
-            . $specialAttributes . $checked . '/>'
-            . '<span class="custom-control-indicator"></span>';
+            . '" class="form-check-input" type="checkbox" value="true" '
+            . $specialAttributes . $checked . '/>';
 
         if (!empty($this->icon)) {
             $html .= '</div>';
