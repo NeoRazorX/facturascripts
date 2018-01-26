@@ -29,49 +29,44 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codproveedor" onclick="" icon="fa-user" required="true" />
             </column>
-            <column name="name" numcolumns="3" order="100" description="desc-provider-name">
+            <column name="name" numcolumns="3" order="110" description="desc-provider-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-provider-name-2" />
             </column>
-            <column name="business-name" title="business-name" numcolumns="3" order="100" description="desc-provider-business-name">
+            <column name="business-name" numcolumns="3" order="120" description="desc-provider-business-name">
                 <widget type="text" fieldname="razonsocial" required="true" />
             </column>
-            <column name="fiscal-id" title="fiscal-id" numcolumns="2" order="100">
+            <column name="fiscal-id" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values></values>
                 </widget>
             </column>
-            <column name="fiscal-number" title="cifnif" numcolumns="2" order="100">
+            <column name="fiscal-number" title="cifnif" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
-            <column name="fiscal-mode" title="is-person" numcolumns="4" order="100">
+            <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
-            <column name="is-creditor" title="is-creditor" numcolumns="3" order="100">
+            <column name="is-creditor" title="is-creditor" numcolumns="3" order="160">
                 <widget type="checkbox" fieldname="acreedor" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="serie" title="serie" numcolumns="2" order="100">
+            <column name="serie" numcolumns="3" order="100">
                 <widget type="select" fieldname="codserie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="currency" title="currency" numcolumns="2" order="100">
-                <widget type="select" fieldname="coddivisa">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="payment-method" title="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="100">
+            <column name="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="110">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tax-transport" title="tax-transport" numcolumns="3" order="100">
-                <widget type="select" fieldname="ivaportes">
+            <column name="tax-transport" numcolumns="3" order="120">
+                <widget type="select" fieldname="codimpuestoportes">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="vat-type" title="vat-regime" order="100" numcolumns="2">
+            <column name="vat-regime" order="130" numcolumns="3">
                 <widget type="select" fieldname="regimeniva">
                     <values></values>
                 </widget>
@@ -87,34 +82,33 @@
             <column name="fax" numcolumns="2" order="120">
                 <widget type="tel" fieldname="fax" />
             </column>
-            <column name="contact-person" numcolumns="6" order="130">
-                <widget type="text" fieldname="contacto" />
-            </column>
-            <column name="email" numcolumns="6" order="140">
+            <column name="email" numcolumns="3" order="140">
                 <widget type="email" fieldname="email" />
             </column>
-            <column name="url" numcolumns="6" order="150">
+            <column name="url" numcolumns="3" order="150">
                 <widget type="url" fieldname="web" />
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
-            <column name="create-date" numcolumns="3" order="80">
+            <column name="subaccount" numcolumns="3" order="100">
+                <widget type="text" fieldname="codsubcuenta" />
+            </column>
+            <column name="create-date" numcolumns="3" order="110">
                 <widget type="datepicker" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="blocked-date" numcolumns="3" order="90">
+            <column name="blocked-date" numcolumns="3" order="120">
                 <widget type="datepicker" fieldname="fechabaja" />
             </column>
-            <column name="blocked" numcolumns="2" order="100">
+            <column name="blocked" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>
         <group name="notes" numcolumns="12">
-            <column name="notes" numcolumns="12" order="170">
+            <column name="notes" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>
-
     <rows>
         <row type="statistics">
             <button type="calculate" icon="fa-files-o" label="delivery-notes-button" action="calcSupplierDeliveryNotes" />

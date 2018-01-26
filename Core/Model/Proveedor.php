@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -37,6 +38,13 @@ class Proveedor extends Base\ComercialContact
      * @var bool
      */
     public $acreedor;
+    
+    /**
+     * Transport tax.
+     *
+     * @var string
+     */
+    public $codimpuestoportes;
 
     /**
      * Returns the name of the table that uses this model.
@@ -75,6 +83,7 @@ class Proveedor extends Base\ComercialContact
     {
         parent::clear();
         $this->acreedor = false;
+        $this->codimpuestoportes = AppSettings::get('default', 'codimpuesto');
     }
 
     /**

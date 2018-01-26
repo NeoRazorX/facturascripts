@@ -28,21 +28,21 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcliente" onclick="" icon="fa-user" required="true" />
             </column>
-            <column name="name" numcolumns="3" order="100" description="desc-custommer-name">
+            <column name="name" numcolumns="3" order="110" description="desc-custommer-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
             </column>
-            <column name="business-name" numcolumns="3" order="100" description="desc-business-name">
+            <column name="business-name" numcolumns="3" order="120" description="desc-business-name">
                 <widget type="text" fieldname="razonsocial" required="true" />
             </column>
-            <column name="fiscal-id" numcolumns="2" order="100">
+            <column name="fiscal-id" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values></values>
                 </widget>
             </column>
-            <column name="vat-id" numcolumns="2" order="100">
+            <column name="vat-id" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
-            <column name="fiscal-mode" title="is-person" order="100">
+            <column name="fiscal-mode" title="is-person" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
@@ -52,30 +52,25 @@
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="serie" title="serie" numcolumns="2" order="100">
+            <column name="serie" numcolumns="3" order="110">
                 <widget type="select" fieldname="codserie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="currency" title="currency" numcolumns="2" order="100">
-                <widget type="select" fieldname="coddivisa">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="payment-method" title="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="100">
+            <column name="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="120">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment-days" title="payment-days" description="desc-payment-days" numcolumns="2" order="100">
+            <column name="payment-days" description="desc-payment-days" numcolumns="3" order="130">
                 <widget type="text" fieldname="diaspago" />
             </column>
-            <column name="employee" numcolumns="3" titleurl="?page=ListUser" order="100">
+            <column name="employee" numcolumns="3" titleurl="?page=ListUser" order="140">
                 <widget type="select" fieldname="codagente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>
             </column>
-            <column name="vat-type" title="vat-regime" numcolumns="3" order="100">
+            <column name="vat-regime" numcolumns="3" order="150">
                 <widget type="select" fieldname="regimeniva">
                     <values></values>
                 </widget>
@@ -83,34 +78,37 @@
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="phone" numcolumns="2" order="100">
-                <widget type="tel" fieldname="telefono1" />
+                <widget type="text" fieldname="telefono1" />
             </column>
             <column name="phone2" numcolumns="2" order="110">
-                <widget type="tel" fieldname="telefono2" />
+                <widget type="text" fieldname="telefono2" />
             </column>
             <column name="fax" numcolumns="2" order="120">
-                <widget type="tel" fieldname="fax" />
+                <widget type="text" fieldname="fax" />
             </column>
-            <column name="email" numcolumns="3" order="200">
+            <column name="email" numcolumns="3" order="130">
                 <widget type="email" fieldname="email" />
             </column>
-            <column name="website" numcolumns="3" order="210">
+            <column name="website" numcolumns="3" order="140">
                 <widget type="url" fieldname="web" />
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
-            <column name="create-date" numcolumns="3" order="80">
+            <column name="subaccount" numcolumns="3" order="100">
+                <widget type="text" fieldname="codsubcuenta" />
+            </column>
+            <column name="create-date" numcolumns="3" order="110">
                 <widget type="datepicker" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="blocked-date" numcolumns="3" order="90">
+            <column name="blocked-date" numcolumns="3" order="120">
                 <widget type="datepicker" fieldname="fechabaja" />
             </column>
-            <column name="blocked" numcolumns="4" order="990">
+            <column name="blocked" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>
         <group name="notes">
-            <column name="notes" order="170" numcolumns="12">
+            <column name="notes" order="100" numcolumns="12">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
