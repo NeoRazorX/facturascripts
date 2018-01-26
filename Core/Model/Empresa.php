@@ -190,7 +190,10 @@ class Empresa extends Base\Contact
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . static::tableName() . ' (web,codpais,direccion,administrador,cifnif,nombre,nombrecorto)'
-            . "VALUES ('https://www.facturascripts.com','ESP','','','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "');";
+        return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono1,codpais,apartado,'
+            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
+            . "VALUES (1,NULL,'https://www.facturascripts.com',"
+            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
+            . "'Empresa " . $num . " S.L.','E-" . $num . "');";
     }
 }

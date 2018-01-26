@@ -285,7 +285,8 @@ class Subcuenta extends Base\ModelClass
             foreach ($this->all([new DataBaseWhere('codsubcuenta', $cod)], ['idsubcuenta' => 'DESC']) as $oldSc) {
                 /// we look for the equivalent account is THIS exercise
                 $cuentaModel = new Cuenta();
-                $newC = $cuentaModel->getByCodigo($oldSc->codcuenta, $codejercicio);
+                $where = [new DataBaseWhere('codcuenta', $oldSc->codcuenta), new DataBaseWhere('codejercicio', $codejercicio)];
+                $newC = $cuentaModel->all($where);
                 if ($newC) {
                     $newSc = new self();
                     $newSc->codcuenta = $newC->codcuenta;
