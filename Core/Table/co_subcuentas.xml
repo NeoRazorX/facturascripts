@@ -7,8 +7,34 @@
 -->
 <table>
     <column>
+        <name>idsubcuenta</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_subcuentas_idsubcuenta_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idcuenta</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>codcuenta</name>
         <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codsubcuenta</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(255)</type>
         <null>NO</null>
     </column>
     <column>
@@ -17,65 +43,27 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>codimpuesto</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codsubcuenta</name>
-        <type>character varying(15)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>debe</name>
         <type>double precision</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>descripcion</name>
-        <type>character varying(255)</type>
-        <null>YES</null>
+        <default>0</default>
     </column>
     <column>
         <name>haber</name>
         <type>double precision</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>idcuenta</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idempresa</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idsubcuenta</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('co_subcuentas_idsubcuenta_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>iva</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>recargo</name>
-        <type>double precision</type>
-        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>saldo</name>
         <type>double precision</type>
         <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
     </column>
     <constraint>
         <name>co_subcuentas_pkey</name>
@@ -92,9 +80,15 @@
             ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_co_subcuentas_cuentas2</name>
+        <name>ca_co_subcuentas_cuentas</name>
         <type>FOREIGN KEY (idcuenta)
             REFERENCES co_cuentas (idcuenta)
             ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentas_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto)
+            REFERENCES impuestos (codimpuesto)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -48,11 +48,6 @@
         <null>YES</null>
     </column>
     <column>
-        <name>idempresa</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>importe</name>
         <type>double precision</type>
         <null>YES</null>
@@ -68,13 +63,13 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>ca_co_asientos_ejercicios2</name>
+        <name>co_asientos_pkey</name>
+        <type>PRIMARY KEY (idasiento)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_asientos_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
             ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>co_asientos_pkey</name>
-        <type>PRIMARY KEY (idasiento)</type>
     </constraint>
 </table>

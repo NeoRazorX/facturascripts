@@ -1107,7 +1107,7 @@
     "lines": "Lineas",
     "budget": "presupuesto",
     "using-apc": "Usando cache APC",
-    "companies": "Compañías",
+    "companies": "Empresas",
     "hour": "Hora",
     "accept-data": "Aceptar cambios u operación",
     "cancel-data": "Cancelar cambios u operación",
@@ -1217,5 +1217,11 @@
     "generate-title": "Ejecuta la creación del informe",
     "tasaconv": "Tasa de conversión",
     "paid": "Pagado",
-    "enable-api": "Activar API"
+    "enable-api": "Activar API",
+    "re": "RE",
+    "new-customer": "nuevo cliente",
+    "new-supplier": "nuevo proveedor",
+    "parent-account": "Cuenta Padre",
+    "account-parent-error": "La cuenta padre es incorrecta o no pertenece al ejercicio",
+    "children-accounts": "Cuentas Hijos"
 }

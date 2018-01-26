@@ -29,7 +29,7 @@
     "require-dev": {
         "phpunit/phpunit": "5.7.*",
         "squizlabs/php_codesniffer": "^3.2",
-	"symfony/dotenv": "^3.4"
+    "symfony/dotenv": "^3.4"
     },
     "config": {
         "preferred-install": {
@@ -42,7 +42,7 @@
             "FacturaScripts\\Core\\": "Core/",
             "FacturaScripts\\Dinamic\\": "Dinamic/",
             "FacturaScripts\\Plugins\\": "Plugins/",
-	    "App\\": "src/"
+        "App\\": "src/"
         }
     },
     "autoload-dev": {
@@ -70,5 +70,10 @@
             "id": "01C4QSW0F4BT8ARBYVTKMVEN6N",
             "allow-contrib": false
         }
-    }
+    },
+    "keywords" : [
+        "crm",
+        "billing",
+        "accounting"
+    ]
 }

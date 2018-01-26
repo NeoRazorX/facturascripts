@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12" icon="fa-file-o" title="fiscal-data">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="id" icon="fa-object-group" required="true" />
+                <widget type="text" fieldname="idempresa" icon="fa-object-group" required="true" />
             </column>
             <column name="company-name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />

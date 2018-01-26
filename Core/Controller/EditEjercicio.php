@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the Familia model
+ * Controller to edit a single item from the Ejercicio model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -38,14 +38,10 @@ class EditEjercicio extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Ejercicio', 'EditEjercicio', 'exercise');
-        $this->addListView('\FacturaScripts\Dinamic\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Epigrafe', 'ListEpigrafe', 'epigraphs');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta', 'subaccount');
 
         /// Disable columns
-        $this->views['ListGrupoEpigrafes']->disableColumn('fiscal-exercise', true);
-        $this->views['ListEpigrafe']->disableColumn('fiscal-exercise', true);
         $this->views['ListCuenta']->disableColumn('fiscal-exercise', true);
         $this->views['ListSubcuenta']->disableColumn('fiscal-exercise', true);
     }
@@ -65,14 +61,6 @@ class EditEjercicio extends ExtendedController\PanelController
             case 'EditEjercicio':
                 $code = $this->request->get('code');
                 $view->loadData($code);
-                break;
-
-            case 'ListGrupoEpigrafes':
-                $view->loadData(false, $where, ['codgrupo' => 'ASC']);
-                break;
-
-            case 'ListEpigrafe':
-                $view->loadData(false, $where, ['codepigrafe' => 'ASC']);
                 break;
 
             case 'ListCuenta':

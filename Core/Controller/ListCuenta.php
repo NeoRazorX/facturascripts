@@ -36,32 +36,12 @@ class ListCuenta extends ExtendedController\ListController
     {
         /* Accounts */
         $this->addView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
-        $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
+        $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio']);
 
-        $this->addOrderBy('ListCuenta', 'codejercicio desc,codcuenta', 'code');
-        $this->addOrderBy('ListCuenta', 'codejercicio desc,descripcion', 'description');
+        $this->addOrderBy('ListCuenta', 'codejercicio desc, codcuenta', 'code');
+        $this->addOrderBy('ListCuenta', 'codejercicio desc, descripcion', 'description');
 
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
-        $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
-
-        /* Epigraphs */
-        $this->addView('\FacturaScripts\Dinamic\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-list-alt');
-        $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
-
-        $this->addOrderBy('ListEpigrafe', 'codejercicio desc,descripcion', 'description');
-        $this->addOrderBy('ListEpigrafe', 'codejercicio desc,codepigrafe', 'code');
-
-        $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', 'nombre');
-        $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
-
-        /* Epigraphs groups */
-        $this->addView('\FacturaScripts\Dinamic\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group', 'fa-bars');
-        $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
-
-        $this->addOrderBy('ListGrupoEpigrafes', 'codejercicio desc,codgrupo', 'code');
-        $this->addOrderBy('ListGrupoEpigrafes', 'codejercicio desc,descripcion', 'description');
-
-        $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Special account */
         $this->addView('\FacturaScripts\Dinamic\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
@@ -69,8 +49,6 @@ class ListCuenta extends ExtendedController\ListController
 
         $this->addOrderBy('ListCuentaEspecial', 'descripcion', 'description');
         $this->addOrderBy('ListCuentaEspecial', 'codsubcuenta', 'code');
-
-        $this->addFilterSelect('ListCuentaEspecial', 'codsubcuenta', '', 'descripcion');
     }
 
     /**
