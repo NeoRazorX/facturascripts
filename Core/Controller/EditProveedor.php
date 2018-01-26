@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Lib;
+use FacturaScripts\Core\Lib\IDFiscal;
+use FacturaScripts\Core\Lib\RegimenIVA;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -41,11 +42,11 @@ class EditProveedor extends ExtendedController\PanelController
 
         /// Load values option to Fiscal ID select input
         $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(Lib\IDFiscal::all());
+        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
 
         /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditProveedor']->columnForName('vat-type');
-        $columnVATType->widget->setValuesFromArray(Lib\RegimenIVA::all());
+        $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
     }
 
     /**
