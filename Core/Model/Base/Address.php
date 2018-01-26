@@ -82,6 +82,6 @@ abstract class Address extends ModelClass
         $this->direccion = Utils::noHtml($this->direccion);
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return false;
+        return true;
     }
 }
