@@ -1213,5 +1213,10 @@
     "renumber-accounting": "Renuméroter les sièges",
     "renumber-accounting-ok": "Renumérotation des sièges terminés",
     "renumber-accounting-error": "Une erreur s'est produite lors de la renumérotation des entrées de l'année fiscale %exerciseCode%",
-    "enable-api": "Activer l'API"
+    "enable-api": "Activer l'API",
+    "re": "RE",
+    "new-customer": "nouveau client",
+    "new-supplier": "nouveau fournisseur",
+    "parent-account": "Compte Parent",
+    "account-parent-error": "Le compte parent est incorrect ou n'appartient pas à l'exercice"
 }
