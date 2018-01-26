@@ -72,7 +72,7 @@ class Cuenta extends Base\ModelClass
     /**
      * Parent account code
      *
-     * @var varchar
+     * @var string
      */
     public $parent_codcuenta;
 
@@ -125,8 +125,8 @@ class Cuenta extends Base\ModelClass
     /**
      * Returns the first account that meets the indicated condition.
      *
-     * @param DataBaseWhere $where
-     * @param Array $orderby
+     * @param DataBaseWhere[] $where
+     * @param array $orderby
      *
      * @return null|Cuenta
      */
