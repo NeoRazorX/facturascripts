@@ -40,13 +40,6 @@ class Subcuenta extends Base\ModelClass
     public $idsubcuenta;
 
     /**
-     * Identificacion de la empresa
-     *
-     * @var int
-     */
-    public $idempresa;
-
-    /**
      * Sub-account code.
      *
      * @var string

@@ -36,12 +36,11 @@ class ListCuenta extends ExtendedController\ListController
     {
         /* Accounts */
         $this->addView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
-        $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'CAST(idempresa AS VARCHAR)']);
+        $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio']);
 
-        $this->addOrderBy('ListCuenta', 'idempresa asc, codejercicio desc, codcuenta', 'code');
-        $this->addOrderBy('ListCuenta', 'idempresa asc, codejercicio desc, descripcion', 'description');
+        $this->addOrderBy('ListCuenta', 'codejercicio desc, codcuenta', 'code');
+        $this->addOrderBy('ListCuenta', 'codejercicio desc, descripcion', 'description');
 
-        $this->addFilterSelect('ListCuenta', 'idempresa', 'empresas', '', 'nombre');
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Special account */

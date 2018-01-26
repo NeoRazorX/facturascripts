@@ -27,9 +27,6 @@
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idcuenta" onclick="EditCuenta" />
         </column>
-        <column name="company" order="100" display="left">
-            <widget type="text" fieldname="idempresa" />
-        </column>
         <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
@@ -41,6 +38,9 @@
         </column>
         <column name="id-account-special" order="130">
             <widget type="text" fieldname="idcuentaesp" />
+        </column>
+        <column name="parent-account" order="140" display="left">
+            <widget type="text" fieldname="parent_codcuenta" />
         </column>
     </columns>
 </view>
