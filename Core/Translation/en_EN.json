@@ -615,5 +615,8 @@
     "paid": "Paid",
     "re": "RE",
     "new-customer": "new customer",
-    "new-supplier": "new supplier"
+    "new-supplier": "new supplier",
+    "parent-account": "Parent Account",
+    "account-parent-error": "The parent account is incorrect or does not belong to the exercise",
+    "children-accounts": "Children Accounts"
 }

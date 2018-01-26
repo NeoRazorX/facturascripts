@@ -13,11 +13,6 @@
         <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
     </column>
     <column>
-        <name>idempresa</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>codejercicio</name>
         <type>character varying(4)</type>
         <null>NO</null>
@@ -38,7 +33,11 @@
         <null>YES</null>
     </column>
     <column>
-        <name>parent_id</name>
+        <name>parent_codcuenta</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>parent_idcuenta</name>
         <type>integer</type>
         <null>YES</null>
     </column>
@@ -48,13 +47,7 @@
     </constraint>
     <constraint>
         <name>uniq_codcuenta</name>
-        <type>UNIQUE (codcuenta,codejercicio,idempresa)</type>
-    </constraint>
-    <constraint>
-        <name>ca_co_cuentas_empresas</name>
-        <type>FOREIGN KEY (idempresa)
-            REFERENCES empresas (idempresa)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>UNIQUE (codcuenta,codejercicio)</type>
     </constraint>
     <constraint>
         <name>ca_co_cuentas_ejercicios</name>
@@ -70,7 +63,7 @@
     </constraint>
     <constraint>
         <name>ca_co_cuentas_parent</name>
-        <type>FOREIGN KEY (parent_id)
+        <type>FOREIGN KEY (parent_idcuenta)
             REFERENCES co_cuentas (idcuenta)
             ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>

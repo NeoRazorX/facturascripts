@@ -13,11 +13,6 @@
         <default>nextval('co_subcuentas_idsubcuenta_seq'::regclass)</default>
     </column>
     <column>
-        <name>idempresa</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>codejercicio</name>
         <type>character varying(4)</type>
         <null>NO</null>
@@ -76,13 +71,7 @@
     </constraint>
     <constraint>
         <name>uniq_codsubcuenta</name>
-        <type>UNIQUE (codsubcuenta,codejercicio,idempresa)</type>
-    </constraint>
-    <constraint>
-        <name>ca_co_subcuentas_empresas</name>
-        <type>FOREIGN KEY (idempresa)
-            REFERENCES empresas (idempresa)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>UNIQUE (codsubcuenta,codejercicio)</type>
     </constraint>
     <constraint>
         <name>ca_co_subcuentas_ejercicios</name>

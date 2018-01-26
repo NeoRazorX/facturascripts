@@ -47,13 +47,6 @@ class Asiento extends Base\ModelClass
     public $numero;
 
     /**
-     * Identificacion de la empresa
-     *
-     * @var int
-     */
-    public $idempresa;
-
-    /**
      * Identifier of the concept.
      *
      * @var int

@@ -24,31 +24,29 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="8">
+        <group name="data" numcolumns="9">
             <column name="id" order="100" display="none">
                 <widget type="text" fieldname="idcuenta" onclick="" />
             </column>
-            <column name="account" numcolumns="2" order="100">
+            <column name="account" numcolumns="3" order="100">
                 <widget type="text" fieldname="codcuenta" maxlength="10" icon="fa-bar-chart" onclick="" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" onclick="" />
             </column>
         </group>
-        <group name="data2" numcolumns="4">
-            <column name="company" order="100">
-                <widget type="select" fieldname="idempresa" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="fiscal-exercise" numcolumns="4" order="100">
+        <group name="data2" numcolumns="3">
+            <column name="fiscal-exercise" order="100">
                 <widget type="select" fieldname="codejercicio" required="true">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>
-        <group name="others" numcolumns="12">
-            <column name="special-account-id" numcolumns="4" order="100">
+        <group name="others" numcolumns="9">
+            <column name="parent-account" numcolumns="3" order="100">
+                <widget type="text" fieldname="parent_codcuenta" maxlength="10" icon="fa-bar-chart" />
+            </column>
+            <column name="special-account-id" numcolumns="7" order="120">
                 <widget type="select" fieldname="idcuentaesp">
                     <values source="co_cuentasesp" fieldcode="idcuentaesp" fieldtitle="descripcion"></values>
                 </widget>

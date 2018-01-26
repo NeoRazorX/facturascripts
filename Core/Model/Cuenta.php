@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -32,6 +31,7 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Cuenta extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -40,13 +40,6 @@ class Cuenta extends Base\ModelClass
      * @var int
      */
     public $idcuenta;
-
-    /**
-     * Identificacion de la empresa
-     *
-     * @var int
-     */
-    public $idempresa;
 
     /**
      * Code of the exercise of this account.
@@ -69,7 +62,19 @@ class Cuenta extends Base\ModelClass
      */
     public $descripcion;
 
-    public $parent_id;
+    /**
+     * Identifier of the parent account
+     *
+     * @var integer
+     */
+    public $parent_idcuenta;
+
+    /**
+     * Parent account code
+     *
+     * @var varchar
+     */
+    public $parent_codcuenta;
 
     /**
      * Returns the name of the table that uses this model.
@@ -93,7 +98,7 @@ class Cuenta extends Base\ModelClass
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -101,7 +106,6 @@ class Cuenta extends Base\ModelClass
     public function install()
     {
         /// force the parents tables
-        new Empresa();
         new Ejercicio();
 
         return '';
@@ -112,65 +116,67 @@ class Cuenta extends Base\ModelClass
      *
      * @return Subcuenta[]
      */
-    public function getSubcuentas()
+    public function getSubAccounts()
     {
         $subcuenta = new Subcuenta();
-
         return $subcuenta->all([new DataBaseWhere('idcuenta', $this->idcuenta)]);
     }
 
     /**
-     * Returns the exercise.
+     * Returns the first account that meets the indicated condition.
      *
-     * @return bool|mixed
+     * @param DataBaseWhere $where
+     * @param Array $orderby
+     *
+     * @return null|Cuenta
      */
-    public function getEjercicio()
+    public function getAccountWithCondition($where, $orderby = [])
     {
-        $eje = new Ejercicio();
-
-        return $eje->get($this->codejercicio);
-    }
-
-    /**
-     * You get the first selected account.
-     *
-     * @param string $cod
-     * @param string $codejercicio
-     *
-     * @return bool|Cuenta
-     */
-    public function getByCodigo($cod, $codejercicio)
-    {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codcuenta = ' . self::$dataBase->var2str($cod) .
-            ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ';';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            return new self($data[0]);
+        if (empty($orderby)) {
+            $orderby = ['codejercicio' => 'DESC', 'codcuenta' => 'ASC'];
         }
-
-        return false;
+        $result = $this->all($where, $orderby, 0, 1);
+        if (empty($result)) {
+            return null;
+        }
+        return $result[0];
     }
 
     /**
      * Gets the first selected special account.
      *
-     * @param int    $idcuesp
+     * @param string $idcuentaesp
      * @param string $codejercicio
      *
-     * @return bool|Cuenta
+     * @return null|Cuenta
      */
-    public function getCuentaesp($idcuesp, $codejercicio)
+    public function getSpecialAccount($idcuentaesp, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idcuentaesp = ' . self::$dataBase->var2str($idcuesp) .
-            ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
+        $where = [
+            new DataBaseWhere('idcuentaesp', $idcuentaesp),
+            new DataBaseWhere('codejercicio', $codejercicio)
+        ];
+        return $this->getAccountWithCondition($where);
+    }
 
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            return new self($data[0]);
+    /**
+     * Check and load the id of the parent account
+     *
+     * @return bool
+     */
+    private function testParentAccount()
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('parent_codcuenta', $this->parent_codcuenta)
+        ];
+
+        $account = $this->getAccountWithCondition($where);
+        if (isset($account)) {
+            $this->parent_idcuenta = $account->parent_idcuenta;
+            return TRUE;
         }
-
-        return false;
+        return FALSE;
     }
 
     /**
@@ -182,136 +188,17 @@ class Cuenta extends Base\ModelClass
     {
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if (strlen($this->codcuenta) > 0 && strlen($this->descripcion) > 0) {
-            return true;
-        }
-        self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
-
-        return false;
-    }
-
-    /**
-     * Returns all the accounts of the epigraph.
-     *
-     * @param int $idepi
-     *
-     * @return self[]
-     */
-    public function fullFromEpigrafe($idepi)
-    {
-        $cuenlist = [];
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idepigrafe = ' . self::$dataBase->var2str($idepi)
-            . ' ORDER BY codcuenta ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $c) {
-                $cuenlist[] = new self($c);
-            }
+        if (strlen($this->codcuenta) < 1 || strlen($this->descripcion) < 1) {
+            self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
+            return false;
         }
 
-        return $cuenlist;
-    }
-
-    /**
-     * Returns all the accounts for the indicated offset.
-     *
-     * @param string $codejercicio
-     * @param int    $offset
-     *
-     * @return self[]
-     */
-    public function allFromEjercicio($codejercicio, $offset = 0)
-    {
-        $cuenlist = [];
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio) .
-            ' ORDER BY codcuenta ASC';
-
-        $data = self::$dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $c) {
-                $cuenlist[] = new self($c);
-            }
+        $this->parent_idcuenta = null;
+        if (!empty($this->parent_codcuenta) && !$this->testParentAccount()) {
+            self::$miniLog->alert(self::$i18n->trans('account-parent-error'));
+            return false;
         }
 
-        return $cuenlist;
-    }
-
-    /**
-     * Returns all accounts for the year.
-     *
-     * @param string $codejercicio
-     *
-     * @return self[]
-     */
-    public function fullFromEjercicio($codejercicio)
-    {
-        $cuenlist = [];
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
-            . ' ORDER BY codcuenta ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $c) {
-                $cuenlist[] = new self($c);
-            }
-        }
-
-        return $cuenlist;
-    }
-
-    /**
-     * Returns all special accounts for the year.
-     *
-     * @param int    $idcuesp
-     * @param string $codejercicio
-     *
-     * @return self[]
-     */
-    public function allFromCuentaesp($idcuesp, $codejercicio)
-    {
-        $cuenlist = [];
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idcuentaesp = ' . self::$dataBase->var2str($idcuesp)
-            . ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $cue) {
-                $cuenlist[] = new self($cue);
-            }
-        }
-
-        return $cuenlist;
-    }
-
-    /**
-     * Returns a new account for the exercise.
-     *
-     * @param int $sumaCodigo
-     *
-     * @return bool|Subcuenta
-     */
-    public function newSubcuenta($sumaCodigo)
-    {
-        $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->get($this->codejercicio);
-        if ($ejercicio !== false) {
-            /// new codsubcuenta
-            $codsubcuenta = (string) (sprintf('%-0' . $ejercicio->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo);
-            $subcuentaModel = new Subcuenta();
-
-            $newSubcuenta = $subcuentaModel->getByCodigo($codsubcuenta, $this->codejercicio);
-            if ($newSubcuenta === flase) {
-                $newSubcuenta = new Subcuenta();
-                $newSubcuenta->codcuenta = $this->codcuenta;
-                $newSubcuenta->idcuenta = $this->idcuenta;
-                $newSubcuenta->codejercicio = $this->codejercicio;
-                $newSubcuenta->codsubcuenta = $codsubcuenta;
-            }
-
-            return $newSubcuenta;
-        }
-
-        return false;
+        return true;
     }
 }
