@@ -55,7 +55,7 @@
             </column>
             <column name="company" numcolumns="4" order="100">
                 <widget type="select" fieldname="idempresa">
-                    <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="lang-code" numcolumns="4" order="100">
