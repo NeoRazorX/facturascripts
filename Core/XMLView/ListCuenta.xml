@@ -17,15 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller ListGrupoEpigrafe
+ * Initial description for the controller ListCuenta
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
     <columns>
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idcuenta" onclick="EditCuenta" />
+        </column>
+        <column name="company" order="100" display="left">
+            <widget type="text" fieldname="idempresa" />
         </column>
         <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
@@ -35,6 +38,9 @@
         </column>
         <column name="description" order="120">
             <widget type="text" fieldname="descripcion" />
+        </column>
+        <column name="id-account-special" order="130">
+            <widget type="text" fieldname="idcuentaesp" />
         </column>
     </columns>
 </view>

@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * but it can be related to many subaccounts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Cuenta
 {
@@ -47,13 +48,6 @@ class Cuenta
     public $idempresa;
 
     /**
-     * Account code.
-     *
-     * @var string
-     */
-    public $codcuenta;
-
-    /**
      * Code of the exercise of this account.
      *
      * @var string
@@ -61,18 +55,11 @@ class Cuenta
     public $codejercicio;
 
     /**
-     * Identifier of the epigraph.
-     *
-     * @var int
-     */
-    public $idepigrafe;
-
-    /**
-     * Code of the epigraph.
+     * Account code.
      *
      * @var string
      */
-    public $codepigrafe;
+    public $codcuenta;
 
     /**
      * Description of the account.
@@ -81,12 +68,7 @@ class Cuenta
      */
     public $descripcion;
 
-    /**
-     * Identifier of the special account.
-     *
-     * @var int
-     */
-    public $idcuentaesp;
+    public $parent_id;
 
     /**
      * Returns the name of the table that uses this model.
@@ -117,8 +99,9 @@ class Cuenta
      */
     public function install()
     {
-        /// force the creation of the table epigrafes
-        new Epigrafe();
+        /// force the parents tables
+        new Empresa();
+        new Ejercicio();
 
         return '';
     }

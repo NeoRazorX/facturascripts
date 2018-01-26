@@ -7,13 +7,14 @@
 -->
 <table>
     <column>
-        <name>codbalance</name>
-        <type>character varying(15)</type>
-        <null>YES</null>
+        <name>idcuenta</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
     </column>
     <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
+        <name>idempresa</name>
+        <type>integer</type>
         <null>NO</null>
     </column>
     <column>
@@ -22,7 +23,7 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codepigrafe</name>
+        <name>codcuenta</name>
         <type>character varying(10)</type>
         <null>NO</null>
     </column>
@@ -32,23 +33,12 @@
         <null>YES</null>
     </column>
     <column>
-        <name>idcuenta</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
-    </column>
-    <column>
         <name>idcuentaesp</name>
         <type>character varying(6)</type>
         <null>YES</null>
     </column>
     <column>
-        <name>idepigrafe</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>idempresa</name>
+        <name>parent_id</name>
         <type>integer</type>
         <null>YES</null>
     </column>
@@ -58,7 +48,13 @@
     </constraint>
     <constraint>
         <name>uniq_codcuenta</name>
-        <type>UNIQUE (codcuenta,codejercicio)</type>
+        <type>UNIQUE (codcuenta,codejercicio,idempresa)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_cuentas_empresas</name>
+        <type>FOREIGN KEY (idempresa)
+            REFERENCES empresas (idempresa)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_co_cuentas_ejercicios</name>
@@ -67,9 +63,15 @@
             ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_co_cuentas_epigrafes2</name>
-        <type>FOREIGN KEY (idepigrafe)
-            REFERENCES co_epigrafes (idepigrafe)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_co_cuentas_cuentasesp</name>
+        <type>FOREIGN KEY (idcuentaesp)
+            REFERENCES co_cuentasesp (idcuentaesp)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_cuentas_parent</name>
+        <type>FOREIGN KEY (parent_id)
+            REFERENCES co_cuentas (idcuenta)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

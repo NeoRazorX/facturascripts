@@ -24,29 +24,34 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="12">
+        <group name="data" numcolumns="8">
             <column name="id" order="100" display="none">
                 <widget type="text" fieldname="idcuenta" onclick="" />
             </column>
-            <column name="account-code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" onclick="" />
+            <column name="account" numcolumns="2" order="100">
+                <widget type="text" fieldname="codcuenta" maxlength="10" icon="fa-bar-chart" onclick="" />
             </column>
-            <column name="description" numcolumns="4" order="110">
+            <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" onclick="" />
             </column>
-            <column name="fiscal-exercise" numcolumns="4" order="120">
-                <widget type="select" fieldname="codejercicio">
+        </group>
+        <group name="data2" numcolumns="4">
+            <column name="company" order="100">
+                <widget type="select" fieldname="idempresa" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="fiscal-exercise" numcolumns="4" order="100">
+                <widget type="select" fieldname="codejercicio" required="true">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="accounting-heading-code" numcolumns="2" order="130">
-                <widget type="text" fieldname="codepigrafe" onclick="" />
-            </column>
-            <column name="special-account-id" numcolumns="2" order="140">
-                <widget type="text" fieldname="idcuentaesp" onclick="" />
-            </column>
-            <column name="accounting-heading" numcolumns="2" order="150">
-                <widget type="text" fieldname="idepigrafe" onclick="" required="true"/>
+        </group>
+        <group name="others" numcolumns="12">
+            <column name="special-account-id" numcolumns="4" order="100">
+                <widget type="select" fieldname="idcuentaesp">
+                    <values source="co_cuentasesp" fieldcode="idcuentaesp" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
     </columns>
