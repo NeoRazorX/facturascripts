@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\Cache;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
+
 /**
  * Description of DocumentController
  *
@@ -32,9 +36,9 @@ abstract class DocumentController extends PanelController
     /**
      * Constructor.
      *
-     * @param \FacturaScripts\Core\Base\Cache      $cache
-     * @param \FacturaScripts\Core\Base\Translator $i18n
-     * @param \FacturaScripts\Core\Base\MiniLog    $miniLog
+     * @param Cache      $cache
+     * @param Translator $i18n
+     * @param MiniLog    $miniLog
      * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)

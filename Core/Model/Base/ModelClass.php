@@ -75,7 +75,7 @@ abstract class ModelClass
      * @param array $data
      */
     abstract public function checkArrayData(&$data);
-
+    
     /**
      * Returns the list of fields in the table.
      *

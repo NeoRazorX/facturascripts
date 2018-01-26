@@ -35,6 +35,7 @@ matrix:
     - php: hhvm
       dist: trusty
   allow_failures:
+    - php: 7.2
     - php: hhvm
     - php: nightly
   fast_finish: true
