@@ -1127,5 +1127,11 @@
     "generate-title": "Executa la creació de l'informe",
     "tasaconv": "Taxa de conversió",
     "paid": "Pagat",
-    "enable-api": "Activa API"
+    "enable-api": "Activa API",
+    "re": "RE",
+    "new-customer": "nou client",
+    "new-supplier": "nou proveïdor",
+    "parent-account": "Compte Pare",
+    "account-parent-error": "El compte pare és incorrecta o no pertany a l'exercici",
+    "children-accounts": "Comptes Fills"
 }
