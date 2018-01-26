@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015         Pablo Peralta
- * Copyright (C) 2015-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,10 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A family of products.
@@ -28,8 +26,9 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Familia
+class Familia extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -75,7 +74,7 @@ class Familia
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codfamilia';
     }
@@ -89,9 +88,8 @@ class Familia
     {
         $status = false;
 
-        $this->codfamilia = self::noHtml($this->codfamilia);
-        $this->descripcion = self::noHtml($this->descripcion);
-        $this->madre = self::noHtml($this->madre);
+        $this->codfamilia = Utils::noHtml($this->codfamilia);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (empty($this->codfamilia) || strlen($this->codfamilia) > 8) {
             self::$miniLog->alert(self::$i18n->trans('family-code-valid-length'));
@@ -157,39 +155,6 @@ class Familia
         }
 
         return $famlist;
-    }
-
-    /**
-     * Apply corrections to the table.
-     */
-    public function fixDb()
-    {
-        /// we check that families with mother, their mother exists.
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE madre IS NOT NULL;';
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $fam = $this->get($d['madre']);
-                if (!$fam) {
-                    /// if it does not exist, we disassociate
-                    $sql = 'UPDATE ' . static::tableName() . ' SET madre = null WHERE codfamilia = '
-                        . self::$dataBase->var2str($d['codfamilia']) . ':';
-                    self::$dataBase->exec($sql);
-                }
-            }
-        }
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
     }
 
     /**

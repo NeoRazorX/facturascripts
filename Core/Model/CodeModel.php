@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base;
@@ -29,7 +28,6 @@ use FacturaScripts\Core\Base;
  */
 class CodeModel
 {
-    use Base\Utils;
 
     const ALL_LIMIT = 1000;
     const SEARCH_LIMIT = 50;
@@ -67,7 +65,7 @@ class CodeModel
             $this->description = '';
         } else {
             $this->code = $data['code'];
-            $this->description = self::fixHtml($data['description']);
+            $this->description = Base\Utils::fixHtml($data['description']);
         }
     }
 

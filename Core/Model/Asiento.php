@@ -16,22 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The accounting entry. It is related to an exercise and consists of games.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Asiento
+class Asiento extends Base\ModelClass
 {
-    use Base\ModelTrait {
-        saveInsert as private traitSaveInsert;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -105,7 +104,7 @@ class Asiento
 
     /**
      * Text that identifies the type of document
-          * 'Customer invoice' or 'Vendor invoice'.
+           * 'Customer invoice' or 'Vendor invoice'.
      *
      * @var string
      */
@@ -140,14 +139,14 @@ class Asiento
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idasiento';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -164,6 +163,7 @@ class Asiento
      */
     public function clear()
     {
+        parent::clear();
         $this->fecha = date('d-m-Y');
         $this->editable = true;
         $this->importe = 0.0;
@@ -192,8 +192,8 @@ class Asiento
 
     /**
      * Returns the code of the currency.
-          * What happens is that this data is stored in the games, that's why
-          * you have to use this function.
+           * What happens is that this data is stored in the games, that's why
+           * you have to use this function.
      *
      * @return string|null
      */
@@ -247,8 +247,8 @@ class Asiento
      */
     public function test()
     {
-        $this->concepto = self::noHtml($this->concepto);
-        $this->documento = self::noHtml($this->documento);
+        $this->concepto = Utils::noHtml($this->concepto);
+        $this->documento = Utils::noHtml($this->documento);
 
         if (strlen($this->concepto) > 255) {
             self::$miniLog->alert(self::$i18n->trans('concept-seat-too-large'));
@@ -257,176 +257,6 @@ class Asiento
         }
 
         return true;
-    }
-
-    /**
-     * Run a complete test of tests.
-     *
-     * @param bool $duplicados
-     *
-     * @return bool
-     */
-    public function fullTest($duplicados = true)
-    {
-        $status = true;
-
-        /*
-         * We check that the seat is not empty or unbalanced.
-                   * We also check that the subaccounts belong to the same fiscal year.
-         */
-        $debe = $haber = 0;
-        $partidas = $this->getPartidas();
-        if (!empty($partidas)) {
-            foreach ($partidas as $p) {
-                $debe += $p->debe;
-                $haber += $p->haber;
-
-                $sc = $p->getSubcuenta();
-                if ($sc) {
-                    if ($sc->codejercicio !== $this->codejercicio) {
-                        self::$miniLog->alert(self::$i18n->trans('subaccount-belongs-other-year', ['%subAccountCode%' => $sc->codsubcuenta]));
-                        $status = false;
-                    }
-                } else {
-                    self::$miniLog->alert(self::$i18n->trans('subaccount-not-found', ['%subAccountCode%' => $p->codsubcuenta]));
-                    $status = false;
-                }
-            }
-        }
-
-        if (!static::floatcmp($debe, $haber, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('notchead-seat', [round($debe - $haber, FS_NF0 + 1)]));
-            $status = false;
-        } elseif (!static::floatcmp($this->importe, max([abs($debe), abs($haber)]), FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('incorrect-seat-amount'));
-            $status = false;
-        }
-
-        /// check that the date is correct
-        $ejercicio = new Ejercicio();
-        $eje0 = $ejercicio->get($this->codejercicio);
-        if ($eje0) {
-            if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
-                self::$miniLog->alert(self::$i18n->trans('seat-date-not-in-exercise-range', ['%link%' => $eje0->url()]));
-                $status = false;
-            }
-        }
-
-        if ($status && $duplicados) {
-            /// check if it is a duplicate
-            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fecha = ' . self::$dataBase->var2str($this->fecha) . '
-            AND concepto = ' . self::$dataBase->var2str($this->concepto) . ' AND importe = ' . self::$dataBase->var2str($this->importe) . '
-            AND idasiento != ' . self::$dataBase->var2str($this->idasiento) . ';';
-            $asientos = self::$dataBase->select($sql);
-            if (!empty($asientos)) {
-                foreach ($asientos as $as) {
-                    /// check the lines
-                    if (strtolower(FS_DB_TYPE) === 'mysql') {
-                        $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . '
-                     AND NOT EXISTS(SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = ' . self::$dataBase->var2str($as['idasiento']) . ');';
-                        $aux = self::$dataBase->select($sql);
-                    } else {
-                        $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . '
-                     EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = ' . self::$dataBase->var2str($as['idasiento']) . ';';
-                        $aux = self::$dataBase->select($sql);
-                    }
-
-                    if (empty($aux)) {
-                        self::$miniLog->alert(self::$i18n->trans('seat-possible-duplicated', ['%seatId%' => $as['idasiento']]));
-                        $status = false;
-                    }
-                }
-            }
-        }
-
-        return $status;
-    }
-
-    /**
-     * Apply corrections to the seat
-     *
-     * @return bool
-     */
-    public function fix()
-    {
-        $importeOld = $this->importe;
-        $debe = $haber = 0;
-        foreach ($this->getPartidas() as $p) {
-            $debe += $p->debe;
-            $haber += $p->haber;
-        }
-        $total = $debe - $haber;
-        $this->importe = max([abs($debe), abs($haber)]);
-
-        /// we correct unbalances of less than 0.01
-        if (static::floatcmp($debe, $haber, 2)) {
-            $debe = $haber = 0;
-            $partidas = $this->getPartidas();
-            foreach ($partidas as $p) {
-                $p->debe = round($p->debe, 2, PHP_ROUND_HALF_EVEN);
-                $debe += $p->debe;
-                $p->haber = round($p->haber, 2, PHP_ROUND_HALF_EVEN);
-                $haber += $p->haber;
-            }
-
-            /// if with rounding the problem is solved, then great!
-            if (static::floatcmp($debe, $haber)) {
-                $this->importe = max([abs($debe), abs($haber)]);
-                foreach ($partidas as $p) {
-                    $p->save();
-                }
-            } else {
-                /// If it has not worked, we try to fix it
-                $total = 0;
-                $partidas = $this->getPartidas();
-                foreach ($partidas as $p) {
-                    $total += ($p->debe - $p->haber);
-                }
-
-                if ($partidas[0]->debe !== 0) {
-                    $partidas[0]->debe -= $total;
-                } elseif ($partidas[0]->haber !== 0) {
-                    $partidas[0]->haber += $total;
-                }
-
-                $debe = $haber = 0;
-                foreach ($partidas as $p) {
-                    $debe += $p->debe;
-                    $haber += $p->haber;
-                }
-
-                /// if we have solved the problem we recorded
-                if (static::floatcmp($debe, $haber)) {
-                    $this->importe = max([abs($debe), abs($haber)]);
-                    foreach ($partidas as $p) {
-                        $p->save();
-                    }
-                }
-            }
-        }
-
-        /// If the amount has changed, we keep it
-        if (!static::floatcmp($this->importe, $importeOld)) {
-            $this->save();
-        }
-
-        /// we check the associated invoice
-        $status = true;
-        $fac = $this->getFactura();
-        if ($fac && $fac->idasiento === null) {
-            $fac->idasiento = $this->idasiento;
-            $status = $fac->save();
-        }
-
-        if ($status) {
-            return $this->fullTest();
-        }
-
-        return false;
     }
 
     /**
@@ -480,46 +310,6 @@ class Asiento
         $sql = 'DELETE FROM ' . static::tableName() . ' WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . ';';
 
         return self::$dataBase->exec($sql);
-    }
-
-    /**
-     * Returns an array with combinations containing $query in its number
-          * or concept or amount.
-     *
-     * @param string $query
-     * @param int    $offset
-     *
-     * @return self[]
-     */
-    public function search($query, $offset = 0)
-    {
-        $alist = [];
-        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
-
-        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE ';
-        if (is_numeric($query)) {
-            $auxSql = '';
-            if (strtolower(FS_DB_TYPE) === 'postgresql') {
-                $auxSql = '::TEXT';
-            }
-
-            $consulta .= 'numero' . $auxSql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
-                . "%' OR importe BETWEEN " . ($query - .01) . ' AND ' . ($query + .01);
-        } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
-            $consulta .= 'fecha = ' . self::$dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
-        } else {
-            $consulta .= "lower(concepto) LIKE '%" . str_replace(' ', '%', $query) . "%'";
-        }
-        $consulta .= ' ORDER BY fecha DESC';
-
-        $data = self::$dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $alist[] = new self($a);
-            }
-        }
-
-        return $alist;
     }
 
     /**
@@ -625,17 +415,17 @@ class Asiento
         $this->renumber();
     }
 
-    /// Renumber all seats. Returns False in case of error
-
     /**
      * Insert the model data in the database.
      *
+     * @param array $values
+     *
      * @return bool
      */
-    private function saveInsert()
+    protected function saveInsert($values = [])
     {
         $this->newNumero();
 
-        return $this->traitSaveInsert();
+        return parent::saveInsert();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,6 +39,9 @@ class EditGrupoClientes extends ExtendedController\PanelController
         $this->addEditView('\FacturaScripts\Dinamic\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->setTabsPosition('bottom');
+        
+        /// Disable columns
+        $this->views['ListCliente']->disableColumn('group', true);
     }
 
     /**

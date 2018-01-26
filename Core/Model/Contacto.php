@@ -16,122 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Description of crm_contacto
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Contacto
+class Contacto extends Base\Contact
 {
+
     use Base\ModelTrait;
-
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
-    public $codcontacto;
-
-    /**
-     * Contact CIF/NIF.
-     *
-     * @var string
-     */
-    public $cifnif;
-
-    /**
-     * True if it is a physical person, but False.
-     *
-     * @var bool
-     */
-    public $personafisica;
-
-    /**
-     * Contact name.
-     *
-     * @var string
-     */
-    public $nombre;
-
-    /**
-     * Last name.
-     *
-     * @var string
-     */
-    public $apellidos;
-
-    /**
-     * Contact company.
-     *
-     * @var string
-     */
-    public $empresa;
-
-    /**
-     * Contact charge.
-     *
-     * @var string
-     */
-    public $cargo;
-
-    /**
-     * Contact email.
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * Phone 1 of the person.
-     *
-     * @var string
-     */
-    public $telefono1;
-
-    /**
-     * Phone 2 of the person.
-     *
-     * @var string
-     */
-    public $telefono2;
-
-    /**
-     * Address of the contact.
-     *
-     * @var string
-     */
-    public $direccion;
-
-    /**
-     * Postal code of the contact.
-     *
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * Contact city.
-     *
-     * @var string
-     */
-    public $ciudad;
-
-    /**
-     * Contact province.
-     *
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Contact country.
-     *
-     * @var string
-     */
-    public $codpais;
 
     /**
      * True if it supports marketing, but False.
@@ -141,11 +38,25 @@ class Contacto
     public $admitemarketing;
 
     /**
-     * Contact's observations.
+     * Last name.
      *
      * @var string
      */
-    public $observaciones;
+    public $apellidos;
+
+    /**
+     * Contact charge.
+     *
+     * @var string
+     */
+    public $cargo;
+
+    /**
+     * Contact city.
+     *
+     * @var string
+     */
+    public $ciudad;
 
     /**
      * Associated employee has this contact. Agent model.
@@ -155,11 +66,46 @@ class Contacto
     public $codagente;
 
     /**
-     * Contact's date of registration.
+     * Primary key.
      *
      * @var string
      */
-    public $fechaalta;
+    public $codcontacto;
+
+    /**
+     * Contact country.
+     *
+     * @var string
+     */
+    public $codpais;
+
+    /**
+     * Postal code of the contact.
+     *
+     * @var string
+     */
+    public $codpostal;
+
+    /**
+     * Address of the contact.
+     *
+     * @var string
+     */
+    public $direccion;
+
+    /**
+     * Contact company.
+     *
+     * @var string
+     */
+    public $empresa;
+
+    /**
+     * Contact province.
+     *
+     * @var string
+     */
+    public $provincia;
 
     /**
      * Date of the last communication.
@@ -183,7 +129,7 @@ class Contacto
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codcontacto';
     }
@@ -193,26 +139,26 @@ class Contacto
      */
     public function clear()
     {
-        $this->personafisica = true;
+        parent::clear();
         $this->admitemarketing = true;
-        $this->fechaalta = date('d-m-Y');
         $this->ultima_comunicacion = date('d-m-Y');
     }
 
     /**
-     * Returns a summarized version of the observations.
+     * Returns True if there is no errors on properties values.
      *
-     * @return string
+     * @return bool
      */
-    public function observacionesResume()
+    public function test()
     {
-        if ($this->observaciones == '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
+        parent::test();
+        $this->apellidos = Utils::noHtml($this->apellidos);
+        $this->cargo = Utils::noHtml($this->cargo);
+        $this->ciudad = Utils::noHtml($this->ciudad);
+        $this->direccion = Utils::noHtml($this->direccion);
+        $this->empresa = Utils::noHtml($this->empresa);
+        $this->provincia = Utils::noHtml($this->provincia);
 
-        return substr($this->observaciones, 0, 57) . '...';
+        return true;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,14 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Abbreviated detail of a balance.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class BalanceCuentaA
+class BalanceCuentaA extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -73,21 +73,9 @@ class BalanceCuentaA
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
     }
 
     /**
@@ -102,13 +90,13 @@ class BalanceCuentaA
     public function saldo(&$ejercicio, $desde = false, $hasta = false)
     {
         $extra = '';
-        if ($ejercicio->idasientopyg !== null) {
+        if (!empty($ejercicio->idasientopyg)) {
             $extra = ' AND idasiento != ' . self::$dataBase->var2str($ejercicio->idasientopyg);
             if ($ejercicio->idasientocierre !== null) {
                 $extra = ' AND idasiento NOT IN (' . self::$dataBase->var2str($ejercicio->idasientocierre)
                     . ', ' . self::$dataBase->var2str($ejercicio->idasientopyg) . ')';
             }
-        } elseif ($ejercicio->idasientocierre !== null) {
+        } elseif (!empty($ejercicio->idasientocierre)) {
             $extra = ' AND idasiento != ' . self::$dataBase->var2str($ejercicio->idasientocierre);
         }
 
@@ -127,7 +115,7 @@ class BalanceCuentaA
         } else {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-               WHERE codcuenta LIKE '" . self::noHtml($this->codcuenta) . "%'"
+               WHERE codcuenta LIKE '" . Utils::noHtml($this->codcuenta) . "%'"
                 . ' AND codejercicio = ' . self::$dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = self::$dataBase->select($sql);
         }
@@ -173,7 +161,7 @@ class BalanceCuentaA
     {
         $balist = [];
         $sql = 'SELECT * FROM ' . static::tableName()
-            . " WHERE codbalance LIKE '" . self::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
+            . " WHERE codbalance LIKE '" . Utils::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {

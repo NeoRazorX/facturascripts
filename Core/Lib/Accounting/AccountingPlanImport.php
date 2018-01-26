@@ -39,9 +39,9 @@ class AccountingPlanImport
 {
 
     /**
+     * Exercise related to the accounting plan.
      *
-     * @param string $filePath
-     * @param string $codejercicio
+     * @var Ejercicio
      */
     private $ejercicio;
 
@@ -74,27 +74,28 @@ class AccountingPlanImport
      * returns an array width the content of xml file
      *
      * @param string $filePath
-     * @return array object
+     *
+     * @return \SimpleXMLElement|array
      *
      */
     private function getData($filePath)
     {
         if (file_exists($filePath)) {
-            return simplexml_load_file(($filePath));
-        } else {
-            return [];
+            return simplexml_load_string(file_get_contents($filePath));
         }
+
+        return [];
     }
 
     /**
      * insert into system balance definition
-     * @param array  $data
+     * @param \SimpleXMLElement $data
      */
     private function importBalance($data)
     {
         $bal = new Balance();
 
-        if ($bal->count() == 0) {
+        if ($bal->count() === 0) {
             foreach ($data as $balance) {
                 $bal = new Balance();
                 if (!$bal->get($balance->codbalance)) {
@@ -118,7 +119,7 @@ class AccountingPlanImport
 
     /**
      * Insert counts of balance definition
-     * @param array $data
+     * @param \SimpleXMLElement $data
      */
     private function importBalanceCuenta($data)
     {
@@ -143,7 +144,7 @@ class AccountingPlanImport
 
     /**
      * Insert counts of abbreviate balance definition
-     * @param array $data
+     * @param \SimpleXMLElement $data
      */
     private function importBalanceCuentaA($data)
     {
@@ -168,7 +169,7 @@ class AccountingPlanImport
     /**
      * Insert Groups of accounting plan
      *
-     * @param array $data
+     * @param \SimpleXMLElement $data
      */
     private function importEpigrafeGroup($data)
     {
@@ -195,7 +196,7 @@ class AccountingPlanImport
     /**
      * insert Epigrafe of accounting plan
      *
-     * @param array $data
+     * @param \SimpleXMLElement $data
      */
     private function importEpigrafe($data)
     {
@@ -224,7 +225,7 @@ class AccountingPlanImport
     /**
      * insert Cuenta of accounting plan
      *
-     * @param array $data
+     * @param \SimpleXMLElement $data
      */
     private function importCuenta($data)
     {
@@ -254,7 +255,7 @@ class AccountingPlanImport
     /**
      * Import subaccounts of accounting plan
      *
-     * @param array $data
+     * @param \SimpleXMLElement $data
      */
     private function importSubcuenta($data)
     {
@@ -274,7 +275,7 @@ class AccountingPlanImport
                 $subcta->idempresa = AppSettings::get('default', 'idempresa');
                 $subcta->codcuenta = $subcuenta->codcuenta;
                 $subcta->codsubcuenta = $subcuenta->codsubcuenta;
-                $subcta->descripcion = base64_decode(($subcuenta->descripcion));
+                $subcta->descripcion = base64_decode($subcuenta->descripcion);
                 $subcta->coddivisa = $subcuenta->coddivisa;
                 $subcta->save();
             }

@@ -491,5 +491,5 @@ class PluginManager
             is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
         }
         return is_dir($dir) ? rmdir($dir) : unlink($dir);
-    }    
+    }
 }

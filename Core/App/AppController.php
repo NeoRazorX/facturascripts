@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\App;
 
-use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
@@ -96,13 +95,13 @@ class AppController extends App
     {
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->renderHtml('Error/DbError.html');
+            $this->renderHtml('Error/DbError.html.twig');
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
-            $this->renderHtml('Login/Login.html');
+            $this->renderHtml('Login/Login.html.twig');
         } else {
             $user = $this->userAuth();
 
@@ -147,7 +146,7 @@ class AppController extends App
         }
 
         $controllerName = $this->getControllerFullName($pageName);
-        $template = 'Error/ControllerNotFound.html';
+        $template = 'Error/ControllerNotFound.html.twig';
         $httpStatus = Response::HTTP_NOT_FOUND;
 
         /// If we found a controller, load it
@@ -166,7 +165,7 @@ class AppController extends App
                     $this->controller->privateCore($this->response, $user, $permissions);
                     $template = $this->controller->getTemplate();
                 } else {
-                    $template = 'Error/AccessDenied.html';
+                    $template = 'Error/AccessDenied.html.twig';
                 }
 
                 $httpStatus = Response::HTTP_OK;
@@ -238,8 +237,6 @@ class AppController extends App
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
 
-            $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-            $this->debugBar->addCollector(new Twig\TwigCollector($env));
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
@@ -255,7 +252,7 @@ class AppController extends App
             $this->response->setContent($twig->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
-            $this->response->setContent($twig->render('Error/TemplateError.html', $templateVars));
+            $this->response->setContent($twig->render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

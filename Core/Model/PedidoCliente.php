@@ -25,9 +25,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Customer order.
  */
-class PedidoCliente
+class PedidoCliente extends Base\SalesDocument
 {
-    use Base\DocumentoVenta;
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -65,32 +65,9 @@ class PedidoCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idpedido';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Ejercicio();
-
-        return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoVenta();
     }
 
     /**
@@ -105,16 +82,6 @@ class PedidoCliente
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
         return $lineaModel->all($where, $order);
-    }
-
-    /**
-     * Check the order data, return True if it is correct.
-     *
-     * @return boolean
-     */
-    public function test()
-    {
-        return $this->testTrait();
     }
 
     /**

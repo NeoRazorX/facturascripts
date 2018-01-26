@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017       Francesc Pineda Segarra     <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2013-2017  Carlos Garcia Gomez         <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez         <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +17,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A province.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class Provincia
+class Provincia extends Base\ModelClass
 {
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * Identify the registry.
@@ -101,32 +99,33 @@ class Provincia
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idprovincia';
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
-     * default.
+     * Returns True if there is no errors on properties values.
      *
-     * @return string
+     * @return bool
      */
-    public function install()
+    public function test()
     {
-        return CSVImport::importTableSQL(static::tableName());
+        $this->provincia = Utils::noHtml($this->provincia);
+
+        return true;
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, 'ListPais&active=List');
+        return parent::url($type, 'ListPais&active=List');
     }
 }
