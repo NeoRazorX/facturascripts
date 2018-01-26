@@ -7,14 +7,10 @@
 -->
 <table>
     <column>
-        <name>codbalance</name>
-        <type>character varying(15)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
+        <name>idcuenta</name>
+        <type>serial</type>
         <null>NO</null>
+        <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
     </column>
     <column>
         <name>codejercicio</name>
@@ -22,7 +18,7 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codepigrafe</name>
+        <name>codcuenta</name>
         <type>character varying(10)</type>
         <null>NO</null>
     </column>
@@ -32,23 +28,16 @@
         <null>YES</null>
     </column>
     <column>
-        <name>idcuenta</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
-    </column>
-    <column>
         <name>idcuentaesp</name>
         <type>character varying(6)</type>
         <null>YES</null>
     </column>
     <column>
-        <name>idepigrafe</name>
-        <type>integer</type>
-        <null>NO</null>
+        <name>parent_codcuenta</name>
+        <type>character varying(10)</type>
     </column>
     <column>
-        <name>idempresa</name>
+        <name>parent_idcuenta</name>
         <type>integer</type>
         <null>YES</null>
     </column>
@@ -67,9 +56,15 @@
             ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_co_cuentas_epigrafes2</name>
-        <type>FOREIGN KEY (idepigrafe)
-            REFERENCES co_epigrafes (idepigrafe)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_co_cuentas_cuentasesp</name>
+        <type>FOREIGN KEY (idcuentaesp)
+            REFERENCES co_cuentasesp (idcuentaesp)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_cuentas_parent</name>
+        <type>FOREIGN KEY (parent_idcuenta)
+            REFERENCES co_cuentas (idcuenta)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

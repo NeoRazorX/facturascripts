@@ -79,6 +79,6 @@
     </constraint>
     <constraint>
         <name>ca_fs_users_company</name>
-        <type>FOREIGN KEY (idempresa) REFERENCES empresas (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
