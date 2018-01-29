@@ -35,7 +35,6 @@ final class FacturaClienteTest extends TestCase
         $model = new FacturaCliente();
 
         $this->assertInstanceOf(FacturaCliente::class, $model);
-        $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombrecliente);
         $this->assertTrue($model->test());
 

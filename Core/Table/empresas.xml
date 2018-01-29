@@ -9,7 +9,6 @@
     <column>
         <name>administrador</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>apartado</name>
@@ -18,7 +17,6 @@
     <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>ciudad</name>
@@ -35,7 +33,6 @@
     <column>
         <name>direccion</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>email</name>

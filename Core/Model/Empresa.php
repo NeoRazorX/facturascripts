@@ -30,8 +30,6 @@ class Empresa extends Base\Contact
 {
     use Base\ModelTrait;
 
-    public $idempresa;
-
     /**
      * Name of the company administrator.
      *
@@ -79,7 +77,7 @@ class Empresa extends Base\Contact
      *
      * @var int
      */
-    public $id;
+    public $idempresa;
 
     /**
      * Short name of the company, to show on the menu.
@@ -173,11 +171,11 @@ class Empresa extends Base\Contact
         $this->provincia = Utils::noHtml($this->provincia);
         $this->web = Utils::noHtml($this->web);
 
-        if ($this->idempresa === null) {
+        if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();
         }
 
-        return true;
+        return parent::test();
     }
 
     /**

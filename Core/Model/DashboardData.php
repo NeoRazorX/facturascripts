@@ -143,7 +143,7 @@ class DashboardData extends Base\ModelClass
      * @param array    $data
      * @param string[] $exclude
      */
-    public function loadFromData(array $data = array(), array $exclude = array())
+    public function loadFromData(array $data = [], array $exclude = [])
     {
         $this->traitLoadFromData($data, ['properties']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
@@ -156,7 +156,7 @@ class DashboardData extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert($values = array())
+    protected function saveInsert($values = [])
     {
         $values = ['properties' => json_encode($this->properties)];
 
@@ -170,7 +170,7 @@ class DashboardData extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate($values = array())
+    protected function saveUpdate($values = [])
     {
         $values = ['properties' => json_encode($this->properties)];
 

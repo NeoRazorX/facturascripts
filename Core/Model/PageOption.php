@@ -170,7 +170,7 @@ class PageOption extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert($values = array())
+    protected function saveInsert($values = [])
     {
         $values = $this->getEncodeValues();
 
@@ -184,7 +184,7 @@ class PageOption extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate($values = array())
+    protected function saveUpdate($values = [])
     {
         $values = $this->getEncodeValues();
 

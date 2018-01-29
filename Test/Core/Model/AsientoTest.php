@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Asiento;
 use PHPUnit\Framework\TestCase;
@@ -41,8 +40,6 @@ final class AsientoTest extends TestCase
         $this->assertEquals(true, $model->editable);
         $this->assertEquals(0.0, $model->importe);
         $this->assertTrue($model->test());
-
-        $model->idempresa = AppSettings::get('default', 'idempresa');
 
         $this->assertTrue($model->test());
     }
