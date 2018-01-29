@@ -42,7 +42,7 @@
             "FacturaScripts\\Core\\": "Core/",
             "FacturaScripts\\Dinamic\\": "Dinamic/",
             "FacturaScripts\\Plugins\\": "Plugins/",
-        "App\\": "src/"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {
@@ -72,6 +72,10 @@
         }
     },
     "keywords" : [
+        "facturascripts",
+        "php",
+        "invoice",
+        "erp",
         "crm",
         "billing",
         "accounting"

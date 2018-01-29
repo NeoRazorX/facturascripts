@@ -41,7 +41,8 @@ class DocumentCalculator
         $doc->totalirpf = 0.0;
         $doc->totalrecargo = 0.0;
 
-        foreach ($this->getSubtotals($doc) as $subt) {
+        $lines = $doc->getLineas();
+        foreach ($this->getSubtotals($lines) as $subt) {
             $doc->neto += $subt['neto'];
             $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
@@ -51,19 +52,55 @@ class DocumentCalculator
         $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
     }
 
+    public function calculateForm(&$doc, &$formLines)
+    {
+        /// clear totals
+        $doc->neto = 0.0;
+        $doc->totaliva = 0.0;
+        $doc->totalirpf = 0.0;
+        $doc->totalrecargo = 0.0;
+
+        $lines = [];
+        foreach ($formLines as $fLine) {
+            if(empty($fLine['cantidad'])) {
+                continue;
+            }
+            
+            $newLine = new Model\LineaAlbaranCliente();
+            $newLine->cantidad = (float) $fLine['cantidad'];
+            $newLine->dtopor = (float) $fLine['dtopor'];
+            $newLine->irpf = (float) $fLine['irpf'];
+            $newLine->iva = (float) $fLine['iva'];
+            $newLine->pvpunitario = (float) $fLine['pvpunitario'];
+            $newLine->recargo = (float) $fLine['recargo'];
+            $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
+            $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+            $lines[] = $newLine;
+        }
+
+        foreach ($this->getSubtotals($lines) as $subt) {
+            $doc->neto += $subt['neto'];
+            $doc->totaliva += $subt['totaliva'];
+            $doc->totalirpf += $subt['totalirpf'];
+            $doc->totalrecargo += $subt['totalrecargo'];
+        }
+
+        return round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
+    }
+
     /**
      * Returns subtotals by tax.
      *
-     * @param Model\FacturaCliente|Model\FacturaProveedor $doc
+     * @param Model\Base\BusinessDocumentLine[] $lines
      *
      * @return array
      */
-    private function getSubtotals($doc)
+    private function getSubtotals($lines)
     {
         $irpf = 0.0;
         $subtotals = [];
-        foreach ($doc->getLineas() as $line) {
-            $codimpuesto = ($line->codimpuesto === null) ? 0 : $line->codimpuesto;
+        foreach ($lines as $line) {
+            $codimpuesto = empty($line->codimpuesto) ? $line->iva . '-' . $line->recargo : $line->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotals)) {
                 $subtotals[$codimpuesto] = [
                     'neto' => 0.0,
