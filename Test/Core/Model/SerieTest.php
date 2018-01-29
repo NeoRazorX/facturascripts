@@ -42,7 +42,6 @@ final class SerieTest extends TestCase
 
         $model->siniva = true;
         $model->numfactura = 2;
-        $model->codalmacen = 'ALG';
         $model->codserie = 'A';
         $model->descripcion = 'Test description';
 

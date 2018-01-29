@@ -35,12 +35,10 @@ final class PresupuestoClienteTest extends TestCase
         $model = new PresupuestoCliente();
 
         $this->assertInstanceOf(PresupuestoCliente::class, $model);
-        $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombrecliente);
         $this->assertTrue($model->test());
 
         $model->nombrecliente = 'Test name';
-        $model->codalmacen = 'ALG';
 
         $this->assertTrue($model->test());
     }

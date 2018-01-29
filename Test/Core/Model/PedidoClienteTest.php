@@ -35,12 +35,10 @@ final class PedidoClienteTest extends TestCase
         $model = new PedidoCliente();
 
         $this->assertInstanceOf(PedidoCliente::class, $model);
-        $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombrecliente);
         $this->assertTrue($model->test());
 
         $model->nombrecliente = 'Test name';
-        $model->codalmacen = 'ALG';
 
         $this->assertTrue($model->test());
     }

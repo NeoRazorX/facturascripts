@@ -133,7 +133,7 @@ class Settings extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert($values = array())
+    protected function saveInsert($values = [])
     {
         $values = ['properties' => json_encode($this->properties)];
 
@@ -147,7 +147,7 @@ class Settings extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate($values = array())
+    protected function saveUpdate($values = [])
     {
         $values = ['properties' => json_encode($this->properties)];
 

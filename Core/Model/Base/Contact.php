@@ -108,6 +108,6 @@ abstract class Contact extends ModelClass
         $this->telefono1 = Utils::noHtml($this->telefono1);
         $this->telefono2 = Utils::noHtml($this->telefono2);
 
-        return true;
+        return !empty($this->nombre);
     }
 }

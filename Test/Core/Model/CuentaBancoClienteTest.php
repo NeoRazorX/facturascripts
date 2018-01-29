@@ -41,7 +41,6 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertTrue($model->test());
 
         $model->nombre = 'Test name';
-        $model->codalmacen = 'ALG';
 
         $this->assertTrue($model->test());
     }

@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018  Carlos García Gómez      <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +20,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Empresa;
 use PHPUnit\Framework\TestCase;
 
@@ -44,7 +44,7 @@ final class EmpresaTest extends TestCase
         $this->assertEquals('', $model->provincia);
         $this->assertEquals('', $model->web);
 
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->administrador = 'Test name admin';
         $model->ciudad = 'Test city';
@@ -56,6 +56,7 @@ final class EmpresaTest extends TestCase
         $model->web = 'http://www.example.com';
 
         $this->assertTrue($model->test());
+        $this->assertTrue($model->save());
     }
 
     public function testTable()
@@ -70,28 +71,6 @@ final class EmpresaTest extends TestCase
         $model = new Empresa();
 
         $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Empresa();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Empresa();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertTrue($result);
-        }
     }
 
     public function testAll()

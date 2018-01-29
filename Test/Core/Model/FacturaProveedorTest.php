@@ -35,12 +35,10 @@ final class FacturaProveedorTest extends TestCase
         $model = new FacturaProveedor();
 
         $this->assertInstanceOf(FacturaProveedor::class, $model);
-        $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombre);
         $this->assertTrue($model->test());
 
         $model->nombre = 'Test name';
-        $model->codalmacen = 'ALG';
 
         $this->assertTrue($model->test());
     }

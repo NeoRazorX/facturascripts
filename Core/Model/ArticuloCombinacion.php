@@ -171,6 +171,8 @@ class ArticuloCombinacion extends Base\ModelClass
         if ($this->codigo === null) {
             $this->codigo = (string) $this->newCode();
         }
+        
+        return true;
     }
 
     /**
