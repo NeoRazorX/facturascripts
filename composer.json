@@ -42,7 +42,7 @@
             "FacturaScripts\\Core\\": "Core/",
             "FacturaScripts\\Dinamic\\": "Dinamic/",
             "FacturaScripts\\Plugins\\": "Plugins/",
-	    "App\\": "src/"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {
@@ -70,5 +70,12 @@
             "id": "01C4QSW0F4BT8ARBYVTKMVEN6N",
             "allow-contrib": false
         }
-    }
+==== BASE ====
+    },
+    "keywords" : [
+        "crm",
+        "billing",
+        "accounting"
+    ]
+==== BASE ====
 }

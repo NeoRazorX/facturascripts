@@ -33,6 +33,12 @@ use FacturaScripts\Core\Model\Base\SalesDocumentLine;
  */
 class DocumentView extends BaseView
 {
+    /**
+     * Document calculator object.
+     *
+     * @var DocumentCalculator
+     */
+    private $calculator;
 
     /**
      * Document type (sale/purchase)
@@ -74,6 +80,7 @@ class DocumentView extends BaseView
     public function __construct($title, $modelName, $lineModelName, $lineXMLView, $userNick)
     {
         parent::__construct($title, $modelName);
+        $this->calculator = new DocumentCalculator();
         $this->documentType = 'sale';
 
         // Loads the view configuration for the user
@@ -155,11 +162,11 @@ class DocumentView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param bool $code
+     * @param bool  $code
      * @param array $where
      * @param array $order
-     * @param int $offset
-     * @param int $limit
+     * @param int   $offset
+     * @param int   $limit
      */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
@@ -188,13 +195,15 @@ class DocumentView extends BaseView
      *
      * @param $data
      *
-     * @return int
+     * @return int|float
      */
     public function calculateDocument(&$data)
     {
-        $result = 0;
-
-        return $result;
+        $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
+        unset($data['lines']);
+        $this->loadFromData($data);
+        
+        return $this->calculator->calculateForm($this->model, $newLines);
     }
 
     /**
@@ -235,8 +244,7 @@ class DocumentView extends BaseView
         }
 
         if ($result === 'OK') {
-            $calculator = new DocumentCalculator();
-            $calculator->calculate($this->model);
+            $this->calculator->calculate($this->model);
             $result = $this->model->save() ? 'OK' : 'ERROR';
             return $new ? 'NEW:' . $this->model->url() : $result;
         }
