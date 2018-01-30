@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * AdminHome manage the basic settings.
@@ -30,26 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminHome extends Base\Controller
 {
-    /**
-     * List of enabled plugins.
-     *
-     * @var array
-     */
-    public $enabledPlugins;
-
-    /**
-     * PHP Upload Max File Size.
-     *
-     * @var int
-     */
-    public $uploadMaxFileSize;
-
-    /**
-     * PHP Post Max Size.
-     *
-     * @var int
-     */
-    public $postMaxSize;
 
     /**
      * Plugin Manager.
@@ -61,9 +41,9 @@ class AdminHome extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param Model\User                 $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response                      $response
+     * @param User                          $user
+     * @param Base\ControllerPermissions    $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -74,12 +54,18 @@ class AdminHome extends Base\Controller
         $this->pluginManager->deploy();
         $this->cache->clear();
 
-        $this->enabledPlugins = $this->pluginManager->enabledPlugins();
-        $this->postMaxSize = $this->returnKBytes(ini_get('post_max_size'));
-        $this->uploadMaxFileSize = $this->returnKBytes(ini_get('upload_max_filesize'));
-
         $action = $this->request->get('action', '');
         $this->execAction($action);
+    }
+
+    /**
+     * Return the max file size that can be uploaded.
+     *
+     * @return float
+     */
+    public function getMaxFileUpload()
+    {
+        return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 
     /**
@@ -111,6 +97,42 @@ class AdminHome extends Base\Controller
     }
 
     /**
+     * Disable the plugin name received.
+     *
+     * @param string $pluginName
+     *
+     * @return bool
+     */
+    private function disablePlugin($pluginName)
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+
+        $this->pluginManager->disable($pluginName);
+        return true;
+    }
+
+    /**
+     * Enable the plugin name received.
+     *
+     * @param string $pluginName
+     *
+     * @return bool
+     */
+    private function enablePlugin($pluginName)
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+
+        $this->pluginManager->enable($pluginName);
+        return true;
+    }
+
+    /**
      * Execute main actions.
      *
      * @param $action
@@ -118,28 +140,20 @@ class AdminHome extends Base\Controller
     private function execAction($action)
     {
         switch ($action) {
-            case 'upload':
-                $this->uploadPlugin($this->request->files->get('plugin', []));
-                /// Refresh enabled plugins lists after upload
-                $this->enabledPlugins = $this->pluginManager->enabledPlugins();
+            case 'disable':
+                $this->disablePlugin($this->request->get('plugin', ''));
                 break;
 
             case 'enable':
                 $this->enablePlugin($this->request->get('plugin', ''));
-                /// Refresh enabled plugins lists after enable
-                $this->enabledPlugins = $this->pluginManager->enabledPlugins();
-                break;
-
-            case 'disable':
-                $this->disablePlugin($this->request->get('plugin', ''));
-                /// Refresh enabled plugins lists after disable
-                $this->enabledPlugins = $this->pluginManager->enabledPlugins();
                 break;
 
             case 'remove':
                 $this->removePlugin($this->request->get('plugin', ''));
-                /// Refresh enabled plugins lists after remove
-                $this->enabledPlugins = $this->pluginManager->enabledPlugins();
+                break;
+
+            case 'upload':
+                $this->uploadPlugin($this->request->files->get('plugin', []));
                 break;
 
             default:
@@ -149,135 +163,43 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Returns if file exists.
-     *
-     * @param string $file
-     *
-     * @return bool
-     */
-    public function fileExists($file)
-    {
-        return file_exists($file);
-    }
-
-    /**
-     * Disable the plugin name received.
-     *
-     * @param string $disablePlugin
-     *
-     * @return bool
-     */
-    private function disablePlugin($disablePlugin)
-    {
-        if (!empty($disablePlugin)) {
-            if (in_array($disablePlugin, $this->enabledPlugins, false)) {
-                $this->pluginManager->disable($disablePlugin);
-                $this->miniLog->error($this->i18n->trans('plugin-disabled'));
-                $this->pluginManager->deploy();
-
-                return true;
-            }
-
-            $this->miniLog->error($this->i18n->trans('plugin-is-not-yet-enabled'));
-        }
-
-        return false;
-    }
-
-    /**
      * Remove and disable the plugin name received.
      *
-     * @param string $removePlugin
+     * @param string $pluginName
      *
      * @return bool
      */
-    private function removePlugin($removePlugin)
+    private function removePlugin($pluginName)
     {
-        if (!empty($removePlugin)) {
-            $this->pluginManager->disable($removePlugin);
-            $pluginPath = $this->pluginManager->getPluginPath() . $removePlugin;
-            if (is_dir($pluginPath) || is_file($pluginPath)) {
-                $this->pluginManager->deploy();
-                $this->pluginManager->delTree($this->pluginManager->getPluginPath() . $removePlugin);
-                $this->miniLog->error($this->i18n->trans('plugin-deleted', ['%pluginName%' => $removePlugin]));
-
-                return true;
-            }
-
-            $this->miniLog->error($this->i18n->trans('plugin-yet-deleted', ['%pluginName%' => $removePlugin]));
+        if (!$this->permissions->allowDelete) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            return false;
         }
 
-        return false;
-    }
-
-    /**
-     * Enable the plugin name received.
-     *
-     * @param string $enablePlugin
-     *
-     * @return bool
-     */
-    private function enablePlugin($enablePlugin)
-    {
-        if (!empty($enablePlugin)) {
-            if (!in_array($enablePlugin, $this->enabledPlugins, false)) {
-                $this->pluginManager->enable($enablePlugin);
-                $this->miniLog->info($this->i18n->trans('plugin-enabled'));
-                $this->pluginManager->deploy();
-                $this->enabledPlugins = $this->pluginManager->enabledPlugins();
-
-                return true;
-            }
-
-            $this->miniLog->info($this->i18n->trans('plugin-yet-enabled'));
-        }
-
-        return false;
+        $this->pluginManager->remove($pluginName);
+        return true;
     }
 
     /**
      * Upload and enable a plugin.
      *
-     * @param \Symfony\Component\HttpFoundation\File\UploadedFile[] $uploadFiles
+     * @param UploadedFile[] $uploadFiles
      */
     private function uploadPlugin($uploadFiles)
     {
         foreach ($uploadFiles as $uploadFile) {
-            if ($uploadFile->getMimeType() === 'application/zip') {
-                $result = $this->pluginManager->unzipFile($uploadFile->getPathname());
-                if ($result) {
-                    $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $result]));
-                    $this->enablePlugin($result);
-                } else {
-                    $this->miniLog->error($this->i18n->trans('plugin-not-installed'));
-                }
-                unlink($uploadFile->getPathname());
-            } else {
-                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+            if (!$uploadFile->isValid()) {
+                $this->miniLog->error($uploadFile->getErrorMessage());
+                continue;
             }
-        }
-    }
 
-    /**
-     * Return the unit of $val in KBytes.
-     *
-     * @param string $val
-     *
-     * @return int
-     */
-    private function returnKBytes($val)
-    {
-        $value = (int) substr(trim($val), 0, -1);
-        $last = strtolower(substr($val, -1));
-        switch ($last) {
-            case 'g':
-                $value *= 1024;
-            // no break - Pass all cases to transform to KB
-            case 'm':
-                $value *= 1024;
-            // no break - Pass all cases to transform to KB
-        }
+            if ($uploadFile->getMimeType() !== 'application/zip') {
+                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+                continue;
+            }
 
-        return $value;
+            $this->pluginManager->install($uploadFile->getPathname());
+            unlink($uploadFile->getPathname());
+        }
     }
 }
