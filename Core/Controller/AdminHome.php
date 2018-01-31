@@ -90,9 +90,8 @@ class AdminHome extends Base\Controller
     private function checkHtaccess()
     {
         if (!file_exists(FS_FOLDER . '/.htaccess')) {
-            // TODO: Don't assume that the example exists
             $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
-            file_put_contents('.htaccess', $txt);
+            file_put_contents('.htaccess', \is_string($txt) ? $txt : '');
         }
     }
 

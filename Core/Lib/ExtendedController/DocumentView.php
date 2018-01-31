@@ -191,9 +191,9 @@ class DocumentView extends BaseView
     }
 
     /**
-     * TODO: Uncomplete
+     * Load data, calculate the needed document values and return the total.
      *
-     * @param $data
+     * @param mixed $data
      *
      * @return int|float
      */
