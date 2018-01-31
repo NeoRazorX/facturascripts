@@ -40,6 +40,9 @@ class PluginDeploy
      */
     private $minilog;
 
+    /**
+     * PluginDeploy constructor.
+     */
     public function __construct()
     {
         $this->i18n = new Translator();

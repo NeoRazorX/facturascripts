@@ -52,6 +52,14 @@ class DocumentCalculator
         $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
     }
 
+    /**
+     * Calculate and return the new total document based on line content.
+     *
+     * @param mixed $doc
+     * @param mixed $formLines
+     *
+     * @return float
+     */
     public function calculateForm(&$doc, &$formLines)
     {
         /// clear totals
@@ -62,7 +70,7 @@ class DocumentCalculator
 
         $lines = [];
         foreach ($formLines as $fLine) {
-            if(empty($fLine['cantidad'])) {
+            if (empty($fLine['cantidad'])) {
                 continue;
             }
             

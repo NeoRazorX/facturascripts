@@ -158,6 +158,13 @@ class PluginManager
         return $this->pluginPath;
     }
 
+    /**
+     * Install a new plugin if is compatible.
+     *
+     * @param string $zipPath
+     *
+     * @return bool|mixed
+     */
     public function install($zipPath)
     {
         $zipFile = new ZipArchive();
@@ -215,6 +222,13 @@ class PluginManager
         return array_diff(scandir($this->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
     }
 
+    /**
+     * Remove a plugin only if it's disabled.
+     *
+     * @param string $pluginName
+     *
+     * @return bool
+     */
     public function remove($pluginName)
     {
         /// can't remove enabled plugins
