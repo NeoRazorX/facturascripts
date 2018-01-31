@@ -29,8 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PDFExport implements ExportInterface
 {
-    use Base\Utils;
-
     const LIST_LIMIT = 500;
 
     /**
