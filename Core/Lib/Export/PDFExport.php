@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PDFExport implements ExportInterface
 {
+
     const LIST_LIMIT = 500;
 
     /**
@@ -92,7 +93,7 @@ class PDFExport implements ExportInterface
     {
         ;
     }
-    
+
     /**
      * Set headers and output document content to response.
      *
@@ -198,87 +199,51 @@ class PDFExport implements ExportInterface
     /**
      * Adds a new page with the document data.
      *
-     * @param mixed $model
+     * @param BusinessDocument $model
      */
     public function generateDocumentPage($model)
     {
-        /// TODO: Uncomplete
-        //
-        //Pending tasks
-        //----------------
-        //Company data
-        //Retrieve labels from i18n
-        //Set header table field name labels to bold font style
-        //Retrieve full address in header table
-        //Remove unused fields or add them to DocumentoVenta and DocumentoCompra
-        //Put document totals on footer and repeat them for each page
-        //Change footer table style
-        
-        if ($this->pdf === null) {
-            $this->newPage();
+        $columns = [];
+        foreach (array_keys((array) $model) as $key) {
+            $columns[$key] = $key;
         }
-        
-        //Document Header
-        $docHeaderData[] =  array("Albarán", (($model->codigo) ?: "--"), "Fecha", (($model->fecha) ?: "--"));
-        $docHeaderData[] =  array("Cliente", (($model->nombrecliente) ?: "--"), "CIF/NIF", (($model->cifnif) ?: "--"));
-        $docHeaderData[] =  array("Dirección", (($model->codigo) ?: "--"), "Teléfonos", "No existe");
-        
-//        $tableOptions = ['showHeadings' => 0]; --> This one does not work
-//        $tableOptions = ['width' => $this->tableWidth];
-        $tableOptions['showHeadings'] = 0;
-        $tableOptions['showLines'] = 0;
-        $tableOptions['width'] = $this->tableWidth;
-        $tableOptions['cols'] = array(
-            '0' => array('bgcolor' => array(1,1,1), 'justification' => 'right'),
-            '1' => array('bgcolor' => array(1,1,1)),
-            '2' => array('bgcolor' => array(1,1,1), 'justification' => 'right'),
-            '3' => array('bgcolor' => array(1,1,1)));
-        
-        $this->pdf->ezTable($docHeaderData, null, '', $tableOptions);
+        $this->generateModelPage($model, $columns, $model->primaryDescription());
+
         $this->pdf->ezText("\n");
-        
-        //Document Lines
-        $headers = array("Ref.+ Description", "Qty.", "Price", "Disc.", "Tax", "Total");
-        $lines = $model->getlineas();
-        $tableData[] = array();
-        
-        if(!empty($lines)) {
-            foreach($lines as $line){
-                $tableData[] = array(
-                    $line->referencia . " - " . $line->descripcion,
-                    $line->cantidad,
-                    $line->pvpunitario,
-                    $line->dtopor,
-                    $line->iva,
-                    $line->pvptotal,
-                );
-            }
+
+        $headers = [
+            'reference' => $this->i18n->trans('reference+description'),
+            'quantity' => $this->i18n->trans('quantity'),
+            'price' => $this->i18n->trans('price'),
+            'discount' => $this->i18n->trans('discount'),
+            'tax' => $this->i18n->trans('tax'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $tableData = [];
+        foreach ($model->getlineas() as $line) {
+            $tableData[] = [
+                'reference' => $line->referencia . " - " . $line->descripcion,
+                'quantity' => $this->numberTools->format($line->cantidad),
+                'price' => $this->numberTools->format($line->pvpunitario),
+                'discount' => $this->numberTools->format($line->dtopor),
+                'tax' => $this->numberTools->format($line->iva),
+                'total' => $this->numberTools->format($line->pvptotal),
+            ];
         }
-        
-        unset($tableOptions['cols']);
-        $tableOptions['showLines'] = 1;
-        $tableOptions['showHeadings'] = 1;
-        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);        
-        $this->pdf->ezText("\n\n");
-        
-        //Document Footer
-        $footerRows[] = array(
-            "Disc.", "Net price", "I.V.A. 21%",
-            "I.V.A. 4%", "I.V.A. 10%", "Total");
-        $footerRows[] = array(
-            "No existe", (($model->neto) ?: "--"), (($model->totaliva) ?: "--"),
-            "No existe", "No existe", (($model->total) ?: "--"));
-        
-        //Footer Table
-        $tableOptions['showHeadings'] = 0;
-        $tableOptions['cols'] = array(
-            '0' => array('justification' => 'right'),
-            '1' => array('justification' => 'right'),
-            '2' => array('justification' => 'right'),
-            '3' => array('justification' => 'right'),
-            '4' => array('justification' => 'right'),
-            '5' => array('justification' => 'right'));
-        $this->pdf->ezTable($footerRows, null, '', $tableOptions);
+
+        $tableOptions = [
+            'cols' => [
+                'quantity' => ['justification' => 'right'],
+                'price' => ['justification' => 'right'],
+                'discount' => ['justification' => 'right'],
+                'tax' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeHeadingCol' => [0.8, 0.8, 0.8],
+            'width' => $this->tableWidth
+        ];
+        $this->removeEmptyCols($tableData, $headers);
+        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
     }
 
     /**
@@ -363,6 +328,11 @@ class PDFExport implements ExportInterface
     private function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
     {
         foreach ($columns as $col) {
+            if (is_string($col)) {
+                $tableCols[$col] = $col;
+                $tableColsTitle[$col] = $col;
+            }
+
             if (isset($col->columns)) {
                 $this->setTableColumns($col->columns, $tableCols, $tableColsTitle, $tableOptions);
                 continue;
@@ -445,7 +415,7 @@ class PDFExport implements ExportInterface
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if ($row[$key] !== null && $row[$key] !== '') {
+                if (isset($row[$key]) && !in_array($row[$key], ['', 0])) {
                     $remove = false;
                     break;
                 }
