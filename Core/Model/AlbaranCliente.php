@@ -93,6 +93,6 @@ class AlbaranCliente extends Base\SalesDocument
         $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all($where, $order);
+        return $lineaModel->all($where, $order, 0, 0);
     }
 }
