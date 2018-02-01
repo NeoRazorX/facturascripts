@@ -146,8 +146,9 @@ class FacturaProveedor extends Base\PurchaseDocument
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
+        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
 
-        return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
+        return $lineaModel->all($where, [], 0, 0);
     }
 
     /**
