@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditFormaPago extends ExtendedController\EditController
 {
-
     /**
      * Returns the model name
      */

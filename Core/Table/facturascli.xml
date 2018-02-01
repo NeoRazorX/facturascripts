@@ -9,11 +9,6 @@
     <column>
         <name>apartado</name>
         <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>automatica</name>
-        <type>boolean</type>
     </column>
     <column>
         <name>cifnif</name>
@@ -23,27 +18,22 @@
     <column>
         <name>ciudad</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codagente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codalmacen</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codcliente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>coddir</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>coddivisa</name>
@@ -63,7 +53,6 @@
     <column>
         <name>codigorect</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpago</name>
@@ -73,22 +62,15 @@
     <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostal</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codserie</name>
         <type>character varying(4)</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>deabono</name>
-        <type>boolean</type>
-        <default>false</default>
     </column>
     <column>
         <name>direccion</name>
@@ -98,7 +80,10 @@
     <column>
         <name>editable</name>
         <type>boolean</type>
-        <default>false</default>
+    </column>
+    <column>
+        <name>idestado</name>
+        <type>integer</type>
     </column>
     <column>
         <name>fecha</name>
@@ -116,18 +101,14 @@
     <column>
         <name>hora</name>
         <type>time without time zone</type>
-        <null>NO</null>
-        <default>now()</default>
     </column>
     <column>
         <name>idasiento</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idasientop</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idfactura</name>
@@ -138,17 +119,6 @@
     <column>
         <name>idfacturarect</name>
         <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idpagodevol</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idprovincia</name>
-        <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>irpf</name>
@@ -159,10 +129,6 @@
         <name>neto</name>
         <type>double precision</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>nogenerarasiento</name>
-        <type>boolean</type>
     </column>
     <column>
         <name>nombrecliente</name>
@@ -177,12 +143,10 @@
     <column>
         <name>numero2</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>observaciones</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>pagada</name>
@@ -199,17 +163,10 @@
     <column>
         <name>porcomision</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>provincia</name>
         <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>recfinanciero</name>
-        <type>double precision</type>
-        <default>0</default>
     </column>
     <column>
         <name>tasaconv</name>
@@ -239,12 +196,6 @@
     <column>
         <name>totalrecargo</name>
         <type>double precision</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>tpv</name>
-        <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codtrans</name>
@@ -265,7 +216,6 @@
     <column>
         <name>direccionenv</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostalenv</name>
@@ -282,51 +232,30 @@
     <column>
         <name>apartadoenv</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpaisenv</name>
         <type>character varying(20)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idimprenta</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>numdocs</name>
-        <type>integer</type>
-        <default>0</default>
     </column>
     <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>ca_facturascli_series2</name>
-        <type>FOREIGN KEY (codserie)
-            REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_ejercicios2</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_asiento2</name>
-        <type>FOREIGN KEY (idasiento)
-            REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idasiento) REFERENCES co_asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_asientop</name>
-        <type>FOREIGN KEY (idasientop)
-            REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idasientop) REFERENCES co_asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_facturascli</name>

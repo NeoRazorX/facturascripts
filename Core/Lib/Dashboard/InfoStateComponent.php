@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Dashboard;
 
 use FacturaScripts\Core\Model;
@@ -28,12 +29,14 @@ use FacturaScripts\Core\Model;
 class InfoStateComponent extends BaseComponent implements ComponentInterface
 {
     /**
+     * List of groups.
      *
      * @var array
      */
     public $group;
 
     /**
+     * List of details.
      *
      * @var array
      */
@@ -43,11 +46,11 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
      * InfoStateComponent constructor.
      *
      * @param Model\DashboardData $data
-     * @param string $userNick
+     * @param string              $userNick
      */
     public function __construct($data, $userNick)
     {
-        parent::__construct($data, NULL);
+        parent::__construct($data, null);
         $this->group = [];
         $this->detail = [];
     }
@@ -63,7 +66,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             'group' => '',
             'model' => '',
             'icon' => '',
-            'values' => []
+            'values' => [],
         ];
     }
 
@@ -90,13 +93,20 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             $this->group[$data->properties['group']] = [
                 'icon' => $data->properties['icon'],
                 'value' => $totalModel->totals['total'],
-                'url' => $modelInfo['url']
+                'url' => $modelInfo['url'],
             ];
 
             $this->addDetail($data->properties['group'], $data->properties['values'], $totalModel);
         }
     }
 
+    /**
+     * Add details to component.
+     *
+     * @param $group
+     * @param $values
+     * @param $totalModel
+     */
     private function addDetail($group, $values, &$totalModel)
     {
         foreach ($values as $value) {
@@ -108,13 +118,29 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         }
     }
 
+    /**
+     * Return the model info table and url list.
+     *
+     * @param $modelName
+     *
+     * @return array
+     */
     private function getModelInfo($modelName)
     {
         $model = self::DIR_MODEL . $modelName;
         $modelObj = new $model();
+
         return ['table' => $modelObj->tableName(), 'url' => $modelObj->url('list')];
     }
 
+    /**
+     * Get summary data from total model.
+     *
+     * @param $table
+     * @param $values
+     *
+     * @return Model\TotalModel
+     */
     private function getSQLData($table, $values)
     {
         $fields = [];
@@ -122,14 +148,21 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             $name = str_replace('-', '', $value['name']);
             $fields[$name] = $value['sql'];
         }
+
         return Model\TotalModel::all($table, [], $fields)[0];
     }
 
+    /**
+     * Data persists in the database, modifying if the record existed or inserting
+     * in case the primary key does not exist.
+     *
+     * @param array $data
+     */
     public function saveData($data)
     {
         $newItem = new Model\DashboardData();
         $newItem->component = 'InfoState';
-        $newItem->nick = NULL;
+        $newItem->nick = null;
 
         if (isset($data['id'])) {
             $newItem->id = $data['id'];
@@ -139,12 +172,19 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             'group' => $data['group'],
             'model' => $data['model'],
             'icon' => $data['icon'],
-            'values' => $data['values']
+            'values' => $data['values'],
         ];
 
         $newItem->save();
     }
 
+    /**
+     * Returns the url where to see/modify the data.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
     public function url($id)
     {
         return $this->group[$id]['url'];

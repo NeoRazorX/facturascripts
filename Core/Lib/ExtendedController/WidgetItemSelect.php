@@ -28,7 +28,6 @@ use FacturaScripts\Core\Model;
  */
 class WidgetItemSelect extends WidgetItem
 {
-
     /**
      * Accepted values for the field associated to the widget.
      * Values are loaded from Model\PageOption::getForUser()
@@ -38,7 +37,7 @@ class WidgetItemSelect extends WidgetItem
     public $values;
 
     /**
-     * Class constructor
+     * WidgetItemSelect constructor.
      */
     public function __construct()
     {
@@ -79,9 +78,9 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            if($codeModel->code === null) {
-               $codeModel->code = '---null---';
-               $codeModel->description = '------';
+            if ($codeModel->code === null) {
+                $codeModel->code = '---null---';
+                $codeModel->description = '------';
             }
 
             $this->values[] = [
@@ -173,10 +172,9 @@ class WidgetItemSelect extends WidgetItem
             return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
         }
 
-        $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML()
-            . '<select name=' . $fieldName . ' id=' . $fieldName
-            . ' class="form-control"' . $specialAttributes . '>';
+            . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '" class="form-control"' . $specialAttributes . '>';
 
         foreach ($this->values as $selectValue) {
             /// don't use strict comparation (===)

@@ -9,7 +9,6 @@
     <column>
         <name>apartado</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>cifnif</name>
@@ -19,27 +18,22 @@
     <column>
         <name>ciudad</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codagente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codalmacen</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codcliente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>coddir</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>coddivisa</name>
@@ -64,12 +58,10 @@
     <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostal</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codserie</name>
@@ -82,6 +74,14 @@
         <null>NO</null>
     </column>
     <column>
+        <name>editable</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>idestado</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>fecha</name>
         <type>date</type>
         <null>NO</null>
@@ -89,8 +89,6 @@
     <column>
         <name>hora</name>
         <type>time without time zone</type>
-        <null>YES</null>
-        <default>now()</default>
     </column>
     <column>
         <name>femail</name>
@@ -105,12 +103,6 @@
     <column>
         <name>idfactura</name>
         <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idprovincia</name>
-        <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>irpf</name>
@@ -127,7 +119,6 @@
     <column>
         <name>nombrecliente</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>numero</name>
@@ -137,33 +128,18 @@
     <column>
         <name>numero2</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>observaciones</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>porcomision</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>provincia</name>
         <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>ptefactura</name>
-        <type>boolean</type>
-        <null>NO</null>
-        <default>true</default>
-    </column>
-    <column>
-        <name>recfinanciero</name>
-        <type>double precision</type>
-        <default>0</default>
     </column>
     <column>
         <name>tasaconv</name>
@@ -220,7 +196,6 @@
     <column>
         <name>direccionenv</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostalenv</name>
@@ -237,40 +212,26 @@
     <column>
         <name>apartadoenv</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpaisenv</name>
         <type>character varying(20)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>numdocs</name>
-        <type>integer</type>
-        <default>0</default>
     </column>
     <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>ca_albaranescli_series2</name>
-        <type>FOREIGN KEY (codserie)
-            REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranescli_ejercicios2</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranescli_facturas</name>
-        <type>FOREIGN KEY (idfactura)
-            REFERENCES facturascli (idfactura)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturascli (idfactura) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_albaranescli</name>

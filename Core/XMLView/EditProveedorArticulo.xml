@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,42 +25,42 @@
 
 <view>
     <columns>
-            <column name="id" display="none" order="100">
-                <widget type="number" decimal="0" fieldname="id" readonly="true" required="true" />
-            </column>
-            <column name="codprovider" display="none" order="100">
-                <widget type="text" fieldname="codproveedor" readonly="true" required="true" />
-            </column>
-            <column name="reference" numcolumns="4" display="left" order="110">
-                <widget type="select" fieldname="referencia" >
-                    <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="provider-reference" order="120" numcolumns="2">
-                <widget type="text" fieldname="refproveedor"  required="true" />
-            </column>
-            <column name="codbarras" order="130" numcolumns="2">
-                <widget type="text" fieldname="codbarras"   />
-            </column>
-            <column name="partnumber" order="140" numcolumns="2">
-                <widget type="text" fieldname="partnumber"   />
-            </column>
-            <column name="precio" numcolumns="2" display="left" order="110">
-                <widget type="number" fieldname="precio" />
-            </column>
-            <column name="dto" order="120" numcolumns="2">
-                <widget type="number" fieldname="dto"/>
-            </column>
-            <column name="tax" numcolumns="4" display="left" order="110">
-                <widget type="select" fieldname="codimpuesto" >
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="no-stock" order="130" numcolumns="2">
-                <widget type="checkbox" fieldname="nostock"   />
-            </column>
-            <column name="stock" order="140" numcolumns="2">
-                <widget type="text" fieldname="stock"   />
-            </column>
+        <column name="id" display="none" order="100">
+            <widget type="number" decimal="0" fieldname="id" readonly="true" required="true" />
+        </column>
+        <column name="codprovider" display="none" order="100">
+            <widget type="text" fieldname="codproveedor" readonly="true" required="true" />
+        </column>
+        <column name="reference" numcolumns="4" display="left" order="110">
+            <widget type="select" fieldname="referencia" >
+                <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="provider-reference" order="120" numcolumns="2">
+            <widget type="text" fieldname="refproveedor"  required="true" />
+        </column>
+        <column name="codbarras" order="130" numcolumns="2">
+            <widget type="text" fieldname="codbarras"   />
+        </column>
+        <column name="partnumber" order="140" numcolumns="2">
+            <widget type="text" fieldname="partnumber"   />
+        </column>
+        <column name="precio" numcolumns="2" display="left" order="110">
+            <widget type="number" fieldname="precio" />
+        </column>
+        <column name="dto" order="120" numcolumns="2">
+            <widget type="number" fieldname="dto"/>
+        </column>
+        <column name="tax" numcolumns="4" display="left" order="110">
+            <widget type="select" fieldname="codimpuesto" >
+                <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="no-stock" order="130" numcolumns="2">
+            <widget type="checkbox" fieldname="nostock"   />
+        </column>
+        <column name="stock" order="140" numcolumns="2">
+            <widget type="text" fieldname="stock"   />
+        </column>
     </columns>
 </view>

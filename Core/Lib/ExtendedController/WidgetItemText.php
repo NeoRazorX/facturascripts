@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemText extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemText constructor.
      *
      * @param string $type
      */
@@ -42,7 +42,7 @@ class WidgetItemText extends WidgetItem
      * Formats text to a given maximum length
      *
      * @param string $txt
-     * @param int $len
+     * @param int    $len
      *
      * @return string
      */
@@ -68,6 +68,7 @@ class WidgetItemText extends WidgetItem
             return '';
         }
         $txt = $this->getTextResume($value);
+
         return $this->standardListHTMLWidget($value, $txt);
     }
 
@@ -84,10 +85,9 @@ class WidgetItemText extends WidgetItem
 
         switch ($this->type) {
             case 'textarea':
-                $fieldName = '"' . $this->fieldName . '"';
                 $html = $this->getIconHTML()
-                    . '<textarea name=' . $fieldName . ' id=' . $fieldName
-                    . ' class="form-control" rows="3" ' . $specialAttributes
+                    . '<textarea name="' . $this->fieldName . '" id="' . $this->fieldName
+                    . '" class="form-control" rows="3" ' . $specialAttributes
                     . '>' . $value . '</textarea>';
 
                 if (!empty($this->icon)) {

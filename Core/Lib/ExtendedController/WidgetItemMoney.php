@@ -29,14 +29,14 @@ use FacturaScripts\Core\Base\DivisaTools;
 class WidgetItemMoney extends WidgetItem
 {
     /**
-     * Class that formats currency
+     * Tools to work with currencies.
      *
      * @var DivisaTools
      */
     private static $divisaTools;
 
     /**
-     * Class constructor
+     * WidgetItemMoney constructor.
      */
     public function __construct()
     {
@@ -63,6 +63,7 @@ class WidgetItemMoney extends WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
+
         return '<span' . $style . '>' . self::$divisaTools->format($value) . '</span>';
     }
 
@@ -76,6 +77,7 @@ class WidgetItemMoney extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
+
         return $this->standardEditHTMLWidget($value, $specialAttributes);
     }
 }

@@ -51,7 +51,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Field display object configuration
      *
-     * @var WidgetButton|WidgetItemCheckBox|WidgetItemColor|WidgetItemDateTime|WidgetItemMoney|WidgetItemNumber|WidgetItemRadio|WidgetItemSelect|WidgetItemText
+     * @var WidgetButton|WidgetItemCheckBox|WidgetItemColor|WidgetItemDateTime|WidgetItemMoney|WidgetItemNumber|WidgetItemRadio|WidgetItemSelect|WidgetItemText|WidgetItemFileChooser
      */
     public $widget;
 
@@ -64,8 +64,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public static function newFromXML($column)
     {
-        $result = new ColumnItem();
+        $result = new self();
         $result->loadFromXML($column);
+
         return $result;
     }
 
@@ -78,8 +79,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public static function newFromJSON($column)
     {
-        $result = new ColumnItem();
+        $result = new self();
         $result->loadFromJSON($column);
+
         return $result;
     }
 
@@ -117,7 +119,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         }
 
         if (!empty($column_atributes->level)) {
-            $this->level = (integer) $column_atributes->level;
+            $this->level = (int) $column_atributes->level;
         }
 
         switch (true) {
@@ -141,7 +143,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         parent::loadFromJSON($column);
         $this->description = (string) $column['description'];
         $this->display = (string) $column['display'];
-        $this->level = (integer) $column['level'];
+        $this->level = (int) $column['level'];
 
         if (!empty($this->widget)) {
             unset($this->widget);
@@ -185,6 +187,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         if ($this->widget->type === 'select') {
             if (isset($this->widget->values[0]['source'])) {
                 $this->widget->loadValuesFromModel();
+
                 return;
             }
 
@@ -228,7 +231,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Generates the HTML code to display the data from the model for Edit controllers
      *
      * @param string $value
-     * @param bool $withLabel
+     * @param bool   $withLabel
      * @param string $formName
      *
      * @return string
@@ -266,7 +269,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $header
      * @param string $value
-     * @param array $data
+     * @param array  $data
      *
      * @return string
      */
@@ -284,8 +287,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Returns the HTML code to display a button
      *
-     * @param array $data
+     * @param array  $data
      * @param string $formName
+     *
      * @return string
      */
     private function buttonHTMLColumn($data, $formName)
@@ -301,18 +305,18 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $header
      * @param string $value
-     * @param array $data
+     * @param array  $data
      *
      * @return string
      */
     private function checkboxHTMLColumn($header, $value, $data)
     {
         $input = $this->widget->getEditHTML($value);
-        $label = $header !== null ? '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2'
+        $label = !empty($header) ? '<label class="form-check-label mb-2 mr-sm-2'
             . ' mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>' : '';
 
-        $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
-            . '<div class="form-check col">' . $label . $data['ColumnDescription'] . '</div>'
+        $result = '<div class="' . $data['ColumnClass'] . '">'
+            . '<div class="form-check">' . $label . $data['ColumnDescription'] . '</div>'
             . $data['ColumnRequired']
             . '</div>';
 
@@ -323,7 +327,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Returns the HTML code to display a list of options
      *
      * @param string $header
-     * @param array $data
+     * @param array  $data
      * @param string $value
      *
      * @return string
@@ -351,6 +355,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         }
 
         $result .= $html . $data['ColumnRequired'] . '</div>';
+
         return $result;
     }
 
@@ -410,7 +415,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     protected function getColumnDescription()
     {
-        return empty($this->description) ? '' : '<small class="form-text text-muted">'
-            . $this->i18n->trans($this->description) . '</small>';
+        $description = '';
+        if (!empty($this->description)) {
+            $description = $this->i18n->trans($this->description);
+        }
+
+        if ($this->widget->type === 'filechooser') {
+            $description = ' ' . $this->i18n->trans('help-server-accepts-filesize', ['%size%' => $this->widget->getMaxFileUpload()]);
+        }
+
+        return empty($description) ? '' : '<small class="form-text text-muted">' . $description . '</small>';
     }
 }

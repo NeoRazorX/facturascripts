@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,11 +25,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FacturaProveedor
+class FacturaProveedor extends Base\PurchaseDocument
 {
 
-    use Base\DocumentoCompra;
-    use Base\Factura;
+    use Base\ModelTrait;
+    use Base\InvoiceTrait;
 
     /**
      * Returns the name of the table that uses this model.
@@ -46,9 +46,19 @@ class FacturaProveedor
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idfactura';
+    }
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->anulada = false;
+        $this->pagada = false;
     }
 
     /**
@@ -60,26 +70,16 @@ class FacturaProveedor
      */
     public function install()
     {
-        new Serie();
-        new Ejercicio();
+        parent::install();
         new Asiento();
 
         return '';
     }
 
     /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoCompra();
-        $this->anulada = false;
-    }
-
-    /**
      * Set the date and time, but respecting the exercise and the
-     * VAT regularizations.
-     * Returns TRUE if a date or time other than those requested is assigned.
+     * VAT regularizations.
+     * Returns TRUE if a date or time other than those requested is assigned.
      *
      * @param string $fecha
      * @param string $hora
@@ -146,38 +146,8 @@ class FacturaProveedor
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
+
         return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
-    }
-
-    /**
-     * Returns the VAT lines of the invoice.
-     * If there are not, create them.
-     *
-     * @return LineaIvaFacturaProveedor[]
-     */
-    public function getLineasIva()
-    {
-        return $this->getLineasIvaTrait('FacturaProveedor');
-    }
-
-    /**
-     * Check the invoice data, return TRUE if it is correct.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return $this->testTrait();
-    }
-
-    /**
-     * Run a complete test of tests.
-     *
-     * @return bool
-     */
-    public function fullTest()
-    {
-        return $this->fullTestTrait('invoice');
     }
 
     /**

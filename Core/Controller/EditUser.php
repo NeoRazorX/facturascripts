@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,6 @@ use FacturaScripts\Core\Model;
  */
 class EditUser extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -67,7 +67,7 @@ class EditUser extends ExtendedController\PanelController
     /**
      * Load view data proedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -81,18 +81,21 @@ class EditUser extends ExtendedController\PanelController
             case 'EditRoleUser':
                 $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }
 
+    /**
+     * Load a list of pages where user has access that can be setted as homepage.
+     */
     private function loadHomepageValues()
     {
         $user = new Model\User();
         $code = $this->request->get('code');
 
         $userPages = [
-            ['value' => '---null---', 'title' => '------']
+            ['value' => '---null---', 'title' => '------'],
         ];
         if ($user->loadFromCode($code)) {
             $userPages = $this->getUserPages($user);
@@ -103,8 +106,11 @@ class EditUser extends ExtendedController\PanelController
     }
 
     /**
-     * 
+     * Return a list of pages where user has access.
+     *
      * @param Model\User $user
+     *
+     * @return array
      */
     private function getUserPages($user)
     {
@@ -118,6 +124,7 @@ class EditUser extends ExtendedController\PanelController
 
                 $pageList[] = ['value' => $page->name, 'title' => $page->name];
             }
+
             return $pageList;
         }
 
@@ -131,6 +138,9 @@ class EditUser extends ExtendedController\PanelController
         return $pageList;
     }
 
+    /**
+     * Load the available language values from translator.
+     */
     private function loadLanguageValues()
     {
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
@@ -140,7 +150,7 @@ class EditUser extends ExtendedController\PanelController
         }
 
         /// sorting
-        usort($langs, function($objA, $objB) {
+        usort($langs, function ($objA, $objB) {
             return strcmp($objA['title'], $objB['title']);
         });
 

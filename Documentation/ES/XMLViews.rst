@@ -280,6 +280,8 @@ Ejemplos:
 -  **readonly** : Atributo opcional para indicar que la columna no es
    editable. **[readonly=“true”]**
 
+-  **maxlength** : Número máximo de carácteres que permite la campo.
+
 -  **icon** : (opcional) Si se indica se visualizará el icono a la
    izquierda del campo.
 
@@ -295,7 +297,7 @@ como su nombre indica permite incluir un botón en una de las columnas de edici�
 Existen tres tipos de botones declarados mediante el atributo ``type`` y con funciones
 distintas:
 
-*  *calculate* : Botón para mostrar un cáculo estadístico.
+*  *calculate* : Botón para mostrar un cálculo estadístico.
 *  *action* : Botón para ejecutar una acción en el controlador.
 *  *modal* : Botón para mostrar un formulario modal.
 

@@ -14,7 +14,7 @@
     </column>
     <column>
         <name>referencia</name>
-        <type>character varying(18)</type>
+        <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <column>
@@ -55,32 +55,22 @@
     </constraint>
     <constraint>
         <name>ca_articulo_trazas_articulos</name>
-        <type>FOREIGN KEY (referencia)
-            REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_articulo_trazas_linalbcli</name>
-        <type>FOREIGN KEY (idlalbventa)
-            REFERENCES lineasalbaranescli (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idlalbventa) REFERENCES lineasalbaranescli (idlinea) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_articulo_trazas_linfaccli</name>
-        <type>FOREIGN KEY (idlfacventa)
-            REFERENCES lineasfacturascli (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idlfacventa) REFERENCES lineasfacturascli (idlinea) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_articulo_trazas_linalbprov</name>
-        <type>FOREIGN KEY (idlalbcompra)
-            REFERENCES lineasalbaranesprov (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idlalbcompra) REFERENCES lineasalbaranesprov (idlinea) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_articulo_trazas_linfacprov</name>
-        <type>FOREIGN KEY (idlfaccompra)
-            REFERENCES lineasfacturasprov (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idlfaccompra) REFERENCES lineasfacturasprov (idlinea) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

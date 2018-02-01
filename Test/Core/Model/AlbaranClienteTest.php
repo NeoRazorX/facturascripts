@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017    Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017    Francesc Pineda Segarra    <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018    Carlos García Gómez        <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +23,10 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\AlbaranCliente;
-use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers AlbaranCliente
+ * @covers \AlbaranCliente
  */
 final class AlbaranClienteTest extends TestCase
 {
@@ -34,30 +34,30 @@ final class AlbaranClienteTest extends TestCase
     {
         $model = new AlbaranCliente();
         $this->assertInstanceOf(AlbaranCliente::class, $model);
-        $this->assertEquals(null, $model->apartado);
-        $this->assertEquals(null, $model->cifnif);
-        $this->assertEquals(null, $model->ciudad);
-        $this->assertEquals(null, $model->codagente);
-        $this->assertEquals(null, $model->codalmacen);
+        $this->assertNull($model->apartado);
+        $this->assertNull($model->cifnif);
+        $this->assertNull($model->ciudad);
+        $this->assertNull($model->codagente);
+        $this->assertEquals(AppSettings::get('default', 'codalmacen'), $model->codalmacen);
         $this->assertEquals(null, $model->codcliente);
-        $this->assertEquals(null, $model->coddivisa);
+        $this->assertEquals(AppSettings::get('default', 'coddivisa'), $model->coddivisa);
         $this->assertEquals(null, $model->coddir);
         $this->assertEquals(null, $model->codejercicio);
         $this->assertEquals(null, $model->codigo);
-        $this->assertEquals(AppSettings::get('default', 'idempresa'), $model->codpago);
+        $this->assertEquals(AppSettings::get('default', 'codpago'), $model->codpago);
         $this->assertEquals(null, $model->codpostal);
         $this->assertEquals(AppSettings::get('default', 'codserie'), $model->codserie);
         $this->assertEquals(null, $model->direccion);
-        $this->assertEquals(null, $model->envio_codtrans);
-        $this->assertEquals(null, $model->envio_codigo);
-        $this->assertEquals(null, $model->envio_nombre);
-        $this->assertEquals(null, $model->envio_apellidos);
-        $this->assertEquals(null, $model->envio_apartado);
-        $this->assertEquals(null, $model->envio_direccion);
-        $this->assertEquals(null, $model->envio_codpostal);
-        $this->assertEquals(null, $model->envio_ciudad);
-        $this->assertEquals(null, $model->envio_provincia);
-        $this->assertEquals(null, $model->envio_codpais);
+        $this->assertEquals(null, $model->codtrans);
+        $this->assertEquals(null, $model->codigoenv);
+        $this->assertEquals(null, $model->nombreenv);
+        $this->assertEquals(null, $model->apellidosenv);
+        $this->assertEquals(null, $model->apartadoenv);
+        $this->assertEquals(null, $model->direccionenv);
+        $this->assertEquals(null, $model->codpostalenv);
+        $this->assertEquals(null, $model->ciudadenv);
+        $this->assertEquals(null, $model->provinciaenv);
+        $this->assertEquals(null, $model->codpaisenv);
         $this->assertEquals(date('d-m-Y'), $model->fecha);
         $this->assertEquals(null, $model->femail);
         $this->assertEquals(date('H:i:s'), $model->hora);
@@ -65,7 +65,6 @@ final class AlbaranClienteTest extends TestCase
         $this->assertEquals(0.0, $model->irpf);
         $this->assertEquals(0.0, $model->neto);
         $this->assertEquals(null, $model->nombrecliente);
-        $this->assertEquals(0, $model->numdocs);
         $this->assertEquals(null, $model->numero);
         $this->assertEquals(null, $model->numero2);
         $this->assertEquals(null, $model->porcomision);
@@ -77,7 +76,6 @@ final class AlbaranClienteTest extends TestCase
         $this->assertEquals(0.0, $model->totalirpf);
         $this->assertEquals(0.0, $model->totalrecargo);
         $this->assertEquals(null, $model->observaciones);
-        $this->assertEquals(true, $model->ptefactura);
         $this->assertTrue($model->test());
     }
 
@@ -90,7 +88,7 @@ final class AlbaranClienteTest extends TestCase
     public function testPrimaryColumn()
     {
         $model = new AlbaranCliente();
-        $this->assertInternalType('string', $model->primaryColumn());
+        $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()
@@ -124,19 +122,4 @@ final class AlbaranClienteTest extends TestCase
             $this->assertSame([], $list);
         }
     }
-    /*
-        public function testGetLineas()
-        {
-
-            $model = new AlbaranCliente();
-            $list = $model->getLineas();
-
-            if (!empty($list)) {
-                $this->assertInternalType('array', $list);
-
-            } else {
-                $this->assertSame([], $list);
-            }
-        }
-    */
 }

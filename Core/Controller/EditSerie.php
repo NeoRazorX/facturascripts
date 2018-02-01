@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditSerie extends ExtendedController\EditController
 {
-
     /**
      * Returns the model name
      */

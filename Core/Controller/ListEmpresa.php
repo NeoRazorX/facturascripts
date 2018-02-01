@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListEmpresa extends ExtendedController\ListController
 {
-
     /**
      * Returns basic page attributes
      *
@@ -52,9 +51,9 @@ class ListEmpresa extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('\FacturaScripts\Dinamic\Model\Empresa', $className);
-        $this->addSearchFields($className, ['nombre', 'nombrecorto', 'CAST(id AS VARCHAR)']);
+        $this->addSearchFields($className, ['nombre', 'nombrecorto', 'CAST(idempresa AS VARCHAR)']);
 
-        $this->addOrderBy($className, 'id', 'code');
+        $this->addOrderBy($className, 'idempresa', 'code');
         $this->addOrderBy($className, 'nombre', 'name');
     }
 }

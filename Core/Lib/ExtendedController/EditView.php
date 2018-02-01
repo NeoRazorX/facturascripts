@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Lib\ExportManager;
@@ -29,9 +30,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class EditView extends BaseView
 {
-
     /**
-     * Class constructor and initialization
+     * EditView constructor and initialization.
      *
      * @param string $title
      * @param string $modelName
@@ -44,14 +44,6 @@ class EditView extends BaseView
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
-    }
-
-    /**
-     * Calculate and set new code for PK of the model
-     */
-    public function setNewCode()
-    {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
     /**
@@ -85,20 +77,10 @@ class EditView extends BaseView
     }
 
     /**
-     * Returns the name.
-     *
-     * @return string
-     */
-    public function getViewName()
-    {
-        return $this->pageOption->name;
-    }
-
-    /**
      * Establishes the column edit state
      *
      * @param string $columnName
-     * @param bool $disabled
+     * @param bool   $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
@@ -109,11 +91,15 @@ class EditView extends BaseView
     }
 
     /**
-     * Establishes and loads the model data according to its Primary Key
+     * Load the data in the model property, according to the code specified.
      *
-     * @param string|array $code
+     * @param mixed           $code
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
-    public function loadData($code)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -132,7 +118,7 @@ class EditView extends BaseView
         $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
 
-        // Bloqueamos el campo Primary Key si no es una alta
+        /// if not a new reg. we lock primary key
         $column = $this->columnForField($fieldName);
         if (!empty($column)) {
             $column->widget->readOnly = ($this->count > 0);

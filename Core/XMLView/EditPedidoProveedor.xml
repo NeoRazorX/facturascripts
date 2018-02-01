@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,61 +27,22 @@
     <columns>
         <group name="supplier" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idpedidoproveedor" required="true" />
-            </column>
-            <column name="supplier" numcolumns="3" order="100">
-                <widget type="text" fieldname="nombre" required="true" />
-            </column>
-            <column name="cifnif" title="cifnif" numcolumns="2" order="100">
-                <widget type="text" fieldname="cifnif" />
-            </column>
-            <column name="number2" numcolumns="3" order="100">
-                <widget type="text" fieldname="numero2" />
+                <widget type="text" fieldname="idpedido" required="true" />
             </column>
             <column name="date" title="date" numcolumns="2" order="100">
                 <widget type="datepicker" fieldname="fecha" required="true" />
             </column>
-            <column name="hour" title="hour" numcolumns="2" order="100">
+            <column name="hour" title="hour" numcolumns="2" order="110">
                 <widget type="text" fieldname="hora" required="true" />
             </column>
-        </group>
-        <group name="billingaddr" title="billing-address" numcolumns="12">
-            <column name="country" numcolumns="3">
-                <widget type="select" fieldname="codpais">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
-                </widget>
+            <column name="numsupplier" numcolumns="3" order="120">
+                <widget type="text" fieldname="numproveedor" />
             </column>
-            <column name="province" numcolumns="3" order="100">
-                <widget type="text" fieldname="provincia" />
+            <column name="supplier" numcolumns="3" order="130">
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="city" numcolumns="3" order="100">
-                <widget type="text" fieldname="ciudad" />
-            </column>
-            <column name="zip-code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codpostal" />
-            </column>
-            <column name="postalmail" numcolumns="2" order="100">
-                <widget type="text" fieldname="apartado" />
-            </column>
-            <column name="address" numcolumns="10" order="150">
-                <widget type="text" fieldname="direccion" />
-            </column>
-        </group>
-        <group name="shippingaddr" title="shipping-address" numcolumns="12">
-            <column name="province" numcolumns="3" order="100">
-                <widget type="text" fieldname="provinciaenv" />
-            </column>
-            <column name="city" numcolumns="3" order="100">
-                <widget type="text" fieldname="ciudadenv" />
-            </column>
-            <column name="zip-code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codpostalenv" />
-            </column>
-            <column name="postalmail" numcolumns="3" order="100">
-                <widget type="text" fieldname="apartadoenv" />
-            </column>
-            <column name="address" numcolumns="12" order="150">
-                <widget type="text" fieldname="direccionenv" />
+            <column name="cifnif" title="cifnif" numcolumns="2" order="140">
+                <widget type="text" fieldname="cifnif" />
             </column>
         </group>
         <group name="codattributes" title="attributes" numcolumns="12">
@@ -111,7 +72,7 @@
         </group>
         <group name="notes" numcolumns="12">
             <column name="observations" numcolumns="12" order="110">
-                <widget type="textarea" fieldname="observaciones" required="true" />
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>

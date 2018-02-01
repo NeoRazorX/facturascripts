@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * A VAT regularization.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class RegularizacionIva
+class RegularizacionIva extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -92,7 +94,7 @@ class RegularizacionIva
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idregiva';
     }
@@ -107,7 +109,7 @@ class RegularizacionIva
         if ($this->idasiento !== null) {
             $partida = new Partida();
 
-            return $partida->allFromAsiento($this->idasiento);
+            return $partida->all([new DataBaseWhere('idasiento', $this->idasiento)]);
         }
 
         return false;
@@ -115,10 +117,10 @@ class RegularizacionIva
 
     /**
      * Returns the VAT regularization corresponding to that date,
-     * that is, the regularization whose start date is earlier
-     * to the date provided and its end date is after the date
-     * provided. So you can know if the period is still open to be able
-     * check in.
+          * that is, the regularization whose start date is earlier
+          * to the date provided and its end date is after the date
+          * provided. So you can know if the period is still open to be able
+          * check in.
      *
      * @param string $fecha
      *

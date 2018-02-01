@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,10 +28,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AlbaranProveedor
+class AlbaranProveedor extends Base\PurchaseDocument
 {
-
-    use Base\DocumentoCompra;
+    use Base\ModelTrait;
 
     /**
      * Primary key. Integer
@@ -47,13 +47,6 @@ class AlbaranProveedor
     public $idfactura;
 
     /**
-     * True => is pending invoice.
-     *
-     * @var bool
-     */
-    public $ptefactura;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -68,34 +61,24 @@ class AlbaranProveedor
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idalbaran';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
      */
     public function install()
     {
-        /// nos aseguramos de que se comprueban las tablas de facturas y series antes
-        new Serie();
+        parent::install();
         new FacturaProveedor();
 
         return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoCompra();
-        $this->ptefactura = true;
     }
 
     /**
@@ -106,27 +89,8 @@ class AlbaranProveedor
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranProveedor();
+
         return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
-    }
-
-    /**
-     * Check the delivery note data, return True if it is correct.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return $this->testTrait();
-    }
-
-    /**
-     * Run a complete test of tests.
-     *
-     * @return bool
-     */
-    public function fullTest()
-    {
-        return $this->fullTestTrait('albaran');
     }
 
     /**
@@ -141,7 +105,7 @@ class AlbaranProveedor
             if ($this->idfactura) {
                 /**
                  * We delegate the elimination of the invoice in the corresponding class,
-                 * You will have to do more things.
+                                  * You will have to do more things.
                  */
                 $factura = new FacturaProveedor();
                 $factura0 = $factura->get($this->idfactura);
@@ -154,18 +118,5 @@ class AlbaranProveedor
         }
 
         return false;
-    }
-
-    /**
-     * Execute a task with cron
-     */
-    public function cronJob()
-    {
-        /**
-         * We put to null all the invoices that are not in facturasprov
-         */
-        $sql = 'UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
-            . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';
-        self::$dataBase->exec($sql);
     }
 }

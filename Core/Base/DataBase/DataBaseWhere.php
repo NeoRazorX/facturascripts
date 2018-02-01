@@ -29,7 +29,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseWhere
 {
-
     const MATCH_DATE = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i";
     const MATCH_DATETIME = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i";
 
@@ -71,10 +70,10 @@ class DataBaseWhere
     /**
      * DataBaseWhere constructor.
      *
-     * @param string $fields
+     * @param string      $fields
      * @param string|bool $value
-     * @param string $operator
-     * @param string $operation
+     * @param string      $operator
+     * @param string      $operation
      */
     public function __construct($fields, $value, $operator = '=', $operation = 'AND')
     {
@@ -135,7 +134,7 @@ class DataBaseWhere
                 break;
 
             case 'REGEXP':
-                $result = "'" . $this->dataBase->escapeString($this->value) . "'";
+                $result = "'" . $this->dataBase->escapeString((string) $this->value) . "'";
                 break;
 
             default:
@@ -187,13 +186,11 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        if($this->value === null) {
+        if ($this->value === null) {
             return 'NULL';
         }
 
-        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN', 'REGEXP'], false)
-            ? $this->getValueFromOperator()
-            : $this->getValueFromType();
+        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN', 'REGEXP'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**
@@ -242,8 +239,10 @@ class DataBaseWhere
         $result = '';
         $join = false;
         foreach ($whereItems as $item) {
-            $result .= $item->getSQLWhereItem($join);
-            $join = true;
+            if (isset($item)) {
+                $result .= $item->getSQLWhereItem($join);
+                $join = true;
+            }
         }
 
         if ($result !== '') {
@@ -272,6 +271,7 @@ class DataBaseWhere
                 }
             }
         }
+
         return $result;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,14 +24,11 @@ namespace FacturaScripts\Core\Model;
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DashboardData
+class DashboardData extends Base\ModelClass
 {
 
     use Base\ModelTrait {
-        clear as private traitClear;
         loadFromData as traitLoadFromData;
-        saveInsert as traitSaveInsert;
-        saveUpdate as traitSaveUpdate;
     }
 
     /**
@@ -91,7 +88,7 @@ class DashboardData
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -116,14 +113,14 @@ class DashboardData
      */
     public function clear()
     {
-        $this->traitClear();
+        parent::clear();
         $this->creationdate = date('d-m-Y');
         $this->displaydate = date('d-m-Y');
         $this->properties = [];
     }
 
     /**
-     * Check that a data array have correct struct of model
+     * Check an array of data so that it has the correct structure of the model.
      *
      * @param array $data
      */
@@ -141,11 +138,12 @@ class DashboardData
     }
 
     /**
-     * Load data from array
+     * Assign the values of the $data array to the model properties.
      *
-     * @param array $data
+     * @param array    $data
+     * @param string[] $exclude
      */
-    public function loadFromData($data)
+    public function loadFromData(array $data = [], array $exclude = [])
     {
         $this->traitLoadFromData($data, ['properties']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
@@ -154,33 +152,40 @@ class DashboardData
     /**
      * Insert the model data in the database.
      *
+     * @param array $values
+     *
      * @return bool
      */
-    private function saveInsert()
+    protected function saveInsert($values = [])
     {
         $values = ['properties' => json_encode($this->properties)];
-        return $this->traitSaveInsert($values);
+
+        return parent::saveInsert($values);
     }
 
     /**
      * Update the model data in the database.
      *
+     * @param array $values
+     *
      * @return bool
      */
-    private function saveUpdate()
+    protected function saveUpdate($values = [])
     {
         $values = ['properties' => json_encode($this->properties)];
-        return $this->traitSaveUpdate($values);
+
+        return parent::saveUpdate($values);
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
@@ -198,6 +203,7 @@ class DashboardData
             default:
                 $result .= 'Dashboard';
         }
+
         return $result;
     }
 }

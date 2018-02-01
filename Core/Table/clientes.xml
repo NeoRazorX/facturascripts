@@ -7,11 +7,6 @@
 -->
 <table>
     <column>
-        <name>capitalimpagado</name>
-        <type>double precision</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
         <null>NO</null>
@@ -19,7 +14,6 @@
     <column>
         <name>codagente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codcliente</name>
@@ -27,100 +21,41 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codcontacto</name>
-        <type>character varying(6)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codcuentadom</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codcuentarem</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>coddivisa</name>
-        <type>character varying(3)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codedi</name>
-        <type>character varying(17)</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>codgrupo</name>
         <type>character varying(6)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpago</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codserie</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuenta</name>
         <type>character varying(15)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codtiporappel</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>contacto</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>copiasfactura</name>
-        <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>debaja</name>
         <type>boolean</type>
-        <null>YES</null>
         <default>false</default>
     </column>
     <column>
         <name>email</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fax</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fechabaja</name>
         <type>date</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fechaalta</name>
         <type>date</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idsubcuenta</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>ivaincluido</name>
-        <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nombre</name>
@@ -130,42 +65,26 @@
     <column>
         <name>razonsocial</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>observaciones</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>recargo</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>regimeniva</name>
         <type>character varying(20)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>riesgoalcanzado</name>
-        <type>double precision</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>riesgomax</name>
-        <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>telefono1</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>telefono2</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>tipoidfiscal</name>
@@ -181,7 +100,6 @@
     <column>
         <name>web</name>
         <type>character varying(250)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>diaspago</name>
@@ -190,7 +108,6 @@
     <column>
         <name>codproveedor</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>clientes_pkey</name>

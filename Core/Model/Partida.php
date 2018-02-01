@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The line of a seat.
@@ -26,9 +28,8 @@ use FacturaScripts\Core\App\AppSettings;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Partida
+class Partida extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -242,7 +243,7 @@ class Partida
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idpartida';
     }
@@ -267,6 +268,7 @@ class Partida
      */
     public function clear()
     {
+        parent::clear();
         $this->concepto = '';
         $this->punteada = false;
         $this->tasaconv = 1.0;
@@ -278,7 +280,7 @@ class Partida
         $this->baseimponible = 0.0;
         $this->debe = 0.0;
         $this->haber = 0.0;
-        $this->numero = 0.0;
+        $this->numero = 0;
         $this->fecha = date('d-m-Y');
         $this->saldo = 0.0;
         $this->sum_debe = 0.0;
@@ -349,9 +351,9 @@ class Partida
      */
     public function test()
     {
-        $this->concepto = self::noHtml($this->concepto);
-        $this->documento = self::noHtml($this->documento);
-        $this->cifnif = self::noHtml($this->cifnif);
+        $this->concepto = Utils::noHtml($this->concepto);
+        $this->documento = Utils::noHtml($this->documento);
+        $this->cifnif = Utils::noHtml($this->cifnif);
 
         return true;
     }
@@ -566,10 +568,10 @@ class Partida
     /**
      * Returns the totals of the sub-accounts of the items between dates.
      *
-     * @param int          $idsubc
-     * @param string       $fechaini
-     * @param string       $fechafin
-     * @param array|bool   $excluir
+     * @param int        $idsubc
+     * @param string     $fechaini
+     * @param string     $fechafin
+     * @param array|bool $excluir
      *
      * @return array
      */

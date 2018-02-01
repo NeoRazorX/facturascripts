@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,13 +33,19 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class PanelController extends Base\Controller
 {
-
     /**
      * Indicates the active view
      *
      * @var string
      */
     public $active;
+
+    /**
+     * Model to use with select and autocomplete filters.
+     *
+     * @var CodeModel
+     */
+    private $codeModel;
 
     /**
      * Export data object
@@ -59,6 +67,7 @@ abstract class PanelController extends Base\Controller
 
     /**
      * Tabs position in page: left, bottom.
+     *
      * @var string
      */
     public $tabsPosition;
@@ -78,7 +87,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Loads the data to display
      *
-     * @param string $keyView
+     * @param string   $keyView
      * @param BaseView $view
      */
     abstract protected function loadData($keyView, $view);
@@ -86,21 +95,22 @@ abstract class PanelController extends Base\Controller
     /**
      * Starts all the objects and properties
      *
-     * @param Base\Cache $cache
+     * @param Base\Cache      $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->exportManager = new ExportManager();
-        $this->setTemplate('Master/PanelController');
         $this->active = $this->request->get('active', '');
-        $this->tabsPosition = 'left';
+        $this->codeModel = new CodeModel();
+        $this->exportManager = new ExportManager();
         $this->settings = [];
         $this->views = [];
+
+        $this->setTabsPosition('left');
     }
 
     /**
@@ -131,8 +141,8 @@ abstract class PanelController extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response                   $response
+     * @param User                       $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -173,6 +183,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param string $keyView
      * @param string $property
+     *
      * @return mixed
      */
     public function getSettings($keyView, $property)
@@ -183,7 +194,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Returns a field value for the loaded data model
      *
-     * @param mixed $model
+     * @param mixed  $model
      * @param string $fieldName
      *
      * @return mixed
@@ -208,6 +219,7 @@ abstract class PanelController extends Base\Controller
     public function getViewModelValue($viewName, $fieldName)
     {
         $model = $this->views[$viewName]->getModel();
+
         return $this->getFieldValue($model, $fieldName);
     }
 
@@ -221,6 +233,7 @@ abstract class PanelController extends Base\Controller
     public function getURL($type)
     {
         $view = array_values($this->views)[0];
+
         return $view->getURL($type);
     }
 
@@ -233,6 +246,7 @@ abstract class PanelController extends Base\Controller
     {
         $viewName = array_keys($this->views)[0];
         $model = $this->views[$viewName]->getModel();
+
         return $model->primaryDescription();
     }
 
@@ -240,7 +254,7 @@ abstract class PanelController extends Base\Controller
      * Run the actions that alter data before reading it
      *
      * @param BaseView $view
-     * @param string $action
+     * @param string   $action
      *
      * @return bool
      */
@@ -266,51 +280,47 @@ abstract class PanelController extends Base\Controller
      * Run the controller after actions
      *
      * @param EditView $view
-     * @param string $action
+     * @param string   $action
      */
     protected function execAfterAction($view, $action)
     {
         switch ($action) {
-            case 'insert':
-                $this->insertAction($view);
+            case 'autocomplete':
+                $this->autocompleteAction();
                 break;
 
             case 'export':
                 $this->setTemplate(false);
-                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->exportManager->newDoc($this->request->get('option'));
                 foreach ($this->views as $selectedView) {
                     $selectedView->export($this->exportManager);
                 }
                 $this->exportManager->show($this->response);
                 break;
+
+            case 'insert':
+                $this->insertAction($view);
+                break;
         }
     }
 
-    protected function insertAction($view)
-    {
-        $view->setNewCode();
-    }
-    
     /**
-     * Run the data edits
-     *
-     * @param BaseView $view
-     *
-     * @return bool
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
      */
-    protected function editAction($view)
+    private function autocompleteAction()
     {
-        if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
-            return false;
-        }
+        $this->setTemplate(false);
+        $source = $this->request->get('source');
+        $field = $this->request->get('field');
+        $title = $this->request->get('title');
+        $term = $this->request->get('term');
 
-        if ($view->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-            return true;
+        $results = [];
+        foreach ($this->codeModel->search($source, $field, $title, $term) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
         }
-
-        return false;
+        $this->response->setContent(json_encode($results));
     }
 
     /**
@@ -324,12 +334,14 @@ abstract class PanelController extends Base\Controller
     {
         if (!$this->permissions->allowDelete) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+
             return false;
         }
 
         $fieldKey = $view->getModel()->primaryColumn();
         if ($view->delete($this->request->get($fieldKey))) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+
             return true;
         }
 
@@ -337,10 +349,47 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
+     * Run the data edits
+     *
+     * @param BaseView $view
+     *
+     * @return bool
+     */
+    protected function editAction($view)
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+
+            return false;
+        }
+
+        if ($view->save()) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
+            return true;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
+
+        return false;
+    }
+
+    /**
+     * Run the data insert action.
+     *
+     * @param EditView $view
+     */
+    protected function insertAction($view)
+    {
+        $view->setNewCode();
+    }
+
+    /**
      * Check if the view should be active
      *
      * @param BaseView $view
-     * @param bool $mainViewHasData
+     * @param bool     $mainViewHasData
+     *
      * @return bool
      */
     protected function checkActiveView(&$view, $mainViewHasData)
@@ -351,14 +400,14 @@ abstract class PanelController extends Base\Controller
     /**
      * Adds a view to the controller and loads its data
      *
-     * @param string $keyView
+     * @param string   $keyView
      * @param BaseView $view
-     * @param string $icon
+     * @param string   $icon
      */
-    private function addView($keyView, $view, $icon)
+    protected function addView($keyView, $view, $icon)
     {
         $this->views[$keyView] = $view;
-        $this->settings[$keyView] = ['active' => TRUE, 'icon' => $icon];
+        $this->settings[$keyView] = ['active' => true, 'icon' => $icon];
 
         if (empty($this->active)) {
             $this->active = $keyView;
@@ -432,6 +481,7 @@ abstract class PanelController extends Base\Controller
     public function viewClass($view)
     {
         $result = explode('\\', get_class($view));
+
         return end($result);
     }
 }

@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017    Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017    Francesc Pineda Segarra    <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018    Carlos García Gómez        <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +25,7 @@ use FacturaScripts\Core\Model\Almacen;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Almacen
+ * @covers \Almacen
  */
 final class AlmacenTest extends TestCase
 {
@@ -33,10 +34,8 @@ final class AlmacenTest extends TestCase
         $model = new Almacen();
 
         $this->assertInstanceOf(Almacen::class, $model);
-        $this->assertEquals(null, $model->codalmacen);
+        $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombre);
-        $this->assertEquals('', $model->contacto);
-        $this->assertEquals('', $model->observaciones);
         $this->assertFalse($model->test());
 
         $model->nombre = 'Test name';
@@ -56,15 +55,7 @@ final class AlmacenTest extends TestCase
     {
         $model = new Almacen();
 
-        $this->assertInternalType('string', $model->primaryColumn());
-    }
-
-
-    public function testDefault()
-    {
-        $model = new Almacen();
-
-        $this->assertTrue($model->isDefault());
+        $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()

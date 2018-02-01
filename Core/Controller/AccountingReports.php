@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -33,7 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AccountingReports extends Controller
 {
-
     /**
      * List of exercices.
      *
@@ -43,16 +43,16 @@ class AccountingReports extends Controller
 
     /**
      * Object to manager data export.
-     * 
-     * @var ExportManager 
+     *
+     * @var ExportManager
      */
     public $exportManager;
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response              $response
+     * @param User                  $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -64,7 +64,9 @@ class AccountingReports extends Controller
         $this->exportManager = new ExportManager();
 
         $action = $this->request->get('action', '');
-        $this->execAction($action);
+        if ($action !== '') {
+            $this->execAction($action);
+        }
     }
 
     /**
@@ -74,7 +76,7 @@ class AccountingReports extends Controller
      */
     private function execAction($action)
     {
-        $data = [];
+        $pages = [];
         $dateFrom = $this->request->get('date-from');
         $dateTo = $this->request->get('date-to');
         $format = $this->request->get('format');
@@ -83,29 +85,48 @@ class AccountingReports extends Controller
             case 'libro-mayor':
                 $this->setTemplate(false);
                 $ledger = new Accounting\Ledger();
-                $data = $ledger->generate($dateFrom, $dateTo);
+                $pages = $ledger->generate($dateFrom, $dateTo);
                 break;
 
             case 'sumas-saldos':
                 $balanceAmmount = new Accounting\BalanceAmmounts();
-                $data = $balanceAmmount->generate($dateFrom, $dateTo);
+                $pages = $balanceAmmount->generate($dateFrom, $dateTo);
                 break;
 
             case 'situacion':
                 $balanceSheet = new Accounting\BalanceSheet();
-                $data = $balanceSheet->generate($dateFrom, $dateTo);
+                $pages = $balanceSheet->generate($dateFrom, $dateTo);
                 break;
 
             case 'pyg':
                 $proffitAndLoss = new Accounting\ProffitAndLoss();
-                $data = $proffitAndLoss->generate($dateFrom, $dateTo);
+                $pages = $proffitAndLoss->generate($dateFrom, $dateTo);
                 break;
         }
 
-        if (!empty($data)) {
-            $this->setTemplate(false);
-            $this->exportData($data, $format);
+        if (empty($pages)) {
+            $this->miniLog->info($this->i18n->trans('no-data'));
+
+            return;
         }
+
+        $this->setTemplate(false);
+        $this->exportData($pages, $format);
+    }
+
+    /**
+     * Return list of accounting documents
+     *
+     * @return array
+     */
+    public function getReports()
+    {
+        return [
+            'libro-mayor' => 'ledger',
+            'sumas-saldos' => 'balance-ammounts',
+            'situacion' => 'balance-sheet',
+            'pyg' => 'profit-and-loss-balance',
+        ];
     }
 
     /**
@@ -125,16 +146,19 @@ class AccountingReports extends Controller
 
     /**
      * Exports data to PDF.
-     * 
-     * @param array $data
+     *
+     * @param array  $pages
      * @param string $format
      */
-    private function exportData(&$data, $format)
+    private function exportData(&$pages, $format)
     {
-        $headers = empty($data) ? [] : array_keys($data[0]);
+        $this->exportManager->newDoc($format);
 
-        $this->exportManager->newDoc($this->response, $format);
-        $this->exportManager->generateTablePage($headers, $data);
+        foreach ($pages as $data) {
+            $headers = empty($data) ? [] : array_keys($data[0]);
+            $this->exportManager->generateTablePage($headers, $data);
+        }
+        
         $this->exportManager->show($this->response);
     }
 }

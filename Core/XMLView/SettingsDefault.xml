@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,13 +34,13 @@
                 </widget>
             </column>
             <column name="currency" numcolumns="3" order="100">
-                <widget type="select" fieldname="coddivisa"> 
+                <widget type="select" fieldname="coddivisa">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="company" numcolumns="3" order="100">
                 <widget type="select" fieldname="idempresa">
-                    <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="warehouse" numcolumns="3" order="100">
@@ -49,12 +49,12 @@
                 </widget>
             </column>
             <column name="serie" numcolumns="3" order="110">
-                <widget type="select" fieldname="codserie"> 
+                <widget type="select" fieldname="codserie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="payment-method" numcolumns="3" order="120">
-                <widget type="select" fieldname="codpago"> 
+                <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
@@ -70,7 +70,7 @@
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
-            <column name="product_decimals" title="product" numcolumns="3" order="110">
+            <column name="product_decimals" title="product-decimals" numcolumns="3" order="110">
                 <widget type="select" fieldname="product_decimals" required="true" icon="fa-sort-numeric-asc">
                     <values start="0" end="6" step="1"></values>
                 </widget>
@@ -106,8 +106,8 @@
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
-            <column name="disable-api" numcolumns="3" order="100">
-                <widget type="checkbox" fieldname="disable_api"/>
+            <column name="enable-api" numcolumns="3" order="100">
+                <widget type="checkbox" fieldname="enable_api"/>
             </column>
         </group>
     </columns>

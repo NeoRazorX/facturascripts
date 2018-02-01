@@ -1,0 +1,121 @@
+{#
+   /**
+     * Form element Macros.
+     *
+     * Adds twig functions to display the simpleInput and simpleSelect form elements
+     * Example import: {% import "Macro/Forms.html.twig" as forms %}
+     *
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     *
+    */
+
+
+   /**
+     * Creates an input form element
+     *
+     * @param string $id element id attribute.
+     * @param string $name element name attribute.
+     * @param string $value the default value for the input.
+     * @param string $type the input type attribute (defaults to text) must be any valid input type attribute
+     *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#element-attrdef-input-type).
+     * @param string $label NULL if no label is set. This will add a <label> element with the string as its contents.
+     * @param string $icon string identifying a FontAwesome icon (http://fontawesome.io/icons/).
+     * @param array  $attributes an associative array of strings, extra attributes with their values
+     *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#the-input-element)
+     *               it shouldn't be 'type', 'id' or 'name', as those are already given.
+     */
+#}
+{% macro simpleInput(id, name, value, type = "text", label = NULL, icon = NULL, attributes = NULL) %}
+        {% if label %}
+            <label for="{{ name }}">{{ label }}</label>
+        {% endif %}
+
+        {% if icon %}
+            <div class="input-group">
+                <span class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+                    </span>
+                </span>
+        {% endif %}
+
+                <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
+                        {% if attributes.class is not defined %}
+                            class="form-control"
+                        {% endif %}
+
+                        {% for attribute,attrValue in attributes %}
+                            {{ attribute }}="{{ attrValue }}"
+                        {% endfor %} /> {# end input #}
+
+        {% if icon %}
+            </div>
+        {% endif %}
+{% endmacro %}
+
+{#   /**
+     * Creates a Select form element
+     *
+     * @param string $id element id attribute
+     * @param string $name element name attribute
+     * @param string $value the default value that will be selected (must be contained in the allValues select)
+     * @param array  $allValues an associative array with the select options (where the key is the option value and the
+     *               array value is the option text.
+     * @param string $label NULL if no label is set. This will add a <label> element with the string as its contents.
+     * @param string $icon string identifying a FontAwesome icon (http://fontawesome.io/icons/).
+     * @param array  $attributes an associative array of strings, extra attributes with their values
+     *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#the-input-element)
+     *               it shouldn't be 'id' or 'name', as those are already given, beware that if the class attribute is
+     *               given, it will override the default ones (remember to add the "form-control" class for consistency.
+     */
+#}
+{% macro simpleSelect(id, name, value, allValues = {}, label = NULL, icon = NULL, attributes = NULL) %}
+    {% if label %}
+        <label for="{{ name }}">{{ label }}</label>
+    {% endif %}
+
+    {% if icon %}
+        <div class="input-group">
+            <span class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+                </span>
+            </span>
+    {% endif %}
+
+        <select id="{{ id }}" name="{{ name }}"
+                {% if attributes.class is not defined %}
+                class="form-control"
+                {% endif %}
+
+                {% for attribute,attrValue in attributes %}
+                    {{ attribute }}="{{ attrValue }}"
+                {% endfor %}> {# end select #}
+
+            {% for key,option in allValues %}
+                <option value="{{ key }}"{% if value == key %} selected="selected"{% endif %}>
+                    {{ option }}
+                </option>
+            {% endfor %}
+        </select>
+
+    {% if icon %}
+        </div>
+    {% endif %}
+
+{% endmacro %}

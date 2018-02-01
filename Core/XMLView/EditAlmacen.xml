@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,62 +28,30 @@
             <column name="code" numcolumns="3" order="100">
                 <widget type="text" fieldname="codalmacen" onclick="" required="true" />
             </column>
-
-            <column name="name" numcolumns="3" order="110">
+            <column name="name" numcolumns="6" order="110">
                 <widget type="text" fieldname="nombre" onclick="" required="true" />
             </column>
-
-            <column name="observations" numcolumns="6" order="130">
-                <widget type="text" fieldname="observaciones" onclick="" />
-            </column>
-        </group>
-
-        <group name="contact-data" title="contact-data" numcolumns="12">
-            <column name="contact" numcolumns="3" order="100">
-                <widget type="text" fieldname="contacto" onclick="" />
-            </column>
-
-            <column name="phone" numcolumns="3" order="110">
+            <column name="phone" numcolumns="3" order="120">
                 <widget type="text" fieldname="telefono" onclick="" />
             </column>
-
-            <column name="fax" numcolumns="3" order="120">
-                <widget type="text" fieldname="fax" onclick="" />
-            </column>
-
-            <column name="email" numcolumns="3" order="130">
-                <widget type="text" fieldname="email" onclick="" />
-            </column>
-
-            <column name="web" numcolumns="3" order="140">
-                <widget type="text" fieldname="web" onclick="" />
-            </column>
-
-            <column name="address" numcolumns="3" order="150">
+        </group>
+        <group name="contact-data" title="contact-data" numcolumns="12">
+            <column name="address" numcolumns="6" order="100">
                 <widget type="text" fieldname="direccion" onclick="" />
             </column>
-
-            <column name="postalcode" numcolumns="3" order="160">
+            <column name="postalcode" numcolumns="3" order="110">
                 <widget type="text" fieldname="codpostal" onclick="" />
             </column>
-
-            <column name="postalmail" numcolumns="3" order="170">
+            <column name="postalmail" numcolumns="3" order="120">
                 <widget type="text" fieldname="apartado" onclick="" />
             </column>
-
-            <column name="city" numcolumns="3" order="180">
+            <column name="city" numcolumns="4" order="130">
                 <widget type="text" fieldname="ciudad" onclick="" />
             </column>
-
-            <column name="town" numcolumns="3" order="190">
-                <widget type="text" fieldname="poblacion" onclick="" />
-            </column>
-
-            <column name="province" numcolumns="3" order="200">
+            <column name="province" numcolumns="4" order="140">
                 <widget type="text" fieldname="provincia" onclick="" />
             </column>
-
-            <column name="country" numcolumns="3" order="170">
+            <column name="country" numcolumns="4" order="150">
                 <widget type="select" fieldname="codpais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>

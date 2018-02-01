@@ -7,24 +7,14 @@
 -->
 <table>
     <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codsubcuenta</name>
-        <type>character varying(15)</type>
-        <null>YES</null>
+        <name>idcuentaesp</name>
+        <type>character varying(6)</type>
+        <null>NO</null>
     </column>
     <column>
         <name>descripcion</name>
         <type>character varying(255)</type>
         <null>YES</null>
-    </column>
-    <column>
-        <name>idcuentaesp</name>
-        <type>character varying(6)</type>
-        <null>NO</null>
     </column>
     <constraint>
         <name>co_cuentasesp_pkey</name>

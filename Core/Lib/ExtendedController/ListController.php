@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,13 +34,19 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ListController extends Base\Controller
 {
-
     /**
      * Indicates the active view
      *
      * @var string
      */
     public $active;
+
+    /**
+     * Model to use with select and autocomplete filters.
+     *
+     * @var CodeModel
+     */
+    public $codeModel;
 
     /**
      * Object to export data
@@ -49,7 +56,15 @@ abstract class ListController extends Base\Controller
     public $exportManager;
 
     /**
+     * List of icons for each of the views
+     *
+     * @var array
+     */
+    public $icons;
+
+    /**
      * First row to select from the database
+     *
      * @var int
      */
     protected $offset;
@@ -69,13 +84,6 @@ abstract class ListController extends Base\Controller
     public $views;
 
     /**
-     * List of icons for each of the views
-     *
-     * @var array
-     */
-    public $icons;
-
-    /**
      * Inserts the views to display
      */
     abstract protected function createViews();
@@ -83,10 +91,10 @@ abstract class ListController extends Base\Controller
     /**
      * Initializes all the objects and properties
      *
-     * @param Base\Cache $cache
+     * @param Base\Cache      $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -94,19 +102,20 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->exportManager = new ExportManager();
         $this->active = $this->request->get('active', '');
+        $this->codeModel = new CodeModel();
+        $this->exportManager = new ExportManager();
+        $this->icons = [];
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
-        $this->icons = [];
     }
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response                   $response
+     * @param User                       $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -137,7 +146,7 @@ abstract class ListController extends Base\Controller
             $this->views[$key]->setSelectedOrderBy($orderKey);
 
             // Load data using filter and order
-            $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData(false, $where, [], $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
 
         // Operations with data, after execute action
@@ -166,9 +175,13 @@ abstract class ListController extends Base\Controller
     protected function execAfterAction($action)
     {
         switch ($action) {
+            case 'autocomplete':
+                $this->autocompleteAction();
+                break;
+
             case 'export':
                 $this->setTemplate(false);
-                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->exportManager->newDoc($this->request->get('option'));
                 $this->views[$this->active]->export($this->exportManager);
                 $this->exportManager->show($this->response);
                 break;
@@ -177,6 +190,25 @@ abstract class ListController extends Base\Controller
                 $this->megaSearchAction();
                 break;
         }
+    }
+
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     */
+    private function autocompleteAction()
+    {
+        $this->setTemplate(false);
+        $source = $this->request->get('source');
+        $field = $this->request->get('field');
+        $title = $this->request->get('title');
+        $term = $this->request->get('term');
+
+        $results = [];
+        foreach ($this->codeModel->search($source, $field, $title, $term) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        $this->response->setContent(json_encode($results));
     }
 
     /**
@@ -190,14 +222,15 @@ abstract class ListController extends Base\Controller
     {
         if (!$this->permissions->allowDelete) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+
             return false;
         }
-        
+
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
             if ($view->delete($cod)) {
-                $numDeletes++;
+                ++$numDeletes;
             } else {
                 $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
             }
@@ -205,32 +238,11 @@ abstract class ListController extends Base\Controller
 
         if ($numDeletes > 0) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Returns columns title for megaSearchAction function.
-     *
-     * @param ListView $view
-     * @param int $maxColumns
-     *
-     * @return array
-     */
-    private function getTextColumns($view, $maxColumns)
-    {
-        $result = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
-                $result[] = $col->widget->fieldName;
-                if (count($result) === $maxColumns) {
-                    break;
-                }
-            }
-        }
-        return $result;
     }
 
     /**
@@ -245,7 +257,7 @@ abstract class ListController extends Base\Controller
                 'icon' => $this->getPageData()['icon'],
                 'columns' => [],
                 'results' => [],
-            ]
+            ],
         ];
 
         /// we search in all listviews
@@ -276,6 +288,29 @@ abstract class ListController extends Base\Controller
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Returns columns title for megaSearchAction function.
+     *
+     * @param ListView $view
+     * @param int      $maxColumns
+     *
+     * @return array
+     */
+    private function getTextColumns($view, $maxColumns)
+    {
+        $result = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
+                $result[] = $col->widget->fieldName;
+                if (count($result) === $maxColumns) {
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -320,7 +355,7 @@ abstract class ListController extends Base\Controller
      * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
      * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
-     * @param string $indexView
+     * @param string   $indexView
      * @param string[] $fields
      */
     protected function addSearchFields($indexView, $fields)
@@ -334,7 +369,7 @@ abstract class ListController extends Base\Controller
      * @param string $indexView
      * @param string $field
      * @param string $label
-     * @param int $default (0 = None, 1 = ASC, 2 = DESC)
+     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
      */
     protected function addOrderBy($indexView, $field, $label = '', $default = 0)
     {
@@ -345,10 +380,10 @@ abstract class ListController extends Base\Controller
      * Add a select type filter to a table
      *
      * @param string $indexView
-     * @param string $key (Filter field name identifier)
-     * @param string $table (Table name)
-     * @param string $where (Where condition for table)
-     * @param string $field (Field of the table with the data to show)
+     * @param string $key       (Filter field name identifier)
+     * @param string $table     (Table name)
+     * @param string $where     (Where condition for table)
+     * @param string $field     (Field of the table with the data to show)
      */
     protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
     {
@@ -357,14 +392,29 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Add an autocomplete type filter to a table
+     *
+     * @param string $indexView
+     * @param string $key       (Filter field name identifier)
+     * @param string $table     (Table name)
+     * @param string $where     (Where condition for table)
+     * @param string $field     (Field of the table with the data to show)
+     */
+    protected function addFilterAutocomplete($indexView, $key, $table, $where = '', $field = '')
+    {
+        $value = $this->request->get($key);
+        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($field, $value, $table, $where));
+    }
+
+    /**
      * Adds a boolean condition type filter
      *
      * @param string $indexView
-     * @param string $key (Filter identifier)
-     * @param string $label (Human reader description)
-     * @param string $field (Field of the table to apply filter)
-     * @param bool $inverse (If you need to invert the selected value)
-     * @param mixed $matchValue (Value to match)
+     * @param string $key        (Filter identifier)
+     * @param string $label      (Human reader description)
+     * @param string $field      (Field of the table to apply filter)
+     * @param bool   $inverse    (If you need to invert the selected value)
+     * @param mixed  $matchValue (Value to match)
      */
     protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false, $matchValue = true)
     {
@@ -389,7 +439,7 @@ abstract class ListController extends Base\Controller
             'valueFrom' => $this->request->get($key . '-from'),
             'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
             'valueTo' => $this->request->get($key . '-to'),
-            'operatorTo' => $this->request->get($key . '-to-operator', '<=')
+            'operatorTo' => $this->request->get($key . '-to-operator', '<='),
         ];
 
         $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
@@ -399,9 +449,9 @@ abstract class ListController extends Base\Controller
      * Adds a date type filter
      *
      * @param string $indexView
-     * @param string $key (Filter identifier)
-     * @param string $label (Human reader description)
-     * @param string $field (Field of the table to apply filter)
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
      */
     protected function addFilterDatePicker($indexView, $key, $label, $field = '')
     {
@@ -412,9 +462,9 @@ abstract class ListController extends Base\Controller
      * Adds a text type filter
      *
      * @param string $indexView
-     * @param string $key (Filter identifier)
-     * @param string $label (Human reader description)
-     * @param string $field (Field of the table to apply filter)
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
      */
     protected function addFilterText($indexView, $key, $label, $field = '')
     {
@@ -425,52 +475,13 @@ abstract class ListController extends Base\Controller
      * Adds a numeric type filter
      *
      * @param string $indexView
-     * @param string $key (Filter identifier)
-     * @param string $label (Human reader description)
-     * @param string $field (Field of the table to apply filter)
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
      */
     protected function addFilterNumber($indexView, $key, $label, $field = '')
     {
         $this->addFilterFromType($indexView, $key, 'number', $label, $field);
-    }
-
-    /**
-     * Creates a list of data from a table
-     *
-     * @param string $field : Field name with real value
-     * @param array $options : Array with configuration values
-     *                          [field = Field description, table = table name, where = SQL Where clausule]
-     *
-     * @return array
-     */
-    public function optionlist($field, $options)
-    {
-        $result = [];
-        if ($this->dataBase->tableExists($options['table'])) {
-            $fieldList = $field;
-            if ($field !== $options['field']) {
-                $fieldList = $fieldList . ', ' . $options['field'];
-            }
-
-            $sql = 'SELECT DISTINCT ' . $fieldList
-                . ' FROM ' . $options['table']
-                . ' WHERE COALESCE(' . $options['field'] . ", '')" . " <> ''" . $options['where']
-                . ' ORDER BY ' . $options['field'] . ' ASC;';
-
-            $data = $this->dataBase->select($sql);
-            foreach ($data as $item) {
-                $value = $item[$options['field']];
-                if ($value !== '') {
-                    /**
-                     * If the key is  mb_strtolower($item[$field], 'UTF8') then we can't filter by codserie, codalmacen,
-                     * etc.
-                     */
-                    $result[$item[$field]] = $value;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -543,6 +554,7 @@ abstract class ListController extends Base\Controller
             $result .= $sep . $key . ': "' . $view->getURL($type) . '"';
             $sep = ', ';
         }
+
         return $result;
     }
 }

@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemDateTime extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemDateTime constructor.
      */
     public function __construct()
     {
@@ -59,6 +59,7 @@ class WidgetItemDateTime extends WidgetItem
     {
         $specialAttributes = $this->specialAttributes();
         $specialClass = $this->readOnly ? '' : ' datepicker';
+
         return $this->standardEditHTMLWidget($value, $specialAttributes, $specialClass, 'text');
     }
 }

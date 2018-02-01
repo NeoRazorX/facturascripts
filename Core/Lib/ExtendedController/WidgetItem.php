@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,11 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * This WidgetItem class modelises the common data and method of a WidgetItem element.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 abstract class WidgetItem implements VisualItemInterface
 {
-
     /**
      * Field name with the data that the widget displays
      *
@@ -61,6 +61,13 @@ abstract class WidgetItem implements VisualItemInterface
      * @var bool
      */
     public $required;
+
+    /**
+     * Indicates that the max length of value
+     *
+     * @var integer
+     */
+    public $maxLength;
 
     /**
      * Icon used as a value or to accompany the widget
@@ -107,26 +114,32 @@ abstract class WidgetItem implements VisualItemInterface
     private static function widgetItemFromType($type)
     {
         switch ($type) {
-            case 'number':
-                return new WidgetItemNumber();
-
-            case 'money':
-                return new WidgetItemMoney();
+            case 'autocomplete':
+                return new WidgetItemAutocomplete();
 
             case 'checkbox':
                 return new WidgetItemCheckBox();
 
+            case 'color':
+                return new WidgetItemColor();
+
             case 'datepicker':
                 return new WidgetItemDateTime();
 
-            case 'select':
-                return new WidgetItemSelect();
+            case 'filechooser':
+                return new WidgetItemFileChooser();
+
+            case 'money':
+                return new WidgetItemMoney();
+
+            case 'number':
+                return new WidgetItemNumber();
 
             case 'radio':
                 return new WidgetItemRadio();
 
-            case 'color':
-                return new WidgetItemColor();
+            case 'select':
+                return new WidgetItemSelect();
 
             default:
                 return new WidgetItemText($type);
@@ -146,6 +159,7 @@ abstract class WidgetItem implements VisualItemInterface
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
         $widget->loadFromXML($column);
+
         return $widget;
     }
 
@@ -161,11 +175,12 @@ abstract class WidgetItem implements VisualItemInterface
         $type = (string) $widget['type'];
         $widgetItem = self::widgetItemFromType($type);
         $widgetItem->loadFromJSON($widget);
+
         return $widgetItem;
     }
 
     /**
-     * Class constructor
+     * WidgetItem constructor.
      */
     public function __construct()
     {
@@ -173,6 +188,7 @@ abstract class WidgetItem implements VisualItemInterface
         $this->hint = '';
         $this->readOnly = false;
         $this->required = false;
+        $this->maxLength = 0;
         $this->icon = null;
         $this->onClick = '';
         $this->options = [];
@@ -201,7 +217,7 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Loads the attribute dictionary for a widget's group of options or values
      *
-     * @param array $property
+     * @param array               $property
      * @param \SimpleXMLElement[] $group
      */
     protected function getAttributesGroup(&$property, $group)
@@ -230,6 +246,7 @@ abstract class WidgetItem implements VisualItemInterface
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
         $this->required = (bool) $widgetAtributes->required;
+        $this->maxLength = (integer) $widgetAtributes->maxlength;
         $this->icon = (string) $widgetAtributes->icon;
         $this->onClick = (string) $widgetAtributes->onclick;
 
@@ -247,6 +264,7 @@ abstract class WidgetItem implements VisualItemInterface
         $this->hint = (string) $widget['hint'];
         $this->readOnly = (bool) $widget['readOnly'];
         $this->required = (bool) $widget['required'];
+        $this->maxLength = (integer) $widget['maxLength'];
         $this->icon = (string) $widget['icon'];
         $this->onClick = (string) $widget['onClick'];
         $this->options = (array) $widget['options'];
@@ -264,12 +282,12 @@ abstract class WidgetItem implements VisualItemInterface
     {
         switch ($optionValue[0]) {
             case '<':
-                $optionValue = substr($optionValue, 1) ? : '';
+                $optionValue = substr($optionValue, 1) ?: '';
                 $result = ((float) $valueItem < (float) $optionValue);
                 break;
 
             case '>':
-                $optionValue = substr($optionValue, 1) ? : '';
+                $optionValue = substr($optionValue, 1) ?: '';
                 $result = ((float) $valueItem > (float) $optionValue);
                 break;
 
@@ -277,6 +295,7 @@ abstract class WidgetItem implements VisualItemInterface
                 $result = ($optionValue === $valueItem);
                 break;
         }
+
         return $result;
     }
 
@@ -330,12 +349,12 @@ abstract class WidgetItem implements VisualItemInterface
             return '';
         }
 
-        $html = '<div class="input-group"><span class="input-group-addon">';
+        $html = '<div class="input-group"><span class="input-group-prepend"><span class="input-group-text">';
         if (strpos($this->icon, 'fa-') === 0) {
-            return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span>';
+            return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span></span>';
         }
 
-        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span>';
+        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span></span>';
     }
 
     /**
@@ -349,10 +368,11 @@ abstract class WidgetItem implements VisualItemInterface
     protected function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
-        $readOnly = empty($this->readOnly) ? '' : ' readonly';
-        $required = empty($this->required) ? '' : ' required';
+        $readOnly = empty($this->readOnly) ? '' : ' readonly=""';
+        $required = empty($this->required) ? '' : ' required=""';
+        $maxLength = empty($this->maxLength) ? '' : ' maxlength="' . $this->maxLength . '"';
 
-        return $hint . $readOnly . $required;
+        return $hint . $readOnly . $required . $maxLength;
     }
 
     /**
@@ -369,10 +389,7 @@ abstract class WidgetItem implements VisualItemInterface
             return '';
         }
 
-        if (empty($text)) {
-            $text = $value;
-        }
-
+        $text = empty($text) ? $value : $text;
         $style = $this->getTextOptionsHTML($value);
         $html = empty($this->onClick) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick
             . '&code=' . $value . '" ' . $style . '>' . $text . '</a>';
@@ -392,16 +409,10 @@ abstract class WidgetItem implements VisualItemInterface
      */
     protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
-        $fieldName = '"' . $this->fieldName . '"';
-        $icon = $this->getIconHTML();
-
-        if (empty($type)) {
-            $type = $this->type;
-        }
-
-        $html = $icon
-            . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
-            . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
+        $type = empty($type) ? $this->type : $type;
+        $html = $this->getIconHTML()
+            . '<input id="' . $this->fieldName . '" type="' . $type . '" class="form-control' . $extraClass . '"'
+            . 'name="' . $this->fieldName . '" value="' . $value . '"' . $specialAttributes . ' />';
 
         if (!empty($this->icon)) {
             $html .= '</div>';

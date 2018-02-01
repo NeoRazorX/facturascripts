@@ -20,10 +20,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the Familia model
+ * Controller to edit a single item from the Ejercicio model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -31,40 +32,43 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditEjercicio extends ExtendedController\PanelController
 {
-
     /**
      * Load views.
      */
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Ejercicio', 'EditEjercicio', 'exercise');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\GrupoEpigrafes', 'EditEjercicioGrupoEpigrafes', 'epigraph-group');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\Epigrafe', 'EditEjercicioEpigrafe', 'epigraphs');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\Cuenta', 'EditEjercicioCuenta', 'account', 'fa-book');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'EditEjercicioSubcuenta', 'subaccount');
+        $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+        $this->addListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta', 'subaccount');
+
+        /// Disable columns
+        $this->views['ListCuenta']->disableColumn('fiscal-exercise', true);
+        $this->views['ListSubcuenta']->disableColumn('fiscal-exercise', true);
     }
 
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
     {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+
         switch ($keyView) {
             case 'EditEjercicio':
                 $code = $this->request->get('code');
                 $view->loadData($code);
                 break;
 
-            case 'EditEjercicioGrupoEpigrafes':
-            case 'EditEjercicioEpigrafe':
-            case 'EditEjercicioCuenta':
-            case 'EditEjercicioSubcuenta':
-                $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-                $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-                $view->loadData($where);
+            case 'ListCuenta':
+                $view->loadData(false, $where, ['codcuenta' => 'ASC']);
+                break;
+
+            case 'ListSubcuenta':
+                $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
                 break;
         }
     }
@@ -83,5 +87,54 @@ class EditEjercicio extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Run the controller after actions
+     *
+     * @param ExtendedController\EditView $view
+     * @param string $action
+     */
+    protected function execAfterAction($view, $action)
+    {
+        switch ($action) {
+            case 'import-accounting':
+                $this->importAccountingPlan();
+                break;
+
+            default:
+                parent::execAfterAction($view, $action);
+        }
+    }
+
+    /**
+     * Import AccountingPlan from any supported file type.
+     *
+     * @return bool
+     */
+    private function importAccountingPlan()
+    {
+        $accountingPlanImport = new AccountingPlanImport();
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $uploadFile = $this->request->files->get('accountingfile', false);
+        if ($uploadFile === false) {
+            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+
+            return false;
+        }
+
+        switch ($uploadFile->getMimeType()) {
+            case 'application/xml':
+            case 'text/xml':
+                $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
+                break;
+
+            case 'text/csv':
+                $accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio);
+                break;
+
+            default:
+                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+        }
     }
 }

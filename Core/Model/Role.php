@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
+ * Copyright (C) 2017-2018  Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,18 +19,18 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Define a permission package to quickly assign users.
  *
- * @author Joe Nilson            <joenilson at gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Joe Nilson           <joenilson at gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class Role
+class Role extends Base\ModelClass
 {
 
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+    use Base\ModelTrait;
 
     /**
      * Role code.
@@ -61,33 +61,34 @@ class Role
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codrol';
     }
 
     /**
      * Returns True if there is no erros on properties values.
-     * Se ejecuta dentro del método save.
+     * It runs inside the save method.
      *
      * @return bool
      */
     public function test()
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         return true;
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, 'ListUser&active=List');
+        return parent::url($type, 'ListUser&active=List');
     }
 }

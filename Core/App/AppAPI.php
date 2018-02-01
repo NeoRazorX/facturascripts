@@ -29,7 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
-
     /**
      * Runs the API.
      *
@@ -40,19 +39,25 @@ class AppAPI extends App
         $this->response->headers->set('Access-Control-Allow-Origin', '*');
         $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         $this->response->headers->set('Content-Type', 'application/json');
+
         if ($this->isDisabled()) {
             $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
             $this->response->setContent(json_encode(['error' => 'API-DISABLED']));
+
             return false;
         }
+
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'DB-ERROR']));
+
             return false;
         }
+
         if ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
+
             return false;
         }
 
@@ -66,7 +71,7 @@ class AppAPI extends App
      */
     private function isDisabled()
     {
-        return AppSettings::get('default', 'disable_api', null) !== null;
+        return AppSettings::get('default', 'enable_api', false) !== true;
     }
 
     /**
@@ -83,6 +88,7 @@ class AppAPI extends App
 
         $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
         $this->response->setContent(json_encode(['error' => 'API-VERSION-NOT-FOUND']));
+
         return true;
     }
 
@@ -98,10 +104,11 @@ class AppAPI extends App
         $resourceName = $this->request->get('resource', '');
         if ($resourceName === '') {
             $this->exposeResources($map);
+
             return true;
         }
 
-        $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map[$resourceName];
+        $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $map[$resourceName];
         $cod = $this->request->get('cod', '');
 
         if ($cod === '') {
@@ -123,14 +130,15 @@ class AppAPI extends App
     private function getRequestArray($key, $default = '')
     {
         $array = $this->request->get($key, $default);
+
         return is_array($array) ? $array : []; /// if is string has bad format
     }
 
     /**
      * Returns the where clauses.
      *
-     * @param array $filter
-     * @param array $operation
+     * @param array  $filter
+     * @param array  $operation
      * @param string $defaultOperation
      *
      * @return DataBaseWhere[]
@@ -144,6 +152,7 @@ class AppAPI extends App
             }
             $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
         }
+
         return $where;
     }
 
@@ -184,10 +193,12 @@ class AppAPI extends App
             }
 
             $this->response->setContent(json_encode($data));
+
             return true;
         } catch (\Exception $ex) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'API-ERROR']));
+
             return false;
         }
     }
@@ -225,10 +236,12 @@ class AppAPI extends App
             }
 
             $this->response->setContent(json_encode($data));
+
             return true;
         } catch (\Exception $ex) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'API-ERROR']));
+
             return false;
         }
     }

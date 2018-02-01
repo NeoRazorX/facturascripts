@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,18 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Payment method of an invoice, delivery note, order or estimation.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FormaPago
+class FormaPago extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -69,7 +68,7 @@ class FormaPago
 
     /**
      * True (default) -> display the data in sales documents,
-     * including the associated bank account.
+     * including the associated bank account.
      *
      * @var bool
      */
@@ -97,7 +96,7 @@ class FormaPago
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codpago';
     }
@@ -107,7 +106,7 @@ class FormaPago
      */
     public function clear()
     {
-        $this->codpago = null;
+        parent::clear();
         $this->descripcion = '';
         $this->genrecibos = 'Emitidos';
         $this->codcuenta = '';
@@ -133,7 +132,7 @@ class FormaPago
      */
     public function test()
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         /// we check the expiration validity
         $fecha1 = date('d-m-Y');
@@ -149,10 +148,10 @@ class FormaPago
 
     /**
      * From a date returns the new due date based on this form of payment.
-     * If $diasDePago is provided, they will be used for the new date.
+     * If $diasDePago is provided, they will be used for the new date.
      *
      * @param string $fechaInicio
-     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
+     * @param string $diasDePago  dias de pago específicos para el cliente (separados por comas).
      *
      * @return string
      */
@@ -186,22 +185,10 @@ class FormaPago
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
-    }
-
-    /**
      * Aux recursive function to calcularVencimiento()
      *
      * @param string $fechaInicio
-     * @param int $diaDePago
+     * @param int    $diaDePago
      *
      * @return string
      */

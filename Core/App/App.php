@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Lib\IPFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,9 +32,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
-
     /**
      * Stored defaut configuration with the default application settings.
+     *
      * @var AppSettings
      */
     protected $appSettings;
@@ -139,6 +140,7 @@ abstract class App
     {
         if ($this->dataBase->connect()) {
             $this->settings->load();
+
             return true;
         }
 
@@ -166,6 +168,15 @@ abstract class App
     public function render()
     {
         $this->response->send();
+    }
+
+    /**
+     * Deploy plugin files.
+     */
+    protected function deployPlugins()
+    {
+        $pluginManager = new PluginManager();
+        $pluginManager->deploy();
     }
 
     /**

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase as db;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 class DataBaseTools
 {
-
     /**
      * DataBase object.
      *
@@ -115,8 +115,8 @@ class DataBaseTools
      * Create the table with the structure received.
      *
      * @param string $tableName
-     * @param array $xmlCols
-     * @param array $xmlCons
+     * @param array  $xmlCols
+     * @param array  $xmlCons
      *
      * @return bool
      */
@@ -129,9 +129,9 @@ class DataBaseTools
      * Compare two arrays with restrictions, return a SQL statement if founded differencies.
      *
      * @param string $tableName
-     * @param array $xmlCons
-     * @param array $dbCons
-     * @param bool $deleteOnly
+     * @param array  $xmlCons
+     * @param array  $dbCons
+     * @param bool   $deleteOnly
      *
      * @return bool
      */
@@ -167,7 +167,7 @@ class DataBaseTools
     /**
      * Look for a column with a value by his name in array.
      *
-     * @param array $items
+     * @param array  $items
      * @param string $index
      * @param string $value
      *
@@ -190,8 +190,8 @@ class DataBaseTools
      * Compare two arrays of columns, return a SQL statement if founded differencies.
      *
      * @param string $tableName
-     * @param array $xmlCols
-     * @param array $dbCols
+     * @param array  $xmlCols
+     * @param array  $dbCols
      *
      * @return string
      */
@@ -259,8 +259,8 @@ class DataBaseTools
      * Extract columns and restrictions form the XML definition file of a Table.
      *
      * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
+     * @param array  $columns
+     * @param array  $constraints
      *
      * @return bool
      */
@@ -340,7 +340,7 @@ class DataBaseTools
     /**
      * Update the name and constraint foreach constraint from the XML
      *
-     * @param array $constraints
+     * @param array             $constraints
      * @param \SimpleXMLElement $xml
      */
     private function checkXmlConstraints(&$constraints, $xml)

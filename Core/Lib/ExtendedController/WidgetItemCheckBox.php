@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemCheckBox extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemCheckBox constructor.
      */
     public function __construct()
     {
@@ -47,6 +47,7 @@ class WidgetItemCheckBox extends WidgetItem
     protected function specialAttributes()
     {
         $readOnly = empty($this->readOnly) ? '' : ' disabled';
+
         return parent::specialAttributes() . $readOnly;
     }
 
@@ -66,6 +67,7 @@ class WidgetItemCheckBox extends WidgetItem
         $checked = in_array($value, ['t', '1'], false);
         $icon = $checked ? 'fa-check' : 'fa-minus';
         $style = $this->getTextOptionsHTML($checked);
+
         return '<i class="fa ' . $icon . '" aria-hidden="true" ' . $style . '></i>';
     }
 
@@ -79,14 +81,12 @@ class WidgetItemCheckBox extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-        $fieldName = '"' . $this->fieldName . '"';
-        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked ' : '';
+        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked="" ' : '';
 
         $html = $this->getIconHTML()
-            . '<input name=' . $fieldName . ' id=' . $fieldName
-            . ' class="custom-control-input form-check-input" type="checkbox" value="true" '
-            . $specialAttributes . $checked . '>'
-            . '<span class="custom-control-indicator"></span>';
+            . '<input name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '" class="form-check-input" type="checkbox" value="true" '
+            . $specialAttributes . $checked . '/>';
 
         if (!empty($this->icon)) {
             $html .= '</div>';

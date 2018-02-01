@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
+ * Copyright (C) 2017-2018  Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
-class RoleUser
+class RoleUser extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -68,7 +68,7 @@ class RoleUser
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -83,7 +83,7 @@ class RoleUser
     public function install()
     {
         new Role();
-        
+
         return '';
     }
 
@@ -96,11 +96,13 @@ class RoleUser
     {
         if (empty($this->nick)) {
             self::$miniLog->alert(self::$i18n->trans('nick-is-empty'));
+
             return false;
         }
 
         if (empty($this->codrol)) {
             self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
+
             return false;
         }
 

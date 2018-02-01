@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListImpuesto extends ExtendedController\ListController
 {
-
     /**
      * Returns basic page attributes
      *

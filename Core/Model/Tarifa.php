@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,17 +18,17 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * A fee for the products.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Tarifa
+class Tarifa extends Base\ModelClass
 {
 
-    use Base\ModelTrait {
-        clear as clearTrait;
-    }
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -94,7 +94,7 @@ class Tarifa
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codtarifa';
     }
@@ -104,7 +104,7 @@ class Tarifa
      */
     public function clear()
     {
-        $this->clearTrait();
+        parent::clear();
         $this->incporcentual = 0;
         $this->inclineal = 0;
         $this->aplicar_a = 'pvp';
@@ -254,7 +254,7 @@ class Tarifa
         $status = false;
 
         $this->codtarifa = trim($this->codtarifa);
-        $this->nombre = self::noHtml($this->nombre);
+        $this->nombre = Utils::noHtml($this->nombre);
 
         if (empty($this->codtarifa) || strlen($this->codtarifa) > 6) {
             self::$miniLog->alert(self::$i18n->trans('rate-code-valid-length'));

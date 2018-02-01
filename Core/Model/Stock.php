@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,14 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The quantity in inventory of an item in a particular warehouse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Stock
+class Stock extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -143,7 +144,7 @@ class Stock
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idstock';
     }
@@ -159,7 +160,7 @@ class Stock
     {
         new Almacen();
         new Articulo();
-        
+
         return '';
     }
 
@@ -168,9 +169,7 @@ class Stock
      */
     public function clear()
     {
-        $this->idstock = null;
-        $this->codalmacen = null;
-        $this->referencia = null;
+        parent::clear();
         $this->nombre = '';
         $this->cantidad = 0;
         $this->reservada = 0;
@@ -179,9 +178,6 @@ class Stock
         $this->stockmin = 0;
         $this->stockmax = 0;
         $this->cantidadultreg = 0;
-        $this->fechaultreg = null;
-        $this->horaultreg = null;
-        $this->ubicacion = null;
     }
 
     /**
@@ -255,6 +251,7 @@ class Stock
         $this->cantidad = round($this->cantidad, 3);
         $this->reservada = round($this->reservada, 3);
         $this->disponible = $this->cantidad - $this->reservada;
+        $this->ubicacion = Utils::noHtml($this->ubicacion);
 
         return true;
     }
@@ -274,7 +271,7 @@ class Stock
 
         if ($codalmacen) {
             $sql .= ' AND codalmacen = ' . self::$dataBase->var2str($codalmacen);
-}
+        }
 
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {

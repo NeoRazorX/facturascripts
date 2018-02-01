@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -23,21 +24,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CuentaBancoProveedor
+class CuentaBancoProveedor extends Base\BankAccount
 {
-
-    use Base\ModelTrait {
-        save as private saveTrait;
-    }
-
-    use Base\BankAccount;
-
-    /**
-     * Primary key. Varchar(6).
-     *
-     * @var int
-     */
-    public $codcuenta;
+    use Base\ModelTrait;
 
     /**
      * Supplier code.
@@ -45,13 +34,6 @@ class CuentaBancoProveedor
      * @var string
      */
     public $codproveedor;
-
-    /**
-     * Description of the account.
-     *
-     * @var string
-     */
-    public $descripcion;
 
     /**
      * True if it is the main account, but False.
@@ -75,7 +57,7 @@ class CuentaBancoProveedor
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codcuenta';
     }
@@ -85,11 +67,8 @@ class CuentaBancoProveedor
      */
     public function clear()
     {
-        $this->codcuenta = null;
-        $this->codproveedor = null;
-        $this->descripcion = null;
+        parent::clear();
         $this->principal = true;
-        $this->clearBankAccount();
     }
 
     /**
@@ -120,22 +99,5 @@ class CuentaBancoProveedor
         }
 
         return false;
-    }
-
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return boolean
-     */
-    public function test()
-    {
-        $this->descripcion = self::noHtml($this->descripcion);
-        if (!$this->testBankAccount()) {
-            ///self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
-
-            return false;
-        }
-
-        return true;
     }
 }

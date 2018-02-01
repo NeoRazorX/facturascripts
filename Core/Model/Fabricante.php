@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A manufacturer of products.
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Fabricante
+class Fabricante extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -60,7 +60,7 @@ class Fabricante
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codfabricante';
     }
@@ -74,8 +74,8 @@ class Fabricante
     {
         $status = false;
 
-        $this->codfabricante = self::noHtml($this->codfabricante);
-        $this->nombre = self::noHtml($this->nombre);
+        $this->codfabricante = Utils::noHtml($this->codfabricante);
+        $this->nombre = Utils::noHtml($this->nombre);
 
         if (empty($this->codfabricante) || strlen($this->codfabricante) > 8) {
             self::$miniLog->alert(self::$i18n->trans('code-manufacturer-valid-length'));
@@ -86,17 +86,5 @@ class Fabricante
         }
 
         return $status;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
     }
 }

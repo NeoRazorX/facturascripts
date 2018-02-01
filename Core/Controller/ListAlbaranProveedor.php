@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListAlbaranProveedor extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */
@@ -43,10 +42,10 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'descripcion');
-        $this->addFilterCheckbox('ListAlbaranProveedor', 'invoice', 'invoice', 'ptefactura', true);
+        $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'proveedores', '', 'nombre');
 
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
     }
 

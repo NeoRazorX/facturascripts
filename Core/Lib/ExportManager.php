@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,18 +29,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ExportManager
 {
-
     /**
      * The selected engine/class to export.
-     * 
+     *
      * @var mixed
      */
     private static $engine;
 
     /**
      * Option list.
-     * 
-     * @var array 
+     *
+     * @var array
      */
     private static $options;
 
@@ -52,7 +52,7 @@ class ExportManager
             self::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o']
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o'],
             ];
         }
     }
@@ -65,6 +65,7 @@ class ExportManager
     public function defaultOption()
     {
         $keys = array_keys(self::$options);
+
         return $keys[0];
     }
 
@@ -80,33 +81,32 @@ class ExportManager
 
     /**
      * Create a new doc and set headers.
-     * 
-     * @param Response $response
-     * @param string $option
+     *
+     * @param string   $option
      */
-    public function newDoc(&$response, $option)
+    public function newDoc($option)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
         $className = $this->getExportClassName($option);
         self::$engine = new $className();
-        self::$engine->newDoc($response);
+        self::$engine->newDoc();
     }
 
     /**
      * Returns the formated data.
-     * 
+     *
      * @param Response $response
      */
     public function show(&$response)
     {
-        $response->setContent(self::$engine->getDoc());
+        self::$engine->show($response);
     }
 
     /**
      * Adds a new page with the model data.
-     * 
-     * @param mixed $model
-     * @param array $columns
+     *
+     * @param mixed  $model
+     * @param array  $columns
      * @param string $title
      */
     public function generateModelPage($model, $columns, $title = '')
@@ -116,13 +116,13 @@ class ExportManager
 
     /**
      * Adds a new page with a table listing the models data.
-     * 
-     * @param mixed $model
+     *
+     * @param mixed           $model
      * @param DataBaseWhere[] $where
-     * @param array $order
-     * @param int $offset
-     * @param array $columns
-     * @param string $title
+     * @param array           $order
+     * @param int             $offset
+     * @param array           $columns
+     * @param string          $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
@@ -134,7 +134,7 @@ class ExportManager
 
     /**
      * Adds a new page with the document data.
-     * 
+     *
      * @param mixed $model
      */
     public function generateDocumentPage($model)
@@ -144,7 +144,7 @@ class ExportManager
 
     /**
      * Adds a new page with the table data.
-     * 
+     *
      * @param array $headers
      * @param array $rows
      */
@@ -161,16 +161,16 @@ class ExportManager
 
     /**
      * Returns the full class name.
-     * 
+     *
      * @param string $option
-     * 
+     *
      * @return string
      */
     private function getExportClassName($option)
     {
-        $className = "FacturaScripts\\Dinamic\\Lib\\Export\\" . $option . 'Export';
+        $className = 'FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
         if (!class_exists($className)) {
-            $className = "FacturaScripts\\Core\\Lib\\Export\\" . $option . 'Export';
+            $className = 'FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
         }
 
         return $className;

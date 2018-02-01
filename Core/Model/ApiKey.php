@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright (C) 2017 Joe Nilson <joenilson at gmail.com>
+ * Copyright (C) 2017   Joe Nilson          <joenilson at gmail.com>
+ * Copyright (C) 2018   Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,56 +16,64 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
+ *
  * @author Joe Nilson <joenilson at gmail.com>
  */
-class ApiKey
+class ApiKey extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
      * Primary key. Id autoincremental
+     *
      * @var int
      */
     public $id;
 
     /**
      * API key.
+     *
      * @var string
      */
     public $apikey;
 
     /**
      * Description.
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Enabled/Disabled.
+     *
      * @var bool
      */
     public $enabled;
 
     /**
      * Date of registration.
+     *
      * @var string
      */
     public $f_alta;
 
     /**
      * Discharge date.
+     *
      * @var string
      */
     public $f_baja;
 
     /**
      * Nick of the user.
+     *
      * @var string
      */
     public $nick;
@@ -84,7 +93,7 @@ class ApiKey
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -94,12 +103,10 @@ class ApiKey
      */
     public function clear()
     {
-        $this->id = null;
+        parent::clear();
         $this->apikey = '';
         $this->descripcion = '';
-        $this->enabled = FALSE;
+        $this->enabled = false;
         $this->f_alta = date('d-m-Y');
-        $this->f_baja = null;
-        $this->nick = null;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditGrupoClientes extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -40,12 +39,15 @@ class EditGrupoClientes extends ExtendedController\PanelController
         $this->addEditView('\FacturaScripts\Dinamic\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->setTabsPosition('bottom');
+        
+        /// Disable columns
+        $this->views['ListCliente']->disableColumn('group', true);
     }
 
     /**
      * Procedure responsible for loading the data to be displayed.
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -59,7 +61,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
             case 'ListCliente':
                 $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
                 $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

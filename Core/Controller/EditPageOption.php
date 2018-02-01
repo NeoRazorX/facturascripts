@@ -55,10 +55,10 @@ class EditPageOption extends Base\Controller
     /**
      * Initialize all objects and properties.
      *
-     * @param Cache $cache
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -74,15 +74,15 @@ class EditPageOption extends Base\Controller
     {
         $this->selectedViewName = $this->request->get('code');
         $this->selectedUser = $this->user->admin
-            ? $this->request->get('nick', NULL)
+            ? $this->request->get('nick', null)
             : $this->user->nick;
     }
 
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -98,19 +98,6 @@ class EditPageOption extends Base\Controller
     }
 
     /**
-     * Where filter for loading the view to be edited
-     *
-     * @return DatabaseWhere[]
-     */
-    private function getFilter()
-    {
-        return [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('user', $this->selectedUser)
-        ];
-    }
-
-    /**
      * Checking the value of the nick field.
      * It determines if we edit a configuration for all the users or one,
      * and if there is already configuration for the nick
@@ -118,12 +105,12 @@ class EditPageOption extends Base\Controller
     private function checkNickAndID()
     {
         if ($this->model->nick != $this->selectedUser) {
-            $this->model->id = NULL;
-            $this->model->nick = empty($this->selectedUser) ? NULL : $this->selectedUser;
+            $this->model->id = null;
+            $this->model->nick = empty($this->selectedUser) ? null : $this->selectedUser;
         }
 
-        if ($this->model->nick === "") {
-            $this->model->nick = NULL;
+        if ($this->model->nick === '') {
+            $this->model->nick = null;
         }
     }
 
@@ -143,6 +130,7 @@ class EditPageOption extends Base\Controller
 
         if ($this->model->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
             return;
         }
         $this->miniLog->alert($this->i18n->trans('data-save-error'));
@@ -201,6 +189,7 @@ class EditPageOption extends Base\Controller
                 $result[$codeModel->code] = $codeModel->description;
             }
         }
+
         return $result;
     }
 }

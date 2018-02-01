@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
 
 /**
@@ -37,7 +38,7 @@ class HtmlView extends BaseView
     public $fileName;
 
     /**
-     * Class constructor and initialization
+     * HtmlView constructor and initialization.
      *
      * @param string $title
      * @param string $modelName
@@ -47,6 +48,16 @@ class HtmlView extends BaseView
     {
         parent::__construct($title, $modelName);
         $this->fileName = $fileName;
+    }
+
+    /**
+     * Allow disable a column from a table.
+     *
+     * @param string $columnName
+     * @param bool   $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
     }
 
     /**
@@ -62,12 +73,15 @@ class HtmlView extends BaseView
     }
 
     /**
-     * Allow disable a column from a table.
+     * Does nothing in this class.
      *
-     * @param string $columnName
-     * @param bool $disabled
+     * @param mixed           $code
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
-    public function disableColumn($columnName, $disabled)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
     }
 }

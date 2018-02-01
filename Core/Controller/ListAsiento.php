@@ -28,14 +28,13 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListAsiento extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */
     protected function createViews()
     {
         $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento');
-        $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))','concepto']);
+        $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAsiento', 'amount', 'amount', 'importe');
@@ -58,5 +57,25 @@ class ListAsiento extends ExtendedController\ListController
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'renumber':
+                $model = $this->views['ListAsiento']->getModel();
+                if ($model->renumber()) {
+                    $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
+                }
+                break;
+
+            default:
+                parent::execPreviousAction($action);
+        }
     }
 }

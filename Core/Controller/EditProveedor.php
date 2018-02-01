@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Lib;
+use FacturaScripts\Core\Lib\IDFiscal;
+use FacturaScripts\Core\Lib\RegimenIVA;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -31,7 +33,6 @@ use FacturaScripts\Core\Lib;
  */
 class EditProveedor extends ExtendedController\PanelController
 {
-
     /**
      * Create and configure main view
      */
@@ -41,11 +42,11 @@ class EditProveedor extends ExtendedController\PanelController
 
         /// Load values option to Fiscal ID select input
         $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(Lib\IDFiscal::all());
+        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
 
         /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditProveedor']->columnForName('vat-type');
-        $columnVATType->widget->setValuesFromArray(Lib\RegimenIVA::all());
+        $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
     }
 
     /**
@@ -64,12 +65,15 @@ class EditProveedor extends ExtendedController\PanelController
 
         /// Disable columns
         $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
+        $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
+        $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
+        $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
     }
 
     /**
      * Load view data
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -89,7 +93,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListPresupuestoProveedor':
                 $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }
@@ -124,6 +128,7 @@ class EditProveedor extends ExtendedController\PanelController
         $where[] = new DataBaseWhere('ptefactura', true);
 
         $totalModel = Model\TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
+
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
@@ -141,6 +146,7 @@ class EditProveedor extends ExtendedController\PanelController
         $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('recibosprov', $where, ['total' => 'SUM(importe)'], '')[0];
+
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

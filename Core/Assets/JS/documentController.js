@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,24 +19,46 @@
 var documentLineData = [];
 var documentUrl = "";
 var hsTable = null;
-var msgConfirmDelete = "";
-var msgAreYouSure = "";
-var msgCancel = "";
-var msgConfirm = "";
-var tabActive = "";
 
-function documentSave() {
-    $("#btn-document-save").prop("disabled", true);
-
-    var data = {action: "save-lines", lines: hsTable.getData()};
+function documentCalculate() {
+    var data = {};
+    $.each($("form[name=f_document_primary]").serializeArray(), function (key, value) {
+        data[value.name] = value.value;
+    });
+    data.action = "calculate-document";
+    data.lines = hsTable.getData();
+    console.log(data);
     $.ajax({
         type: "POST",
         url: documentUrl,
         dataType: "text",
         data: data,
         success: function (results) {
-            if(results == "OK") {
+            $("#doc_total").val(results);
+        }
+    });
+}
+
+function documentSave() {
+    $("#btn-document-save").prop("disabled", true);
+
+    var data = {};
+    $.each($("form[name=f_document_primary]").serializeArray(), function (key, value) {
+        data[value.name] = value.value;
+    });
+    data.action = "save-document";
+    data.lines = hsTable.getData();
+    console.log(data);
+    $.ajax({
+        type: "POST",
+        url: documentUrl,
+        dataType: "text",
+        data: data,
+        success: function (results) {
+            if (results == "OK") {
                 location.reload();
+            } else if (results.substring(0, 4) == "NEW:") {
+                location.href = results.substring(4);
             } else {
                 alert(results);
             }
@@ -46,38 +68,7 @@ function documentSave() {
     $("#btn-document-save").prop("disabled", false);
 }
 
-function deleteRecord(formName) {
-    bootbox.confirm({
-        title: msgConfirmDelete,
-        message: msgAreYouSure,
-        closeButton: false,
-        buttons: {
-            cancel: {
-                label: "<i class='fa fa-times'></i> " + msgCancel
-            },
-            confirm: {
-                label: "<i class='fa fa-check'></i> " + msgConfirm,
-                className: "btn-danger"
-            }
-        },
-        callback: function (result) {
-            if (result) {
-                var form = document.forms[formName];
-                form.action.value = "delete";
-                if (formName === "f_document_primary") {
-                    form.action.value = "delete-doc";
-                }
-                form.submit();
-            }
-        }
-    });
-}
-
 $(document).ready(function () {
-    $("#mainTabs").on("shown.bs.tab", function (e) {
-        tabActive = e.target.hash.substring(1);
-    });
-
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
         data: documentLineData.rows,
@@ -96,4 +87,6 @@ $(document).ready(function () {
         preventOverflow: "horizontal",
         minSpareRows: 1,
     });
+
+    Handsontable.hooks.add('afterChange', documentCalculate);
 });

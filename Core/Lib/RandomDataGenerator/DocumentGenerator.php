@@ -12,10 +12,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Model;
  */
 class DocumentGenerator extends ModelDataGenerator
 {
-
     /**
      * Generates a random document
      *
@@ -85,9 +85,9 @@ class DocumentGenerator extends ModelDataGenerator
      * Generates a random purchase document
      *
      * @param $doc
-     * @param Model\Ejercicio $eje
+     * @param Model\Ejercicio   $eje
      * @param Model\Proveedor[] $proveedores
-     * @param int $num
+     * @param int               $num
      *
      * @return string
      */
@@ -97,9 +97,7 @@ class DocumentGenerator extends ModelDataGenerator
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
-            $doc->codproveedor = $proveedores[$num]->codproveedor;
-            $doc->nombre = $proveedores[$num]->razonsocial;
-            $doc->cifnif = $proveedores[$num]->cifnif;
+            $doc->setProveedor($proveedores[$num]);
             $regimeniva = $proveedores[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without provider, to check if it breaks ;-)
@@ -116,7 +114,7 @@ class DocumentGenerator extends ModelDataGenerator
      * @param $doc
      * @param Model\Ejercicio $eje
      * @param Model\Cliente[] $clientes
-     * @param int $num
+     * @param int             $num
      *
      * @return string
      */
@@ -126,32 +124,8 @@ class DocumentGenerator extends ModelDataGenerator
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
-            $doc->codcliente = $clientes[$num]->codcliente;
-            $doc->nombrecliente = $clientes[$num]->razonsocial;
-            $doc->cifnif = $clientes[$num]->cifnif;
+            $doc->setCliente($clientes[$num]);
             $regimeniva = $clientes[$num]->regimeniva;
-
-            foreach ($clientes[$num]->getDirecciones() as $dir) {
-                if ($dir->domfacturacion) {
-                    $doc->codpais = $dir->codpais;
-                    $doc->provincia = $dir->provincia;
-                    $doc->ciudad = $dir->ciudad;
-                    $doc->direccion = $dir->direccion;
-                    $doc->codpostal = $dir->codpostal;
-                    $doc->apartado = $dir->apartado;
-                }
-
-                if ($dir->domenvio && mt_rand(0, 2) == 0) {
-                    $doc->envio_nombre = $this->tools->nombre();
-                    $doc->envio_apellidos = $this->tools->apellidos();
-                    $doc->envio_codpais = $dir->codpais;
-                    $doc->envio_provincia = $dir->provincia;
-                    $doc->envio_ciudad = $dir->ciudad;
-                    $doc->envio_codpostal = $dir->codpostal;
-                    $doc->envio_direccion = $dir->direccion;
-                    $doc->envio_apartado = $dir->apartado;
-                }
-            }
         } else {
             /// Every once in a while, generate one without the client, to check if it breaks ;-)
             $doc->nombrecliente = $this->tools->nombre() . ' ' . $this->tools->apellidos();
@@ -168,10 +142,10 @@ class DocumentGenerator extends ModelDataGenerator
      * @param string $iddoc
      * @param string $lineaClass
      * @param string $regimeniva
-     * @param bool $recargo
-     * @param int $modStock
+     * @param bool   $recargo
+     * @param int    $modStock
      */
-    private function randomLineas(&$doc, $iddoc = 'idalbaran', $lineaClass = 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, $modStock = 0)
+    private function randomLineas(&$doc, $iddoc, $lineaClass, $regimeniva, $recargo, $modStock = 0)
     {
         $articulos = $this->randomArticulos();
 
@@ -232,7 +206,7 @@ class DocumentGenerator extends ModelDataGenerator
                 $doc->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
             }
 
-            $numlineas--;
+            --$numlineas;
         }
 
         /// redondeamos
@@ -249,6 +223,7 @@ class DocumentGenerator extends ModelDataGenerator
      * Returns the number of generated delivery notes
      *
      * @param int $max
+     *
      * @return int
      */
     public function albaranesCliente($max = 25)
@@ -271,7 +246,7 @@ class DocumentGenerator extends ModelDataGenerator
 
                 if ($alb->save()) {
                     $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, -1);
-                    $num++;
+                    ++$num;
                 } else {
                     break;
                 }
@@ -288,6 +263,7 @@ class DocumentGenerator extends ModelDataGenerator
      * Returns the number of generated delivery notes
      *
      * @param int $max
+     *
      * @return int
      */
     public function albaranesProveedor($max = 25)
@@ -310,7 +286,7 @@ class DocumentGenerator extends ModelDataGenerator
 
                 if ($alb->save()) {
                     $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Dinamic\Model\LineaAlbaranProveedor', $regimeniva, $recargo, 1);
-                    $num++;
+                    ++$num;
                 } else {
                     break;
                 }
@@ -327,6 +303,7 @@ class DocumentGenerator extends ModelDataGenerator
      * Returns the number of generated orders.
      *
      * @param int $max
+     *
      * @return int
      */
     public function pedidosCliente($max = 25)
@@ -352,7 +329,7 @@ class DocumentGenerator extends ModelDataGenerator
 
                 if ($ped->save()) {
                     $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoCliente', $regimeniva, $recargo);
-                    $num++;
+                    ++$num;
                 } else {
                     break;
                 }
@@ -369,6 +346,7 @@ class DocumentGenerator extends ModelDataGenerator
      * Returns the number of generated orders.
      *
      * @param int $max
+     *
      * @return int
      */
     public function pedidosProveedor($max = 25)
@@ -391,7 +369,7 @@ class DocumentGenerator extends ModelDataGenerator
 
                 if ($ped->save()) {
                     $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoProveedor', $regimeniva, $recargo);
-                    $num++;
+                    ++$num;
                 } else {
                     break;
                 }
@@ -408,6 +386,7 @@ class DocumentGenerator extends ModelDataGenerator
      * Returns the number of generated estimates.
      *
      * @param int $max
+     *
      * @return int
      */
     public function presupuestosCliente($max = 25)
@@ -431,7 +410,7 @@ class DocumentGenerator extends ModelDataGenerator
 
                 if ($presu->save()) {
                     $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Dinamic\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
-                    $num++;
+                    ++$num;
                 } else {
                     break;
                 }

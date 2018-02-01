@@ -32,13 +32,12 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditAsiento extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
         $this->addListView('\FacturaScripts\Dinamic\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
         $this->setTabsPosition('bottom');
     }
@@ -46,7 +45,7 @@ class EditAsiento extends ExtendedController\PanelController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -61,7 +60,7 @@ class EditAsiento extends ExtendedController\PanelController
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData($where);
+                    $view->loadData(false, $where);
                 }
                 break;
         }

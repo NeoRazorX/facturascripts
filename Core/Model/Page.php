@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Page
+class Page extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -59,7 +59,7 @@ class Page
 
     /**
      * Indicates if it is displayed in the menu.
-     * False -> hide in the menu.
+     * False -> hide in the menu.
      *
      * @var bool
      */
@@ -94,7 +94,7 @@ class Page
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'name';
     }
@@ -116,21 +116,20 @@ class Page
      */
     public function clear()
     {
-        $this->name = null;
-        $this->title = null;
-        $this->menu = null;
-        $this->submenu = null;
-        $this->icon = null;
+        parent::clear();
         $this->showonmenu = true;
         $this->orden = 100;
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url()
+    public function url($type = 'auto', $list = 'List')
     {
         return 'index.php?page=' . $this->name;
     }

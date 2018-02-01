@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,7 +30,13 @@ use FacturaScripts\Core\Model;
  */
 class Wizard extends Controller
 {
+    const ITEM_SELECT_LIMIT = 500;
 
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();
@@ -39,44 +46,91 @@ class Wizard extends Controller
         return $pageData;
     }
 
-    public function getPaises()
+    /**
+     * Returns an array with all data from selected model.
+     *
+     * @param string $modelName
+     *
+     * @return mixed
+     */
+    public function getSelectValues($modelName)
     {
-        $paises = [];
+        $values = [];
+        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $model = new $modelName();
 
-        $paisModel = new Model\Pais();
-        foreach ($paisModel->all([], ['nombre' => 'ASC'], 0, 500) as $pais) {
-            $paises[$pais->codpais] = $pais->nombre;
+        $order = [$model->primaryDescriptionColumn() => 'ASC'];
+        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
         }
 
-        return $paises;
+        return $values;
     }
-    
+
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Model\User $user
+     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        
-        $codpais = $this->request->request->get('codpais','');
-        if($codpais !== '') {
+
+        $coddivisa = $this->request->request->get('coddivisa', '');
+        $codpais = $this->request->request->get('codpais', '');
+        if ($codpais !== '') {
             $appSettings = new AppSettings();
+            $appSettings->set('default', 'coddivisa', $coddivisa);
             $appSettings->set('default', 'codpais', $codpais);
+            $appSettings->set('default', 'homepage', 'AdminHome');
             $appSettings->save();
             $this->initModels();
-            
+            $this->saveAddress($appSettings, $codpais);
+
+            /// change user homepage
             $this->user->homepage = 'AdminHome';
             $this->user->save();
-            
+
             /// redir to EditSettings
-            $this->response->headers->set('Refresh', '1; index.php?page=EditSettings');
+            $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
         }
     }
-    
+
+    /**
+     * Initialize required models.
+     */
     private function initModels()
     {
-        new Model\Divisa();
-        new Model\Empresa();
-        new Model\Almacen();
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+    }
+
+    /**
+     * Save company default address.
+     *
+     * @param AppSettings $appSettings
+     * @param string      $codpais
+     */
+    private function saveAddress(&$appSettings, $codpais)
+    {
+        $this->empresa->codpais = $codpais;
+        $this->empresa->provincia = $this->request->request->get('provincia');
+        $this->empresa->ciudad = $this->request->request->get('ciudad');
+        $this->empresa->save();
+
+        $almacenModel = new Model\Almacen();
+        foreach ($almacenModel->all() as $almacen) {
+            $almacen->codpais = $codpais;
+            $almacen->provincia = $this->empresa->provincia;
+            $almacen->ciudad = $this->empresa->ciudad;
+            $almacen->save();
+
+            $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+            $appSettings->save();
+            break;
+        }
     }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Lib\AssetManager;
@@ -32,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
-
     /**
      * Contains a list of extra files to load: javascript, css, etc.
      *
@@ -103,11 +103,11 @@ class Controller
      * @var NumberTools
      */
     public $numberTools;
-    
+
     /**
      * User permissions on this controller.
-     * 
-     * @var ControllerPermissions 
+     *
+     * @var ControllerPermissions
      */
     public $permissions;
 
@@ -128,7 +128,7 @@ class Controller
     /**
      * Name of the file for the template.
      *
-     * @var string|false nombre_archivo.html
+     * @var string|false nombre_archivo.html.twig
      */
     private $template;
 
@@ -149,10 +149,10 @@ class Controller
     /**
      * Initialize all objects and properties.
      *
-     * @param Cache $cache
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -166,7 +166,7 @@ class Controller
         $this->miniLog = &$miniLog;
         $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
-        $this->template = $this->className . '.html';
+        $this->template = $this->className . '.html.twig';
 
         $this->title = $this->className;
         $pageData = $this->getPageData();
@@ -198,7 +198,7 @@ class Controller
     /**
      * Returns a field value for the loaded data model
      *
-     * @param mixed $model
+     * @param mixed  $model
      * @param string $fieldName
      *
      * @return mixed
@@ -223,10 +223,12 @@ class Controller
     {
         if ($template === false) {
             $this->template = false;
+
             return true;
         }
 
-        $this->template = $template . '.html';
+        $this->template = $template . '.html.twig';
+
         return true;
     }
 
@@ -266,15 +268,15 @@ class Controller
     public function publicCore(&$response)
     {
         $this->response = &$response;
-        $this->template = 'Login/Login.html';
+        $this->template = 'Login/Login.html.twig';
         $this->dispatcher->dispatch('pre-publicCore');
     }
 
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response              $response
+     * @param Model\User            $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,24 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base;
 
 /**
  * Auxiliary model to load a list of codes and their descriptions
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class CodeModel
 {
 
+    const ALL_LIMIT = 1000;
+    const SEARCH_LIMIT = 50;
+
     /**
      * It provides direct access to the database.
      *
-     * @var DataBase
+     * @var Base\DataBase
      */
     private static $dataBase;
 
@@ -56,36 +60,120 @@ class CodeModel
      */
     public function __construct($data = [])
     {
-        $this->code = $data['code'];
-        $this->description = $data['description'];
+        if (empty($data)) {
+            $this->code = '';
+            $this->description = '';
+        } else {
+            $this->code = $data['code'];
+            $this->description = Base\Utils::fixHtml($data['description']);
+        }
     }
 
     /**
      * Load a CodeModel list (code and description) for the indicated table.
      *
-     * @param string  $tableName
-     * @param string  $fieldCode
-     * @param string  $fieldDescription
-     * @param bool $addEmpty
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
+     * @param bool   $addEmpty
      *
      * @return self[]
      */
-    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = false)
+    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = true)
     {
         $result = [];
 
         if (self::$dataBase === null) {
-            self::$dataBase = new DataBase();
+            self::$dataBase = new Base\DataBase();
         }
 
         if (self::$dataBase->tableExists($tableName)) {
             if ($addEmpty) {
-                $result[] = new self(['code' => null, 'description' => '']);
+                $result[] = new self(['code' => null, 'description' => '------']);
             }
 
             $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
                 . $tableName . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, 1000);
+            $data = self::$dataBase->selectLimit($sql, self::ALL_LIMIT);
+            if (!empty($data)) {
+                foreach ($data as $d) {
+                    $result[] = new self($d);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns a codemodel with the selected data.
+     *
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $code
+     * @param string $fieldDescription
+     *
+     * @return self
+     */
+    public function get($tableName, $fieldCode, $code, $fieldDescription)
+    {
+        if (self::$dataBase === null) {
+            self::$dataBase = new Base\DataBase();
+        }
+
+        if (self::$dataBase->tableExists($tableName)) {
+            $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
+                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::$dataBase->var2str($code);
+            $data = self::$dataBase->selectLimit($sql, 1);
+            if (!empty($data)) {
+                return new self($data[0]);
+            }
+        }
+
+        return new self();
+    }
+
+    /**
+     * Returns a description with the selected data.
+     *
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $code
+     * @param string $fieldDescription
+     *
+     * @return string
+     */
+    public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
+    {
+        $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
+
+        return $model->description;
+    }
+
+    /**
+     * Load a CodeModel list (code and description) for the indicated table and search.
+     *
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
+     * @param string $search
+     *
+     * @return self[]
+     */
+    public static function search($tableName, $fieldCode, $fieldDescription, $search)
+    {
+        $result = [];
+
+        if (self::$dataBase === null) {
+            self::$dataBase = new Base\DataBase();
+        }
+
+        if (self::$dataBase->tableExists($tableName)) {
+            $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description'
+                . ' FROM ' . $tableName
+                . ' WHERE LOWER(' . $fieldDescription . ") LIKE '%" . mb_strtolower($search) . "%'"
+                . ' ORDER BY 2 ASC';
+            $data = self::$dataBase->selectLimit($sql, self::SEARCH_LIMIT);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);

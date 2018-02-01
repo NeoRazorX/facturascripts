@@ -44,7 +44,7 @@ class EditAtributo extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -58,7 +58,7 @@ class EditAtributo extends ExtendedController\PanelController
             case 'EditAtributoValor':
                 $codatributo = $this->getViewModelValue('EditAtributo', 'codatributo');
                 $where = [new DataBaseWhere('codatributo', $codatributo)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

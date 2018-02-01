@@ -14,7 +14,10 @@
     "facturascripts",
     "php",
     "invoice",
-    "erp"
+    "erp",
+    "crm",
+    "billing",
+    "accounting"
   ],
   "author": "Carlos García Gómez",
   "license": "LGPL-3.0",
@@ -24,11 +27,10 @@
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
     "bootbox": "^4.x",
-    "bootstrap": "4.0.0-beta.2",
-    "bootstrap-fileinput": "^4.4.6",
+    "bootstrap": "^4.x",
     "font-awesome": "^4.x",
     "handsontable": "^0.34.5",
-    "jquery": "^3.x",
+    "jquery": "^3.3.1",
     "jquery-ui-dist": "^1.12.x",
     "jscolor-picker": "^2.0.4",
     "popper.js": "^1.13.0"

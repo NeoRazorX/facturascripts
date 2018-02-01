@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,6 +48,12 @@
     <rows>
         <row type="status" fieldname="editable">
             <option color="table-warning">1</option>
+        </row>
+
+        <row type="footer">
+            <group name="footer-actions" footer="specials-actions">
+                <button type="action" label="renumber-accounting" color="info" action="renumber" icon="fa-list-ol" />
+            </group>
         </row>
     </rows>
 </view>

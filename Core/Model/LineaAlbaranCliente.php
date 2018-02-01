@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,10 +23,10 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaAlbaranCliente
+class LineaAlbaranCliente extends Base\SalesDocumentLine
 {
 
-    use Base\LineaDocumentoVenta;
+    use Base\ModelTrait;
 
     /**
      * ID of the related order line, if there is one.
@@ -71,16 +71,5 @@ class LineaAlbaranCliente
         new AlbaranCliente();
         
         return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearLinea();
-        $this->idlineapedido = null;
-        $this->idalbaran = null;
-        $this->idpedido = null;
     }
 }

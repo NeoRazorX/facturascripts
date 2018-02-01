@@ -31,7 +31,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditFamilia extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -45,7 +44,7 @@ class EditFamilia extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -59,13 +58,13 @@ class EditFamilia extends ExtendedController\PanelController
             case 'ListArticulo':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
 
             case 'ListFamilia':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('madre', $codfamilia)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -12,10 +12,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,88 +30,100 @@ use FacturaScripts\Core\Model;
  */
 class ModelDataGenerator
 {
-
     /**
      * Contains generated agentes
+     *
      * @var Model\Agente[]
      */
     protected $agentes;
 
     /**
      * Contains generated almacenes
-     * 
+     *
      * @var Model\Almacen[]
      */
     protected $almacenes;
 
     /**
      * Provides direct access to the database.
+     *
      * @var Base\DataBase
      */
     protected $db;
 
     /**
      * Contains generated divisas
+     *
      * @var Model\Divisa[]
      */
     protected $divisas;
 
     /**
      * Contains generated ejercicios
+     *
      * @var Model\Ejercicio
      */
     protected $ejercicio;
 
     /**
      * Contains generated empresas
+     *
      * @var Model\Empresa
      */
     protected $empresa;
 
     /**
-     * Contains generated formas de pago 
+     * Contains generated formas de pago
+     *
      * @var Model\FormaPago[]
      */
     protected $formasPago;
 
     /**
-     * Contains generated grupos de clientes 
+     * Contains generated grupos de clientes
+     *
      * @var Model\GrupoClientes[]
      */
     protected $grupos;
 
     /**
      * Contains generated impuestos
+     *
      * @var Model\Impuesto[]
      */
     protected $impuestos;
 
     /**
-     * Contains generated países 
+     * Contains generated países
+     *
      * @var Model\Pais[]
      */
     protected $paises;
 
     /**
      * Contains generated series
+     *
      * @var Model\Serie[]
      */
     protected $series;
 
     /**
      * Provides access to the data generator
+     *
      * @var DataGeneratorTools
      */
     protected $tools;
 
     /**
      * Contains generated usuarios
+     *
      * @var Model\User[]
      */
     protected $users;
 
     /**
      * Constructor. Initialize everything needed and randomize.
+     *
      * @param Model\Empresa $empresa
      */
     public function __construct($empresa)
@@ -134,7 +147,9 @@ class ModelDataGenerator
     /**
      * Generates $max random fabricantes.
      * Returns how many fabricantes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function fabricantes($max = 50)
@@ -154,7 +169,9 @@ class ModelDataGenerator
     /**
      * Generates $max random familias.
      * Returns how many familias were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function familias($max = 50)
@@ -179,7 +196,9 @@ class ModelDataGenerator
     /**
      * Generates $max random artículos.
      * Returns how many artículos were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function articulos($max = 50)
@@ -207,15 +226,15 @@ class ModelDataGenerator
 
             switch (mt_rand(0, 2)) {
                 case 0:
-                    $art->referencia = $art->getNewReferencia();
+                    $art->referencia = $art->newCode();
                     break;
 
                 case 1:
                     $aux = explode(':', $art->descripcion);
-                    if ($aux) {
+                    if (!empty($aux)) {
                         $art->referencia = $this->tools->txt2codigo($aux[0], 18);
                     } else {
-                        $art->referencia = $art->getNewReferencia();
+                        $art->referencia = $art->newCode();
                     }
                     break;
 
@@ -255,28 +274,31 @@ class ModelDataGenerator
     /**
      * Generates $max random artículos de proveedor.
      * Returns how many artículos were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function articulosProveedor($max = 50)
     {
         $proveedores = $this->randomProveedores();
+        $articulos = $this->randomArticulos();
 
         for ($num = 0; $num < $max; ++$num) {
-            if (mt_rand(0, 2) == 0 && $this->impuestos[0]->iva <= 10) {
-                shuffle($this->impuestos);
+            if (!isset($articulos[$num])) {
+                break;
             }
 
             $art = new Model\ArticuloProveedor();
-            $art->referencia = mt_rand(1, 99999999);
-            $art->refproveedor = mt_rand(1, 99999999);
+            $art->referencia = $articulos[$num]->referencia;
+            $art->refproveedor = (string) mt_rand(1, 99999999);
             $art->descripcion = $this->tools->descripcion();
-            $art->codimpuesto = $this->impuestos[0]->codimpuesto;
+            $art->codimpuesto = $articulos[$num]->codimpuesto;
             $art->codproveedor = $proveedores[$num]->codproveedor;
             $art->precio = $this->tools->precio(1, 49, 699);
             $art->dto = mt_rand(0, 80);
             $art->nostock = (mt_rand(0, 2) == 0);
-            $art->stock = mt_rand(0, 10);
+            $art->stockfis = mt_rand(0, 10);
 
             if (!$art->save()) {
                 break;
@@ -289,50 +311,34 @@ class ModelDataGenerator
     /**
      * Generates $max random agentes (empleados).
      * Returns how many agentes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function agentes($max = 50)
     {
         for ($num = 0; $num < $max; ++$num) {
             $agente = new Model\Agente();
-            $agente->f_nacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
-            $agente->f_alta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
-            $agente->dnicif = (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
+            $agente->fechanacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
+            $agente->fechaalta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
+            $agente->cifnif = (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
             $agente->nombre = $this->tools->nombre();
             $agente->apellidos = $this->tools->apellidos();
             $agente->provincia = $this->tools->provincia();
             $agente->ciudad = $this->tools->ciudad();
             $agente->direccion = $this->tools->direccion();
             $agente->codpostal = (string) mt_rand(11111, 99999);
-
-            if (mt_rand(0, 24) == 0) {
-                $agente->f_baja = date('d-m-Y');
-            }
-
-            if (mt_rand(0, 1) == 0) {
-                $agente->telefono = (string) mt_rand(555555555, 999999999);
-            }
-
-            if (mt_rand(0, 2) > 0) {
-                $agente->email = $this->tools->email();
-            }
-
-            if (mt_rand(0, 2) > 0) {
-                $agente->cargo = $this->tools->cargo();
-            }
-
-            if (mt_rand(0, 1) == 0) {
-                $agente->seg_social = (string) mt_rand(111111, 9999999999);
-            }
+            $agente->fechabaja = (mt_rand(0, 24) == 0) ? date('d-m-Y') : null;
+            $agente->telefono1 = (mt_rand(0, 1) == 0) ? (string) mt_rand(555555555, 999999999) : '';
+            $agente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : '';
+            $agente->cargo = (mt_rand(0, 2) > 0) ? $this->tools->cargo() : '';
+            $agente->seg_social = (mt_rand(0, 1) == 0) ? (string) mt_rand(111111, 9999999999) : '';
+            $agente->porcomision = $this->tools->cantidad(0, 5, 20);
 
             if (mt_rand(0, 5) == 0) {
                 $agente->banco = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
                     . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
-            }
-
-            if (mt_rand(0, 5) == 0) {
-                $agente->porcomision = $this->tools->cantidad(0, 5, 20);
             }
 
             if (!$agente->save()) {
@@ -346,14 +352,16 @@ class ModelDataGenerator
     /**
      * Generates $max random grupos de clientes.
      * Returns how many grupos de clientes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function gruposClientes($max = 50)
     {
         $nombres = [
             'Profesionales', 'Profesional', 'Grandes compradores', 'Preferentes',
-            'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental'
+            'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental',
         ];
         $nombres2 = ['VIP', 'PRO', 'NEO', 'XL', 'XXL', '50 aniversario', 'C', 'Z'];
 
@@ -362,7 +370,7 @@ class ModelDataGenerator
 
         $grupo = new Model\GrupoClientes();
         for ($num = 0; $num < $max; ++$num) {
-            $grupo->codgrupo = $grupo->getNewCodigo();
+            $grupo->codgrupo = $grupo->newCode();
             $grupo->nombre = $nombres[mt_rand(0, $max_nombres)] . ' '
                 . $nombres2[mt_rand(0, $max_nombres2)] . ' ' . $num;
             if (!$grupo->save()) {
@@ -376,7 +384,9 @@ class ModelDataGenerator
     /**
      * Generates $max random clientes.
      * Returns how many clientes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function clientes($max = 50)
@@ -466,18 +476,19 @@ class ModelDataGenerator
      * Rellena direcciones de un cliente con datos aleatorios.
      *
      * @param Model\Cliente $cliente
-     * @param int $max
+     * @param int           $max
      */
     private function direccionesCliente($cliente, $max = 3)
     {
         while ($max > 0) {
             $dir = new Model\DireccionCliente();
             $dir->codcliente = $cliente->codcliente;
-            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');;
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
+
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
-            $dir->codpostal = mt_rand(1234, 99999);
+            $dir->codpostal = (string) mt_rand(1234, 99999);
             $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
             $dir->domenvio = (mt_rand(0, 1) === 1);
             $dir->domfacturacion = (mt_rand(0, 1) === 1);
@@ -486,7 +497,7 @@ class ModelDataGenerator
                 break;
             }
 
-            $max--;
+            --$max;
         }
     }
 
@@ -494,7 +505,7 @@ class ModelDataGenerator
      * Rellena cuentas bancarias de un cliente con datos aleatorios.
      *
      * @param Model\Cliente $cliente
-     * @param int $max
+     * @param int           $max
      */
     private function cuentasBancoCliente($cliente, $max = 3)
     {
@@ -515,14 +526,16 @@ class ModelDataGenerator
                 break;
             }
 
-            $max--;
+            --$max;
         }
     }
 
     /**
      * Generates $max random proveedores.
      * Returns how many proveedores were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function proveedores($max = 50)
@@ -539,7 +552,7 @@ class ModelDataGenerator
 
             $proveedor->codproveedor = $proveedor->newCode();
             if ($proveedor->save()) {
-                $num++;
+                ++$num;
 
                 /// añadimos direcciones
                 $numDirs = mt_rand(0, 3);
@@ -560,14 +573,14 @@ class ModelDataGenerator
      * Rellena direcciones de un proveedor con datos aleatorios.
      *
      * @param Model\Proveedor $proveedor
-     * @param int $max
+     * @param int             $max
      */
     private function direccionesProveedor($proveedor, $max = 3)
     {
         while ($max) {
             $dir = new Model\DireccionProveedor();
             $dir->codproveedor = $proveedor->codproveedor;
-            $dir->codpais = AppSettings::get('default', 'codpais');;
+            $dir->codpais = AppSettings::get('default', 'codpais');
 
             if (mt_rand(0, 2) == 0) {
                 $dir->codpais = $this->paises[0]->codpais;
@@ -576,7 +589,7 @@ class ModelDataGenerator
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
-            $dir->codpostal = mt_rand(1234, 99999);
+            $dir->codpostal = (string) mt_rand(1234, 99999);
 
             if (mt_rand(0, 3) == 0) {
                 $dir->apartado = (string) mt_rand(1234, 99999);
@@ -588,7 +601,7 @@ class ModelDataGenerator
 
             $dir->descripcion = 'Dirección #' . $max;
             $dir->save();
-            $max--;
+            --$max;
         }
     }
 
@@ -596,7 +609,7 @@ class ModelDataGenerator
      * Rellena cuentas bancarias de un proveedor con datos aleatorios.
      *
      * @param Model\Proveedor $proveedor
-     * @param int $max
+     * @param int             $max
      */
     private function cuentasBancoProveedor($proveedor, $max = 3)
     {
@@ -616,7 +629,7 @@ class ModelDataGenerator
             }
 
             $cuenta->save();
-            $max--;
+            --$max;
         }
     }
 
@@ -626,7 +639,7 @@ class ModelDataGenerator
      * @param string $modelName
      * @param string $tableName
      * @param string $functionName
-     * @param bool $recursivo
+     * @param bool   $recursivo
      *
      * @return array
      */
@@ -652,7 +665,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random clientes.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Cliente[]
      */
     protected function randomClientes($recursivo = true)
@@ -662,7 +677,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random proveedores.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Proveedor[]
      */
     protected function randomProveedores($recursivo = true)
@@ -672,7 +689,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random empleados.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Agente[]
      */
     protected function randomAgentes($recursivo = true)
@@ -682,7 +701,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random artículos.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Articulo[]
      */
     protected function randomArticulos($recursivo = true)

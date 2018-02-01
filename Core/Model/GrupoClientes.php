@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,17 +18,17 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * A group of customers, which may be associated with a rate.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class GrupoClientes
+class GrupoClientes extends Base\ModelClass
 {
 
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -66,32 +66,19 @@ class GrupoClientes
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codgrupo';
     }
 
     /**
-     * Returns a new code for a new group of clients.
+     * Returns the description of the column that is the model's primary key.
      *
      * @return string
      */
-    public function getNewCodigo()
+    public function primaryDescriptionColumn()
     {
-        if (strtolower(FS_DB_TYPE) === 'postgresql') {
-            $sql = 'SELECT codgrupo from ' . static::tableName() . " where codgrupo ~ '^\d+$'"
-                . ' ORDER BY codgrupo::integer DESC';
-        } else {
-            $sql = 'SELECT codgrupo from ' . static::tableName() . " where codgrupo REGEXP '^[0-9]+$'"
-                . ' ORDER BY CAST(`codgrupo` AS decimal) DESC';
-        }
-
-        $data = self::$dataBase->selectLimit($sql, 1);
-        if (!empty($data)) {
-            return sprintf('%06s', 1 + (int) $data[0]['codgrupo']);
-        }
-
-        return '000001';
+        return 'nombre';
     }
 
     /**
@@ -101,14 +88,14 @@ class GrupoClientes
      */
     public function test()
     {
-        $this->nombre = self::noHtml($this->nombre);
+        $this->nombre = Utils::noHtml($this->nombre);
 
         return true;
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -122,14 +109,15 @@ class GrupoClientes
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, 'ListCliente&active=List');
+        return parent::url($type, 'ListCliente&active=List');
     }
 }

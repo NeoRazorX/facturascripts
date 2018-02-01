@@ -66,6 +66,7 @@ function searchErrors(&$errors, &$i18n)
  * Returns the corresponding font-awesome value to the @param parameter (true or false)
  *
  * @param boolean $isOk
+ *
  * @return string
  */
 function checkRequirement($isOk)
@@ -81,9 +82,10 @@ function checkRequirement($isOk)
  */
 function getUserLanguage()
 {
-    $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+    $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
     $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
     $translationExists = file_exists(__DIR__ . '/Core/Translation/' . $userLanguage . '.json');
+
     return ($translationExists) ? $userLanguage : 'en_EN';
 }
 
@@ -91,17 +93,19 @@ function getUserLanguage()
  * Timezones list with GMT offset
  *
  * @return array
+ *
  * @link http://stackoverflow.com/a/9328760
  */
 function get_timezone_list()
 {
-    $zones_array = array();
+    $zones_array = [];
     $timestamp = time();
     foreach (timezone_identifiers_list() as $key => $zone) {
         date_default_timezone_set($zone);
         $zones_array[$key]['zone'] = $zone;
         $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
     }
+
     return $zones_array;
 }
 
@@ -236,6 +240,8 @@ function createFolders()
         return true;
     }
     if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
+        chmod('Plugins', octdec(777));
+
         return true;
     }
 
@@ -294,7 +300,7 @@ function renderHTML(&$templateVars)
     $twig = new Twig_Environment($twigLoader);
 
     /// Generate and return the HTML
-    $response = new Response($twig->render('Installer/Install.html', $templateVars), Response::HTTP_OK);
+    $response = new Response($twig->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
     $response->send();
 }
 
@@ -307,7 +313,7 @@ function renderHTML(&$templateVars)
  */
 function randomString($length = 20)
 {
-    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+    return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
 }
 
 /**
@@ -344,7 +350,7 @@ function installerMain()
             'mb_substr' => checkRequirement(function_exists('mb_substr')),
             'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
             'openSSL' => checkRequirement(extension_loaded('openssl')),
-            'Zip' => checkRequirement(extension_loaded('zip'))
+            'Zip' => checkRequirement(extension_loaded('zip')),
         ],
         'i18n' => $i18n,
         'languages' => $i18n->getAvailableLanguages(),

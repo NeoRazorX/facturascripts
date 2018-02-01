@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,7 @@
                 <widget type="text" fieldname="hora" required="true" />
             </column>
         </group>
-         <group name="supplier" title="supplier" numcolumns="12">
+        <group name="supplier" title="supplier" numcolumns="12">
             <column name="cifnif" title="cifnif" numcolumns="4" order="120">
                 <widget type="text" fieldname="cifnif" />
             </column>
@@ -75,7 +75,7 @@
         </group>
         <group name="notes" numcolumns="12">
             <column name="observations" numcolumns="12" order="110">
-                <widget type="textarea" fieldname="observaciones" required="true" />
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>

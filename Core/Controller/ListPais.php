@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListPais extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */

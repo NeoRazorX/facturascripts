@@ -26,7 +26,6 @@ use FacturaScripts\Core\Base\Cache;
  */
 class CacheTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Cache
      */
@@ -48,7 +47,6 @@ class CacheTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**
@@ -61,8 +59,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1234, $data);
         $this->assertSame(1234, $data);
         $this->assertNotSame('1234', $data);
-        $this->assertNotEquals(null, $data);
-        $this->assertNotEquals(false, $data);
+        $this->assertNotNull($data);
+        $this->assertNotFalse($data);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,14 +27,11 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class PageOption
+class PageOption extends Base\ModelClass
 {
 
     use Base\ModelTrait {
-        clear as traitClear;
         loadFromData as traitLoadFromData;
-        saveInsert as traitSaveInsert;
-        saveUpdate as traitSaveUpdate;
     }
 
     /**
@@ -92,7 +89,7 @@ class PageOption
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_pages_options';
     }
@@ -102,7 +99,7 @@ class PageOption
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -127,7 +124,7 @@ class PageOption
      */
     public function clear()
     {
-        $this->traitClear();
+        parent::clear();
         $this->columns = [];
         $this->modals = [];
         $this->filters = [];
@@ -138,6 +135,7 @@ class PageOption
      * Load the data from an array
      *
      * @param array $data
+     * @param array $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
     {
@@ -161,30 +159,36 @@ class PageOption
             'columns' => json_encode($this->columns),
             'modals' => json_encode($this->modals),
             'filters' => json_encode($this->filters),
-            'rows' => json_encode($this->rows)
+            'rows' => json_encode($this->rows),
         ];
-    }
-
-    /**
-     * Update the model data in the database.
-     *
-     * @return bool
-     */
-    private function saveUpdate()
-    {
-        $values = $this->getEncodeValues();
-        return $this->traitSaveUpdate($values);
     }
 
     /**
      * Insert the model data in the database.
      *
+     * @param array $values
+     *
      * @return bool
      */
-    private function saveInsert()
+    protected function saveInsert($values = [])
     {
         $values = $this->getEncodeValues();
-        return $this->traitSaveInsert($values);
+
+        return parent::saveInsert($values);
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate($values = [])
+    {
+        $values = $this->getEncodeValues();
+
+        return parent::saveUpdate($values);
     }
 
     /**
@@ -192,6 +196,7 @@ class PageOption
      *
      * @param string $name
      * @param string $nick
+     *
      * @return Database\DataBaseWhere[]
      */
     private function getPageFilter($name, $nick)
@@ -200,7 +205,7 @@ class PageOption
             new DataBase\DataBaseWhere('nick', $nick),
             new DataBase\DataBaseWhere('name', $name),
             new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            new DataBase\DataBaseWhere('name', $name)
+            new DataBase\DataBaseWhere('name', $name),
         ];
     }
 
@@ -221,6 +226,7 @@ class PageOption
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
                 self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $name]));
+
                 return;
             }
         }

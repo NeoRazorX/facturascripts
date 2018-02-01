@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -12,10 +12,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,21 +29,23 @@ use FacturaScripts\Core\Model;
  */
 class AccountingGenerator
 {
-
     /**
      * List of available periods
-     * @var Model\Ejercicio[] 
+     *
+     * @var Model\Ejercicio[]
      */
     protected $ejercicios;
 
     /**
      * Default company
-     * @var Model\Empresa 
+     *
+     * @var Model\Empresa
      */
     protected $empresa;
 
     /**
      * Provides access to the data generator
+     *
      * @var DataGeneratorTools
      */
     protected $tools;
@@ -91,19 +94,19 @@ class AccountingGenerator
                     $partida->idsubcuenta = $subcuentas[$num2]->idsubcuenta;
                     $partida->codsubcuenta = $subcuentas[$num2]->codsubcuenta;
                     $partida->concepto = $asiento->concepto;
-                    if($debe) {
+                    if ($debe) {
                         $partida->debe = $asiento->importe;
                     } else {
                         $partida->haber = $asiento->importe;
                     }
-                    
-                    if($partida->save()) {
+
+                    if ($partida->save()) {
                         $debe = !$debe;
                     }
                 }
                 continue;
             }
-            
+
             break;
         }
 
@@ -178,7 +181,7 @@ class AccountingGenerator
 
             $grupo = new Model\GrupoEpigrafes();
             $grupo->codejercicio = $this->ejercicios[0]->codejercicio;
-            $grupo->codgrupo = mt_rand(1, 99);
+            $grupo->codgrupo = (string) mt_rand(1, 99);
             $grupo->descripcion = $this->tools->descripcion();
             if (!$grupo->save()) {
                 break;
@@ -205,6 +208,7 @@ class AccountingGenerator
         }
 
         shuffle($data);
+
         return $data;
     }
 

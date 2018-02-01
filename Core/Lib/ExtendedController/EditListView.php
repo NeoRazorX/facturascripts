@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Lib\ExportManager;
  */
 class EditListView extends BaseView
 {
-
     /**
      * Cursor with the display model's data
      *
@@ -104,18 +104,18 @@ class EditListView extends BaseView
      */
     public function isBasicEditList()
     {
-        if(count($this->pageOption->columns) !== 1) {
+        if (count($this->pageOption->columns) !== 1) {
             return false;
         }
-        
+
         $maxColumns = 5;
         $group = reset($this->pageOption->columns);
         foreach ($group->columns as $col) {
             if ($col->display !== 'none') {
-                $maxColumns--;
+                --$maxColumns;
             }
         }
-        
+
         return $maxColumns > 0;
     }
 
@@ -123,7 +123,7 @@ class EditListView extends BaseView
      * Establishes the column's edit state
      *
      * @param string $columnName
-     * @param bool $disabled
+     * @param bool   $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
@@ -137,12 +137,15 @@ class EditListView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
+     * @param mixed           $code
      * @param DataBaseWhere[] $where
-     * @param int $offset
-     * @param int $limit
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
-    public function loadData($where, $offset = 0, $limit = 0)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
+        $this->order = empty($order) ? $this->order : $order;
         $this->count = $this->model->count($where);
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $this->order, $offset, $limit);

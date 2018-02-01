@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : contactosproveedores.xml
+    Description:
+        Estructura de la tabla contactosproveedores.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('contactosproveedores_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>codcontacto</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codproveedor</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>contactosproveedores_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_contactosproveedores_proveedores</nombre>
+        <consulta>FOREIGN KEY (codproveedor)
+            REFERENCES proveedores (codproveedor)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_contactosproveedores_crm_contactos</nombre>
+        <consulta>FOREIGN KEY (codcontacto)
+            REFERENCES crm_contactos (codcontacto)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

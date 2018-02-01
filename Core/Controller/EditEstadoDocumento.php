@@ -28,7 +28,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditEstadoDocumento extends ExtendedController\EditController
 {
-
     /**
      * Returns the model name
      */

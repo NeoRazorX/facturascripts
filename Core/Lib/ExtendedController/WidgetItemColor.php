@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemColor extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemColor constructor.
      */
     public function __construct()
     {
@@ -58,6 +58,7 @@ class WidgetItemColor extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
+
         return $this->standardEditHTMLWidget($value, $specialAttributes, ' jscolor', 'text');
     }
 }

@@ -24,7 +24,7 @@ use FacturaScripts\Core\Model\Agente;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Agente
+ * @covers \Agente
  */
 final class AgenteTest extends TestCase
 {
@@ -37,8 +37,7 @@ final class AgenteTest extends TestCase
             $model
         );
 
-        $this->assertEquals(
-            null,
+        $this->assertNull(
             $model->codagente
         );
 
@@ -54,7 +53,7 @@ final class AgenteTest extends TestCase
 
         $this->assertEquals(
             '',
-            $model->dnicif
+            $model->cifnif
         );
 
         $this->assertEquals(
@@ -79,17 +78,17 @@ final class AgenteTest extends TestCase
 
         $this->assertEquals(
             date('d-m-Y'),
-            $model->f_alta
+            $model->fechaalta
         );
 
         $this->assertEquals(
             null,
-            $model->f_baja
+            $model->fechabaja
         );
 
         $this->assertEquals(
-            date('d-m-Y'),
-            $model->f_nacimiento
+            null,
+            $model->fechanacimiento
         );
 
         $this->assertInternalType(
@@ -116,7 +115,7 @@ final class AgenteTest extends TestCase
 
         $this->assertInternalType(
             'string',
-            $model->primaryColumn()
+            $model::primaryColumn()
         );
     }
 

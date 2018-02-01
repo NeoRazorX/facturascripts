@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditFabricante extends ExtendedController\PanelController
 {
-    
     /**
      * Load views.
      */
@@ -43,7 +42,7 @@ class EditFabricante extends ExtendedController\PanelController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\BaseView $view
      */
     protected function loadData($keyView, $view)
@@ -57,7 +56,7 @@ class EditFabricante extends ExtendedController\PanelController
             case 'EditFabricanteListArticulos':
                 $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
                 $where = [new DataBaseWhere('codfabricante', $codfabricante)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

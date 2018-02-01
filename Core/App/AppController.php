@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
-use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
@@ -26,7 +26,6 @@ use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\MenuManager;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +39,6 @@ use Twig_Loader_Filesystem;
  */
 class AppController extends App
 {
-
     /**
      * Controller loaded
      *
@@ -63,6 +61,13 @@ class AppController extends App
     private $menuManager;
 
     /**
+     * Langcode to use in html.
+     *
+     * @var string
+     */
+    private $langcode2;
+
+    /**
      * AppController constructor.
      *
      * @param string $folder
@@ -72,6 +77,7 @@ class AppController extends App
         parent::__construct($folder);
         $this->debugBar = new StandardDebugBar();
         $this->menuManager = new MenuManager();
+        $this->langcode2 = substr($this->request->cookies->get('fsLang', FS_LANG), 0, 2);
 
         if (FS_DEBUG) {
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
@@ -89,13 +95,13 @@ class AppController extends App
     {
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->renderHtml('Error/DbError.html');
+            $this->renderHtml('Error/DbError.html.twig');
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
-            $this->renderHtml('Login/Login.html');
+            $this->renderHtml('Login/Login.html.twig');
         } else {
             $user = $this->userAuth();
 
@@ -129,7 +135,7 @@ class AppController extends App
     /**
      * Load and process the $pageName controller.
      *
-     * @param string $pageName
+     * @param string     $pageName
      * @param User|false $user
      */
     private function loadController($pageName, $user)
@@ -140,7 +146,7 @@ class AppController extends App
         }
 
         $controllerName = $this->getControllerFullName($pageName);
-        $template = 'Error/ControllerNotFound.html';
+        $template = 'Error/ControllerNotFound.html.twig';
         $httpStatus = Response::HTTP_NOT_FOUND;
 
         /// If we found a controller, load it
@@ -159,7 +165,7 @@ class AppController extends App
                     $this->controller->privateCore($this->response, $user, $permissions);
                     $template = $this->controller->getTemplate();
                 } else {
-                    $template = 'Error/AccessDenied.html';
+                    $template = 'Error/AccessDenied.html.twig';
                 }
 
                 $httpStatus = Response::HTTP_OK;
@@ -202,7 +208,7 @@ class AppController extends App
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
-     * @param string $template html file to use
+     * @param string $template       html file to use
      * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
@@ -220,6 +226,7 @@ class AppController extends App
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
+            'langcode2' => $this->langcode2,
             'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
@@ -230,8 +237,6 @@ class AppController extends App
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
 
-            $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-            $this->debugBar->addCollector(new Twig\TwigCollector($env));
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
@@ -247,14 +252,14 @@ class AppController extends App
             $this->response->setContent($twig->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
-            $this->response->setContent($twig->render('Error/TemplateError.html', $templateVars));
+            $this->response->setContent($twig->render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * Returns a TwigLoader object with the folders selecteds
-     * 
+     *
      * @return Twig_Loader_Filesystem
      */
     private function loadTwigFolders()
@@ -304,16 +309,19 @@ class AppController extends App
                     $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
                     $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
                     $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
+
                     return $user;
                 }
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert($this->i18n->trans('login-password-fail'));
+
                 return false;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+
             return false;
         }
 
@@ -335,10 +343,13 @@ class AppController extends App
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                     $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
+
                     return $cookieUser;
                 }
 
                 $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
+                $this->response->headers->clearCookie('fsNick');
+
                 return false;
             }
 
@@ -349,21 +360,12 @@ class AppController extends App
     }
 
     /**
-     * Log out the user
+     * Log out the user.
      */
     private function userLogout()
     {
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
         $this->miniLog->debug($this->i18n->trans('logout-ok'));
-    }
-
-    /**
-     * Load plugins
-     */
-    private function deployPlugins()
-    {
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy();
     }
 }

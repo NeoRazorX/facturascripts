@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditCuentaBanco extends ExtendedController\EditController
 {
-
     /**
      * Returns the model name
      */

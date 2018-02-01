@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 class Postgresql implements DataBaseEngine
 {
-
     /**
      * Link to the SQL statements for the connected database
      *
@@ -53,7 +52,7 @@ class Postgresql implements DataBaseEngine
     private $i18n;
 
     /**
-     * Class constructor and initialization
+     * Postgresql constructor and initialization.
      */
     public function __construct()
     {
@@ -213,8 +212,8 @@ class Postgresql implements DataBaseEngine
      * or an empty array if it fails.
      *
      * @param resource $link
-     * @param string $sql
-     * @param bool $selectRows
+     * @param string   $sql
+     * @param bool     $selectRows
      *
      * @return array|bool
      */
@@ -243,13 +242,15 @@ class Postgresql implements DataBaseEngine
      * Runs a SELECT SQL statement
      *
      * @param resource $link
-     * @param string $sql
+     * @param string   $sql
      *
      * @return array
      */
     public function select($link, $sql)
     {
-        return $this->runSql($link, $sql);
+        $results = $this->runSql($link, $sql);
+
+        return is_array($results) ? $results : [];
     }
 
     /**
@@ -257,7 +258,7 @@ class Postgresql implements DataBaseEngine
      * (inserts, updates or deletes)
      *
      * @param resource $link
-     * @param string $sql
+     * @param string   $sql
      *
      * @return bool
      */
@@ -270,7 +271,7 @@ class Postgresql implements DataBaseEngine
      * Escapes quotes from a text string
      *
      * @param resource $link
-     * @param string $str
+     * @param string   $str
      *
      * @return string
      */
@@ -318,7 +319,7 @@ class Postgresql implements DataBaseEngine
             . ' ORDER BY tablename ASC;';
 
         $aux = $this->select($link, $sql);
-        if (!empty($aux)) {
+        if (is_array($aux)) {
             foreach ($aux as $a) {
                 $tables[] = $a['tablename'];
             }
@@ -333,9 +334,9 @@ class Postgresql implements DataBaseEngine
      * sequence exists. If it can't find it, i will create one.
      *
      * @param resource $link
-     * @param string $tableName
-     * @param string $default
-     * @param string $colname
+     * @param string   $tableName
+     * @param string   $default
+     * @param string   $colname
      */
     public function checkSequence($link, $tableName, $default, $colname)
     {
@@ -353,8 +354,8 @@ class Postgresql implements DataBaseEngine
      * Runs extra checks in the table
      *
      * @param resource $link
-     * @param string $tableName
-     * @param string $error
+     * @param string   $tableName
+     * @param string   $error
      *
      * @return bool
      */

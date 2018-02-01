@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditBalance extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -43,7 +42,7 @@ class EditBalance extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -58,7 +57,7 @@ class EditBalance extends ExtendedController\PanelController
             case 'EditBalanceCuentaA':
                 $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
                 $where = [new DataBaseWhere('codbalance', $codbalance)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

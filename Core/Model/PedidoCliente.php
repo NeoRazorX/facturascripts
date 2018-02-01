@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018    Carlos Garcia Gomez        <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,10 +25,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Customer order.
  */
-class PedidoCliente
+class PedidoCliente extends Base\SalesDocument
 {
-
-    use Base\DocumentoVenta;
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -44,35 +44,11 @@ class PedidoCliente
     public $idalbaran;
 
     /**
-     * Order status:
-     * 0 -> pending. (editable)
-     * 1 -> approved. (there is an idalbaran and it is not editable)
-     * 2 -> rejected. (there is no idalbaran and it is not editable)
-     *
-     * @var integer
-     */
-    public $status;
-
-    /**
-     * True if it is editable, but false
-     *
-     * @var bool
-     */
-    public $editable;
-
-    /**
      * Expected date of departure of the material.
      *
      * @var string
      */
     public $fechasalida;
-
-    /**
-     * If this estimation is the version of another, the original estimation document is stored here.
-     *
-     * @var integer
-     */
-    public $idoriginal;
 
     /**
      * Returns the name of the table that uses this model.
@@ -89,36 +65,9 @@ class PedidoCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idpedido';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Ejercicio();
-        
-        return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoVenta();
-        $this->status = 0;
-        $this->editable = true;
-        $this->fechasalida = null;
-        $this->idoriginal = null;
     }
 
     /**
@@ -129,58 +78,15 @@ class PedidoCliente
     public function getLineas()
     {
         $lineaModel = new LineaPedidoCliente();
-        return $lineaModel->all([new DataBaseWhere('idpedido', $this->idpedido)]);
-    }
+        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-    /**
-     * Returns the versions of an order.
-     *
-     * @return self[]
-     */
-    public function getVersiones()
-    {
-        $versiones = [];
-
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpedido);
-        if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . self::$dataBase->var2str($this->idoriginal);
-            $sql .= ' OR idpedido = ' . self::$dataBase->var2str($this->idoriginal);
-        }
-        $sql .= 'ORDER BY fecha DESC, hora DESC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $versiones[] = new self($d);
-            }
-        }
-
-        return $versiones;
-    }
-
-    /**
-     * Check the order data, return True if it is correct.
-     *
-     * @return boolean
-     */
-    public function test()
-    {
-        /// we check that editable corresponds to the status
-        if ($this->idalbaran) {
-            $this->status = 1;
-            $this->editable = false;
-        } elseif ($this->status == 0) {
-            $this->editable = true;
-        } elseif ($this->status == 2) {
-            $this->editable = false;
-        }
-
-        return $this->testTrait();
+        return $lineaModel->all($where, $order);
     }
 
     /**
      * Remove the order from the database.
-     * Returns False in case of failure.
+          * Returns False in case of failure.
      *
      * @return boolean
      */
@@ -195,23 +101,5 @@ class PedidoCliente
         }
 
         return false;
-    }
-
-    /**
-     * Execute a task with cron
-     */
-    public function cronJob()
-    {
-        /// mark estimations approved as approved with idpedido
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
-            . " WHERE status != '1' AND idalbaran IS NOT NULL;");
-
-        /// return to the pending status the orders with status 1 to which the delivery note has been erased
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
-            . "WHERE status = '1' AND idalbaran NOT IN (SELECT idalbaran FROM albaranescli);");
-
-        /// mark as rejected all non-editable budgets and without associated order
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
-            . ' editable = false;');
     }
 }

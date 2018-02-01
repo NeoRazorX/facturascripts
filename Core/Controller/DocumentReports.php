@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
- * Copyright (C) 2017  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,23 +16,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\DocumentReportsBase;
 use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of AccountingReports
  *
- * @author Francesc Pienda Segarra
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 class DocumentReports extends Controller
 {
-
     /**
      * Data for table.
      *
@@ -42,102 +46,11 @@ class DocumentReports extends Controller
     public $dataTable;
 
     /**
-     * Document 1 used by default or selected.
+     * List of filters.
      *
-     * @var string
+     * @var DocumentReportsBase\DocumentReportsFilterList[]
      */
-    public $source1;
-
-    /**
-     * Document 2 used by default or selected.
-     *
-     * @var string
-     */
-    public $source2;
-
-    /**
-     * Start date used by default or selected.
-     *
-     * @var \DateTime
-     */
-    public $date1From;
-
-    /**
-     * End date used by default or selected.
-     *
-     * @var \DateTime
-     */
-    public $date1To;
-
-    /**
-     * Start date used by default or selected.
-     *
-     * @var \DateTime
-     */
-    public $date2From;
-
-    /**
-     * End date used by default or selected.
-     *
-     * @var \DateTime
-     */
-    public $date2To;
-
-    /**
-     * Employee used by default or selected.
-     *
-     * @var string
-     */
-    public $employee;
-
-    /**
-     * Employee list.
-     *
-     * @var array
-     */
-    public $employeeList;
-
-    /**
-     * Serie used by default or selected.
-     *
-     * @var string
-     */
-    public $serie;
-
-    /**
-     * Serie list.
-     *
-     * @var array
-     */
-    public $serieList;
-
-    /**
-     * Currency used by default or selected.
-     *
-     * @var string
-     */
-    public $currency;
-
-    /**
-     * Currency list.
-     *
-     * @var array
-     */
-    public $currencyList;
-
-    /**
-     * Payment method used by default or selected.
-     *
-     * @var string
-     */
-    public $paymentMethod;
-
-    /**
-     * Payment method List.
-     *
-     * @var array
-     */
-    public $paymentMethodList;
+    public $filters;
 
     /**
      * Contains daily, monthly or yearly.
@@ -147,18 +60,69 @@ class DocumentReports extends Controller
     public $grouped;
 
     /**
+     * List of sources.
+     *
+     * @var DocumentReportsBase\DocumentReportsSource[]
+     */
+    public $sources;
+
+    /**
+     * Initializes all the objects and properties
+     *
+     * @param Cache      $cache
+     * @param Translator $i18n
+     * @param MiniLog    $miniLog
+     * @param string     $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        $this->dataTable = [];
+
+        $this->sources = [
+            new DocumentReportsBase\DocumentReportsSource('customer-invoices'),
+            new DocumentReportsBase\DocumentReportsSource('supplier-invoices'),
+        ];
+
+        $this->filters = [
+            'employee' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fa-users'),
+            'serie' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Serie', AppSettings::get('default', 'codserie')),
+            'currency' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Divisa', AppSettings::get('default', 'coddivisa')),
+            'payment-method' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago'),
+        ];
+    }
+
+    /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response              $response
+     * @param Model\User            $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
 
+        // actions to be executed before the main process
         $action = $this->request->get('action', '');
         $this->execAction($action);
+
+        // main process
+        $this->generateResults();
+    }
+
+    /**
+     * Set values selected by the user to source.
+     *
+     * @param int                                   $index
+     * @param DocumentReportsBase\DocumentReportsSource $source
+     */
+    private function setDefaultToSource($index, &$source)
+    {
+        $source->source = $this->request->get('source' . $index, $source->source);
+        $source->dateFrom = new \DateTime($this->request->get('date-from' . $index, date('01-m-Y')));
+        $source->dateTo = new \DateTime($this->request->get('date-to' . $index, date('t-m-Y')));
     }
 
     /**
@@ -166,98 +130,19 @@ class DocumentReports extends Controller
      *
      * @param $action
      */
-    private function execAction($action)
+    protected function execAction($action)
     {
-        switch ($action) {
-            case 'reload':
-                $this->setValuesFromRequest();
-                break;
+        if ($action === 'reload') {
+            // Load sources data from params
+            foreach ($this->sources as $index => $source) {
+                $this->setDefaultToSource($index, $source);
+            }
 
-            default:
-                $this->setDefaults();
-                break;
+            // Load filters data from params
+            foreach ($this->filters as $key => $filter) {
+                $filter->selectedValue = $this->request->get($key, $filter->selectedValue);
+            }
         }
-
-        $this->setLists();
-        $this->generateResults();
-    }
-
-    /**
-     * Set values selected by the user.
-     */
-    private function setValuesFromRequest()
-    {
-        $this->source1 = $this->request->get('source1', 'customer-invoices');
-        $this->source2 = $this->request->get('source2', 'supplier-invoices');
-        $this->date1From = new \DateTime($this->request->get('date1-from', date('01-m-Y')));
-        $this->date1To = new \DateTime($this->request->get('date1-to', date('t-m-Y')));
-        $this->date2From = new \DateTime($this->request->get('date2-from', date('01-m-Y')));
-        $this->date2To = new \DateTime($this->request->get('date2-to', date('t-m-Y')));
-        $this->employee = $this->request->get('employee', '');
-        $this->serie = $this->request->get('serie', '');
-        $this->currency = $this->request->get('currency', AppSettings::get('default', 'coddivisa'));
-        $this->paymentMethod = $this->request->get('payment-method', '');
-    }
-
-    /**
-     * Set default values.
-     */
-    private function setDefaults()
-    {
-        $this->source1 = 'customer-invoices';
-        $this->source2 = 'supplier-invoices';
-        $this->date1From = new \DateTime(date('01-m-Y'));
-        $this->date1To = new \DateTime(date('t-m-Y'));
-        $this->date2From = new \DateTime(date('01-m-Y'));
-        $this->date2To = new \DateTime(date('t-m-Y'));
-        $this->employee = '';
-        $this->serie = AppSettings::get('default', 'codserie');
-        $this->currency = AppSettings::get('default', 'coddivisa');
-        $this->paymentMethod = AppSettings::get('default', 'codpago');
-    }
-
-    /**
-     * Set basic list of default data for input selects.
-     */
-    private function setLists()
-    {
-        $agenteModel = new Model\Agente();
-        $this->employeeList = ['' => '------'];
-        foreach($agenteModel->all() as $age) {
-            $this->employeeList[$age->codagente] = $age->primaryDescription();
-        }
-
-        $serieModel = new Model\Serie();
-        $this->serieList = ['' => '------'];
-        foreach($serieModel->all() as $serie) {
-            $this->serieList[$serie->codserie] = $serie->descripcion;
-        }
-
-        $divisaModel = new Model\Divisa();
-        $this->currencyList = ['' => '------'];
-        foreach($divisaModel->all() as $divisa) {
-            $this->currencyList[$divisa->coddivisa] = $divisa->descripcion;
-        }
-
-        $formaPagoModel = new Model\FormaPago();
-        $this->paymentMethodList = ['' => '------'];
-        foreach($formaPagoModel->all() as $fPago) {
-            $this->paymentMethodList[$fPago->codpago] = $fPago->descripcion;
-        }
-    }
-
-    /**
-     * Generate daily data to show to user.
-     */
-    private function generateResults()
-    {
-        $this->dataTable = [];
-        $step = '+1 day';
-        $format = 'd-m-Y';
-        $this->getStepFormat($step, $format);
-
-        $this->dataTable[] = $this->populateTable($this->date1From, $this->date1To, $this->source1, 1, $step, $format);
-        $this->dataTable[] = $this->populateTable($this->date2From, $this->date2To, $this->source2, 2, $step, $format);
     }
 
     /**
@@ -268,62 +153,25 @@ class DocumentReports extends Controller
      */
     private function getStepFormat(&$step, &$format)
     {
-        $dateDiff1 = $this->date1To->diff($this->date1From);
-        $dateDiff2 = $this->date2To->diff($this->date2From);
-
-        $days = $dateDiff1->days < $dateDiff2->days ? $dateDiff2->days : $dateDiff1->days;
+        $dateDiff1 = $this->sources[0]->dateTo->diff($this->sources[0]->dateFrom);
+        $dateDiff2 = $this->sources[1]->dateTo->diff($this->sources[1]->dateFrom);
+        $days = ($dateDiff1->days < $dateDiff2->days) ? $dateDiff2->days : $dateDiff1->days;
 
         if ($days >= 15 * 30) {
             $step = '+1 year';
             $format = 'Y';
             $this->grouped = 'yearly';
-        } elseif ($days >= 3 * 30) {
+
+            return;
+        }
+
+        if ($days >= 3 * 30) {
             $step = '+1 month';
             $format = 'm-Y';
             $this->grouped = 'monthly';
-        } else {
-            $step = '+1 day';
-            $format = 'd-m-Y';
-            $this->grouped = 'daily';
+
+            return;
         }
-    }
-
-    /**
-     * Populate the result with the parameters.
-     *
-     * @param \DateTime $dateFrom
-     * @param \DateTime $dateTo
-     * @param string $source
-     * @param int $pos
-     * @param string $step
-     * @param string $format
-     *
-     * @return array
-     */
-    private function populateTable($dateFrom, $dateTo, $source, $pos, $step = '+1 day', $format = 'd-m-Y')
-    {
-        $result = [];
-
-        foreach (Utils::dateRange($dateFrom->format('d-m-Y'), $dateTo->format('d-m-Y'), $step, $format) as $date) {
-            $dateDaily = $this->getStamp($format, $date);
-            $result[$source][$dateDaily] = [
-                'date' => date($format, strtotime($this->fullDate($date))),
-                'total' => 0
-            ];
-        }
-
-        $dateSQL = $this->getDateSQL($format);
-
-        $table = $this->getTableName($source);
-        $sql = 'SELECT ' . $dateSQL . ' AS date, SUM(neto) AS total FROM ' . $table
-            . ' WHERE ' . $this->getWhere($pos) . 'GROUP BY date ORDER BY date ASC;';
-        $list = $this->dataBase->select($sql);
-        foreach ($list as $item) {
-            $dateDaily = $this->getStamp($format, $this->fullDate($item['date']));
-            $result[$source][$dateDaily]['total'] = (float) $item['total'];
-        }
-
-        return $result;
     }
 
     /**
@@ -335,168 +183,101 @@ class DocumentReports extends Controller
      */
     private function getDateSQL($format)
     {
-        switch ($format) {
-            case 'Y':
-                $date = "DATE_FORMAT(fecha, '%Y')";
-                if (strtolower(FS_DB_TYPE) === 'postgresql') {
-                    $date = "to_char(fecha,'YYYY')";
-                }
-                break;
+        $concat = [];
+        $options = explode('-', $format);
 
-            case 'm-Y':
-                $date = "DATE_FORMAT(fecha, '%m%Y')";
-                if (strtolower(FS_DB_TYPE) === 'postgresql') {
-                    $date = "to_char(fecha,'FMMMYYYY')";
-                }
-                break;
+        switch (true) {
+            case in_array('d', $options):
+                $concat[] = 'LPAD(CAST(EXTRACT(DAY FROM fecha) AS CHAR(10)), 2, \'0\')';
+                $concat[] = ' \'-\' ';
+                /// no break
 
-            default:
-                $date = 'fecha';
-                break;
+            case in_array('m', $options):
+                $concat[] = 'LPAD(CAST(EXTRACT(MONTH FROM fecha) AS CHAR(10)), 2, \'0\')';
+                $concat[] = ' \'-\' ';
+                /// no break
+
+            case in_array('Y', $options):
+                $concat[] = 'CAST(EXTRACT(YEAR FROM fecha) AS CHAR(10))';
         }
 
-        return $date;
-    }
-
-    /**
-     * Return a full format date string from partial string.
-     * Example:    2017 => 01-01-2017
-     *              12017 =>  01-01-2017
-     *              102017 =>  01-10-2017
-     *              10-2017 =>  01-10-2017
-     *
-     * @param string $date
-     *
-     * @return string
-     */
-    private function fullDate($date)
-    {
-        switch (strlen($date)) {
-            case 4:
-                return '01-01-' . $date;
-
-            case 5:
-                return '01-0' . $date[0] . '-' . substr($date, 1);
-
-            case 6:
-                return '01-' . substr($date, 0, 2) . '-' . substr($date, 2);
-
-            case 7:
-                return '01-' . $date;
-
-            case 8:
-                return substr($date, 0, 2) . '-' . substr($date, 2, 2) . '-' . substr($date, 4, 4);
-
-            default:
-                return $date;
+        if (strtolower(FS_DB_TYPE) === 'mysql') {
+            return 'CONCAT(' . implode(', ', $concat) . ')';
         }
-    }
 
-    /**
-     * Return the time stamp used to identify this date.
-     *
-     * @param string $format
-     * @param string $date
-     *
-     * @return false|int
-     */
-    private function getStamp($format, $date)
-    {
-        switch ($format) {
-            case 'Y':
-                return date('Y', strtotime($this->fullDate($date)));
-
-            case 'm-Y':
-                return date('Ym', strtotime($this->fullDate($date)));
-
-            default:
-                return date('Ymd', strtotime($date));
-        }
-    }
-
-    /**
-     * Return the table name.
-     *
-     * @param $source
-     *
-     * @return string
-     */
-    private function getTableName($source)
-    {
-        switch ($source) {
-            case 'customer-estimations':
-                return 'presupuestoscli';
-
-            case 'customer-orders':
-                return 'pedidoscli';
-
-            case 'customer-delivery-notes':
-                return 'albaranescli';
-
-            case 'customer-invoices':
-                return 'facturascli';
-
-            case 'supplier-orders':
-                return 'pedidosprov';
-
-            case 'supplier-delivery-notes':
-                return 'albaranesprov';
-
-            case 'supplier-invoices':
-                return 'facturasprov';
-
-            default:
-                return '';
-        }
+        /// PostgreSQL
+        return implode(' || ', $concat);
     }
 
     /**
      * Establishes the WHERE clause according to the defined filters.
      *
-     * @param int $pos
+     * @param DocumentReportsBase\DocumentReportsSource $source
      *
-     * @return string
+     * @return DataBase\DataBaseWhere[]
      */
-    private function getWhere($pos)
+    private function getWhere($source)
     {
-        $where = '';
-        switch ($pos) {
-            case 1:
-                $where .= ' fecha >= ' . $this->dataBase->var2str($this->date1From->format('d-m-Y'))
-                    . ' AND fecha <= ' . $this->dataBase->var2str($this->date1To->format('d-m-Y')) . ' ';
-                return $where . $this->getCommonWhere();
+        $where = [
+            new DataBase\DataBaseWhere('fecha', $source->dateFrom->format('d-m-Y'), '>='),
+            new DataBase\DataBaseWhere('fecha', $source->dateTo->format('d-m-Y'), '<='),
+        ];
 
-            case 2:
-                $where .= ' fecha >= ' . $this->dataBase->var2str($this->date2From->format('d-m-Y'))
-                    . ' AND fecha <= ' . $this->dataBase->var2str($this->date2To->format('d-m-Y')) . ' ';
-                return $where . $this->getCommonWhere();
-
-            default:
-                return '';
-        }
-    }
-
-    /**
-     * Return the common WHERE clause according to the defined filters.
-     * @return string
-     */
-    private function getCommonWhere()
-    {
-        $where = '';
-        if (!empty($this->employee)) {
-            $where .= ' AND codagente = ' . $this->dataBase->var2str($this->employee) . ' ';
-        }
-        if (!empty($this->serie)) {
-            $where .= ' AND codserie = ' . $this->dataBase->var2str($this->serie) . ' ';
-        }
-        if (!empty($this->currency)) {
-            $where .= ' AND coddivisa = ' . $this->dataBase->var2str($this->currency) . ' ';
-        }
-        if (!empty($this->paymentMethod)) {
-            $where .= ' AND codpago = ' . $this->dataBase->var2str($this->paymentMethod) . ' ';
+        foreach ($this->filters as $filter) {
+            $where[] = $filter->getWhere();
         }
 
         return $where;
+    }
+
+    /**
+     * Populate the result with the parameters.
+     *
+     * @param DocumentReportsBase\DocumentReportsSource $source
+     * @param string                                    $step
+     * @param string                                    $format
+     *
+     * @return array
+     */
+    private function populateTable(&$source, $step, $format)
+    {
+        // Init data
+        $result = [];
+        foreach (Utils::dateRange($source->dateFrom->format('d-m-Y'), $source->dateTo->format('d-m-Y'), $step, $format) as $index) {
+            $result[$index] = 0;
+        }
+
+        // Get data
+        $tableName = $source->getTableName();
+        $dateSQL = $this->getDateSQL($format);
+        $where = $this->getWhere($source);
+        $data = Model\TotalModel::all($tableName, $where, ['total' => 'SUM(neto)'], $dateSQL);
+
+        foreach ($data as $item) {
+            if (empty($item->code)) {
+                continue;
+            }
+
+            $result[$item->code] = (float) $item->totals['total'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Generate daily data to show to user.
+     */
+    protected function generateResults()
+    {
+        $step = '+1 day';
+        $format = 'd-m-Y';
+        $this->grouped = 'daily';
+        $this->getStepFormat($step, $format);
+
+        $this->dataTable = [];
+        foreach ($this->sources as $source) {
+            $this->dataTable[$source->source] = $this->populateTable($source, $step, $format);
+        }
     }
 
     /**
@@ -528,7 +309,7 @@ class DocumentReports extends Controller
             'customer-invoices' => $this->i18n->trans('customer-invoices'),
             'supplier-orders' => $this->i18n->trans('supplier-orders'),
             'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
-            'supplier-invoices' => $this->i18n->trans('supplier-invoices')
+            'supplier-invoices' => $this->i18n->trans('supplier-invoices'),
         ];
     }
 }

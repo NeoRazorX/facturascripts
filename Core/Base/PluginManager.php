@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use ZipArchive;
 
 /**
  * FacturaScripts plugins manager.
@@ -88,71 +89,19 @@ class PluginManager
     }
 
     /**
-     * Returns the plugin path folder.
+     * Deploy all the necessary files in the Dinamic folder to be able to use plugins
+     * with the autoloader, but following the priority system of FacturaScripts.
      *
-     * @return string
+     * @param bool $clean
      */
-    public function getPluginPath()
+    public function deploy($clean = true)
     {
-        return $this->pluginPath;
-    }
+        $pluginDeploy = new PluginDeploy();
+        $pluginDeploy->deploy($this->pluginPath, self::$enabledPlugins, $clean);
 
-    /**
-     * Returns an array with the list of plugins in the plugin.list file.
-     *
-     * @return array
-     */
-    private function loadFromFile()
-    {
-        if (file_exists(self::$pluginListFile)) {
-            $list = explode(',', trim(file_get_contents(self::$pluginListFile)));
-            if (count($list) === 1 && empty($list[0])) {
-                return [];
-            }
-            return $list;
-        }
-
-        return [];
-    }
-
-    /**
-     * Save the list of plugins in a file.
-     */
-    private function save()
-    {
-        file_put_contents(self::$pluginListFile, implode(',', self::$enabledPlugins));
-    }
-
-    /**
-     * Returns the list of active plugins.
-     *
-     * @return array
-     */
-    public function enabledPlugins()
-    {
-        return self::$enabledPlugins;
-    }
-
-    /**
-     * Returns the list of installed plugins.
-     *
-     * @return array
-     */
-    public function installedPlugins()
-    {
-        return array_diff(scandir($this->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-    }
-
-    /**
-     * Activate the indicated plugin.
-     *
-     * @param string $pluginName
-     */
-    public function enable($pluginName)
-    {
-        if (file_exists($this->pluginPath . $pluginName)) {
-            self::$enabledPlugins[] = $pluginName;
-            $this->save();
+        if (self::$deployedControllers === false) {
+            /// finally we started the drivers to complete the menu
+            $this->initControllers();
         }
     }
 
@@ -167,44 +116,155 @@ class PluginManager
             if ($value === $pluginName) {
                 unset(self::$enabledPlugins[$i]);
                 $this->save();
+                $this->deploy();
+                self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
                 break;
             }
         }
     }
 
     /**
-     * Display all the necessary files in the Dinamic folder to be able to use plugins
-     * and plugin models with the autoloader, but following the priority system of FacturaScripts.
+     * Activate the indicated plugin.
      *
-     * @param bool $clean
+     * @param string $pluginName
      */
-    public function deploy($clean = true)
+    public function enable($pluginName)
     {
-        $folders = ['Assets', 'Controller', 'Model', 'Lib', 'Table', 'View', 'XMLView'];
-        foreach ($folders as $folder) {
-            if ($clean) {
-                $this->cleanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
-            }
+        if (file_exists($this->pluginPath . $pluginName)) {
+            self::$enabledPlugins[] = $pluginName;
+            $this->save();
+            $this->deploy(false);
+            self::$minilog->info(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+        }
+    }
 
-            $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
+    /**
+     * Returns the list of active plugins.
+     *
+     * @return array
+     */
+    public function enabledPlugins()
+    {
+        return self::$enabledPlugins;
+    }
 
-            /// examine the plugins
-            foreach (self::$enabledPlugins as $pluginName) {
-                if (file_exists($this->pluginPath . $pluginName . DIRECTORY_SEPARATOR . $folder)) {
-                    $this->linkFiles($folder, 'Plugins', $pluginName);
-                }
-            }
+    /**
+     * Returns the plugin path folder.
+     *
+     * @return string
+     */
+    public function getPluginPath()
+    {
+        return $this->pluginPath;
+    }
 
-            /// examine the core
-            if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . $folder)) {
-                $this->linkFiles($folder);
+    /**
+     * Install a new plugin if is compatible.
+     *
+     * @param string $zipPath
+     *
+     * @return bool|mixed
+     */
+    public function install($zipPath)
+    {
+        $zipFile = new ZipArchive();
+        $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
+        if (true !== $result) {
+            self::$minilog->error('ZIP error: ' . $result);
+            return $result;
+        }
+
+        /// get folder on plugin zip
+        $pathINI = $zipFile->getNameIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
+        $folderPluginZip = explode('/', $pathINI);
+
+        /// get plugin name
+        $pluginName = '';
+        if ($pathINI) {
+            $iniFile = $zipFile->getFromIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
+            $iniContent = parse_ini_string($iniFile);
+            if (!empty($iniContent) && array_key_exists('name', $iniContent)) {
+                $pluginName = $iniContent['name'];
             }
         }
 
-        if (self::$deployedControllers === false) {
-            /// finally we started the drivers to complete the menu
-            $this->initControllers();
+        if ('' === $pluginName) {
+            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $pluginName]));
+            return false;
         }
+
+
+        /// Removing previous version
+        if (is_dir($this->pluginPath . $pluginName)) {
+            $this->delTree($this->pluginPath . $pluginName);
+        }
+
+        /// Extract new version
+        $zipFile->extractTo($this->pluginPath);
+        $zipFile->close();
+
+        /// Rename folder Plugin
+        if ($folderPluginZip[0] !== $pluginName) {
+            rename($this->pluginPath . $folderPluginZip[0], $this->pluginPath . $pluginName);
+        }
+
+        self::$minilog->info(self::$i18n->trans('plugin-installed', ['%pluginName%' => $pluginName]));
+        return true;
+    }
+
+    /**
+     * Returns the list of installed plugins.
+     *
+     * @return array
+     */
+    public function installedPlugins()
+    {
+        return array_diff(scandir($this->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+    }
+
+    /**
+     * Remove a plugin only if it's disabled.
+     *
+     * @param string $pluginName
+     *
+     * @return bool
+     */
+    public function remove($pluginName)
+    {
+        /// can't remove enabled plugins
+        if (in_array($pluginName, self::$enabledPlugins)) {
+            self::$minilog->error(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+            return false;
+        }
+
+        $pluginPath = $this->getPluginPath() . $pluginName;
+        if (is_dir($pluginPath) || is_file($pluginPath)) {
+            $this->delTree($pluginPath);
+            self::$minilog->info(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
+            return true;
+        }
+
+        self::$minilog->info(self::$i18n->trans('plugin-delete-error', ['%pluginName%' => $pluginName]));
+        return false;
+    }
+
+    /**
+     * Recursive delete directory.
+     *
+     * @param string $dir
+     *
+     * @return bool
+     */
+    private function delTree($dir)
+    {
+        $files = [];
+        if (is_dir($dir)) {
+            $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        }
+        foreach ($files as $file) {
+            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+        }
+        return is_dir($dir) ? rmdir($dir) : unlink($dir);
     }
 
     /**
@@ -239,154 +299,30 @@ class PluginManager
     }
 
     /**
-     * Delete the $folder and its files.
+     * Returns an array with the list of plugins in the plugin.list file.
      *
-     * @param string $folder
-     *
-     * @return bool
+     * @return array
      */
-    private function cleanFolder($folder)
+    private function loadFromFile()
     {
-        $done = true;
-
-        if (file_exists($folder)) {
-            /// Comprobamos los archivos que no son '.' ni '..'
-            $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
-
-            /// Ahora recorremos y eliminamos lo que encontramos
-            foreach ($items as $item) {
-                if (is_dir($folder . DIRECTORY_SEPARATOR . $item)) {
-                    $done = $this->cleanFolder($folder . DIRECTORY_SEPARATOR . $item . DIRECTORY_SEPARATOR);
-                } else {
-                    $done = unlink($folder . DIRECTORY_SEPARATOR . $item);
-                }
+        if (file_exists(self::$pluginListFile)) {
+            $list = explode(',', trim(file_get_contents(self::$pluginListFile)));
+            if (count($list) === 1 && empty($list[0])) {
+                return [];
             }
+
+            return $list;
         }
 
-        return $done;
+        return [];
     }
 
     /**
-     * Create the folder.
-     *
-     * @param string $folder
-     *
-     * @return bool
+     * Save the list of plugins in a file.
      */
-    private function createFolder($folder)
+    private function save()
     {
-        if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
-            self::$minilog->critical(self::$i18n->trans('cant-create-folder', ['%folderName%' => $folder]));
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Link the files.
-     *
-     * @param string $folder
-     * @param string $place
-     * @param string $pluginName
-     */
-    private function linkFiles($folder, $place = 'Core', $pluginName = '')
-    {
-        if (empty($pluginName)) {
-            $path = FS_FOLDER . DIRECTORY_SEPARATOR . $place . DIRECTORY_SEPARATOR . $folder;
-        } else {
-            $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . $folder;
-        }
-
-        foreach ($this->scanFolders($path) as $fileName) {
-            $infoFile = pathinfo($fileName);
-            if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
-                $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
-            } elseif ($infoFile['filename'] !== '' && is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
-                if ($infoFile['extension'] === 'php') {
-                    $this->linkClassFile($fileName, $folder, $place, $pluginName);
-                } else {
-                    $filePath = $path . DIRECTORY_SEPARATOR . $fileName;
-                    $this->linkFile($fileName, $folder, $filePath);
-                }
-            }
-        }
-    }
-
-    /**
-     * Link classes dynamically.
-     *
-     * @param string $fileName
-     * @param string $folder
-     * @param string $place
-     * @param string $pluginName
-     */
-    private function linkClassFile($fileName, $folder, $place, $pluginName)
-    {
-        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName)) {
-            if (empty($pluginName)) {
-                $namespace = "FacturaScripts\\" . $place . '\\' . $folder;
-                $newNamespace = "FacturaScripts\\Dinamic\\" . $folder;
-            } else {
-                $namespace = "FacturaScripts\Plugins\\" . $pluginName . '\\' . $folder;
-                $newNamespace = "FacturaScripts\Dinamic\\" . $folder;
-            }
-
-            $paths = explode(DIRECTORY_SEPARATOR, $fileName);
-            for ($key = 0; $key < count($paths) - 1; $key++) {
-                $namespace .= "\\" . $paths[$key];
-                $newNamespace .= "\\" . $paths[$key];
-            }
-
-            $className = basename($fileName, '.php');
-            $txt = '<?php namespace ' . $newNamespace . ";\n\n"
-                . '/**' . "\n"
-                . ' * Class created by Core/Base/PluginManager' . "\n"
-                . ' * @package ' . $newNamespace . "\n"
-                . ' * @author Carlos García Gómez <carlos@facturascripts.com>' . "\n"
-                . ' */' . "\n"
-                . 'class ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
-
-            file_put_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName, $txt);
-        }
-    }
-
-    /**
-     * Link other static files.
-     *
-     * @param string $fileName
-     * @param string $folder
-     * @param string $filePath
-     */
-    private function linkFile($fileName, $folder, $filePath)
-    {
-        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName)) {
-            @copy($filePath, FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
-        }
-    }
-
-    /**
-     * Makes a recursive scan in folders inside a root folder and extracts the list of files
-     * and pass its to an array as result.
-     *
-     * @param string $folder
-     *
-     * @return array $result
-     */
-    private function scanFolders($folder)
-    {
-        $result = [];
-        $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        foreach ($rootFolder as $item) {
-            $newItem = $folder . DIRECTORY_SEPARATOR . $item;
-            if (is_file($newItem)) {
-                $result[] = $item;
-                continue;
-            }
-            $result[] = $item;
-            foreach ($this->scanFolders($newItem) as $item2) {
-                $result[] = $item . DIRECTORY_SEPARATOR . $item2;
-            }
-        }
-        return $result;
+        $txt = implode(',', array_unique(self::$enabledPlugins));
+        file_put_contents(self::$pluginListFile, $txt);
     }
 }
