@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  * PDF export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  */
 class PDFExport implements ExportInterface
 {
@@ -233,7 +234,7 @@ class PDFExport implements ExportInterface
             '2' => array('bgcolor' => array(1,1,1), 'justification' => 'right'),
             '3' => array('bgcolor' => array(1,1,1)));
         
-        $this->pdf->ezTable($docHeaderData, NULL, '', $tableOptions);
+        $this->pdf->ezTable($docHeaderData, null, '', $tableOptions);
         $this->pdf->ezText("\n");
         
         //Document Lines
@@ -268,6 +269,7 @@ class PDFExport implements ExportInterface
             "No existe", (($model->neto) ?: "--"), (($model->totaliva) ?: "--"),
             "No existe", "No existe", (($model->total) ?: "--"));
         
+        //Footer Table
         $tableOptions['showHeadings'] = 0;
         $tableOptions['cols'] = array(
             '0' => array('justification' => 'right'),
@@ -276,7 +278,7 @@ class PDFExport implements ExportInterface
             '3' => array('justification' => 'right'),
             '4' => array('justification' => 'right'),
             '5' => array('justification' => 'right'));
-        $this->pdf->ezTable($footerRows, NULL, '', $tableOptions);
+        $this->pdf->ezTable($footerRows, null, '', $tableOptions);
     }
 
     /**
