@@ -331,6 +331,7 @@ class PDFExport implements ExportInterface
             if (is_string($col)) {
                 $tableCols[$col] = $col;
                 $tableColsTitle[$col] = $col;
+                continue;
             }
 
             if (isset($col->columns)) {
@@ -415,7 +416,7 @@ class PDFExport implements ExportInterface
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if (isset($row[$key]) && !in_array($row[$key], ['', 0])) {
+                if (!empty($row[$key])) {
                     $remove = false;
                     break;
                 }
