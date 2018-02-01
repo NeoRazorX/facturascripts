@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  * PDF export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  */
 class PDFExport implements ExportInterface
 {
@@ -202,6 +203,82 @@ class PDFExport implements ExportInterface
     public function generateDocumentPage($model)
     {
         /// TODO: Uncomplete
+        //
+        //Pending tasks
+        //----------------
+        //Company data
+        //Retrieve labels from i18n
+        //Set header table field name labels to bold font style
+        //Retrieve full address in header table
+        //Remove unused fields or add them to DocumentoVenta and DocumentoCompra
+        //Put document totals on footer and repeat them for each page
+        //Change footer table style
+        
+        if ($this->pdf === null) {
+            $this->newPage();
+        }
+        
+        //Document Header
+        $docHeaderData[] =  array("Albarán", (($model->codigo) ?: "--"), "Fecha", (($model->fecha) ?: "--"));
+        $docHeaderData[] =  array("Cliente", (($model->nombrecliente) ?: "--"), "CIF/NIF", (($model->cifnif) ?: "--"));
+        $docHeaderData[] =  array("Dirección", (($model->codigo) ?: "--"), "Teléfonos", "No existe");
+        
+//        $tableOptions = ['showHeadings' => 0]; --> This one does not work
+//        $tableOptions = ['width' => $this->tableWidth];
+        $tableOptions['showHeadings'] = 0;
+        $tableOptions['showLines'] = 0;
+        $tableOptions['width'] = $this->tableWidth;
+        $tableOptions['cols'] = array(
+            '0' => array('bgcolor' => array(1,1,1), 'justification' => 'right'),
+            '1' => array('bgcolor' => array(1,1,1)),
+            '2' => array('bgcolor' => array(1,1,1), 'justification' => 'right'),
+            '3' => array('bgcolor' => array(1,1,1)));
+        
+        $this->pdf->ezTable($docHeaderData, null, '', $tableOptions);
+        $this->pdf->ezText("\n");
+        
+        //Document Lines
+        $headers = array("Ref.+ Description", "Qty.", "Price", "Disc.", "Tax", "Total");
+        $lines = $model->getlineas();
+        $tableData[] = array();
+        
+        if(!empty($lines)) {
+            foreach($lines as $line){
+                $tableData[] = array(
+                    $line->referencia . " - " . $line->descripcion,
+                    $line->cantidad,
+                    $line->pvpunitario,
+                    $line->dtopor,
+                    $line->iva,
+                    $line->pvptotal,
+                );
+            }
+        }
+        
+        unset($tableOptions['cols']);
+        $tableOptions['showLines'] = 1;
+        $tableOptions['showHeadings'] = 1;
+        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);        
+        $this->pdf->ezText("\n\n");
+        
+        //Document Footer
+        $footerRows[] = array(
+            "Disc.", "Net price", "I.V.A. 21%",
+            "I.V.A. 4%", "I.V.A. 10%", "Total");
+        $footerRows[] = array(
+            "No existe", (($model->neto) ?: "--"), (($model->totaliva) ?: "--"),
+            "No existe", "No existe", (($model->total) ?: "--"));
+        
+        //Footer Table
+        $tableOptions['showHeadings'] = 0;
+        $tableOptions['cols'] = array(
+            '0' => array('justification' => 'right'),
+            '1' => array('justification' => 'right'),
+            '2' => array('justification' => 'right'),
+            '3' => array('justification' => 'right'),
+            '4' => array('justification' => 'right'),
+            '5' => array('justification' => 'right'));
+        $this->pdf->ezTable($footerRows, null, '', $tableOptions);
     }
 
     /**
