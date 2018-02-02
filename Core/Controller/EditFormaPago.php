@@ -35,7 +35,7 @@ class EditFormaPago extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\FormaPago';
+        return 'FormaPago';
     }
 
     /**

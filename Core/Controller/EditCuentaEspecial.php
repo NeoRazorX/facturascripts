@@ -34,7 +34,7 @@ class EditCuentaEspecial extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\CuentaEspecial';
+        return 'CuentaEspecial';
     }
 
     /**

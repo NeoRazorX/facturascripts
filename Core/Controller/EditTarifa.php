@@ -35,7 +35,7 @@ class EditTarifa extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\Tarifa';
+        return 'Tarifa';
     }
 
     /**
