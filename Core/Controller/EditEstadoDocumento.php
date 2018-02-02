@@ -33,7 +33,7 @@ class EditEstadoDocumento extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\EstadoDocumento';
+        return 'EstadoDocumento';
     }
 
     /**

@@ -94,11 +94,13 @@ class EditDashboardData extends ExtendedController\EditController
     /**
      * Run the data edits
      *
+     * @param BaseView $view
+     *
      * @return bool
      */
-    protected function editAction()
+    protected function editAction($view)
     {
-        $model = $this->view->getModel();
+        $model = $view->getModel();
         $properties = array_keys($this->getPropertiesFields());
         $fields = array_keys($model->properties);
         foreach ($fields as $key) {
@@ -107,7 +109,7 @@ class EditDashboardData extends ExtendedController\EditController
             }
         }
 
-        return parent::editAction();
+        return parent::editAction($view);
     }
 
     /**
@@ -115,7 +117,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\DashboardData';
+        return 'DashboardData';
     }
 
     /**

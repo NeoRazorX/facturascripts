@@ -233,7 +233,6 @@ abstract class PanelController extends Base\Controller
     public function getURL($type)
     {
         $view = array_values($this->views)[0];
-
         return $view->getURL($type);
     }
 

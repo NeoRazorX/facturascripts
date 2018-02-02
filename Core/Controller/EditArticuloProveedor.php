@@ -35,7 +35,7 @@ class EditArticuloProveedor extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\ArticuloProveedor';
+        return 'ArticuloProveedor';
     }
 
     /**

@@ -34,7 +34,7 @@ class EditPais extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\Pais';
+        return 'Pais';
     }
 
     /**
