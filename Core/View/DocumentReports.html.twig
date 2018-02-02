@@ -25,6 +25,11 @@
 
 {% extends "Master/MenuTemplate.html.twig" %}
 
+{% block javascript %}
+    {{ parent() }}
+    <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+{% endblock %}
+
 {% block body %}
 {# Calculate texts according to language #}
 {% set refresh = i18n.trans('refresh-page') %}
@@ -70,7 +75,7 @@
     </div>
 </div>
 
-<hr>
+<hr/>
 
 {# Filters for Data #}
 <div class="container-fluid">
@@ -83,13 +88,11 @@
                     {{ forms.simpleSelect('source' ~ index, 'source' ~ index, source.source, fsc.getDocumentTypes(), choose_source ~ ' ' ~ index, 'fa-files-o', select_attr) }}
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="form-group">
                     {{ forms.simpleInput('date-from' ~ index, 'date-from' ~ index, source.dateFrom.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="form-group">
                     {{ forms.simpleInput('date-to' ~ index, 'date-to' ~ index, source.dateTo.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
@@ -158,5 +161,4 @@
         {% endfor %}
     </div>
 </div>
-
 {% endblock %}
