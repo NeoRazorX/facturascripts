@@ -90,6 +90,6 @@ class PresupuestoCliente extends Base\SalesDocument
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all($where, $order);
+        return $lineaModel->all($where, $order, 0, 0);
     }
 }

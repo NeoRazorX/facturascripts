@@ -81,7 +81,7 @@ class PedidoCliente extends Base\SalesDocument
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all($where, $order);
+        return $lineaModel->all($where, $order, 0, 0);
     }
 
     /**

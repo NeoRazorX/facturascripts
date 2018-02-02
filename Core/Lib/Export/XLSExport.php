@@ -29,8 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class XLSExport implements ExportInterface
 {
-    use Base\Utils;
-
     const LIST_LIMIT = 1000;
 
     /**
@@ -131,7 +129,6 @@ class XLSExport implements ExportInterface
      */
     public function generateDocumentPage($model)
     {
-        /// TODO: Uncomplete
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {

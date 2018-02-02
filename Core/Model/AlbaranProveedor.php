@@ -89,8 +89,9 @@ class AlbaranProveedor extends Base\PurchaseDocument
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranProveedor();
+        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
 
-        return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
+        return $lineaModel->all($where, [], 0, 0);
     }
 
     /**

@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 /**
  * This class manage all specific method for a WidgetItem of File Chooser type.
  *
@@ -74,9 +76,6 @@ class WidgetItemFileChooser extends WidgetItem
      */
     public function getMaxFileUpload()
     {
-        $postMaxSize = (int) ini_get('post_max_size');
-        $uploadMaxSize = (int) ini_get('upload_max_filesize');
-
-        return ($uploadMaxSize > $postMaxSize) ? $uploadMaxSize : $postMaxSize;
+        return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 }

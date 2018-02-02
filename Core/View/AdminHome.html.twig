@@ -25,34 +25,6 @@
 
 {% extends "Master/MenuTemplate.html.twig" %}
 
-{% set langCode = fsc.lang|slice(0, 2)|lower %}
-
-{% block css %}
-    {{ parent() }}
-    <link href="node_modules/bootstrap-fileinput/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
-{% endblock %}
-
-{% block javascript %}
-    {{ parent() }}
-    <script src="node_modules/bootstrap-fileinput/js/fileinput.min.js"></script>
-    {% set absFileInputLocale = [constant('FS_FOLDER'), '/', 'node_modules/bootstrap-fileinput/js/locales/', langCode, '.js']|join %}
-    {% set relFileInputLocale = ['node_modules/bootstrap-fileinput/js/locales/', langCode, '.js']|join %}
-    {% if fsc.fileExists(absFileInputLocale) == true %}
-    <script src="{{ relFileInputLocale }}"></script>
-    {% endif %}
-    <script src="node_modules/bootstrap-fileinput/themes/fa/theme.min.js"></script>
-{% endblock %}
-
-{% block messages %}
-<div class="container-fluid">
-    <div id="messages" class="row">
-        <div class="col-12">
-            {{ parent() }}
-        </div>
-    </div>
-</div>
-{% endblock %}
-
 {% block body %}
 {# Calculate texts according to language #}
 {% set refresh = i18n.trans('refresh-page') %}
@@ -86,7 +58,7 @@
                 {% endif %}
             </div>
             <div class="btn-group d-xs-none">
-                <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#addPlugin">
+                <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
                 </button>
@@ -105,47 +77,48 @@
 <div class="table-responsive">
     <table class="table table-striped table-hover">
         <thead>
-        <tr>
-            <th scope="col">{{ i18n.trans('name') }}</th>
-            <th scope="col">{{ i18n.trans('description') }}</th>
-            <th class="text-right" scope="col">{{ i18n.trans('actions') }}</th>
-        </tr>
+            <tr>
+                <th>{{ i18n.trans('name') }}</th>
+                <th>{{ i18n.trans('description') }}</th>
+                <th class="text-right">{{ i18n.trans('actions') }}</th>
+            </tr>
         </thead>
         <tbody>
-        {% if fsc.pluginManager.installedPlugins is empty %}
+        {% if fsc.pluginManager.installedPlugins() is empty %}
         <tr class="table-warning">
             <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
         </tr>
         {% else %}
-        {% for plugin in fsc.pluginManager.installedPlugins %}
-        {% if plugin in fsc.enabledPlugins %}
-        <tr class="table-primary">
-            {% else %}
-        <tr>
-            {% endif %}
-            <td><b>{{ plugin }}</b></td>
-            <td></td>
-            <td class="text-right">
-                <span class="btn-group d-xs-none">
-                    {% if plugin in fsc.enabledPlugins %}
-                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}&amp;action=disable&amp;plugin={{ plugin }}" {{ popoverTitle(disable, 'bottom') }}>
-                        <i class="fa fa-close" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
-                    </a>
-                    {% else %}
-                    <a class="btn btn-sm btn-primary" href="{{ fsc.url() }}&amp;action=enable&amp;plugin={{ plugin }}" {{ popoverTitle(enable, 'bottom') }}>
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
-                    </a>
-                    {% endif %}
-                    <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}&amp;action=remove&amp;plugin={{ plugin }}" {{ popoverTitle(delete, 'bottom') }}>
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
-                    </a>
-                </span>
-            </td>
-        </tr>
-        {% endfor %}
+            {% for plugin in fsc.pluginManager.installedPlugins() %}
+                {% set enabled = (plugin in fsc.pluginManager.enabledPlugins()) %}
+                {% if enabled %}
+                <tr class="table-success">
+                {% else %}
+                <tr>
+                {% endif %}
+                <td><b>{{ plugin }}</b></td>
+                <td></td>
+                <td class="text-right">
+                    <span class="btn-group d-xs-none">
+                        {% if enabled %}
+                        <a class="btn btn-sm btn-warning" href="{{ fsc.url() }}&amp;action=disable&amp;plugin={{ plugin }}" {{ popoverTitle(disable, 'bottom') }}>
+                            <i class="fa fa-close" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
+                        </a>
+                        {% else %}
+                        <a class="btn btn-sm btn-success" href="{{ fsc.url() }}&amp;action=enable&amp;plugin={{ plugin }}" {{ popoverTitle(enable, 'bottom') }}>
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
+                        </a>
+                        <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}&amp;action=remove&amp;plugin={{ plugin }}" {{ popoverTitle(delete, 'bottom') }}>
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
+                        </a>
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
         {% endif %}
         </tbody>
     </table>
@@ -153,23 +126,21 @@
 
 {# Modal for add new plugins #}
 <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
-    <div class="modal fade" id="addPlugin" tabindex="-1" role="dialog" aria-labelledby="addPluginLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+    <input type="hidden" name="action" value="upload" />
+    <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addPluginLabel">{{ i18n.trans('add-new-plugin') }}</h5>
+                    <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input id="action" name="action" value="upload" type="hidden">
                         <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
-                        <div class="file-loading">
-                            <input id="plugin" name="plugin[]" type="file" multiple>
-                        </div>
-                        <div id="file-upload-errors" class="help-block"></div>
+                        <input name="plugin[]" type="file" multiple="" />
+                        <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -180,29 +151,4 @@
         </div>
     </div>
 </form>
-
-{# Script for file upload #}
-<script type="text/javascript">
-    var input = $("#plugin");
-    input.fileinput({
-        theme: "fa",
-        uploadUrl: "{{ fsc.url() }}",
-        uploadAsync: false,
-        showUpload: false,
-        showRemove: false,
-        dropZoneEnabled: true,
-        browseOnZoneClick: false,
-        fileActionSettings: {showDrag: false, showUpload: false, showZoom: false},
-        language: "{{ i18n.getLangCode() }}",
-        allowedFileExtensions: ["zip"],
-        overwriteInitial: false,
-        previewFileIcon: '<i class="fa fa-file-archive-o"></i>',
-        browseClass: "btn btn-success",
-        allowedPreviewTypes: false,
-        elErrorContainer: '#file-upload-errors',
-        minFileCount: 1,
-        maxFileCount: 10,
-        maxFileSize: {{ fsc.uploadMaxFileSize }}
-    });
-</script>
 {% endblock %}

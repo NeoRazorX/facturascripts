@@ -30,8 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CSVExport implements ExportInterface
 {
-    use Base\Utils;
-
     const LIST_LIMIT = 1000;
 
     /**
@@ -201,7 +199,6 @@ class CSVExport implements ExportInterface
      */
     public function generateDocumentPage($model)
     {
-        /// TODO: Uncomplete
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {

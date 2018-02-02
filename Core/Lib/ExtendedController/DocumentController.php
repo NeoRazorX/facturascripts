@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\Cache;
@@ -85,6 +84,21 @@ abstract class DocumentController extends PanelController
 
             default:
                 return parent::execPreviousAction($view, $action);
+        }
+    }
+
+    protected function execAfterAction($view, $action)
+    {
+        if ($action === 'export') {
+            $this->setTemplate(false);
+            $this->exportManager->newDoc($this->request->get('option'));
+            foreach ($this->views as $selectedView) {
+                $selectedView->export($this->exportManager);
+                break;
+            }
+            $this->exportManager->show($this->response);
+        } else {
+            parent::execAfterAction($view, $action);
         }
     }
 

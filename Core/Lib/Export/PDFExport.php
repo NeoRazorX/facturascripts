@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * PDF export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  */
 class PDFExport implements ExportInterface
 {
-    use Base\Utils;
 
     const LIST_LIMIT = 500;
 
@@ -93,7 +93,7 @@ class PDFExport implements ExportInterface
     {
         ;
     }
-    
+
     /**
      * Set headers and output document content to response.
      *
@@ -199,11 +199,51 @@ class PDFExport implements ExportInterface
     /**
      * Adds a new page with the document data.
      *
-     * @param mixed $model
+     * @param BusinessDocument $model
      */
     public function generateDocumentPage($model)
     {
-        /// TODO: Uncomplete
+        $columns = [];
+        foreach (array_keys((array) $model) as $key) {
+            $columns[$key] = $key;
+        }
+        $this->generateModelPage($model, $columns, $model->primaryDescription());
+
+        $this->pdf->ezText("\n");
+
+        $headers = [
+            'reference' => $this->i18n->trans('reference+description'),
+            'quantity' => $this->i18n->trans('quantity'),
+            'price' => $this->i18n->trans('price'),
+            'discount' => $this->i18n->trans('discount'),
+            'tax' => $this->i18n->trans('tax'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $tableData = [];
+        foreach ($model->getlineas() as $line) {
+            $tableData[] = [
+                'reference' => $line->referencia . " - " . $line->descripcion,
+                'quantity' => $this->numberTools->format($line->cantidad),
+                'price' => $this->numberTools->format($line->pvpunitario),
+                'discount' => $this->numberTools->format($line->dtopor),
+                'tax' => $this->numberTools->format($line->iva),
+                'total' => $this->numberTools->format($line->pvptotal),
+            ];
+        }
+
+        $tableOptions = [
+            'cols' => [
+                'quantity' => ['justification' => 'right'],
+                'price' => ['justification' => 'right'],
+                'discount' => ['justification' => 'right'],
+                'tax' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeHeadingCol' => [0.8, 0.8, 0.8],
+            'width' => $this->tableWidth
+        ];
+        $this->removeEmptyCols($tableData, $headers);
+        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
     }
 
     /**
@@ -288,6 +328,12 @@ class PDFExport implements ExportInterface
     private function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
     {
         foreach ($columns as $col) {
+            if (is_string($col)) {
+                $tableCols[$col] = $col;
+                $tableColsTitle[$col] = $col;
+                continue;
+            }
+
             if (isset($col->columns)) {
                 $this->setTableColumns($col->columns, $tableCols, $tableColsTitle, $tableOptions);
                 continue;
@@ -370,7 +416,7 @@ class PDFExport implements ExportInterface
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if ($row[$key] !== null && $row[$key] !== '') {
+                if (!empty($row[$key])) {
                     $remove = false;
                     break;
                 }
