@@ -123,42 +123,99 @@
         </div>
     </div>
 
-    {# Data Table #}
     <div class="row">
-        {% for source in fsc.sources %}
-        <div class="col">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        {# Data Group Title #}
-                        <th class="text-left" colspan="3">
-                            {{ i18n.trans(source.source) }} <br />
-                            <small>(
-                                {{source.dateFrom.format('d-m-Y') }}
-                                &nbsp;&nbsp;-&nbsp;&nbsp;
-                                {{ source.dateTo.format('d-m-Y') }})
-                            </small>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="text-left">Code</th>
-                        <th class="text-left">Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {# Data #}
-                    {% for code, total in fsc.dataTable[source.source] %}
-                    <tr class="table-light">
-                        <td class="text-left">{{ code }}</td>
-                        <td class="text-left">{{ total }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+        {# -- Left Panel -- #}
+        <div class="col-sm-2">
+            <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
+                <a class="nav-link active" id="chart-tab" data-toggle="pill" href="#chart" role="tab" aria-controls="chart" aria-expanded="true">
+                    <i class="fa fa-line-chart fa-fw" aria-hidden="true"></i>
+                    &nbsp;{{ i18n.trans('chart') }}
+                </a>
+                <a class="nav-link" id="data-tab" data-toggle="pill" href="#detail" role="tab" aria-controls="detail" aria-expanded="false">
+                    <i class="fa fa-table fa-fw" aria-hidden="true"></i>
+                    &nbsp;{{ i18n.trans('detail') }}
+                </a>
             </div>
         </div>
-        {% endfor %}
+
+        {# -- Right Panel -- #}
+        <div class="col-sm-10">
+            <div class="tab-content" id="mainTabsContent">
+                <div class="tab-pane fade show active" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+                    <canvas id="documentChart"></canvas>
+                </div>
+                <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+                    {# Data Table #}
+                    <div class="row">
+                        {% for source in fsc.sources %}
+                        <div class="col">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        {# Data Group Title #}
+                                        <th class="text-left" colspan="3">
+                                            {{ i18n.trans(source.source) }} <br />
+                                            <small>(
+                                                {{source.dateFrom.format('d-m-Y') }}
+                                                &nbsp;&nbsp;-&nbsp;&nbsp;
+                                                {{ source.dateTo.format('d-m-Y') }})
+                                            </small>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left">Code</th>
+                                        <th class="text-left">Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {# Data #}
+                                    {% for code, total in fsc.dataTable[source.source] %}
+                                    <tr class="table-light">
+                                        <td class="text-left">{{ code }}</td>
+                                        <td class="text-left">{{ total }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ctx = document.getElementById('documentChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                labels: [{{ fsc.getLabels()|raw }}],
+                datasets: [
+                    {% for source in fsc.sources %}
+                    {
+                        label: '{{ i18n.trans(source.source) }}',
+                        borderColor: 'rgb({{ source.color }})',
+                        backgroundColor: 'rgb({{ source.color }})',
+                        fill: false,
+                        data: [{{ fsc.getDataTable(source.source)|raw }}]
+                    },
+                    {% endfor %}
+                ]
+            },
+
+            // Configuration options go here
+            options: {}
+        });
+    });
+</script>
+
 {% endblock %}
+
