@@ -19,22 +19,18 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\DocumentReportsBase;
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of AccountingReports
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class DocumentReports extends Controller
 {
@@ -67,6 +63,13 @@ class DocumentReports extends Controller
     public $sources;
 
     /**
+     * List of index labels for data
+     *
+     * @var Array
+     */
+    private $labels;
+
+    /**
      * Initializes all the objects and properties
      *
      * @param Cache      $cache
@@ -79,10 +82,11 @@ class DocumentReports extends Controller
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->dataTable = [];
+        $this->labels = [];
 
         $this->sources = [
-            new DocumentReportsBase\DocumentReportsSource('customer-invoices'),
-            new DocumentReportsBase\DocumentReportsSource('supplier-invoices'),
+            new DocumentReportsBase\DocumentReportsSource('customer-invoices', '181,225,174'),
+            new DocumentReportsBase\DocumentReportsSource('supplier-invoices', '154,206,223'),
         ];
 
         $this->filters = [
@@ -276,8 +280,22 @@ class DocumentReports extends Controller
 
         $this->dataTable = [];
         foreach ($this->sources as $source) {
-            $this->dataTable[$source->source] = $this->populateTable($source, $step, $format);
+            $data = $this->populateTable($source, $step, $format);
+            $this->dataTable[$source->source] = $data;
+            $this->labels += array_keys($data);
+            unset($data);
         }
+        sort($this->labels);
+    }
+
+    public function getLabels()
+    {
+        return '"' . implode('","', $this->labels) . '"';
+    }
+
+    public function getDataTable($sourceKey)
+    {
+        return implode(',', $this->dataTable[$sourceKey]);
     }
 
     /**
