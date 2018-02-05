@@ -613,5 +613,8 @@
     "new-supplier": "new supplier",
     "parent-account": "Parent Account",
     "account-parent-error": "The parent account is incorrect or does not belong to the exercise",
-    "children-accounts": "Children Accounts"
+    "children-accounts": "Children Accounts",
+    "data-source": "Origin data",
+    "chart": "Chart",
+    "others-filters": "Others filters"
 }
