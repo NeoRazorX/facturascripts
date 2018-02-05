@@ -31,3 +31,7 @@ package-lock.json
 .project
 .settings
 .buildpath
+
+###> phpunit/phpunit ###
+/phpunit.xml
+###< phpunit/phpunit ###
