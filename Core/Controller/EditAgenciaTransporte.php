@@ -35,7 +35,7 @@ class EditAgenciaTransporte extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\AgenciaTransporte';
+        return 'AgenciaTransporte';
     }
 
     /**

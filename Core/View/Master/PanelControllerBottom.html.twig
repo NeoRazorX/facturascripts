@@ -27,98 +27,46 @@
 {% extends "Master/PanelController.html.twig" %}
 
 {% block body %}
-{# -- Calculate texts according to language -- #}
-{% set go_back = i18n.trans('back') %}
-{% set refresh_title = i18n.trans('refresh') %}
-{% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
-{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
-
-{# -- Calculate common values -- #}
-{% set list_url = fsc.getURL('list') %}
-{% set edit_url = fsc.getURL('edit') %}
-
 {# -- Visual macros -- #}
-{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html.twig' import exportData as exportData %}
 {% import 'Macro/BaseController.html.twig' as BaseController %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
-    {# -- Header Row -- #}
-    <div class="row">
-        <div class="col-6 d-print-none">
-            <div class="btn-group" aria-label="Button group with navigation actions">
-                <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                    <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
-                </a>
-                <a href="{{ edit_url }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
-                   <i class="fa fa-refresh" aria-hidden="true"></i>
-                </a>
-            </div>
-            <div class="btn-group">
-                <div class="dropdown">
-                    <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-wrench" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
-                    </a>
-                    <div class="dropdown-menu">
-                        {% for view in fsc.views %}
-                        <a class="dropdown-item" href="index.php?page=EditPageOption&code={{ view.getViewName() }}">
-                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {# -- Adds print and export options -- #}
-            {{ exportData(fsc, i18n, 'edit') }}
-        </div>
-        <div class="col-6 text-right">
-            <h2>
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
-                {{ title }} <small class="text-info">{{ fsc.getPrimaryDescription() }}</small>
-            </h2>
-        </div>
-    </div>
-
-    <br/>
-
     {# -- Data Row -- #}
     <div class="row">
         {# -- First View Panel -- #}
         <div class="col-12">
-            {% for indexView, view in fsc.views %}
-                {% if loop.index == 1 %}
-                    {% if viewType in ['EditView','EditListView'] %}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-                    {% endif %}
+            {% set indexView = fsc.views|keys|first %}
+            {% set view = fsc.views[indexView] %}
+            {% if viewType in ['EditView','EditListView'] %}
+                {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+            {% endif %}
 
-                    <div class="card">
-                        <div class="card-body">
-                            {% set viewType = fsc.viewClass(view) %}
-                            {% if viewType == 'ListView' %}
-                                {{ BaseController.columnsForListView(_context, view) }}
-                            {% elseif viewType == 'EditView' %}
-                                {# Statistical buttons bar #}
-                                {{ BaseController.rowStatisticsForEditView(_context, view) }}
+            <div class="card">
+                <div class="card-body">
+                    {% set viewType = fsc.viewClass(view) %}
+                    {% if viewType == 'ListView' %}
+                        {{ BaseController.columnsForListView(_context, view) }}
+                    {% elseif viewType == 'EditView' %}
+                        {# Statistical buttons bar #}
+                        {{ BaseController.rowStatisticsForEditView(_context, view) }}
 
-                                {# Main Form #}
-                                {% set model = view.getModel() %}
-                                {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
-                            {% elseif viewType == 'EditListView' %}
-                                {{ BaseController.columnsForEditListView(_context, view) }}
-                            {% elseif viewType == 'HtmlView' %}
-                            <div>{% include view.fileName ignore missing %}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if viewType in ['ListView','EditView','EditListView'] %}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                        {{ BaseController.modalFormFromColumns(_context, view) }}
+                        {# Main Form #}
+                        {% set model = view.getModel() %}
+                        {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
+                    {% elseif viewType == 'EditListView' %}
+                        {{ BaseController.columnsForEditListView(_context, view) }}
+                    {% elseif viewType == 'HtmlView' %}
+                    <div>{% include view.fileName ignore missing %}</div>
                     {% endif %}
-                {% endif %}
-            {% endfor %}
+                </div>
+            </div>
+            {% if viewType in ['ListView','EditView','EditListView'] %}
+                {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                {{ BaseController.modalFormFromColumns(_context, view) }}
+            {% endif %}
+
+            {% if fsc.views|length > 1 %}
             <br/>
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
@@ -171,6 +119,7 @@
                     </div>
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

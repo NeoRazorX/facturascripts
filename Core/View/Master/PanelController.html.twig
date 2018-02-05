@@ -63,9 +63,6 @@
         form.action.value = actionValue;
         form.submit();
     }
-    function goToOptions() {
-        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
-    }
     $(document).ready(function () {
         $('#mainTabs').on('shown.bs.tab', function (e) {
             tabActive = e.target.hash.substring(1);
@@ -85,11 +82,13 @@
 </script>
 {% endblock %}
 
-{% block body %}
+{% block bodyHeaderOptions %}
+{{ parent() }}
+
 {# -- Calculate texts according to language -- #}
 {% set go_back = i18n.trans('back') %}
 {% set refresh_title = i18n.trans('refresh') %}
-{% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
+{% set options = i18n.trans('options') %}
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 {# -- Calculate common values -- #}
@@ -97,18 +96,14 @@
 {% set edit_url = fsc.getURL('edit') %}
 
 {# -- Visual macros -- #}
-{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html.twig' import exportData as exportData %}
-{% import 'Macro/BaseController.html.twig' as BaseController %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
-{# -- Main Body -- #}
+{# -- Header Row -- #}
 <div class="container-fluid">
-    {{ parent() }}
-
-    {# -- Header Row -- #}
     <div class="row">
         <div class="col-6 d-print-none">
-            <div class="btn-group" aria-label="Button group with navigation actions">
+            <div class="btn-group">
                 <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
@@ -118,13 +113,22 @@
                 </a>
             </div>
             <div class="btn-group">
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions()" {{ popoverTitle(options_title, 'bottom') }}>
-                   <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
-                </a>
-                {# -- Adds print and export options -- #}
-                {{ exportData(fsc, i18n, 'edit') }}
+                <div class="dropdown">
+                    <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-wrench" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        {% for view in fsc.views %}
+                        <a class="dropdown-item" id="b_options" href="index.php?page=EditPageOption&code={{ view.getViewName() }}">
+                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
+            {# -- Adds print and export options -- #}
+            {{ exportData(fsc, i18n, 'edit') }}
         </div>
         <div class="col-6 text-right">
             <h2>
@@ -133,9 +137,19 @@
             </h2>
         </div>
     </div>
+</div>
+<br/>
+{% endblock %}
 
-    {# -- Data Row -- #}
-    <div class="row" style="margin-top: 15px;">
+{% block body %}
+{{ parent() }}
+
+{# -- Visual macros -- #}
+{% import 'Macro/BaseController.html.twig' as BaseController %}
+
+{# -- Data Row -- #}
+<div class="container-fluid">
+    <div class="row">
         {# -- Left Panel -- #}
         <div class="col-sm-2">
             <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">

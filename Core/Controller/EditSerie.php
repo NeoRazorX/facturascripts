@@ -35,7 +35,7 @@ class EditSerie extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\Serie';
+        return 'Serie';
     }
 
     /**

@@ -35,7 +35,7 @@ class EditImpuesto extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\Impuesto';
+        return 'Impuesto';
     }
 
     /**

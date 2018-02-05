@@ -38,6 +38,13 @@ class DocumentReportsSource
     public $source;
 
     /**
+     * RGB colors values
+     *
+     * @var string
+     */
+    public $color;
+
+    /**
      * Start date.
      *
      * @var \DateTime
@@ -56,9 +63,10 @@ class DocumentReportsSource
      *
      * @param string $source
      */
-    public function __construct($source)
+    public function __construct($source, $color)
     {
         $this->source = $source;
+        $this->color = $color;
         $this->dateFrom = new \DateTime(date('01-m-Y'));
         $this->dateTo = new \DateTime(date('t-m-Y'));
     }
