@@ -1,3 +1,0 @@
-factura_scripts_homepage:
-    path:     /
-    defaults: { _controller: FacturaScriptsBundle:Default:index }
