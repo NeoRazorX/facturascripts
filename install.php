@@ -96,17 +96,17 @@ function getUserLanguage()
  *
  * @link http://stackoverflow.com/a/9328760
  */
-function get_timezone_list()
+function getTimezoneList()
 {
-    $zones_array = [];
+    $zonesArray = [];
     $timestamp = time();
     foreach (timezone_identifiers_list() as $key => $zone) {
         date_default_timezone_set($zone);
-        $zones_array[$key]['zone'] = $zone;
-        $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
+        $zonesArray[$key]['zone'] = $zone;
+        $zonesArray[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
     }
 
-    return $zones_array;
+    return $zonesArray;
 }
 
 /**
@@ -354,7 +354,7 @@ function installerMain()
         ],
         'i18n' => $i18n,
         'languages' => $i18n->getAvailableLanguages(),
-        'timezone' => get_timezone_list(),
+        'timezone' => getTimezoneList(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
         'memcache_prefix' => randomString(8),
     ];
