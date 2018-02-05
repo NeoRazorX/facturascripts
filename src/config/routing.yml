@@ -1,0 +1,4 @@
+factura_scripts:
+    resource: "@FacturaScriptsBundle/Resources/config/routing.yml"
+    prefix:   /
+
