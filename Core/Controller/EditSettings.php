@@ -86,9 +86,9 @@ class EditSettings extends ExtendedController\PanelController
             case 'testmail':
                 $emailTools = new EmailTools();
                 if ($emailTools->test()) {
-                    $this->miniLog->info($this->i18n->trans('mail-test-ok'));
+                    $this->get('logger')->info($this->i18n->trans('mail-test-ok'));
                 } else {
-                    $this->miniLog->error($this->i18n->trans('mail-test-error'));
+                    $this->get('logger')->error($this->i18n->trans('mail-test-error'));
                 }
                 break;
         }
@@ -212,7 +212,7 @@ class EditSettings extends ExtendedController\PanelController
             }
 
             if ($error) {
-                $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
+                $this->get('logger')->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
             }
         }
     }
