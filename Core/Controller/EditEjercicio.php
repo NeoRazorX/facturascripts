@@ -118,7 +118,7 @@ class EditEjercicio extends ExtendedController\PanelController
         $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
-            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+            $this->get('logger')->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
 
             return false;
         }
@@ -134,7 +134,7 @@ class EditEjercicio extends ExtendedController\PanelController
                 break;
 
             default:
-                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+                $this->get('logger')->error($this->i18n->trans('file-not-supported'));
         }
     }
 }

@@ -105,7 +105,7 @@ class AdminHome extends Base\Controller
     private function disablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->get('logger')->alert($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
@@ -123,7 +123,7 @@ class AdminHome extends Base\Controller
     private function enablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->get('logger')->alert($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
@@ -171,7 +171,7 @@ class AdminHome extends Base\Controller
     private function removePlugin($pluginName)
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->get('logger')->alert($this->i18n->trans('not-allowed-delete'));
             return false;
         }
 
@@ -188,12 +188,12 @@ class AdminHome extends Base\Controller
     {
         foreach ($uploadFiles as $uploadFile) {
             if (!$uploadFile->isValid()) {
-                $this->miniLog->error($uploadFile->getErrorMessage());
+                $this->get('logger')->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             if ($uploadFile->getMimeType() !== 'application/zip') {
-                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+                $this->get('logger')->error($this->i18n->trans('file-not-supported'));
                 continue;
             }
 
