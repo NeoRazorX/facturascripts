@@ -32,6 +32,7 @@ package-lock.json
 .settings
 .buildpath
 
-###> phpunit/phpunit ###
+###> symfony/phpunit-bridge ###
+.phpunit
 /phpunit.xml
-###< phpunit/phpunit ###
+###< symfony/phpunit-bridge ###
