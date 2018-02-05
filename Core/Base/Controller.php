@@ -155,7 +155,7 @@ class Controller extends SymfonyController
      * @param MiniLog    $miniLog
      * @param string     $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, $className)
     {
         $this->assets = AssetManager::getAssetsForPage($className);
         $this->cache = &$cache;
@@ -164,7 +164,6 @@ class Controller extends SymfonyController
         $this->dispatcher = new EventDispatcher();
         $this->divisaTools = new DivisaTools();
         $this->i18n = &$i18n;
-        $this->miniLog = &$miniLog;
         $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';

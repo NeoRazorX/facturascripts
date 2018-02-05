@@ -96,9 +96,9 @@ abstract class ListController extends Base\Controller
      * @param Base\MiniLog    $miniLog
      * @param string          $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $className);
 
         $this->setTemplate('Master/ListController');
 

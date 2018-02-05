@@ -60,9 +60,9 @@ class EditPageOption extends Base\Controller
      * @param MiniLog    $miniLog
      * @param string     $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $className);
         $this->setTemplate('EditPageOption');
         $this->model = new Model\PageOption();
     }
@@ -129,11 +129,11 @@ class EditPageOption extends Base\Controller
         }
 
         if ($this->model->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->get('logger')->notice($this->i18n->trans('record-updated-correctly'));
 
             return;
         }
-        $this->miniLog->alert($this->i18n->trans('data-save-error'));
+        $this->get('logger')->alert($this->i18n->trans('data-save-error'));
     }
 
     /**
