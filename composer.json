@@ -18,7 +18,6 @@
         "phpmailer/phpmailer": "v6.0.3",
         "rospdf/pdf-php": "0.12.43",
         "sensio/framework-extra-bundle": "^5.1",
-        "sensio/generator-bundle": "^3.1",
         "symfony/console": "^3.4",
         "symfony/event-dispatcher": "^3.4",
         "symfony/flex": "^1.0",
