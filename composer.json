@@ -23,6 +23,7 @@
         "symfony/framework-bundle": "^3.4",
         "symfony/http-foundation": "^3.4",
         "symfony/lts": "^3",
+        "symfony/monolog-bridge": "^3.4",
         "symfony/monolog-bundle": "^3.1",
         "symfony/translation": "^3.4",
         "symfony/yaml": "^3.4",
