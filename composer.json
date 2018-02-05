@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.0.8",
+        "doctrine/doctrine-bundle": "^1.8",
         "maximebf/debugbar": "1.*",
         "mk-j/php_xlsxwriter": "0.37",
         "parsecsv/php-parsecsv": "0.4.5",
