@@ -25,13 +25,14 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller as SymfonyController;
 
 /**
  * Class from which all FacturaScripts controllers must inherit.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Controller
+class Controller extends SymfonyController
 {
     /**
      * Contains a list of extra files to load: javascript, css, etc.
