@@ -45,7 +45,7 @@
             "FacturaScripts\\Core\\": "Core/",
             "FacturaScripts\\Dinamic\\": "Dinamic/",
             "FacturaScripts\\Plugins\\": "Plugins/",
-            "App\\": "src/"
+            "FacturaScripts\\": "src/"
         }
     },
     "autoload-dev": {
