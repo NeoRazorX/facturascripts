@@ -1,0 +1,92 @@
+FsUsers:
+    type: entity
+    table: fs_users
+    indexes:
+        ca_fs_users_pages:
+            columns:
+                - homepage
+        ca_fs_users_company:
+            columns:
+                - idempresa
+    id:
+        nick:
+            type: string
+            nullable: false
+            length: 50
+            options:
+                fixed: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        password:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        email:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        logkey:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        lastactivity:
+            type: datetime
+            nullable: true
+        lastip:
+            type: string
+            nullable: true
+            length: 40
+            options:
+                fixed: false
+        admin:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+        enabled:
+            type: boolean
+            nullable: false
+            options:
+                default: '1'
+        langcode:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        level:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+                default: '1'
+    manyToOne:
+        idempresa:
+            targetEntity: Empresas
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idempresa:
+                    referencedColumnName: id
+            orphanRemoval: false
+        homepage:
+            targetEntity: FsPages
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                homepage:
+                    referencedColumnName: name
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

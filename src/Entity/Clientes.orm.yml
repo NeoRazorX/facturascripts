@@ -1,0 +1,152 @@
+Clientes:
+    type: entity
+    table: clientes
+    indexes:
+        ca_clientes_grupos:
+            columns:
+                - codgrupo
+    id:
+        codcliente:
+            type: string
+            nullable: false
+            length: 10
+            options:
+                fixed: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        cifnif:
+            type: string
+            nullable: false
+            length: 30
+            options:
+                fixed: false
+        codagente:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        codpago:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        codserie:
+            type: string
+            nullable: true
+            length: 4
+            options:
+                fixed: false
+        codsubcuenta:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        debaja:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+        email:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        fax:
+            type: string
+            nullable: true
+            length: 30
+            options:
+                fixed: false
+        fechabaja:
+            type: date
+            nullable: true
+        fechaalta:
+            type: date
+            nullable: true
+        nombre:
+            type: string
+            nullable: false
+            length: 100
+            options:
+                fixed: false
+        razonsocial:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        observaciones:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        recargo:
+            type: boolean
+            nullable: true
+        regimeniva:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        telefono1:
+            type: string
+            nullable: true
+            length: 30
+            options:
+                fixed: false
+        telefono2:
+            type: string
+            nullable: true
+            length: 30
+            options:
+                fixed: false
+        tipoidfiscal:
+            type: string
+            nullable: false
+            length: 25
+            options:
+                fixed: false
+                default: NIF
+        personafisica:
+            type: boolean
+            nullable: true
+            options:
+                default: '1'
+        web:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        diaspago:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        codproveedor:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+    manyToOne:
+        codgrupo:
+            targetEntity: Gruposclientes
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codgrupo:
+                    referencedColumnName: codgrupo
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

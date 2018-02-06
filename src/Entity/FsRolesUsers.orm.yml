@@ -1,0 +1,46 @@
+FsRolesUsers:
+    type: entity
+    table: fs_roles_users
+    indexes:
+        fs_roles_users_user:
+            columns:
+                - nick
+        IDX_BA7222AF6190BABA:
+            columns:
+                - codrol
+    uniqueConstraints:
+        unique_fs_roles_users:
+            columns:
+                - codrol
+                - nick
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    manyToOne:
+        codrol:
+            targetEntity: FsRoles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codrol:
+                    referencedColumnName: codrol
+            orphanRemoval: false
+        nick:
+            targetEntity: FsUsers
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                nick:
+                    referencedColumnName: nick
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
