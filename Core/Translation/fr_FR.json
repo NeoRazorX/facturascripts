@@ -16,8 +16,8 @@
     "license": "Licence",
     "mysql-socket": "Socket MySQL",
     "mysql-socket-p": "Ce champ est uniquement nécessaire dans certains hostings MySQL.",
-    "plugin-enabled": "Plugin activé avec succès.",
-    "plugin-disabled": "Plugin désactivé avec succès.",
+    "plugin-enabled": "Le plugin %pluginName% a été activé avec succès.",
+    "plugin-disabled": "Le plugin %pluginName% a été désactivé correctement.",
     "template-not-found": "Modèle non trouvé",
     "to-do-list": "liste de choses à faire",
     "user-unsaved": "Impossible d'enregistrer les informations utilisateur",
@@ -1218,5 +1218,9 @@
     "new-customer": "nouveau client",
     "new-supplier": "nouveau fournisseur",
     "parent-account": "Compte Parent",
-    "account-parent-error": "Le compte parent est incorrect ou n'appartient pas à l'exercice"
+    "account-parent-error": "Le compte parent est incorrect ou n'appartient pas à l'exercice",
+    "plugin-not-compatible": "Le plugin %pluginName% n'est pas compatible avec FacturaScripts 2018.",
+    "data-source": "Données d'origine",
+    "chart": "Graphique",
+    "others-filters": "D'autres filtres"
 }
