@@ -9,7 +9,20 @@ FacturaScripts\Entity\Agent:
         name:
             type: string
             length: 100
-        price:
-            type: decimal
-            scale: 2
+        city:
+            type: string
+            length: 50
+        startDate:
+            column: start_date
+            type: date
+            nullable: true
+        endDate:
+            column: end_date
+            type: date
+            nullable: true
+        birthday:
+            type: date
+            nullable: true
+        observations:
+            type: text
             nullable: true
