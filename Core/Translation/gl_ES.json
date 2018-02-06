@@ -1144,5 +1144,6 @@
     "dashboard-card": "Panel de control (elemento)",
     "creation-date": "Data de creación",
     "display-date": "Data de visualización",
-    "color": "cor"
+    "color": "cor",
+    "%-commission": "% Comisión"
 }
