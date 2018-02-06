@@ -1,0 +1,309 @@
+Albaranescli:
+    type: entity
+    table: albaranescli
+    indexes:
+        ca_albaranescli_series2:
+            columns:
+                - codserie
+        ca_albaranescli_ejercicios2:
+            columns:
+                - codejercicio
+        ca_albaranescli_facturas:
+            columns:
+                - idfactura
+    uniqueConstraints:
+        uniq_codigo_albaranescli:
+            columns:
+                - codigo
+    id:
+        idalbaran:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        apartado:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        cifnif:
+            type: string
+            nullable: false
+            length: 30
+            options:
+                fixed: false
+        ciudad:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        codagente:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        codalmacen:
+            type: string
+            nullable: true
+            length: 4
+            options:
+                fixed: false
+        codcliente:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        coddir:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        coddivisa:
+            type: string
+            nullable: false
+            length: 3
+            options:
+                fixed: false
+        codigo:
+            type: string
+            nullable: false
+            length: 20
+            options:
+                fixed: false
+        codpago:
+            type: string
+            nullable: false
+            length: 10
+            options:
+                fixed: false
+        codpais:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        codpostal:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        direccion:
+            type: string
+            nullable: false
+            length: 100
+            options:
+                fixed: false
+        editable:
+            type: boolean
+            nullable: true
+        idestado:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        fecha:
+            type: date
+            nullable: false
+        hora:
+            type: time
+            nullable: true
+        femail:
+            type: date
+            nullable: true
+        irpf:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        neto:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        nombrecliente:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        numero:
+            type: string
+            nullable: false
+            length: 12
+            options:
+                fixed: false
+        numero2:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+        observaciones:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        porcomision:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        provincia:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        tasaconv:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '1'
+        total:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        totaleuros:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        totalirpf:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        totaliva:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        totalrecargo:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        codtrans:
+            type: string
+            nullable: true
+            length: 8
+            options:
+                fixed: false
+        codigoenv:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+        nombreenv:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+        apellidosenv:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+        direccionenv:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        codpostalenv:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        ciudadenv:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        provinciaenv:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        apartadoenv:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        codpaisenv:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        idempresa:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+    manyToOne:
+        codejercicio:
+            targetEntity: Ejercicios
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codejercicio:
+                    referencedColumnName: codejercicio
+            orphanRemoval: false
+        idfactura:
+            targetEntity: Facturascli
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idfactura:
+                    referencedColumnName: idfactura
+            orphanRemoval: false
+        codserie:
+            targetEntity: Series
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codserie:
+                    referencedColumnName: codserie
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

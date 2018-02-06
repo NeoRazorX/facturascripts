@@ -1,0 +1,104 @@
+Articulosprov:
+    type: entity
+    table: articulosprov
+    indexes:
+        IDX_9AB8C8AECFF0C203:
+            columns:
+                - codproveedor
+    uniqueConstraints:
+        uniq_articulo_proveedor2:
+            columns:
+                - codproveedor
+                - refproveedor
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        referencia:
+            type: string
+            nullable: false
+            length: 30
+            options:
+                fixed: false
+        refproveedor:
+            type: string
+            nullable: false
+            length: 30
+            options:
+                fixed: false
+        descripcion:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        precio:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        dto:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        codimpuesto:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        stockfis:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        nostock:
+            type: boolean
+            nullable: true
+            options:
+                default: '1'
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        coddivisa:
+            type: string
+            nullable: true
+            length: 3
+            options:
+                fixed: false
+        codbarras:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        partnumber:
+            type: string
+            nullable: true
+            length: 40
+            options:
+                fixed: false
+    manyToOne:
+        codproveedor:
+            targetEntity: Proveedores
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codproveedor:
+                    referencedColumnName: codproveedor
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
