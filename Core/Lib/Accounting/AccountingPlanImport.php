@@ -129,13 +129,13 @@ class AccountingPlanImport
 
             if (empty($epigrafe->all($where)))
             {
-                $wherepadre = [new Database\DatabaseWhere('codejercicio',
+                $wherePadre = [new Database\DatabaseWhere('codejercicio',
                         $this->ejercicio->codejercicio),
                     new DataBase\DataBaseWhere('codcuenta',
                         $epigrafeElement['codgrupo'])
                 ];
                 $epigrafeGroup = new Model\Cuenta();
-                $epigrafeGroup->loadfromCode(NULL, $wherepadre);
+                $epigrafeGroup->loadfromCode(NULL, $wherePadre);
 
                 if (empty($epigrafeGroup))
                 {
@@ -177,12 +177,12 @@ class AccountingPlanImport
             ];
             if (empty($account->all($where)))
             {
-                $wherepadre = [new Database\DataBaseWhere('codejercicio',
+                $wherePadre = [new Database\DataBaseWhere('codejercicio',
                         $this->ejercicio->codejercicio),
                     new DataBase\DataBaseWhere('codcuenta',
                         $accountElement['codepigrafe'])
                 ];
-                $epigrafe->loadFromCode(NULL, $wherepadre);
+                $epigrafe->loadFromCode(NULL, $wherePadre);
                 if (empty($epigrafe))
                 {
                     self::$miniLog->alert(self::$i18n->trans('epigrafe-error'));
@@ -226,12 +226,12 @@ class AccountingPlanImport
             if (empty($subaccount->all($where)))
             {
                 $account = new Model\Cuenta();
-                $where_account = [new DataBase\DataBaseWhere('codejercicio',
+                $whereAccount = [new DataBase\DataBaseWhere('codejercicio',
                         $this->ejercicio->codejercicio),
                     new DataBase\DataBaseWhere('codcuenta',
                         $subaccountElement['codcuenta'])
                 ];
-                $account->loadFromCode(NULL, $where_account);
+                $account->loadFromCode(NULL, $whereAccount);
                 if (empty($account))
                 {
                     self::$miniLog->alert(self::$i18n->trans('account-error'));
