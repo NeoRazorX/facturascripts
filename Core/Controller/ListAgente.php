@@ -35,10 +35,12 @@ class ListAgente extends ExtendedController\ListController
      * Matches /agent exactly
      * 
      * Equivalent to /index.php?page=ListAgente
+     * 
+     * List action (index)
      *
      * @Route("/agent", name="agent_list")
      */
-    public function list()
+    public function index()
     {
         // ...
         return new Response('Hello AgentListController', Response::HTTP_OK);
