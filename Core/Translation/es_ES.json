@@ -646,8 +646,8 @@
     "license": "Licencia",
     "mysql-socket": "Socket MySQL",
     "mysql-socket-p": "Este campo sólo es requerido en algunos hostings con MySQL.",
-    "plugin-enabled": "Plugin activado correctamente.",
-    "plugin-disabled": "Plugin desactivado correctamente.",
+    "plugin-enabled": "El Plugin %pluginName% ha sido activado correctamente.",
+    "plugin-disabled": "El Plugin %pluginName% ha sido desactivado correctamente.",
     "preferences": "Preferencias",
     "select-language": "Selecciona un idioma",
     "select-timezone": "Selecciona zona horaria",
@@ -1223,5 +1223,9 @@
     "new-supplier": "nuevo proveedor",
     "parent-account": "Cuenta Padre",
     "account-parent-error": "La cuenta padre es incorrecta o no pertenece al ejercicio",
-    "children-accounts": "Cuentas Hijos"
+    "children-accounts": "Cuentas Hijos",
+    "plugin-not-compatible": "El Plugin %pluginName% no es compatible con FacturaScripts 2018.",
+    "data-source": "Datos de origen",
+    "chart": "Gráfico",
+    "others-filters": "Otros filtros"
 }

@@ -587,8 +587,8 @@
     "license": "Licencia",
     "mysql-socket": "Socket MySQL",
     "mysql-socket-p": "Este campo solamente es necesario en algunos hostings MySQL.",
-    "plugin-enabled": "Plugin activado correctamente.",
-    "plugin-disabled": "Plugin desactivado correctamente.",
+    "plugin-enabled": "El Plugin %pluginName% ha sido activado correctamente.",
+    "plugin-disabled": "El Plugin %pluginName% ha sido desactivado correctamente.",
     "preferences": "Preferencias",
     "select-language": "Seleccione idioma",
     "template-not-found": "Template no encontrado",
@@ -1210,5 +1210,15 @@
     "generate-title": "Ejecuta la creación del informe",
     "tasaconv": "Tasa de conversión",
     "paid": "Pagado",
-    "enable-api": "Activar API"
+    "enable-api": "Activar API",
+    "plugin-not-compatible": "El Plugin %pluginName% no es compatible con FacturaScripts 2018.",
+    "re": "RE",
+    "new-customer": "nuevo cliente",
+    "new-supplier": "nuevo proveedor",
+    "parent-account": "Cuenta Padre",
+    "account-parent-error": "La cuenta padre es incorrecta o no pertenece al ejercicio",
+    "children-accounts": "Cuentas Hijos",
+    "data-source": "Datos de origen",
+    "chart": "Gráfico",
+    "others-filters": "Otros filtros"
 }

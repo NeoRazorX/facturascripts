@@ -696,8 +696,8 @@
     "plugin": "Plugin",
     "plugin-added": "Plugin added correctly.",
     "plugin-deleted": "Plugin %pluginName% successfully deleted.",
-    "plugin-disabled": "Plugin disabled successfully.",
-    "plugin-enabled": "Plugin activated successfully.",
+    "plugin-disabled": "Plugin %pluginName% disabled successfully.",
+    "plugin-enabled": "Plugin %pluginName% activated successfully.",
     "plugin-name-added": "Plugin %pluginName% added correctly. You can activate it now.",
     "plugin-name-disabled": "Plugin <b>%pluginName%</b> successfully disabled.",
     "plugin-name-enabled": "Plugin <b>%pluginName%</b> is enabled correctly.",
@@ -1060,5 +1060,9 @@
     "new-supplier": "new supplier",
     "parent-account": "Parent Account",
     "account-parent-error": "The parent account is incorrect or does not belong to the exercise",
-    "children-accounts": "Children Accounts"
+    "children-accounts": "Children Accounts",
+    "plugin-not-compatible": "Plugin %pluginName% not compatible with FacturaScripts 2018.",
+    "data-source": "Origin data",
+    "chart": "Chart",
+    "others-filters": "Others filters"
 }

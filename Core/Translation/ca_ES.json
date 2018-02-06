@@ -16,8 +16,8 @@
     "license": "Llicència",
     "mysql-socket": "Socket MySQL",
     "mysql-socket-p": "Aquest camp només és necessari en alguns hostings MySQL.",
-    "plugin-enabled": "Plugin activat correctament.",
-    "plugin-disabled": "Plugin desactivat correctament.",
+    "plugin-enabled": "El Plugin %pluginName% ha estat activat correctament.",
+    "plugin-disabled": "El Plugin %pluginName% ha estat desactivat correctament.",
     "preferences": "Preferències",
     "select-language": "Seleccionar o idioma",
     "template-not-found": "Template no trobat",
@@ -1133,5 +1133,9 @@
     "new-supplier": "nou proveïdor",
     "parent-account": "Compte Pare",
     "account-parent-error": "El compte pare és incorrecta o no pertany a l'exercici",
-    "children-accounts": "Comptes Fills"
+    "children-accounts": "Comptes Fills",
+    "plugin-not-compatible": "El Plugin %pluginName% no és compatible amb FacturaScripts 2018.",
+    "data-source": "Dades d'origen",
+    "chart": "Gràfic",
+    "others-filters": "Altres filtres"
 }
