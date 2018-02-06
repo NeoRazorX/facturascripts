@@ -1,0 +1,174 @@
+Impuestos:
+    type: entity
+    table: impuestos
+    id:
+        codimpuesto:
+            type: string
+            nullable: false
+            length: 10
+            options:
+                fixed: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        codsubcuentaacr:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentadeu:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivadedadue:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivadevadue:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivadeventue:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivarepexe:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivarepexp:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivarepre:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivasopagra:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivasopexe:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentaivasopimp:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentarep:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        codsubcuentasop:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        descripcion:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+        idsubcuentaacr:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentadeu:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivadedadue:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivadevadue:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivadeventue:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivarepexe:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivarepexp:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivarepre:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivasopagra:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivasopexe:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentaivasopimp:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentarep:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        idsubcuentasop:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        iva:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+        recargo:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+    lifecycleCallbacks: {  }

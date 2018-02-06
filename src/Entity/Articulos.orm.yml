@@ -1,0 +1,181 @@
+Articulos:
+    type: entity
+    table: articulos
+    indexes:
+        ca_articulos_impuestos:
+            columns:
+                - codimpuesto
+        ca_articulos_familias:
+            columns:
+                - codfamilia
+        ca_articulos_fabricantes:
+            columns:
+                - codfabricante
+    id:
+        referencia:
+            type: string
+            nullable: false
+            length: 30
+            options:
+                fixed: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        bloqueado:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+        equivalencia:
+            type: string
+            nullable: true
+            length: 25
+            options:
+                fixed: false
+        stockmin:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        observaciones:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        codbarras:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        stockfis:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        stockmax:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        costemedio:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        preciocoste:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        nostock:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+        codsubcuentacom:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        descripcion:
+            type: text
+            nullable: false
+            length: 65535
+            options:
+                fixed: false
+        codsubcuentairpfcom:
+            type: string
+            nullable: true
+            length: 15
+            options:
+                fixed: false
+        secompra:
+            type: boolean
+            nullable: true
+            options:
+                default: '1'
+        ventasinstock:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+        tipo:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        pvp:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        sevende:
+            type: boolean
+            nullable: true
+            options:
+                default: '1'
+        publico:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+        partnumber:
+            type: string
+            nullable: true
+            length: 40
+            options:
+                fixed: false
+        trazabilidad:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+    manyToOne:
+        codfabricante:
+            targetEntity: Fabricantes
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codfabricante:
+                    referencedColumnName: codfabricante
+            orphanRemoval: false
+        codfamilia:
+            targetEntity: Familias
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codfamilia:
+                    referencedColumnName: codfamilia
+            orphanRemoval: false
+        codimpuesto:
+            targetEntity: Impuestos
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codimpuesto:
+                    referencedColumnName: codimpuesto
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

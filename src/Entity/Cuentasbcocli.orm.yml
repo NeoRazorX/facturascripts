@@ -1,0 +1,54 @@
+Cuentasbcocli:
+    type: entity
+    table: cuentasbcocli
+    indexes:
+        ca_cuentasbcocli_clientes:
+            columns:
+                - codcliente
+    id:
+        codcuenta:
+            type: string
+            nullable: false
+            length: 10
+            options:
+                fixed: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        descripcion:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        swift:
+            type: string
+            nullable: true
+            length: 11
+            options:
+                fixed: false
+        iban:
+            type: string
+            nullable: true
+            length: 34
+            options:
+                fixed: false
+        principal:
+            type: boolean
+            nullable: true
+        fmandato:
+            type: date
+            nullable: true
+    manyToOne:
+        codcliente:
+            targetEntity: Clientes
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codcliente:
+                    referencedColumnName: codcliente
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

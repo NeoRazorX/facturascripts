@@ -35,7 +35,7 @@ if ($debug) {
         Debug::enable();
     }
 }
-var_dump($env);
+
 $kernel = new Kernel($env, $debug);
 $application = new Application($kernel);
 $application->run($input);

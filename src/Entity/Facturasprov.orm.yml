@@ -1,0 +1,221 @@
+Facturasprov:
+    type: entity
+    table: facturasprov
+    indexes:
+        ca_facturasprov_series2:
+            columns:
+                - codserie
+        ca_facturasprov_ejercicios2:
+            columns:
+                - codejercicio
+        ca_facturasprov_asiento2:
+            columns:
+                - idasiento
+        ca_facturasprov_asientop:
+            columns:
+                - idasientop
+    uniqueConstraints:
+        uniq_codigo_facturasprov:
+            columns:
+                - codigo
+    id:
+        idfactura:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        cifnif:
+            type: string
+            nullable: false
+            length: 30
+            options:
+                fixed: false
+        codagente:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        codalmacen:
+            type: string
+            nullable: true
+            length: 4
+            options:
+                fixed: false
+        coddivisa:
+            type: string
+            nullable: false
+            length: 3
+            options:
+                fixed: false
+        codigo:
+            type: string
+            nullable: false
+            length: 20
+            options:
+                fixed: false
+        codigorect:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+        codpago:
+            type: string
+            nullable: false
+            length: 10
+            options:
+                fixed: false
+        codproveedor:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        editable:
+            type: boolean
+            nullable: true
+        idestado:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        fecha:
+            type: date
+            nullable: false
+        hora:
+            type: time
+            nullable: true
+        femail:
+            type: date
+            nullable: true
+        idfacturarect:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        irpf:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        neto:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        nombre:
+            type: string
+            nullable: false
+            length: 100
+            options:
+                fixed: false
+        numero:
+            type: string
+            nullable: false
+            length: 12
+            options:
+                fixed: false
+        numproveedor:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+        observaciones:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        pagada:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+        anulada:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+        tasaconv:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+        total:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        totaleuros:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        totalirpf:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        totaliva:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        totalrecargo:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+        idempresa:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+    manyToOne:
+        idasiento:
+            targetEntity: CoAsientos
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idasiento:
+                    referencedColumnName: idasiento
+            orphanRemoval: false
+        idasientop:
+            targetEntity: CoAsientos
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idasientop:
+                    referencedColumnName: idasiento
+            orphanRemoval: false
+        codejercicio:
+            targetEntity: Ejercicios
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codejercicio:
+                    referencedColumnName: codejercicio
+            orphanRemoval: false
+        codserie:
+            targetEntity: Series
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                codserie:
+                    referencedColumnName: codserie
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.0.8",
+        "doctrine/doctrine-bundle": "^1.8",
         "maximebf/debugbar": "1.*",
         "mk-j/php_xlsxwriter": "0.37",
         "parsecsv/php-parsecsv": "0.4.5",
@@ -25,13 +26,16 @@
         "symfony/lts": "^3",
         "symfony/monolog-bridge": "^3.4",
         "symfony/monolog-bundle": "^3.1",
+        "symfony/orm-pack": "^1.0",
         "symfony/translation": "^3.4",
+        "symfony/validator": "^3.4",
         "symfony/yaml": "^3.4",
         "twig/twig": "v2.*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.2",
         "symfony/dotenv": "^3.4",
+        "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^3.4"
     },
     "config": {
