@@ -11,10 +11,12 @@ class AgentController extends Controller
      * Matches /agent exactly
      *
      * Equivalent to /index.php?page=ListAgente
+     * 
+     * List action (index)
      *
      * @Route("/agent", name="agent_list")
      */
-    public function list()
+    public function index()
     {
         // ...
         return new Response('Hello AgentController', Response::HTTP_OK);
