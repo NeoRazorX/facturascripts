@@ -1214,7 +1214,7 @@
     "desc-customer-name-2": "Nombre comercial del cliente",
     "choose-source": "Elegir el origen",
     "record-save-error": "Un error ha ocurrido mientras se guardaban los datos",
-    "generate-title": "Ejecuta la creación del informe",
+    "generate-title": "Genera el informe",
     "tasaconv": "Tasa de conversión",
     "paid": "Pagado",
     "enable-api": "Activar API",
