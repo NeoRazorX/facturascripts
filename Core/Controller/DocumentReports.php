@@ -79,7 +79,7 @@ class DocumentReports extends Controller
      */
     public function __construct(&$cache, &$i18n, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $className);
 
         $this->dataTable = [];
         $this->labels = [];
