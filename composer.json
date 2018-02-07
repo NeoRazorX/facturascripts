@@ -11,71 +11,24 @@
     ],
     "require": {
         "php": ">=7.0.8",
-        "doctrine/doctrine-bundle": "^1.8",
         "maximebf/debugbar": "1.*",
         "mk-j/php_xlsxwriter": "0.37",
         "parsecsv/php-parsecsv": "0.4.5",
         "phpmailer/phpmailer": "v6.0.3",
         "rospdf/pdf-php": "0.12.43",
-        "sensio/framework-extra-bundle": "^5.1",
-        "symfony/console": "^3.4",
-        "symfony/event-dispatcher": "^3.4",
-        "symfony/flex": "^1.0",
-        "symfony/framework-bundle": "^3.4",
         "symfony/http-foundation": "^3.4",
-        "symfony/lts": "^3",
-        "symfony/monolog-bridge": "^3.4",
-        "symfony/monolog-bundle": "^3.1",
-        "symfony/orm-pack": "^1.0",
         "symfony/translation": "^3.4",
-        "symfony/validator": "^3.4",
-        "symfony/yaml": "^3.4",
         "twig/twig": "v2.*"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.2",
-        "symfony/dotenv": "^3.4",
-        "symfony/maker-bundle": "^1.0",
-        "symfony/phpunit-bridge": "^3.4"
-    },
-    "config": {
-        "preferred-install": {
-            "*": "dist"
-        },
-        "sort-packages": true
+        "phpunit/phpunit": "5.7.*",
+        "squizlabs/php_codesniffer": "^3.2"
     },
     "autoload": {
         "psr-4": {
             "FacturaScripts\\Core\\": "Core/",
             "FacturaScripts\\Dinamic\\": "Dinamic/",
-            "FacturaScripts\\Plugins\\": "Plugins/",
-            "FacturaScripts\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "App\\Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "id": "01C4QSW0F4BT8ARBYVTKMVEN6N",
-            "allow-contrib": false
+            "FacturaScripts\\Plugins\\": "Plugins/"
         }
     },
     "keywords" : [

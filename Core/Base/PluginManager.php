@@ -289,7 +289,7 @@ class PluginManager
                 }
 
                 try {
-                    $controller = new $controllerNamespace($cache, self::$i18n, $controllerName);
+                    $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
                     $menuManager->selectPage($controller->getPageData());
                 } catch (Exception $exc) {
                     self::$minilog->critical(self::$i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));

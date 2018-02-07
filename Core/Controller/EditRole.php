@@ -143,7 +143,7 @@ class EditRole extends ExtendedController\PanelController
                     $this->dataBase->commit();
                 } catch (\Exception $e) {
                     $this->dataBase->rollback();
-                    $this->get('logger')->notice($e->getMessage());
+                    $this->miniLog->notice($e->getMessage());
                 }
 
                 return true;
