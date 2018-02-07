@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -167,8 +167,6 @@ function dbConnect(&$errors, &$i18n)
  */
 function testMysql(&$errors, $dbData)
 {
-    $done = false;
-
     if (filter_input(INPUT_POST, 'mysql_socket') !== '') {
         ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
     }
@@ -181,18 +179,18 @@ function testMysql(&$errors, $dbData)
         // Check that the DB exists, if it doesn't, we create a new one
         $dbSelected = mysqli_select_db($connection, $dbData['name']);
         if ($dbSelected) {
-            $done = true;
-        } else {
-            $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
-            if ($connection->query($sqlCrearBD)) {
-                $done = true;
-            } else {
-                $errors[] = (string) $connection->connect_error;
-            }
+            return true;
         }
+
+        $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
+        if ($connection->query($sqlCrearBD)) {
+            return true;
+        }
+
+        $errors[] = (string) $connection->connect_error;
     }
 
-    return $done;
+    return false;
 }
 
 /**
@@ -207,25 +205,23 @@ function testMysql(&$errors, $dbData)
  */
 function testPostgreSql(&$errors, $dbData)
 {
-    $done = false;
-
     $connection = @pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
     if ($connection) {
         // Check that the DB exists, if it doesn't, we create a new one
         $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if ($connection2) {
-            $done = true;
-        } else {
-            $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            if (pg_query($connection, $sqlCrearBD)) {
-                $done = true;
-            } else {
-                $errors[] = (string) pg_last_error($connection);
-            }
+            return true;
         }
+
+        $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
+        if (pg_query($connection, $sqlCrearBD)) {
+            return true;
+        }
+
+        $errors[] = (string) pg_last_error($connection);
     }
 
-    return $done;
+    return false;
 }
 
 /**

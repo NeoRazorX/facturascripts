@@ -156,7 +156,7 @@ class AppController extends App
             $permissions = new ControllerPermissions($user, $pageName);
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $pageName);
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 if ($user === false) {
                     $this->controller->publicCore($this->response);
                     $template = $this->controller->getTemplate();
