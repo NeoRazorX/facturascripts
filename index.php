@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,13 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define('FS_FOLDER', __DIR__);
+
 /// Preliminary checks
 if (!file_exists(__DIR__ . '/config.php')) {
+    if (!file_exists(__DIR__ . '/vendor')) {
+        die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install<br/>npm install</p>'
+            . '----------------------------------------'
+            . '<p>Debes ejecutar: composer install<br/>npm install</p>');
+    }
+
     /**
      * If there is no configuration file, it means the installation hasn't been done,
-     * then we redirect to the installer
+     * then we load the installer.
      */
-    header('Location: install.php');
+    require_once __DIR__ . '/vendor/autoload.php';
+    $app = new FacturaScripts\Core\App\AppInstaller();
     die('');
 }
 
@@ -31,12 +40,13 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
 /// Initialise the application
-$app = new FacturaScripts\Core\App\AppController(__DIR__);
+$router = new FacturaScripts\Core\App\AppRouter();
+$app = $router->getApp();
 
 /// Connect to the database, cache, etc.
 $app->connect();
 
-/// Run the corresponding controller
+/// Executes App logic
 $app->run();
 $app->render();
 

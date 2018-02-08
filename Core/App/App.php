@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
@@ -32,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
+
     /**
      * Stored defaut configuration with the default application settings.
      *
@@ -103,17 +103,19 @@ abstract class App
     protected $settings;
 
     /**
+     * Requested Uri
+     *
+     * @var string
+     */
+    protected $uri;
+
+    /**
      * Initializes the app.
      *
-     * @param string $folder FacturaScripts working directory
+     * @param string $uri
      */
-    public function __construct($folder = '')
+    public function __construct($uri)
     {
-        /// Having the directory in a constas lets us access it more easily
-        if (!defined('FS_FOLDER')) {
-            define('FS_FOLDER', $folder);
-        }
-
         $this->request = Request::createFromGlobals();
 
         if ($this->request->cookies->get('fsLang')) {
@@ -129,6 +131,7 @@ abstract class App
         $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();
         $this->settings = new AppSettings();
+        $this->uri = $uri;
     }
 
     /**
