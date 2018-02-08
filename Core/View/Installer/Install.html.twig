@@ -42,7 +42,7 @@ $(document).ready(function () {
     </head>
     <body>
         <nav class="navbar navbar-dark bg-dark">
-            <a class="navbar-brand" href="install.php">
+            <a class="navbar-brand" href="" onclick="location.reload();">
                 <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
             </a>
         </nav>
@@ -50,9 +50,11 @@ $(document).ready(function () {
             <div class="row">
                 <div class="col-sm-12">
                     <br />
-                    {% for msg in errors %}
-                    <div class="alert alert-danger">{{ msg }}</div>
-                    {% endfor %}
+                    {% from 'Macro/Utils.html.twig' import message as show_message %}
+                    {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+                    {{ show_message(log, ['warning'], 'warning') }}
+                    {{ show_message(log, ['notice'], 'success') }}
+                    {{ show_message(log, ['info'], 'info') }}
                     <p>{{ i18n.trans('installer-p') }}</p>
                 </div>
             </div>
@@ -78,7 +80,7 @@ $(document).ready(function () {
                     <br/>
                 </div>
             </div>
-            <form name="fs_install" action="install.php" method="post" class="form">
+            <form name="fs_install" method="post" class="form">
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="preferencias">
                         <div class="row">
@@ -92,7 +94,7 @@ $(document).ready(function () {
                                             </span>
                                         </span>
                                         <select id="fs_lang" name="fs_lang" class="form-control">
-                                            {% for langCode, langName in languages %}
+                                            {% for langCode, langName in i18n.getAvailableLanguages() %}
                                             {% if langCode == i18n.getLangCode() %}
                                             <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                             {% else %}
@@ -113,7 +115,7 @@ $(document).ready(function () {
                                             </span>
                                         </span>
                                         <select name="fs_timezone" class="form-control">
-                                            {% for tz in timezone %}
+                                            {% for tz in timezones %}
                                             <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
                                             {% endfor %}
                                         </select>
@@ -223,17 +225,6 @@ $(document).ready(function () {
                     </div>
                 </div>
             </form>
-            <h5>
-                {{ i18n.trans('installer-requirements') }}
-            </h5>
-            <div class="row">
-                <br />
-                {% for extension, status in requirements %}
-                <div class="col-sm-4">
-                    <div class="alert alert-info">{{ extension }}: <i class="fa {{ status }} pull-right"></i></div>
-                </div>
-                {% endfor %}
-            </div>
         </div>
         <nav class="navbar fixed-bottom navbar-link bg-light">
             <a class="navbar-brand" href="https://www.facturascripts.com" target="_blank">

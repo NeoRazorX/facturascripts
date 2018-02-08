@@ -8,9 +8,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
    RewriteEngine On
-
-   RewriteRule ^api/(.*)/(.*)/(.*)$ api.php?v=$1&resource=$2&cod=$3&%{QUERY_STRING} [L]
-   RewriteRule ^api/(.*)/(.*)$ api.php?v=$1&resource=$2&%{QUERY_STRING} [L]
-   RewriteRule ^api/(.*)$ api.php?v=$1&%{QUERY_STRING} [L]
-   RewriteRule ^api$ api.php?%{QUERY_STRING} [L]
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteRule ^(.*)$ index.php?path=$1 [NC,L,QSA]
 </IfModule>
