@@ -19,9 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExportManager;
-
 /**
  * View definition for its use in ExtendedControllers
  *
@@ -48,40 +45,5 @@ class HtmlView extends BaseView
     {
         parent::__construct($title, $modelName);
         $this->fileName = $fileName;
-    }
-
-    /**
-     * Allow disable a column from a table.
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-    }
-
-    /**
-     * Method to export the view data
-     *
-     * @param ExportManager $exportManager
-     *
-     * @return null
-     */
-    public function export(&$exportManager)
-    {
-        return null;
-    }
-
-    /**
-     * Does nothing in this class.
-     *
-     * @param mixed           $code
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param int             $limit
-     */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
-    {
     }
 }
