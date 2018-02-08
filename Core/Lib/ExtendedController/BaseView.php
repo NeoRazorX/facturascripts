@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model;
 
 /**
@@ -74,33 +72,6 @@ abstract class BaseView
      * @var Base\Translator
      */
     public static $i18n;
-
-    /**
-     * Establishes de view/edit state of a column
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    abstract public function disableColumn($columnName, $disabled);
-
-    /**
-     * Method to export the view data
-     *
-     * @param ExportManager $exportManager
-     */
-    abstract public function export(&$exportManager);
-
-    /**
-     * Load the data in the model or cursor property, according to the code or
-     * where filter specified.
-     *
-     * @param mixed           $code
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param int             $limit
-     */
-    abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
      * Construct and initialize the class
