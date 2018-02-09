@@ -131,6 +131,6 @@ class Page extends Base\ModelClass
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return 'index.php?page=' . $this->name;
+        return $this->name;
     }
 }

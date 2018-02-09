@@ -119,18 +119,15 @@ class EditSettings extends ExtendedController\PanelController
      */
     public function getURL($type)
     {
-        $result = 'index.php';
         switch ($type) {
             case 'list':
-                $result .= '?page=AdminHome';
-                break;
+                return 'AdminHome';
 
             case 'edit':
-                $result .= '?page=EditSettings';
-                break;
+                return 'EditSettings';
         }
 
-        return $result;
+        return FS_ROUTE;
     }
 
     /**

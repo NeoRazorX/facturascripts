@@ -33,7 +33,7 @@
         <column name="expiration" display="center" order="120">
             <widget type="text" fieldname="vencimiento" />
         </column>
-        <column name="account-code" titleurl="?page=ListEmpresa" order="125">
+        <column name="account-code" titleurl="ListEmpresa" order="125">
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column name="generate-receipt" display="center" order="130">

@@ -248,7 +248,7 @@ class Controller
      */
     public function url()
     {
-        return 'index.php?page=' . $this->className;
+        return $this->className;
     }
 
     /**

@@ -128,7 +128,7 @@ class ListView extends BaseView
     {
         foreach ($this->getColumns() as $col) {
             if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
-                return '?page=' . $col->widget->onClick . '&code=' . $data->{$col->widget->fieldName};
+                return $col->widget->onClick . '?code=' . $data->{$col->widget->fieldName};
             }
         }
 

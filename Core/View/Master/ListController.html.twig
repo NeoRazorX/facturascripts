@@ -75,7 +75,7 @@
         $('#formSearch' + tabActive).submit();
     }
     function goToOptions() {
-        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
+        window.location.href = 'EditPageOption?code=' + tabActive;
     }
     function insertRecord() {
         var url = { {{ fsc.getStringURLs('new') | raw }} };
