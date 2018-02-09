@@ -71,7 +71,7 @@ class AppAPI extends App
      */
     private function isDisabled()
     {
-        return AppSettings::get('default', 'enable_api', false) !== true;
+        return $this->settings->get('default', 'enable_api', false) !== 'true';
     }
 
     /**
