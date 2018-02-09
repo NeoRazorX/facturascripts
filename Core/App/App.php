@@ -33,13 +33,6 @@ abstract class App
 {
 
     /**
-     * Stored defaut configuration with the default application settings.
-     *
-     * @var AppSettings
-     */
-    protected $appSettings;
-
-    /**
      * Cache access manager.
      *
      * @var Base\Cache
