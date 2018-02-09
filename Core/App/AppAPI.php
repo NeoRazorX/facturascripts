@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
     /**
      * Runs the API.
      *
@@ -81,8 +81,7 @@ class AppAPI extends App
      */
     private function selectVersion()
     {
-        $version = $this->request->get('v', '');
-        if ($version === '3') {
+        if ($this->getUriParam(1) === '3') {
             return $this->selectResource();
         }
 
@@ -101,7 +100,7 @@ class AppAPI extends App
     {
         $map = $this->getResourcesMap();
 
-        $resourceName = $this->request->get('resource', '');
+        $resourceName = $this->getUriParam(2);
         if ($resourceName === '') {
             $this->exposeResources($map);
 
@@ -109,7 +108,7 @@ class AppAPI extends App
         }
 
         $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $map[$resourceName];
-        $cod = $this->request->get('cod', '');
+        $cod = $this->getUriParam(3);
 
         if ($cod === '') {
             return $this->processResource($modelName);

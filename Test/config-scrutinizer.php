@@ -19,6 +19,7 @@
 define('FS_COOKIES_EXPIRE', 604800);
 define('FS_DEBUG', true);
 define('FS_LANG', 'es_ES');
+define('FS_ROUTE', '/');
 define('FS_TIMEZONE', 'Europe/Madrid');
 define('FS_DB_TYPE', 'postgresql');
 define('FS_DB_HOST', 'localhost');

@@ -24,7 +24,7 @@ use FacturaScripts\Core\Model\Settings;
 /**
  * AppSettings manage the essential data settings of the app.
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppSettings
 {
