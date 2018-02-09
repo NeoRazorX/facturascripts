@@ -53,9 +53,4 @@ class AssetManager
 
         return $assets;
     }
-
-    public static function fix($path)
-    {
-        return FS_ROUTE . '/' . $path;
-    }
 }
