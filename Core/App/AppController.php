@@ -226,7 +226,7 @@ class AppController extends App
         $twigLoader = $this->loadTwigFolders();
 
         /// Twig options
-        $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
+        $twigOptions = ['cache' => FS_FOLDER . '/MyFiles/Cache/Twig'];
 
         /// HTML template variables
         $templateVars = [

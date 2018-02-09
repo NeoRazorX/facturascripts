@@ -41,14 +41,17 @@ require_once __DIR__ . '/config.php';
 
 /// Initialise the application
 $router = new FacturaScripts\Core\App\AppRouter();
-$app = $router->getApp();
 
-/// Connect to the database, cache, etc.
-$app->connect();
+if (!$router->getFile()) {
+    $app = $router->getApp();
 
-/// Executes App logic
-$app->run();
-$app->render();
+    /// Connect to the database, cache, etc.
+    $app->connect();
 
-/// Disconnect from everything
-$app->close();
+    /// Executes App logic
+    $app->run();
+    $app->render();
+
+    /// Disconnect from everything
+    $app->close();
+}

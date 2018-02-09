@@ -273,7 +273,7 @@ abstract class ListController extends Base\Controller
 
             $fields = $listView->getSearchIn();
             $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
-            $listView->loadData($where, 0, Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData(false, $where, [], 0, Base\Pagination::FS_ITEM_LIMIT);
 
             $cols = $this->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;

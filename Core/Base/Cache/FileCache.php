@@ -63,7 +63,7 @@ class FileCache implements AdaptorInterface
     public function __construct()
     {
         self::$config = [
-            'cache_path' => FS_FOLDER . '/Cache/FileCache',
+            'cache_path' => FS_FOLDER . '/MyFiles/Cache/FileCache',
             'expires' => 180,
         ];
 
