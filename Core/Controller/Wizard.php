@@ -96,7 +96,7 @@ class Wizard extends Controller
             $this->user->save();
 
             /// redir to EditSettings
-            $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
+            $this->response->headers->set('Refresh', '0; EditSettings');
         }
     }
 

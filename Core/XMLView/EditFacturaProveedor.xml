@@ -59,12 +59,12 @@
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment" title="method-payment" numcolumns="3" titleurl="?page=ListFormaPago" order="120">
+            <column name="payment" title="method-payment" numcolumns="3" titleurl="ListFormaPago" order="120">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="currency" title="currency" numcolumns="2" titleurl="?page=ListDivisa" order="130">
+            <column name="currency" title="currency" numcolumns="2" titleurl="ListDivisa" order="130">
                 <widget type="select" fieldname="coddivisa">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>

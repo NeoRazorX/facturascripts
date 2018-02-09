@@ -148,8 +148,8 @@ class AppController extends App
             return $this->request->query->get('page');
         }
 
-        if ($this->uri !== '/' && substr($this->uri, 0, 10) !== '/index.php') {
-            return substr($this->uri, 1);
+        if ($this->getUriParam(0) !== 'index.php' && $this->getUriParam(0) !== '') {
+            return $this->getUriParam(0);
         }
 
         if ($user && $user->homepage !== null && $user->homepage !== '') {

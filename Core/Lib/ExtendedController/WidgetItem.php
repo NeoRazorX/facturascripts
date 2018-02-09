@@ -391,8 +391,8 @@ abstract class WidgetItem implements VisualItemInterface
 
         $text = empty($text) ? $value : $text;
         $style = $this->getTextOptionsHTML($value);
-        $html = empty($this->onClick) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick
-            . '&code=' . $value . '" ' . $style . '>' . $text . '</a>';
+        $html = empty($this->onClick) ? '<span' . $style . '>' . $text . '</span>' : '<a href="' . $this->onClick
+            . '?code=' . $value . '" ' . $style . '>' . $text . '</a>';
 
         return $html;
     }
