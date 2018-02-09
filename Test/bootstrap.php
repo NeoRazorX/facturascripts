@@ -27,10 +27,10 @@ define('FS_FOLDER', getcwd());
 $config = FS_FOLDER . '/config.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
     echo 'Executing on scrutinizer ...' . "\n\n";
-    $config = FS_FOLDER . '/config-scrutinizer.php';
+    $config = FS_FOLDER . '/Test/config-scrutinizer.php';
 } elseif (__DIR__ === '/home/travis/build/NeoRazorX/facturascripts/Test') {
     echo 'Executing on travis ...' . "\n\n";
-    $config = FS_FOLDER . '/config-travis.php';
+    $config = FS_FOLDER . '/Test/config-travis.php';
 }
 
 echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.' . "\n";

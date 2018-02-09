@@ -256,7 +256,7 @@ class AppController extends App
             $this->debugBar['messages']->info('END');
         }
         $twig = new Twig_Environment($twigLoader, $twigOptions);
-        $assetFunction = new Twig_Function('asset', function($string) {
+        $assetFunction = new Twig_Function('asset', function ($string) {
             return FS_ROUTE . '/' . $string;
         });
         $twig->addFunction($assetFunction);
