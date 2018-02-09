@@ -101,12 +101,11 @@ class AppInstaller
     private function createFolders()
     {
         // If they already exist, we can return true
-        if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('Cache')) {
+        if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('MyFiles')) {
             return true;
         }
 
-        if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
-            chmod('Plugins', octdec(777));
+        if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('MyFiles')) {
             return true;
         }
 
@@ -223,7 +222,6 @@ class AppInstaller
             fwrite($file, "define('FS_CACHE_HOST', '" . $this->request->request->get('memcache_host') . "');\n");
             fwrite($file, "define('FS_CACHE_PORT', '" . $this->request->request->get('memcache_port') . "');\n");
             fwrite($file, "define('FS_CACHE_PREFIX', '" . $this->request->request->get('memcache_prefix') . "');\n");
-            fwrite($file, "define('FS_MYDOCS', '');\n");
             if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
                 fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
             }

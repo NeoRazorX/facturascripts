@@ -184,8 +184,7 @@ abstract class App
      */
     protected function getUriParam($num)
     {
-        $uri = explode('?', $this->uri);
-        $params = explode('/', substr($uri[0], 1));
+        $params = explode('/', substr($this->uri, 1));
         return isset($params[$num]) ? $params[$num] : '';
     }
 

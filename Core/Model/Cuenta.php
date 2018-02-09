@@ -107,6 +107,7 @@ class Cuenta extends Base\ModelClass
     {
         /// force the parents tables
         new Ejercicio();
+        new CuentaEspecial();
 
         return '';
     }

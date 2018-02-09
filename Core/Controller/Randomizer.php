@@ -52,7 +52,7 @@ class Randomizer extends Base\Controller
         $option = $this->request->get('gen', '');
         if ($option !== '') {
             $this->execAction($option);
-            $this->urlReload = $this->url() . '&gen=' . $option;
+            $this->urlReload = $this->url() . '?gen=' . $option;
         }
     }
 

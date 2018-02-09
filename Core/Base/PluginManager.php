@@ -83,7 +83,7 @@ class PluginManager
             self::$deployedControllers = false;
             self::$i18n = new Translator();
             self::$minilog = new MiniLog();
-            self::$pluginListFile = FS_FOLDER . DIRECTORY_SEPARATOR . 'plugin.list';
+            self::$pluginListFile = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'plugin.list';
             self::$enabledPlugins = $this->loadFromFile();
         }
     }

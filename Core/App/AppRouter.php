@@ -40,9 +40,40 @@ class AppRouter
         return new AppController($uri);
     }
 
+    public function getFile()
+    {
+        $uri = $this->getUri();
+        $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core'];
+        foreach ($allowedFolders as $folder) {
+            $filePath = FS_FOLDER . $uri;
+            if ('/' . $folder === substr($uri, 0, strlen($folder) + 1) && is_file($filePath)) {
+                header('Content-Type: ' . $this->getMime($filePath));
+                readfile($filePath);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getMime($filePath)
+    {
+        if (substr($filePath, -4) === '.css') {
+            return 'text/css';
+        }
+
+        if (substr($filePath, -3) === '.js') {
+            return 'application/javascript';
+        }
+
+        return mime_content_type($filePath);
+    }
+
     private function getUri()
     {
         $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
-        return substr($uri, strlen(FS_ROUTE));
+        $uriArray = explode('?', $uri);
+
+        return substr($uriArray[0], strlen(FS_ROUTE));
     }
 }
