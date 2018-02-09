@@ -107,7 +107,7 @@ abstract class App
      *
      * @param string $uri
      */
-    public function __construct($uri)
+    public function __construct($uri = '/')
     {
         $this->request = Request::createFromGlobals();
 

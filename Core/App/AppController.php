@@ -73,7 +73,7 @@ class AppController extends App
      *
      * @param string $uri
      */
-    public function __construct($uri)
+    public function __construct($uri = '/')
     {
         parent::__construct($uri);
         $this->debugBar = new StandardDebugBar();
