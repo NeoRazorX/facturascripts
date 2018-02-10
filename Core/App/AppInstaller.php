@@ -106,6 +106,7 @@ class AppInstaller
         }
 
         if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('MyFiles')) {
+            chmod('Plugins', octdec(777));
             return true;
         }
 
