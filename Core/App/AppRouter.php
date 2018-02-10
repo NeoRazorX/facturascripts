@@ -26,6 +26,13 @@ namespace FacturaScripts\Core\App;
 class AppRouter
 {
 
+    public function __construct()
+    {
+        if (!defined('FS_ROUTE')) {
+            define('FS_ROUTE', '');
+        }
+    }
+
     public function getApp()
     {
         $uri = $this->getUri();
@@ -43,10 +50,17 @@ class AppRouter
     public function getFile()
     {
         $uri = $this->getUri();
+        $filePath = FS_FOLDER . $uri;
+
+        /// Not a file?
+        if (!is_file($filePath)) {
+            return false;
+        }
+
+        /// Forbidden folder?
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core'];
         foreach ($allowedFolders as $folder) {
-            $filePath = FS_FOLDER . $uri;
-            if ('/' . $folder === substr($uri, 0, strlen($folder) + 1) && is_file($filePath)) {
+            if ('/' . $folder === substr($uri, 0, strlen($folder) + 1)) {
                 header('Content-Type: ' . $this->getMime($filePath));
                 readfile($filePath);
                 return true;

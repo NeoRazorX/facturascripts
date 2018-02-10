@@ -32,7 +32,11 @@ if (!file_exists(__DIR__ . '/config.php')) {
      * then we load the installer.
      */
     require_once __DIR__ . '/vendor/autoload.php';
-    $app = new FacturaScripts\Core\App\AppInstaller();
+
+    $router = new FacturaScripts\Core\App\AppRouter();
+    if (!$router->getFile()) {
+        $app = new FacturaScripts\Core\App\AppInstaller();
+    }
     die('');
 }
 
