@@ -58,7 +58,7 @@ class AppRouter
         }
 
         /// Forbidden folder?
-        $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core'];
+        $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins'];
         foreach ($allowedFolders as $folder) {
             if ('/' . $folder === substr($uri, 0, strlen($folder) + 1)) {
                 header('Content-Type: ' . $this->getMime($filePath));

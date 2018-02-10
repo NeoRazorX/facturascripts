@@ -40,6 +40,22 @@ if (!file_exists(__DIR__ . '/config.php')) {
     die('');
 }
 
+/// This function shows useful error data
+function fatal_handler()
+{
+    $error = error_get_last();
+    if (isset($error) && in_array($error["type"], [1, 64])) {
+        echo "<h1>Fatal error</h1>"
+        . "<ul>"
+        . "<li><b>Type:</b> " . $error["type"] . "</li>"
+        . "<li><b>File:</b> " . $error["file"] . "</li>"
+        . "<li><b>Line:</b> " . $error["line"] . "</li>"
+        . "<li><b>Message:</b> " . $error["message"] . "</li>"
+        . "</ul>";
+    }
+}
+register_shutdown_function("fatal_handler");
+
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
