@@ -144,10 +144,6 @@ class AppController extends App
      */
     private function getPageName($user)
     {
-        if ($this->request->query->get('page', '') !== '') {
-            return $this->request->query->get('page');
-        }
-
         if ($this->getUriParam(0) !== 'index.php' && $this->getUriParam(0) !== '') {
             return $this->getUriParam(0);
         }
