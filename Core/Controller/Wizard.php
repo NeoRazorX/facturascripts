@@ -21,7 +21,9 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Wizard
@@ -70,9 +72,9 @@ class Wizard extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param Model\User $user
-     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param Model\User            $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -94,7 +96,7 @@ class Wizard extends Controller
             $this->user->save();
 
             /// redir to EditSettings
-            $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
+            $this->response->headers->set('Refresh', '0; EditSettings');
         }
     }
 

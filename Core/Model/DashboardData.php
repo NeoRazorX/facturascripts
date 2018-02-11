@@ -189,11 +189,11 @@ class DashboardData extends Base\ModelClass
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
-        $result = 'index.php?page=';
+        $result = '';
 
         switch ($type) {
             case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
+                $result .= 'Edit' . $model . '?code=' . $value;
                 break;
 
             case 'new':

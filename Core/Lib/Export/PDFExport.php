@@ -305,7 +305,7 @@ class PDFExport implements ExportInterface
             $this->pdf = new \Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->tempPath = FS_FOLDER . '/Cache';
+            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - 60;
 

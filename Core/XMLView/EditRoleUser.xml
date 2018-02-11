@@ -33,7 +33,7 @@
                     <values source="fs_users" fieldcode="nick" fieldtitle="nick"></values>
                 </widget>
             </column>
-            <column name="role" order="100" titleurl="?page=ListUser">
+            <column name="role" order="100" titleurl="ListUser">
                 <widget type="select" fieldname="codrol">
                     <values source="fs_roles" fieldcode="codrol" fieldtitle="descripcion"></values>
                 </widget>

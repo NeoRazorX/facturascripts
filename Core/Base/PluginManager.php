@@ -83,7 +83,7 @@ class PluginManager
             self::$deployedControllers = false;
             self::$i18n = new Translator();
             self::$minilog = new MiniLog();
-            self::$pluginListFile = FS_FOLDER . DIRECTORY_SEPARATOR . 'plugin.list';
+            self::$pluginListFile = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'plugin.list';
             self::$enabledPlugins = $this->loadFromFile();
         }
     }
@@ -289,7 +289,7 @@ class PluginManager
                 }
 
                 try {
-                    $controller = new $controllerNamespace($cache, self::$i18n, $controllerName);
+                    $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
                     $menuManager->selectPage($controller->getPageData());
                 } catch (Exception $exc) {
                     self::$minilog->critical(self::$i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));

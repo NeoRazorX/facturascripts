@@ -305,7 +305,7 @@ class Subcuenta extends Base\ModelClass
                     return false;
                 }
 
-                self::$miniLog->alert(self::$i18n->trans('equivalent-account-not-found', ['%accountCode%' => $oldSc->codcuenta, '%exerciseCode%' => $codejercicio, '%link%' => 'index.php?page=ContabilidadEjercicio&cod=' . $codejercicio]));
+                self::$miniLog->alert(self::$i18n->trans('equivalent-account-not-found', ['%accountCode%' => $oldSc->codcuenta, '%exerciseCode%' => $codejercicio, '%link%' => 'ContabilidadEjercicio?cod=' . $codejercicio]));
 
                 return false;
             }

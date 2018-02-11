@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,9 +60,9 @@ class EditPageOption extends Base\Controller
      * @param MiniLog    $miniLog
      * @param string     $className
      */
-    public function __construct(&$cache, &$i18n, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($cache, $i18n, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className);
         $this->setTemplate('EditPageOption');
         $this->model = new Model\PageOption();
     }
@@ -129,11 +129,11 @@ class EditPageOption extends Base\Controller
         }
 
         if ($this->model->save()) {
-            $this->get('logger')->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
 
             return;
         }
-        $this->get('logger')->alert($this->i18n->trans('data-save-error'));
+        $this->miniLog->alert($this->i18n->trans('data-save-error'));
     }
 
     /**
