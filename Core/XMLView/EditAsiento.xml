@@ -25,15 +25,25 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="fecha" title="date" numcolumns="3" order="100">
+            <column name="fecha" title="date" numcolumns="2" order="100">
                 <widget type="datepicker" fieldname="fecha" required="true" />
             </column>
-            <column name="concepto" numcolumns="6" order="120">
+            <column name="concepto" numcolumns="8" order="120">
                 <widget type="text" fieldname="concepto" required="true" />
             </column>
-            <column name="importe" numcolumns="3" order="140">
+            <column name="importe" numcolumns="2" display="right" order="140">
                 <widget type="money" fieldname="importe" readonly="readonly"/>
+            </column>
+            <column name="id" display="none" order="999">
+                <widget type="number" fieldname="idasiento" />
             </column>
         </group>
     </columns>
+
+    <rows>
+        <row type="actions">
+            <button type="action" label="lock" color="warning" action="lock" icon="fa-lock" />
+            <button type="action" label="clone" color="info" action="clone" icon="fa-clone" />
+        </row>
+    </rows>
 </view>

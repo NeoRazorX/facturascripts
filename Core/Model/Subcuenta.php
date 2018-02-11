@@ -154,6 +154,7 @@ class Subcuenta extends Base\ModelClass
     {
         new Ejercicio();
         new Cuenta();
+        new SubcuentaSaldo();
 
         return '';
     }

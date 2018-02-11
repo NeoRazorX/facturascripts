@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -32,21 +33,26 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditAsiento extends ExtendedController\PanelController
 {
+    public function __construct(&$cache, &$i18n, $className)
+    {
+        parent::__construct($cache, $i18n, $className);
+        $this->setTemplate('AccountingEntry');
+    }
+
     /**
      * Load views
      */
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $this->setTabsPosition('bottom');
+        $this->addGridView('\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
     }
 
     /**
      * Load data view procedure
      *
      * @param string                      $keyView
-     * @param ExtendedController\EditView $view
+     * @param ExtendedController\BaseView $view
      */
     protected function loadData($keyView, $view)
     {
@@ -56,13 +62,44 @@ class EditAsiento extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
+            case 'EditPartida':
             case 'ListPartida':
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData(false, $where);
+                    $orderby = ['idpartida' => 'ASC'];
+                    $view->loadData(false, $where, $orderby);
                 }
                 break;
+        }
+    }
+
+    /**
+     * Run the actions that alter data before reading it
+     *
+     * @param BaseView $view
+     * @param string   $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($view, $action): bool
+    {
+        switch ($action) {
+            case 'account-data':
+                $this->setTemplate(false);
+                $code = $this->request->get('code', '');
+                $result = $this->getAccountData($code);
+                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                return false;
+
+            case 'clone':
+                return true; // TODO
+
+            case 'lock':
+                return true; // TODO
+
+            default:
+                return parent::execPreviousAction($view, $action);
         }
     }
 
@@ -71,7 +108,7 @@ class EditAsiento extends ExtendedController\PanelController
      *
      * @return array
      */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounting-entry';
@@ -80,5 +117,34 @@ class EditAsiento extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    private function getAccountData($code): array
+    {
+        $result = [
+            'description' => '',
+            'balance' => 0.00,
+            'detail' => []
+        ];
+
+        if (!empty($code)) {
+            $accountingEntry = new Model\Partida();
+            if ($accountingEntry->loadFromCode($code)) {
+                $account = new Model\Subcuenta();
+                $account->loadFromCode($accountingEntry->idsubcuenta);
+                $result['description'] = $account->descripcion;
+
+                $balance = new Model\SubcuentaSaldo();
+                if ($balance->loadFromCode($accountingEntry->idsubcuenta)) {
+                    $result['balance'] = $balance->saldo;
+
+                    for ($i = 1; $i < 13; ++$i) {
+                        $field = 'saldo_' . strval($i);
+                        $result['detail'][] = $balance->{$field};
+                    }
+                }
+            }
+        }
+        return $result;
     }
 }

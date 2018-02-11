@@ -157,7 +157,9 @@ abstract class PanelController extends Base\Controller
         $action = empty($view) ? '' : $this->request->get('action', '');
 
         // Run operations on the data before reading it
-        $this->execPreviousAction($view, $action);
+        if (!$this->execPreviousAction($view, $action)) {
+            return;
+        }
 
         // Load the model data for each view
         $mainView = array_keys($this->views)[0];
@@ -452,6 +454,12 @@ abstract class PanelController extends Base\Controller
     protected function addEditView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
         $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->addView($viewName, $view, $viewIcon);
+    }
+
+    protected function addGridView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list')
+    {
+        $view = new GridView($viewTitle, $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
