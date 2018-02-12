@@ -57,7 +57,7 @@ class Dashboard extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_dashboard';
+        return 'dashboard';
     }
 
     /**

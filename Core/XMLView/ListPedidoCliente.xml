@@ -49,10 +49,9 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="status">
-            <option color="table-warning">0</option>
-            <option color="table-success">1</option>
-            <option color="table-danger">2</option>
+        <row type="status" fieldname="editable">
+            <option color="table-warning">1</option>
+            <option color="table-success">0</option>
         </row>
     </rows>
     <filters>

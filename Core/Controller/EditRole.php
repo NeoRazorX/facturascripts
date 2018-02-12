@@ -60,8 +60,8 @@ class EditRole extends ExtendedController\PanelController
 
             case 'EditRoleUser':
             case 'ListRoleAccess':
-                $codrol = $this->getViewModelValue('EditRole', 'codrol');
-                $where = [new DataBaseWhere('codrol', $codrol)];
+                $codrole = $this->getViewModelValue('EditRole', 'codrole');
+                $where = [new DataBaseWhere('codrole', $codrole)];
                 $view->loadData(false, $where);
                 break;
         }
@@ -87,15 +87,15 @@ class EditRole extends ExtendedController\PanelController
      * Add the indicated page list to the Role group
      * and all users who are in that group
      *
-     * @param string       $codrol
+     * @param string       $codrole
      * @param Model\Page[] $pages
      *
      * @throws \Exception
      */
-    private function addRoleAccess($codrol, $pages)
+    private function addRoleAccess($codrole, $pages)
     {
         // add Pages to Rol
-        if (!Model\RoleAccess::addPagesToRole($codrol, $pages)) {
+        if (!Model\RoleAccess::addPagesToRole($codrole, $pages)) {
             throw new \Exception(self::$i18n->trans('cancel-process'));
         }
     }
@@ -131,15 +131,15 @@ class EditRole extends ExtendedController\PanelController
     {
         switch ($action) {
             case 'add-rol-access':
-                $codrol = $this->request->get('code', '');
+                $codrole = $this->request->get('code', '');
                 $pages = $this->getPages();
-                if (empty($pages) || empty($codrol)) {
+                if (empty($pages) || empty($codrole)) {
                     return true;
                 }
 
                 $this->dataBase->beginTransaction();
                 try {
-                    $this->addRoleAccess($codrol, $pages);
+                    $this->addRoleAccess($codrole, $pages);
                     $this->dataBase->commit();
                 } catch (\Exception $e) {
                     $this->dataBase->rollback();

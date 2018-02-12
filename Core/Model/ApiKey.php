@@ -62,14 +62,7 @@ class ApiKey extends Base\ModelClass
      *
      * @var string
      */
-    public $f_alta;
-
-    /**
-     * Discharge date.
-     *
-     * @var string
-     */
-    public $f_baja;
+    public $creationdate;
 
     /**
      * Nick of the user.
@@ -85,7 +78,7 @@ class ApiKey extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_api_keys';
+        return 'api_keys';
     }
 
     /**
@@ -107,6 +100,6 @@ class ApiKey extends Base\ModelClass
         $this->apikey = '';
         $this->descripcion = '';
         $this->enabled = false;
-        $this->f_alta = date('d-m-Y');
+        $this->creationdate = date('d-m-Y');
     }
 }

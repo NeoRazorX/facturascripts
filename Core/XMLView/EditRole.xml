@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="code" order="100" numcolumns="3">
-            <widget type="text" fieldname="codrol" icon="fa-id-card-o" required="true"/>
+            <widget type="text" fieldname="codrole" icon="fa-id-card-o" required="true"/>
         </column>
         <column name="description" order="100" numcolumns="9">
             <widget type="text" fieldname="descripcion" required="true"/>

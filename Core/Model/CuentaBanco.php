@@ -65,6 +65,6 @@ class CuentaBanco extends Base\BankAccount
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return parent::url($type, 'ListFormaPago&active=List');
+        return parent::url($type, 'ListFormaPago?active=List');
     }
 }

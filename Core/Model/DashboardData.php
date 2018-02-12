@@ -80,7 +80,7 @@ class DashboardData extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_dashboard_data';
+        return 'dashboard_data';
     }
 
     /**

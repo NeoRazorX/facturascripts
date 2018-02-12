@@ -95,7 +95,7 @@
             </column>
             <column name="homepage" numcolumns="3" order="100">
                 <widget type="select" fieldname="homepage">
-                    <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
+                    <values source="pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>
             </column>
             <column name="item_limit" numcolumns="3" order="100">

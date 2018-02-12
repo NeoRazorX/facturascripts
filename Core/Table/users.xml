@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_users.xml
+    Document   : users.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the fs_users table.
+        Structure for the users table.
 -->
 <table>
     <column>
@@ -70,15 +70,15 @@
         <default>1</default>
     </column>
     <constraint>
-        <name>fs_users_pkey</name>
+        <name>users_pkey</name>
         <type>PRIMARY KEY (nick)</type>
     </constraint>
     <constraint>
-        <name>ca_fs_users_pages</name>
-        <type>FOREIGN KEY (homepage) REFERENCES fs_pages (name) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <name>ca_users_pages</name>
+        <type>FOREIGN KEY (homepage) REFERENCES pages (name) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_fs_users_company</name>
+        <name>ca_users_company</name>
         <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -106,7 +106,7 @@ class MenuManager
     {
         $pageModel = self::$pageModel->get($pageData['name']);
         if ($pageModel === false) {
-            $pageData['order'] = 100;
+            $pageData['ordernum'] = 100;
             $pageModel = new Model\Page($pageData);
             $pageModel->save();
         } elseif ($this->pageNeedSave($pageModel, $pageData)) {
@@ -115,7 +115,7 @@ class MenuManager
             $pageModel->showonmenu = $pageData['showonmenu'];
             $pageModel->title = $pageData['title'];
             $pageModel->icon = $pageData['icon'];
-            $pageModel->orden = $pageData['orden'];
+            $pageModel->ordernum = $pageData['ordernum'];
             $pageModel->save();
         }
 
@@ -176,7 +176,7 @@ class MenuManager
         $order = [
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
-            'orden' => 'ASC',
+            'ordernum' => 'ASC',
             'title' => 'ASC',
         ];
 

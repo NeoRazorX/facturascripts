@@ -118,6 +118,6 @@ class ArticuloProveedor extends Base\Product
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return parent::url($type, 'ListArticulo&active=List');
+        return parent::url($type, 'ListArticulo?active=List');
     }
 }

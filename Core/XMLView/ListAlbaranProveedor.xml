@@ -49,7 +49,7 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="ptefactura">
+        <row type="status" fieldname="editable">
             <option color="table-warning">1</option>
             <option color="table-success">0</option>
         </row>
