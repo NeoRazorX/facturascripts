@@ -313,7 +313,7 @@
     "simply-forms": "Formularios sencillos con las opciones imprescindibles.",
     "sql-queries": "Consultas SQL",
     "invalid-expiration": "Vencimiento no válido: %1$s &gt; %2$s.",
-    "created-default-admin-account": "Creouse o usuario admin co contrasinal admin.",
+    "created-default-admin-account": "Creouse o usuario admin co contrasinal de admin.",
     "invalid-user-nick": "Nick '%s' non válido. Debe ter entre 3 e 12 caracteres, valen números ou letras, pero non o Ñ nin acentos.",
     "pass-between-1-32-chars": "O contrasinal debe conter entre 1 e 32 caracteres.",
     "memcache": "Memcache %s",
@@ -622,8 +622,8 @@
     "amount": "Cantidade",
     "any": "Calquera",
     "apc-clear": "APC borrou.",
-    "apc-delete-key-item": "Elemento eliminado '0' de APC.",
-    "apc-get-key-item": "Elemento obtido '0' de APC.",
+    "apc-delete-key-item": "Elemento eliminado '%item'% de APC.",
+    "apc-get-key-item": "Elemento obtido  '%item%'  de APC.",
     "apc-getarray-key-item": "Elementos de matriz amortizados '0' de APC.",
     "apc-not-found": "Non se atopou a extensión APC.",
     "apc-set-key-item": "Elemento fixado '0' para APC.",
@@ -635,7 +635,7 @@
     "average-cost": "Custo medio",
     "badge": "Insignia",
     "balance": "Balance",
-    "balances": "Balanzas",
+    "balances": "Balances",
     "bank-accounts": "Contas bancarias",
     "bank-fmandato": "Data obrigatoria",
     "barcode": "Código de barras",
@@ -1145,5 +1145,8 @@
     "creation-date": "Data de creación",
     "display-date": "Data de visualización",
     "color": "cor",
-    "%-commission": "% Comisión"
+    "%-commission": "% Comisión",
+    "all": "Todo",
+    "bank-account": "Conta bancaria",
+    "birth-date": "Data de nacemento"
 }
