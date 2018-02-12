@@ -121,7 +121,7 @@ class EditSettings extends ExtendedController\PanelController
     {
         switch ($type) {
             case 'list':
-                return 'AdminHome';
+                return 'AdminPlugins';
 
             case 'edit':
                 return 'EditSettings';
