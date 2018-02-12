@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_pages_options.xml
+    Document   : pages_options.xml
     Created on : 27 de julio de 2017
     Author     : jcuello@artextrading.com
     Description:
-        Structure for the fs_pages_options table.
+        Structure for the pages_options table.
 -->
 <table>
     <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('fs_pages_options_id_seq'::regclass)</default>
+        <default>nextval('pages_options_id_seq'::regclass)</default>
     </column>
     <column>
         <name>name</name>
@@ -44,7 +44,7 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>fs_pages_options_pkey</name>
+        <name>pages_options_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
@@ -52,7 +52,7 @@
         <type>UNIQUE (name, nick)</type>
     </constraint>
     <constraint>
-        <name>ca_fs_pagesoptions_users</name>
-        <type>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_pagesoptions_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

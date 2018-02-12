@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_roles_access.xml
+    Document   : roles_access.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the fs_roles_access table.
+        Structure for the roles_access table.
 -->
 <table>
     <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('fs_roles_access_id_seq'::regclass)</default>
+        <default>nextval('roles_access_id_seq'::regclass)</default>
     </column>
     <column>
-        <name>codrol</name>
+        <name>codrole</name>
         <type>character varying(20)</type>
         <null>NO</null>
     </column>
@@ -35,19 +35,19 @@
         <default>true</default>
     </column>
     <constraint>
-        <name>fs_roles_access_pkey</name>
+        <name>roles_access_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>fs_roles_access_roles</name>
-        <type>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>roles_access_roles</name>
+        <type>FOREIGN KEY (codrole) REFERENCES roles (codrole) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>fs_roles_access_page</name>
-        <type>FOREIGN KEY (pagename) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>roles_access_page</name>
+        <type>FOREIGN KEY (pagename) REFERENCES pages (name) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>unique_fs_roles_access</name>
-        <type>UNIQUE (codrol,pagename)</type>
+        <name>unique_roles_access</name>
+        <type>UNIQUE (codrole,pagename)</type>
     </constraint>
 </table>

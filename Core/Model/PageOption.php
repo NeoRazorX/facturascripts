@@ -91,7 +91,7 @@ class PageOption extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_pages_options';
+        return 'pages_options';
     }
 
     /**

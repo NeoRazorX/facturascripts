@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_roles.xml
+    Document   : roles.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the fs_roles table.
+        Structure for the roles table.
 -->
 <table>
     <column>
-        <name>codrol</name>
+        <name>codrole</name>
         <type>character varying(20)</type>
         <null>NO</null>
     </column>
@@ -17,7 +17,7 @@
         <null>NO</null>
     </column>
     <constraint>
-        <name>fs_roles_pkey</name>
-        <type>PRIMARY KEY (codrol)</type>
+        <name>roles_pkey</name>
+        <type>PRIMARY KEY (codrole)</type>
     </constraint>
 </table>

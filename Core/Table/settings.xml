@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_settings.xml
+    Document   : settings.xml
     Created on : 12 de septiembre de 2017
     Author     : jcuello@artextrading.com
     Description:
-        Structure for the fs_settings table.
+        Structure for the settings table.
 -->
 
 
@@ -30,7 +30,7 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>fs_settings_pkey</name>
+        <name>settings_pkey</name>
         <type>PRIMARY KEY (name)</type>
     </constraint>
 </table>

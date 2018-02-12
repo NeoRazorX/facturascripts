@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_api_keys.xml
+    Document   : api_keys.xml
     Author     : Joe Nilson Zegarra Galvez
     Description:
-        Structure for the fs_api_keys table.
+        Structure for the api_keys table.
 -->
 <table>
     <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('fs_api_keys_id_seq'::regclass)</default>
+        <default>nextval('api_keys_id_seq'::regclass)</default>
     </column>
     <column>
         <name>apikey</name>
-        <type>character varying(250)</type>
+        <type>character varying(99)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>descripcion</name>
+        <name>description</name>
         <type>character varying(150)</type>
         <null>NO</null>
     </column>
@@ -29,14 +29,9 @@
         <default>false</default>
     </column>
     <column>
-        <name>f_alta</name>
+        <name>creationdate</name>
         <type>date</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>f_baja</name>
-        <type>date</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nick</name>
@@ -44,7 +39,7 @@
         <null>NO</null>
     </column>
     <constraint>
-        <name>fs_api_keys_pkey</name>
+        <name>api_keys_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
 </table>

@@ -237,7 +237,7 @@ class Controller
             'menu' => 'new',
             'submenu' => null,
             'showonmenu' => true,
-            'orden' => 100,
+            'ordernum' => 100,
         ];
     }
 

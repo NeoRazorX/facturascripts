@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_dashboard.xml
+    Document   : dashboard.xml
     Author     : Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
     Author     : Artex Trading sa <jcuello@artextrading.com>
     Description:
@@ -24,7 +24,7 @@
         <default>99</default>
     </column>
     <constraint>
-        <name>fs_dashboard_pkey</name>
+        <name>dashboard_pkey</name>
         <type>PRIMARY KEY (component)</type>
     </constraint>
 </table>

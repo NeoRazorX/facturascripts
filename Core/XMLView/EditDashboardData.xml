@@ -34,7 +34,7 @@
             </column>
             <column name="user" numcolumns="4" order="110">
                 <widget type="select" fieldname="nick" icon="fa-user" required="true">
-                    <values source="fs_users" fieldcode="nick" fieldtitle="nick" ></values>
+                    <values source="users" fieldcode="nick" fieldtitle="nick" ></values>
                 </widget>
             </column>
             <column name="display-date" numcolumns="4" order="120">

@@ -136,7 +136,7 @@ class User extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_users';
+        return 'users';
     }
 
     /**

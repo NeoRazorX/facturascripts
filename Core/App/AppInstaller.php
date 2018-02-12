@@ -328,7 +328,7 @@ class AppInstaller
     /**
      * Test the MySQL connection and creates the database if needed.
      *
-     * @param Array $dbData
+     * @param array $dbData
      *
      * @return bool
      */
@@ -363,7 +363,7 @@ class AppInstaller
     /**
      * Test the PostgreSQL connection and creates the database if needed.
      *
-     * @param string $dbData
+     * @param array $dbData
      *
      * @return bool
      */

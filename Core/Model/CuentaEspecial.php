@@ -73,6 +73,6 @@ class CuentaEspecial extends Base\ModelClass
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return parent::url($type, 'ListCuenta&active=List');
+        return parent::url($type, 'ListCuenta?active=List');
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_dashboard.xml
+    Document   : dashboard.xml
     Author     : Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
     Author     : Artex Trading sa <jcuello@artextrading.com>
     Description:
@@ -11,7 +11,7 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('fs_dashboard_id_seq'::regclass)</default>
+        <default>nextval('dashboard_data_id_seq'::regclass)</default>
     </column>
     <column>
         <name>component</name>
@@ -39,15 +39,15 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>fs_dashboarddata_pkey</name>
+        <name>dashboarddata_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>ca_fs_dashboarddata_users</name>
-        <type>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_dashboarddata_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_fs_dashboarddata_components</name>
-        <type>FOREIGN KEY (component) REFERENCES fs_dashboard (component) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_dashboarddata_components</name>
+        <type>FOREIGN KEY (component) REFERENCES dashboard (component) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>
