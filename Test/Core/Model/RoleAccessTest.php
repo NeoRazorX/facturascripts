@@ -41,7 +41,7 @@ final class RoleAccessTest extends TestCase
         $this->assertNull($model->allowupdate);
         $this->assertTrue($model->test());
 
-        $model->pagename = 'AdminHome';
+        $model->pagename = 'AdminPlugins';
 
         $this->assertTrue($model->test());
     }
