@@ -26,11 +26,17 @@ namespace FacturaScripts\Core\App;
 class AppRouter
 {
 
+    const ROUTE_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json';
+
+    private $routes;
+
     public function __construct()
     {
         if (!defined('FS_ROUTE')) {
             define('FS_ROUTE', '');
         }
+
+        $this->routes = $this->loadFromFile();
     }
 
     public function getApp()
@@ -42,6 +48,12 @@ class AppRouter
 
         if ('/cron' === $uri) {
             return new AppCron($uri);
+        }
+
+        foreach ($this->routes as $key => $data) {
+            if ($uri === $key) {
+                return new AppController($uri, $data['controller']);
+            }
         }
 
         return new AppController($uri);
@@ -57,7 +69,7 @@ class AppRouter
             return false;
         }
 
-        /// Forbidden folder?
+        /// Allowed folder?
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins'];
         foreach ($allowedFolders as $folder) {
             if ('/' . $folder === substr($uri, 0, strlen($folder) + 1)) {
@@ -68,6 +80,25 @@ class AppRouter
         }
 
         return false;
+    }
+
+    public function setRoute($newRoute, $controllerName, $optionalId = '')
+    {
+        if (!empty($optionalId)) {
+            /// if optionaId, then remove previous items with that data
+            foreach ($this->routes as $route => $routeItem) {
+                if ($routeItem['controller'] === $controllerName && $routeItem['optionalId'] === $optionalId) {
+                    unset($this->routes[$route]);
+                }
+            }
+        }
+
+        $this->routes[$newRoute] = [
+            'controller' => $controllerName,
+            'optionalId' => $optionalId
+        ];
+
+        $this->save();
     }
 
     private function getMime($filePath)
@@ -89,5 +120,28 @@ class AppRouter
         $uriArray = explode('?', $uri);
 
         return substr($uriArray[0], strlen(FS_ROUTE));
+    }
+
+    /**
+     * Returns an array with the list of plugins in the plugin.list file.
+     *
+     * @return array
+     */
+    private function loadFromFile()
+    {
+        if (file_exists(self::ROUTE_LIST_FILE)) {
+            $content = file_get_contents(self::ROUTE_LIST_FILE);
+            if ($content !== false) {
+                return json_decode($content, true);
+            }
+        }
+
+        return [];
+    }
+
+    private function save()
+    {
+        $content = json_encode($this->routes);
+        return file_put_contents(self::ROUTE_LIST_FILE, $content) !== false;
     }
 }

@@ -132,6 +132,12 @@ class Controller
     public $title;
 
     /**
+     *
+     * @var string
+     */
+    public $uri;
+
+    /**
      * User logged in.
      *
      * @var Model\User
@@ -145,8 +151,9 @@ class Controller
      * @param Translator $i18n
      * @param MiniLog    $miniLog
      * @param string     $className
+     * @param string     $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         $this->assets = AssetManager::getAssetsForPage($className);
         $this->cache = &$cache;
@@ -158,12 +165,10 @@ class Controller
         $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
+        $this->uri = $uri;
 
-        $this->title = $this->className;
         $pageData = $this->getPageData();
-        if (!empty($pageData)) {
-            $this->title = $pageData['title'];
-        }
+        $this->title = empty($pageData) ? $this->className : $pageData['title'];
     }
 
     /**
