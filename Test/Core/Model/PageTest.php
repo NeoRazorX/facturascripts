@@ -40,7 +40,7 @@ final class PageTest extends TestCase
         $this->assertTrue($model->test());
 
         $model->showonmenu = false;
-        $model->orden = 0;
+        $model->ordernum = 0;
 
         $this->assertTrue($model->test());
     }

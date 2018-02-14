@@ -55,13 +55,6 @@ class AppController extends App
     private $debugBar;
 
     /**
-     * Langcode to use in html.
-     *
-     * @var string
-     */
-    private $langcode2;
-
-    /**
      * Load user's menu
      *
      * @var MenuManager
@@ -69,11 +62,18 @@ class AppController extends App
     private $menuManager;
 
     /**
+     *
+     * @var string
+     */
+    private $pageName;
+
+    /**
      * Initializes the app.
      *
      * @param string $uri
+     * @param string $pageName
      */
-    public function __construct($uri = '/')
+    public function __construct($uri = '/', $pageName = '')
     {
         parent::__construct($uri);
         $this->debugBar = new StandardDebugBar();
@@ -83,8 +83,8 @@ class AppController extends App
             $this->debugBar->addCollector(new TranslationCollector($this->i18n));
         }
 
-        $this->langcode2 = substr($this->request->cookies->get('fsLang', FS_LANG), 0, 2);
         $this->menuManager = new MenuManager();
+        $this->pageName = $pageName;
     }
 
     /**
@@ -146,6 +146,10 @@ class AppController extends App
      */
     private function getPageName($user)
     {
+        if ($this->pageName !== '') {
+            return $this->pageName;
+        }
+
         if ($this->getUriParam(0) !== 'index.php' && $this->getUriParam(0) !== '') {
             return $this->getUriParam(0);
         }
@@ -181,7 +185,7 @@ class AppController extends App
             $permissions = new ControllerPermissions($user, $pageName);
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName, $this->uri);
                 if ($user === false) {
                     $this->controller->publicCore($this->response);
                     $template = $this->controller->getTemplate();
@@ -233,7 +237,6 @@ class AppController extends App
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
-            'langcode2' => $this->langcode2,
             'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
