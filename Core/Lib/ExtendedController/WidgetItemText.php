@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 class WidgetItemText extends WidgetItem
 {
+
     /**
      * WidgetItemText constructor.
      *
@@ -84,15 +84,14 @@ class WidgetItemText extends WidgetItem
         $specialAttributes = $this->specialAttributes();
 
         switch ($this->type) {
-            case 'textarea':
-                $html = $this->getIconHTML()
-                    . '<textarea name="' . $this->fieldName . '" id="' . $this->fieldName
-                    . '" class="form-control" rows="3" ' . $specialAttributes
-                    . '>' . $value . '</textarea>';
+            case 'html':
+                $html = '<textarea name="' . $this->fieldName . '" class="form-control summernote" rows="3" '
+                    . $specialAttributes . '>' . $value . '</textarea>';
+                break;
 
-                if (!empty($this->icon)) {
-                    $html .= '</div>';
-                }
+            case 'textarea':
+                $html = '<textarea name="' . $this->fieldName . '" class="form-control" rows="3" '
+                    . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 
             default:
