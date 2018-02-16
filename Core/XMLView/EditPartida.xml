@@ -17,21 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListGrupoEpigrafe
+ * Definición inicial para el controlador EditPartida
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com
 -->
 
 <view>
     <columns>
+        <column name="idasiento" order="100" display="none">
+            <widget type="text" fieldname="idasiento" />
+        </column>
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idpartida" />
         </column>
-        <column name="subaccount" order="100">
+        <column name="subaccount" order="105">
             <widget type="text" fieldname="codsubcuenta" />
         </column>
-        <column name="description" order="110">
+        <column name="contrapartida" order="110">
+            <widget type="text" fieldname="codcontrapartida" />
+        </column>
+        <column name="description" order="115">
             <widget type="text" fieldname="concepto" />
         </column>
         <column name="debit" display="right" order="120">
@@ -45,4 +50,10 @@
             </widget>
         </column>
     </columns>
+
+    <rows>
+        <row type="actions">
+            <button type="action" label="balance" color="success" action="balance" icon="fa-balance-scale" />
+        </row>
+    </rows>
 </view>

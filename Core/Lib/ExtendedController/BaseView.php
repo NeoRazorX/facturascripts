@@ -28,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class BaseView
+class BaseView
 {
     /**
      * Needed model to for the model method calls.
