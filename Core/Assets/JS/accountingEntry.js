@@ -18,7 +18,8 @@
 
 var documentLineData = [];
 var documentUrl = "";
-var hsTable = null;
+var accountEntries = null;
+var accountGraph = null;
 
 function getGridData(row, fieldName) {
     return documentLineData['rows'][row][fieldName];
@@ -29,48 +30,61 @@ function getGridColumnName(col) {
 }
 
 function setAccountData(data) {
-    var accountData = JSON.parse(data);
-    $('#account-description').text(accountData.description);
-    $('#account-balance').text(accountData.balance);
+    console.log('setAccountData');
+    console.log(typeof data);
+    console.log(data);
 
-    // Draw graphic bars
-    var ctx = document.getElementById('detail-balance').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-            datasets: [{
-                label: 'Detail by months',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgb(54, 162, 235)',
-                borderWidth: 1,
-                fill: false,
-                data: Object.values(accountData.detail)
-            }]
-        },
-        options: {}
+    // Update data labels
+    $('#account-description').text(data.description);
+    $('#account-balance').text(data.balance);
+
+    // Update graphic bars
+    accountGraph.data.datasets.forEach((dataset) => {
+        dataset.data.lenght = 0;
+        dataset.data = Object.values(data.detail);
     });
+    accountGraph.update();
 }
 
 function clearAccountData() {
     $('#account-description').text('');
+    $('#account-balance').text('');
+
+    // Update graphic bars
+    accountGraph.data.datasets.forEach((dataset) => {
+        dataset.data.lenght = 0;
+    });
+    accountGraph.update();
 }
 
 function afterSelection(row1, col1, row2, col2, preventScrolling) {
+    console.log('afterSelection');
     if (col1 === col2 && row1 === row2) {
+        console.log('afterSelection 2');
         if (getGridColumnName(col1) === 'codsubcuenta') {
+            console.log('afterSelection 3');
+            var exercise = $('input[name=codejercicio]')[0];
             var data = {
                 action: 'account-data',
-                code: getGridData(row1, 'idpartida')
+                codsubcuenta: getGridData(row1, 'codsubcuenta'),
+                codejercicio: exercise.value
             };
-            $.get(documentUrl, data, setAccountData);
+            console.log('getJSON');
+            console.log(data);
+            $.getJSON(documentUrl, data, setAccountData);
         }
     }
 }
 
+function afterChange(changes, source) {
+    console.log(changes);
+    console.log(source);
+}
+
 $(document).ready(function () {
+    // Grid Data
     var container = document.getElementById("document-lines");
-    hsTable = new Handsontable(container, {
+    accountEntries = new Handsontable(container, {
         data: documentLineData.rows,
         columns: documentLineData.columns,
         rowHeaders: true,
@@ -89,4 +103,23 @@ $(document).ready(function () {
     });
 
     Handsontable.hooks.add('afterSelection', afterSelection);
+//    Handsontable.hooks.add('afterChange', afterChange);
+
+    // Graphic bars
+    var ctx = document.getElementById('detail-balance').getContext('2d');
+    accountGraph = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+            datasets: [{
+                label: 'Detail by months',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgb(54, 162, 235)',
+                borderWidth: 1,
+                fill: false,
+                data: [0,0,0,0,0,0,0,0,0,0,0,0]
+            }]
+        },
+        options: {}
+    });
 });

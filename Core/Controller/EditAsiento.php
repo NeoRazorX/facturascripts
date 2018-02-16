@@ -87,8 +87,9 @@ class EditAsiento extends ExtendedController\PanelController
         switch ($action) {
             case 'account-data':
                 $this->setTemplate(false);
-                $code = $this->request->get('code', '');
-                $result = $this->getAccountData($code);
+                $subaccount = $this->request->get('codsubcuenta', '');
+                $exercise = $this->request->get('codejercicio', '');
+                $result = $this->getAccountData($exercise, $subaccount);
                 $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                 return false;
 
@@ -111,7 +112,7 @@ class EditAsiento extends ExtendedController\PanelController
     public function getPageData(): array
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entry';
+        $pagedata['title'] = 'accounting-entries';
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-balance-scale';
         $pagedata['showonmenu'] = false;
@@ -119,30 +120,32 @@ class EditAsiento extends ExtendedController\PanelController
         return $pagedata;
     }
 
-    private function getAccountData($code): array
+    private function getAccountData($exercise, $subaccount): array
     {
         $result = [
             'description' => '',
             'balance' => 0.00,
-            'detail' => []
+            'detail' => [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00]
         ];
 
-        if (!empty($code)) {
-            $accountingEntry = new Model\Partida();
-            if ($accountingEntry->loadFromCode($code)) {
-                $account = new Model\Subcuenta();
-                $account->loadFromCode($accountingEntry->idsubcuenta);
-                $result['description'] = $account->descripcion;
+        if (empty($exercise) or empty($subaccount)) {
+            return $result;
+        }
 
-                $balance = new Model\SubcuentaSaldo();
-                if ($balance->loadFromCode($accountingEntry->idsubcuenta)) {
-                    $result['balance'] = $balance->saldo;
+        $where = [
+            new DataBaseWhere('codsubcuenta', $subaccount),
+            new DataBaseWhere('codejercicio', $exercise)
+        ];
 
-                    for ($i = 1; $i < 13; ++$i) {
-                        $field = 'saldo_' . strval($i);
-                        $result['detail'][] = $balance->{$field};
-                    }
-                }
+        $account = new Model\Subcuenta();
+        if ($account->loadFromCode(null, $where)) {
+            $result['description'] = $account->descripcion;
+
+            $where = [ new DataBaseWhere('idsubcuenta', $account->idsubcuenta) ];
+            $balance = new Model\SubcuentaSaldo();
+            foreach ($balance->all($where) as $values) {
+                $result['detail'][$values->mes] = $values->saldo;
+                $result['balance'] += $values->saldo;
             }
         }
         return $result;

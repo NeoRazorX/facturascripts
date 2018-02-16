@@ -45,7 +45,7 @@
 {% import 'Macro/BaseController.html.twig' as BaseController %}
 
 {# -- Main Body -- #}
-<div class="container-fluid" style="height: 45vh !important">
+<div class="container-fluid">
     {# -- Account View Panel -- #}
     <div class="row">
         <div class="col-12">
@@ -72,13 +72,13 @@
     </div>
 
     {# -- Detail data -- #}
-    <div class="row mt-2 h-100">
-        <div class="col-12 h-100">
+    <div class="row mt-2">
+        <div class="col-12">
             {# -- Tabs -- #}
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
-                {% set active = (loop.index == 2) ? ' active' : '' %}
                 {% if loop.index > 1 %}
+                {% set active = (loop.index == 2) ? ' active' : '' %}
                 <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
                     <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
                     &nbsp;{{ view.title }}
@@ -88,10 +88,11 @@
             </div>
 
             {# Data #}
-            <div class="tab-content h-100" id="optionsindex-tabContent">
+            <div class="tab-content" id="optionsindex-tabContent">
                 {% for indexView, view in fsc.views %}
+                    {% if loop.index > 1 %}
                     {% set active = (loop.index == 2) ? ' show active' : '' %}
-                    <div class="tab-pane h-100 fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
                         {% set viewType = fsc.viewClass(view) %}
 
                         {# List #}
@@ -103,27 +104,36 @@
 
                         {# Grid #}
                         {% if viewType == 'GridView' %}
-                            <div class="row no-gutters h-100">
-                                <div class="col-9 mr-2 h-100">
+                            <div class="row no-gutters">
+                                <div class="col-9 mr-2">
                                     <script type="text/javascript">
                                         documentLineData = {{ view.getGridData() | raw }};
                                     </script>
-                                    <div class="card h-100">
-                                        <div class="body h-100">
-                                            <div id="document-lines"></div>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <span><small id="account-description">description of the account</small></span>
+                                            <span class="float-right"><small><strong>Descuadre:&nbsp;<span>0.00</span></strong></small></span>
                                         </div>
-                                        <div class="card-footer" style="height: 1.75rem;padding-top: 0px">
-                                            <small id="account-description">description of the account</small>
+                                        <div class="body">
+                                            <div id="document-lines"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col h-100">
-                                    <div class="card h-100">
-                                        <div class="card-body h-100">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <small><strong>Total balance:&nbsp;<span id="account-balance">0.00</span></strong></small>
+                                        </div>
+                                        <div class="card-body">
                                             <canvas id="detail-balance" class="w-100"></canvas>
                                         </div>
-                                        <div class="card-footer" style="height: 1.75rem;padding-top: 0px">
-                                            <small><strong>Total balance:&nbsp;<span id="account-balance">0.00</span></strong></small>
+                                    </div>
+                                    <div class="card mt-2">
+                                        <div class="card-header">
+                                            <small><strong>Libro de Impuestos</strong></small>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Datos especiales de la cuenta</p>
                                         </div>
                                     </div>
                                 </div>
@@ -161,6 +171,7 @@
                             {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
                         {% endif %}
                     </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
