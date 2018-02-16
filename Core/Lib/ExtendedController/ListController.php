@@ -72,7 +72,7 @@ abstract class ListController extends Base\Controller
     /**
      * This string contains the text sent as a query parameter, used to filter the model data
      *
-     * @var string|false
+     * @var string
      */
     public $query;
 
