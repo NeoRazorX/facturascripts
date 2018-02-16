@@ -39,5 +39,10 @@
         "crm",
         "billing",
         "accounting"
-    ]
+    ],
+    "scripts": {
+        "auto-scripts": {
+
+        }
+    }
 }
