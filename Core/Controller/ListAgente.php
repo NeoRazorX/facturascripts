@@ -54,7 +54,7 @@ class ListAgente extends ExtendedController\ListController
         $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
 
         $this->addOrderBy($className, 'codagente', 'code');
-        $this->addOrderBy($className, 'nombre||apellidos', 'name');
+        $this->addOrderBy($className, 'concat(nombre,apellidos)', 'name', 1);
         $this->addOrderBy($className, 'provincia', 'province');
 
         $this->addFilterCheckbox($className, 'debaja', 'suspended', 'debaja');

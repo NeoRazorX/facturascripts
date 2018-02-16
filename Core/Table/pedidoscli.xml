@@ -229,7 +229,7 @@
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_pedidoscli</name>
-        <type>UNIQUE (codigo)</type>
+        <name>uniq_codigo_pedidoscli2</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>
