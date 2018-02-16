@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : asientos.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the asientos table.
+-->
+<table>
+    <column>
+        <name>idasiento</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('asientos_idasiento_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>concepto</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>importe</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>documento</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>editable</name>
+        <type>boolean</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>asientos_pkey</name>
+        <type>PRIMARY KEY (idasiento)</type>
+    </constraint>
+    <constraint>
+        <name>ca_asientos_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
+            REFERENCES ejercicios (codejercicio)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+</table>
