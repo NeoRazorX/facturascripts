@@ -333,7 +333,7 @@ class ModelDataGenerator
             $agente->telefono1 = (mt_rand(0, 1) == 0) ? (string) mt_rand(555555555, 999999999) : '';
             $agente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : '';
             $agente->cargo = (mt_rand(0, 2) > 0) ? $this->tools->cargo() : '';
-            $agente->seg_social = (mt_rand(0, 1) == 0) ? (string) mt_rand(111111, 9999999999) : '';
+            $agente->seg_social = (mt_rand(0, 1) == 0) ? (string) mt_rand(111111, (mt_getrandmax()>9999999999)?9999999999: mt_getrandmax()) : '';
             $agente->porcomision = $this->tools->cantidad(0, 5, 20);
 
             if (mt_rand(0, 5) == 0) {
@@ -501,6 +501,25 @@ class ModelDataGenerator
         }
     }
 
+    private function calcularIBAN($ccc, $codpais = '')
+    {
+        $pais = substr($codpais, 0, 2);
+        $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
+            'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
+            'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
+            'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
+        ];
+
+        $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
+        $digitoControl = 98 - \bcmod($dividendo, '97');
+
+        if (strlen($digitoControl) === 1) {
+            $digitoControl = '0' . $digitoControl;
+        }
+
+        return $pais . $digitoControl . $ccc;
+    }
+
     /**
      * Rellena cuentas bancarias de un cliente con datos aleatorios.
      *
@@ -513,11 +532,9 @@ class ModelDataGenerator
             $cuenta = new Model\CuentaBancoCliente();
             $cuenta->codcliente = $cliente->codcliente;
             $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
-
-            $opcion = mt_rand(0, 2);
-            $cuenta->iban = ($opcion != 1) ? 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' '
-                . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
-                . mt_rand(1000, 9999) : '';
+            
+            $ccc=mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999);
+            $cuenta->iban = $this->calcularIBAN($ccc, 'ES');
 
             $cuenta->swift = ($opcion != 0) ? $this->tools->randomString(8) : '';
             $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
@@ -617,8 +634,9 @@ class ModelDataGenerator
             $cuenta = new Model\CuentaBancoProveedor();
             $cuenta->codproveedor = $proveedor->codproveedor;
             $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
-            $cuenta->iban = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
-                . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
+            $ccc=mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999);
+            $cuenta->iban = $this->calcularIBAN($ccc, 'ES');
+            
             $cuenta->swift = $this->tools->randomString(8);
 
             $opcion = mt_rand(0, 2);

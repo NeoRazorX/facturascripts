@@ -27,6 +27,18 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 class DataGeneratorTools
 {
     /**
+     * Get a random item from the array.
+     * 
+     * Toma un elemento del array al azar
+     * 
+     */
+    public function getOneItem($array)
+    {
+        return $array[mt_rand(0,count($array)-1)];
+    }
+    
+    
+    /**
      * Support method for the model constructor and data initialisation
      *
      * @param array $variable -> data destination
@@ -73,25 +85,21 @@ class DataGeneratorTools
             'Jet', 'Jex', 'Max', 'Pro', 'FX', 'Neo', 'Maxi', 'Extreme', 'Sub',
             'Ultra', 'Minga', 'Hiper', 'Giga', 'Mega', 'Super', 'Fusion', 'Broken',
         ];
-        shuffle($prefijos);
 
         $nombres = [
             'Motor', 'Engine', 'Generator', 'Tool', 'Oviode', 'Box', 'Proton', 'Neutro',
             'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam',
         ];
-        shuffle($nombres);
 
         $sufijos = [
             'II', '3', 'XL', 'XXL', 'SE', 'GT', 'GTX', 'Pro', 'NX', 'XP', 'OS', 'Nitro',
         ];
-        shuffle($sufijos);
 
         $descripciones1 = [
-            'Una alcachofa', 'Un motor', 'Una targeta gráfica (GPU)', 'Un procesador',
+            'Una alcachofa', 'Un motor', 'Una tarjeta gráfica (GPU)', 'Un procesador',
             'Un coche', 'Un dispositivo tecnológico', 'Un magnetofón', 'Un palo',
             'un cubo de basura', "Un objeto pequeño d'or", '"La hostia"',
         ];
-        shuffle($descripciones1);
 
         $descripciones2 = [
             '64 núcleos', 'chasis de fibra de carbono', '8 cilindros en V', 'frenos de berilio',
@@ -101,28 +109,33 @@ class DataGeneratorTools
             'un posavasos', 'malignas intenciones', 'la virginidad intacta', 'malware', 'linux',
             'Windows Vista', 'propiedades psicotrópicas', 'spyware', 'reproductor 4k',
         ];
+        
+        $prefijo=$this->getOneItem($prefijos);
+        $nombre=$this->getOneItem($nombres);
+        $sufijo=$this->getOneItem($sufijos);
+        $descripcion=$this->getOneItem($descripciones1);
         shuffle($descripciones2);
-
-        $texto = $prefijos[0] . ' ' . $nombres[0] . ' ' . $sufijos[0];
+        
+        $texto =  "$prefijo $nombre $sufijo";
 
         switch (mt_rand(0, 4)) {
             case 0:
                 break;
 
             case 1:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . '.';
+                $texto .= ": $descripcion con {$descripciones2[0]}.";
                 break;
 
             case 2:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ', ' . $descripciones2[2] . ' y ' . $descripciones2[3] . '.';
+                $texto .= ": $descripcion con {$descripciones2[0]}, {$descripciones2[1]}, {$descripciones2[2]} y {$descripciones2[3]}.";
                 break;
 
             case 3:
-                $texto .= ': ' . $descripciones1[0] . " con:\n- " . $descripciones2[0] . "\n- " . $descripciones2[1] . "\n- " . $descripciones2[2] . "\n- " . $descripciones2[3] . '.';
+                $texto .= ": $descripcion con:\n- {$descripciones2[0]} \n- {$descripciones2[1]} \n- {$descripciones2[2]} \n- {$descripciones2[3]}.";
                 break;
 
             default:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ' y ' . $descripciones2[2] . '.';
+                $texto .= ": $descripcion con {$descripciones2[0]}, {$descripciones2[1]} y {$descripciones2[2]}.";
                 break;
         }
 
@@ -196,9 +209,7 @@ class DataGeneratorTools
             "D'Ambrosio", '"Licenciado"', '"El master"',
         ];
 
-        shuffle($nombres);
-
-        return $nombres[0];
+        return $this->getOneItem($nombres);
     }
 
     /**
@@ -219,7 +230,7 @@ class DataGeneratorTools
 
         shuffle($apellidos);
 
-        return $apellidos[0] . ' ' . $apellidos[1];
+        return "{$apellidos[0]} {$apellidos[1]}";
     }
 
     /**
@@ -231,9 +242,7 @@ class DataGeneratorTools
     {
         $cargos = ['Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior'];
 
-        shuffle($cargos);
-
-        return $cargos[0];
+        return $this->getOneItem($cargos);
     }
 
     /**
@@ -253,14 +262,14 @@ class DataGeneratorTools
             'X', 'Arch', 'Arco', 'Broken', 'Arkam', 'RX', "d'Art", 'Peña', '"La cosa"',
         ];
 
-        $separador = ['-', ' & ', ' ', '_', '', '/', '*'];
-        $tipo = ['S.L.', 'S.A.', 'Inc.', 'LTD', 'Corp.'];
+        $separadores = ['-', ' & ', ' ', '_', '', '/', '*'];
+        $tipos = ['S.L.', 'S.A.', 'Inc.', 'LTD', 'Corp.'];
 
         shuffle($nombres);
-        shuffle($separador);
-        shuffle($tipo);
+        $separador=$this->getOneItem($separadores);
+        $tipo=$this->getOneItem($tipos);
 
-        return $nombres[0] . $separador[0] . $nombres[1] . ' ' . $tipo[0];
+        return "{$nombres[0]} $separador {$nombres[1]} $tipo";
     }
 
     /**
@@ -276,9 +285,9 @@ class DataGeneratorTools
             'contact', 'invoices', 'mail',
         ];
 
-        shuffle($nicks);
+        $nick=$this->getOneItem($nicks);
 
-        return $nicks[0] . '.' . mt_rand(2, 9999) . '@facturascripts.com';
+        return $nick . '.' . mt_rand(2, 9999) . '@facturascripts.com';
     }
 
     /**
@@ -297,9 +306,7 @@ class DataGeneratorTools
             'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza',
         ];
 
-        shuffle($nombres);
-
-        return $nombres[0];
+        return $this->getOneItem($nombres);
     }
 
     /**
@@ -318,9 +325,7 @@ class DataGeneratorTools
             'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche',
         ];
 
-        shuffle($nombres);
-
-        return $nombres[0];
+        return $this->getOneItem($nombres);
     }
 
     /**
@@ -336,14 +341,10 @@ class DataGeneratorTools
             'Del Pacífico', 'Rue', "d'Ambrosio", 'Bañez', '"La calle"',
         ];
 
-        shuffle($tipos);
-        shuffle($nombres);
-
-        if (mt_rand(0, 2) == 0) {
-            return $tipos[0] . ' ' . $nombres[0] . ', nº' . mt_rand(1, 199) . ', puerta ' . mt_rand(1, 99);
-        }
-
-        return $tipos[0] . ' ' . $nombres[0] . ', ' . mt_rand(1, 99);
+        $tipo=$this->getOneItem($tipos);
+        $nombre=$this->getOneItem($nombres);
+        
+        return "$tipo $nombre, nº" . mt_rand(1,199) . ((mt_rand(0, 2) == 0)?', puerta '. mt_rand(1,99):'');
     }
 
     /**
