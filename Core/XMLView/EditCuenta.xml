@@ -47,8 +47,8 @@
                 <widget type="text" fieldname="parent_codcuenta" maxlength="10" icon="fa-bar-chart" />
             </column>
             <column name="special-account-id" numcolumns="7" order="120">
-                <widget type="select" fieldname="idcuentaesp">
-                    <values source="cuentasesp" fieldcode="idcuentaesp" fieldtitle="descripcion"></values>
+                <widget type="select" fieldname="codcuentaesp">
+                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
                 </widget>
             </column>
         </group>
