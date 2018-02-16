@@ -259,6 +259,7 @@
     "id":"Id.",
     "importe":"Amount",
     "incorrect-seat-amount":"Incorrect seat amount.",
+    "incompatible-with-facturascripts":"Incompatible with FacturaScripts %version%",
     "installer":"FacturaScripts 2018 installer",
     "installer-p":"Welcome to the FacturaScripts installer. Fill in the fields required to connect to the database.",
     "installer-requirements":"The follow extensions and functions are needed for FacturaScripts:",

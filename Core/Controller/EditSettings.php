@@ -86,9 +86,9 @@ class EditSettings extends ExtendedController\PanelController
             case 'testmail':
                 $emailTools = new EmailTools();
                 if ($emailTools->test()) {
-                    $this->get('logger')->info($this->i18n->trans('mail-test-ok'));
+                    $this->miniLog->info($this->i18n->trans('mail-test-ok'));
                 } else {
-                    $this->get('logger')->error($this->i18n->trans('mail-test-error'));
+                    $this->miniLog->error($this->i18n->trans('mail-test-error'));
                 }
                 break;
         }
@@ -119,18 +119,15 @@ class EditSettings extends ExtendedController\PanelController
      */
     public function getURL($type)
     {
-        $result = 'index.php';
         switch ($type) {
             case 'list':
-                $result .= '?page=AdminHome';
-                break;
+                return 'AdminPlugins';
 
             case 'edit':
-                $result .= '?page=EditSettings';
-                break;
+                return 'EditSettings';
         }
 
-        return $result;
+        return FS_ROUTE;
     }
 
     /**
@@ -212,7 +209,7 @@ class EditSettings extends ExtendedController\PanelController
             }
 
             if ($error) {
-                $this->get('logger')->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
+                $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
             }
         }
     }

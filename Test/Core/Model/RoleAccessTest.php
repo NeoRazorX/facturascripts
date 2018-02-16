@@ -35,13 +35,13 @@ final class RoleAccessTest extends TestCase
         $model = new RoleAccess();
 
         $this->assertInstanceOf(RoleAccess::class, $model);
-        $this->assertEquals('', $model->codrol);
+        $this->assertEquals('', $model->codrole);
         $this->assertEquals('', $model->pagename);
         $this->assertNull($model->allowdelete);
         $this->assertNull($model->allowupdate);
         $this->assertTrue($model->test());
 
-        $model->pagename = 'AdminHome';
+        $model->pagename = 'AdminPlugins';
 
         $this->assertTrue($model->test());
     }

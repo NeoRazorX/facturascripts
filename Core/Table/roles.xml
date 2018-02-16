@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : roles.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the roles table.
+-->
+<table>
+    <column>
+        <name>codrole</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(200)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>roles_pkey</name>
+        <type>PRIMARY KEY (codrole)</type>
+    </constraint>
+</table>

@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditDashboardData extends ExtendedController\EditController
 {
+
     /**
      * Runs the controller's private logic.
      *
@@ -53,7 +54,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     private function getPropertiesFields()
     {
-        $model = $this->view->getModel();
+        $model = $this->getModel();
         $component = 'FacturaScripts\\Core\\Lib\\Dashboard\\'
             . $model->component
             . DashboardLib\BaseComponent::SUFIX_COMPONENTS;
@@ -66,8 +67,8 @@ class EditDashboardData extends ExtendedController\EditController
      */
     private function validateColumns()
     {
-        $fields = array_keys($this->view->getModel()->properties);
-        $group = $this->view->getColumns()['options']->columns;
+        $fields = array_keys($this->getModel()->properties);
+        $group = $this->views['EditDashboardData']->getColumns()['options']->columns;
         foreach ($group as $column) {
             if (in_array($column->widget->fieldName, $fields, false)) {
                 continue;
@@ -82,7 +83,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     private function validateProperties()
     {
-        $model = $this->view->getModel();
+        $model = $this->getModel();
         $properties = $this->getPropertiesFields();
         foreach ($properties as $key => $value) {
             if (!isset($model->properties[$key])) {

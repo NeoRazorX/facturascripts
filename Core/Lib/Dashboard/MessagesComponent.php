@@ -129,6 +129,6 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
      */
     public function url($id)
     {
-        return 'index.php?page=EditDashboardData&code=' . $id;
+        return 'EditDashboardData?code=' . $id;
     }
 }

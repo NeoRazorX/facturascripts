@@ -409,14 +409,14 @@ abstract class ModelClass
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
-        $result = 'index.php?page=';
+        $result = '';
         switch ($type) {
             case 'list':
                 $result .= $list . $model;
                 break;
 
             case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
+                $result .= 'Edit' . $model . '?code=' . $value;
                 break;
 
             case 'new':
@@ -424,7 +424,7 @@ abstract class ModelClass
                 break;
 
             default:
-                $result .= empty($value) ? $list . $model : 'Edit' . $model . '&code=' . $value;
+                $result .= empty($value) ? $list . $model : 'Edit' . $model . '?code=' . $value;
                 break;
         }
 

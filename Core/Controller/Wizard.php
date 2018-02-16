@@ -21,7 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Wizard
@@ -70,9 +73,9 @@ class Wizard extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param Model\User $user
-     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param Model\User            $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -84,17 +87,17 @@ class Wizard extends Controller
             $appSettings = new AppSettings();
             $appSettings->set('default', 'coddivisa', $coddivisa);
             $appSettings->set('default', 'codpais', $codpais);
-            $appSettings->set('default', 'homepage', 'AdminHome');
+            $appSettings->set('default', 'homepage', 'AdminPlugins');
             $appSettings->save();
             $this->initModels();
             $this->saveAddress($appSettings, $codpais);
 
             /// change user homepage
-            $this->user->homepage = 'AdminHome';
+            $this->user->homepage = 'AdminPlugins';
             $this->user->save();
 
             /// redir to EditSettings
-            $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
+            $this->response->headers->set('Refresh', '0; EditSettings');
         }
     }
 
@@ -106,6 +109,9 @@ class Wizard extends Controller
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+        
+        $pluginManager = new PluginManager();
+        $pluginManager->initControllers();
     }
 
     /**

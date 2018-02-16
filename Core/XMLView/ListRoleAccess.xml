@@ -28,7 +28,7 @@
             <widget type="text" fieldname="id"/>
         </column>
         <column name="role" display="none" order="100">
-            <widget type="text" fieldname="codrol" />
+            <widget type="text" fieldname="codrole" />
         </column>
         <column name="pagename" order="110">
             <widget type="text" fieldname="pagename" />
@@ -51,7 +51,7 @@
         <group name="add-rol-access" icon="fa-user-plus">
             <column name="select-menu" title="menu">
                 <widget type="select" fieldname="menu">
-                    <values source="fs_pages" fieldcode="menu" fieldtitle="menu"></values>
+                    <values source="pages" fieldcode="menu" fieldtitle="menu"></values>
                 </widget>
             </column>
         </group>

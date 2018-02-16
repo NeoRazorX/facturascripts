@@ -72,43 +72,41 @@ trait ModelTrait
         foreach ($data as $key => $value) {
             if (in_array($key, $exclude)) {
                 continue;
+            } elseif (!isset(self::$fields[$key])) {
+                $this->{$key} = $value;
+                continue;
             }
 
-            if (isset(self::$fields[$key])) {
-                $field = self::$fields[$key];
+            // We check if it is a varchar (with established length) or another type of data
+            $field = self::$fields[$key];
+            $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
 
-                // We check if it is a varchar (with established length) or another type of data
-                $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            switch ($type) {
+                case 'tinyint':
+                case 'boolean':
+                    $this->{$key} = Utils::str2bool($value);
+                    break;
 
-                switch ($type) {
-                    case 'tinyint':
-                    case 'boolean':
-                        $this->{$key} = Utils::str2bool($value);
-                        break;
+                case 'integer':
+                case 'int':
+                    $this->{$key} = $this->getIntergerValueForField($field, $value);
+                    break;
 
-                    case 'integer':
-                    case 'int':
-                        $this->{$key} = $this->getIntergerValueForField($field, $value);
-                        break;
+                case 'double':
+                case 'double precision':
+                case 'float':
+                    $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                    break;
 
-                    case 'double':
-                    case 'double precision':
-                    case 'float':
-                        $this->{$key} = empty($value) ? 0.00 : (float) $value;
-                        break;
+                case 'date':
+                    $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
+                    break;
 
-                    case 'date':
-                        $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
-                        break;
-
-                    default:
-                        if ($value === null && $field['is_nullable'] === 'NO') {
-                            $value = '';
-                        }
-                        $this->{$key} = Utils::fixHtml($value);
-                }
-            } else {
-                $this->{$key} = $value;
+                default:
+                    if ($value === null && $field['is_nullable'] === 'NO') {
+                        $value = '';
+                    }
+                    $this->{$key} = $value;
             }
         }
     }

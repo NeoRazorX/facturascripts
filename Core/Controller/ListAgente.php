@@ -20,8 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to list the items in the Agentes model
@@ -31,21 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ListAgente extends ExtendedController\ListController
 {
-    /**
-     * Matches /agent exactly
-     * 
-     * Equivalent to /index.php?page=ListAgente
-     * 
-     * List action (index)
-     *
-     * @Route("/agent", name="agent_list")
-     */
-    public function index()
-    {
-        // ...
-        return new Response('Hello AgentListController', Response::HTTP_OK);
-    }
-    
     /**
      * Returns basic page attributes
      *
@@ -71,7 +54,7 @@ class ListAgente extends ExtendedController\ListController
         $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
 
         $this->addOrderBy($className, 'codagente', 'code');
-        $this->addOrderBy($className, 'nombre||apellidos', 'name');
+        $this->addOrderBy($className, 'concat(nombre,apellidos)', 'name', 1);
         $this->addOrderBy($className, 'provincia', 'province');
 
         $this->addFilterCheckbox($className, 'debaja', 'suspended', 'debaja');

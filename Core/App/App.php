@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
@@ -32,12 +31,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
-    /**
-     * Stored defaut configuration with the default application settings.
-     *
-     * @var AppSettings
-     */
-    protected $appSettings;
 
     /**
      * Cache access manager.
@@ -103,17 +96,19 @@ abstract class App
     protected $settings;
 
     /**
+     * Requested Uri
+     *
+     * @var string
+     */
+    protected $uri;
+
+    /**
      * Initializes the app.
      *
-     * @param string $folder FacturaScripts working directory
+     * @param string $uri
      */
-    public function __construct($folder = '')
+    public function __construct($uri = '/')
     {
-        /// Having the directory in a constas lets us access it more easily
-        if (!defined('FS_FOLDER')) {
-            define('FS_FOLDER', $folder);
-        }
-
         $this->request = Request::createFromGlobals();
 
         if ($this->request->cookies->get('fsLang')) {
@@ -129,6 +124,7 @@ abstract class App
         $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();
         $this->settings = new AppSettings();
+        $this->uri = $uri;
     }
 
     /**
@@ -171,12 +167,16 @@ abstract class App
     }
 
     /**
-     * Deploy plugin files.
+     * Returns param number $num in uri.
+     *
+     * @param int $num
+     *
+     * @return string
      */
-    protected function deployPlugins()
+    protected function getUriParam($num)
     {
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy();
+        $params = explode('/', substr($this->uri, 1));
+        return isset($params[$num]) ? $params[$num] : '';
     }
 
     /**

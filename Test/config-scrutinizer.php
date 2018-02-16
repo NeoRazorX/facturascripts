@@ -19,6 +19,7 @@
 define('FS_COOKIES_EXPIRE', 604800);
 define('FS_DEBUG', true);
 define('FS_LANG', 'es_ES');
+define('FS_ROUTE', '/');
 define('FS_TIMEZONE', 'Europe/Madrid');
 define('FS_DB_TYPE', 'postgresql');
 define('FS_DB_HOST', 'localhost');
@@ -32,7 +33,6 @@ define('FS_DB_TYPE_CHECK', true);
 define('FS_CACHE_HOST', 'localhost');
 define('FS_CACHE_PORT', '11211');
 define('FS_CACHE_PREFIX', 'tFlqb1s1');
-define('FS_MYDOCS', '');
 define('FS_ITEM_LIMIT', 50);
 define('FS_CODPAIS', 'ESP');
 define('FS_NF0', '2');
