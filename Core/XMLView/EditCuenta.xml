@@ -48,7 +48,7 @@
             </column>
             <column name="special-account-id" numcolumns="7" order="120">
                 <widget type="select" fieldname="idcuentaesp">
-                    <values source="co_cuentasesp" fieldcode="idcuentaesp" fieldtitle="descripcion"></values>
+                    <values source="cuentasesp" fieldcode="idcuentaesp" fieldtitle="descripcion"></values>
                 </widget>
             </column>
         </group>

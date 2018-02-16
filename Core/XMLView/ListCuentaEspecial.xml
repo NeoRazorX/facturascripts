@@ -24,10 +24,10 @@
 
 <view>
     <columns>
-        <column name="id-account-special" order="100">
-            <widget type="text" fieldname="idcuentaesp" onclick="EditCuentaEspecial" />
+        <column name="code" order="100">
+            <widget type="text" fieldname="codcuentaesp" onclick="EditCuentaEspecial" />
         </column>
-        
+
         <column name="description" order="130">
             <widget type="text" fieldname="descripcion" />
         </column>
