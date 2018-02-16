@@ -161,8 +161,8 @@
         <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_albaranesprov</name>
-        <type>UNIQUE (codigo)</type>
+        <name>uniq_codigo_albaranesprov2</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
     <constraint>
         <name>albaranesprov_pkey</name>

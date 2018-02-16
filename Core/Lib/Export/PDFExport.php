@@ -139,6 +139,7 @@ class PDFExport implements ExportInterface
                 $txt = $this->i18n->trans($value ? 'yes' : 'no');
                 $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
             } elseif ($value !== null && $value !== '') {
+                $value = is_string($value) ? Base\Utils::fixHtml($value) : $value;
                 $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
             }
         }
@@ -222,7 +223,7 @@ class PDFExport implements ExportInterface
         $tableData = [];
         foreach ($model->getlineas() as $line) {
             $tableData[] = [
-                'reference' => $line->referencia . " - " . $line->descripcion,
+                'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
                 'quantity' => $this->numberTools->format($line->cantidad),
                 'price' => $this->numberTools->format($line->pvpunitario),
                 'discount' => $this->numberTools->format($line->dtopor),
@@ -378,6 +379,8 @@ class PDFExport implements ExportInterface
                     $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
                 } elseif (null === $value) {
                     $value = '';
+                } elseif($tableOptions['cols'][$col]['col-type'] === 'text') {
+                    $value = Base\Utils::fixHtml($value);
                 }
 
                 $tableData[$key][$col] = $value;

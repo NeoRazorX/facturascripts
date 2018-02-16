@@ -6,7 +6,7 @@
      * in different formats.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -71,7 +71,7 @@
         $('.autocomplete').each(function() {
             var field = $(this).attr('data-field');
             $(this).autocomplete({
-                source: '{{ fsc.url() }}&action=autocomplete&source=' + $(this).attr('data-source')
+                source: '{{ fsc.url() }}?action=autocomplete&source=' + $(this).attr('data-source')
                         + '&field=' + field + '&title=' + $(this).attr('data-title'),
                 select: function(event, ui) {
                     $('#' + field + 'Autocomplete').val(ui.item.key);
@@ -133,7 +133,7 @@
         <div class="col-6 text-right">
             <h2>
                 <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
-                {{ title }} <small class="text-info">{{ fsc.getPrimaryDescription() }}</small>
+                {{ title }} <small class="text-info">{{ fsc.getPrimaryDescription() | raw }}</small>
             </h2>
         </div>
     </div>
@@ -151,6 +151,7 @@
 <div class="container-fluid">
     <div class="row">
         {# -- Left Panel -- #}
+        {% if fsc.views | length > 1 %}
         <div class="col-sm-2">
             <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
                 {% for indexView, view in fsc.views %}
@@ -163,9 +164,10 @@
                 {% endfor %}
             </div>
         </div>
+        {% endif %}
 
         {# -- Right Panel -- #}
-        <div class="col-sm-10">
+        <div class="col">
             <div class="tab-content" id="mainTabsContent">
                 {% for indexView, view in fsc.views %}
                     {% set active = (indexView == fsc.active) ? ' show active' : '' %}
@@ -178,6 +180,10 @@
                             <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
+                                <a href="{{ view.getURL('new') | raw }}" class="btn btn-sm btn-success">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans('new') }}</span>
+                                </a>
                                 {{ BaseController.columnsForListView(_context, view) }}
                             {% elseif viewType == 'EditView' %}
                                 {# Statistical buttons bar #}

@@ -107,7 +107,7 @@
         $('.autocomplete').each(function() {
             var field = $(this).attr('data-field');
             $(this).autocomplete({
-                source: '{{ fsc.url() }}&action=autocomplete&source=' + $(this).attr('data-source')
+                source: '{{ fsc.url() }}?action=autocomplete&source=' + $(this).attr('data-source')
                         + '&field=' + field + '&title=' + $(this).attr('data-title'),
                 select: function(event, ui) {
                     $('#' + field + 'Autocomplete').val(ui.item.key);
