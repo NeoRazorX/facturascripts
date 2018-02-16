@@ -63,7 +63,7 @@ class Ledger extends AccountingBase
     protected function getData()
     {
         $sql = 'SELECT asto.numero, asto.fecha, part.codsubcuenta, part.concepto, part.debe, part.haber'
-            . ' FROM co_asientos as asto, co_partidas AS part WHERE asto.idasiento = part.idasiento '
+            . ' FROM asientos as asto, partidas AS part WHERE asto.idasiento = part.idasiento '
             . ' AND fecha >= ' . $this->dataBase->var2str($this->dateFrom)
             . ' AND fecha <= ' . $this->dataBase->var2str($this->dateTo)
             . ' ORDER BY asto.numero, part.codsubcuenta ASC';

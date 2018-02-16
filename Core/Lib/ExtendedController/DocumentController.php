@@ -40,9 +40,9 @@ abstract class DocumentController extends PanelController
      * @param MiniLog    $miniLog
      * @param string     $className
      */
-    public function __construct(&$cache, &$i18n, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($cache, $i18n, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className);
         $this->setTemplate('Master/DocumentController');
     }
 

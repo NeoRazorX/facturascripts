@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ langcode2 }}" xml:lang="{{ langcode2 }}" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG')|slice(0, 2) }}" xml:lang="{{ constant('FS_LANG')|slice(0, 2) }}" >
     <head>
         {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -7,19 +7,20 @@
         <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="FacturaScripts" />
+        <meta name="robots" content="noindex" />
         {% endblock %}
         {% block icons %}
-        <link rel="shortcut icon" href="Dinamic/Assets/Images/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="Dinamic/Assets/Images/apple-icon-180x180.png" />
+        <link rel="shortcut icon" href="{{ asset('Dinamic/Assets/Images/favicon.ico') }}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}" />
         {% endblock %}
         {% block css %}
-        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('node_modules/font-awesome/css/font-awesome.min.css') }}" />
         {% endblock %}
         {% block javascript %}
-        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
-        <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>

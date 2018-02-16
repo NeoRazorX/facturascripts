@@ -44,7 +44,7 @@ class RoleUser extends Base\ModelClass
      *
      * @var string
      */
-    public $codrol;
+    public $codrole;
 
     /**
      * Nick.
@@ -60,7 +60,7 @@ class RoleUser extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_roles_users';
+        return 'roles_users';
     }
 
     /**
@@ -100,7 +100,7 @@ class RoleUser extends Base\ModelClass
             return false;
         }
 
-        if (empty($this->codrol)) {
+        if (empty($this->codrole)) {
             self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
 
             return false;
@@ -127,7 +127,7 @@ class RoleUser extends Base\ModelClass
             return [];
         }
 
-        $filter = [new DataBaseWhere('codrol', $this->codrol)];
+        $filter = [new DataBaseWhere('codrole', $this->codrole)];
         if (!empty($pageName)) {
             $filter[] = new DataBaseWhere('pagename', $pageName);
         }

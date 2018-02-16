@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codrol" onclick="EditRole" />
+            <widget type="text" fieldname="codrole" onclick="EditRole" />
         </column>
         <column name="description" order="100">
             <widget type="text" fieldname="descripcion" />

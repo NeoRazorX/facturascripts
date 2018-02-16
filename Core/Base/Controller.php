@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,24 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as SymfonyController;
 
 /**
  * Class from which all FacturaScripts controllers must inherit.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Controller extends SymfonyController
+class Controller
 {
+
     /**
      * Contains a list of extra files to load: javascript, css, etc.
      *
@@ -62,13 +60,6 @@ class Controller extends SymfonyController
      * @var DataBase
      */
     protected $dataBase;
-
-    /**
-     * Event manager.
-     *
-     * @var EventDispatcher
-     */
-    protected $dispatcher;
 
     /**
      * Tools to work with currencies.
@@ -141,6 +132,12 @@ class Controller extends SymfonyController
     public $title;
 
     /**
+     *
+     * @var string
+     */
+    public $uri;
+
+    /**
      * User logged in.
      *
      * @var Model\User
@@ -154,25 +151,24 @@ class Controller extends SymfonyController
      * @param Translator $i18n
      * @param MiniLog    $miniLog
      * @param string     $className
+     * @param string     $uri
      */
-    public function __construct(&$cache, &$i18n, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         $this->assets = AssetManager::getAssetsForPage($className);
         $this->cache = &$cache;
         $this->className = $className;
         $this->dataBase = new DataBase();
-        $this->dispatcher = new EventDispatcher();
         $this->divisaTools = new DivisaTools();
         $this->i18n = &$i18n;
+        $this->miniLog = &$miniLog;
         $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
+        $this->uri = $uri;
 
-        $this->title = $this->className;
         $pageData = $this->getPageData();
-        if (!empty($pageData)) {
-            $this->title = $pageData['title'];
-        }
+        $this->title = empty($pageData) ? $this->className : $pageData['title'];
     }
 
     /**
@@ -246,7 +242,7 @@ class Controller extends SymfonyController
             'menu' => 'new',
             'submenu' => null,
             'showonmenu' => true,
-            'orden' => 100,
+            'ordernum' => 100,
         ];
     }
 
@@ -257,7 +253,7 @@ class Controller extends SymfonyController
      */
     public function url()
     {
-        return 'index.php?page=' . $this->className;
+        return $this->className;
     }
 
     /**
@@ -269,7 +265,6 @@ class Controller extends SymfonyController
     {
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
-        $this->dispatcher->dispatch('pre-publicCore');
     }
 
     /**
@@ -300,7 +295,5 @@ class Controller extends SymfonyController
             $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
             $this->user->save();
         }
-
-        $this->dispatcher->dispatch('pre-privateCore');
     }
 }

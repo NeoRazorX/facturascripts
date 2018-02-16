@@ -36,11 +36,11 @@ final class RoleUserTest extends TestCase
 
         $this->assertInstanceOf(RoleUser::class, $model);
         $this->assertEquals('', $model->nick);
-        $this->assertEquals('', $model->codrol);
+        $this->assertEquals('', $model->codrole);
         $this->assertFalse($model->test());
 
         $model->nick = 'Test nick';
-        $model->codrol = 'CODR1';
+        $model->codrole = 'CODR1';
 
         $this->assertTrue($model->test());
     }

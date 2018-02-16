@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Lib\DocumentReportsBase;
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model;
 
 /**
@@ -34,6 +33,7 @@ use FacturaScripts\Core\Model;
  */
 class DocumentReports extends Controller
 {
+
     /**
      * Data for table.
      *
@@ -77,7 +77,7 @@ class DocumentReports extends Controller
      * @param MiniLog    $miniLog
      * @param string     $className
      */
-    public function __construct(&$cache, &$i18n, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
@@ -194,12 +194,12 @@ class DocumentReports extends Controller
             case in_array('d', $options):
                 $concat[] = 'LPAD(CAST(EXTRACT(DAY FROM fecha) AS CHAR(10)), 2, \'0\')';
                 $concat[] = ' \'-\' ';
-                /// no break
+            /// no break
 
             case in_array('m', $options):
                 $concat[] = 'LPAD(CAST(EXTRACT(MONTH FROM fecha) AS CHAR(10)), 2, \'0\')';
                 $concat[] = ' \'-\' ';
-                /// no break
+            /// no break
 
             case in_array('Y', $options):
                 $concat[] = 'CAST(EXTRACT(YEAR FROM fecha) AS CHAR(10))';

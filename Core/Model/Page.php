@@ -70,7 +70,7 @@ class Page extends Base\ModelClass
      *
      * @var int
      */
-    public $orden;
+    public $ordernum;
 
     /**
      * Icon of the page.
@@ -86,7 +86,7 @@ class Page extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_pages';
+        return 'pages';
     }
 
     /**
@@ -118,7 +118,7 @@ class Page extends Base\ModelClass
     {
         parent::clear();
         $this->showonmenu = true;
-        $this->orden = 100;
+        $this->ordernum = 100;
     }
 
     /**
@@ -131,6 +131,6 @@ class Page extends Base\ModelClass
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return 'index.php?page=' . $this->name;
+        return $this->name;
     }
 }

@@ -75,7 +75,7 @@
         $('#formSearch' + tabActive).submit();
     }
     function goToOptions() {
-        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
+        window.location.href = 'EditPageOption?code=' + tabActive;
     }
     function insertRecord() {
         var url = { {{ fsc.getStringURLs('new') | raw }} };
@@ -107,7 +107,7 @@
         $('.autocomplete').each(function() {
             var field = $(this).attr('data-field');
             $(this).autocomplete({
-                source: '{{ fsc.url() }}&action=autocomplete&source=' + $(this).attr('data-source')
+                source: '{{ fsc.url() }}?action=autocomplete&source=' + $(this).attr('data-source')
                         + '&field=' + field + '&title=' + $(this).attr('data-title'),
                 select: function(event, ui) {
                     $('#' + field + 'Autocomplete').val(ui.item.key);
@@ -154,11 +154,11 @@
                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
                    <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}

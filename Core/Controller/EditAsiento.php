@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -32,21 +33,26 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditAsiento extends ExtendedController\PanelController
 {
+    public function __construct(&$cache, &$i18n, $className)
+    {
+        parent::__construct($cache, $i18n, $className);
+        $this->setTemplate('AccountingEntry');
+    }
+
     /**
      * Load views
      */
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $this->setTabsPosition('bottom');
+        $this->addGridView('\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
     }
 
     /**
      * Load data view procedure
      *
      * @param string                      $keyView
-     * @param ExtendedController\EditView $view
+     * @param ExtendedController\BaseView $view
      */
     protected function loadData($keyView, $view)
     {
@@ -56,13 +62,45 @@ class EditAsiento extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
+            case 'EditPartida':
             case 'ListPartida':
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData(false, $where);
+                    $orderby = ['idpartida' => 'ASC'];
+                    $view->loadData(false, $where, $orderby);
                 }
                 break;
+        }
+    }
+
+    /**
+     * Run the actions that alter data before reading it
+     *
+     * @param BaseView $view
+     * @param string   $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($view, $action): bool
+    {
+        switch ($action) {
+            case 'account-data':
+                $this->setTemplate(false);
+                $subaccount = $this->request->get('codsubcuenta', '');
+                $exercise = $this->request->get('codejercicio', '');
+                $result = $this->getAccountData($exercise, $subaccount);
+                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                return false;
+
+            case 'clone':
+                return true; // TODO
+
+            case 'lock':
+                return true; // TODO
+
+            default:
+                return parent::execPreviousAction($view, $action);
         }
     }
 
@@ -71,14 +109,45 @@ class EditAsiento extends ExtendedController\PanelController
      *
      * @return array
      */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entry';
+        $pagedata['title'] = 'accounting-entries';
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-balance-scale';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    private function getAccountData($exercise, $subaccount): array
+    {
+        $result = [
+            'description' => '',
+            'balance' => 0.00,
+            'detail' => [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00]
+        ];
+
+        if (empty($exercise) or empty($subaccount)) {
+            return $result;
+        }
+
+        $where = [
+            new DataBaseWhere('codsubcuenta', $subaccount),
+            new DataBaseWhere('codejercicio', $exercise)
+        ];
+
+        $account = new Model\Subcuenta();
+        if ($account->loadFromCode(null, $where)) {
+            $result['description'] = $account->descripcion;
+
+            $where = [ new DataBaseWhere('idsubcuenta', $account->idsubcuenta) ];
+            $balance = new Model\SubcuentaSaldo();
+            foreach ($balance->all($where) as $values) {
+                $result['detail'][$values->mes] = $values->saldo;
+                $result['balance'] += $values->saldo;
+            }
+        }
+        return $result;
     }
 }

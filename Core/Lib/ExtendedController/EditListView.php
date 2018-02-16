@@ -28,7 +28,7 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditListView extends BaseView
+class EditListView extends BaseView implements DataViewInterface
 {
     /**
      * Cursor with the display model's data

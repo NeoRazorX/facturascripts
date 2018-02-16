@@ -57,7 +57,7 @@
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="120">
+            <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="120">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
@@ -65,7 +65,7 @@
             <column name="payment-days" description="desc-payment-days" numcolumns="3" order="130">
                 <widget type="text" fieldname="diaspago" />
             </column>
-            <column name="employee" numcolumns="3" titleurl="?page=ListUser" order="140">
+            <column name="agent" numcolumns="3" titleurl="ListUser" order="140">
                 <widget type="select" fieldname="codagente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>

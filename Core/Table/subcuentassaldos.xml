@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : subcuentassaldos.xml
+    Author     : Raul Jimenez
+    Author     : Jose Antonio Cuello
+    Description:
+        Structure for the subcuentassaldos table.
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('subcuentas_saldos_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>mes</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idsubcuenta</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idcuenta</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>debe</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>haber</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>saldo</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <constraint>
+        <name>subcuentas_saldos_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_subcuentassaldos_subcuentas</name>
+        <type>FOREIGN KEY (idsubcuenta)
+            REFERENCES subcuentas (idsubcuenta)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_subcuentassaldos_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
+            REFERENCES ejercicios (codejercicio)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_subcuentassaldos_cuentas</name>
+        <type>FOREIGN KEY (idcuenta)
+            REFERENCES cuentas (idcuenta)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_subcuentasaldos</name>
+        <type>UNIQUE (idsubcuenta, mes)</type>
+    </constraint>
+</table>

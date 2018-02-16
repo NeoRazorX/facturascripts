@@ -96,9 +96,9 @@ abstract class ListController extends Base\Controller
      * @param Base\MiniLog    $miniLog
      * @param string          $className
      */
-    public function __construct(&$cache, &$i18n, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($cache, $i18n, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate('Master/ListController');
 
@@ -273,7 +273,7 @@ abstract class ListController extends Base\Controller
 
             $fields = $listView->getSearchIn();
             $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
-            $listView->loadData($where, 0, Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData(false, $where, [], 0, Base\Pagination::FS_ITEM_LIMIT);
 
             $cols = $this->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;
@@ -324,7 +324,7 @@ abstract class ListController extends Base\Controller
 
         if ($this->query !== '') {
             $fields = $this->views[$this->active]->getSearchIn();
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
+            $result[] = new DataBaseWhere($fields, Base\Utils::noHtml($this->query), 'LIKE');
         }
 
         foreach ($this->views[$this->active]->getFilters() as $key => $filter) {

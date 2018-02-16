@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use DebugBar\StandardDebugBar;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Twig_Function;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 
@@ -39,6 +39,7 @@ use Twig_Loader_Filesystem;
  */
 class AppController extends App
 {
+
     /**
      * Controller loaded
      *
@@ -61,29 +62,29 @@ class AppController extends App
     private $menuManager;
 
     /**
-     * Langcode to use in html.
      *
      * @var string
      */
-    private $langcode2;
+    private $pageName;
 
     /**
-     * AppController constructor.
+     * Initializes the app.
      *
-     * @param string $folder
+     * @param string $uri
+     * @param string $pageName
      */
-    public function __construct($folder = '')
+    public function __construct($uri = '/', $pageName = '')
     {
-        parent::__construct($folder);
+        parent::__construct($uri);
         $this->debugBar = new StandardDebugBar();
-        $this->menuManager = new MenuManager();
-        $this->langcode2 = substr($this->request->cookies->get('fsLang', FS_LANG), 0, 2);
-
         if (FS_DEBUG) {
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
             $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
             $this->debugBar->addCollector(new TranslationCollector($this->i18n));
         }
+
+        $this->menuManager = new MenuManager();
+        $this->pageName = $pageName;
     }
 
     /**
@@ -106,7 +107,7 @@ class AppController extends App
             $user = $this->userAuth();
 
             /// returns the name of the controller to load
-            $pageName = $this->request->query->get('page', $this->getDefaultController($user));
+            $pageName = $this->getPageName($user);
             $this->loadController($pageName, $user);
 
             /// returns true for testing purpose
@@ -117,19 +118,47 @@ class AppController extends App
     }
 
     /**
+     * Returns the controllers full name
+     *
+     * @param string $pageName
+     *
+     * @return string
+     */
+    private function getControllerFullName($pageName)
+    {
+        $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
+        if (!class_exists($controllerName)) {
+            $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
+            if (FS_DEBUG) {
+                $this->pluginManager->deploy();
+            }
+        }
+
+        return $controllerName;
+    }
+
+    /**
      * Returns the name of the default controller for the current user or for all users.
      *
      * @param User|false $user
      *
      * @return string
      */
-    private function getDefaultController($user)
+    private function getPageName($user)
     {
+        if ($this->pageName !== '') {
+            return $this->pageName;
+        }
+
+        if ($this->getUriParam(0) !== 'index.php' && $this->getUriParam(0) !== '') {
+            return $this->getUriParam(0);
+        }
+
         if ($user && $user->homepage !== null && $user->homepage !== '') {
             return $user->homepage;
         }
 
-        return AppSettings::get('default', 'homepage', 'Wizard');
+        return $this->settings->get('default', 'homepage', 'Wizard');
     }
 
     /**
@@ -156,7 +185,7 @@ class AppController extends App
             $permissions = new ControllerPermissions($user, $pageName);
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $pageName);
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName, $this->uri);
                 if ($user === false) {
                     $this->controller->publicCore($this->response);
                     $template = $this->controller->getTemplate();
@@ -187,24 +216,6 @@ class AppController extends App
     }
 
     /**
-     * Returns the controllers full name
-     *
-     * @param string $pageName
-     *
-     * @return string
-     */
-    private function getControllerFullName($pageName)
-    {
-        $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
-        if (!class_exists($controllerName)) {
-            $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
-            $this->deployPlugins();
-        }
-
-        return $controllerName;
-    }
-
-    /**
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
@@ -217,16 +228,15 @@ class AppController extends App
         $twigLoader = $this->loadTwigFolders();
 
         /// Twig options
-        $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
+        $twigOptions = ['cache' => FS_FOLDER . '/MyFiles/Cache/Twig'];
 
         /// HTML template variables
         $templateVars = [
-            'appSettings' => new AppSettings(),
+            'appSettings' => $this->settings,
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
-            'langcode2' => $this->langcode2,
             'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
@@ -237,7 +247,7 @@ class AppController extends App
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
 
-            $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
+            $baseUrl = FS_ROUTE . '/vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
             /// add log data to the debugBar
@@ -247,6 +257,10 @@ class AppController extends App
             $this->debugBar['messages']->info('END');
         }
         $twig = new Twig_Environment($twigLoader, $twigOptions);
+        $assetFunction = new Twig_Function('asset', function ($string) {
+            return FS_ROUTE . '/' . $string;
+        });
+        $twig->addFunction($assetFunction);
 
         try {
             $this->response->setContent($twig->render($template, $templateVars));

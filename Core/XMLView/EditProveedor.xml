@@ -56,7 +56,7 @@
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="110">
+            <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="110">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>

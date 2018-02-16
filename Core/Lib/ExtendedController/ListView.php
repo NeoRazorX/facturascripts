@@ -28,7 +28,7 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListView extends BaseView
+class ListView extends BaseView implements DataViewInterface
 {
     /**
      * Order constants
@@ -128,7 +128,7 @@ class ListView extends BaseView
     {
         foreach ($this->getColumns() as $col) {
             if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
-                return '?page=' . $col->widget->onClick . '&code=' . $data->{$col->widget->fieldName};
+                return $col->widget->onClick . '?code=' . $data->{$col->widget->fieldName};
             }
         }
 

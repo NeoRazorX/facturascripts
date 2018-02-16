@@ -126,6 +126,6 @@ class Provincia extends Base\ModelClass
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return parent::url($type, 'ListPais&active=List');
+        return parent::url($type, 'ListPais?active=List');
     }
 }

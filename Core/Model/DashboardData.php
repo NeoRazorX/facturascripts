@@ -80,7 +80,7 @@ class DashboardData extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_dashboard_data';
+        return 'dashboard_data';
     }
 
     /**
@@ -189,11 +189,11 @@ class DashboardData extends Base\ModelClass
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
-        $result = 'index.php?page=';
+        $result = '';
 
         switch ($type) {
             case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
+                $result .= 'Edit' . $model . '?code=' . $value;
                 break;
 
             case 'new':

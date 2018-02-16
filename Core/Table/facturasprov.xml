@@ -168,15 +168,15 @@
     </constraint>
     <constraint>
         <name>ca_facturasprov_asiento2</name>
-        <type>FOREIGN KEY (idasiento) REFERENCES co_asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturasprov_asientop</name>
-        <type>FOREIGN KEY (idasientop) REFERENCES co_asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idasientop) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_facturasprov</name>
-        <type>UNIQUE (codigo)</type>
+        <name>uniq_codigo_facturasprov2</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
     <constraint>
         <name>facturasprov_pkey</name>

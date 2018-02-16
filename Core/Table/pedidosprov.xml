@@ -150,7 +150,7 @@
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_pedidosprov</name>
-        <type>UNIQUE (codigo)</type>
+        <name>uniq_codigo_pedidosprov2</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>

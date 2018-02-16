@@ -40,20 +40,6 @@ class Impuesto extends Base\ModelClass
     public $codimpuesto;
 
     /**
-     * Sub-account code for sales.
-     *
-     * @var string
-     */
-    public $codsubcuentarep;
-
-    /**
-     * Sub-account code for purchases.
-     *
-     * @var string
-     */
-    public $codsubcuentasop;
-
-    /**
      * Description of the tax.
      *
      * @var string
@@ -121,19 +107,18 @@ class Impuesto extends Base\ModelClass
      */
     public function test()
     {
-        $status = false;
-
         $this->codimpuesto = trim($this->codimpuesto);
-        $this->descripcion = Utils::noHtml($this->descripcion);
-
         if (empty($this->codimpuesto) || strlen($this->codimpuesto) > 10) {
             self::$miniLog->alert(self::$i18n->trans('not-valid-tax-code-length'));
-        } elseif (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-description-tax'));
-        } else {
-            $status = true;
+            return false;
         }
 
-        return $status;
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        if (empty($this->descripcion) || strlen($this->descripcion) > 50) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-description-tax'));
+            return false;
+        }
+
+        return true;
     }
 }

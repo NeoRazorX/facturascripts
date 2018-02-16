@@ -37,7 +37,7 @@ class Role extends Base\ModelClass
      *
      * @var string
      */
-    public $codrol;
+    public $codrole;
 
     /**
      * Description of the role.
@@ -53,7 +53,7 @@ class Role extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_roles';
+        return 'roles';
     }
 
     /**
@@ -63,7 +63,7 @@ class Role extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'codrol';
+        return 'codrole';
     }
 
     /**
@@ -89,6 +89,6 @@ class Role extends Base\ModelClass
      */
     public function url($type = 'auto', $list = 'List')
     {
-        return parent::url($type, 'ListUser&active=List');
+        return parent::url($type, 'ListUser?active=List');
     }
 }
