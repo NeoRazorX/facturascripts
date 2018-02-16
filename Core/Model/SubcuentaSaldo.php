@@ -33,6 +33,20 @@ class SubcuentaSaldo extends Base\ModelClass
      *
      * @var int
      */
+    public $id;
+
+    /**
+     * Month
+     *
+     * @var int
+     */
+    public $mes;
+
+    /**
+     * ID of the subaccount to which it belongs.
+     *
+     * @var int
+     */
     public $idsubcuenta;
 
     /**
@@ -50,95 +64,26 @@ class SubcuentaSaldo extends Base\ModelClass
     public $codejercicio;
 
     /**
-     * Balance amount for the month of January.
+     * Debit amount for the month.
      *
      * @var float|int
      */
-    public $saldo_1;
+    public $debe;
 
     /**
-     * Balance amount for the month of February.
+     * Credit amount for the month.
      *
      * @var float|int
      */
-    public $saldo_2;
+    public $haber;
 
     /**
-     * Balance amount for the month of March.
-     *
-     * @var float|int
-     */
-    public $saldo_3;
-
-    /**
-     * Balance amount for the month of April.
-     *
-     * @var float|int
-     */
-    public $saldo_4;
-
-    /**
-     * Balance amount for the month of May.
-     *
-     * @var float|int
-     */
-    public $saldo_5;
-
-    /**
-     * Balance amount for the month of June.
-     *
-     * @var float|int
-     */
-    public $saldo_6;
-
-    /**
-     * Balance amount for the month of July.
-     *
-     * @var float|int
-     */
-    public $saldo_7;
-
-    /**
-     * Balance amount for the month of August.
-     *
-     * @var float|int
-     */
-    public $saldo_8;
-
-    /**
-     * Balance amount for the month of September.
-     *
-     * @var float|int
-     */
-    public $saldo_9;
-
-    /**
-     * Balance amount for the month of October.
-     *
-     * @var float|int
-     */
-    public $saldo_10;
-
-    /**
-     * Balance amount for the month of November.
-     *
-     * @var float|int
-     */
-    public $saldo_11;
-
-    /**
-     * Balance amount for the month of December.
-     *
-     * @var float|int
-     */
-    public $saldo_12;
-
-    /**
-     * Balance amount.
+     * Balance amount for the month.
      *
      * @var float|int
      */
     public $saldo;
+
 
     /**
      * Returns the name of the table that uses this model.
@@ -147,7 +92,7 @@ class SubcuentaSaldo extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_subcuentas_saldos';
+        return 'subcuentassaldos';
     }
 
     /**
@@ -167,18 +112,8 @@ class SubcuentaSaldo extends Base\ModelClass
     {
         parent::clear();
 
-        $this->saldo_1 = 0.0;
-        $this->saldo_2 = 0.0;
-        $this->saldo_3 = 0.0;
-        $this->saldo_4 = 0.0;
-        $this->saldo_5 = 0.0;
-        $this->saldo_6 = 0.0;
-        $this->saldo_7 = 0.0;
-        $this->saldo_8 = 0.0;
-        $this->saldo_9 = 0.0;
-        $this->saldo_10 = 0.0;
-        $this->saldo_11 = 0.0;
-        $this->saldo_12 = 0.0;
+        $this->debe = 0.0;
+        $this->haber = 0.0;
         $this->saldo = 0.0;
     }
 
@@ -197,11 +132,28 @@ class SubcuentaSaldo extends Base\ModelClass
 
         $this->codejercicio = $account->codejercicio;
         $this->idcuenta = $account->idcuenta;
-        $this->saldo = 0.0;
-        for ($i = 1; $i < 13; ++$i) {
-            $field = 'saldo_' . strval($i);
-            $this->saldo += $this->{$field};
-        }
+        $this->saldo = $this->debe - $this->haber;
         return true;
+    }
+
+    /**
+     * Update account balance for a month
+     *
+     * @param int $month
+     * @param float $debit
+     * @param float $credit
+     * @return bool
+     */
+    public function updateBalance($month, $debit, $credit): bool
+    {
+        $balance = $debit - $credit;
+        $sql = 'UPDATE ' . static::tableName() . ' SET '
+            . ' debe = debe + ' . $debit
+            . ',haber = haber + ' . $credit
+            . ',saldo = saldo + ' . $balance
+            . ' WHERE idsubcuenta = ' . $this->idsubcuenta
+            . ' AND mes = ' . $month;
+
+        return self::$dataBase->exec($sql);
     }
 }

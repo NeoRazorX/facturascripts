@@ -254,6 +254,7 @@ class Ejercicio extends Base\ModelClass
      */
     public function test()
     {
+        /// TODO: Change dates verify to $this->inRange() call
         $status = false;
 
         $this->codejercicio = trim($this->codejercicio);
@@ -288,5 +289,19 @@ class Ejercicio extends Base\ModelClass
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
             . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
+    }
+
+    /**
+     * Check if the indicated date is within the period of the exercise dates
+     *
+     * @param string $dateToCheck        (string with date format)
+     * @return bool
+     */
+    function inRange($dateToCheck): bool
+    {
+      $start = strtotime($this->fechainicio);
+      $end = strtotime($this->fechafin);
+      $date = strtotime($dateToCheck);
+      return (($date >= $start) && ($date <= $end));
     }
 }
