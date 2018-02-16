@@ -75,7 +75,7 @@ abstract class ModelClass
      * @param array $data
      */
     abstract public function checkArrayData(&$data);
-    
+
     /**
      * Returns the list of fields in the table.
      *
@@ -312,6 +312,8 @@ abstract class ModelClass
      */
     public function newCode($field = '')
     {
+        /// TODO: Review the change to numeric by the cast and be able to indicate
+        /// TODO: a where condition for the calculation
         $sqlWhere = '';
         if (empty($field)) {
             /// Set Cast to Integer of PK Field
