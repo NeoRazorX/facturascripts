@@ -167,15 +167,6 @@ abstract class App
     }
 
     /**
-     * Deploy plugin files.
-     */
-    protected function deployPlugins()
-    {
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy();
-    }
-
-    /**
      * Returns param number $num in uri.
      *
      * @param int $num

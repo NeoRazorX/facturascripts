@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_pages.xml
+    Document   : pages.xml
     Created on : 24 de enero de 2012, 19:57
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the fs_pages table.
+        Structure for the pages table.
 -->
 <table>
     <column>
@@ -34,7 +34,7 @@
         <default>true</default>
     </column>
     <column>
-        <name>orden</name>
+        <name>ordernum</name>
         <type>integer</type>
         <null>NO</null>
         <default>100</default>
@@ -45,7 +45,7 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>fs_pages_pkey</name>
+        <name>pages_pkey</name>
         <type>PRIMARY KEY (name)</type>
     </constraint>
 </table>

@@ -30,12 +30,12 @@
             </column>
             <column name="user" order="100">
                 <widget type="select" fieldname="nick">
-                    <values source="fs_users" fieldcode="nick" fieldtitle="nick"></values>
+                    <values source="users" fieldcode="nick" fieldtitle="nick"></values>
                 </widget>
             </column>
             <column name="role" order="100" titleurl="ListUser">
-                <widget type="select" fieldname="codrol">
-                    <values source="fs_roles" fieldcode="codrol" fieldtitle="descripcion"></values>
+                <widget type="select" fieldname="codrole">
+                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion"></values>
                 </widget>
             </column>
         </group>

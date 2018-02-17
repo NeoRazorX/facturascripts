@@ -24,11 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * AdminHome manage the basic settings.
+ * AdminPlugins.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AdminHome extends Base\Controller
+class AdminPlugins extends Base\Controller
 {
 
     /**
@@ -37,26 +37,6 @@ class AdminHome extends Base\Controller
      * @var Base\PluginManager
      */
     public $pluginManager;
-
-    /**
-     * Runs the controller's private logic.
-     *
-     * @param Response                      $response
-     * @param User                          $user
-     * @param Base\ControllerPermissions    $permissions
-     */
-    public function privateCore(&$response, $user, $permissions)
-    {
-        parent::privateCore($response, $user, $permissions);
-
-        /// For now, always deploy the contents of Dinamic, for testing purposes
-        $this->pluginManager = new Base\PluginManager();
-        $this->pluginManager->deploy();
-        $this->cache->clear();
-
-        $action = $this->request->get('action', '');
-        $this->execAction($action);
-    }
 
     /**
      * Return the max file size that can be uploaded.
@@ -85,14 +65,23 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Restores .htaccess to default settings
+     * Runs the controller's private logic.
+     *
+     * @param Response                      $response
+     * @param User                          $user
+     * @param Base\ControllerPermissions    $permissions
      */
-    private function checkHtaccess()
+    public function privateCore(&$response, $user, $permissions)
     {
-        if (!file_exists(FS_FOLDER . '/.htaccess')) {
-            $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
-            file_put_contents('.htaccess', \is_string($txt) ? $txt : '');
-        }
+        parent::privateCore($response, $user, $permissions);
+
+        /// For now, always deploy the contents of Dinamic, for testing purposes
+        $this->pluginManager = new Base\PluginManager();
+        $this->pluginManager->deploy();
+        $this->cache->clear();
+
+        $action = $this->request->get('action', '');
+        $this->execAction($action);
     }
 
     /**
@@ -154,10 +143,6 @@ class AdminHome extends Base\Controller
             case 'upload':
                 $this->uploadPlugin($this->request->files->get('plugin', []));
                 break;
-
-            default:
-                $this->checkHtaccess();
-                break;
         }
     }
 
@@ -197,7 +182,7 @@ class AdminHome extends Base\Controller
                 continue;
             }
 
-            $this->pluginManager->install($uploadFile->getPathname());
+            $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
             unlink($uploadFile->getPathname());
         }
     }

@@ -72,7 +72,7 @@ abstract class ListController extends Base\Controller
     /**
      * This string contains the text sent as a query parameter, used to filter the model data
      *
-     * @var string|false
+     * @var string
      */
     public $query;
 
@@ -324,7 +324,7 @@ abstract class ListController extends Base\Controller
 
         if ($this->query !== '') {
             $fields = $this->views[$this->active]->getSearchIn();
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
+            $result[] = new DataBaseWhere($fields, Base\Utils::noHtml($this->query), 'LIKE');
         }
 
         foreach ($this->views[$this->active]->getFilters() as $key => $filter) {

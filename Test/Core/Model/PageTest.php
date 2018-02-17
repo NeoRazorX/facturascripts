@@ -36,11 +36,11 @@ final class PageTest extends TestCase
 
         $this->assertInstanceOf(Page::class, $model);
         $this->assertTrue($model->showonmenu);
-        $this->assertEquals(100, $model->orden);
+        $this->assertEquals(100, $model->ordernum);
         $this->assertTrue($model->test());
 
         $model->showonmenu = false;
-        $model->orden = 0;
+        $model->ordernum = 0;
 
         $this->assertTrue($model->test());
     }

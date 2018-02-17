@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ langcode2 }}" xml:lang="{{ langcode2 }}" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG')|slice(0, 2) }}" xml:lang="{{ constant('FS_LANG')|slice(0, 2) }}" >
     <head>
         {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -7,6 +7,7 @@
         <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="FacturaScripts" />
+        <meta name="robots" content="noindex" />
         {% endblock %}
         {% block icons %}
         <link rel="shortcut icon" href="{{ asset('Dinamic/Assets/Images/favicon.ico') }}" />

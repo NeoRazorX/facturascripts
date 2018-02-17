@@ -44,7 +44,7 @@ class RoleAccess extends Base\ModelClass
      *
      * @var string
      */
-    public $codrol;
+    public $codrole;
 
     /**
      * Name of the page.
@@ -74,7 +74,7 @@ class RoleAccess extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_roles_access';
+        return 'roles_access';
     }
 
     /**
@@ -90,21 +90,21 @@ class RoleAccess extends Base\ModelClass
     /**
      * Add the indicated page list to the Role group
      *
-     * @param string $codrol
+     * @param string $codrole
      * @param Page[] $pages
      *
      * @return bool
      */
-    public static function addPagesToRole($codrol, $pages)
+    public static function addPagesToRole($codrole, $pages)
     {
-        $where = [new DataBaseWhere('codrol', $codrol)];
+        $where = [new DataBaseWhere('codrole', $codrole)];
         $roleAccess = new self();
 
         foreach ($pages as $record) {
             $where[] = new DataBaseWhere('pagename', $record->name);
 
             if (!$roleAccess->loadFromCode('', $where)) {
-                $roleAccess->codrol = $codrol;
+                $roleAccess->codrole = $codrole;
                 $roleAccess->pagename = $record->name;
                 $roleAccess->allowdelete = true;
                 $roleAccess->allowupdate = true;

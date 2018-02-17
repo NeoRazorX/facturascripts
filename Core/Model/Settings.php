@@ -65,7 +65,7 @@ class Settings extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'fs_settings';
+        return 'settings';
     }
 
     /**

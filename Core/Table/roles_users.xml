@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : fs_roles_users.xml
+    Document   : roles_users.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the fs_roles_users table.
+        Structure for the roles_users table.
 -->
 <table>
     <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('fs_roles_users_id_seq'::regclass)</default>
+        <default>nextval('roles_users_id_seq'::regclass)</default>
     </column>
     <column>
-        <name>codrol</name>
+        <name>codrole</name>
         <type>character varying(20)</type>
         <null>NO</null>
     </column>
@@ -23,19 +23,19 @@
         <null>NO</null>
     </column>
     <constraint>
-        <name>fs_roles_users_pkey</name>
+        <name>roles_users_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>fs_roles_users_roles</name>
-        <type>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>roles_users_roles</name>
+        <type>FOREIGN KEY (codrole) REFERENCES roles (codrole) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>fs_roles_users_user</name>
-        <type>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>roles_users_user</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>unique_fs_roles_users</name>
-        <type>UNIQUE (codrol,nick)</type>
+        <name>unique_roles_users</name>
+        <type>UNIQUE (codrole,nick)</type>
     </constraint>
 </table>

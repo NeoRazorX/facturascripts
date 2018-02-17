@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,10 +34,27 @@ use Twig_Loader_Filesystem;
 class AppInstaller
 {
 
+    /**
+     *
+     * @var Translator
+     */
     private $i18n;
+
+    /**
+     *
+     * @var MiniLog
+     */
     private $miniLog;
+
+    /**
+     *
+     * @var Request
+     */
     private $request;
 
+    /**
+     * Starts installer and run it.
+     */
     public function __construct()
     {
         $this->request = Request::createFromGlobals();
@@ -59,6 +77,11 @@ class AppInstaller
         }
     }
 
+    /**
+     * Check database connection and creates the database if needed.
+     *
+     * @return boolean
+     */
     private function createDataBase()
     {
         $dbData = [
@@ -107,6 +130,8 @@ class AppInstaller
 
         if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('MyFiles')) {
             chmod('Plugins', octdec(777));
+            $pluginManager = new PluginManager();
+            $pluginManager->deploy();
             return true;
         }
 
@@ -114,6 +139,11 @@ class AppInstaller
         return false;
     }
 
+    /**
+     * Returns the request uri from server.
+     *
+     * @return string
+     */
     private function getUri()
     {
         $uri = $this->request->server->get('REQUEST_URI');
@@ -171,6 +201,9 @@ class AppInstaller
         return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
 
+    /**
+     * Renders HTML.
+     */
     private function render()
     {
         /// HTML template variables
@@ -191,6 +224,11 @@ class AppInstaller
         $response->send();
     }
 
+    /**
+     * Saves the htaccess file for the apache server.
+     *
+     * @return bool
+     */
     private function saveHtaccess()
     {
         if (!file_exists(FS_FOLDER . '/.htaccess')) {
@@ -201,6 +239,11 @@ class AppInstaller
         return true;
     }
 
+    /**
+     * Saves install parameters to config file.
+     *
+     * @return bool
+     */
     private function saveInstall()
     {
         $file = fopen(FS_FOLDER . '/config.php', 'wb');
@@ -235,9 +278,19 @@ class AppInstaller
         return false;
     }
 
+    /**
+     * Check for common errors.
+     *
+     * @return bool
+     */
     private function searchErrors()
     {
         $errors = false;
+
+        if ((int) substr(phpversion(), 0, 1) < 7) {
+            $this->miniLog->critical($this->i18n->trans('old-php-version'));
+            $errors = true;
+        }
 
         if ((float) '3,1' >= (float) '3.1') {
             $this->miniLog->critical($this->i18n->trans('wrong-decimal-separator'));
@@ -272,6 +325,13 @@ class AppInstaller
         return $errors;
     }
 
+    /**
+     * Test the MySQL connection and creates the database if needed.
+     *
+     * @param array $dbData
+     *
+     * @return bool
+     */
     private function testMysql($dbData)
     {
         if ($dbData['socket'] !== '') {
@@ -300,6 +360,13 @@ class AppInstaller
         return false;
     }
 
+    /**
+     * Test the PostgreSQL connection and creates the database if needed.
+     *
+     * @param array $dbData
+     *
+     * @return bool
+     */
     private function testPostgreSql($dbData)
     {
         $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];

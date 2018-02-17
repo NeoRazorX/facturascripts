@@ -73,7 +73,6 @@
     <hr />
 </div>
 
-{# List of plugins available for download and row colored for enabled or unstable #}
 <div class="table-responsive">
     <table class="table table-striped table-hover">
         <thead>
@@ -85,39 +84,40 @@
         </thead>
         <tbody>
         {% if fsc.pluginManager.installedPlugins() is empty %}
-        <tr class="table-warning">
-            <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
-        </tr>
+            <tr class="table-warning">
+                <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
+            </tr>
         {% else %}
             {% for plugin in fsc.pluginManager.installedPlugins() %}
-                {% set enabled = (plugin in fsc.pluginManager.enabledPlugins()) %}
-                {% if enabled %}
-                <tr class="table-success">
-                {% else %}
-                <tr>
+                {% set trClass = ' class="table-danger"' %}
+                {% if plugin.enabled %}
+                    {% set trClass = ' class="table-success"' %}
+                {% elseif plugin.compatible %}
+                    {% set trClass = '' %}
                 {% endif %}
-                <td><b>{{ plugin }}</b></td>
-                <td></td>
-                <td class="text-right">
-                    <span class="btn-group d-xs-none">
-                        {% if enabled %}
-                        <a class="btn btn-sm btn-warning" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin }}" {{ popoverTitle(disable, 'bottom') }}>
-                            <i class="fa fa-close" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
-                        </a>
-                        {% else %}
-                        <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin }}" {{ popoverTitle(enable, 'bottom') }}>
-                            <i class="fa fa-check" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
-                        </a>
-                        <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}?action=remove&amp;plugin={{ plugin }}" {{ popoverTitle(delete, 'bottom') }}>
-                            <i class="fa fa-trash" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
-                        </a>
-                        {% endif %}
-                    </span>
-                </td>
-            </tr>
+                <tr{{ trClass | raw }}>
+                    <td><b>{{ plugin.name }}</b> v{{ plugin.version }}</td>
+                    <td>{{ plugin.description }}</td>
+                    <td class="text-right">
+                        <span class="btn-group d-xs-none">
+                            {% if plugin.enabled %}
+                            <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}" {{ popoverTitle(disable, 'bottom') }}>
+                                <i class="fa fa-close" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
+                            </a>
+                            {% elseif plugin.compatible %}
+                            <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}" {{ popoverTitle(enable, 'bottom') }}>
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
+                            </a>
+                            <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}?action=remove&amp;plugin={{ plugin.name }}" {{ popoverTitle(delete, 'bottom') }}>
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
+                            </a>
+                            {% endif %}
+                        </span>
+                    </td>
+                </tr>
             {% endfor %}
         {% endif %}
         </tbody>
@@ -139,7 +139,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
-                        <input name="plugin[]" type="file" multiple="" />
+                        <input type="file" name="plugin[]" multiple="" accept="application/zip"/>
                         <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
                     </div>
                 </div>
