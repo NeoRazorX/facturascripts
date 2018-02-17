@@ -73,7 +73,11 @@ class AppInstaller
         if ($installed) {
             header('Location: ' . $this->getUri());
         } else {
-            $this->render();
+            if ($this->request->getBasePath() !== $this->getUri()) {
+                header('Location: ' . $this->request->getBasePath());
+            } else {
+                $this->render();
+            }
         }
     }
 
