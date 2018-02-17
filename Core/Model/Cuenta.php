@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -33,7 +34,6 @@ class Cuenta extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
     /**
      * Primary key.
      *
@@ -133,11 +133,14 @@ class Cuenta extends Base\ModelClass
      */
     public function getAccountWithCondition($where, $orderby = [])
     {
-        if (empty($orderby)) {
+        if (empty($orderby))
+        {
             $orderby = ['codejercicio' => 'DESC', 'codcuenta' => 'ASC'];
         }
         $result = $this->all($where, $orderby, 0, 1);
-        if (empty($result)) {
+
+        if (empty($result))
+        {
             return null;
         }
         return $result[0];
@@ -169,12 +172,14 @@ class Cuenta extends Base\ModelClass
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('parent_codcuenta', $this->parent_codcuenta)
+            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
 
         $account = $this->getAccountWithCondition($where);
-        if (isset($account)) {
-            $this->parent_idcuenta = $account->parent_idcuenta;
+        if (isset($account))
+        {
+            $this->parent_idcuenta = $account->idcuenta;
+
             return TRUE;
         }
         return FALSE;
@@ -189,14 +194,17 @@ class Cuenta extends Base\ModelClass
     {
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if (strlen($this->codcuenta) < 1 || strlen($this->descripcion) < 1) {
+        if (strlen($this->codcuenta) < 1 || strlen($this->descripcion) < 1)
+        {
             self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
             return false;
         }
 
         $this->parent_idcuenta = null;
-        if (!empty($this->parent_codcuenta) && !$this->testParentAccount()) {
+        if (!empty($this->parent_codcuenta) && !$this->testParentAccount())
+        {
             self::$miniLog->alert(self::$i18n->trans('account-parent-error'));
+
             return false;
         }
 
