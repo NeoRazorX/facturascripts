@@ -27,14 +27,14 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block css %}
-{{ parent() }}
-
-<link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('Core/Assets/CSS/extendedcontroller.css') }}" />
+    <link rel="stylesheet" href="{{ asset('node_modules/summernote/dist/summernote-bs4.css') }}"/>
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
-
+<script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
     function deleteRecord(formName) {
@@ -78,6 +78,8 @@
                 }
             });
         });
+        // html widgets
+        $('.summernote').summernote();
     });
 </script>
 {% endblock %}
