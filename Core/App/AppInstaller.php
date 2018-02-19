@@ -208,19 +208,16 @@ class AppInstaller
     {
         /// HTML template variables
         $templateVars = [
-            'i18n' => $this->i18n,
             'license' => file_get_contents(FS_FOLDER . '/COPYING'),
-            'log' => $this->miniLog,
             'memcache_prefix' => $this->randomString(8),
             'timezones' => $this->getTimezoneList()
         ];
 
         /// Load the template engine
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
-        $twig = new Twig_Environment($twigLoader);
+        $webRender = new WebRender();
 
         /// Generate and return the HTML
-        $response = new Response($twig->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
+        $response = new Response($webRender->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
         $response->send();
     }
 

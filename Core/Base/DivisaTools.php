@@ -26,6 +26,13 @@ namespace FacturaScripts\Core\Base;
  */
 class DivisaTools
 {
+    public function __construct()
+    {
+        if (!defined('FS_CURRENCY_POS')) {
+            define('FS_CURRENCY_POS', 'right');
+        }
+    }
+
     /**
      * Returns the value of the formatted currency.
      *
@@ -35,7 +42,7 @@ class DivisaTools
      *
      * @return string
      */
-    public function format($number, $decimals = FS_NF0, $addSymbol = true)
+    public static function format($number, $decimals = FS_NF0, $addSymbol = true)
     {
         $txt = number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
         if (!$addSymbol) {
