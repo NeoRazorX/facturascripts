@@ -23,8 +23,6 @@ use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Twig_Environment;
-use Twig_Loader_Filesystem;
 
 /**
  * Description of AppInstaller
