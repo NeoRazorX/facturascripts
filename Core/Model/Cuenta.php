@@ -169,12 +169,12 @@ class Cuenta extends Base\ModelClass
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('parent_codcuenta', $this->parent_codcuenta)
+            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
 
         $account = $this->getAccountWithCondition($where);
         if (isset($account)) {
-            $this->parent_idcuenta = $account->parent_idcuenta;
+            $this->parent_idcuenta = $account->idcuenta;
             return TRUE;
         }
         return FALSE;

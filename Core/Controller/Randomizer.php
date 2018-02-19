@@ -119,9 +119,7 @@ class Randomizer extends Base\Controller
                 break;
 
             case 'cuentas':
-                $accountingGenerator->gruposEpigrafes(2);
-                $accountingGenerator->epigrafes(4);
-                $num = $accountingGenerator->cuentas(8);
+                $num = $accountingGenerator->cuentas(4);
                 $this->miniLog->info($this->i18n->trans('generated-accounts', ['%quantity%' => $num]));
                 break;
 
