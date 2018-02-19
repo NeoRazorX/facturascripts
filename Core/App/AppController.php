@@ -28,8 +28,9 @@ use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Twig_Function;
 use Twig_Environment;
+use Twig_Extension_Debug;
+use Twig_Function;
 use Twig_Loader_Filesystem;
 
 /**
@@ -261,6 +262,7 @@ class AppController extends App
             return FS_ROUTE . '/' . $string;
         });
         $twig->addFunction($assetFunction);
+        $twig->addExtension(new Twig_Extension_Debug());
 
         try {
             $this->response->setContent($twig->render($template, $templateVars));

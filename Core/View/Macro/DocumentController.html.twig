@@ -131,7 +131,7 @@
                 </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
-            <input type="text" id="{{ id }}" value="{{ model.nombrecliente }}" class="form-control autocomplete"
+            <input type="text" id="{{ id }}" value="{{ model.nombrecliente|raw }}" class="form-control autocomplete"
                    data-source="clientes" data-field="codcliente" data-title="razonsocial"
                    placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-btn">
@@ -179,7 +179,7 @@
                 </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
-            <input type="text" id="{{ id }}" value="{{ model.nombre }}" class="form-control autocomplete"
+            <input type="text" id="{{ id }}" value="{{ model.nombre|raw }}" class="form-control autocomplete"
                    data-source="proveedores" data-field="codproveedor" data-title="razonsocial"
                    placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-btn">
