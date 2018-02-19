@@ -54,14 +54,14 @@ class WebRender
 
     /**
      *
-     * @var type 
+     * @var PluginManager
      */
     private $pluginManager;
 
     public function __construct()
     {
         if (!defined('FS_DEBUG')) {
-            define('FS_DEBUG', false);
+            define('FS_DEBUG', true);
         }
 
         $this->i18n = new Translator();
