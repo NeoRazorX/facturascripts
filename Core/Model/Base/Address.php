@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -69,6 +70,12 @@ abstract class Address extends ModelClass
      * @var string
      */
     public $provincia;
+    
+    public function clear()
+    {
+        parent::clear();
+        $this->codpais = AppSettings::get('default', 'codpais');
+    }
 
     /**
      * Returns True if there is no errors on properties values.

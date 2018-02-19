@@ -146,7 +146,7 @@ class AppInstaller
      */
     private function getUri()
     {
-        $uri = $this->request->server->get('REQUEST_URI');
+        $uri = $this->request->getBasePath();
         if ('/' === substr($uri, -1)) {
             return substr($uri, 0, -1);
         }
@@ -357,6 +357,7 @@ class AppInstaller
             $this->miniLog->critical((string) $connection->connect_error);
         }
 
+        $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
         return false;
     }
 
@@ -386,6 +387,7 @@ class AppInstaller
             $this->miniLog->critical((string) \pg_last_error($connection));
         }
 
+        $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
         return false;
     }
 }

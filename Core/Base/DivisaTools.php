@@ -43,7 +43,7 @@ class DivisaTools
         }
 
         $symbol = '€';
-        if (FS_POS_DIVISA === 'right') {
+        if (FS_CURRENCY_POS === 'right') {
             return $txt . ' ' . $symbol;
         }
 

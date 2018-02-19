@@ -75,7 +75,7 @@ abstract class ModelClass
      * @param array $data
      */
     abstract public function checkArrayData(&$data);
-    
+
     /**
      * Returns the list of fields in the table.
      *
@@ -313,6 +313,16 @@ abstract class ModelClass
     public function newCode($field = '')
     {
         $sqlWhere = '';
+        if (empty($field)) {
+            /// Primary key is integer?
+            foreach ($this->getModelFields() as $tableField => $fieldData) {
+                if ($tableField === $this->primaryColumn() && in_array($fieldData['type'], ['integer', 'int', 'serial'])) {
+                    $field = $this->primaryColumn();
+                    break;
+                }
+            }
+        }
+
         if (empty($field)) {
             /// Set Cast to Integer of PK Field
             $field = self::$dataBase->sql2Int($this->primaryColumn());
