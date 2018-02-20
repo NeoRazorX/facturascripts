@@ -221,30 +221,27 @@ class Ejercicio extends Base\ModelClass
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fechainicio <= '
-            . self::$dataBase->var2str($fecha) . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE ' . self::$dataBase->var2str($fecha) . ' BETWEEN fechainicio AND fechafin;';
 
         $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            $eje = new self($data[0]);
-            if ($eje->abierto() || !$soloAbierto) {
-                return $eje;
+        if (empty($data)) {
+            if ($crear && (strtotime($fecha) >= 1)) {
+                $eje = new self();
+                $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
+                $eje->nombre = date('Y', strtotime($fecha));
+                $eje->fechainicio = date('1-1-Y', strtotime($fecha));
+                $eje->fechafin = date('31-12-Y', strtotime($fecha));
+                if ($eje->save()) {
+                    return $eje;
+                }
             }
-        } elseif ($crear) {
-            $eje = new self();
-            $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
-            $eje->nombre = date('Y', strtotime($fecha));
-            $eje->fechainicio = date('1-1-Y', strtotime($fecha));
-            $eje->fechafin = date('31-12-Y', strtotime($fecha));
-
-            if (strtotime($fecha) < 1) {
-                self::$miniLog->alert(self::$i18n->trans('invalid-date', ['%date%' => $fecha]));
-            } elseif ($eje->save()) {
-                return $eje;
-            }
+            self::$miniLog->alert(self::$i18n->trans('invalid-date', ['%date%' => $fecha]));
+            return false;
         }
 
-        return false;
+        $eje = new self($data[0]);
+        return ($eje->abierto() || $soloAbierto === false) ? $eje : false;
     }
 
     /**
