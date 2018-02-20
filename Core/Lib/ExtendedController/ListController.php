@@ -129,42 +129,52 @@ abstract class ListController extends Base\Controller
         $action = $this->request->get('action', '');
 
         // Operations with data, before execute action
-        $this->execPreviousAction($action);
+        if ($this->execPreviousAction($action)) {
+            // Load data for every view
+            foreach ($this->views as $key => $listView) {
+                $where = [];
+                $orderKey = '';
 
-        // Load data for every view
-        foreach ($this->views as $key => $listView) {
-            $where = [];
-            $orderKey = '';
+                // If processing the selected view, calculate order and filters
+                if ($this->active == $key) {
+                    $orderKey = $this->request->get('order', '');
+                    $where = $this->getWhere();
+                }
 
-            // If processing the selected view, calculate order and filters
-            if ($this->active == $key) {
-                $orderKey = $this->request->get('order', '');
-                $where = $this->getWhere();
+                // Set selected order by
+                $this->views[$key]->setSelectedOrderBy($orderKey);
+
+                // Load data using filter and order
+                $listView->loadData(false, $where, [], $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
             }
 
-            // Set selected order by
-            $this->views[$key]->setSelectedOrderBy($orderKey);
-
-            // Load data using filter and order
-            $listView->loadData(false, $where, [], $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+            // Operations with data, after execute action
+            $this->execAfterAction($action);
         }
-
-        // Operations with data, after execute action
-        $this->execAfterAction($action);
     }
 
     /**
      * Runs the actions that alter the data before reading it
      *
      * @param string $action
+     * @return bool
      */
-    protected function execPreviousAction($action)
+    protected function execPreviousAction($action): bool
     {
+        $status = true;
         switch ($action) {
+            case 'autocomplete':
+                $this->setTemplate(false);
+                $data = $this->requestGet(['source', 'field', 'title', 'term']);
+                $results = $this->autocompleteAction($data);
+                $this->response->setContent(json_encode($results));
+                break;
+
             case 'delete':
                 $this->deleteAction($this->views[$this->active]);
                 break;
         }
+        return $status;
     }
 
     /**
@@ -175,10 +185,6 @@ abstract class ListController extends Base\Controller
     protected function execAfterAction($action)
     {
         switch ($action) {
-            case 'autocomplete':
-                $this->autocompleteAction();
-                break;
-
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->request->get('option'));
@@ -195,20 +201,17 @@ abstract class ListController extends Base\Controller
     /**
      * Run the autocomplete action.
      * Returns a JSON string for the searched values.
+     *
+     * @param array $data
+     * @return array
      */
-    private function autocompleteAction()
+    protected function autocompleteAction($data): array
     {
-        $this->setTemplate(false);
-        $source = $this->request->get('source');
-        $field = $this->request->get('field');
-        $title = $this->request->get('title');
-        $term = $this->request->get('term');
-
         $results = [];
-        foreach ($this->codeModel->search($source, $field, $title, $term) as $value) {
+        foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
-        $this->response->setContent(json_encode($results));
+        return $results;
     }
 
     /**
