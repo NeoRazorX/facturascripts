@@ -91,7 +91,7 @@
     </column>
     <column>
         <name>factura</name>
-        <type>double precision</type>
+        <type>character varying(15)</type>
         <null>YES</null>
     </column>
     <column>
