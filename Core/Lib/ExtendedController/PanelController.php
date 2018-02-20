@@ -41,13 +41,6 @@ abstract class PanelController extends Base\Controller
     public $active;
 
     /**
-     * Model to use with select and autocomplete filters.
-     *
-     * @var CodeModel
-     */
-    private $codeModel;
-
-    /**
      * Export data object
      *
      * @var ExportManager
@@ -106,7 +99,6 @@ abstract class PanelController extends Base\Controller
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
 
         $this->active = $this->request->get('active', '');
-        $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->settings = [];
         $this->views = [];
@@ -268,7 +260,7 @@ abstract class PanelController extends Base\Controller
                 $this->setTemplate(false);
                 $data = $this->requestGet(['source', 'field', 'title', 'term']);
                 $results = $this->autocompleteAction($data);
-                $this->response->setContent(json_encode($results, JSON_FORCE_OBJECT));
+                $this->response->setContent(json_encode($results));
                 $status = false;
                 break;
 
@@ -320,7 +312,8 @@ abstract class PanelController extends Base\Controller
     protected function autocompleteAction($data): array
     {
         $results = [];
-        foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], data['term']) as $value) {
+        $codeModel = new CodeModel();
+        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;

@@ -159,7 +159,7 @@ abstract class ListController extends Base\Controller
      * @param string $action
      * @return bool
      */
-    protected function execPreviousAction($action): bool
+    protected function execPreviousAction($action)
     {
         $status = true;
         switch ($action) {
