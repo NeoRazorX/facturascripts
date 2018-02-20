@@ -57,13 +57,6 @@ class SubcuentaSaldo extends Base\ModelClass
     public $idcuenta;
 
     /**
-     * Exercise code.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
      * Debit amount for the month.
      *
      * @var float|int
@@ -92,7 +85,7 @@ class SubcuentaSaldo extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'subcuentassaldos';
+        return 'subcuentas_saldos';
     }
 
     /**
@@ -118,7 +111,21 @@ class SubcuentaSaldo extends Base\ModelClass
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Subcuenta();
+        return '';
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
+     * Syncronize data from account
      *
      * @return bool
      */
@@ -130,7 +137,6 @@ class SubcuentaSaldo extends Base\ModelClass
             return false;
         }
 
-        $this->codejercicio = $account->codejercicio;
         $this->idcuenta = $account->idcuenta;
         $this->saldo = $this->debe - $this->haber;
         return true;

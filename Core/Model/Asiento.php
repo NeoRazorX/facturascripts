@@ -127,6 +127,7 @@ class Asiento extends Base\ModelClass
     public function install()
     {
         new Ejercicio();
+        new SubcuentaSaldo();
 
         return '';
     }
@@ -172,13 +173,14 @@ class Asiento extends Base\ModelClass
     private function testErrorInData(): bool
     {
         return empty($this->concepto)
-            || empty($this->codejercicio);
+            || empty($this->fecha);
     }
 
     private function testErrorInExercise(): string
     {
-        $exercise = new Ejercicio();
-        if (!$exercise->loadFromCode($this->codejercicio)) {
+        $exerciseModel = new Ejercicio();
+        $exercise = $exerciseModel->getByFecha($this->fecha);
+        if (empty($exercise) || empty($exercise->codejercicio)) {
             return 'exercise-data-missing';
         }
 
@@ -186,10 +188,8 @@ class Asiento extends Base\ModelClass
             return 'exercise-closed';
         }
 
-        if (!$exercise->inRange($this->fecha)) {
-            return 'exercise-date-out-range';
-        }
-
+        // All Ok, get exercise code
+        $this->codejercicio = $exercise->codejercicio;
         return '';
     }
 
@@ -281,12 +281,12 @@ class Asiento extends Base\ModelClass
 
         /// We keep the list of accounting items for subsequent operations
         $linesModel = new Partida();
-        $lines = $linesModel->all([new DataBaseWhere('idasiento', $this->idasiento)]);
+        $lines = $linesModel->all([new DataBase\DataBaseWhere('idasiento', $this->idasiento)]);
 
         /// Run main delete action
+        $inTransaction = self::$dataBase->inTransaction();
         try {
-            $inTransaction = self::$dataBase->inTransaction();
-            if (inTransaction === false) {
+            if ($inTransaction === false) {
                 self::$dataBase->beginTransaction();
             }
 
@@ -303,7 +303,7 @@ class Asiento extends Base\ModelClass
             }
 
             /// save transaction
-            if (inTransaction === false) {
+            if ($inTransaction === false) {
                 self::$dataBase->commit();
             }
         }
@@ -331,7 +331,7 @@ class Asiento extends Base\ModelClass
     {
         $continuar = false;
         $ejercicio = new Ejercicio();
-        foreach ($ejercicio->all([new DataBaseWhere('estado', 'ABIERTO')]) as $eje) {
+        foreach ($ejercicio->all([new DataBase\DataBaseWhere('estado', 'ABIERTO')]) as $eje) {
             $posicion = 0;
             $numero = 1;
             $sql = '';
@@ -379,7 +379,7 @@ class Asiento extends Base\ModelClass
         $regiva0 = new RegularizacionIva();
         foreach ($eje0->all() as $ej) {
             if ($ej instanceof Ejercicio && $ej->abierto()) {
-                foreach ($regiva0->all([new DataBaseWhere('codejercicio', $ej->codejercicio)]) as $reg) {
+                foreach ($regiva0->all([new DataBase\DataBaseWhere('codejercicio', $ej->codejercicio)]) as $reg) {
                     $sql = 'UPDATE ' . static::tableName() . ' SET editable = false WHERE editable = true'
                         . ' AND codejercicio = ' . self::$dataBase->var2str($ej->codejercicio)
                         . ' AND fecha >= ' . self::$dataBase->var2str($reg->fechainicio)

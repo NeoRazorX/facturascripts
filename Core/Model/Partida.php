@@ -329,9 +329,9 @@ class Partida extends Base\ModelClass
         $accounting = new Asiento();
         $accounting->loadFromCode($this->idasiento);
 
+        $inTransaction = self::$dataBase->inTransaction();
         try {
-            $inTransaction = self::$dataBase->inTransaction();
-            if (inTransaction === false) {
+            if ($inTransaction === false) {
                 self::$dataBase->beginTransaction();
             }
 
