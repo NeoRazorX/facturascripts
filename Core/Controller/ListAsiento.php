@@ -72,10 +72,10 @@ class ListAsiento extends ExtendedController\ListController
                 if ($model->renumber()) {
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
-                break;
+                return true;
 
             default:
-                parent::execPreviousAction($action);
+                return parent::execPreviousAction($action);
         }
     }
 }
