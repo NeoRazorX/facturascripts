@@ -70,15 +70,14 @@ class AppInstaller
 
         if ($installed) {
             header('Location: ' . $this->getUri());
-        } else {
-            if ($this->request->getBasePath() !== $this->getUri()) {
-                header('Location: ' . $this->request->getBasePath());
-            } else {
-                $this->render();
-            }
         }
-    }
 
+        if ($this->request->getBasePath() !== $this->getUri()) {
+            header('Location: ' . $this->request->getBasePath());
+        }
+
+        $this->render();
+    }
     /**
      * Check database connection and creates the database if needed.
      *
