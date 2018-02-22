@@ -82,7 +82,7 @@
     "cant-assign-date-already-regularized": "No se puede asignar la fecha %date% porque ya hay una regularización de %tax% para ese periodo.",
     "cant-assing-subaccount-supplier": "Imposible asociar la subcuenta para el proveedor %supplierCode%",
     "cant-associate-customer-subaccount": "Imposible asociar la subcuenta para el cliente %customerCode%",
-    "cant-connect-database": "¡Imposible conectar a la base de datos!",
+    "cant-connect-database": "Imposible conectar a la base de datos",
     "cant-convert-to-innodb": "Imposible convertir la tabla '%tableName%' a InnoDB. Imprescindible para FacturaScripts.",
     "cant-create-customer-subaccount": "Imposible crear la subcuenta para el cliente %customerCode%",
     "cant-create-folder": "No se puede crear la carpeta %folderName%.",
