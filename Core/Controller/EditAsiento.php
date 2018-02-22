@@ -33,9 +33,18 @@ use FacturaScripts\Core\Model;
  */
 class EditAsiento extends ExtendedController\PanelController
 {
-    public function __construct(&$cache, &$i18n, $className)
+    /**
+     * Starts all the objects and properties
+     *
+     * @param Base\Cache      $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
+     * @param string          $uri
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
         $this->setTemplate('AccountingEntry');
     }
 
@@ -45,7 +54,7 @@ class EditAsiento extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
-        $this->addGridView('\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
+        $this->addGridView('EditAsiento', '\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
     }
 
     /**
@@ -63,12 +72,11 @@ class EditAsiento extends ExtendedController\PanelController
                 break;
 
             case 'EditPartida':
-            case 'ListPartida':
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
                     $orderby = ['idpartida' => 'ASC'];
-                    $view->loadData(false, $where, $orderby);
+                    $view->loadData($where, $orderby);
                 }
                 break;
         }
@@ -82,7 +90,7 @@ class EditAsiento extends ExtendedController\PanelController
      *
      * @return bool
      */
-    protected function execPreviousAction($view, $action): bool
+    protected function execPreviousAction($view, $action)
     {
         switch ($action) {
             case 'account-data':
@@ -120,6 +128,30 @@ class EditAsiento extends ExtendedController\PanelController
         return $pagedata;
     }
 
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function autocompleteAction($data): array
+    {
+        $results = [];
+        $codeModel = new Model\CodeModel();
+        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+            $results[] = $value->code;
+        }
+        return $results;
+    }
+
+    /**
+     * Load total data from subaccount
+     *
+     * @param string $exercise
+     * @param string $subaccount
+     * @return array
+     */
     private function getAccountData($exercise, $subaccount): array
     {
         $result = [
@@ -148,6 +180,14 @@ class EditAsiento extends ExtendedController\PanelController
                 $result['balance'] += $values->saldo;
             }
         }
+
+        // Aply round to imports
+        $result['balance'] = round($result['balance'], (int) FS_NF0);
+        foreach ($result['detail'] as $key => $value) {
+            $result['detail'][$key] = round($value, (int) FS_NF0);
+        }
+
+        // Return account data
         return $result;
     }
 }

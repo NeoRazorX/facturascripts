@@ -34,7 +34,7 @@
 {% block javascript %}
 {{ parent() }}
 <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
-<script src="Core/Assets/JS/documentController.js"></script>
+<script src="{{ asset('Core/Assets/JS/documentController.js') }}"></script>
 <script type="text/javascript">
     documentUrl = '{{ fsc.document.url() | raw }}';
 </script>

@@ -132,8 +132,6 @@ class Subcuenta extends Base\ModelClass
     public function install()
     {
         new Cuenta();
-        new SubcuentaSaldo();
-
         return '';
     }
 
@@ -234,9 +232,9 @@ class Subcuenta extends Base\ModelClass
         $detail = new SubcuentaSaldo();
         $detail->idsubcuenta = $this->idsubcuenta;
 
+        $inTransaction = self::$dataBase->inTransaction();
         try {
-            $inTransaction = self::$dataBase->inTransaction();
-            if (inTransaction === false) {
+            if ($inTransaction === false) {
                 self::$dataBase->beginTransaction();
             }
 

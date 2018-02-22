@@ -41,13 +41,6 @@ abstract class PanelController extends Base\Controller
     public $active;
 
     /**
-     * Model to use with select and autocomplete filters.
-     *
-     * @var CodeModel
-     */
-    private $codeModel;
-
-    /**
      * Export data object
      *
      * @var ExportManager
@@ -99,13 +92,13 @@ abstract class PanelController extends Base\Controller
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
      * @param string          $className
+     * @param string          $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
 
         $this->active = $this->request->get('active', '');
-        $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->settings = [];
         $this->views = [];
@@ -263,6 +256,14 @@ abstract class PanelController extends Base\Controller
     {
         $status = true;
         switch ($action) {
+            case 'autocomplete':
+                $this->setTemplate(false);
+                $data = $this->requestGet(['source', 'field', 'title', 'term']);
+                $results = $this->autocompleteAction($data);
+                $this->response->setContent(json_encode($results));
+                $status = false;
+                break;
+
             case 'save':
                 $data = $this->request->request->all();
                 $view->loadFromData($data);
@@ -286,10 +287,6 @@ abstract class PanelController extends Base\Controller
     protected function execAfterAction($view, $action)
     {
         switch ($action) {
-            case 'autocomplete':
-                $this->autocompleteAction();
-                break;
-
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->request->get('option'));
@@ -308,20 +305,18 @@ abstract class PanelController extends Base\Controller
     /**
      * Run the autocomplete action.
      * Returns a JSON string for the searched values.
+     *
+     * @param array $data
+     * @return array
      */
-    private function autocompleteAction()
+    protected function autocompleteAction($data): array
     {
-        $this->setTemplate(false);
-        $source = $this->request->get('source');
-        $field = $this->request->get('field');
-        $title = $this->request->get('title');
-        $term = $this->request->get('term');
-
         $results = [];
-        foreach ($this->codeModel->search($source, $field, $title, $term) as $value) {
+        $codeModel = new CodeModel();
+        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
-        $this->response->setContent(json_encode($results));
+        return $results;
     }
 
     /**
@@ -457,10 +452,13 @@ abstract class PanelController extends Base\Controller
         $this->addView($viewName, $view, $viewIcon);
     }
 
-    protected function addGridView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list')
+    protected function addGridView($parentView, $modelName, $viewName, $viewTitle, $viewIcon = 'fa-list')
     {
-        $view = new GridView($viewTitle, $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
+        $parent = $this->views[$parentView];
+        if (isset($parent)) {
+            $view = new GridView($parent, $viewTitle, $modelName, $viewName, $this->user->nick);
+            $this->addView($viewName, $view, $viewIcon);
+        }
     }
 
     /**

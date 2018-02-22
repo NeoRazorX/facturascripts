@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : subcuentassaldos.xml
+    Document   : subcuentas_saldos.xml
     Author     : Raul Jimenez
     Author     : Jose Antonio Cuello
     Description:
@@ -29,11 +29,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>debe</name>
         <type>double precision</type>
         <null>NO</null>
@@ -56,25 +51,19 @@
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>ca_subcuentassaldos_subcuentas</name>
+        <name>ca_subcuentas_saldos_subcuentas</name>
         <type>FOREIGN KEY (idsubcuenta)
             REFERENCES subcuentas (idsubcuenta)
             ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_subcuentassaldos_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_subcuentassaldos_cuentas</name>
+        <name>ca_subcuentas_saldos_cuentas</name>
         <type>FOREIGN KEY (idcuenta)
             REFERENCES cuentas (idcuenta)
             ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_subcuentasaldos</name>
+        <name>uniq_subcuenta_saldos</name>
         <type>UNIQUE (idsubcuenta, mes)</type>
     </constraint>
 </table>

@@ -31,7 +31,9 @@
             <widget type="text" fieldname="idpartida" />
         </column>
         <column name="subaccount" order="105">
-            <widget type="text" fieldname="codsubcuenta" />
+            <widget type="autocomplete" fieldname="codsubcuenta" required="true">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="contrapartida" order="110">
             <widget type="text" fieldname="codcontrapartida" />
