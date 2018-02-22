@@ -28,13 +28,13 @@
 
 {% block css %}
 {{ parent() }}
-<link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css" />
+<link rel="stylesheet" href="{{ asset('node_modules/handsontable/dist/handsontable.full.min.css') }}" />
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
-<script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
-<script src="{{ asset('Core/Assets/JS/documentController.js') }}"></script>
+<script src="{{ asset('node_modules/handsontable/dist/handsontable.full.min.js') }}"></script>
+<script src="{{ asset('Dinamic/Assets/JS/documentController.js') }}"></script>
 <script type="text/javascript">
     documentUrl = '{{ fsc.document.url() | raw }}';
 </script>
