@@ -1083,5 +1083,21 @@
     "children-accounts": "Cuentas Hijos",
     "data-source": "Datos de origen",
     "chart": "Gráfico",
-    "others-filters": "Otros filtros"
+    "others-filters": "Otros filtros",
+    "concept-too-large": "Concepto demasiado largo.",
+    "incorrect-accounting-amount": "El importe del asiento es incorrecto.",
+    "incompatible-with-facturascripts": "Incompatible con la versión %version% de FacturaScripts",
+    "notchead-accounting": "Asiento cuadrado. Neglect: 0",
+    "exercise-date-out-range": "La fecha no está en el periodo del ejercicio.",
+    "accounting-possible-duplicated": "El asiento contable posiblemente está duplicado con este otro. Si no es así, para evitar este mensaje, simplemente cambie el concepto.",
+    "accounting-within-regularization": "El asiento pertenece a una regularización del impuesto %tax%. No puede ser borrado.",
+    "balance-sheets": "Balance",
+    "debit": "Debe",
+    "credit": "Haber",
+    "offsetting-account": "Contrapartida",
+    "offsetting": "Contrapartida",
+    "accounting-entry": "Asiento",
+    "concept": "Concepto",
+    "lock-unlock": "(Des)Bloquear",
+    "clone": "Duplicar"
 }
