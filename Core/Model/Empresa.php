@@ -71,9 +71,9 @@ class Empresa extends Base\Contact
      * @var string
      */
     public $direccion;
-    
-     /**
-     *Physical person.
+
+    /**
+     * Physical person.
      *
      * @var int
      */
@@ -177,7 +177,6 @@ class Empresa extends Base\Contact
         $this->nombrecorto = Utils::noHtml($this->nombrecorto);
         $this->provincia = Utils::noHtml($this->provincia);
         $this->web = Utils::noHtml($this->web);
-        $this->personafisica = Utils::intval($this->personafisica);
 
         if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();
