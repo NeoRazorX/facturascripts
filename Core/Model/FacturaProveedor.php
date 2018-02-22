@@ -192,7 +192,7 @@ class FacturaProveedor extends Base\PurchaseDocument
         if (self::$dataBase->exec($sql)) {
             if ($this->idasiento) {
                 /**
-                 * We delegate the elimination of the seat in the corresponding class.
+                 * We delegate the elimination of the accounting entries in the corresponding class.
                  */
                 $asiento = new Asiento();
                 $asi0 = $asiento->get($this->idasiento);

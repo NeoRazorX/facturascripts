@@ -210,7 +210,7 @@ class FacturaCliente extends Base\SalesDocument
         if (self::$dataBase->exec($sql)) {
             if ($this->idasiento) {
                 /**
-                 * We delegate the elimination of the seats in the corresponding class.
+                 * We delegate the elimination of the accounting entries in the corresponding class.
                  */
                 $asiento = new Asiento();
                 $asi0 = $asiento->get($this->idasiento);

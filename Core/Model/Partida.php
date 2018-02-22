@@ -23,8 +23,8 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
- * The line of a seat.
- * It is related to a seat and a sub-account.
+ * The line of a accounting entry.
+ * It is related to a accounting entry and a sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -40,7 +40,7 @@ class Partida extends Base\ModelClass
     public $idpartida;
 
     /**
-     * Related seat ID.
+     * Related accounting entry ID.
      *
      * @var int
      */

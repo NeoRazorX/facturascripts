@@ -40,14 +40,14 @@ trait InvoiceTrait
     public $codigorect;
 
     /**
-     * Related seat ID, if any.
+     * Related accounting entry ID, if any.
      *
      * @var int
      */
     public $idasiento;
 
     /**
-     * ID of the related payment seat, if any.
+     * ID of the related payment accounting entry, if any.
      *
      * @var int
      */
