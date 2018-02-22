@@ -53,7 +53,6 @@ class AccountingPlanImport
 
         if ($data->count() > 0)
         {
-
             $this->importEpigrafeGroup($data->grupo_epigrafes);
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
@@ -91,9 +90,11 @@ class AccountingPlanImport
 
         foreach ($data as $xmlEpigrafeGroup) {
             $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
-            $where = [new Database\DataBaseWhere('codejercicio',
+            $where = [new Database\DataBaseWhere(
+                'codejercicio',
                     $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codcuenta',
+                new Database\DataBaseWhere(
+                    'codcuenta',
                     $epigrafeGroupElement['codgrupo'])
             ];
 
@@ -121,17 +122,21 @@ class AccountingPlanImport
 
         foreach ($data as $xmlEpigrafeElement) {
             $epigrafeElement = (array) $xmlEpigrafeElement;
-            $where = [new Database\DataBaseWhere('codejercicio',
+            $where = [new Database\DataBaseWhere(
+                'codejercicio',
                     $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codcuenta',
+                new Database\DataBaseWhere(
+                    'codcuenta',
                     $epigrafeElement['codepigrafe'])
             ];
 
             if (empty($epigrafe->all($where)))
             {
-                $wherePadre = [new Database\DatabaseWhere('codejercicio',
+                $wherePadre = [new Database\DatabaseWhere(
+                    'codejercicio',
                         $this->ejercicio->codejercicio),
-                    new DataBase\DataBaseWhere('codcuenta',
+                    new DataBase\DataBaseWhere(
+                        'codcuenta',
                         $epigrafeElement['codgrupo'])
                 ];
                 $epigrafeGroup = new Model\Cuenta();
@@ -170,16 +175,20 @@ class AccountingPlanImport
         $epigrafe = new Model\Cuenta();
         foreach ($data as $xmlAccount) {
             $accountElement = (array) $xmlAccount;
-            $where = [new Database\DataBaseWhere('codejercicio',
+            $where = [new Database\DataBaseWhere(
+                'codejercicio',
                     $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codcuenta',
+                new Database\DataBaseWhere(
+                    'codcuenta',
                     $accountElement['codcuenta'])
             ];
             if (empty($account->all($where)))
             {
-                $wherePadre = [new Database\DataBaseWhere('codejercicio',
+                $wherePadre = [new Database\DataBaseWhere(
+                    'codejercicio',
                         $this->ejercicio->codejercicio),
-                    new DataBase\DataBaseWhere('codcuenta',
+                    new DataBase\DataBaseWhere(
+                        'codcuenta',
                         $accountElement['codepigrafe'])
                 ];
                 $epigrafe->loadFromCode(NULL, $wherePadre);
@@ -217,18 +226,22 @@ class AccountingPlanImport
 
         foreach ($data as $xmlSubaccountElement) {
             $subaccountElement = (array) $xmlSubaccountElement;
-            $where = [new Database\DataBaseWhere('codejercicio',
+            $where = [new Database\DataBaseWhere(
+                'codejercicio',
                     $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codsubcuenta',
+                new Database\DataBaseWhere(
+                    'codsubcuenta',
                     $subaccountElement['codsubcuenta'])
             ];
 
             if (empty($subaccount->all($where)))
             {
                 $account = new Model\Cuenta();
-                $whereAccount = [new DataBase\DataBaseWhere('codejercicio',
+                $whereAccount = [new DataBase\DataBaseWhere(
+                    'codejercicio',
                         $this->ejercicio->codejercicio),
-                    new DataBase\DataBaseWhere('codcuenta',
+                    new DataBase\DataBaseWhere(
+                        'codcuenta',
                         $subaccountElement['codcuenta'])
                 ];
                 $account->loadFromCode(NULL, $whereAccount);
