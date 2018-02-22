@@ -117,7 +117,7 @@ class WidgetItemAutocomplete extends WidgetItem
             $html .= '<span class="input-group-prepend"><span class="input-group-text">'
                 . '<i class="fa fa-keyboard-o" aria-hidden="true"></i></span></span>';
         } else {
-            $html .= '<span class="input-group-btn">'
+            $html .= '<span class="input-group-prepend">'
                 . '<button type="button" class="btn btn-warning" onclick="$(\'#' . $this->fieldName . 'Autocomplete, #' . $this->fieldName . 'Autocomplete2\').val(\'\');">'
                 . '<i class="fa fa-remove" aria-hidden="true"></i>'
                 . '</button>'
