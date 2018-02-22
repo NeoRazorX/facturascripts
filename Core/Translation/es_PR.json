@@ -835,7 +835,7 @@
     "status": "Estado",
     "status-document": "Estado de documento",
     "status-name-valid-length": "Nombre del estado no válido (debe tener entre 1 y 20 carácteres).",
-    "status-value-is-number": "el campo estado debe ser numérico.",
+    "status-value-is-number": "El campo estado debe ser numérico.",
     "stock": "Stock",
     "stockmax": "Stock máx.",
     "stockmin": "Stock mín.",
