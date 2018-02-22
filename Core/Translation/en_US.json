@@ -86,7 +86,7 @@
     "cant-assign-date-already-regularized": "You can't assign the date %date% because there is already a regularization of %tax% for that period.",
     "cant-assing-subaccount-supplier": "Unable to associate subaccount for provider %supplierCode%",
     "cant-associate-customer-subaccount": "Unable to associate subaccount for client %customerCode%",
-    "cant-connect-database": "Unable to connect to the database!",
+    "cant-connect-database": "Can't connect to database",
     "cant-convert-to-innodb": "Unable to convert table '%tableName%' to InnoDB. Essential for FacturaScripts.",
     "cant-create-customer-subaccount": "Unable to create customer %customerCode% subaccount",
     "cant-create-folder": "Can't create folder '%folderName%'.",
