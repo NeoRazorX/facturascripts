@@ -253,7 +253,7 @@
     "province": "Provincia",
     "serie": "Serie",
     "series": "Series",
-    "cant-connect-database": "¡Imposible conectar a la base de datos!",
+    "cant-connect-database": "Imposible conectar a la base de datos",
     "cron-still-working": "ERROR: Ya hay un cron en ejecución. Si crees que es un error, ve a Admin &gt; Información del sistema para solucionar el problema.",
     "cron-error": "\nERROR: %error%\n",
     "executing-cron": "Ejecutando el cron...",
