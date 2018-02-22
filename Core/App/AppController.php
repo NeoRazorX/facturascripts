@@ -28,9 +28,6 @@ use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Twig_Function;
-use Twig_Environment;
-use Twig_Loader_Filesystem;
 
 /**
  * Class to manage selected controller.
@@ -224,29 +221,21 @@ class AppController extends App
      */
     private function renderHtml($template, $controllerName = '')
     {
-        /// Load the template engine
-        $twigLoader = $this->loadTwigFolders();
-
-        /// Twig options
-        $twigOptions = ['cache' => FS_FOLDER . '/MyFiles/Cache/Twig'];
-
         /// HTML template variables
         $templateVars = [
             'appSettings' => $this->settings,
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
-            'i18n' => $this->i18n,
-            'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
             'template' => $template,
         ];
 
-        if (FS_DEBUG) {
-            unset($twigOptions['cache']);
-            $twigOptions['debug'] = true;
+        $webRender = new WebRender();
+        $webRender->loadPluginFolders();
 
+        if (FS_DEBUG) {
             $baseUrl = FS_ROUTE . '/vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
@@ -256,49 +245,14 @@ class AppController extends App
             }
             $this->debugBar['messages']->info('END');
         }
-        $twig = new Twig_Environment($twigLoader, $twigOptions);
-        $assetFunction = new Twig_Function('asset', function ($string) {
-            return FS_ROUTE . '/' . $string;
-        });
-        $twig->addFunction($assetFunction);
 
         try {
-            $this->response->setContent($twig->render($template, $templateVars));
+            $this->response->setContent($webRender->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
-            $this->response->setContent($twig->render('Error/TemplateError.html.twig', $templateVars));
+            $this->response->setContent($webRender->render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Returns a TwigLoader object with the folders selecteds
-     *
-     * @return Twig_Loader_Filesystem
-     */
-    private function loadTwigFolders()
-    {
-        /// Path for default namespace
-        $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
-        $twigLoader = new Twig_Loader_Filesystem($path);
-
-        /// Core namespace
-        $twigLoader->addPath(FS_FOLDER . '/Core/View', 'Core');
-
-        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
-            if (!file_exists($pluginPath)) {
-                continue;
-            }
-
-            /// plugin namespace
-            $twigLoader->addPath($pluginPath, 'Plugin' . $pluginName);
-            if (FS_DEBUG) {
-                $twigLoader->prependPath($pluginPath);
-            }
-        }
-
-        return $twigLoader;
     }
 
     /**

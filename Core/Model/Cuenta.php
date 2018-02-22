@@ -128,7 +128,7 @@ class Cuenta extends Base\ModelClass
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('parent_codcuenta', $this->parent_codcuenta)
+            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
 
         $account = $this->all($where, ['codcuenta' => 'ASC'], 0, 1);

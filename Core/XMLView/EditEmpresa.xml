@@ -82,8 +82,11 @@
             <column name="startdate" numcolumns="2" order="100">
                 <widget type="datepicker" fieldname="fechaalta"/>
             </column>
-            <column name="surcharge" columns="3" order="110">
+            <column name="surcharge" numcolumns="1" order="110">
                 <widget type="checkbox" fieldname="recequivalencia"/>
+            </column>
+             <column name="fiscal-mode" title="is-person" numcolumns="4" order="120">
+                <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
     </columns>

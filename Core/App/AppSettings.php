@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,7 +72,6 @@ class AppSettings
         return self::$data[$group][$property];
     }
 
-
     /**
      * Set the value for group property.
      *
@@ -105,7 +104,7 @@ class AppSettings
             'FS_NF0_ART' => ['property' => 'product_decimals', 'default' => 2],
             'FS_NF1' => ['property' => 'decimal_separator', 'default' => ','],
             'FS_NF2' => ['property' => 'thousands_separator', 'default' => ' '],
-            'FS_POS_DIVISA' => ['property' => 'divisa_position', 'default' => 'right'],
+            'FS_CURRENCY_POS' => ['property' => 'currency_position', 'default' => 'right'],
             'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
         ];
         $this->setConstants($constants);

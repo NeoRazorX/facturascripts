@@ -316,6 +316,16 @@ abstract class ModelClass
         /// TODO: a where condition for the calculation
         $sqlWhere = '';
         if (empty($field)) {
+            /// Primary key is integer?
+            foreach ($this->getModelFields() as $tableField => $fieldData) {
+                if ($tableField === $this->primaryColumn() && in_array($fieldData['type'], ['integer', 'int', 'serial'])) {
+                    $field = $this->primaryColumn();
+                    break;
+                }
+            }
+        }
+
+        if (empty($field)) {
             /// Set Cast to Integer of PK Field
             $field = self::$dataBase->sql2Int($this->primaryColumn());
 

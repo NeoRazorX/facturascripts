@@ -71,6 +71,13 @@ class Empresa extends Base\Contact
      * @var string
      */
     public $direccion;
+    
+     /**
+     *Physical person.
+     *
+     * @var int
+     */
+    public $personafisica;
 
     /**
      * Primary key. Integer.
@@ -170,6 +177,7 @@ class Empresa extends Base\Contact
         $this->nombrecorto = Utils::noHtml($this->nombrecorto);
         $this->provincia = Utils::noHtml($this->provincia);
         $this->web = Utils::noHtml($this->web);
+        $this->personafisica = Utils::intval($this->personafisica);
 
         if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();
@@ -190,9 +198,9 @@ class Empresa extends Base\Contact
         $num = mt_rand(1, 9999);
 
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono1,codpais,apartado,'
-            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
+            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto,personafisica)'
             . "VALUES (1,NULL,'https://www.facturascripts.com',"
             . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
-            . "'Empresa " . $num . " S.L.','E-" . $num . "');";
+            . "'Empresa " . $num . " S.L.','E-" . $num . "','0');";
     }
 }

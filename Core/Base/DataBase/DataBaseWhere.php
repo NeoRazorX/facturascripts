@@ -156,12 +156,6 @@ class DataBaseWhere
                 $result = $this->value ? 'TRUE' : 'FALSE';
                 break;
 
-            case 'integer':
-            case 'double':
-            case 'float':
-                $result = $this->dataBase->escapeString($this->value);
-                break;
-
             /// DATE
             case preg_match(self::MATCH_DATE, $this->value) > 0:
                 $result = $this->format2Date();
