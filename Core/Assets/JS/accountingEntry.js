@@ -21,19 +21,32 @@ var documentUrl = "";
 var accountEntries = null;
 var accountGraph = null;
 
-function getGridData(row, fieldName) {
-    return documentLineData['rows'][row][fieldName];
-}
-
-function getGridColumnName(col) {
-    return documentLineData['columns'][col]['data'];
+function configureAutocompleteColumns(columns) {
+    Object.keys(columns).forEach(function (key) {
+        if (columns[key]['type'] === 'autocomplete') {
+            var data = columns[key]['data-source'];
+            columns[key]['source'] = function (query, process) {
+                    $.ajax({
+                        url: data.url,
+                        dataType: 'json',
+                        data: {
+                            term: query,
+                            action: 'autocomplete',
+                            source: data.source,
+                            field: data.field,
+                            title: data.title
+                        },
+                        success: function (response) {
+                            process(response);
+                        }
+                    });
+            };
+            delete columns[key]['data-source'];
+        }
+    });
 }
 
 function setAccountData(data) {
-    console.log('setAccountData');
-    console.log(typeof data);
-    console.log(data);
-
     // Update data labels
     $('#account-description').text(data.description);
     $('#account-balance').text(data.balance);
@@ -57,69 +70,80 @@ function clearAccountData() {
     accountGraph.update();
 }
 
+function getGridFieldData(row, fieldName) {
+    return documentLineData['rows'][row][fieldName];
+}
+
+function getGridColumnName(col) {
+    return documentLineData['columns'][col]['data'];
+}
+
 function afterSelection(row1, col1, row2, col2, preventScrolling) {
-    console.log('afterSelection');
     if (col1 === col2 && row1 === row2) {
-        console.log('afterSelection 2');
         if (getGridColumnName(col1) === 'codsubcuenta') {
-            console.log('afterSelection 3');
             var exercise = $('input[name=codejercicio]')[0];
             var data = {
                 action: 'account-data',
-                codsubcuenta: getGridData(row1, 'codsubcuenta'),
+                codsubcuenta: getGridFieldData(row1, 'codsubcuenta'),
                 codejercicio: exercise.value
             };
-            console.log('getJSON');
-            console.log(data);
             $.getJSON(documentUrl, data, setAccountData);
         }
     }
 }
 
 function afterChange(changes, source) {
-    console.log(changes);
-    console.log(source);
+    if (changes !== null) {
+        if (changes[0][1] === 'codsubcuenta') {
+            if (changes[0][2] !== changes[0][3]) {
+                var row = changes[0][0];
+                afterSelection(row, 0, row, 0, true);
+            }
+        }
+    }
 }
 
 $(document).ready(function () {
     // Grid Data
     var container = document.getElementById("document-lines");
-    accountEntries = new Handsontable(container, {
-        data: documentLineData.rows,
-        columns: documentLineData.columns,
-        rowHeaders: true,
-        colHeaders: documentLineData.headers,
-        stretchH: "all",
-        autoWrapRow: true,
-        manualRowResize: true,
-        manualColumnResize: true,
-        manualRowMove: true,
-        manualColumnMove: true,
-        contextMenu: true,
-        filters: true,
-        dropdownMenu: true,
-        preventOverflow: "horizontal",
-        minSpareRows: 1
-    });
+    if (container) {
+        accountEntries = new Handsontable(container, {
+            data: documentLineData.rows,
+            columns: documentLineData.columns,
+            rowHeaders: true,
+            colHeaders: documentLineData.headers,
+            stretchH: "all",
+            autoWrapRow: false,
+            manualRowResize: true,
+            manualColumnResize: true,
+            manualRowMove: true,
+            manualColumnMove: true,
+            minSpareRows: 1,
+            minRows: 6
+        });
 
-    Handsontable.hooks.add('afterSelection', afterSelection);
-//    Handsontable.hooks.add('afterChange', afterChange);
+        Handsontable.hooks.add('afterSelection', afterSelection);
+        Handsontable.hooks.add('afterChange', afterChange);
+    }
 
     // Graphic bars
-    var ctx = document.getElementById('detail-balance').getContext('2d');
-    accountGraph = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-            datasets: [{
-                label: 'Detail by months',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgb(54, 162, 235)',
-                borderWidth: 1,
-                fill: false,
-                data: [0,0,0,0,0,0,0,0,0,0,0,0]
-            }]
-        },
-        options: {}
-    });
+    var ctx = document.getElementById('detail-balance');
+    if (ctx) {
+        ctx = ctx.getContext('2d');
+        accountGraph = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+                datasets: [{
+                    label: 'Detail by months',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1,
+                    fill: false,
+                    data: [0,0,0,0,0,0,0,0,0,0,0,0]
+                }]
+            },
+            options: {}
+        });
+    }
 });

@@ -27,19 +27,24 @@ use FacturaScripts\Core\Base;
  */
 class GridView extends BaseView
 {
+    private $parentView;
     private $gridData;
 
     /**
      * EditView constructor and initialization.
      *
+     * @param BaseView $parent
      * @param string $title
      * @param string $modelName
      * @param string $viewName
      * @param string $userNick
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct(&$parent, $title, $modelName, $viewName, $userNick)
     {
         parent::__construct($title, $modelName);
+
+        // Join the parent view
+        $this->parentView = $parent;
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
@@ -55,12 +60,75 @@ class GridView extends BaseView
         return $this->model;
     }
 
-    public function getGridData()
+    /**
+     * Returns JSON into string with Grid view data
+     *
+     * @return string
+     */
+    public function getGridData(): string
     {
         return json_encode($this->gridData);
     }
 
-    private function getColumns()
+    /**
+     * Configure autocomplete column with data to Grid component
+     *
+     * @param array $values
+     * @return array
+     */
+    private function getAutocompleteSource($values): array
+    {
+        // Calculate url for grid controller
+        $parentModel = $this->parentView->getModel();
+        $url = $parentModel->url('edit');
+
+        return [
+            'url' => $url,
+            'source' => $values['source'],
+            'field' => $values['fieldcode'],
+            'title' => $values['fieldtitle']
+        ];
+    }
+
+    /**
+     * Return grid column configuration
+     *
+     * @param ColumnItem $column
+     * @return array
+     */
+    private function getItemForColumn($column): array
+    {
+        $item = ['data' => $column->widget->fieldName];
+        switch ($column->widget->type) {
+            case 'autocomplete':
+                $item['type'] = 'autocomplete';
+                $item['strict'] = true;
+                $item['allowInvalid'] = false;
+                $item['visibleRows'] = 5;
+                $item['trimDropdown'] = false;
+                $item['data-source'] = $this->getAutocompleteSource($column->widget->values[0]);
+                break;
+
+            case 'number':
+            case 'money':
+                $item['type'] = 'numeric';
+                $item['format'] = Base\DivisaTools::gridMoneyFormat();
+                break;
+
+            default:
+                $item['type'] = $column->widget->type;
+                break;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Return grid columns configuration
+     *
+     * @return array
+     */
+    private function getColumns(): array
     {
         $data = [
             'headers' => [],
@@ -70,16 +138,7 @@ class GridView extends BaseView
 
         $columns = $this->pageOption->columns['root']->columns;
         foreach ($columns as $col) {
-            $item = [
-                'data' => $col->widget->fieldName,
-                'type' => $col->widget->type,
-            ];
-
-            if ($item['type'] === 'number' || $item['type'] === 'money') {
-                $item['type'] = 'numeric';
-                $item['format'] = Base\DivisaTools::gridMoneyFormat();
-            }
-
+            $item = $this->getItemForColumn($col);
             switch ($col->display) {
                 case 'none':
                     $data['hidden'][] = $item;
@@ -99,11 +158,10 @@ class GridView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param mixed           $code
      * @param DataBaseWhere[] $where
      * @param array           $order
      */
-    public function loadData($code = false, $where = [], $order = [])
+    public function loadData($where = [], $order = [])
     {
         // load columns configuration
         $this->gridData = $this->getColumns();

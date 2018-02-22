@@ -2,7 +2,7 @@
    /**
      * Accounting Entry View
      *
-     * Allows the visualization and editing of accounting notes
+     * Allows the visualization and editing of accounting entries
      *
      * This file is part of FacturaScripts
      * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -41,6 +41,9 @@
 {% endblock %}
 
 {% block body %}
+{# Working variables #}
+{% set masterKeyView = fsc.views|keys|first %}
+
 {# -- Visual macros -- #}
 {% import 'Macro/BaseController.html.twig' as BaseController %}
 
@@ -49,8 +52,7 @@
     {# -- Account View Panel -- #}
     <div class="row">
         <div class="col-12">
-            {% set indexView = fsc.views|keys|first %}
-            {% set view = fsc.views[indexView] %}
+            {% set view = fsc.views[masterKeyView] %}
 
             {# Info header panels #}
             {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
@@ -72,6 +74,7 @@
     </div>
 
     {# -- Detail data -- #}
+    {% if fsc.views[masterKeyView].count > 0 %}
     <div class="row mt-2">
         <div class="col-12">
             {# -- Tabs -- #}
@@ -106,12 +109,15 @@
                         {% if viewType == 'GridView' %}
                             <div class="row no-gutters">
                                 <div class="col-9 mr-2">
+                                    {# Prepare grid data & events #}
                                     <script type="text/javascript">
-                                        documentLineData = {{ view.getGridData() | raw }};
+                                        documentLineData = {{ view.getGridData()|raw }};
+                                        configureAutocompleteColumns(documentLineData['columns']);
                                     </script>
+                                    {# Grid data panel #}
                                     <div class="card">
                                         <div class="card-header">
-                                            <span><small id="account-description">description of the account</small></span>
+                                            <span><small id="account-description"></small></span>
                                             <span class="float-right"><small><strong>Descuadre:&nbsp;<span>0.00</span></strong></small></span>
                                         </div>
                                         <div class="body">
@@ -124,16 +130,9 @@
                                         <div class="card-header">
                                             <small><strong>Total balance:&nbsp;<span id="account-balance">0.00</span></strong></small>
                                         </div>
+                                        {# Graphic Subaccount Balance panel #}
                                         <div class="card-body">
                                             <canvas id="detail-balance" class="w-100"></canvas>
-                                        </div>
-                                    </div>
-                                    <div class="card mt-2">
-                                        <div class="card-header">
-                                            <small><strong>Libro de Impuestos</strong></small>
-                                        </div>
-                                        <div class="card-body">
-                                            <p>Datos especiales de la cuenta</p>
                                         </div>
                                     </div>
                                 </div>
@@ -176,6 +175,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 <br/>
 {% endblock %}
