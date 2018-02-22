@@ -1137,5 +1137,21 @@
     "plugin-not-compatible": "El Plugin %pluginName% no és compatible amb FacturaScripts 2018.",
     "data-source": "Dades d'origen",
     "chart": "Gràfic",
-    "others-filters": "Altres filtres"
+    "others-filters": "Altres filtres",
+    "concept-too-large": "Concepte massa llarg.",
+    "incorrect-accounting-amount": "L'import del assentament és incorrecte.",
+    "incompatible-with-facturascripts": "Incompatible amb la versió %versio% de FacturaScripts",
+    "notchead-accounting": "Assentament cuadrat. Neglect: 0",
+    "exercise-date-out-range": "La data no està en el període de l'exercici.",
+    "accounting-possible-duplicated": "El assentament comptable possiblement està duplicat amb aquest altre. Si no és així, per evitar aquest missatge, simplement canviï el concepte.",
+    "accounting-within-regularization": "El assentament pertany a una regularització de l'impost %tax%. No pot ser esborrat.",
+    "balance-sheets": "Balanç",
+    "debit": "Deure",
+    "credit": "Haver",
+    "offsetting-account": "Contrapartida",
+    "offsetting": "Contrapartida",
+    "accounting-entry": "Assentament",
+    "concept": "Concepte",
+    "lock-unlock": "(Des)Bloquejar",
+    "clone": "Duplicar"
 }
