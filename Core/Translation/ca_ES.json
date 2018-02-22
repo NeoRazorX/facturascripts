@@ -344,7 +344,7 @@
     "cant-assign-date-already-regularized": "No es pot assignar la data %date% perquè ja hi ha una regularització de %tax% per aquest període.",
     "cant-assing-subaccount-supplier": "Impossible associar el subcompte per al proveïdor %supplierCode%",
     "cant-associate-customer-subaccount": "Impossible associar el subcompte per al client %customerCode%",
-    "cant-connect-database": "Impossible connectar a la base de dades!",
+    "cant-connect-database": "Impossible conectar a la base de dades",
     "cant-create-customer-subaccount": "No es pot crear la subcuenta del client %customerCode%",
     "cant-create-folder": "No es pot crear la carpeta '%folderName%'.",
     "cant-create-subaccount-supplier": "Impossible crear el subcompte per al proveïdor %supplierCode%",
