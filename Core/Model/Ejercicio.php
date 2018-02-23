@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\Utils;
 
 /**
- * Accounting year. It is the period in which seats, invoices, delivery notes are grouped ...
+ * Accounting year. It is the period in which accounting entry, invoices, delivery notes are grouped ...
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -66,7 +66,7 @@ class Ejercicio extends Base\ModelClass
     public $estado;
 
     /**
-     * Seat ID of the year end.
+     * Accounting entry ID of the year end.
      *
      * @var int
      */
@@ -80,7 +80,7 @@ class Ejercicio extends Base\ModelClass
     public $idasientopyg;
 
     /**
-     * Opening seat ID.
+     * Opening accounting entry ID.
      *
      * @var int
      */

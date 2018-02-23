@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListSubcuenta
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -36,7 +36,7 @@
         <column name="description" order="130">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="ammount" order="140" display="right">
+        <column name="balance" order="140" display="right">
             <widget type="money" fieldname="saldo" />
         </column>
     </columns>
