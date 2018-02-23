@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -33,20 +34,34 @@ use FacturaScripts\Core\Lib\ExtendedController;
 class EditAsiento extends ExtendedController\PanelController
 {
     /**
+     * Starts all the objects and properties
+     *
+     * @param Base\Cache      $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
+     * @param string          $uri
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
+        $this->setTemplate('AccountingEntry');
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $this->setTabsPosition('bottom');
+        $this->addGridView('EditAsiento', '\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
     }
 
     /**
      * Load data view procedure
      *
      * @param string                      $keyView
-     * @param ExtendedController\EditView $view
+     * @param ExtendedController\BaseView $view
      */
     protected function loadData($keyView, $view)
     {
@@ -56,13 +71,44 @@ class EditAsiento extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
-            case 'ListPartida':
+            case 'EditPartida':
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData(false, $where);
+                    $orderby = ['idpartida' => 'ASC'];
+                    $view->loadData($where, $orderby);
                 }
                 break;
+        }
+    }
+
+    /**
+     * Run the actions that alter data before reading it
+     *
+     * @param BaseView $view
+     * @param string   $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($view, $action)
+    {
+        switch ($action) {
+            case 'account-data':
+                $this->setTemplate(false);
+                $subaccount = $this->request->get('codsubcuenta', '');
+                $exercise = $this->request->get('codejercicio', '');
+                $result = $this->getAccountData($exercise, $subaccount);
+                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                return false;
+
+            case 'clone':
+                return true; // TODO
+
+            case 'lock':
+                return true; // TODO
+
+            default:
+                return parent::execPreviousAction($view, $action);
         }
     }
 
@@ -71,14 +117,77 @@ class EditAsiento extends ExtendedController\PanelController
      *
      * @return array
      */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entry';
+        $pagedata['title'] = 'accounting-entries';
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-balance-scale';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function autocompleteAction($data): array
+    {
+        $results = [];
+        $codeModel = new Model\CodeModel();
+        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+            $results[] = $value->code;
+        }
+        return $results;
+    }
+
+    /**
+     * Load total data from subaccount
+     *
+     * @param string $exercise
+     * @param string $subaccount
+     * @return array
+     */
+    private function getAccountData($exercise, $subaccount): array
+    {
+        $result = [
+            'description' => '',
+            'balance' => 0.00,
+            'detail' => [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00]
+        ];
+
+        if (empty($exercise) or empty($subaccount)) {
+            return $result;
+        }
+
+        $where = [
+            new DataBaseWhere('codsubcuenta', $subaccount),
+            new DataBaseWhere('codejercicio', $exercise)
+        ];
+
+        $account = new Model\Subcuenta();
+        if ($account->loadFromCode(null, $where)) {
+            $result['description'] = $account->descripcion;
+
+            $where = [ new DataBaseWhere('idsubcuenta', $account->idsubcuenta) ];
+            $balance = new Model\SubcuentaSaldo();
+            foreach ($balance->all($where) as $values) {
+                $result['detail'][$values->mes] = $values->saldo;
+                $result['balance'] += $values->saldo;
+            }
+        }
+
+        // Aply round to imports
+        $result['balance'] = round($result['balance'], (int) FS_NF0);
+        foreach ($result['detail'] as $key => $value) {
+            $result['detail'][$key] = round($value, (int) FS_NF0);
+        }
+
+        // Return account data
+        return $result;
     }
 }
