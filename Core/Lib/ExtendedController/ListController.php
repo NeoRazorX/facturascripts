@@ -510,12 +510,15 @@ abstract class ListController extends Base\Controller
     {
         $result = '';
         if ($indexView === $this->active) {
+            $join = '?';
             if (!empty($this->query)) {
-                $result = '&query=' . $this->query;
+                $result = $join . 'query=' . $this->query;
+                $join = '&';
             }
 
             foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-                $result .= $filter->getParams($key);
+                $result .= $filter->getParams($key, $join);
+                $join = '&';
             }
         }
 
@@ -535,8 +538,8 @@ abstract class ListController extends Base\Controller
         $count = $this->views[$indexView]->count;
         $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
 
-        $paginationObj = new Base\Pagination();
-        $result = $paginationObj->getPages($url, $count, $offset);
+        $paginationObj = new Base\Pagination($url);
+        $result = $paginationObj->getPages($count, $offset);
         unset($paginationObj);
 
         return $result;

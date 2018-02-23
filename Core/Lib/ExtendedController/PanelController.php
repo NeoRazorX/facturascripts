@@ -313,7 +313,7 @@ abstract class PanelController extends Base\Controller
     {
         $results = [];
         $codeModel = new CodeModel();
-        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], data['term']) as $value) {
+        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;

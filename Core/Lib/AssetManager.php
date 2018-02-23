@@ -43,12 +43,12 @@ class AssetManager
         $folder = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
         $jsFile = $folder . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
         if (file_exists($jsFile)) {
-            $assets['js'] = $jsFile;
+            $assets['js'][] = $jsFile;
         }
 
         $cssFile = $folder . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
         if (file_exists($cssFile)) {
-            $assets['css'] = $cssFile;
+            $assets['css'][] = $cssFile;
         }
 
         return $assets;
