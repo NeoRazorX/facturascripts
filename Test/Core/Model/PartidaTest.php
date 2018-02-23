@@ -48,11 +48,6 @@ final class PartidaTest extends TestCase
         $this->assertEquals(0.0, $model->baseimponible);
         $this->assertEquals(0.0, $model->debe);
         $this->assertEquals(0.0, $model->haber);
-        $this->assertEquals(0, $model->numero);
-        $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertEquals(0.0, $model->saldo);
-        $this->assertEquals(0.0, $model->sum_debe);
-        $this->assertEquals(0.0, $model->sum_haber);
         $this->assertTrue($model->test());
 
         $model->concepto = 'Test name';

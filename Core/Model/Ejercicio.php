@@ -294,11 +294,11 @@ class Ejercicio extends Base\ModelClass
      * @param string $dateToCheck        (string with date format)
      * @return bool
      */
-    function inRange($dateToCheck): bool
+    public function inRange($dateToCheck): bool
     {
-      $start = strtotime($this->fechainicio);
-      $end = strtotime($this->fechafin);
-      $date = strtotime($dateToCheck);
-      return (($date >= $start) && ($date <= $end));
+        $start = strtotime($this->fechainicio);
+        $end = strtotime($this->fechafin);
+        $date = strtotime($dateToCheck);
+        return (($date >= $start) && ($date <= $end));
     }
 }

@@ -170,10 +170,7 @@ class Subcuenta extends Base\ModelClass
      */
     private function testErrorInData(): bool
     {
-        return empty($this->codcuenta)
-            || empty($this->codsubcuenta)
-            || empty($this->descripcion)
-            || empty($this->codejercicio);
+        return empty($this->codcuenta) || empty($this->codsubcuenta) || empty($this->descripcion) || empty($this->codejercicio);
     }
 
     /**
@@ -181,10 +178,11 @@ class Subcuenta extends Base\ModelClass
      *
      * @return bool
      */
-    private function testErrorInLengthSubAccount(): bool {
+    private function testErrorInLengthSubAccount(): bool
+    {
         $exercise = new Ejercicio();
         $exercise->loadFromCode($this->codejercicio);
-        return empty($exercise->codejercicio) || (strlen($this->codsubcuenta) <> $exercise->longsubcuenta);
+        return empty($exercise->codejercicio) || (strlen($this->codsubcuenta) <> $exercise->longsubcuenta);
     }
 
     /**
@@ -198,7 +196,7 @@ class Subcuenta extends Base\ModelClass
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if ($this->testErrorInData())  {
+        if ($this->testErrorInData()) {
             self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
             return false;
         }
@@ -208,7 +206,7 @@ class Subcuenta extends Base\ModelClass
             return false;
         }
 
-        $this->idcuenta = $this->getAccount();
+        $this->idcuenta = $this->getIdAccount();
         if (empty($this->idcuenta)) {
             self::$miniLog->alert(self::$i18n->trans('account-data-error'));
             return false;
@@ -248,13 +246,11 @@ class Subcuenta extends Base\ModelClass
                 . ',saldo = saldo + ' . $balance
                 . ' WHERE idsubcuenta = ' . $this->idsubcuenta;
             self::$dataBase->exec($sql);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             self::$miniLog->error($e->getMessage());
             self::$dataBase->rollback();
             return false;
-        }
-        finally {
+        } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
                 self::$dataBase->rollback();
                 self::$miniLog->alert(self::$i18n->trans('update-account-balance-error'));
