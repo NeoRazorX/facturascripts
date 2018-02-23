@@ -155,6 +155,7 @@ class EditAsiento extends ExtendedController\PanelController
     private function getAccountData($exercise, $subaccount): array
     {
         $result = [
+            'subaccount' => $subaccount,
             'description' => '',
             'balance' => 0.00,
             'detail' => [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00]

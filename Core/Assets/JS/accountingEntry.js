@@ -20,6 +20,7 @@ var documentLineData = [];
 var documentUrl = "";
 var accountEntries = null;
 var accountGraph = null;
+var calculateAccount = null;
 
 function configureAutocompleteColumns(columns) {
     Object.keys(columns).forEach(function (key) {
@@ -46,10 +47,26 @@ function configureAutocompleteColumns(columns) {
     });
 }
 
+function loadAccountData(account) {
+    if (account === null) {
+        clearAccountData();
+        return;
+    }
+
+    var exercise = $('input[name=codejercicio]')[0];
+    var data = {
+        action: 'account-data',
+        codsubcuenta: account,
+        codejercicio: exercise.value
+    };
+    $.getJSON(documentUrl, data, setAccountData);
+}
+
 function setAccountData(data) {
     // Update data labels
     $('#account-description').text(data.description);
     $('#account-balance').text(data.balance);
+    calculateAccount = data.subaccount;
 
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
@@ -62,10 +79,12 @@ function setAccountData(data) {
 function clearAccountData() {
     $('#account-description').text('');
     $('#account-balance').text('');
+    calculateAccount = null;
 
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
         dataset.data.lenght = 0;
+        dataset.data = [];
     });
     accountGraph.update();
 }
@@ -79,25 +98,27 @@ function getGridColumnName(col) {
 }
 
 function afterSelection(row1, col1, row2, col2, preventScrolling) {
+    // Check if editing
+    var editor = accountEntries.getActiveEditor();
+    if (editor && editor.isOpened()) {
+        return false;
+    }
+
+    // Not multiselection
     if (col1 === col2 && row1 === row2) {
-        if (getGridColumnName(col1) === 'codsubcuenta') {
-            var exercise = $('input[name=codejercicio]')[0];
-            var data = {
-                action: 'account-data',
-                codsubcuenta: getGridFieldData(row1, 'codsubcuenta'),
-                codejercicio: exercise.value
-            };
-            $.getJSON(documentUrl, data, setAccountData);
+        var newAccount = getGridFieldData(row1, 'codsubcuenta');
+        if (newAccount !== calculateAccount) {
+            loadAccountData(newAccount);
         }
     }
+    return true;
 }
 
 function afterChange(changes, source) {
     if (changes !== null) {
         if (changes[0][1] === 'codsubcuenta') {
             if (changes[0][2] !== changes[0][3]) {
-                var row = changes[0][0];
-                afterSelection(row, 0, row, 0, true);
+                loadAccountData(changes[0][3]);
             }
         }
     }
