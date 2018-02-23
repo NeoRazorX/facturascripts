@@ -180,11 +180,9 @@ abstract class AbstractRandom
     /**
      * Returns random comments
      *
-     * @param string|bool $fecha
-     *
      * @return string
      */
-    public function observaciones($fecha = false)
+    public function observaciones()
     {
         $observaciones = [
             'Pagado', 'Faltan piezas', 'No se corresponde con lo solicitado.',
