@@ -232,7 +232,6 @@ class AccountingPlanImport
                     $subaccount->codcuenta = $subaccountElement['codcuenta'];
                     $subaccount->codsubcuenta = $subaccountElement['codsubcuenta'];
                     $subaccount->descripcion = base64_decode($subaccountElement['descripcion']);
-                    $subaccount->coddivisa = $subaccountElement['coddivisa'];
                     $subaccount->save();
                 }
             }

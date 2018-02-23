@@ -226,7 +226,7 @@ class Subcuenta extends Base\ModelClass
     public function updateBalance($date, $debit, $credit): bool
     {
         $balance = $debit - $credit;
-        $month = date("n", strtotime($date));
+        $month = (int) date("n", strtotime($date));
         $detail = new SubcuentaSaldo();
         $detail->idsubcuenta = $this->idsubcuenta;
 
