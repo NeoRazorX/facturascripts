@@ -121,36 +121,18 @@ class AppInstaller
      */
     private function createFolders()
     {
-        // If they already exist, we can return true
-        if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('MyFiles')) {
-            return TRUE;
-        }
-
-        $deployPlugins = FALSE;
         // Check each needed folder to deploy
-        foreach(['Plugins', 'Dinamic', 'MyFiles'] as $folder)
-        {
-            // Create and deploy only if missing
-            if(!file_exists($folder) || !is_dir($folder))
-            {
-                if(!mkdir($folder))
-                {
-                    $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['folder' => $folder]));
-                }
-                else
-                {
-                    $deployPlugins = TRUE;
-                }
+        foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
+            if (!file_exists($folder) && !mkdir($folder)) {
+                $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['%folder%' => $folder]));
+                return false;
             }
         }
 
-        if ($deployPlugins) {
-            chmod('Plugins', octdec(777));
-            $pluginManager = new PluginManager();
-            $pluginManager->deploy();
-        }
-
-        return $deployPlugins;
+        chmod('Plugins', octdec(777));
+        $pluginManager = new PluginManager();
+        $pluginManager->deploy();
+        return true;
     }
 
     /**
