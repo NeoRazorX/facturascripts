@@ -42,7 +42,6 @@
     ],
     "scripts": {
         "auto-scripts": {
-
         },
         "post-install-cmd": [
             "npm install"

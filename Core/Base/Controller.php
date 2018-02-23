@@ -247,6 +247,21 @@ class Controller
     }
 
     /**
+     * Return array with parameters values
+     *
+     * @param array $keys
+     * @return array
+     */
+    protected function requestGet($keys): array
+    {
+        $result = [];
+        foreach ($keys as $value) {
+            $result[$value] = $this->request->get($value);
+        }
+        return $result;
+    }
+
+    /**
      * Return the URL of the actual controller.
      *
      * @return string

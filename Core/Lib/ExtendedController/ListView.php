@@ -28,7 +28,7 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListView extends BaseView
+class ListView extends BaseView implements DataViewInterface
 {
     /**
      * Order constants

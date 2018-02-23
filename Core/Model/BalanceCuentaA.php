@@ -101,19 +101,19 @@ class BalanceCuentaA extends Base\ModelClass
         }
 
         if ($desde && $hasta) {
-            $extra .= ' AND idasiento IN (SELECT idasiento FROM co_asientos WHERE '
+            $extra .= ' AND idasiento IN (SELECT idasiento FROM asientos WHERE '
                 . 'fecha >= ' . self::$dataBase->var2str($desde) . ' AND '
                 . 'fecha <= ' . self::$dataBase->var2str($hasta) . ')';
         }
 
         if ($this->codcuenta === '129') {
-            $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
+            $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-              WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%') 
+              WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%')
                 AND codejercicio = " . self::$dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = self::$dataBase->select($sql);
         } else {
-            $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
+            $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
                WHERE codcuenta LIKE '" . Utils::noHtml($this->codcuenta) . "%'"
                 . ' AND codejercicio = ' . self::$dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';

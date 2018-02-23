@@ -1,0 +1,181 @@
+{#
+   /**
+     * Accounting Entry View
+     *
+     * Allows the visualization and editing of accounting entries
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     *
+    */
+#}
+
+{% extends "Master/PanelController.html.twig" %}
+
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css" />
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
+<script src="node_modules/chart.js/dist/Chart.min.js"></script>
+<script src="Core/Assets/JS/accountingEntry.js"></script>
+<script type="text/javascript">
+    documentUrl = '{{ view.getURL('edit') | raw }}';
+</script>
+{% endblock %}
+
+{% block body %}
+{# Working variables #}
+{% set masterKeyView = fsc.views|keys|first %}
+
+{# -- Visual macros -- #}
+{% import 'Macro/BaseController.html.twig' as BaseController %}
+
+{# -- Main Body -- #}
+<div class="container-fluid">
+    {# -- Account View Panel -- #}
+    <div class="row">
+        <div class="col-12">
+            {% set view = fsc.views[masterKeyView] %}
+
+            {# Info header panels #}
+            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+
+            {# Main Data #}
+            <div class="card">
+                <div class="card-body">
+                    {# Statistical buttons bar #}
+                    {{ BaseController.rowStatisticsForEditView(_context, view) }}
+
+                    {# Main Form #}
+                    {{ BaseController.columnsForEditView(_context, view, view.getModel(), TRUE) }}
+                </div>
+            </div>
+            {# Info footers panels and modals forms #}
+            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+            {{ BaseController.modalFormFromColumns(_context, view) }}
+        </div>
+    </div>
+
+    {# -- Detail data -- #}
+    {% if fsc.views[masterKeyView].count > 0 %}
+    <div class="row mt-2">
+        <div class="col-12">
+            {# -- Tabs -- #}
+            <div class="nav nav-tabs" id="optionsindex" role="tablist">
+                {% for indexView, view in fsc.views %}
+                {% if loop.index > 1 %}
+                {% set active = (loop.index == 2) ? ' active' : '' %}
+                <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
+                    &nbsp;{{ view.title }}
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            {# Data #}
+            <div class="tab-content" id="optionsindex-tabContent">
+                {% for indexView, view in fsc.views %}
+                    {% if loop.index > 1 %}
+                    {% set active = (loop.index == 2) ? ' show active' : '' %}
+                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                        {% set viewType = fsc.viewClass(view) %}
+
+                        {# List #}
+                        {% if viewType == 'ListView' %}
+                            {{ BaseController.columnsForListView(_context, view) }}
+                        {% endif %}
+
+                        <div class="mb-2"></div>
+
+                        {# Grid #}
+                        {% if viewType == 'GridView' %}
+                            <div class="row no-gutters">
+                                <div class="col-9 mr-2">
+                                    {# Prepare grid data & events #}
+                                    <script type="text/javascript">
+                                        documentLineData = {{ view.getGridData()|raw }};
+                                        configureAutocompleteColumns(documentLineData['columns']);
+                                    </script>
+                                    {# Grid data panel #}
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <span><small id="account-description"></small></span>
+                                            <span class="float-right"><small><strong>Descuadre:&nbsp;<span>0.00</span></strong></small></span>
+                                        </div>
+                                        <div class="body">
+                                            <div id="document-lines"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <small><strong>Total balance:&nbsp;<span id="account-balance">0.00</span></strong></small>
+                                        </div>
+                                        {# Graphic Subaccount Balance panel #}
+                                        <div class="card-body">
+                                            <canvas id="detail-balance" class="w-100"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Edit #}
+                        {% if viewType == 'EditView' %}
+                            {# Information Cards Header #}
+                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+
+                            {# Statistical buttons bar #}
+                            {{ BaseController.rowStatisticsForEditView(_context, view) }}
+
+                            {# Main Form #}
+                            {{ BaseController.columnsForEditView(_context, view, view.getModel(), TRUE) }}
+                        {% endif %}
+
+                        {# Edit Multiple #}
+                        {% if viewType == 'EditListView' %}
+                            {# Information Cards Header #}
+                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+
+                            {# Main Form #}
+                            {{ BaseController.columnsForEditListView(_context, view) }}
+                        {% endif %}
+
+                        {# Html #}
+                        {% if viewType == 'HtmlView' %}
+                        <div>{% include view.fileName ignore missing %}</div>
+                        {% endif %}
+
+                        {# Footer options #}
+                        {% if viewType in ['EditView','EditListView'] %}
+                            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<br/>
+{% endblock %}
