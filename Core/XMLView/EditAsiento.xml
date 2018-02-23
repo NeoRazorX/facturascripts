@@ -36,14 +36,14 @@
         <column name="concept" order="120">
             <widget type="text" fieldname="concepto" required="true" />
         </column>
-        <column name="importe" numcolumns="2" display="right" order="200">
+        <column name="ammount" numcolumns="2" display="right" order="200">
             <widget type="money" fieldname="importe" icon="fa-money" readonly="readonly" />
         </column>
     </columns>
 
     <rows>
         <row type="actions">
-            <button type="action" label="lock" color="warning" action="lock" icon="fa-lock" />
+            <button type="action" label="lock-unlock" color="warning" action="lock" icon="fa-lock" />
             <button type="action" label="clone" color="info" action="clone" icon="fa-clone" />
         </row>
     </rows>

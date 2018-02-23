@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -31,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditPageOption extends Base\Controller
 {
+
     /**
      * Selected user, for which the controller columns are created or modified
      *
@@ -73,9 +73,7 @@ class EditPageOption extends Base\Controller
     private function getParams()
     {
         $this->selectedViewName = $this->request->get('code');
-        $this->selectedUser = $this->user->admin
-            ? $this->request->get('nick', null)
-            : $this->user->nick;
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick', null) : $this->user->nick;
     }
 
     /**

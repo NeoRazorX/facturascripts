@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -33,6 +32,7 @@ use FacturaScripts\Core\Model;
  */
 class EditAsiento extends ExtendedController\PanelController
 {
+
     /**
      * Load views
      */
@@ -144,7 +144,7 @@ class EditAsiento extends ExtendedController\PanelController
             'subaccount' => $subaccount,
             'description' => '',
             'balance' => 0.00,
-            'detail' => [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00]
+            'detail' => [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
         ];
 
         if (empty($exercise) or empty($subaccount)) {
@@ -160,7 +160,7 @@ class EditAsiento extends ExtendedController\PanelController
         if ($account->loadFromCode(null, $where)) {
             $result['description'] = $account->descripcion;
 
-            $where = [ new DataBaseWhere('idsubcuenta', $account->idsubcuenta) ];
+            $where = [new DataBaseWhere('idsubcuenta', $account->idsubcuenta)];
             $balance = new Model\SubcuentaSaldo();
             foreach ($balance->all($where) as $values) {
                 $result['detail'][$values->mes] = $values->saldo;

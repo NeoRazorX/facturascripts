@@ -35,7 +35,7 @@
                 <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="contrapartida" order="110">
+        <column name="offsetting" order="110">
             <widget type="text" fieldname="codcontrapartida" />
         </column>
         <column name="description" order="115">
@@ -46,7 +46,7 @@
                 <option color="red">&lt;0</option>
             </widget>
         </column>
-        <column name="habe" display="right" order="130">
+        <column name="credit" display="right" order="130">
             <widget type="money" fieldname="haber">
                 <option color="red">&lt;0</option>
             </widget>
