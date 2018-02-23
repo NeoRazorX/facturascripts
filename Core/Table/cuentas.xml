@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : co_cuentas.xml
+    Document   : cuentas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the co_cuentas table.
+        Structure for the cuentas table.
 -->
 <table>
     <column>
         <name>idcuenta</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
+        <default>nextval('cuentas_idcuenta_seq'::regclass)</default>
     </column>
     <column>
         <name>codejercicio</name>
@@ -28,7 +28,7 @@
         <null>YES</null>
     </column>
     <column>
-        <name>idcuentaesp</name>
+        <name>codcuentaesp</name>
         <type>character varying(6)</type>
         <null>YES</null>
     </column>
@@ -42,7 +42,7 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>co_cuentas_pkey</name>
+        <name>cuentas_pkey</name>
         <type>PRIMARY KEY (idcuenta)</type>
     </constraint>
     <constraint>
@@ -50,21 +50,21 @@
         <type>UNIQUE (codcuenta,codejercicio)</type>
     </constraint>
     <constraint>
-        <name>ca_co_cuentas_ejercicios</name>
+        <name>ca_cuentas_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
             ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_co_cuentas_cuentasesp</name>
-        <type>FOREIGN KEY (idcuentaesp)
-            REFERENCES co_cuentasesp (idcuentaesp)
+        <name>ca_cuentas_cuentasesp</name>
+        <type>FOREIGN KEY (codcuentaesp)
+            REFERENCES cuentasesp (codcuentaesp)
             ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_co_cuentas_parent</name>
+        <name>ca_cuentas_parent</name>
         <type>FOREIGN KEY (parent_idcuenta)
-            REFERENCES co_cuentas (idcuenta)
+            REFERENCES cuentas (idcuenta)
             ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

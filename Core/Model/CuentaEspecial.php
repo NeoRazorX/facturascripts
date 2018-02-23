@@ -50,7 +50,7 @@ class CuentaEspecial extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_cuentasesp';
+        return 'cuentasesp';
     }
 
     /**
@@ -60,7 +60,31 @@ class CuentaEspecial extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idcuentaesp';
+        return 'codcuentaesp';
+    }
+
+    /**
+     * Returns the name of the column that describes the model, such as name, description...
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codcuentaesp';
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// TODO: Install basic specials accounts
+
+        return '';
     }
 
     /**

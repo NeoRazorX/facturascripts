@@ -39,7 +39,7 @@
         <group name="seccondary-data" numcolumns="12">
             <column name="account" numcolumns="3" order="100">
                 <widget type="select" fieldname="codcuenta" readonly="true">
-                    <values source="co_cuentas" fieldcode="codcuenta" fieldtitle="descripcion"></values>
+                    <values source="cuentas" fieldcode="codcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="exercise" numcolumns="3" order="100">
@@ -50,7 +50,7 @@
             <column name="currency" numcolumns="3" order="100">
                 <widget type="select" fieldname="coddivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget> 
+                </widget>
             </column>
             <column name="taxes" numcolumns="3" order="100">
                 <widget type="select" fieldname="codimpuesto" required="true">

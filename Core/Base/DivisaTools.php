@@ -56,4 +56,19 @@ class DivisaTools
 
         return $symbol . ' ' . $txt;
     }
+
+    /**
+     * Return format mask for edit grid
+     *
+     * @param type $decimals
+     * @return string
+     */
+    public static function gridMoneyFormat($decimals = FS_NF0)
+    {
+        $moneyFormat = '0.';
+        for ($num = 0; $num < $decimals; $num++) {
+            $moneyFormat .= '0';
+        }
+        return $moneyFormat;
+    }
 }

@@ -81,7 +81,7 @@ class BalanceAmmounts extends AccountingBase
     protected function getData()
     {
         $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) AS debe, SUM(partida.haber) AS haber'
-            . ' FROM co_partidas as partida, co_asientos as asiento'
+            . ' FROM partidas as partida, asientos as asiento'
             . ' WHERE asiento.idasiento = partida.idasiento'
             . ' AND asiento.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
             . ' AND asiento.fecha <= ' . $this->dataBase->var2str($this->dateTo)
