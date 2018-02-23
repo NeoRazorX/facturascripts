@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditPartida
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <column name="idasiento" order="100" display="none">
+            <widget type="text" fieldname="idasiento" />
+        </column>
+        <column name="id" order="100" display="none">
+            <widget type="text" fieldname="idpartida" />
+        </column>
+        <column name="subaccount" order="105">
+            <widget type="autocomplete" fieldname="codsubcuenta" required="true">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="contrapartida" order="110">
+            <widget type="text" fieldname="codcontrapartida" />
+        </column>
+        <column name="description" order="115">
+            <widget type="text" fieldname="concepto" />
+        </column>
+        <column name="debit" display="right" order="120">
+            <widget type="money" fieldname="debe">
+                <option color="red">&lt;0</option>
+            </widget>
+        </column>
+        <column name="habe" display="right" order="130">
+            <widget type="money" fieldname="haber">
+                <option color="red">&lt;0</option>
+            </widget>
+        </column>
+    </columns>
+
+    <rows>
+        <row type="actions">
+            <button type="action" label="balance" color="success" action="balance" icon="fa-balance-scale" />
+        </row>
+    </rows>
+</view>

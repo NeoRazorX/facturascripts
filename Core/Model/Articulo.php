@@ -279,8 +279,7 @@ class Articulo extends Base\Product
         $result = false;
         $stock = new Stock();
         $encontrado = false;
-        $stocks = $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
-        foreach ($stocks as $sto) {
+        foreach ($stock->all([new DataBaseWhere('referencia', $this->referencia)]) as $sto) {
             if ($sto->codalmacen === $codalmacen) {
                 $sto->setCantidad($cantidad);
                 $result = $sto->save();
@@ -288,6 +287,7 @@ class Articulo extends Base\Product
                 break;
             }
         }
+
         if (!$encontrado) {
             $stock->referencia = $this->referencia;
             $stock->codalmacen = $codalmacen;
@@ -295,28 +295,30 @@ class Articulo extends Base\Product
             $result = $stock->save();
         }
 
-        if ($result) {
-            /// $result is True
-            /// this code is highly optimized to save only the changes
-
-            $nuevoStock = $stock->totalFromArticulo($this->referencia);
-            if ($this->stockfis !== $nuevoStock) {
-                $this->stockfis = $nuevoStock;
-
-                if ($this->exists()) {
-                    $sql = 'UPDATE ' . static::tableName()
-                        . ' SET stockfis = ' . self::$dataBase->var2str($this->stockfis)
-                        . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
-                    $result = self::$dataBase->exec($sql);
-                } elseif (!$this->save()) {
-                    self::$miniLog->alert(self::$i18n->trans('error-updating-product-stock'));
-                }
-            }
-        } else {
+        if (!$result) {
             self::$miniLog->alert(self::$i18n->trans('error-saving-stock'));
+            return false;
         }
 
-        return $result;
+        /// this code is highly optimized to save only the changes
+        $nuevoStock = $stock->totalFromArticulo($this->referencia);
+        if ($this->stockfis !== $nuevoStock) {
+            $this->stockfis = $nuevoStock;
+
+            if ($this->exists()) {
+                $sql = 'UPDATE ' . static::tableName()
+                    . ' SET stockfis = ' . self::$dataBase->var2str($this->stockfis)
+                    . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
+                return self::$dataBase->exec($sql);
+            }
+
+            if (!$this->save()) {
+                self::$miniLog->alert(self::$i18n->trans('error-updating-product-stock'));
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -332,78 +334,79 @@ class Articulo extends Base\Product
      */
     public function sumStock($codalmacen, $cantidad = 1, $recalculaCoste = false, $codcombinacion = null)
     {
-        $result = false;
-
         if ($recalculaCoste) {
             // TODO: Uncomplete
             $this->costemedio = 1;
         }
 
         if ($this->nostock) {
-            $result = true;
-
             if ($recalculaCoste) {
                 /// this code is highly optimized to save only the changes
                 if ($this->exists()) {
                     $sql = 'UPDATE ' . static::tableName()
                         . '  SET costemedio = ' . self::$dataBase->var2str($this->costemedio)
                         . '  WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
-                    $result = self::$dataBase->exec($sql);
-                } elseif (!$this->save()) {
+                    return self::$dataBase->exec($sql);
+                }
+
+                if (!$this->save()) {
                     self::$miniLog->alert(self::$i18n->trans('error-updating-product-stock'));
-                    $result = false;
+                    return false;
                 }
             }
-        } else {
-            $stock = new Stock();
-            $encontrado = false;
-            $stocks = $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
-            foreach ($stocks as $sto) {
-                if ($sto instanceof Stock && $sto->codalmacen === $codalmacen) {
-                    $sto->sumCantidad($cantidad);
-                    $result = $sto->save();
-                    $encontrado = true;
-                    break;
-                }
+
+            return true;
+        }
+
+        $result = false;
+        $stock = new Stock();
+        $encontrado = false;
+        foreach ($stock->all([new DataBaseWhere('referencia', $this->referencia)]) as $sto) {
+            if ($sto instanceof Stock && $sto->codalmacen === $codalmacen) {
+                $sto->sumCantidad($cantidad);
+                $result = $sto->save();
+                $encontrado = true;
+                break;
             }
-            if (!$encontrado) {
-                $stock->referencia = $this->referencia;
-                $stock->codalmacen = $codalmacen;
-                $stock->setCantidad($cantidad);
-                $result = $stock->save();
+        }
+
+        if (!$encontrado) {
+            $stock->referencia = $this->referencia;
+            $stock->codalmacen = $codalmacen;
+            $stock->setCantidad($cantidad);
+            $result = $stock->save();
+        }
+
+        if (!$result) {
+            self::$miniLog->alert(self::$i18n->trans('error-saving-stock'));
+            return false;
+        }
+
+        /// this code is highly optimized to save only the changes
+        $nuevoStock = $stock->totalFromArticulo($this->referencia);
+        if ($this->stockfis !== $nuevoStock) {
+            $this->stockfis = $nuevoStock;
+
+            if ($this->exists()) {
+                $sql = 'UPDATE ' . static::tableName()
+                    . '  SET stockfis = ' . self::$dataBase->var2str($this->stockfis)
+                    . ', costemedio = ' . self::$dataBase->var2str($this->costemedio)
+                    . '  WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
+                $result = self::$dataBase->exec($sql);
+            } elseif (!$this->save()) {
+                self::$miniLog->alert(self::$i18n->trans('error-updating-product-stock'));
+                return false;
             }
 
-            if ($result) {
-                /// this code is highly optimized to save only the changes
-
-                $nuevoStock = $stock->totalFromArticulo($this->referencia);
-                if ($this->stockfis !== $nuevoStock) {
-                    $this->stockfis = $nuevoStock;
-
-                    if ($this->exists()) {
-                        $sql = 'UPDATE ' . static::tableName()
-                            . '  SET stockfis = ' . self::$dataBase->var2str($this->stockfis)
-                            . ', costemedio = ' . self::$dataBase->var2str($this->costemedio)
-                            . '  WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
-                        $result = self::$dataBase->exec($sql);
-                    } elseif (!$this->save()) {
-                        self::$miniLog->alert(self::$i18n->trans('error-updating-product-stock'));
-                        $result = false;
+            /// Any combination?
+            if ($codcombinacion !== null && $result) {
+                $com0 = new ArticuloCombinacion();
+                foreach ($com0->allFromCodigo($codcombinacion) as $combi) {
+                    if ($combi instanceof ArticuloCombinacion) {
+                        $combi->stockfis += $cantidad;
+                        $combi->save();
                     }
-
-                    /// Any combination?
-                    if ($codcombinacion !== null && $result) {
-                        $com0 = new ArticuloCombinacion();
-                        foreach ($com0->allFromCodigo($codcombinacion) as $combi) {
-                            if ($combi instanceof ArticuloCombinacion) {
-                                $combi->stockfis += $cantidad;
-                                $combi->save();
-                            }
-                        }
-                    }
                 }
-            } else {
-                self::$miniLog->alert(self::$i18n->trans('error-saving-stock'));
             }
         }
 

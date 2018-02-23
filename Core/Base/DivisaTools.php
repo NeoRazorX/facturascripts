@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,6 +25,14 @@ namespace FacturaScripts\Core\Base;
  */
 class DivisaTools
 {
+
+    public function __construct()
+    {
+        if (!defined('FS_CURRENCY_POS')) {
+            define('FS_CURRENCY_POS', 'right');
+        }
+    }
+
     /**
      * Returns the value of the formatted currency.
      *
@@ -35,7 +42,7 @@ class DivisaTools
      *
      * @return string
      */
-    public function format($number, $decimals = FS_NF0, $addSymbol = true)
+    public static function format($number, $decimals = FS_NF0, $addSymbol = true)
     {
         $txt = number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
         if (!$addSymbol) {
@@ -43,10 +50,26 @@ class DivisaTools
         }
 
         $symbol = '€';
-        if (FS_POS_DIVISA === 'right') {
+        if (FS_CURRENCY_POS === 'right') {
             return $txt . ' ' . $symbol;
         }
 
         return $symbol . ' ' . $txt;
+    }
+
+    /**
+     * Return format mask for edit grid
+     *
+     * @param int $decimals
+     * 
+     * @return string
+     */
+    public static function gridMoneyFormat($decimals = FS_NF0)
+    {
+        $moneyFormat = '0.';
+        for ($num = 0; $num < $decimals; $num++) {
+            $moneyFormat .= '0';
+        }
+        return $moneyFormat;
     }
 }

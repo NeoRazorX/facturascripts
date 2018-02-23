@@ -19,10 +19,9 @@
  * NOTICE: This class is deprecated!!!
  * 
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
-use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model;
 
 /**
@@ -32,6 +31,7 @@ use FacturaScripts\Core\Model;
  */
 class AccountingGenerator
 {
+
     /**
      * List of available periods
      *
@@ -125,87 +125,43 @@ class AccountingGenerator
      */
     public function cuentas($max = 50)
     {
-        $epigrafes = $this->randomModel("\FacturaScripts\Dinamic\Model\Epigrafe");
-        for ($num = 0; $num < $max && count($epigrafes) > 0; ++$num) {
+        $where = [new DataBaseWhere('codejercicio', $this->ejercicios[0]->codejercicio)];
+        $cuentas = $this->randomModel("\FacturaScripts\Dinamic\Model\Cuenta", $where);
+        for ($num = 0; $num < $max; ++$num) {
             $cuenta = new Model\Cuenta();
-            $cuenta->codcuenta = $epigrafes[0]->codepigrafe . mt_rand(0, 99);
-            $cuenta->codejercicio = $epigrafes[0]->codejercicio;
-            $cuenta->codepigrafe = $epigrafes[0]->codepigrafe;
+
+            if (isset($cuentas[0])) {
+                $cuenta->codcuenta = $cuenta->parent_codcuenta = $cuentas[0]->codcuenta;
+                $cuenta->codejercicio = $cuentas[0]->codejercicio;
+            } else {
+                $cuenta->codejercicio = $this->ejercicios[0]->codejercicio;
+                shuffle($this->ejercicios);
+            }
+
+            $cuenta->codcuenta .= mt_rand(1, 9);
             $cuenta->descripcion = $this->tools->descripcion();
-            $cuenta->idepigrafe = $epigrafes[0]->idepigrafe;
             if (!$cuenta->save()) {
                 break;
             }
 
-            shuffle($epigrafes);
+            shuffle($cuentas);
         }
 
         return $num;
     }
 
     /**
-     * Genera epigrafes con datos aleatorios.
-     *
-     * @param int $max
-     *
-     * @return int
-     */
-    public function epigrafes($max = 50)
-    {
-        $grupos = $this->randomModel("\FacturaScripts\Dinamic\Model\GrupoEpigrafes");
-        for ($num = 0; $num < $max && count($grupos) > 0; ++$num) {
-            $epigrafe = new Model\Epigrafe();
-            $epigrafe->codejercicio = $grupos[0]->codejercicio;
-            $epigrafe->codepigrafe = $grupos[0]->codgrupo . mt_rand(0, 99);
-            $epigrafe->codgrupo = $grupos[0]->codgrupo;
-            $epigrafe->descripcion = $this->tools->descripcion();
-            $epigrafe->idgrupo = $grupos[0]->idgrupo;
-            if (!$epigrafe->save()) {
-                break;
-            }
-
-            shuffle($grupos);
-        }
-
-        return $num;
-    }
-
-    /**
-     * Genera grupos de epigrafes con datos aleatorios.
-     *
-     * @param int $max
-     *
-     * @return int
-     */
-    public function gruposEpigrafes($max = 50)
-    {
-        for ($num = 0; $num < $max; ++$num) {
-            shuffle($this->ejercicios);
-
-            $grupo = new Model\GrupoEpigrafes();
-            $grupo->codejercicio = $this->ejercicios[0]->codejercicio;
-            $grupo->codgrupo = (string) mt_rand(1, 99);
-            $grupo->descripcion = $this->tools->descripcion();
-            if (!$grupo->save()) {
-                break;
-            }
-        }
-
-        return $num;
-    }
-
-    /**
-     * Obtiene todos los datos de un modelo, los mezcla y los devuelve.
-     * Si el modelo no tiene datos, devuelve un array vacío.
-     *
+     * Returns an array with random data of the given model.
+     * 
      * @param string $modelName
-     *
+     * @param array  $where
+     * 
      * @return array
      */
-    protected function randomModel($modelName = "\FacturaScripts\Dinamic\Model\Cuenta")
+    protected function randomModel($modelName = "\FacturaScripts\Dinamic\Model\Cuenta", $where = [])
     {
         $model = new $modelName();
-        $data = $model->all();
+        $data = $model->all($where);
         if (empty($model)) {
             return [];
         }
@@ -228,7 +184,6 @@ class AccountingGenerator
         for ($num = 0; $num < $max; ++$num) {
             $subcuenta = new Model\Subcuenta();
             $subcuenta->codcuenta = $cuentas[0]->codcuenta;
-            $subcuenta->coddivisa = AppSettings::get('default', 'coddivisa');
             $subcuenta->codejercicio = $cuentas[0]->codejercicio;
             $subcuenta->codsubcuenta = $cuentas[0]->codcuenta . mt_rand(0, 9999);
             $subcuenta->descripcion = $this->tools->descripcion();

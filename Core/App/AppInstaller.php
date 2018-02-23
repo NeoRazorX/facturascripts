@@ -23,8 +23,6 @@ use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Twig_Environment;
-use Twig_Loader_Filesystem;
 
 /**
  * Description of AppInstaller
@@ -123,20 +121,18 @@ class AppInstaller
      */
     private function createFolders()
     {
-        // If they already exist, we can return true
-        if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('MyFiles')) {
-            return true;
+        // Check each needed folder to deploy
+        foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
+            if (!file_exists($folder) && !mkdir($folder)) {
+                $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['%folder%' => $folder]));
+                return false;
+            }
         }
 
-        if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('MyFiles')) {
-            chmod('Plugins', octdec(777));
-            $pluginManager = new PluginManager();
-            $pluginManager->deploy();
-            return true;
-        }
-
-        $this->miniLog->critical($this->i18n->trans('cant-create-folders'));
-        return false;
+        chmod('Plugins', octdec(777));
+        $pluginManager = new PluginManager();
+        $pluginManager->deploy();
+        return true;
     }
 
     /**
@@ -146,7 +142,7 @@ class AppInstaller
      */
     private function getUri()
     {
-        $uri = $this->request->server->get('REQUEST_URI');
+        $uri = $this->request->getBasePath();
         if ('/' === substr($uri, -1)) {
             return substr($uri, 0, -1);
         }
@@ -208,19 +204,16 @@ class AppInstaller
     {
         /// HTML template variables
         $templateVars = [
-            'i18n' => $this->i18n,
             'license' => file_get_contents(FS_FOLDER . '/COPYING'),
-            'log' => $this->miniLog,
             'memcache_prefix' => $this->randomString(8),
             'timezones' => $this->getTimezoneList()
         ];
 
         /// Load the template engine
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
-        $twig = new Twig_Environment($twigLoader);
+        $webRender = new WebRender();
 
         /// Generate and return the HTML
-        $response = new Response($twig->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
+        $response = new Response($webRender->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
         $response->send();
     }
 
@@ -357,6 +350,7 @@ class AppInstaller
             $this->miniLog->critical((string) $connection->connect_error);
         }
 
+        $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
         return false;
     }
 
@@ -386,6 +380,7 @@ class AppInstaller
             $this->miniLog->critical((string) \pg_last_error($connection));
         }
 
+        $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
         return false;
     }
 }

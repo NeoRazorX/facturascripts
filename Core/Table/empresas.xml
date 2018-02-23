@@ -62,6 +62,11 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>personafisica</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
         <name>recequivalencia</name>
         <type>boolean</type>
     </column>

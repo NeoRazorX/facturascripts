@@ -19,7 +19,7 @@
  *
  * Definición inicial para el controlador ListGrupoEpigrafe
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com
 -->
 
@@ -35,10 +35,14 @@
             <widget type="text" fieldname="concepto" />
         </column>
         <column name="debit" display="right" order="120">
-            <widget type="money" fieldname="debe" />
+            <widget type="money" fieldname="debe">
+                <option color="red">&lt;0</option>
+            </widget>
         </column>
         <column name="habe" display="right" order="130">
-            <widget type="money" fieldname="haber" />
+            <widget type="money" fieldname="haber">
+                <option color="red">&lt;0</option>
+            </widget>
         </column>
     </columns>
 </view>

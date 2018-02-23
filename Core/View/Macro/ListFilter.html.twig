@@ -105,7 +105,7 @@
         {% endif %}
         <input type="text" value="{{ context.fsc.codeModel.getDescription(filter.options.table, key, filter.options.value, filter.options.field) }}"
                class="form-control autocomplete" data-source="{{ filter.options.table }}" data-field="{{ key }}" data-title="{{ filter.options.field }}"
-               placeholder="{{ any }} {{ key }}" autocomplete="off"/>
+               placeholder="{{ any }} {{ filter.options.field }}" autocomplete="off"/>
     </div>
 </div>
 {% endmacro %}

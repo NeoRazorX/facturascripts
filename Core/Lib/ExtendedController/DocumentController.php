@@ -72,7 +72,7 @@ abstract class DocumentController extends PanelController
                 $data = $this->request->request->all();
                 $result = $view->calculateDocument($data);
                 $this->response->setContent($result);
-                break;
+                return false;
 
             case 'save-document':
                 $this->setTemplate(false);
@@ -80,7 +80,7 @@ abstract class DocumentController extends PanelController
                 $data = $this->request->request->all();
                 $result = $view->saveDocument($data);
                 $this->response->setContent($result);
-                break;
+                return false;
 
             default:
                 return parent::execPreviousAction($view, $action);

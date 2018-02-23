@@ -113,6 +113,18 @@ class ListFilter
     }
 
     /**
+     * Check if option value is not null or empty
+     *
+     * @param string $key
+     * @return bool
+     */
+    private function hasValue($key = 'value'): bool
+    {
+        $value = $this->options[$key];
+        return (($value !== null) && ($value !== ''));
+    }
+
+    /**
      * Adds $where to the informed filters in DataBaseWhere format
      *
      * @param DataBaseWhere[] $where
@@ -123,7 +135,7 @@ class ListFilter
         switch ($this->type) {
             case 'autocomplete':
             case 'select':
-                if ($this->options['value'] !== null && $this->options['value'] !== '') {
+                if ($this->hasValue()) {
                     // we use the key value because the field value indicate is the text field of the source data
                     $where[] = new DataBaseWhere($key, $this->options['value']);
                 }
@@ -134,18 +146,18 @@ class ListFilter
                 if ($this->options['matchValue'] === null) {
                     $operator = $this->options['inverse'] ? 'IS NOT' : 'IS';
                 }
-                if ($this->options['value'] !== null && $this->options['value'] !== '') {
+                if ($this->hasValue()) {
                     $where[] = new DataBaseWhere($this->options['field'], $this->options['matchValue'], $operator);
                 }
                 break;
 
             default:
-                if ($this->options['valueFrom'] !== null && $this->options['valueFrom'] !== '') {
+                if ($this->hasValue('valueFrom')) {
                     $where[] = new DataBaseWhere(
                         $this->options['field'], $this->options['valueFrom'], $this->options['operatorFrom']
                     );
                 }
-                if ($this->options['valueTo'] !== null && $this->options['valueTo'] !== '') {
+                if ($this->hasValue('valueTo')) {
                     $where[] = new DataBaseWhere(
                         $this->options['field'], $this->options['valueTo'], $this->options['operatorTo']
                     );
@@ -157,29 +169,31 @@ class ListFilter
      * Builds a string with the parameters contained in the URL of the controller call
      *
      * @param string $key
+     * @param string $join
      *
      * @return string
      */
-    public function getParams($key)
+    public function getParams($key, $join): string
     {
         $result = '';
         switch ($this->type) {
             case 'autocomplete':
             case 'select':
             case 'checkbox':
-                if ($this->options['value'] !== '') {
-                    $result .= '&' . $key . '=' . $this->options['value'];
+                if ($this->hasValue()) {
+                    $result .= $join . $key . '=' . $this->options['value'];
                 }
                 break;
 
             default:
-                if ($this->options['valueFrom'] !== '') {
-                    $result .= '&' . $key . '-from=' . $this->options['valueFrom'];
+                if ($this->hasValue('valueFrom')) {
+                    $result .= $join . $key . '-from=' . $this->options['valueFrom'];
                     $result .= '&' . $key . '-from-operator=' . $this->options['operatorFrom'];
+                    $join = '&';
                 }
 
-                if ($this->options['valueTo'] !== '') {
-                    $result .= '&' . $key . '-to=' . $this->options['valueTo'];
+                if ($this->hasValue('valueTo')) {
+                    $result .= $join . $key . '-to=' . $this->options['valueTo'];
                     $result .= '&' . $key . '-to-operator=' . $this->options['operatorTo'];
                 }
         }
@@ -197,7 +211,7 @@ class ListFilter
      *
      * @return ListFilter
      */
-    public static function newSelectFilter($field, $value, $table, $where)
+    public static function newSelectFilter($field, $value, $table, $where): ListFilter
     {
         $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
 
