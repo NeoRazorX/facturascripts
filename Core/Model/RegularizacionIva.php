@@ -38,7 +38,7 @@ class RegularizacionIva extends Base\ModelClass
     public $idregiva;
 
     /**
-     * ID of the generated seat.
+     * ID of the generated accounting entry.
      *
      * @var int
      */
@@ -100,7 +100,7 @@ class RegularizacionIva extends Base\ModelClass
     }
 
     /**
-     * Returns the items per seat.
+     * Returns the items per accounting entry.
      *
      * @return Partida[]|bool
      */
