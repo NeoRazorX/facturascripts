@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * Description of AccountingPlanImport
@@ -30,12 +31,25 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class AccountingPlanImport
 {
+
     /**
      * Exercise related to the accounting plan.
      *
-     * @var Ejercicio
+     * @var Model\Ejercicio
      */
     private $ejercicio;
+
+    /**
+     *
+     * @var Translator
+     */
+    private static $i18n;
+
+    /**
+     *
+     * @var MiniLog
+     */
+    private static $miniLog;
 
     /**
      * Import data from XML file.
@@ -45,15 +59,16 @@ class AccountingPlanImport
      */
     public function importXML($filePath, $codejercicio)
     {
+        if (!isset(self::$miniLog)) {
+            self::$i18n = new Translator();
+            self::$miniLog = new MiniLog();
+        }
 
         $this->ejercicio = new Model\Ejercicio();
-        $this->ejercicio->codejercicio = $codejercicio;
+        $this->ejercicio->loadFromCode($codejercicio);
 
         $data = $this->getData($filePath);
-
-        if ($data->count() > 0)
-        {
-
+        if ($data->count() > 0) {
             $this->importEpigrafeGroup($data->grupo_epigrafes);
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
@@ -71,8 +86,7 @@ class AccountingPlanImport
      */
     private function getData($filePath)
     {
-        if (file_exists($filePath))
-        {
+        if (file_exists($filePath)) {
             return simplexml_load_string(file_get_contents($filePath));
         }
 
@@ -87,20 +101,16 @@ class AccountingPlanImport
     private function importEpigrafeGroup($data)
     {
         $epigrafeGroup = new model\Cuenta();
-        $epigrafeGroupElement = [];
 
         foreach ($data as $xmlEpigrafeGroup) {
             $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
-            $where = [new Database\DataBaseWhere('codejercicio',
-                    $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codcuenta',
-                    $epigrafeGroupElement['codgrupo'])
+            $where = [
+                new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                new DataBaseWhere('codcuenta', $epigrafeGroupElement['codgrupo'])
             ];
 
-            if (empty($epigrafeGroup->all($where)))
-            {
+            if (empty($epigrafeGroup->all($where))) {
                 $epigrafeGroup = new Model\Cuenta();
-
                 $epigrafeGroup->codejercicio = $this->ejercicio->codejercicio;
                 $epigrafeGroup->codcuenta = $epigrafeGroupElement['codgrupo'];
                 $epigrafeGroup->descripcion = \base64_decode($epigrafeGroupElement['descripcion']);
@@ -117,40 +127,31 @@ class AccountingPlanImport
     private function importEpigrafe($data)
     {
         $epigrafe = new Model\Cuenta();
-        $epigrafeElement = [];
 
         foreach ($data as $xmlEpigrafeElement) {
             $epigrafeElement = (array) $xmlEpigrafeElement;
-            $where = [new Database\DataBaseWhere('codejercicio',
-                    $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codcuenta',
-                    $epigrafeElement['codepigrafe'])
+            $where = [
+                new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                new DataBaseWhere('codcuenta', $epigrafeElement['codepigrafe'])
             ];
 
-            if (empty($epigrafe->all($where)))
-            {
-                $wherePadre = [new Database\DatabaseWhere('codejercicio',
-                        $this->ejercicio->codejercicio),
-                    new DataBase\DataBaseWhere('codcuenta',
-                        $epigrafeElement['codgrupo'])
+            if (empty($epigrafe->all($where))) {
+                $wherePadre = [
+                    new DatabaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                    new DataBaseWhere('codcuenta', $epigrafeElement['codgrupo'])
                 ];
                 $epigrafeGroup = new Model\Cuenta();
                 $epigrafeGroup->loadfromCode(NULL, $wherePadre);
 
-                if (empty($epigrafeGroup))
-                {
+                if (empty($epigrafeGroup)) {
                     self::$miniLog->alert(self::$i18n->trans('epigrafe-group-error'));
-                }
-                else
-                {
+                } else {
                     $epigrafe = new Model\Cuenta();
-
                     $epigrafe->codejercicio = $this->ejercicio->codejercicio;
                     $epigrafe->parent_codcuenta = $epigrafeGroup->codcuenta;
                     $epigrafe->parent_idcuenta = $epigrafeGroup->idcuenta;
                     $epigrafe->codcuenta = $epigrafeElement['codepigrafe'];
                     $epigrafe->descripcion = base64_decode($epigrafeElement['descripcion']);
-
                     $epigrafe->save();
                 }
             }
@@ -170,34 +171,27 @@ class AccountingPlanImport
         $epigrafe = new Model\Cuenta();
         foreach ($data as $xmlAccount) {
             $accountElement = (array) $xmlAccount;
-            $where = [new Database\DataBaseWhere('codejercicio',
-                    $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codcuenta',
-                    $accountElement['codcuenta'])
+            $where = [
+                new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                new DataBaseWhere('codcuenta', $accountElement['codcuenta'])
             ];
-            if (empty($account->all($where)))
-            {
-                $wherePadre = [new Database\DataBaseWhere('codejercicio',
-                        $this->ejercicio->codejercicio),
-                    new DataBase\DataBaseWhere('codcuenta',
-                        $accountElement['codepigrafe'])
+
+            if (empty($account->all($where))) {
+                $wherePadre = [
+                    new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                    new DataBaseWhere('codcuenta', $accountElement['codepigrafe'])
                 ];
                 $epigrafe->loadFromCode(NULL, $wherePadre);
-                if (empty($epigrafe))
-                {
+
+                if (empty($epigrafe)) {
                     self::$miniLog->alert(self::$i18n->trans('epigrafe-error'));
-                }
-                else
-                {
+                } else {
                     $account = new Model\Cuenta();
                     $account->codejercicio = $this->ejercicio->codejercicio;
                     $account->parent_idcuenta = $epigrafe->idcuenta;
                     $account->parent_codcuenta = $epigrafe->codcuenta;
-
                     $account->codcuenta = $accountElement['codcuenta'];
                     $account->descripcion = base64_decode($accountElement['descripcion']);
-
-
                     $account->save();
                 }
             }
@@ -214,30 +208,24 @@ class AccountingPlanImport
         $subaccount = new Model\Subcuenta();
         $subaccountElement = [];
 
-
         foreach ($data as $xmlSubaccountElement) {
             $subaccountElement = (array) $xmlSubaccountElement;
-            $where = [new Database\DataBaseWhere('codejercicio',
-                    $this->ejercicio->codejercicio),
-                new Database\DataBaseWhere('codsubcuenta',
-                    $subaccountElement['codsubcuenta'])
+            $where = [
+                new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                new DataBaseWhere('codsubcuenta', $subaccountElement['codsubcuenta'])
             ];
 
-            if (empty($subaccount->all($where)))
-            {
+            if (empty($subaccount->all($where))) {
                 $account = new Model\Cuenta();
-                $whereAccount = [new DataBase\DataBaseWhere('codejercicio',
-                        $this->ejercicio->codejercicio),
-                    new DataBase\DataBaseWhere('codcuenta',
-                        $subaccountElement['codcuenta'])
+                $whereAccount = [
+                    new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                    new DataBaseWhere('codcuenta', $subaccountElement['codcuenta'])
                 ];
                 $account->loadFromCode(NULL, $whereAccount);
-                if (empty($account))
-                {
+
+                if (empty($account)) {
                     self::$miniLog->alert(self::$i18n->trans('account-error'));
-                }
-                else
-                {
+                } else {
                     $subaccount = new Model\Subcuenta();
                     $subaccount->codejercicio = $this->ejercicio->codejercicio;
                     $subaccount->idcuenta = $account->idcuenta;
