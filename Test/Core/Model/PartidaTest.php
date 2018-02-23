@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -31,11 +30,11 @@ use PHPUnit\Framework\TestCase;
  */
 final class PartidaTest extends TestCase
 {
+
     public function testNewPartida()
     {
         $model = new Partida();
 
-        $now = new \DateTime();
         $this->assertInstanceOf(Partida::class, $model);
         $this->assertEquals('', $model->concepto);
         $this->assertFalse($model->punteada);
@@ -48,12 +47,7 @@ final class PartidaTest extends TestCase
         $this->assertEquals(0.0, $model->baseimponible);
         $this->assertEquals(0.0, $model->debe);
         $this->assertEquals(0.0, $model->haber);
-        $this->assertTrue($model->test());
-
-        $model->concepto = 'Test name';
-        $model->punteada = true;
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

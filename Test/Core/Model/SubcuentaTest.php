@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -31,21 +30,17 @@ use PHPUnit\Framework\TestCase;
  */
 final class SubcuentaTest extends TestCase
 {
+
     public function testNewSubcuenta()
     {
         $model = new Subcuenta();
 
         $this->assertInstanceOf(Subcuenta::class, $model);
-        $this->assertEquals(AppSettings::get('default', 'coddivisa'), $model->coddivisa);
         $this->assertEquals('', $model->descripcion);
         $this->assertEquals(0.0, $model->debe);
         $this->assertEquals(0.0, $model->haber);
         $this->assertEquals(0.0, $model->saldo);
-        $this->assertEquals(0.0, $model->recargo);
-        $this->assertEquals(0.0, $model->iva);
         $this->assertFalse($model->test());
-
-        $model->descripcion = 'Test description';
     }
 
     public function testTable()

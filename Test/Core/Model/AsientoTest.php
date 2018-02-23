@@ -35,13 +35,10 @@ final class AsientoTest extends TestCase
         $model = new Asiento();
 
         $this->assertInstanceOf(Asiento::class, $model);
-        $now = new \DateTime();
-        $this->assertEquals($now->format('d-m-Y'), $model->fecha);
+        $this->assertEquals(date('d-m-Y'), $model->fecha);
         $this->assertEquals(true, $model->editable);
         $this->assertEquals(0.0, $model->importe);
-        $this->assertTrue($model->test());
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()
