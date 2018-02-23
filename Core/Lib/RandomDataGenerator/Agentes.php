@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,17 +27,16 @@ use FacturaScripts\Core\Model;
  */
 class Agentes extends AbstractRandomPeople
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\Agente());
     }
-    
-    public function generate($num = 50) {
-        
-        $agente=$this->model;
-        for ($i = 0; $i < $num; ++$i) {
-            //$agente = new Model\Agente();
+
+    public function generate($num = 50)
+    {
+        $agente = $this->model;
+        for ($generated = 0; $generated < $num; ++$generated) {
             $agente->clear();
             $agente->fechanacimiento = $this->fecha(1970, 1997);
             $agente->fechaalta = $this->fecha(2013, 2016);
@@ -51,22 +49,17 @@ class Agentes extends AbstractRandomPeople
             $agente->codpostal = (string) mt_rand(11111, 99999);
             $agente->fechabaja = (mt_rand(0, 24) == 0) ? date('d-m-Y') : null;
             $agente->telefono1 = (mt_rand(0, 1) == 0) ? $this->telefono() : '';
+            $agente->telefono2 = (mt_rand(0, 1) == 0) ? $this->telefono() : '';
             $agente->email = (mt_rand(0, 2) > 0) ? $this->email() : '';
             $agente->cargo = (mt_rand(0, 2) > 0) ? $this->cargo() : '';
             $agente->seg_social = (mt_rand(0, 1) == 0) ? $this->seguridadSocial() : '';
             $agente->porcomision = $this->cantidad(0, 5, 20);
-
-            if (mt_rand(0, 5) == 0) {
-                $agente->banco = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
-                    . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
-            }
-
+            $agente->banco = mt_rand(0, 5) ? $this->iban() : '';
             if (!$agente->save()) {
                 break;
             }
         }
-        
-        return $i;
+
+        return $generated;
     }
-            
 }

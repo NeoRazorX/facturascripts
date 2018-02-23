@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -28,6 +27,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class WidgetItemFileChooser extends WidgetItem
 {
+
     /**
      * WidgetItemFileChooser constructor.
      */

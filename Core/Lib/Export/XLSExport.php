@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
@@ -29,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class XLSExport implements ExportInterface
 {
+
     const LIST_LIMIT = 1000;
 
     /**
@@ -56,7 +56,7 @@ class XLSExport implements ExportInterface
         $this->writer = new \XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
     }
-    
+
     /**
      * Set headers and output document content to response.
      *

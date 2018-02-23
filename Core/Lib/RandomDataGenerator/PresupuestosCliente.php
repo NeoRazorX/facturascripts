@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,41 +27,37 @@ use FacturaScripts\Core\Model;
  */
 class PresupuestosCliente extends AbstractRandomDocuments
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\PresupuestoCliente());
     }
-    
-    public function generate($num = 50) {
-        $presu=$this->model;
-        
-        $this->shuffle($clientes, new Model\Cliente());
-        
-        $recargo = false;
-        if ($clientes[0]->recargo || mt_rand(0, 4) === 0) {
-            $recargo = true;
-        }
 
-        $i=0;
-        while ($i < $num) {
+    public function generate($num = 50)
+    {
+        $presu = $this->model;
+        $this->shuffle($clientes, new Model\Cliente());
+
+        $generated = 0;
+        while ($generated < $num) {
             $presu->clear();
             $this->randomizeDocument($presu);
             $eje = $this->ejercicio->getByFecha($presu->fecha);
-            if ($eje) {
-                $regimeniva = $this->randomizeDocumentVenta($presu, $eje, $clientes, $i);
-                $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
-                if ($presu->save()) {
-                    $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Dinamic\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
-                    ++$i;
-                } else {
-                    break;
-                }
+            if (false === $eje) {
+                break;
+            }
+
+            $recargo = ($clientes[0]->recargo || mt_rand(0, 4) === 0);
+            $regimeniva = $this->randomizeDocumentVenta($presu, $eje, $clientes, $generated);
+            $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
+            if ($presu->save()) {
+                $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Dinamic\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
+                ++$generated;
             } else {
                 break;
             }
         }
 
-        return $i;
+        return $generated;
     }
 }

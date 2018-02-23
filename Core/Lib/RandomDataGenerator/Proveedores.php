@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
 /**
@@ -28,16 +28,16 @@ use FacturaScripts\Core\Model;
  */
 class Proveedores extends AbstractRandomPeople
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\Proveedor());
     }
-    
-    public function generate($num = 50) {
-        
-        $proveedor=$this->model;
-        for ($i = 0; $i < $num; ++$i) {
+
+    public function generate($num = 50)
+    {
+        $proveedor = $this->model;
+        for ($generated = 0; $generated < $num; ++$generated) {
             $proveedor->clear();
             $this->fillCliPro($proveedor);
 
@@ -59,6 +59,69 @@ class Proveedores extends AbstractRandomPeople
             }
         }
 
-        return $i;
+        return $generated;
+    }
+
+    /**
+     * Rellena cuentas bancarias de un proveedor con datos aleatorios.
+     *
+     * @param Model\Proveedor $proveedor
+     * @param int             $max
+     */
+    protected function cuentasBancoProveedor($proveedor, $max = 3)
+    {
+        while ($max > 0) {
+            $cuenta = new Model\CuentaBancoProveedor();
+            $cuenta->codproveedor = $proveedor->codproveedor;
+            $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
+            $cuenta->iban = $this->iban();
+            $cuenta->swift = $this->randomString(8);
+
+            $opcion = mt_rand(0, 2);
+            if ($opcion == 0) {
+                $cuenta->swift = '';
+            } elseif ($opcion == 1) {
+                $cuenta->iban = '';
+            }
+
+            $cuenta->save();
+            --$max;
+        }
+    }
+
+    /**
+     * Rellena direcciones de un proveedor con datos aleatorios.
+     *
+     * @param Model\Proveedor $proveedor
+     * @param int             $max
+     */
+    protected function direccionesProveedor($proveedor, $max = 3)
+    {
+        while ($max) {
+            $dir = new Model\DireccionProveedor();
+            $dir->codproveedor = $proveedor->codproveedor;
+            $dir->codpais = AppSettings::get('default', 'codpais');
+
+            if (mt_rand(0, 2) == 0) {
+                $dir->codpais = $this->paises[0]->codpais;
+            }
+
+            $dir->provincia = $this->provincia();
+            $dir->ciudad = $this->ciudad();
+            $dir->direccion = $this->direccion();
+            $dir->codpostal = (string) mt_rand(1234, 99999);
+
+            if (mt_rand(0, 3) == 0) {
+                $dir->apartado = (string) mt_rand(1234, 99999);
+            }
+
+            if (mt_rand(0, 1) == 0) {
+                $dir->direccionppal = false;
+            }
+
+            $dir->descripcion = 'Dirección #' . $max;
+            $dir->save();
+            --$max;
+        }
     }
 }

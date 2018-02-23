@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -34,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ListController extends Base\Controller
 {
+
     /**
      * Indicates the active view
      *

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditGrupoClientes extends ExtendedController\PanelController
 {
+
     /**
      * Load views
      */
@@ -39,7 +39,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
         $this->addEditView('\FacturaScripts\Dinamic\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->setTabsPosition('bottom');
-        
+
         /// Disable columns
         $this->views['ListCliente']->disableColumn('group', true);
     }

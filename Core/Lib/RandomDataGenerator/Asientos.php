@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
 /**
@@ -29,19 +27,20 @@ use FacturaScripts\Core\Model;
  */
 class Asientos extends AbstractRandomAccounting
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\Asiento());
     }
-    
-    public function generate($num = 25) {
-        $asiento=$this->model;
+
+    public function generate($num = 25)
+    {
+        $asiento = $this->model;
         $partida = new Model\Partida();
-        $msubcuentas=new Model\Subcuenta();
-        $subcuentas=$msubcuentas->all();
-        for ($i = 0; $i < $num; ++$i) {
-            $ejercicio=$this->getOneItem($this->ejercicios);
+        $this->shuffle($subcuentas, new Model\Subcuenta());
+
+        for ($generated = 0; $generated < $num; ++$generated) {
+            $ejercicio = $this->getOneItem($this->ejercicios);
 
             $asiento->clear();
             $asiento->codejercicio = $ejercicio->codejercicio;
@@ -74,7 +73,6 @@ class Asientos extends AbstractRandomAccounting
             break;
         }
 
-        return $i;
+        return $generated;
     }
-            
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
@@ -31,29 +29,47 @@ use FacturaScripts\Core\Model;
  */
 abstract class AbstractRandomPeople extends AbstractRandom
 {
-    protected $paises;
-    protected $agente;
+
+    /**
+     *
+     * @var Model\Agente[]
+     */
+    protected $agentes;
+
+    /**
+     *
+     * @var Model\GrupoClientes[]
+     */
     protected $grupos;
+
+    /**
+     *
+     * @var Model\Pais[]
+     */
+    protected $paises;
 
     public function __construct($model)
     {
         parent::__construct($model);
-        
-        $this->shuffle($this->paises, new Model\Pais());
+
         $this->shuffle($this->agentes, new Model\Agente());
         $this->shuffle($this->grupos, new Model\GrupoClientes());
+        $this->shuffle($this->paises, new Model\Pais());
     }
-    
-    protected function cif() {
+
+    protected function cif()
+    {
         return (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
     }
-    
-    protected function telefono() {
+
+    protected function telefono()
+    {
         return (string) mt_rand(555555555, 999999999);
     }
-    
-    protected function seguridadSocial() {
-        return (string) mt_rand(10000, 99999).mt_rand(10000, 99999);
+
+    protected function seguridadSocial()
+    {
+        return (string) mt_rand(10000, 99999) . mt_rand(10000, 99999);
     }
 
     /**
@@ -90,7 +106,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
             'Rivera', 'Tudor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
             'Errejón', "D'Ambrosio", 'Peña', '"Márquez"',
         ];
-        return $this->getOneItem($apellidos).' '.$this->getOneItem($apellidos);
+        return $this->getOneItem($apellidos) . ' ' . $this->getOneItem($apellidos);
     }
 
     /**
@@ -126,7 +142,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
         $tipo = ['S.L.', 'S.A.', 'Inc.', 'LTD', 'Corp.'];
 
         return $this->getOneItem($nombres) . $this->getOneItem($separador) .
-                $this->getOneItem($nombres) . ' ' . $this->getOneItem($tipo);
+            $this->getOneItem($nombres) . ' ' . $this->getOneItem($tipo);
     }
 
     /**
@@ -195,14 +211,14 @@ abstract class AbstractRandomPeople extends AbstractRandom
             'Infante', 'Principal', 'Falsa', '58', '74', 'Pacheco', 'Baleares',
             'Del Pacífico', 'Rue', "d'Ambrosio", 'Bañez', '"La calle"',
         ];
-        
-        $tipo=$this->getOneItem($tipos);
-        $nombre=$this->getOneItem($nombres);
 
-        $ret="$tipo $nombre, nº" . mt_rand(1, 199);
-        
+        $tipo = $this->getOneItem($tipos);
+        $nombre = $this->getOneItem($nombres);
+
+        $ret = "$tipo $nombre, nº" . mt_rand(1, 199);
+
         if (mt_rand(0, 2) == 0) {
-            $ret.=', puerta ' . mt_rand(1, 99);
+            $ret .= ', puerta ' . mt_rand(1, 99);
         }
 
         return $ret;
@@ -250,147 +266,4 @@ abstract class AbstractRandomPeople extends AbstractRandom
 
         $clipro->email = (mt_rand(0, 2) > 0) ? $this->email() : null;
     }
-
-
-    /**
-     * Rellena direcciones de un cliente con datos aleatorios.
-     *
-     * @param Model\Cliente $cliente
-     * @param int           $max
-     */
-    protected function direccionesCliente($cliente, $max = 3)
-    {
-        while ($max > 0) {
-            $dir = new Model\DireccionCliente();
-            $dir->codcliente = $cliente->codcliente;
-            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
-
-            $dir->provincia = $this->provincia();
-            $dir->ciudad = $this->ciudad();
-            $dir->direccion = $this->direccion();
-            $dir->codpostal = (string) mt_rand(1234, 99999);
-            $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
-            $dir->domenvio = (mt_rand(0, 1) === 1);
-            $dir->domfacturacion = (mt_rand(0, 1) === 1);
-            $dir->descripcion = 'Dirección #' . $max;
-            if (!$dir->save()) {
-                break;
-            }
-
-            --$max;
-        }
-    }
-    
-private function calcularIBAN($ccc, $codpais = '')
-    {
-        $pais = substr($codpais, 0, 2);
-        $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
-            'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
-            'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
-            'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
-        ];
-
-        $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
-        $digitoControl = 98 - \bcmod($dividendo, '97');
-
-        if (strlen($digitoControl) === 1) {
-            $digitoControl = '0' . $digitoControl;
-        }
-
-        return $pais . $digitoControl . $ccc;
-    }    
-
-    /**
-     * Rellena cuentas bancarias de un cliente con datos aleatorios.
-     *
-     * @param Model\Cliente $cliente
-     * @param int           $max
-     */
-    protected function cuentasBancoCliente($cliente, $max = 3)
-    {
-        while ($max > 0) {
-            $cuenta = new Model\CuentaBancoCliente();
-            $cuenta->codcliente = $cliente->codcliente;
-            $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
-
-            $ccc=mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999);
-            $cuenta->iban = $this->calcularIBAN($ccc, 'ES');
-
-            $cuenta->swift = (mt_rand(0, 2) != 0) ? $this->randomString(8) : '';
-            $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
-
-            if (!$cuenta->save()) {
-                break;
-            }
-
-            --$max;
-        }
-    }
-    
-    /**
-     * Rellena direcciones de un proveedor con datos aleatorios.
-     *
-     * @param Model\Proveedor $proveedor
-     * @param int             $max
-     */
-    protected function direccionesProveedor($proveedor, $max = 3)
-    {
-        while ($max) {
-            $dir = new Model\DireccionProveedor();
-            $dir->codproveedor = $proveedor->codproveedor;
-            $dir->codpais = AppSettings::get('default', 'codpais');
-
-            if (mt_rand(0, 2) == 0) {
-                $dir->codpais = $this->paises[0]->codpais;
-            }
-
-            $dir->provincia = $this->provincia();
-            $dir->ciudad = $this->ciudad();
-            $dir->direccion = $this->direccion();
-            $dir->codpostal = (string) mt_rand(1234, 99999);
-
-            if (mt_rand(0, 3) == 0) {
-                $dir->apartado = (string) mt_rand(1234, 99999);
-            }
-
-            if (mt_rand(0, 1) == 0) {
-                $dir->direccionppal = false;
-            }
-
-            $dir->descripcion = 'Dirección #' . $max;
-            $dir->save();
-            --$max;
-        }
-    }
-
-    /**
-     * Rellena cuentas bancarias de un proveedor con datos aleatorios.
-     *
-     * @param Model\Proveedor $proveedor
-     * @param int             $max
-     */
-    protected function cuentasBancoProveedor($proveedor, $max = 3)
-    {
-        while ($max > 0) {
-            $cuenta = new Model\CuentaBancoProveedor();
-            $cuenta->codproveedor = $proveedor->codproveedor;
-            $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
-
-            $ccc=mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999);
-            $cuenta->iban = $this->calcularIBAN($ccc, 'ES');
-
-            $cuenta->swift = $this->randomString(8);
-
-            $opcion = mt_rand(0, 2);
-            if ($opcion == 0) {
-                $cuenta->swift = '';
-            } elseif ($opcion == 1) {
-                $cuenta->iban = '';
-            }
-
-            $cuenta->save();
-            --$max;
-        }
-    }
-
 }

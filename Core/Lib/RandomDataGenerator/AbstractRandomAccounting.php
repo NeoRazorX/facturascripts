@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Model\Epigrafe;
 
 /**
  * Abstract class that contains the methods that generate random data 
@@ -31,14 +28,14 @@ use FacturaScripts\Core\Model\Epigrafe;
  */
 abstract class AbstractRandomAccounting extends AbstractRandom
 {
-    protected $ejercicio;
+
+    protected $ejercicios;
 
     public function __construct($model)
     {
         parent::__construct($model);
-        
-        $ejercicios= new Model\Ejercicio();
-        $this->ejercicios=$ejercicios->all();
+
+        $ejercicios = new Model\Ejercicio();
+        $this->ejercicios = $ejercicios->all();
     }
-    
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,39 +27,36 @@ use FacturaScripts\Core\Model;
  */
 class PedidosProveedor extends AbstractRandomDocuments
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\PedidoProveedor());
     }
-    
-    public function generate($num = 50) {
-        $ped=$this->model;
-        $this->shuffle($proveedores, new Model\Proveedor());
-        
-        $recargo = false;
-        if (mt_rand(0, 4) === 0) {
-            $recargo = true;
-        }
 
-        $i=0;
-        while ($i < $num) {
+    public function generate($num = 50)
+    {
+        $ped = $this->model;
+        $this->shuffle($proveedores, new Model\Proveedor());
+
+        $generated = 0;
+        while ($generated < $num) {
             $ped->clear();
             $this->randomizeDocument($ped);
             $eje = $this->ejercicio->getByFecha($ped->fecha);
-            if ($eje) {
-                $regimeniva = $this->randomizeDocumentCompra($ped, $eje, $proveedores, $i);
-                if ($ped->save()) {
-                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoProveedor', $regimeniva, $recargo);
-                    ++$i;
-                } else {
-                    break;
-                }
+            if (false === $eje) {
+                break;
+            }
+
+            $recargo = (mt_rand(0, 4) === 0);
+            $regimeniva = $this->randomizeDocumentCompra($ped, $eje, $proveedores, $generated);
+            if ($ped->save()) {
+                $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoProveedor', $regimeniva, $recargo);
+                ++$generated;
             } else {
                 break;
             }
         }
 
-        return $i;
+        return $generated;
     }
 }

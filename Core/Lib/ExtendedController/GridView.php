@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base;
  */
 class GridView extends BaseView
 {
+
     private $parentView;
     private $gridData;
 
@@ -133,7 +134,7 @@ class GridView extends BaseView
         $data = [
             'headers' => [],
             'columns' => [],
-            'hidden'  => []
+            'hidden' => []
         ];
 
         $columns = $this->pageOption->columns['root']->columns;

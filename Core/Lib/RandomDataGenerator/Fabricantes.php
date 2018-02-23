@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,15 +27,16 @@ use FacturaScripts\Core\Model;
  */
 class Fabricantes extends AbstractRandomPeople
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\Fabricante());
     }
-    
-    public function generate($num = 50) {
+
+    public function generate($num = 50)
+    {
         $fabri = $this->model;
-        for ($i = 0; $i < $num; ++$i) {
+        for ($generated = 0; $generated < $num; ++$generated) {
             $fabri->clear();
             $fabri->nombre = $this->empresa();
             $fabri->codfabricante = $this->txt2codigo($fabri->nombre);
@@ -45,6 +45,6 @@ class Fabricantes extends AbstractRandomPeople
             }
         }
 
-        return $i;
+        return $generated;
     }
 }
