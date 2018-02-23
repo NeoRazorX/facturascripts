@@ -34,7 +34,8 @@ class ArticulosProveedor extends AbstractRandom
         parent::__construct(new Model\ArticuloProveedor());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
 
         //$proveedores = $this->randomProveedores();
         //$articulos = $this->randomArticulos();
@@ -71,5 +72,4 @@ class ArticulosProveedor extends AbstractRandom
 
         return $i;
     }
-            
 }

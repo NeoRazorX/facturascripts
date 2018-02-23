@@ -36,7 +36,8 @@ class Subcuentas extends AbstractRandomAccounting
         parent::__construct(new Model\Subcuenta());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $subcuenta=$this->model;
         $mcuentas=new Model\Cuenta();
         $cuentas=$mcuentas->all();
@@ -56,5 +57,4 @@ class Subcuentas extends AbstractRandomAccounting
 
         return $i;
     }
-            
 }

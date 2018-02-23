@@ -34,7 +34,8 @@ class Proveedores extends AbstractRandomPeople
         parent::__construct(new Model\Proveedor());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         
         $proveedor=$this->model;
         for ($i = 0; $i < $num; ++$i) {

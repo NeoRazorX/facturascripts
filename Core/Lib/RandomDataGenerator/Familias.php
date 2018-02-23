@@ -34,7 +34,8 @@ class Familias extends AbstractRandom
         parent::__construct(new Model\Familia());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
 
         $fam = $this->model;
         $codfamilia = null;
@@ -53,5 +54,4 @@ class Familias extends AbstractRandom
         
         return $i;
     }
-            
 }

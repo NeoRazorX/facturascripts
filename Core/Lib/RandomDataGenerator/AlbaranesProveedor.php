@@ -34,7 +34,8 @@ class AlbaranesProveedor extends AbstractRandomDocuments
         parent::__construct(new Model\AlbaranProveedor());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $alb=$this->model;
         $this->shuffle($proveedores, new Model\Proveedor());
         

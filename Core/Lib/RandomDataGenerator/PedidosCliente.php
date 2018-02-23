@@ -34,7 +34,8 @@ class PedidosCliente extends AbstractRandomDocuments
         parent::__construct(new Model\PedidoCliente());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $ped=$this->model;
         $this->shuffle($clientes, new Model\Cliente());
         

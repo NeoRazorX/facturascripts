@@ -34,7 +34,8 @@ class Agentes extends AbstractRandomPeople
         parent::__construct(new Model\Agente());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         
         $agente=$this->model;
         for ($i = 0; $i < $num; ++$i) {
@@ -68,5 +69,4 @@ class Agentes extends AbstractRandomPeople
         
         return $i;
     }
-            
 }

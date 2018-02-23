@@ -44,16 +44,19 @@ abstract class AbstractRandomPeople extends AbstractRandom
         $this->shuffle($this->grupos, new Model\GrupoClientes());
     }
     
-    protected function cif() {
+    protected function cif() 
+    {
         return (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
     }
     
-    protected function telefono() {
+    protected function telefono() 
+    {
         return (string) mt_rand(555555555, 999999999);
     }
     
-    protected function seguridadSocial() {
-        return (string) mt_rand(10000, 99999).mt_rand(10000, 99999);
+    protected function seguridadSocial() 
+    {
+        return (string) mt_rand(10000, 99999) . mt_rand(10000, 99999);
     }
 
     /**
@@ -90,7 +93,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
             'Rivera', 'Tudor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
             'Errejón', "D'Ambrosio", 'Peña', '"Márquez"',
         ];
-        return $this->getOneItem($apellidos).' '.$this->getOneItem($apellidos);
+        return $this->getOneItem($apellidos) . ' ' . $this->getOneItem($apellidos);
     }
 
     /**
@@ -282,7 +285,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
     }
     
 private function calcularIBAN($ccc, $codpais = '')
-    {
+{
         $pais = substr($codpais, 0, 2);
         $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
             'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
@@ -295,7 +298,7 @@ private function calcularIBAN($ccc, $codpais = '')
 
         if (strlen($digitoControl) === 1) {
             $digitoControl = '0' . $digitoControl;
-        }
+            }
 
         return $pais . $digitoControl . $ccc;
     }    
@@ -313,7 +316,7 @@ private function calcularIBAN($ccc, $codpais = '')
             $cuenta->codcliente = $cliente->codcliente;
             $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
 
-            $ccc=mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999);
+            $ccc=mt_rand(1000, 9999) . mt_rand(1000, 9999) . mt_rand(1000, 9999) . mt_rand(1000, 9999) . mt_rand(1000, 9999);
             $cuenta->iban = $this->calcularIBAN($ccc, 'ES');
 
             $cuenta->swift = (mt_rand(0, 2) != 0) ? $this->randomString(8) : '';
@@ -376,7 +379,7 @@ private function calcularIBAN($ccc, $codpais = '')
             $cuenta->codproveedor = $proveedor->codproveedor;
             $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
 
-            $ccc=mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999).mt_rand(1000, 9999);
+            $ccc=mt_rand(1000, 9999) . mt_rand(1000, 9999) . mt_rand(1000, 9999) . mt_rand(1000, 9999) . mt_rand(1000, 9999);
             $cuenta->iban = $this->calcularIBAN($ccc, 'ES');
 
             $cuenta->swift = $this->randomString(8);
@@ -392,5 +395,4 @@ private function calcularIBAN($ccc, $codpais = '')
             --$max;
         }
     }
-
 }

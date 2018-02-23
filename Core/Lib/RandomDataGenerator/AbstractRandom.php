@@ -38,7 +38,7 @@ abstract class AbstractRandom
         $this->db = new Base\DataBase();
     }
     
-    abstract public function generate($num=50);
+    abstract public function generate($num = 50);
     
     public function shuffle(&$variable, $modelo)
     {
@@ -48,10 +48,11 @@ abstract class AbstractRandom
     
     public function getOneItem($array)
     {
-        return $array[mt_rand(0,count($array)-1)];
+        return $array[mt_rand(0, count($array)-1)];
     }
 
-    protected function fecha($desde, $hasta) {
+    protected function fecha($desde, $hasta) 
+    {
         return date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand($desde, $hasta));
     }
     
@@ -108,7 +109,7 @@ abstract class AbstractRandom
             'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam',
         ];
             
-        return (mt_rand(0, 4)?$this->getOneItem($prefijos).' ':'').$this->getOneItem($nombres);
+        return (mt_rand(0, 4)?$this->getOneItem($prefijos) . ' ':'') . $this->getOneItem($nombres);
     }
 
     /**
@@ -121,7 +122,7 @@ abstract class AbstractRandom
         $sufijos = [
             'II', '3', 'XL', 'XXL', 'SE', 'GT', 'GTX', 'Pro', 'NX', 'XP', 'OS', 'Nitro',
         ];
-        $texto = $this->familia().$this->getOneItem($sufijos);
+        $texto = $this->familia() . $this->getOneItem($sufijos);
 
         $descripciones1 = [
             'Una alcachofa', 'Un motor', 'Una targeta gráfica (GPU)', 'Un procesador',
@@ -357,5 +358,4 @@ abstract class AbstractRandom
     {
         return $this->randomModel('\FacturaScripts\Dinamic\Model\Articulo', 'articulos', 'articulos', $recursivo);
     }
-
 }

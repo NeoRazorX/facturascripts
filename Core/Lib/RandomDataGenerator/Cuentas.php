@@ -35,7 +35,8 @@ class Cuentas extends AbstractRandomAccounting
         parent::__construct(new Model\Cuenta());
     }
     
-    public function generate($num = 25) {
+    public function generate($num = 25) 
+    {
         $cuenta=$this->model;
         for ($i = 0; $i < $num; ++$i) {
             $codigo=mt_rand(1000, 9990);
@@ -57,5 +58,4 @@ class Cuentas extends AbstractRandomAccounting
 
         return $i;
     }
-            
 }

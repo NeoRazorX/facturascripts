@@ -34,7 +34,8 @@ class Clientes extends AbstractRandomPeople
         parent::__construct(new Model\Cliente());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $cliente=$this->model;
         for ($i = 0; $i < $num; ++$i) {
             $cliente->clear();

@@ -456,5 +456,4 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 
         return $num;
     }
-
 }

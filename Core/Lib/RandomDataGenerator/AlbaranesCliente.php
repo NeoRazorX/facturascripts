@@ -34,7 +34,8 @@ class AlbaranesCliente extends AbstractRandomDocuments
         parent::__construct(new Model\AlbaranCliente());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $alb=$this->model;
 
         $this->shuffle($clientes, new Model\Cliente());

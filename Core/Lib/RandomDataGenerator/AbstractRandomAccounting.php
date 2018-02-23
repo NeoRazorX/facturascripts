@@ -40,5 +40,4 @@ abstract class AbstractRandomAccounting extends AbstractRandom
         $ejercicios= new Model\Ejercicio();
         $this->ejercicios=$ejercicios->all();
     }
-    
 }

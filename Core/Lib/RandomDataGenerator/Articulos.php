@@ -34,7 +34,8 @@ class Articulos extends AbstractRandom
         parent::__construct(new Model\Articulo());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         
         $fab = new Model\Fabricante();
         $fabricantes = $fab->all();
@@ -103,5 +104,4 @@ class Articulos extends AbstractRandom
 
         return $i;
     }
-            
 }

@@ -34,7 +34,8 @@ class Fabricantes extends AbstractRandomPeople
         parent::__construct(new Model\Fabricante());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $fabri = $this->model;
         for ($i = 0; $i < $num; ++$i) {
             $fabri->clear();

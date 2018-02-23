@@ -35,7 +35,8 @@ class Asientos extends AbstractRandomAccounting
         parent::__construct(new Model\Asiento());
     }
     
-    public function generate($num = 25) {
+    public function generate($num = 25) 
+    {
         $asiento=$this->model;
         $partida = new Model\Partida();
         $msubcuentas=new Model\Subcuenta();
@@ -76,5 +77,4 @@ class Asientos extends AbstractRandomAccounting
 
         return $i;
     }
-            
 }

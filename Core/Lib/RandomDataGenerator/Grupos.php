@@ -34,7 +34,8 @@ class Grupos extends AbstractRandomPeople
         parent::__construct(new Model\GrupoClientes());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $nombres = [
             'Profesionales', 'Profesional', 'Grandes compradores', 'Preferentes',
             'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental',
@@ -45,7 +46,7 @@ class Grupos extends AbstractRandomPeople
         for ($i = 0; $i < $num; ++$i) {
             $grupo->clear();
             $grupo->codgrupo = $grupo->newCode();
-            $grupo->nombre = $this->getOneItem($nombres).' '.$this->getOneItem($sufijos)." $i";
+            $grupo->nombre = $this->getOneItem($nombres) . ' ' . $this->getOneItem($sufijos) . " $i";
             if (!$grupo->save()) {
                 break;
             }
@@ -53,5 +54,4 @@ class Grupos extends AbstractRandomPeople
 
         return $i;
     }
-            
 }

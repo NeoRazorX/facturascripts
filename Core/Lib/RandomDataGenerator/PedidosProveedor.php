@@ -34,7 +34,8 @@ class PedidosProveedor extends AbstractRandomDocuments
         parent::__construct(new Model\PedidoProveedor());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $ped=$this->model;
         $this->shuffle($proveedores, new Model\Proveedor());
         

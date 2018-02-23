@@ -34,7 +34,8 @@ class PresupuestosCliente extends AbstractRandomDocuments
         parent::__construct(new Model\PresupuestoCliente());
     }
     
-    public function generate($num = 50) {
+    public function generate($num = 50) 
+    {
         $presu=$this->model;
         
         $this->shuffle($clientes, new Model\Cliente());
