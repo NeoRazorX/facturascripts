@@ -12,3 +12,14 @@ Options -Indexes
    RewriteCond %{REQUEST_FILENAME} !-f
    RewriteRule . index.php [L]
 </IfModule>
+
+<IfModule mod_expires.c>
+   ExpiresActive On
+   ExpiresDefault                           "access plus 1 week"
+   ExpiresByType text/css                   "access plus 1 week"
+   ExpiresByType application/javascript     "access plus 1 week"
+   ExpiresByType text/javascript            "access plus 1 week"
+   <FilesMatch "\.(php|cgi)$">
+      ExpiresActive Off
+   </FilesMatch>
+</IfModule>

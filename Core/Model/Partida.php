@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -30,6 +30,7 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Partida extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -263,9 +264,7 @@ class Partida extends Base\ModelClass
      */
     private function testErrorInData(): bool
     {
-        return empty($this->idasiento)
-            || empty($this->codsubcuenta)
-            || empty($this->debe + $this->haber);
+        return empty($this->idasiento) || empty($this->codsubcuenta) || empty($this->debe + $this->haber);
     }
 
     /**
@@ -278,7 +277,7 @@ class Partida extends Base\ModelClass
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->codcontrapartida = trim($this->codcontrapartida);
 
-        if ($this->testErrorInData())  {
+        if ($this->testErrorInData()) {
             self::$miniLog->alert(self::$i18n->trans('accounting-data-missing'));
             return false;
         }
@@ -344,13 +343,11 @@ class Partida extends Base\ModelClass
             $account = new Subcuenta();
             $account->idsubcuenta = $this->idsubcuenta;
             $account->updateBalance($accounting->fecha, ($this->debe * -1), ($this->haber * -1));
-        }
-        catch (Exception $e) {
+        } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
             self::$dataBase->rollback();
             return false;
-        }
-        finally {
+        } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
                 self::$dataBase->rollback();
                 return false;

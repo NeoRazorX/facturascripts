@@ -15,20 +15,46 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * NOTICE: This class is deprecated!!!
- * 
  */
 
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\Base;
+
 /**
- * Description of DataGeneratorTools
+ * Abstract class that contains the basic methods to populate a table with 
+ * random data 
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José <info@rsanjoseo.com>
  */
-class DataGeneratorTools
+abstract class AbstractRandom
 {
+    protected $model;
+    protected $db;
+    
+    public function __construct($model)
+    {
+        $this->model=$model;
+        $this->db = new Base\DataBase();
+    }
+    
+    abstract public function generate($num=50);
+    
+    public function shuffle(&$variable, $modelo)
+    {
+        $variable=$modelo->all();
+        shuffle($variable);
+    }
+    
+    public function getOneItem($array)
+    {
+        return $array[mt_rand(0,count($array)-1)];
+    }
+
+    protected function fecha($desde, $hasta) {
+        return date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand($desde, $hasta));
+    }
+    
     /**
      * Support method for the model constructor and data initialisation
      *
@@ -36,7 +62,7 @@ class DataGeneratorTools
      * @param $modelo   -> model for each array item
      * @param bool $shuffle -> Randomly sort the list
      */
-    public function loadData(&$variable, $modelo, $shuffle)
+    public function _loadData_borrame_(&$variable, $modelo, $shuffle)
     {
         $variable = $modelo->all();
         if ($shuffle) {
@@ -64,6 +90,26 @@ class DataGeneratorTools
 
         return $result;
     }
+    
+    /**
+     * Returns a random category description
+     *
+     * @return string
+     */
+    public function familia()
+    {
+        $prefijos = [
+            'Jet', 'Jex', 'Max', 'Pro', 'FX', 'Neo', 'Maxi', 'Extreme', 'Sub',
+            'Ultra', 'Minga', 'Hiper', 'Giga', 'Mega', 'Super', 'Fusion', 'Broken',
+        ];
+
+        $nombres = [
+            'Motor', 'Engine', 'Generator', 'Tool', 'Oviode', 'Box', 'Proton', 'Neutro',
+            'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam',
+        ];
+            
+        return (mt_rand(0, 4)?$this->getOneItem($prefijos).' ':'').$this->getOneItem($nombres);
+    }
 
     /**
      * Returns a random product description
@@ -72,31 +118,20 @@ class DataGeneratorTools
      */
     public function descripcion()
     {
-        $prefijos = [
-            'Jet', 'Jex', 'Max', 'Pro', 'FX', 'Neo', 'Maxi', 'Extreme', 'Sub',
-            'Ultra', 'Minga', 'Hiper', 'Giga', 'Mega', 'Super', 'Fusion', 'Broken',
-        ];
-        shuffle($prefijos);
-
-        $nombres = [
-            'Motor', 'Engine', 'Generator', 'Tool', 'Oviode', 'Box', 'Proton', 'Neutro',
-            'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam',
-        ];
-        shuffle($nombres);
-
         $sufijos = [
             'II', '3', 'XL', 'XXL', 'SE', 'GT', 'GTX', 'Pro', 'NX', 'XP', 'OS', 'Nitro',
         ];
-        shuffle($sufijos);
+        $texto = $this->familia().$this->getOneItem($sufijos);
 
         $descripciones1 = [
             'Una alcachofa', 'Un motor', 'Una targeta gráfica (GPU)', 'Un procesador',
             'Un coche', 'Un dispositivo tecnológico', 'Un magnetofón', 'Un palo',
             'un cubo de basura', "Un objeto pequeño d'or", '"La hostia"',
         ];
+        $descripcion=$this->getOneItem($descripciones1);
         shuffle($descripciones1);
 
-        $descripciones2 = [
+        $descripciones = [
             '64 núcleos', 'chasis de fibra de carbono', '8 cilindros en V', 'frenos de berilio',
             '16 ejes', 'pantalla Super AMOLED', '1024 stream processors', 'un núcleo híbrido',
             '32 pistones digitales', 'tecnología digitrónica 4.1', 'cuernos metálicos', 'un palo',
@@ -104,28 +139,27 @@ class DataGeneratorTools
             'un posavasos', 'malignas intenciones', 'la virginidad intacta', 'malware', 'linux',
             'Windows Vista', 'propiedades psicotrópicas', 'spyware', 'reproductor 4k',
         ];
-        shuffle($descripciones2);
+        shuffle($descripciones);
 
-        $texto = $prefijos[0] . ' ' . $nombres[0] . ' ' . $sufijos[0];
 
         switch (mt_rand(0, 4)) {
             case 0:
                 break;
 
             case 1:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . '.';
+                $texto .= ": $descripcion con {$descripciones[0]}.";
                 break;
 
             case 2:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ', ' . $descripciones2[2] . ' y ' . $descripciones2[3] . '.';
+                $texto .= ": $descripcion con {$descripciones[0]}, {$descripciones[1]}, {$descripciones[2]} y {$descripciones[3]}.";
                 break;
 
             case 3:
-                $texto .= ': ' . $descripciones1[0] . " con:\n- " . $descripciones2[0] . "\n- " . $descripciones2[1] . "\n- " . $descripciones2[2] . "\n- " . $descripciones2[3] . '.';
+                $texto .= ": $descripcion con:\n- {$descripciones[0]}\n- {$descripciones[1]}\n- {$descripciones[2]}\n- {$descripciones[3]}.";
                 break;
 
             default:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ' y ' . $descripciones2[2] . '.';
+                $texto .= ": $descripcion con {$descripciones[0]}, {$descripciones[1]} y {$descripciones[2]}.";
                 break;
         }
 
@@ -180,173 +214,6 @@ class DataGeneratorTools
         }
 
         return $precio;
-    }
-
-    /**
-     * Returns a random name
-     *
-     * @return string
-     */
-    public function nombre()
-    {
-        $nombres = [
-            'Carlos', 'Pepe', 'Wilson', 'Petra', 'Madonna', 'Justin',
-            'Emiliana', 'Jo', 'Penélope', 'Mia', 'Wynona', 'Antonio',
-            'Joe', 'Cristiano', 'Mohamed', 'John', 'Ali', 'Pastor',
-            'Barak', 'Sadam', 'Donald', 'Jorge', 'Joel', 'Pedro', 'Mariano',
-            'Albert', 'Alberto', 'Gorka', 'Cecilia', 'Carmena', 'Pichita',
-            'Alicia', 'Laura', 'Riola', 'Wilson', 'Jaume', 'David',
-            "D'Ambrosio", '"Licenciado"', '"El master"',
-        ];
-
-        shuffle($nombres);
-
-        return $nombres[0];
-    }
-
-    /**
-     * Returns two random surnames
-     *
-     * @return string
-     */
-    public function apellidos()
-    {
-        $apellidos = [
-            'García', 'Gómez', 'Ronaldo', 'Suarez', 'Wilson', 'Pacheco',
-            'Escobar', 'Mendoza', 'Pérez', 'Cruz', 'Lee', 'Smith', 'Humilde',
-            'Hijo de Dios', 'Petrov', 'Maximiliano', 'Nieve', 'Snow', 'Trump',
-            'Obama', 'Ali', 'Stark', 'Sanz', 'Rajoy', 'Sánchez', 'Iglesias',
-            'Rivera', 'Tudor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
-            'Errejón', "D'Ambrosio", 'Peña', '"Márquez"',
-        ];
-
-        shuffle($apellidos);
-
-        return $apellidos[0] . ' ' . $apellidos[1];
-    }
-
-    /**
-     * Returns a job position
-     *
-     * @return string
-     */
-    public function cargo()
-    {
-        $cargos = ['Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior'];
-
-        shuffle($cargos);
-
-        return $cargos[0];
-    }
-
-    /**
-     * Returns a random commercial name
-     *
-     * @return string
-     */
-    public function empresa()
-    {
-        $nombres = [
-            'Tech', 'Motor', 'Pasión', 'Future', 'Max', 'Massive', 'Industrial',
-            'Plastic', 'Pro', 'Micro', 'System', 'Light', 'Magic', 'Fake', 'Techno',
-            'Miracle', 'NX', 'Smoke', 'Steam', 'Power', 'FX', 'Fusion', 'Bastion',
-            'Investments', 'Solutions', 'Neo', 'Ming', 'Tube', 'Pear', 'Apple',
-            'Dolphin', 'Chrome', 'Cat', 'Hat', 'Linux', 'Soft', 'Mobile', 'Phone',
-            'XL', 'Open', 'Thunder', 'Zero', 'Scorpio', 'Zelda', '10', 'V', 'Q',
-            'X', 'Arch', 'Arco', 'Broken', 'Arkam', 'RX', "d'Art", 'Peña', '"La cosa"',
-        ];
-
-        $separador = ['-', ' & ', ' ', '_', '', '/', '*'];
-        $tipo = ['S.L.', 'S.A.', 'Inc.', 'LTD', 'Corp.'];
-
-        shuffle($nombres);
-        shuffle($separador);
-        shuffle($tipo);
-
-        return $nombres[0] . $separador[0] . $nombres[1] . ' ' . $tipo[0];
-    }
-
-    /**
-     * Returns a random email
-     *
-     * @return string
-     */
-    public function email()
-    {
-        $nicks = [
-            'neo', 'carlos', 'mokko', 'snake', 'pikachu', 'pliskin', 'ocelot', 'samurai',
-            'ninja', 'infiltrator', 'info', 'compras', 'ventas', 'administracion', 'contacto',
-            'contact', 'invoices', 'mail',
-        ];
-
-        shuffle($nicks);
-
-        return $nicks[0] . '.' . mt_rand(2, 9999) . '@facturascripts.com';
-    }
-
-    /**
-     * Returns a random province
-     *
-     * @return string
-     */
-    public function provincia()
-    {
-        $nombres = [
-            'A Coruña', 'Alava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
-            'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca',
-            'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
-            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
-            'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza',
-        ];
-
-        shuffle($nombres);
-
-        return $nombres[0];
-    }
-
-    /**
-     * Returns a random city
-     *
-     * @return string
-     */
-    public function ciudad()
-    {
-        $nombres = [
-            'A Coruña', 'Alava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
-            'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca',
-            'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
-            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
-            'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche',
-        ];
-
-        shuffle($nombres);
-
-        return $nombres[0];
-    }
-
-    /**
-     * Returns a random address
-     *
-     * @return string
-     */
-    public function direccion()
-    {
-        $tipos = ['Calle', 'Avenida', 'Polígono', 'Carretera'];
-        $nombres = [
-            'Infante', 'Principal', 'Falsa', '58', '74', 'Pacheco', 'Baleares',
-            'Del Pacífico', 'Rue', "d'Ambrosio", 'Bañez', '"La calle"',
-        ];
-
-        shuffle($tipos);
-        shuffle($nombres);
-
-        if (mt_rand(0, 2) == 0) {
-            return $tipos[0] . ' ' . $nombres[0] . ', nº' . mt_rand(1, 199) . ', puerta ' . mt_rand(1, 99);
-        }
-
-        return $tipos[0] . ' ' . $nombres[0] . ', ' . mt_rand(1, 99);
     }
 
     /**
@@ -408,4 +275,87 @@ class DataGeneratorTools
     {
         return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
+    
+
+    /// Creo que a partir de aquí será para otro tipo de documento...
+        
+    
+    /**
+     * Devuelve listados de datos del model indicado.
+     *
+     * @param string $modelName
+     * @param string $tableName
+     * @param string $functionName
+     * @param bool   $recursivo
+     *
+     * @return array
+     */
+    protected function randomModel($modelName, $tableName, $functionName, $recursivo = true)
+    {
+        $lista = [];
+
+        $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY ';
+        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
+
+        $data = $this->db->selectLimit($sql, 100, 0);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new $modelName($d);
+            }
+        } elseif ($recursivo) {
+                $this->{$functionName}();
+            $lista = $this->randomModel($modelName, $tableName, $functionName, false);
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Returns an array with random clientes.
+     *
+     * @param bool $recursivo
+     *
+     * @return Model\Cliente[]
+     */
+    protected function randomClientes($recursivo = true)
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Cliente', 'clientes', 'clientes', $recursivo);
+    }
+
+    /**
+     * Returns an array with random proveedores.
+     *
+     * @param bool $recursivo
+     *
+     * @return Model\Proveedor[]
+     */
+    protected function randomProveedores($recursivo = true)
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Proveedor', 'proveedores', 'proveedores', $recursivo);
+    }
+
+    /**
+     * Returns an array with random empleados.
+     *
+     * @param bool $recursivo
+     *
+     * @return Model\Agente[]
+     */
+    protected function randomAgentes($recursivo = true)
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Agente', 'agentes', 'agentes', $recursivo);
+    }
+
+    /**
+     * Returns an array with random artículos.
+     *
+     * @param bool $recursivo
+     *
+     * @return Model\Articulo[]
+     */
+    protected function randomArticulos($recursivo = true)
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Articulo', 'articulos', 'articulos', $recursivo);
+    }
+
 }

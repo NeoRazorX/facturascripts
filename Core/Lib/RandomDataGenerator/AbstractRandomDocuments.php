@@ -15,29 +15,55 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * NOTICE: This class is deprecated!!!
- * 
  */
 
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of DocumentGenerator
+ * Abstract class that contains the methods that generate random documents
+ * for clients and suppliers, such as orders, delivery notes and invoices. 
  *
- * @author carlos
+ * @author Rafael San José <info@rsanjoseo.com>
  */
-class DocumentGenerator extends ModelDataGenerator
+abstract class AbstractRandomDocuments extends AbstractRandomPeople
 {
+    protected $ejercicio;
+    protected $formasPago;
+    protected $almacenes;
+    protected $divisas;
+    protected $series;
+    protected $impuestos;
+
+    public function __construct($model)
+    {
+        parent::__construct($model);
+        
+        /* Esto viene del ancestro...
+         * 
+         * $this->shuffle($this->paises, new Model\Pais());
+         * $this->shuffle($this->agentes, new Model\Agente());
+         * $this->shuffle($this->grupos, new Model\GrupoClientes());
+         */
+        
+        $this->ejercicio = new Model\Ejercicio();
+        $impuestos = new Model\Impuesto();
+        $this->impuestos=$impuestos->all();
+        $this->shuffle($this->formasPago, new Model\FormaPago());
+        $this->shuffle($this->almacenes, new Model\Almacen());
+        $this->shuffle($this->divisas, new Model\Divisa());
+        $this->shuffle($this->series, new Model\Serie());
+    }
+    
     /**
      * Generates a random document
      *
      * @param mixed $doc
      */
-    private function randomizeDocument(&$doc)
+    protected function randomizeDocument(&$doc)
     {
         $doc->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
         $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
@@ -59,13 +85,17 @@ class DocumentGenerator extends ModelDataGenerator
         }
 
         $doc->codserie = AppSettings::get('default', 'codserie');
+        if (!isset($doc->codserie) || $doc->codserie=="---null---") {
+            $doc->codserie='A';
+            $doc->irpf=0;
+        }
         if (mt_rand(0, 2) == 0) {
             if ($this->series[0]->codserie != 'R') {
                 $doc->codserie = $this->series[0]->codserie;
                 $doc->irpf = $this->series[0]->irpf;
             }
 
-            $doc->observaciones = $this->tools->observaciones($doc->fecha);
+            $doc->observaciones = $this->observaciones($doc->fecha);
         }
 
         if (isset($doc->numero2) && mt_rand(0, 4) == 0) {
@@ -94,7 +124,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return string
      */
-    private function randomizeDocumentCompra(&$doc, $eje, $proveedores, $num)
+    protected function randomizeDocumentCompra(&$doc, $eje, $proveedores, $num)
     {
         $doc->codejercicio = $eje->codejercicio;
 
@@ -104,8 +134,8 @@ class DocumentGenerator extends ModelDataGenerator
             $regimeniva = $proveedores[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without provider, to check if it breaks ;-)
-            $doc->nombre = $this->tools->empresa();
-            $doc->cifnif = mt_rand(1111111, 9999999999) . 'Z';
+            $doc->nombre = $this->empresa();
+            $doc->cifnif = mt_rand(1111111, 99999999) . 'Z';
         }
 
         return $regimeniva;
@@ -121,7 +151,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return string
      */
-    private function randomizeDocumentVenta(&$doc, $eje, $clientes, $num)
+    protected function randomizeDocumentVenta(&$doc, $eje, $clientes, $num)
     {
         $doc->codejercicio = $eje->codejercicio;
 
@@ -131,7 +161,7 @@ class DocumentGenerator extends ModelDataGenerator
             $regimeniva = $clientes[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without the client, to check if it breaks ;-)
-            $doc->nombrecliente = $this->tools->nombre() . ' ' . $this->tools->apellidos();
+            $doc->nombrecliente = $this->nombre() . ' ' . $this->apellidos();
             $doc->cifnif = mt_rand(1111, 999999999) . 'J';
         }
 
@@ -148,8 +178,10 @@ class DocumentGenerator extends ModelDataGenerator
      * @param bool   $recargo
      * @param int    $modStock
      */
-    private function randomLineas(&$doc, $iddoc, $lineaClass, $regimeniva, $recargo, $modStock = 0)
+    protected function randomLineas(&$doc, $iddoc, $lineaClass, $regimeniva, $recargo, $modStock = 0)
     {
+        $imp=new Model\Impuesto();
+        
         $articulos = $this->randomArticulos();
 
         /// 1 out of 15 times we use negative quantities
@@ -158,13 +190,13 @@ class DocumentGenerator extends ModelDataGenerator
             $modcantidad = -1;
         }
 
-        $numlineas = (int) $this->tools->cantidad(0, 10, 200);
+        $numlineas = (int) $this->cantidad(0, 10, 200);
         while ($numlineas > 0) {
             $lin = new $lineaClass();
             $lin->{$iddoc} = $doc->{$iddoc};
-            $lin->cantidad = $modcantidad * $this->tools->cantidad(1, 3, 19);
-            $lin->descripcion = $this->tools->descripcion();
-            $lin->pvpunitario = $this->tools->precio(1, 49, 699);
+            $lin->cantidad = $modcantidad * $this->cantidad(1, 3, 19);
+            $lin->descripcion = $this->descripcion();
+            $lin->pvpunitario = $this->precio(1, 49, 699);
             $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
             $lin->iva = $this->impuestos[0]->iva;
 
@@ -177,7 +209,7 @@ class DocumentGenerator extends ModelDataGenerator
                 $lin->descripcion = $articulos[$numlineas]->descripcion;
                 $lin->pvpunitario = $articulos[$numlineas]->pvp;
                 $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                $lin->iva = $articulos[$numlineas]->getIva();
+                $lin->iva = $imp->get($articulos[$numlineas]->codimpuesto)->iva;
                 $lin->recargo = 0;
             }
 
@@ -191,7 +223,7 @@ class DocumentGenerator extends ModelDataGenerator
             }
 
             if (mt_rand(0, 4) == 0) {
-                $lin->dtopor = $this->tools->cantidad(0, 33, 100);
+                $lin->dtopor = $this->cantidad(0, 33, 100);
             }
 
             $lin->pvpsindto = $lin->pvpunitario * $lin->cantidad;
@@ -229,7 +261,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return int
      */
-    public function albaranesCliente($max = 25)
+    protected function albaranesCliente($max = 25)
     {
         $num = 0;
         $clientes = $this->randomClientes();
@@ -269,7 +301,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return int
      */
-    public function albaranesProveedor($max = 25)
+    protected function albaranesProveedor($max = 25)
     {
         $num = 0;
         $proveedores = $this->randomProveedores();
@@ -309,7 +341,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return int
      */
-    public function pedidosCliente($max = 25)
+    protected function pedidosCliente($max = 25)
     {
         $num = 0;
         $clientes = $this->randomClientes();
@@ -352,7 +384,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return int
      */
-    public function pedidosProveedor($max = 25)
+    protected function pedidosProveedor($max = 25)
     {
         $num = 0;
         $proveedores = $this->randomProveedores();
@@ -392,7 +424,7 @@ class DocumentGenerator extends ModelDataGenerator
      *
      * @return int
      */
-    public function presupuestosCliente($max = 25)
+    protected function presupuestosCliente($max = 25)
     {
         $num = 0;
         $clientes = $this->randomClientes();
@@ -424,4 +456,5 @@ class DocumentGenerator extends ModelDataGenerator
 
         return $num;
     }
+
 }

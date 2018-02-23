@@ -18,12 +18,16 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExportManager;
+
 /**
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 interface DataViewInterface
 {
+
     /**
      * Column list and its configuration
      * (Array of ColumnItem)

@@ -172,8 +172,7 @@ class Asiento extends Base\ModelClass
      */
     private function testErrorInData(): bool
     {
-        return empty($this->concepto)
-            || empty($this->fecha);
+        return empty($this->concepto) || empty($this->fecha);
     }
 
     private function testErrorInExercise(): string
@@ -203,13 +202,13 @@ class Asiento extends Base\ModelClass
         $this->concepto = Utils::noHtml($this->concepto);
         $this->documento = Utils::noHtml($this->documento);
 
-        if ($this->testErrorInData())  {
+        if ($this->testErrorInData()) {
             self::$miniLog->alert(self::$i18n->trans('accounting-data-missing'));
             return false;
         }
 
         $error = $this->testErrorInExercise();
-        if (!empty($error))  {
+        if (!empty($error)) {
             self::$miniLog->alert(self::$i18n->trans($error));
             return false;
         }
@@ -306,13 +305,11 @@ class Asiento extends Base\ModelClass
             if ($inTransaction === false) {
                 self::$dataBase->commit();
             }
-        }
-        catch (Exception $e) {
+        } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
             self::$dataBase->rollback();
             return false;
-        }
-        finally {
+        } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
                 self::$dataBase->rollback();
                 return false;

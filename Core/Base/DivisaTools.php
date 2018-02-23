@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base;
  */
 class DivisaTools
 {
+
     public function __construct()
     {
         if (!defined('FS_CURRENCY_POS')) {
@@ -60,7 +60,8 @@ class DivisaTools
     /**
      * Return format mask for edit grid
      *
-     * @param type $decimals
+     * @param int $decimals
+     * 
      * @return string
      */
     public static function gridMoneyFormat($decimals = FS_NF0)
