@@ -108,20 +108,13 @@ class Contacto extends Base\Contact
     public $provincia;
 
     /**
-     * Date of the last communication.
-     *
-     * @var string
-     */
-    public $ultima_comunicacion;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
      */
     public static function tableName()
     {
-        return 'crm_contactos';
+        return 'contactos';
     }
 
     /**
@@ -141,7 +134,6 @@ class Contacto extends Base\Contact
     {
         parent::clear();
         $this->admitemarketing = true;
-        $this->ultima_comunicacion = date('d-m-Y');
     }
 
     /**

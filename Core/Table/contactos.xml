@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : crm_contactos.xml
+    Document   : contactos.xml
     Description:
-        Structure for the crm_contactos table.
+        Structure for the contactos table.
 -->
 <table>
     <column>
@@ -85,12 +85,8 @@
         <name>fechaalta</name>
         <type>date</type>
     </column>
-    <column>
-        <name>ultima_comunicacion</name>
-        <type>date</type>
-    </column>
     <constraint>
-        <name>crm_contactos_pkey</name>
+        <name>contactos_pkey</name>
         <type>PRIMARY KEY (codcontacto)</type>
     </constraint>
 </table>
