@@ -27,20 +27,21 @@ function configureAutocompleteColumns(columns) {
         if (columns[key]['type'] === 'autocomplete') {
             var data = columns[key]['data-source'];
             columns[key]['source'] = function (query, process) {
-                    $.ajax({
-                        url: data.url,
-                        dataType: 'json',
-                        data: {
-                            term: query,
-                            action: 'autocomplete',
-                            source: data.source,
-                            field: data.field,
-                            title: data.title
-                        },
-                        success: function (response) {
-                            process(response);
-                        }
-                    });
+                query = query.split(' - ', 1)[0];
+                $.ajax({
+                    url: data.url,
+                    dataType: 'json',
+                    data: {
+                        term: query,
+                        action: 'autocomplete',
+                        source: data.source,
+                        field: data.field,
+                        title: data.title
+                    },
+                    success: function (response) {
+                        process(response);
+                    }
+                });
             };
             delete columns[key]['data-source'];
         }
@@ -101,7 +102,7 @@ function afterSelection(row1, col1, row2, col2, preventScrolling) {
     // Check if editing
     var editor = accountEntries.getActiveEditor();
     if (editor && editor.isOpened()) {
-        return false;
+        return;
     }
 
     // Not multiselection
@@ -111,14 +112,17 @@ function afterSelection(row1, col1, row2, col2, preventScrolling) {
             loadAccountData(newAccount);
         }
     }
-    return true;
+    return;
 }
 
-function afterChange(changes, source) {
+function beforeChange(changes, source) {
     if (changes !== null) {
         if (changes[0][1] === 'codsubcuenta') {
             if (changes[0][2] !== changes[0][3]) {
-                loadAccountData(changes[0][3]);
+                var value = changes[0][3];
+                value = value.split(' - ', 1)[0];
+                changes[0][3] = value;
+                loadAccountData(value);
             }
         }
     }
@@ -144,7 +148,7 @@ $(document).ready(function () {
         });
 
         Handsontable.hooks.add('afterSelection', afterSelection);
-        Handsontable.hooks.add('afterChange', afterChange);
+        Handsontable.hooks.add('beforeChange', beforeChange);
     }
 
     // Graphic bars

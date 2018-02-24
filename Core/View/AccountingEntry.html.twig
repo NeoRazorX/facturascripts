@@ -74,10 +74,12 @@
     </div>
 
     {# -- Detail data -- #}
-    {% if fsc.views[masterKeyView].count > 0 %}
+    {% set numViews = fsc.views[masterKeyView].count %}
+    {% if numViews > 0 %}
     <div class="row mt-2">
         <div class="col-12">
             {# -- Tabs -- #}
+            {% if numViews > 1 %}
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
                 {% if loop.index > 1 %}
@@ -89,7 +91,8 @@
                 {% endif %}
                 {% endfor %}
             </div>
-
+            {% endif %}
+            
             {# Data #}
             <div class="tab-content" id="optionsindex-tabContent">
                 {% for indexView, view in fsc.views %}
