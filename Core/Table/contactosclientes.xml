@@ -27,14 +27,10 @@
     </restriccion>
     <restriccion>
         <nombre>ca_contactosclientes_clientes</nombre>
-        <consulta>FOREIGN KEY (codcliente)
-            REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+        <consulta>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>
     <restriccion>
         <nombre>ca_contactosclientes_crm_contactos</nombre>
-        <consulta>FOREIGN KEY (codcontacto)
-            REFERENCES crm_contactos (codcontacto)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+        <consulta>FOREIGN KEY (codcontacto) REFERENCES contactos (codcontacto) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>
 </tabla>

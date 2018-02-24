@@ -27,14 +27,10 @@
     </restriccion>
     <restriccion>
         <nombre>ca_contactosproveedores_proveedores</nombre>
-        <consulta>FOREIGN KEY (codproveedor)
-            REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+        <consulta>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>
     <restriccion>
-        <nombre>ca_contactosproveedores_crm_contactos</nombre>
-        <consulta>FOREIGN KEY (codcontacto)
-            REFERENCES crm_contactos (codcontacto)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+        <nombre>ca_contactosproveedores_contactos</nombre>
+        <consulta>FOREIGN KEY (codcontacto) REFERENCES contactos (codcontacto) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>
 </tabla>
