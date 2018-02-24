@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,26 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
 /**
- *  Generate random data for the customers (clientes) file
+ * Generate random data for the customers (clientes) file
  *
  * @author Rafael San José <info@rsanjoseo.com>
  */
 class Clientes extends AbstractRandomPeople
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\Cliente());
     }
-    
-    public function generate($num = 50) {
-        $cliente=$this->model;
+
+    public function generate($num = 50)
+    {
+        $cliente = $this->model;
         for ($i = 0; $i < $num; ++$i) {
             $cliente->clear();
             $this->fillCliPro($cliente);
@@ -72,5 +73,58 @@ class Clientes extends AbstractRandomPeople
         }
 
         return $i;
+    }
+
+    /**
+     * Rellena cuentas bancarias de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int           $max
+     */
+    protected function cuentasBancoCliente($cliente, $max = 3)
+    {
+        while ($max > 0) {
+            $cuenta = new Model\CuentaBancoCliente();
+            $cuenta->codcliente = $cliente->codcliente;
+            $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
+            $cuenta->iban = $this->iban();
+            $cuenta->swift = (mt_rand(0, 2) != 0) ? $this->randomString(8) : '';
+            $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
+
+            if (!$cuenta->save()) {
+                break;
+            }
+
+            --$max;
+        }
+    }
+
+    /**
+     * Rellena direcciones de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int           $max
+     */
+    protected function direccionesCliente($cliente, $max = 3)
+    {
+        while ($max > 0) {
+            $dir = new Model\DireccionCliente();
+            $dir->codcliente = $cliente->codcliente;
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
+
+            $dir->provincia = $this->provincia();
+            $dir->ciudad = $this->ciudad();
+            $dir->direccion = $this->direccion();
+            $dir->codpostal = (string) mt_rand(1234, 99999);
+            $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
+            $dir->domenvio = (mt_rand(0, 1) === 1);
+            $dir->domfacturacion = (mt_rand(0, 1) === 1);
+            $dir->descripcion = 'Dirección #' . $max;
+            if (!$dir->save()) {
+                break;
+            }
+
+            --$max;
+        }
     }
 }

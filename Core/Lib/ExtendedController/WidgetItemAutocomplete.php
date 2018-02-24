@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model;
  */
 class WidgetItemAutocomplete extends WidgetItem
 {
+
     /**
      * Model to use with select and autocomplete filters.
      *

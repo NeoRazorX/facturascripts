@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -32,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Randomizer extends Base\Controller
 {
+
     /**
      * URL where reload.
      *
@@ -53,7 +53,7 @@ class Randomizer extends Base\Controller
         $option = $this->request->get('gen', '');
         if ($option !== '') {
             $this->execAction($option);
-            //$this->urlReload = $this->url() . '?gen=' . $option;
+            $this->urlReload = $this->url() . '?gen=' . $option;
         }
     }
 
@@ -80,91 +80,95 @@ class Randomizer extends Base\Controller
     private function execAction($option)
     {
         switch ($option) {
-            case 'fabricantes':
-                $app=new RandomDataGenerator\Fabricantes();
-                $txt='generated-manufacturers';
-                break;
-
-            case 'familias':
-                $app=new RandomDataGenerator\Familias();
-                $txt='generated-families';
-                break;
-
-            case 'articulos':
-                $app=new RandomDataGenerator\Articulos();
-                $txt='generated-products';
-                break;
-
-            case 'articulosprov':
-                $app=new RandomDataGenerator\ArticulosProveedor();
-                $txt='generated-products';
-                break;
-
             case 'agentes':
-                $app=new RandomDataGenerator\Agentes();
-                $txt='generated-agents';
-                break;
-
-            case 'proveedores':
-                $app=new RandomDataGenerator\Proveedores();
-                $txt='generated-supplier';
-                break;
-
-            case 'pedidosprov':
-                $app=new RandomDataGenerator\PedidosProveedor();
-                $txt='generated-supplier-orders';
-                break;
-
-            case 'albaranesprov':
-                $app=new RandomDataGenerator\AlbaranesProveedor();
-                $txt='generated-supplier-delivery-notes';
-                break;
-
-            case 'grupos':
-                $app=new RandomDataGenerator\Grupos();
-                $txt='generated-customer-groups';
-                break;
-
-            case 'clientes':
-                $app=new RandomDataGenerator\Clientes();
-                $txt='generated-customers';
-                break;
-
-            case 'presupuestoscli':
-                $app=new RandomDataGenerator\PresupuestosCliente();
-                $txt='generated-customer-estimations';
-                break;
-
-            case 'pedidoscli':
-                $app=new RandomDataGenerator\PedidosCliente();
-                $txt='generated-customer-orders';
+                $app = new RandomDataGenerator\Agentes();
+                $txt = 'generated-agents';
                 break;
 
             case 'albaranescli':
-                $app=new RandomDataGenerator\AlbaranesCliente();
-                $txt='generated-customer-delivery-notes';
+                $app = new RandomDataGenerator\AlbaranesCliente();
+                $txt = 'generated-customer-delivery-notes';
                 break;
 
-            case 'cuentas':
-                $app=new RandomDataGenerator\Cuentas();
-                $txt='generated-accounts';
-                break;
-
-            case 'subcuentas':
-                $app=new RandomDataGenerator\Subcuentas();
-                $txt='generated-subaccounts';
+            case 'albaranesprov':
+                $app = new RandomDataGenerator\AlbaranesProveedor();
+                $txt = 'generated-supplier-delivery-notes';
                 break;
 
             case 'asientos':
-                $app=new RandomDataGenerator\Asientos();
-                $txt='generated-accounting-entries';
+                $app = new RandomDataGenerator\Asientos();
+                $txt = 'generated-accounting-entries';
                 break;
+
+            case 'articulos':
+                $app = new RandomDataGenerator\Articulos();
+                $txt = 'generated-products';
+                break;
+
+            case 'articulosprov':
+                $app = new RandomDataGenerator\ArticulosProveedor();
+                $txt = 'generated-products';
+                break;
+
+            case 'clientes':
+                $app = new RandomDataGenerator\Clientes();
+                $txt = 'generated-customers';
+                break;
+
+            case 'cuentas':
+                $app = new RandomDataGenerator\Cuentas();
+                $txt = 'generated-accounts';
+                break;
+
+            case 'grupos':
+                $app = new RandomDataGenerator\Grupos();
+                $txt = 'generated-customer-groups';
+                break;
+
+            case 'fabricantes':
+                $app = new RandomDataGenerator\Fabricantes();
+                $txt = 'generated-manufacturers';
+                break;
+
+            case 'familias':
+                $app = new RandomDataGenerator\Familias();
+                $txt = 'generated-families';
+                break;
+
+            case 'pedidoscli':
+                $app = new RandomDataGenerator\PedidosCliente();
+                $txt = 'generated-customer-orders';
+                break;
+
+            case 'pedidosprov':
+                $app = new RandomDataGenerator\PedidosProveedor();
+                $txt = 'generated-supplier-orders';
+                break;
+
+            case 'presupuestoscli':
+                $app = new RandomDataGenerator\PresupuestosCliente();
+                $txt = 'generated-customer-estimations';
+                break;
+
+            case 'proveedores':
+                $app = new RandomDataGenerator\Proveedores();
+                $txt = 'generated-supplier';
+                break;
+
+            case 'subcuentas':
+                $app = new RandomDataGenerator\Subcuentas();
+                $txt = 'generated-subaccounts';
+                break;
+
+            default:
+                $app = false;
+                $txt = '';
         }
-        
-        if (isset($app)) {
+
+        if (false !== $app) {
             $this->miniLog->info($this->i18n->trans($txt, ['%quantity%' => $app->generate()]));
         }
-        
+
         return;
     }
 }

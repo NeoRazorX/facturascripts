@@ -144,7 +144,7 @@ class GridView extends BaseView
         $data = [
             'headers' => [],
             'columns' => [],
-            'hidden'  => []
+            'hidden' => []
         ];
 
         $columns = $this->pageOption->columns['root']->columns;

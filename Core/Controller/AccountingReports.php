@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -34,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AccountingReports extends Controller
 {
+
     /**
      * List of exercices.
      *
@@ -158,7 +158,7 @@ class AccountingReports extends Controller
             $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->generateTablePage($headers, $data);
         }
-        
+
         $this->exportManager->show($this->response);
     }
 }

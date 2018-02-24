@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Accounting;
 
 /**
@@ -28,6 +27,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class BalanceSheet extends AccountingBase
 {
+
     /**
      * Date from for filter
      *
@@ -143,7 +143,7 @@ class BalanceSheet extends AccountingBase
             $balance[$index] = [
                 'descripcion' => $index,
                 'saldo' => $linea['saldo'],
-                'saldoprev' => $linea['saldoprev'], ];
+                'saldoprev' => $linea['saldoprev'],];
         } else {
             $balance[$index]['saldo'] += $linea['saldo'];
             $balance[$index]['saldoprev'] += $linea['saldoprev'];

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 abstract class EditController extends PanelController
 {
+
     /**
      * Returns the class name of the model to use in the editView.
      */

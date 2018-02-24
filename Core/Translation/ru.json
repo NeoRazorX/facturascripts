@@ -120,7 +120,7 @@
     "partners-facturascripts": "Партнеры FacturaScripts",
     "system-info": "информация о системе",
     "tables": "рисовать",
-    "alert": "бдительный",
+    "alert": "Осторожно",
     "blocks-database": "Закупорка в базе данных",
     "type": "тип",
     "autorize": "санкционировать",
@@ -328,7 +328,7 @@
     "did-you-disabled-plugins": "Вы отключен плагин?",
     "did-you-reinstall": "Вы переустанавливать зверь?",
     "did-you-update-from-facturascripts-2014": "Вы повышен с FacturaScripts 2014 или ранее?",
-    "accept": "принимать",
+    "accept": "Принять",
     "before-start": "Перед тем, как начать...",
     "bootstrap": "начальная загрузка",
     "cant-write-facturascripts-folder": "папка FacturaScripts не имеет разрешения на запись. Эти разрешения необходимы для системы шаблонов, установить плагин, обновление, и т.д....",
@@ -615,7 +615,7 @@
     "admin": "Администратор",
     "agent": "агент",
     "agents": "Агенты",
-    "alfa-code-2": "Alfa code 2",
+    "alfa-code-2": "Альфа-код 2",
     "alfa-code-3": "Альфа-код 3",
     "allow-delete": "Разрешить удаление",
     "allow-update": "Разрешить обновление",
@@ -1144,5 +1144,7 @@
     "dashboard-card": "Панель инструментов (элемент)",
     "creation-date": "Дата создания",
     "display-date": "Показать дату",
-    "color": "цвет"
+    "color": "цвет",
+    "%-commission": "% Комиссия",
+    "all": "Все"
 }

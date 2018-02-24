@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 interface ExportInterface
 {
+
     /**
      * Return the full document.
      *
@@ -40,7 +40,7 @@ interface ExportInterface
      * Blank document.
      */
     public function newDoc();
-    
+
     /**
      * Set headers and output document content to response.
      *

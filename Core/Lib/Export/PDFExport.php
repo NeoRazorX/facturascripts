@@ -379,7 +379,7 @@ class PDFExport implements ExportInterface
                     $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
                 } elseif (null === $value) {
                     $value = '';
-                } elseif($tableOptions['cols'][$col]['col-type'] === 'text') {
+                } elseif ($tableOptions['cols'][$col]['col-type'] === 'text') {
                     $value = Base\Utils::fixHtml($value);
                 }
 

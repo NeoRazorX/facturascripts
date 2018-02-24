@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,31 +27,47 @@ use FacturaScripts\Core\Model;
  */
 class Articulos extends AbstractRandom
 {
-    
+
+    /**
+     *
+     * @var Model\Almacen[]
+     */
+    protected $almacenes;
+
+    /**
+     *
+     * @var Model\Fabricante[]
+     */
+    protected $fabricantes;
+
+    /**
+     *
+     * @var Model\Familia[]
+     */
+    protected $familias;
+
+    /**
+     *
+     * @var Model\Impuesto[]
+     */
+    protected $impuestos;
+
     public function __construct()
     {
         parent::__construct(new Model\Articulo());
+        $this->shuffle($this->almacenes, new Model\Almacen());
+        $this->shuffle($this->fabricantes, new Model\Fabricante());
+        $this->shuffle($this->familias, new Model\Familia());
+        $this->shuffle($this->impuestos, new Model\Impuesto());
     }
-    
-    public function generate($num = 50) {
-        
-        $fab = new Model\Fabricante();
-        $fabricantes = $fab->all();
 
-        $fam = new Model\Familia();
-        $familias = $fam->all();
-
-        $imp = new Model\Impuesto();
-        $impuestos = $imp->all();
-
-        $alm = new Model\Almacen();
-        $almacenes = $alm->all();
-
+    public function generate($num = 50)
+    {
         $art = $this->model;
-        for ($i = 0; $i < $num; ++$i) {
+        for ($generated = 0; $generated < $num; ++$generated) {
             $art->clear();
             $art->descripcion = $this->descripcion();
-            $art->codimpuesto = $this->getOneItem($impuestos)->codimpuesto;
+            $art->codimpuesto = $this->impuestos[0]->codimpuesto;
             $art->setPvpIva($this->precio(1, 49, 699));
             $art->costemedio = $art->preciocoste = $this->cantidad(0, $art->pvp, $art->pvp + 1);
             $art->stockmin = mt_rand(0, 10);
@@ -77,8 +92,8 @@ class Articulos extends AbstractRandom
             }
 
             if (mt_rand(0, 9) > 0) {
-                $art->codfabricante = $this->getOneItem($fabricantes)->codfabricante;
-                $art->codfamilia = $this->getOneItem($familias)->codfamilia;
+                $art->codfabricante = $this->getOneItem($this->fabricantes)->codfabricante;
+                $art->codfamilia = $this->getOneItem($this->familias)->codfamilia;
             } else {
                 $art->codfabricante = null;
                 $art->codfamilia = null;
@@ -95,13 +110,12 @@ class Articulos extends AbstractRandom
             }
 
             if (mt_rand(0, 2) == 0) {
-                $art->sumStock($this->getOneItem($almacenes)->codalmacen, mt_rand(0, 1000));
+                $art->sumStock($this->getOneItem($this->almacenes)->codalmacen, mt_rand(0, 1000));
             } else {
-                $art->sumStock($this->getOneItem($almacenes)->codalmacen, mt_rand(0, 20));
+                $art->sumStock($this->getOneItem($this->almacenes)->codalmacen, mt_rand(0, 20));
             }
         }
 
-        return $i;
+        return $generated;
     }
-            
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,48 +27,38 @@ use FacturaScripts\Core\Model;
  */
 class ArticulosProveedor extends AbstractRandom
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\ArticuloProveedor());
     }
-    
-    public function generate($num = 50) {
 
-        //$proveedores = $this->randomProveedores();
-        //$articulos = $this->randomArticulos();
-        $_proveedores=new Model\Proveedor();
-        $proveedores=$_proveedores->all();
-        shuffle($proveedores);
-        
-        $_articulos=new Model\Articulo();
-        $articulos=$_articulos->all();
-        shuffle($articulos);
-        
-        $art=$this->model;
+    public function generate($num = 50)
+    {
+        $this->shuffle($articulos, new Model\Articulo());
+        $this->shuffle($proveedores, new Model\Proveedor());
+        $art = $this->model;
 
-        for ($i = 0; $i < $num; ++$i) {
-            if (!isset($articulos[$i])) {
+        for ($generated = 0; $generated < $num; ++$generated) {
+            if (!isset($articulos[$generated])) {
                 break;
             }
 
             $art->clear();
-            $art->referencia = $articulos[$i]->referencia;
+            $art->referencia = $articulos[$generated]->referencia;
             $art->refproveedor = (string) mt_rand(1, 99999999);
             $art->descripcion = $this->descripcion();
-            $art->codimpuesto = $articulos[$i]->codimpuesto;
-            $art->codproveedor = $proveedores[$i]->codproveedor;
+            $art->codimpuesto = $articulos[$generated]->codimpuesto;
+            $art->codproveedor = $proveedores[$generated]->codproveedor;
             $art->precio = $this->precio(1, 49, 699);
             $art->dto = mt_rand(0, 80);
             $art->nostock = (mt_rand(0, 2) == 0);
             $art->stockfis = mt_rand(0, 10);
-
             if (!$art->save()) {
                 break;
             }
         }
 
-        return $i;
+        return $generated;
     }
-            
 }

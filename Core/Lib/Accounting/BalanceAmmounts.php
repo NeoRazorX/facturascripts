@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model\Subcuenta;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Model\Subcuenta;
  */
 class BalanceAmmounts extends AccountingBase
 {
+
     /**
      * Model with related information.
      *

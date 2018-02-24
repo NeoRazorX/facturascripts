@@ -73,7 +73,7 @@ class DocumentCalculator
             if (empty($fLine['cantidad'])) {
                 continue;
             }
-            
+
             $newLine = new Model\LineaAlbaranCliente();
             $newLine->cantidad = (float) $fLine['cantidad'];
             $newLine->dtopor = (float) $fLine['dtopor'];

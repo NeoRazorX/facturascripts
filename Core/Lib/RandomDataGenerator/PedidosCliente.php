@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Model;
@@ -28,41 +27,38 @@ use FacturaScripts\Core\Model;
  */
 class PedidosCliente extends AbstractRandomDocuments
 {
-    
+
     public function __construct()
     {
         parent::__construct(new Model\PedidoCliente());
     }
-    
-    public function generate($num = 50) {
-        $ped=$this->model;
-        $this->shuffle($clientes, new Model\Cliente());
-        
-        $recargo = false;
-        if ($clientes[0]->recargo || mt_rand(0, 4) === 0) {
-            $recargo = true;
-        }
 
-        $i=0;
-        while ($i < $num) {
+    public function generate($num = 50)
+    {
+        $ped = $this->model;
+        $this->shuffle($clientes, new Model\Cliente());
+
+        $generated = 0;
+        while ($generated < $num) {
             $ped->clear();
             $this->randomizeDocument($ped);
             $eje = $this->ejercicio->getByFecha($ped->fecha);
-            if ($eje) {
-                $regimeniva = $this->randomizeDocumentVenta($ped, $eje, $clientes, $i);
-                if (mt_rand(0, 3) == 0) {
-                    $ped->fechasalida = date('d-m-Y', strtotime($ped->fecha . ' +' . mt_rand(1, 3) . ' months'));
-                }
-                if ($ped->save()) {
-                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoCliente', $regimeniva, $recargo);
-                    ++$i;
-                } else {
-                    break;
-                }
+            if (false === $eje) {
+                break;
+            }
+
+            $recargo = ($clientes[0]->recargo || mt_rand(0, 4) === 0);
+            $regimeniva = $this->randomizeDocumentVenta($ped, $eje, $clientes, $generated);
+            if (mt_rand(0, 3) == 0) {
+                $ped->fechasalida = date('d-m-Y', strtotime($ped->fecha . ' +' . mt_rand(1, 3) . ' months'));
+            }
+            if ($ped->save()) {
+                $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoCliente', $regimeniva, $recargo);
+                ++$generated;
             } else {
                 break;
             }
         }
-        return $i;
+        return $generated;
     }
 }
