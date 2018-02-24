@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Lib\MenuItem;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Lib\MenuItem;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * Manage the use of the Facturascripts menu.
