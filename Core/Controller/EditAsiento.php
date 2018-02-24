@@ -126,7 +126,7 @@ class EditAsiento extends ExtendedController\PanelController
         $results = [];
         $codeModel = new Model\CodeModel();
         foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
-            $results[] = $value->code;
+            $results[] = $value->code . ' - ' . $value->description;
         }
         return $results;
     }

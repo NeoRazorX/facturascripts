@@ -27,8 +27,18 @@ use FacturaScripts\Core\Base;
  */
 class GridView extends BaseView
 {
-
+    /**
+     * Parent container of grid data
+     *
+     * @var BaseView
+     */
     private $parentView;
+
+    /**
+     * Grid data configuration and data
+     *
+     * @var Array
+     */
     private $gridData;
 
     /**
