@@ -36,7 +36,9 @@
             </widget>
         </column>
         <column name="offsetting" order="110">
-            <widget type="text" fieldname="codcontrapartida" />
+            <widget type="autocomplete" fieldname="codcontrapartida" required="true">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="description" order="115">
             <widget type="text" fieldname="concepto" />

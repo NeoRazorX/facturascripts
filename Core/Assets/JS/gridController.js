@@ -83,8 +83,6 @@ function afterSelection(row1, col1, row2, col2, preventScrolling) {
             column = controlledColumns[keys[i]];
             var newValue = getGridFieldData(row1, keys[i]);
             if (newValue !== column.value && column.afterSelection !== null) {
-                console.log('value: ', column.value);
-                console.log('new: ', newValue);
                 column.value = newValue;
                 column.afterSelection(newValue);
             }
