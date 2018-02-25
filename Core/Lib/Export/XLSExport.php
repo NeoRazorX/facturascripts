@@ -41,11 +41,11 @@ class XLSExport implements ExportInterface
     /**
      * Return the full document.
      *
-     * @return bool|string
+     * @return string
      */
     public function getDoc()
     {
-        return $this->writer->writeToString();
+        return (string) $this->writer->writeToString();
     }
 
     /**
