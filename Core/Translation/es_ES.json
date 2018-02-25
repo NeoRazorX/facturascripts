@@ -1244,5 +1244,6 @@
     "concept": "Concepto",
     "lock-unlock": "(Des)Bloquear",
     "clone": "Duplicar",
-    "predefined-concepts": "Conceptos Predefinidos"
+    "predefined-concepts": "Conceptos Predefinidos",
+    "php-extension-not-found": "No tienes la extensión %extension% de PHP instalada."
 }
