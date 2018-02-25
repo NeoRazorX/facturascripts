@@ -305,6 +305,7 @@ class PluginManager
 
             if ($info['min_version'] >= 2018 && $info['min_version'] <= self::MIN_VERSION) {
                 $info['compatible'] = true;
+                $info['description'] = self::$i18n->trans('compatible');
             } else {
                 $info['description'] = self::$i18n->trans('incompatible-with-facturascripts', ['%version%' => self::MIN_VERSION]);
             }

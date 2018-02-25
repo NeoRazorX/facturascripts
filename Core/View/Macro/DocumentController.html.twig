@@ -134,7 +134,7 @@
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente|raw }}" class="form-control autocomplete"
                    data-source="clientes" data-field="codcliente" data-title="razonsocial"
                    placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
-            <span class="input-group-btn">
+            <span class="input-group-prepend">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newCustomerModal">
                     <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
                 </button>
@@ -182,7 +182,7 @@
             <input type="text" id="{{ id }}" value="{{ model.nombre|raw }}" class="form-control autocomplete"
                    data-source="proveedores" data-field="codproveedor" data-title="razonsocial"
                    placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
-            <span class="input-group-btn">
+            <span class="input-group-prepend">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newSupplierModal">
                     <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
                 </button>

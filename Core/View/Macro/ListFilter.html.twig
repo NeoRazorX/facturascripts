@@ -97,7 +97,7 @@
             </span>
         </span>
         {% else %}
-        <span class="input-group-btn" title="{{ key }}">
+        <span class="input-group-prepend" title="{{ key }}">
             <button class="btn btn-warning" type="button" onclick="$('#{{ key }}Autocomplete').val('');$('#{{ key }}Autocomplete').form().submit();">
                 <i class="fa fa-remove" aria-hidden="true"></i>
             </button>
@@ -140,7 +140,7 @@
 {% macro filterForTextInput(context, key, filter) %}
 <div class="col-md-2">
     <div class="input-group">
-        <div class="input-group-btn">
+        <div class="input-group-prepend">
             <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
                    class="btn btn-outline-secondary dropdown-toggle"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
@@ -160,7 +160,7 @@
 </div>
 <div class="col-md-2">
     <div class="input-group">
-        <div class="input-group-btn">
+        <div class="input-group-prepend">
             <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
                    class="btn btn-outline-secondary dropdown-toggle"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
