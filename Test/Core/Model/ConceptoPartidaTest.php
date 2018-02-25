@@ -35,7 +35,7 @@ final class ConceptoPartidaTest extends TestCase
         $model = new ConceptoPartida();
 
         $this->assertInstanceOf(ConceptoPartida::class, $model);
-        $this->assertNull($model->idconceptopar);
+        $this->assertNull($model->codconcepto);
         $this->assertEquals('', $model->concepto);
         $this->assertTrue($model->test());
 
