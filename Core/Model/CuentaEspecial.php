@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 /**
  * Allows to relate special accounts (SALES, for example)
-  * with the real account or sub-account.
+ * with the real account or sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -71,20 +71,6 @@ class CuentaEspecial extends Base\ModelClass
     public function primaryDescriptionColumn()
     {
         return 'codcuentaesp';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// TODO: Install basic specials accounts
-
-        return '';
     }
 
     /**
