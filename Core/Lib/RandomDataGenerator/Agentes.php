@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class Agentes extends AbstractRandomPeople
 {
 
+    /**
+     * Agentes constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Agente());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $agente = $this->model;

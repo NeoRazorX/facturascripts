@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class PresupuestosCliente extends AbstractRandomDocuments
 {
 
+    /**
+     * PresupuestosCliente constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\PresupuestoCliente());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $presu = $this->model;

@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class Familias extends AbstractRandom
 {
 
+    /**
+     * Familias constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Familia());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $fam = $this->model;

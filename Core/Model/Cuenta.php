@@ -140,6 +140,11 @@ class Cuenta extends Base\ModelClass
         return false;
     }
 
+    /**
+     * TODO
+     *
+     * @return bool
+     */
     private function testErrorInAccount(): bool
     {
         return empty($this->codcuenta) || empty($this->descripcion) || empty($this->codejercicio);

@@ -31,41 +31,52 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 {
 
     /**
+     * TODO
      *
      * @var Model\Almacen[]
      */
     protected $almacenes;
 
     /**
+     * TODO
      *
      * @var Model\Divisa[]
      */
     protected $divisas;
 
     /**
+     * TODO
      *
      * @var Model\Ejercicio
      */
     protected $ejercicio;
 
     /**
+     * TODO
      *
      * @var Model\FormaPago[]
      */
     protected $formasPago;
 
     /**
+     * TODO
      *
      * @var Model\Impuesto[]
      */
     protected $impuestos;
 
     /**
+     * TODO
      *
      * @var Model\Serie[]
      */
     protected $series;
 
+    /**
+     * AbstractRandomDocuments constructor.
+     *
+     * @param $model
+     */
     public function __construct($model)
     {
         parent::__construct($model);

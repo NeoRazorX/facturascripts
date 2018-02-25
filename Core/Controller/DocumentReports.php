@@ -288,11 +288,23 @@ class DocumentReports extends Controller
         sort($this->labels);
     }
 
+    /**
+     * TODO
+     *
+     * @return string
+     */
     public function getLabels()
     {
         return '"' . implode('","', $this->labels) . '"';
     }
 
+    /**
+     * TODO
+     *
+     * @param $sourceKey
+     *
+     * @return string
+     */
     public function getDataTable($sourceKey)
     {
         return implode(',', $this->dataTable[$sourceKey]);

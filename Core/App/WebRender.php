@@ -35,29 +35,36 @@ class WebRender
 {
 
     /**
+     * TODO
      *
      * @var Translator
      */
     private $i18n;
 
     /**
+     * TODO
      *
      * @var Twig_Loader_Filesystem
      */
     private $loader;
 
     /**
+     * TODO
      *
      * @var MiniLog
      */
     private $miniLog;
 
     /**
+     * TODO
      *
      * @var PluginManager
      */
     private $pluginManager;
 
+    /**
+     * WebRender constructor.
+     */
     public function __construct()
     {
         if (!defined('FS_DEBUG')) {
@@ -71,6 +78,11 @@ class WebRender
         $this->pluginManager = new PluginManager();
     }
 
+    /**
+     * TODO
+     *
+     * @return Twig_Environment
+     */
     public function getTwig()
     {
         $twig = new Twig_Environment($this->loader, $this->getOptions());
@@ -85,6 +97,9 @@ class WebRender
         return $twig;
     }
 
+    /**
+     * TODO
+     */
     public function loadPluginFolders()
     {
         /// Core namespace
@@ -104,6 +119,14 @@ class WebRender
         }
     }
 
+    /**
+     * Returns the data into the standard output.
+     *
+     * @param $template
+     * @param $params
+     *
+     * @return string
+     */
     public function render($template, $params)
     {
         $templateVars = [
@@ -118,6 +141,11 @@ class WebRender
         return $twig->render($template, $templateVars);
     }
 
+    /**
+     * TODO
+     *
+     * @return array
+     */
     private function getOptions()
     {
         return FS_DEBUG ? ['debug' => true] : ['cache' => FS_FOLDER . '/MyFiles/Cache/Twig'];

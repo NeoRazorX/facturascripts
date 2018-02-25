@@ -29,29 +29,36 @@ class Articulos extends AbstractRandom
 {
 
     /**
+     * TODO
      *
      * @var Model\Almacen[]
      */
     protected $almacenes;
 
     /**
+     * TODO
      *
      * @var Model\Fabricante[]
      */
     protected $fabricantes;
 
     /**
+     * TODO
      *
      * @var Model\Familia[]
      */
     protected $familias;
 
     /**
+     * TODO
      *
      * @var Model\Impuesto[]
      */
     protected $impuestos;
 
+    /**
+     * Articulos constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Articulo());
@@ -61,6 +68,13 @@ class Articulos extends AbstractRandom
         $this->shuffle($this->impuestos, new Model\Impuesto());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $art = $this->model;

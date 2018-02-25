@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
 
 /**
+ * TODO
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -45,6 +46,7 @@ interface DataViewInterface
     public function disableColumn($columnName, $disabled);
 
     /**
+     * TODO
      *
      * @param mixed           $code
      * @param DataBaseWhere[] $where

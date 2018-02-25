@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class AlbaranesProveedor extends AbstractRandomDocuments
 {
 
+    /**
+     * AlbaranesProveedor constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\AlbaranProveedor());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $alb = $this->model;

@@ -29,8 +29,18 @@ use FacturaScripts\Core\Model;
 abstract class AbstractRandomAccounting extends AbstractRandom
 {
 
+    /**
+     * TODO
+     *
+     * @var array
+     */
     protected $ejercicios;
 
+    /**
+     * AbstractRandomAccounting constructor.
+     *
+     * @param $model
+     */
     public function __construct($model)
     {
         parent::__construct($model);

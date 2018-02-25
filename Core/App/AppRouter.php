@@ -26,10 +26,21 @@ namespace FacturaScripts\Core\App;
 class AppRouter
 {
 
+    /**
+     * TODO
+     */
     const ROUTE_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json';
 
+    /**
+     * TODO
+     *
+     * @var array
+     */
     private $routes;
 
+    /**
+     * AppRouter constructor.
+     */
     public function __construct()
     {
         if (!defined('FS_ROUTE')) {
@@ -39,6 +50,11 @@ class AppRouter
         $this->routes = $this->loadFromFile();
     }
 
+    /**
+     * TODO
+     *
+     * @return AppAPI|AppController|AppCron
+     */
     public function getApp()
     {
         $uri = $this->getUri();
@@ -59,6 +75,11 @@ class AppRouter
         return new AppController($uri);
     }
 
+    /**
+     * TODO
+     *
+     * @return bool
+     */
     public function getFile()
     {
         $uri = $this->getUri();
@@ -82,6 +103,13 @@ class AppRouter
         return false;
     }
 
+    /**
+     * TODO
+     *
+     * @param $newRoute
+     * @param $controllerName
+     * @param string $optionalId
+     */
     public function setRoute($newRoute, $controllerName, $optionalId = '')
     {
         if (!empty($optionalId)) {
@@ -101,6 +129,13 @@ class AppRouter
         $this->save();
     }
 
+    /**
+     * TODO
+     *
+     * @param $filePath
+     *
+     * @return string
+     */
     private function getMime($filePath)
     {
         if (substr($filePath, -4) === '.css') {
@@ -114,6 +149,11 @@ class AppRouter
         return mime_content_type($filePath);
     }
 
+    /**
+     * TODO
+     *
+     * @return bool|string
+     */
     private function getUri()
     {
         $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
@@ -139,6 +179,11 @@ class AppRouter
         return [];
     }
 
+    /**
+     * Save the routes in a file.
+     *
+     * @return bool
+     */
     private function save()
     {
         $content = json_encode($this->routes);

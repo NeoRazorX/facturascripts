@@ -30,6 +30,9 @@ use FacturaScripts\Core\Base\Translator;
 abstract class DocumentController extends PanelController
 {
 
+    /**
+     * TODO
+     */
     const ITEM_SELECT_LIMIT = 500;
 
     /**
@@ -87,6 +90,12 @@ abstract class DocumentController extends PanelController
         }
     }
 
+    /**
+     * TODO
+     *
+     * @param EditView $view
+     * @param string $action
+     */
     protected function execAfterAction($view, $action)
     {
         if ($action === 'export') {
