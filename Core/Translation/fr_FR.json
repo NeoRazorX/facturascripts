@@ -1239,5 +1239,6 @@
     "accounting-entry": "Entrée comptable",
     "concept": "Concept",
     "lock-unlock": "Verrouiller-Déverrouiller",
-    "clone": "Cloner"
+    "clone": "Cloner",
+    "predefined-concepts": "Concepts prédéfinis"
 }

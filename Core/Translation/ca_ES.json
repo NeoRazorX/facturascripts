@@ -1153,5 +1153,6 @@
     "accounting-entry": "Assentament",
     "concept": "Concepte",
     "lock-unlock": "(Des)Bloquejar",
-    "clone": "Duplicar"
+    "clone": "Duplicar",
+    "predefined-concepts": "Conceptes Predefinits"
 }
