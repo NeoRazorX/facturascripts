@@ -3,7 +3,7 @@
     Document   : conceptos_partidas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the auto concepts for accounting entries table.
+        Structure for predefined concepts for accounting entries table.
 -->
 <table>
     <column>

@@ -43,7 +43,7 @@ class ListAsiento extends ExtendedController\ListController
         $this->addOrderBy('ListAsiento', 'numero', 'number');
         $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
 
-        $this->addView('\FacturaScripts\Dinamic\Model\ConceptoPartida', 'ListConceptoPartida', 'accounting-entry-concepts', 'fa-indent');
+        $this->addView('\FacturaScripts\Dinamic\Model\ConceptoPartida', 'ListConceptoPartida', 'predefined-concepts', 'fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
 
         $this->addOrderBy('ListConceptoPartida', 'codconcepto', 'code');
