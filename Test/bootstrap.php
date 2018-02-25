@@ -28,7 +28,7 @@ $config = FS_FOLDER . '/config.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
     echo 'Executing on scrutinizer ...' . "\n\n";
     $config = FS_FOLDER . '/Test/config-scrutinizer.php';
-} elseif (__DIR__ === '/home/travis/build/NeoRazorX/facturascripts/Test') {
+} elseif (strpos(__DIR__, '/home/travis/build/') !== false) {
     echo 'Executing on travis ...' . "\n\n";
     $config = FS_FOLDER . '/Test/config-travis.php';
 }
