@@ -6,9 +6,10 @@
 -->
 <table>
     <column>
-        <name>codcontacto</name>
-        <type>character varying(10)</type>
+        <name>idcontacto</name>
+        <type>serial</type>
         <null>NO</null>
+        <default>nextval('contactos_idcontacto_seq'::regclass)</default>
     </column>
     <column>
         <name>cifnif</name>
@@ -87,6 +88,6 @@
     </column>
     <constraint>
         <name>contactos_pkey</name>
-        <type>PRIMARY KEY (codcontacto)</type>
+        <type>PRIMARY KEY (idcontacto)</type>
     </constraint>
 </table>

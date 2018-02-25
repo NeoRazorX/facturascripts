@@ -17,8 +17,8 @@
         <nulo>NO</nulo>
     </columna>
     <columna>
-        <nombre>codcontacto</nombre>
-        <tipo>character varying(6)</tipo>
+        <nombre>idcontacto</nombre>
+        <tipo>integer</tipo>
         <nulo>NO</nulo>
     </columna>
     <restriccion>
@@ -30,7 +30,7 @@
         <consulta>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>
     <restriccion>
-        <nombre>ca_contactosclientes_crm_contactos</nombre>
-        <consulta>FOREIGN KEY (codcontacto) REFERENCES contactos (codcontacto) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+        <nombre>ca_contactosclientes_contactos</nombre>
+        <consulta>FOREIGN KEY (idcontacto) REFERENCES contactos (idcontacto) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>
 </tabla>

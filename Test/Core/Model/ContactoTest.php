@@ -35,7 +35,6 @@ final class ContactoTest extends TestCase
         $model = new Contacto();
 
         $this->assertInstanceOf(Contacto::class, $model);
-        $now = new \DateTime();
         $this->assertTrue($model->admitemarketing);
         $this->assertTrue($model->test());
 
