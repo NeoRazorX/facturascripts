@@ -289,7 +289,7 @@ class DocumentReports extends Controller
     }
 
     /**
-     * TODO
+     * Return a comma separated list of labels.
      *
      * @return string
      */
@@ -299,7 +299,7 @@ class DocumentReports extends Controller
     }
 
     /**
-     * TODO
+     * Return a comma separated list of keys.
      *
      * @param $sourceKey
      *

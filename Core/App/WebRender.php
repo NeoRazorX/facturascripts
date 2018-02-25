@@ -35,28 +35,28 @@ class WebRender
 {
 
     /**
-     * TODO
+     * Translation engine.
      *
      * @var Translator
      */
     private $i18n;
 
     /**
-     * TODO
+     * Loads template from the filesystem.
      *
      * @var Twig_Loader_Filesystem
      */
     private $loader;
 
     /**
-     * TODO
+     * App log manager.
      *
      * @var MiniLog
      */
     private $miniLog;
 
     /**
-     * TODO
+     * Plugin manager.
      *
      * @var PluginManager
      */
@@ -79,7 +79,7 @@ class WebRender
     }
 
     /**
-     * TODO
+     * Return Twig environment with default options for Twig.
      *
      * @return Twig_Environment
      */
@@ -98,7 +98,7 @@ class WebRender
     }
 
     /**
-     * TODO
+     * Add all paths from Core and Plugins folders.
      */
     public function loadPluginFolders()
     {
@@ -142,7 +142,7 @@ class WebRender
     }
 
     /**
-     * TODO
+     * Return default options for Twig.
      *
      * @return array
      */

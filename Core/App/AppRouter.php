@@ -27,12 +27,12 @@ class AppRouter
 {
 
     /**
-     * TODO
+     * Path to list of routes stored on file.
      */
     const ROUTE_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json';
 
     /**
-     * TODO
+     * List of routes.
      *
      * @var array
      */
@@ -51,7 +51,7 @@ class AppRouter
     }
 
     /**
-     * TODO
+     * Return the especific App controller for any kind of petition.
      *
      * @return AppAPI|AppController|AppCron
      */
@@ -76,7 +76,7 @@ class AppRouter
     }
 
     /**
-     * TODO
+     * Return true if can output a file, false otherwise.
      *
      * @return bool
      */
@@ -104,7 +104,7 @@ class AppRouter
     }
 
     /**
-     * TODO
+     * TODO: Uncomplete documentation
      *
      * @param $newRoute
      * @param $controllerName
@@ -130,7 +130,7 @@ class AppRouter
     }
 
     /**
-     * TODO
+     * Return the mime type from given file.
      *
      * @param $filePath
      *
@@ -150,7 +150,7 @@ class AppRouter
     }
 
     /**
-     * TODO
+     * Return the uri from the request.
      *
      * @return bool|string
      */

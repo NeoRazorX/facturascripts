@@ -31,42 +31,42 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 {
 
     /**
-     * TODO
+     * List of warehouses.
      *
      * @var Model\Almacen[]
      */
     protected $almacenes;
 
     /**
-     * TODO
+     * List of currencies.
      *
      * @var Model\Divisa[]
      */
     protected $divisas;
 
     /**
-     * TODO
+     * Exercice to use.
      *
      * @var Model\Ejercicio
      */
     protected $ejercicio;
 
     /**
-     * TODO
+     * List of payment methods.
      *
      * @var Model\FormaPago[]
      */
     protected $formasPago;
 
     /**
-     * TODO
+     * List of taxes.
      *
      * @var Model\Impuesto[]
      */
     protected $impuestos;
 
     /**
-     * TODO
+     * List of series.
      *
      * @var Model\Serie[]
      */

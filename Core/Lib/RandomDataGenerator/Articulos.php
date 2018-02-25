@@ -29,28 +29,28 @@ class Articulos extends AbstractRandom
 {
 
     /**
-     * TODO
+     * List of warehouses.
      *
      * @var Model\Almacen[]
      */
     protected $almacenes;
 
     /**
-     * TODO
+     * List of manufacturers.
      *
      * @var Model\Fabricante[]
      */
     protected $fabricantes;
 
     /**
-     * TODO
+     * List of families.
      *
      * @var Model\Familia[]
      */
     protected $familias;
 
     /**
-     * TODO
+     * List of taxes.
      *
      * @var Model\Impuesto[]
      */

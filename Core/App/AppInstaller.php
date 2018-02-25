@@ -33,21 +33,21 @@ class AppInstaller
 {
 
     /**
-     * TODO
+     * Translation engine.
      *
      * @var Translator
      */
     private $i18n;
 
     /**
-     * TODO
+     * App log manager.
      *
      * @var MiniLog
      */
     private $miniLog;
 
     /**
-     * TODO
+     * Request on which we can get data.
      *
      * @var Request
      */

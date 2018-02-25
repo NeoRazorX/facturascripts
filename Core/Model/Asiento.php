@@ -176,7 +176,7 @@ class Asiento extends Base\ModelClass
     }
 
     /**
-     * TODO
+     * TODO: Uncomplete documentation
      *
      * @return string
      */

@@ -30,7 +30,7 @@ abstract class AbstractRandomAccounting extends AbstractRandom
 {
 
     /**
-     * TODO
+     * List of exercices.
      *
      * @var array
      */

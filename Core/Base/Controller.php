@@ -132,7 +132,7 @@ class Controller
     public $title;
 
     /**
-     * TODO
+     * Given uri, default is empty.
      *
      * @var string
      */

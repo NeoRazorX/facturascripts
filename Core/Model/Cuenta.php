@@ -141,7 +141,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * TODO
+     * TODO: Uncomplete documentation
      *
      * @return bool
      */

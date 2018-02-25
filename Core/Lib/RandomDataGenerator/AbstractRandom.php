@@ -38,7 +38,7 @@ abstract class AbstractRandom
     private $dataBase;
 
     /**
-     * TODO
+     * Contains the model to generate random data.
      *
      * @var mixed
      */
@@ -162,7 +162,7 @@ abstract class AbstractRandom
     }
 
     /**
-     * TODO
+     * Return a date between $start and $end.
      *
      * @param int $start
      * @param int $end
@@ -175,7 +175,7 @@ abstract class AbstractRandom
     }
 
     /**
-     * TODO
+     * Return one random item from given array.
      *
      * @param $array
      *
@@ -187,7 +187,7 @@ abstract class AbstractRandom
     }
 
     /**
-     * TODO
+     * Return an IBAN number.
      *
      * @return string
      */
@@ -261,7 +261,7 @@ abstract class AbstractRandom
     }
 
     /**
-     * TODO
+     * Suffle all items from $model and put it to $variable.
      *
      * @param $variable
      * @param $model

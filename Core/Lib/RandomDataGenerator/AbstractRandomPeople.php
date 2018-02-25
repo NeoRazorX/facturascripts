@@ -31,21 +31,21 @@ abstract class AbstractRandomPeople extends AbstractRandom
 {
 
     /**
-     * TODO
+     * List of agents.
      *
      * @var Model\Agente[]
      */
     protected $agentes;
 
     /**
-     * TODO
+     * List of client groups.
      *
      * @var Model\GrupoClientes[]
      */
     protected $grupos;
 
     /**
-     * TODO
+     * List of countries.
      *
      * @var Model\Pais[]
      */
@@ -66,7 +66,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
     }
 
     /**
-     * TODO
+     * Return a random CIF.
      *
      * @return string
      */
@@ -76,7 +76,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
     }
 
     /**
-     * TODO
+     * Return a random phone number.
      *
      * @return string
      */
@@ -86,7 +86,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
     }
 
     /**
-     * TODO
+     * Return a random
      *
      * @return string
      */

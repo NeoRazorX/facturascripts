@@ -84,7 +84,6 @@ class AccountingPlanImport
      * @param string $filePath
      *
      * @return \SimpleXMLElement|array
-     *
      */
     private function getData($filePath)
     {

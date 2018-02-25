@@ -31,7 +31,7 @@ abstract class DocumentController extends PanelController
 {
 
     /**
-     * TODO
+     * Default item limit for selects.
      */
     const ITEM_SELECT_LIMIT = 500;
 
@@ -91,7 +91,7 @@ abstract class DocumentController extends PanelController
     }
 
     /**
-     * TODO
+     * Run the controller after actions
      *
      * @param EditView $view
      * @param string $action

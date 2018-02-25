@@ -59,7 +59,7 @@ class AppController extends App
     private $menuManager;
 
     /**
-     * TODO
+     * Contains the page name.
      *
      * @var string
      */
