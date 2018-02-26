@@ -85,7 +85,14 @@ class Updater extends Controller
         }
     }
 
-    private function delTree($dir)
+    /**
+     * Erase $dir folder and all its subfolders.
+     * 
+     * @param string $dir
+     * 
+     * @return bool
+     */
+    private function delTree(string $dir): bool
     {
         $files = array_diff(scandir($dir), ['.', '..']);
         foreach ($files as $file) {
@@ -95,6 +102,9 @@ class Updater extends Controller
         return rmdir($dir);
     }
 
+    /**
+     * Downloads core zip.
+     */
     private function download()
     {
         if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')) {
@@ -104,10 +114,18 @@ class Updater extends Controller
         $downloader = new DownloadTools();
         if ($downloader->download(self::UPDATE_CORE_URL, FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')) {
             $this->miniLog->info('download-completed');
+            $this->updaterItems[0]['downloaded'] = true;
         }
     }
 
-    private function foldersFrom($baseDir)
+    /**
+     * Returns an array with all subforder of $baseDir folder.
+     * 
+     * @param string $baseDir
+     * 
+     * @return array
+     */
+    private function foldersFrom(string $baseDir): array
     {
         $directories = [];
         foreach (scandir($baseDir) as $file) {
@@ -124,7 +142,12 @@ class Updater extends Controller
         return $directories;
     }
 
-    private function notWritablefolders()
+    /**
+     * Returns an array with all not writable folders.
+     * 
+     * @return array
+     */
+    private function notWritablefolders(): array
     {
         $notwritable = [];
         foreach ($this->foldersFrom(FS_FOLDER) as $dir) {
@@ -136,12 +159,18 @@ class Updater extends Controller
         return $notwritable;
     }
 
-    private function recurseCopy($src, $dst)
+    /**
+     * Copy all files and folders from $src to $dst
+     * 
+     * @param string $src
+     * @param string $dst
+     */
+    private function recurseCopy(string $src, string $dst)
     {
         $dir = opendir($src);
         @mkdir($dst);
         while (false !== ( $file = readdir($dir))) {
-            if ($file != '.' || $file != '..') {
+            if ($file === '.' || $file === '..') {
                 continue;
             }
 
@@ -154,14 +183,12 @@ class Updater extends Controller
         closedir($dir);
     }
 
-    private function update()
-    {
-        if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')) {
-            $this->extractCore();
-        }
-    }
-
-    private function extractCore()
+    /**
+     * Extract zip file and update all files.
+     * 
+     * @return bool
+     */
+    private function update(): bool
     {
         $zip = new ZipArchive();
         $zipStatus = $zip->open(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip', ZipArchive::CHECKCONS);
@@ -170,13 +197,23 @@ class Updater extends Controller
             return false;
         }
 
-        $zip->extractTo('.');
+        $zip->extractTo(FS_FOLDER);
         $zip->close();
+        unlink(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip');
 
         foreach (['Core', 'node_modules', 'vendor'] as $folder) {
-            $this->delTree(FS_FOLDER . DIRECTORY_SEPARATOR . $folder);
-            $this->recurseCopy(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts' . DIRECTORY_SEPARATOR . $folder, FS_FOLDER . DIRECTORY_SEPARATOR . $folder);
+            $origin = FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts' . DIRECTORY_SEPARATOR . $folder;
+            $dest = FS_FOLDER . DIRECTORY_SEPARATOR . $folder;
+            if (!file_exists($origin)) {
+                $this->miniLog->critical('COPY ERROR: ' . $origin);
+                break;
+            }
+
+            $this->delTree($dest);
+            $this->recurseCopy($origin, $dest);
         }
+
+        $this->delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
         return true;
     }
 }
