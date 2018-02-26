@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class PedidosCliente extends AbstractRandomDocuments
 {
 
+    /**
+     * PedidosCliente constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\PedidoCliente());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $ped = $this->model;

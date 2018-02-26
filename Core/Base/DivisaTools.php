@@ -26,6 +26,9 @@ namespace FacturaScripts\Core\Base;
 class DivisaTools
 {
 
+    /**
+     * DivisaTools constructor.
+     */
     public function __construct()
     {
         if (!defined('FS_CURRENCY_POS')) {

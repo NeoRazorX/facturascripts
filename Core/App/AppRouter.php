@@ -26,10 +26,21 @@ namespace FacturaScripts\Core\App;
 class AppRouter
 {
 
+    /**
+     * Path to list of routes stored on file.
+     */
     const ROUTE_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json';
 
+    /**
+     * List of routes.
+     *
+     * @var array
+     */
     private $routes;
 
+    /**
+     * AppRouter constructor.
+     */
     public function __construct()
     {
         if (!defined('FS_ROUTE')) {
@@ -39,6 +50,11 @@ class AppRouter
         $this->routes = $this->loadFromFile();
     }
 
+    /**
+     * Return the especific App controller for any kind of petition.
+     *
+     * @return AppAPI|AppController|AppCron
+     */
     public function getApp()
     {
         $uri = $this->getUri();
@@ -59,6 +75,11 @@ class AppRouter
         return new AppController($uri);
     }
 
+    /**
+     * Return true if can output a file, false otherwise.
+     *
+     * @return bool
+     */
     public function getFile()
     {
         $uri = $this->getUri();
@@ -82,6 +103,13 @@ class AppRouter
         return false;
     }
 
+    /**
+     * TODO: Uncomplete documentation
+     *
+     * @param $newRoute
+     * @param $controllerName
+     * @param string $optionalId
+     */
     public function setRoute($newRoute, $controllerName, $optionalId = '')
     {
         if (!empty($optionalId)) {
@@ -101,6 +129,13 @@ class AppRouter
         $this->save();
     }
 
+    /**
+     * Return the mime type from given file.
+     *
+     * @param $filePath
+     *
+     * @return string
+     */
     private function getMime($filePath)
     {
         if (substr($filePath, -4) === '.css') {
@@ -114,6 +149,11 @@ class AppRouter
         return mime_content_type($filePath);
     }
 
+    /**
+     * Return the uri from the request.
+     *
+     * @return bool|string
+     */
     private function getUri()
     {
         $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
@@ -139,6 +179,11 @@ class AppRouter
         return [];
     }
 
+    /**
+     * Save the routes in a file.
+     *
+     * @return bool
+     */
     private function save()
     {
         $content = json_encode($this->routes);

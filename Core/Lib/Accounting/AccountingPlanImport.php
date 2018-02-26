@@ -40,12 +40,14 @@ class AccountingPlanImport
     private $ejercicio;
 
     /**
+     * System translator.
      *
      * @var Translator
      */
     private static $i18n;
 
     /**
+     * Manage the log of the entire application.
      *
      * @var MiniLog
      */
@@ -82,7 +84,6 @@ class AccountingPlanImport
      * @param string $filePath
      *
      * @return \SimpleXMLElement|array
-     *
      */
     private function getData($filePath)
     {

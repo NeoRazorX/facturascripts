@@ -70,7 +70,10 @@ abstract class Address extends ModelClass
      * @var string
      */
     public $provincia;
-    
+
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
