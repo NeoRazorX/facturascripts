@@ -295,19 +295,11 @@ class AppInstaller
             $errors = true;
         }
 
-        if (!extension_loaded('simplexml')) {
-            $this->miniLog->critical($this->i18n->trans('simplexml-not-found'));
-            $errors = true;
-        }
-
-        if (!extension_loaded('openssl')) {
-            $this->miniLog->critical($this->i18n->trans('openssl-not-found'));
-            $errors = true;
-        }
-
-        if (!extension_loaded('zip')) {
-            $this->miniLog->critical($this->i18n->trans('ziparchive-not-found'));
-            $errors = true;
+        foreach (['bcmath', 'curl', 'simplexml', 'openssl', 'zip'] as $extension) {
+            if (!extension_loaded($extension)) {
+                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%enxtension%' => $extension]));
+                $errors = true;
+            }
         }
 
         if (!is_writable(FS_FOLDER)) {
