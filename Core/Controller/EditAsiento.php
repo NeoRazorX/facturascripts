@@ -88,10 +88,10 @@ class EditAsiento extends ExtendedController\PanelController
                 return false;
 
             case 'clone':
-                return true; // TODO
+                return true; // TODO: Uncomplete
 
             case 'lock':
-                return true; // TODO
+                return true; // TODO: Uncomplete
 
             default:
                 return parent::execPreviousAction($view, $action);

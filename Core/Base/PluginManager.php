@@ -31,8 +31,17 @@ use ZipArchive;
 class PluginManager
 {
 
+    /**
+     * Minimum version required of FacturaScripts.
+     */
     const MIN_VERSION = 2018;
+    /**
+     * Path to list plugins on file.
+     */
     const PLUGIN_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'plugins.json';
+    /**
+     * Plugin path folder.
+     */
     const PLUGIN_PATH = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR;
 
     /**
@@ -175,7 +184,7 @@ class PluginManager
      *
      * @param string $zipPath
      * @param string $zipName
-     * 
+     *
      * @return bool
      */
     public function install($zipPath, $zipName = 'plugin.zip')
@@ -281,6 +290,14 @@ class PluginManager
         return is_dir($dir) ? rmdir($dir) : unlink($dir);
     }
 
+    /**
+     * Return plugin information.
+     *
+     * @param $pluginName
+     * @param $iniContent
+     *
+     * @return array
+     */
     private function getPluginInfo($pluginName, $iniContent)
     {
         $info = [
@@ -305,6 +322,7 @@ class PluginManager
 
             if ($info['min_version'] >= 2018 && $info['min_version'] <= self::MIN_VERSION) {
                 $info['compatible'] = true;
+                $info['description'] = self::$i18n->trans('compatible');
             } else {
                 $info['description'] = self::$i18n->trans('incompatible-with-facturascripts', ['%version%' => self::MIN_VERSION]);
             }
@@ -334,7 +352,7 @@ class PluginManager
 
     /**
      * Save the list of plugins in a file.
-     * 
+     *
      * @return bool
      */
     private function save()
@@ -348,7 +366,7 @@ class PluginManager
      *
      * @param string $folderPath
      *
-     * @return Array
+     * @return array
      */
     private function scanFolder($folderPath)
     {

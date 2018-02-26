@@ -31,19 +31,33 @@ abstract class AbstractRandom
 {
 
     /**
+     * Link with the active database
      *
      * @var DataBase
      */
     private $dataBase;
 
     /**
+     * Contains the model to generate random data.
      *
      * @var mixed
      */
     protected $model;
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return mixed
+     */
     abstract public function generate($num = 50);
 
+    /**
+     * AbstractRandom constructor.
+     *
+     * @param $model
+     */
     public function __construct($model)
     {
         $this->dataBase = new DataBase();
@@ -147,16 +161,36 @@ abstract class AbstractRandom
         return (mt_rand(0, 4) ? $this->getOneItem($prefijos) . ' ' : '') . $this->getOneItem($nombres);
     }
 
+    /**
+     * Return a date between $start and $end.
+     *
+     * @param int $start
+     * @param int $end
+     *
+     * @return false|string
+     */
     protected function fecha($start = 2013, $end = 2018)
     {
         return date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand($start, $end));
     }
 
+    /**
+     * Return one random item from given array.
+     *
+     * @param $array
+     *
+     * @return mixed
+     */
     public function getOneItem($array)
     {
         return $array[mt_rand(0, count($array) - 1)];
     }
 
+    /**
+     * Return an IBAN number.
+     *
+     * @return string
+     */
     public function iban()
     {
         $pais = $this->getOneItem(['ES', 'FR']);
@@ -226,6 +260,12 @@ abstract class AbstractRandom
         return $precio;
     }
 
+    /**
+     * Suffle all items from $model and put it to $variable.
+     *
+     * @param $variable
+     * @param $model
+     */
     public function shuffle(&$variable, $model)
     {
         $variable = $model->all();

@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class Asientos extends AbstractRandomAccounting
 {
 
+    /**
+     * Asientos constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Asiento());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 25)
     {
         $asiento = $this->model;

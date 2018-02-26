@@ -62,6 +62,7 @@ class DocumentReportsSource
      * Create and initialize object
      *
      * @param string $source
+     * @param string $color
      */
     public function __construct($source, $color)
     {

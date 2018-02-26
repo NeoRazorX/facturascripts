@@ -29,11 +29,21 @@ use FacturaScripts\Core\Model;
 class Subcuentas extends AbstractRandomAccounting
 {
 
+    /**
+     * Subcuentas constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Subcuenta());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $subcuenta = $this->model;

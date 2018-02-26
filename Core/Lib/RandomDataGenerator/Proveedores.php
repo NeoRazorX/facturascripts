@@ -29,11 +29,21 @@ use FacturaScripts\Core\Model;
 class Proveedores extends AbstractRandomPeople
 {
 
+    /**
+     * Proveedores constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Proveedor());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $proveedor = $this->model;
