@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : crm_contactos.xml
+    Document   : contactos.xml
     Description:
-        Structure for the crm_contactos table.
+        Structure for the contactos table.
 -->
 <table>
     <column>
-        <name>codcontacto</name>
-        <type>character varying(10)</type>
+        <name>idcontacto</name>
+        <type>serial</type>
         <null>NO</null>
+        <default>nextval('contactos_idcontacto_seq'::regclass)</default>
     </column>
     <column>
         <name>cifnif</name>
@@ -85,12 +86,8 @@
         <name>fechaalta</name>
         <type>date</type>
     </column>
-    <column>
-        <name>ultima_comunicacion</name>
-        <type>date</type>
-    </column>
     <constraint>
-        <name>crm_contactos_pkey</name>
-        <type>PRIMARY KEY (codcontacto)</type>
+        <name>contactos_pkey</name>
+        <type>PRIMARY KEY (idcontacto)</type>
     </constraint>
 </table>

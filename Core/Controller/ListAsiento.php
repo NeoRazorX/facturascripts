@@ -33,7 +33,7 @@ class ListAsiento extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento');
+        $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
@@ -42,6 +42,12 @@ class ListAsiento extends ExtendedController\ListController
 
         $this->addOrderBy('ListAsiento', 'numero', 'number');
         $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
+
+        $this->addView('\FacturaScripts\Dinamic\Model\ConceptoPartida', 'ListConceptoPartida', 'predefined-concepts', 'fa-indent');
+        $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
+
+        $this->addOrderBy('ListConceptoPartida', 'codconcepto', 'code');
+        $this->addOrderBy('ListConceptoPartida', 'descripcion', 'description');
     }
 
     /**

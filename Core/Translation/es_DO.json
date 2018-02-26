@@ -1236,5 +1236,6 @@
     "accounting-entry": "Asiento",
     "concept": "Concepto",
     "lock-unlock": "(Des)Bloquear",
-    "clone": "Duplicar"
+    "clone": "Duplicar",
+    "predefined-concepts": "Conceptos Predefinidos"
 }

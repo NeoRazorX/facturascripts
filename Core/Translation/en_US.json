@@ -1080,5 +1080,6 @@
     "accounting-entry": "Accounting Entry",
     "concept": "Concept",
     "lock-unlock": "Lock-Unlock",
-    "clone": "Clone"
+    "clone": "Clone",
+    "predefined-concepts": "Predefined Concepts"
 }

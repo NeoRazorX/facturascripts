@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,19 +29,17 @@ use PHPUnit\Framework\TestCase;
  */
 final class ContactoTest extends TestCase
 {
+
     public function testNewContacto()
     {
         $model = new Contacto();
 
         $this->assertInstanceOf(Contacto::class, $model);
-        $now = new \DateTime();
         $this->assertTrue($model->admitemarketing);
-        $this->assertEquals($now->format('d-m-Y'), $model->ultima_comunicacion);
         $this->assertTrue($model->test());
 
         $model->nombre = 'Contact name';
         $model->apellidos = 'Contact surname';
-
         $this->assertTrue($model->test());
     }
 
