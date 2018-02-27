@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 class WidgetButton implements VisualItemInterface
 {
-
     /**
      * Type of button.
      *
@@ -141,11 +141,13 @@ class WidgetButton implements VisualItemInterface
         $this->action = (string) $widget_atributes->action;
         $this->hint = (string) $widget_atributes->hint;
 
-        if (!empty($widget_atributes->color)) {
+        if (!empty($widget_atributes->color))
+        {
             $this->color = (string) $widget_atributes->color;
         }
 
-        if (!empty($widget_atributes->onclick)) {
+        if (!empty($widget_atributes->onclick))
+        {
             $this->onClick = (string) $widget_atributes->onclick;
         }
     }
@@ -173,7 +175,7 @@ class WidgetButton implements VisualItemInterface
      */
     private function getIconHTML()
     {
-        return empty($this->icon) ? '' : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
+        return empty($this->icon) ? '' : '<i class="fa '.$this->icon.'"></i>&nbsp;&nbsp;';
     }
 
     /**
@@ -183,7 +185,7 @@ class WidgetButton implements VisualItemInterface
      */
     private function getOnClickHTML()
     {
-        return empty($this->onClick) ? '' : ' onclick="' . $this->onClick . '"';
+        return empty($this->onClick) ? '' : ' onclick="'.$this->onClick.'"';
     }
 
     /**
@@ -197,10 +199,10 @@ class WidgetButton implements VisualItemInterface
      */
     private function getCalculateHTML($label, $value, $hint)
     {
-        $html = '<button type="button" class="btn btn-' . $this->color . '" '
-            . $this->getOnClickHTML() . ' style="margin-right: 5px;" ' . $hint . '>'
-            . $this->getIconHTML()
-            . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
+        $html = '<button type="button" class="btn btn-'.$this->color.'" '
+            .$this->getOnClickHTML().' style="margin-right: 5px;" '.$hint.'>'
+            .$this->getIconHTML()
+            .'<span class="cust-text">'.$label.' '.$value.'</span></button>';
 
         return $html;
     }
@@ -215,13 +217,14 @@ class WidgetButton implements VisualItemInterface
      *
      * @return string
      */
-    private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
+    private function getActionHTML($label, $hint, $formName = 'main_form',
+                                   $class = 'col-sm-auto')
     {
-        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
-            . ' onclick="execActionForm(\'' . $formName . '\',\'' . $this->action . '\');" ' . $hint . '>'
-            . $this->getIconHTML()
-            . $label
-            . '</button>';
+        $html = '<button type="button" class="'.$class.' btn btn-'.$this->color.'"'
+            .' onclick="execActionForm(\''.$formName.'\',\''.$this->action.'\');" '.$hint.'>'
+            .$this->getIconHTML()
+            .$label
+            .'</button>';
 
         return $html;
     }
@@ -236,13 +239,31 @@ class WidgetButton implements VisualItemInterface
      */
     private function getModalHTML($label, $class = 'col-sm-auto')
     {
-        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
-            . ' data-toggle="modal" data-target="#' . $this->action . '">'
-            . $this->getIconHTML()
-            . $label
-            . '</button>';
+        $html = '<button type="button" class="'.$class.' btn btn-'.$this->color.'"'
+            .' data-toggle="modal" data-target="#'.$this->action.'">'
+            .$this->getIconHTML()
+            .$label
+            .'</button>';
 
         return $html;
+    }
+
+    /**
+     * Return the HTML code to display a button with javascript Action
+     * 
+     * @param string $label
+     * @param string $hint
+     * @param string $formName
+     * @param sring $class
+     */
+    private function getJsHTML($label, $hint, $formName = 'main-form',
+                               $class = 'col-sm-auto')
+    {
+
+        $html = '<button type="button" class="'.$class.'btn btn-'.$this->color.'"'
+            .'onclick="'.$this->action.'">'
+            .$label
+            .'</button';
     }
 
     /**
@@ -255,7 +276,8 @@ class WidgetButton implements VisualItemInterface
      *
      * @return string
      */
-    public function getHTML($label, $value = '', $hint = '', $class = 'col-sm-auto')
+    public function getHTML($label, $value = '', $hint = '',
+                            $class = 'col-sm-auto')
     {
         switch ($this->type) {
             case 'calculate':
@@ -263,10 +285,10 @@ class WidgetButton implements VisualItemInterface
 
             case 'action':
                 return $this->getActionHTML($label, $hint, $value, $class);
-
             case 'modal':
                 return $this->getModalHTML($label, $class);
-
+            case 'js':
+                return $this->getJsHTML($label, $hint, $value, $class);
             default:
                 return '';
         }
@@ -294,6 +316,6 @@ class WidgetButton implements VisualItemInterface
     public function getHintHTML($hint)
     {
         return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="'
-            . $hint . '" ';
+            .$hint.'" ';
     }
 }
