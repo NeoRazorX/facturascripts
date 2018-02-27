@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class EmailExport implements ExportInterface
 {
-    use Base\Utils;
 
     /**
      * EmailExport constructor.
@@ -53,9 +52,22 @@ class EmailExport implements ExportInterface
      *
      * @param Response $response
      */
-    public function newDoc(&$response)
+    public function newDoc()
     {
-        return new RedirectResponse('index.php?page=ExportEmail', 302);
+        return new RedirectResponse('ExportEmail', 302);
+    }
+
+    /**
+     * Set headers and output document content to response.
+     *
+     * @param Response $response
+     */
+    public function show(&$response)
+    {
+        //$response->headers->set('Content-type', 'application/pdf');
+        //$response->setContent($this->getDoc());
+
+        return new RedirectResponse('ExportEmail', 302);
     }
 
     /**
