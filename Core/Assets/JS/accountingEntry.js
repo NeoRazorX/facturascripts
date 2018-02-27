@@ -18,8 +18,29 @@
 
 var documentUrl = "";
 var accountGraph = null;
+var accountGrid = null;
+var accountDescription, accountBalance, unbalance;
 
-function loadAccountData(account) {
+/*
+ * BEFORE CHANGE Funtions
+ */
+function bc_calculateUnbalance(changes) {
+    // Calculate new unbalance
+    var balance = Number(changes[3]) - Number(changes[2]);
+    if (changes[1] === 'haber') {
+        balance = balance * -1;
+    }
+    setUnbalance(balance);
+}
+
+function bc_loadAccountData(changes) {
+    as_loadAccountData(changes[1], changes[3]);
+}
+
+/*
+ * AFTER SELECTION Funtions
+ */
+function as_loadAccountData(colName, account, preventScrolling) {
     if (account === null || account === '') {
         clearAccountData();
         return;
@@ -34,10 +55,13 @@ function loadAccountData(account) {
     $.getJSON(documentUrl, data, setAccountData);
 }
 
+/*
+ * AUXILIAR Funtions
+ */
 function setAccountData(data) {
     // Update data labels
-    $('#account-description').text(data.description);
-    $('#account-balance').text(data.balance);
+    accountDescription.innerText = data.description;
+    accountBalance.innerText = data.balance;
 
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
@@ -48,21 +72,69 @@ function setAccountData(data) {
 }
 
 function clearAccountData() {
-    $('#account-description').text('');
-    $('#account-balance').text('');
+    accountDescription.innerText = '';
+    accountBalance.innerText = '';
 
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
         dataset.data.lenght = 0;
-        dataset.data = [];
+        dataset.data = [0,0,0,0,0,0,0,0,0,0,0,0];
     });
     accountGraph.update();
 }
 
+// Accumulate balance to unbalance
+function setUnbalance(balance) {
+    var amount = Number(unbalance.innerText) + Number(balance);
+    unbalance.innerText = amount.toFixed(2);
+}
+
+// Calculate initial unbalance
+function setInitialUnbalance() {
+    // Calculate columns number for Debit & Credit
+    var colDebit, colCredit, colField;
+    for (var i = accountGrid.countCols()-1; i >= 0; i--) {
+        colField = getGridColumnName(i);
+        if (colField === 'debe' || colField === 'haber') {
+            colDebit = (colField === 'debe') ? i : colDebit;
+            colCredit = (colField === 'haber') ? i : colCredit;
+            if (colDebit !== undefined && colCredit !== undefined) {
+                break;
+            }
+        }
+    }
+
+    // Calculate unbalance
+    var data = accountGrid.getData();
+    var balance = 0.00;
+    for (var i = 0, max = data.length; i < max; i++) {
+        balance += Number(data[i][colDebit]) - Number(data[i][colCredit]);
+    }
+    setUnbalance(balance.toFixed(2));
+}
+
+/*
+ * Document Ready. Create and configure Objects.
+ */
 $(document).ready(function () {
+    // Init Working variables
+    accountGrid = gridObject;                            // TODO: convert gridObject to POO
+    accountDescription = document.getElementById('account-description');
+    accountBalance = document.getElementById('account-balance');
+    unbalance = document.getElementById('unbalance');
+
+    // Calculate initial unbalance
+    setInitialUnbalance();
+
+    // Add control to balances columns
+    addControlledColumn('debe');
+    addControlledColumn('haber');
+    controlledColumns['debe'].beforeChange = bc_calculateUnbalance;
+    controlledColumns['haber'].beforeChange = bc_calculateUnbalance;
+
     // Add control events to Grid Controller
-    controlledColumns['codsubcuenta'].beforeChange = loadAccountData;
-    controlledColumns['codsubcuenta'].afterSelection = loadAccountData;
+    controlledColumns['codsubcuenta'].beforeChange = bc_loadAccountData;
+    controlledColumns['codsubcuenta'].afterSelection = as_loadAccountData;
 
     // Graphic bars
     var ctx = document.getElementById('detail-balance');

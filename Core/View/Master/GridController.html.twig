@@ -43,9 +43,6 @@
 {% endblock %}
 
 {% block body %}
-{# Working variables #}
-{% set masterKeyView = fsc.views|keys|first %}
-
 {# -- Visual macros -- #}
 {% import 'Macro/BaseController.html.twig' as BaseController %}
 
@@ -54,7 +51,8 @@
     {# -- Account View Panel -- #}
     <div class="row">
         <div class="col-12">
-            {% set view = fsc.views[masterKeyView] %}
+            {% set indexView = fsc.views|keys|first %}
+            {% set view = fsc.views[indexView] %}
 
             {# Info header panels #}
             {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
@@ -76,7 +74,7 @@
     </div>
 
     {# -- Detail data -- #}
-    {% set numViews = fsc.views[masterKeyView].count %}
+    {% set numViews = fsc.views[indexView].count %}
     {% if numViews > 0 %}
     <div class="row mt-2">
         <div class="col-12">

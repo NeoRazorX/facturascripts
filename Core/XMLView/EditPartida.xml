@@ -36,10 +36,14 @@
             </widget>
         </column>
         <column name="offsetting" order="110">
-            <widget type="text" fieldname="codcontrapartida" />
+            <widget type="autocomplete" fieldname="codcontrapartida" required="true">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="description" order="115">
-            <widget type="text" fieldname="concepto" />
+            <widget type="autocomplete" fieldname="concepto" required="true">
+                <values source="conceptos_partidas" fieldcode="descripcion" fieldtitle="codconcepto" strict="false"></values>
+            </widget>
         </column>
         <column name="debit" display="right" order="120">
             <widget type="money" fieldname="debe">
