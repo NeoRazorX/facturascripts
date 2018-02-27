@@ -49,7 +49,6 @@
         <row type="status" fieldname="editable">
             <option color="table-warning">1</option>
         </row>
-
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
                 <button type="action" label="renumber-accounting" color="info" action="renumber" icon="fa-list-ol" />
