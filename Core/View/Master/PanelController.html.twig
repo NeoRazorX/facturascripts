@@ -122,9 +122,11 @@
                     </a>
                     <div class="dropdown-menu">
                         {% for view in fsc.views %}
-                        <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}">
-                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
-                        </a>
+                            {% if fsc.viewClass(view) != 'HtmlView' %}
+                            <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}">
+                                <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

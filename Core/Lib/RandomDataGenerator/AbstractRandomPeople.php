@@ -31,23 +31,31 @@ abstract class AbstractRandomPeople extends AbstractRandom
 {
 
     /**
+     * List of agents.
      *
      * @var Model\Agente[]
      */
     protected $agentes;
 
     /**
+     * List of client groups.
      *
      * @var Model\GrupoClientes[]
      */
     protected $grupos;
 
     /**
+     * List of countries.
      *
      * @var Model\Pais[]
      */
     protected $paises;
 
+    /**
+     * AbstractRandomPeople constructor.
+     *
+     * @param $model
+     */
     public function __construct($model)
     {
         parent::__construct($model);
@@ -57,16 +65,31 @@ abstract class AbstractRandomPeople extends AbstractRandom
         $this->shuffle($this->paises, new Model\Pais());
     }
 
+    /**
+     * Return a random CIF.
+     *
+     * @return string
+     */
     protected function cif()
     {
         return (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
     }
 
+    /**
+     * Return a random phone number.
+     *
+     * @return string
+     */
     protected function telefono()
     {
         return (string) mt_rand(555555555, 999999999);
     }
 
+    /**
+     * Return a random
+     *
+     * @return string
+     */
     protected function seguridadSocial()
     {
         return (string) mt_rand(10000, 99999) . mt_rand(10000, 99999);
@@ -227,7 +250,7 @@ abstract class AbstractRandomPeople extends AbstractRandom
     /**
      * Rellena un cliente con datos aleatorios.
      *
-     * @param Model\Cliente|Model\Proveedor $cliente
+     * @param Model\Cliente|Model\Proveedor $clipro
      */
     protected function fillCliPro(&$clipro)
     {

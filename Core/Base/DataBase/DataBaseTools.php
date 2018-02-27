@@ -38,14 +38,14 @@ class DataBaseTools
     private static $dataBase;
 
     /**
-     * System Log.
+     * System translator.
      *
      * @var Translator
      */
     private static $i18n;
 
     /**
-     * Translator.
+     * Manage the log of the entire application.
      *
      * @var MiniLog
      */
