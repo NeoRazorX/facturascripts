@@ -73,6 +73,8 @@ class AppInstaller
 
         if ($installed) {
             header('Location: ' . $this->getUri());
+        } elseif ('TRUE' === $this->request->get('phpinfo', '')) {
+            phpinfo();
         } else {
             $this->render();
         }
@@ -300,7 +302,7 @@ class AppInstaller
 
         foreach (['bcmath', 'curl', 'simplexml', 'openssl', 'zip'] as $extension) {
             if (!extension_loaded($extension)) {
-                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%enxtension%' => $extension]));
+                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => $extension]));
                 $errors = true;
             }
         }
