@@ -285,11 +285,6 @@ class AppInstaller
     {
         $errors = false;
 
-        if ((int) substr(phpversion(), 0, 1) < 7) {
-            $this->miniLog->critical($this->i18n->trans('old-php-version'));
-            $errors = true;
-        }
-
         if ((float) '3,1' >= (float) '3.1') {
             $this->miniLog->critical($this->i18n->trans('wrong-decimal-separator'));
             $errors = true;

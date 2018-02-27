@@ -19,12 +19,28 @@
 
 define('FS_FOLDER', __DIR__);
 
+/// This function shows useful error data
+function fatal_handler()
+{
+    $error = error_get_last();
+    if (isset($error) && in_array($error["type"], [1, 64])) {
+        die("<h1>Fatal error</h1>"
+            . "<ul>"
+            . "<li><b>Type:</b> " . $error["type"] . "</li>"
+            . "<li><b>File:</b> " . $error["file"] . "</li>"
+            . "<li><b>Line:</b> " . $error["line"] . "</li>"
+            . "<li><b>Message:</b> " . $error["message"] . "</li>"
+            . "</ul>");
+    }
+}
+register_shutdown_function("fatal_handler");
+
 /// Preliminary checks
 if (!file_exists(__DIR__ . '/config.php')) {
     if (!file_exists(__DIR__ . '/vendor')) {
-        die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install<br/>npm install</p>'
+        die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>'
             . '----------------------------------------'
-            . '<p>Debes ejecutar: composer install<br/>npm install</p>');
+            . '<p>Debes ejecutar: composer install</p>');
     }
 
     /**
@@ -39,22 +55,6 @@ if (!file_exists(__DIR__ . '/config.php')) {
     }
     die('');
 }
-
-/// This function shows useful error data
-function fatal_handler()
-{
-    $error = error_get_last();
-    if (isset($error) && in_array($error["type"], [1, 64])) {
-        echo "<h1>Fatal error</h1>"
-        . "<ul>"
-        . "<li><b>Type:</b> " . $error["type"] . "</li>"
-        . "<li><b>File:</b> " . $error["file"] . "</li>"
-        . "<li><b>Line:</b> " . $error["line"] . "</li>"
-        . "<li><b>Message:</b> " . $error["message"] . "</li>"
-        . "</ul>";
-    }
-}
-register_shutdown_function("fatal_handler");
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
