@@ -18,9 +18,48 @@
 
 
 var documentLineData = [];
-var gridObject = null;
+var gridObject = null;               // TODO: convert to POO
 var controlledColumns = {};
 
+/* Add a column to controlate events */
+function addControlledColumn(columnName) {
+    controlledColumns[columnName] = {
+        value: null,
+        beforeChange: null,
+        afterSelection: null
+    };
+}
+
+/* Generate a single source function for autocomplete columns
+ *
+ * @param {Object} data
+ * @returns {Function}
+ */
+function assignSource(data) {
+    var source = data.source.slice(0);
+    var field = data.field.slice(0);
+    var title = data.title.slice(0);
+
+    return function (query, process) {
+        query = query.split(' - ', 1)[0];
+        $.ajax({
+            url: data.url,
+            dataType: 'json',
+            data: {
+                term: query,
+                action: 'autocomplete',
+                source: source,
+                field: field,
+                title: title
+            },
+            success: function (response) {
+                process(response);
+            }
+        });
+    };
+}
+
+/* Configure source data for autocomplete columns */
 function configureAutocompleteColumns(columns) {
     var column = null;
     var keys = Object.keys(columns);
@@ -28,44 +67,28 @@ function configureAutocompleteColumns(columns) {
         column = columns[keys[i]];
         if (column['type'] === 'autocomplete') {
             // Add column to list of columns to control
-            controlledColumns[column['data']] = {
-                value: null,
-                beforeChange: null,
-                afterSelection: null
-            };
+            addControlledColumn(column['data']);
 
             // assing calculate function to column
-            var data = column['data-source'];
-            column['source'] = function (query, process) {
-                query = query.split(' - ', 1)[0];
-                $.ajax({
-                    url: data.url,
-                    dataType: 'json',
-                    data: {
-                        term: query,
-                        action: 'autocomplete',
-                        source: data.source,
-                        field: data.field,
-                        title: data.title
-                    },
-                    success: function (response) {
-                        process(response);
-                    }
-                });
-            };
+            column['source'] = assignSource(column['data-source']);
             delete column['data-source'];
         }
     }
 }
 
+/* Return column value */
 function getGridFieldData(row, fieldName) {
     return documentLineData['rows'][row][fieldName];
 }
 
+/* Return field name for a column */
 function getGridColumnName(col) {
     return documentLineData['columns'][col]['data'];
 }
 
+/*
+ * EVENT MANAGER
+ */
 function afterSelection(row1, col1, row2, col2, preventScrolling) {
     // Check if editing
     var editor = gridObject.getActiveEditor();
@@ -83,10 +106,8 @@ function afterSelection(row1, col1, row2, col2, preventScrolling) {
             column = controlledColumns[keys[i]];
             var newValue = getGridFieldData(row1, keys[i]);
             if (newValue !== column.value && column.afterSelection !== null) {
-                console.log('value: ', column.value);
-                console.log('new: ', newValue);
                 column.value = newValue;
-                column.afterSelection(newValue);
+                column.afterSelection(keys[i], newValue, preventScrolling);
             }
         }
     }
@@ -94,26 +115,33 @@ function afterSelection(row1, col1, row2, col2, preventScrolling) {
 }
 
 function beforeChange(changes, source) {
-    // Check if the value has changed
+    // Check if the value has changed. Not Multiselection
     if (changes !== null && changes[0][2] !== changes[0][3]) {
         var column = null;
         var keys = Object.keys(controlledColumns);
         for (var i = 0; i < keys.length; i++) {
             if (changes[0][1] === keys[i]) {
-                // Control for autocomplete columns
-                column = controlledColumns[keys[i]];
-                column.value = changes[0][3].split(' - ', 1)[0];
-                changes[0][3] = column.value;
+                // aply for autocomplete columns
+                if (typeof changes[0][3] === 'string') {
+                    changes[0][3] = changes[0][3].split(' - ', 1)[0];
+                }
 
                 // propagate event to childrens
+                column = controlledColumns[keys[i]];
                 if (column.beforeChange !== null) {
-                    column.beforeChange(column.value);
+                    column.beforeChange(changes[0]);
                 }
+
+                // Set new value
+                column.value = changes[0][3];
             }
         }
     }
 }
 
+/*
+ * Document Ready. Create and configure Grid Object.
+ */
 $(document).ready(function () {
     // Prepare autocomplete columns
     configureAutocompleteColumns(documentLineData['columns']);
