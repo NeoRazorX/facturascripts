@@ -37,7 +37,7 @@ class GridView extends BaseView
     /**
      * Grid data configuration and data
      *
-     * @var Array
+     * @var array
      */
     private $gridData;
 

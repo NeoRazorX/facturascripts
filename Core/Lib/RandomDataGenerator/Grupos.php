@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class Grupos extends AbstractRandomPeople
 {
 
+    /**
+     * Grupos constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\GrupoClientes());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $nombres = [

@@ -154,9 +154,6 @@ class DocumentView extends BaseView
      *
      * @param bool  $code
      * @param array $where
-     * @param array $order
-     * @param int   $offset
-     * @param int   $limit
      */
     public function loadData($code = false, $where = [])
     {

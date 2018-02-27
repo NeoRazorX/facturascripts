@@ -335,7 +335,7 @@ class Articulo extends Base\Product
     public function sumStock($codalmacen, $cantidad = 1, $recalculaCoste = false, $codcombinacion = null)
     {
         if ($recalculaCoste) {
-            // TODO: Uncomplete
+            // TODO: Uncomplete condition
             $this->costemedio = 1;
         }
 

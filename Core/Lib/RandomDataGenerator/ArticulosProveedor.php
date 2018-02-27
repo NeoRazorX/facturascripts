@@ -28,11 +28,21 @@ use FacturaScripts\Core\Model;
 class ArticulosProveedor extends AbstractRandom
 {
 
+    /**
+     * ArticulosProveedor constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\ArticuloProveedor());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 50)
     {
         $this->shuffle($articulos, new Model\Articulo());

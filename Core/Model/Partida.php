@@ -239,6 +239,8 @@ class Partida extends Base\ModelClass
      * Load de ID for subaccount
      *
      * @param string $code
+     * @param string $exercise
+     *
      * @return int|null
      */
     private function getIdSubAccount($code, $exercise)

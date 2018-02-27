@@ -175,6 +175,11 @@ class Asiento extends Base\ModelClass
         return empty($this->concepto) || empty($this->fecha);
     }
 
+    /**
+     * TODO: Uncomplete documentation
+     *
+     * @return string
+     */
     private function testErrorInExercise(): string
     {
         $exerciseModel = new Ejercicio();

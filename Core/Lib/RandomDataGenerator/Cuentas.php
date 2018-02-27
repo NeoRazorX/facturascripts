@@ -29,11 +29,21 @@ use FacturaScripts\Core\Model;
 class Cuentas extends AbstractRandomAccounting
 {
 
+    /**
+     * Cuentas constructor.
+     */
     public function __construct()
     {
         parent::__construct(new Model\Cuenta());
     }
 
+    /**
+     * Generate random data.
+     *
+     * @param int $num
+     *
+     * @return int
+     */
     public function generate($num = 25)
     {
         $cuenta = $this->model;
