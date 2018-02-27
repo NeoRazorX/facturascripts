@@ -286,6 +286,10 @@ This visual element is available only in views of type *Edit* and *EditList* and
 As its name suggests it allows to include a button in one of the editing columns.
 There are three types of buttons declared by the ``type`` attribute and with functions
 different:
+*  *calculate*: Button to show a statistical calculation.
+*  *action*: Button to execute an action in the controller.
+*  *modal*: Button to display a modal form.
+*  *js*: Button to make a call to a javascript function.
 
 -  **type**: indicates the type of button.
 
@@ -300,7 +304,8 @@ different:
 
 -  **action**: this property varies according to the type. For ``action`` buttons indicates the action
     which is sent to the controller, so that it performs some kind of special process.
-    For buttons of type ``modal`` indicates the modal form that should be shown to the user.
+    For buttons of type ``modal`` indicates the modal form that should be shown to the user. 
+    In the case of buttonos type js, action will be the name of the javascript function to call.
 
 
 Example:
