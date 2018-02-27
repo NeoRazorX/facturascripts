@@ -102,6 +102,18 @@ class GridView extends BaseView
     }
 
     /**
+     * Determines whether the user's selection should be strictly
+     * a value from the list of values
+     *
+     * @param array $values
+     * @return bool
+     */
+    private function getAutocompeteStrict($values): bool
+    {
+        return isset($values['strict']) ? $values['strict'] === 'true' : true;
+    }
+
+    /**
      * Return grid column configuration
      *
      * @param ColumnItem $column
@@ -113,10 +125,10 @@ class GridView extends BaseView
         switch ($column->widget->type) {
             case 'autocomplete':
                 $item['type'] = 'autocomplete';
-                $item['strict'] = true;
-                $item['allowInvalid'] = false;
                 $item['visibleRows'] = 5;
+                $item['allowInvalid'] = true;
                 $item['trimDropdown'] = false;
+                $item['strict'] = $this->getAutocompeteStrict($column->widget->values[0]);
                 $item['data-source'] = $this->getAutocompleteSource($column->widget->values[0]);
                 break;
 

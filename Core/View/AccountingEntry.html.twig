@@ -41,7 +41,7 @@
         <div class="card">
             <div class="card-header">
                 <span><small id="account-description"></small></span>
-                <span class="float-right"><small><strong>Descuadre:&nbsp;<span>0.00</span></strong></small></span>
+                <span class="float-right"><small><strong>{{ i18n.trans('unbalance') }}:&nbsp;<span id="unbalance">0.00</span></strong></small></span>
             </div>
             <div class="body">
                 <div id="document-lines"></div>
@@ -52,7 +52,7 @@
     <div class="col">
         <div class="card">
             <div class="card-header">
-                <small><strong>Total balance:&nbsp;<span id="account-balance">0.00</span></strong></small>
+                <small><strong>{{ i18n.trans('account-balance') }}:&nbsp;<span id="account-balance">0.00</span></strong></small>
             </div>
             {# Graphic Subaccount Balance panel #}
             <div class="card-body">

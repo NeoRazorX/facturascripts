@@ -625,5 +625,7 @@
     "concept": "Concept",
     "lock-unlock": "Lock-Unlock",
     "clone": "Clone",
-    "predefined-concepts": "Predefined Concepts"
+    "predefined-concepts": "Predefined Concepts",
+    "unbalance": "Unbalance",
+    "account-balance": "Account Balance"
 }
