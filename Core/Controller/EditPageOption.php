@@ -31,7 +31,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditPageOption extends Base\Controller {
+class EditPageOption extends Base\Controller 
+{
 
     /**
      * Selected user, for which the controller columns are created or modified
@@ -73,8 +74,7 @@ class EditPageOption extends Base\Controller {
      */
     private function getParams() {
         $this->selectedViewName = $this->request->get('code');
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick', null) : $this->user->nick;
-         
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick', null) : $this->user->nick;         
     }
 
     /**
@@ -140,7 +140,8 @@ class EditPageOption extends Base\Controller {
     /**
      * Delete configuration for view
      */
-    private function deleteData(){
+    private function deleteData()
+        {
         $nick = $this->request->get('nick');
         if (!$nick){            
             $where = [
@@ -155,9 +156,9 @@ class EditPageOption extends Base\Controller {
             ];            
         }
         
-        $id = $this->model->all($where, [], 0, 0);
+        $id_all = $this->model->all($where, [], 0, 0);
         
-            if ($id[0] && $id[0]->delete()) {
+            if ($id_all[0] && $id_all[0]->delete()) {
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
                 $this->model->getForUser($this->selectedViewName, $this->selectedUser);
             } 
