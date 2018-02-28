@@ -26,73 +26,74 @@
 #}
 
 {% macro DocumentView(context, view) %}
-{% import _self as macros %}
+    {% import _self as macros %}
 
-{# -- Calculate common values -- #}
-{% set model = view.getModel() %}
+    {# -- Calculate common values -- #}
+    {% set model = view.getModel() %}
 
-<script type="text/javascript">
-    documentLineData = {{ view.getLineData() | raw }};
-</script>
+    <script type="text/javascript">
+        documentLineData = {{ view.getLineData() | raw }};
+        documentUrl = '{{ model.url('edit') | raw }}';
+    </script>
 
-<form name="f_document_primary" action="#" method="post">
-    <input type="hidden" name="action"/>
-    <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
-    <div class="form-row">
-        {% if view.documentType == 'sale' %}
-            {{ macros.customerSelect(context.i18n, 'codcliente', 'codcliente', model) }}
-        {% elseif view.documentType == 'purchase' %}
-            {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
-        {% endif %}
-        {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
-        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control text-right', disabled: ''}) }}
-    </div>
-    <br/>
-    <div id="document-lines"></div>
-    <br/>
-    <div class="form-row">
-        {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
-        {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
-        {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
-        {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
-        {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <br/>
+    <form name="f_document_primary" action="#" method="post">
+        <input type="hidden" name="action"/>
+        <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
+        <div class="form-row">
+            {% if view.documentType == 'sale' %}
+                {{ macros.customerSelect(context.i18n, 'codcliente', 'codcliente', model) }}
+            {% elseif view.documentType == 'purchase' %}
+                {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
+            {% endif %}
+            {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
+            {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control text-right', disabled: ''}) }}
         </div>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary')">
-                <i class="fa fa-trash" aria-hidden="true"></i>
-                <span class="d-none d-sm-inline-block">&nbsp;{{ context.i18n.trans('delete') }}</span>
-            </a>
+        <br/>
+        <div id="document-lines"></div>
+        <br/>
+        <div class="form-row">
+            {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
+            {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
+            {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
+            {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
+            {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
         </div>
-        <div class="col-6 text-right">
-            <button type="button" id="btn-document-save" class="btn btn-sm btn-primary" onclick="documentSave()">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
-            </button>
+        <div class="row">
+            <div class="col-12">
+                <br/>
+            </div>
         </div>
-    </div>
-</form>
+        <div class="row">
+            <div class="col-6">
+                <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary')">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ context.i18n.trans('delete') }}</span>
+                </a>
+            </div>
+            <div class="col-6 text-right">
+                <button type="button" id="btn-document-save" class="btn btn-sm btn-primary" onclick="documentSave()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
+                </button>
+            </div>
+        </div>
+    </form>
 {% endmacro %}
 
 {% macro customSelect(id, name, value, allValues = {}, allowHide = true) %}
     {% if allowHide and allValues | length == 1 %}
         {% for key, option in allValues %}
-        <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
+            <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
         {% endfor %}
     {% else %}
-    <div class="col">
-        <select id="{{ id }}" name="{{ name }}" class="form-control">
-            {% for key, option in allValues %}
-            <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
-                {{ option }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
+        <div class="col">
+            <select id="{{ id }}" name="{{ name }}" class="form-control">
+                {% for key, option in allValues %}
+                    <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
+                        {{ option }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
     {% endif %}
 {% endmacro %}
 
@@ -105,18 +106,18 @@
                         <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
                     </span>
                 </span>
-        {% endif %}
+            {% endif %}
 
-                <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
-                        {% if attributes.class is not defined %}
-                            class="form-control"
-                        {% endif %}
+            <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
+                   {% if attributes.class is not defined %}
+                       class="form-control"
+                   {% endif %}
 
-                        {% for attribute,attrValue in attributes %}
-                            {{ attribute }}="{{ attrValue }}"
-                        {% endfor %} /> {# end input #}
+                   {% for attribute,attrValue in attributes %}
+                       {{ attribute }}="{{ attrValue }}"
+                   {% endfor %} /> {# end input #}
 
-        {% if icon %}
+            {% if icon %}
             </div>
         {% endif %}
     </div>
