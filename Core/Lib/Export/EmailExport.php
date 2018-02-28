@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class to export and send by email a page
@@ -30,6 +31,30 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class EmailExport implements ExportInterface
 {
+
+    const LIST_LIMIT = 500;
+
+    /**
+     * Contains the CSV data in array format
+     *
+     * @var array
+     */
+    private $csv;
+
+    /**
+     * Separator value
+     *
+     * @var string
+     */
+    private $separator;
+
+    /**
+     * Text delimiter value
+     *
+     * @var string
+     */
+    private $delimiter;
+
 
     /**
      * EmailExport constructor.
@@ -54,7 +79,6 @@ class EmailExport implements ExportInterface
      */
     public function newDoc()
     {
-        return new RedirectResponse('ExportEmail', 302);
     }
 
     /**
@@ -64,10 +88,8 @@ class EmailExport implements ExportInterface
      */
     public function show(&$response)
     {
-        //$response->headers->set('Content-type', 'application/pdf');
-        //$response->setContent($this->getDoc());
-
-        return new RedirectResponse('ExportEmail', 302);
+        $request = Request::createFromGlobals();
+        $response = (new RedirectResponse('ExportEmail', 302))->prepare($request);
     }
 
     /**
@@ -80,14 +102,14 @@ class EmailExport implements ExportInterface
     public function generateModelPage($model, $columns, $title = '')
     {
         $tableData = [];
-        foreach ((array) $model as $key => $value) {
+        /*foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
                 $tableData[] = [
                     'key' =>  $key ,
                     'value' =>  $value,
                 ];
             }
-        }
+        }*/
 
         $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
     }
