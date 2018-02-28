@@ -28,11 +28,14 @@
 
 {% block javascript %}
 {{ parent() }}
+{% set masterView = fsc.views|keys|first %}
+{% if fsc.views[masterView].count > 0 %}
 <script src="node_modules/chart.js/dist/Chart.min.js"></script>
 <script src="Core/Assets/JS/accountingEntry.js"></script>
 <script type="text/javascript">
     documentUrl = '{{ view.getURL('edit') | raw }}';
 </script>
+{% endif %}
 {% endblock %}
 
 {% block gridcard %}

@@ -33,13 +33,19 @@
 
 {% block css %}
 {{ parent() }}
+{% set masterView = fsc.views|keys|first %}
+{% if fsc.views[masterView].count > 0 %}
 <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css" />
+{% endif %}
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
+{% set masterView = fsc.views|keys|first %}
+{% if fsc.views[masterView].count > 0 %}
 <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
 <script src="Core/Assets/JS/gridController.js"></script>
+{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -74,12 +80,11 @@
     </div>
 
     {# -- Detail data -- #}
-    {% set numViews = fsc.views[indexView].count %}
-    {% if numViews > 0 %}
+    {% if fsc.views[indexView].count > 0 %}
     <div class="row mt-2">
         <div class="col-12">
             {# -- Tabs -- #}
-            {% if numViews > 1 %}
+            {% if fsc.views.count > 1 %}
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
                 {% if loop.index > 1 %}
