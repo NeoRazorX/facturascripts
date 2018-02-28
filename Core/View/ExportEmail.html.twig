@@ -21,7 +21,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block css %}
     {{ parent() }}
@@ -53,7 +53,7 @@
 {% set reports = fsc.getReports() %}
 
 {# -- Visual macros -- #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
 {# -- Main Body -- #}
 <div class="container-fluid d-print-none">
@@ -90,11 +90,6 @@
         {# -- Left Panel -- #}
         <div class="col-sm-2">
             <div class="nav flex-column nav-pills" id="mainTabs" role="tablist" aria-orientation="vertical">
-                {% for ejercicio in fsc.ejercicios %}
-                <a class="nav-link{% if loop.first %} active{% endif %}" id="tab-{{ ejercicio.codejercicio }}" data-toggle="pill" href="#data-{{ ejercicio.codejercicio }}" role="tab" aria-controls="data-{{ ejercicio.codejercicio }}" aria-selected="{{ loop.first }}">
-                    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i> {{ ejercicio.nombre }}
-                </a>
-                {% endfor %}
             </div>
         </div>
 
@@ -113,37 +108,39 @@
                                     {# -- Document Title -- #}
                                     <div class="col-12">
                                         <h3 class="text-capitalize">
-                                            <i class="fa fa-book fa-fw" aria-hidden="true"></i> {{ i18n.trans(description) }}
+                                            <i class="fa fa-book fa-fw" aria-hidden="true"></i> {{ i18n.trans(sent_by_email_title)|default('Enviar por email') }}
                                         </h3>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-3">
+                                    <div class="col-12">
                                         <div class="form-group">
-                                            <input type="text" name="date-from" value="{{ ejercicio.fechainicio }}" class="form-control datepicker" autocomplete="off"/>
+                                            {{ forms.simpleInput('date-from' ~ index, 'date-from' ~ index, NULL, 'text', i18n.trans(subject)|default('Destinatario'), 'fa-calendar', input_date_attr) }}
                                         </div>
                                     </div>
+                                 </div>
 
-                                    <div class="col-3">
+                                 <div class="row">
+                                    <div class="col-12">
                                         <div class="form-group">
-                                            <input type="text" name="date-to" value="{{ ejercicio.fechafin }}" class="form-control datepicker" autocomplete="off"/>
+                                            {{ forms.simpleInput('date-from' ~ index, 'date-from' ~ index, NULL, 'text', i18n.trans(subject)|default('Asunto'), 'fa-calendar', input_date_attr) }}
                                         </div>
                                     </div>
+                                 </div>
 
-                                    <div class="col-3">
+                                 <div class="row">
+                                    <div class="col-12">
                                         <div class="form-group">
-                                            <select name="format" class="form-control">
-                                                {% for key, option in exportOptions %}
-                                                <option value="{{ key }}">{{ i18n.trans(option['description']) }}</option>
-                                                {% endfor %}
-                                            </select>
+                                            {{ forms.simpleInput('date-from' ~ index, 'date-from' ~ index, NULL, 'text', i18n.trans(subject)|default('Contenido'), 'fa-calendar', input_date_attr) }}
                                         </div>
                                     </div>
+                                 </div>
 
+                                 <div class="row">
                                     <div class="col-3">
                                         <button type="submit" class="btn btn-primary" {{ popoverTitle(generate_title, 'bottom') }}>
-                                            <i class="fa fa-eye fa-fw" aria-hidden="true"></i> {{ generate }}
+                                            <i class="fa fa-mail fa-fw" aria-hidden="true"></i> {{ submit|default('Enviar') }}
                                         </button>
                                     </div>
                                 </div>
