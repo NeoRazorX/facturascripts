@@ -618,5 +618,6 @@
     "children-accounts": "Children Accounts",
     "data-source": "Origin data",
     "chart": "Chart",
-    "others-filters": "Others filters"
+    "others-filters": "Others filters",
+    "default-not-deletable": "Default configuration can't be deleted"
 }

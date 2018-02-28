@@ -11,6 +11,7 @@
 {% set go_back = i18n.trans('back') %}
 {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
 {% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore-data') %}
+{% set delete, delete_title = i18n.trans('delete'), i18n.trans('delete-data') %}
 {% set refresh_title = i18n.trans('refresh') %}
 
 {% set panel_header = fsc.getPanelHeader() %}
@@ -57,7 +58,6 @@
                     <div class="float-right text-danger">
                         <form action="#" method="post" class="form-inline" role="form" name="select_user">
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
-
                             <label>{{ i18n.trans('select-user') }}&nbsp;&nbsp;</label>
                             {% set userList = {'':i18n.trans('all')}|merge(fsc.getUserList()) %}
                             {{ simpleSelect(
@@ -75,7 +75,6 @@
                 </div>
 
                 <form action="#" method="post" class="form" role="form" name="main_form">
-                    <input type="hidden" name="action" value="save">
                     <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
                     <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
 
@@ -159,10 +158,13 @@
 
                     <div class="card-footer text-right">
                         <small class="pull-left text-left">{{ panel_footer|raw }}</small>
+                        <button class="btn btn-sm btn btn-danger" type="submit" name="action" value="delete" {{ popoverTitle(delete_title, 'bottom') }}>
+                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; {{ delete }}
+                        </button>
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                             <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
-                        </button>
-                        <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
+                        </button>              
+                        <button class="btn btn-sm btn-primary" type="submit" name="action" value="save" {{ popoverTitle(save_title, 'bottom') }}>
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>
                     </div>

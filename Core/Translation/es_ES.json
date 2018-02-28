@@ -1227,5 +1227,6 @@
     "plugin-not-compatible": "El Plugin %pluginName% no es compatible con FacturaScripts 2018.",
     "data-source": "Datos de origen",
     "chart": "Gráfico",
-    "others-filters": "Otros filtros"
+    "others-filters": "Otros filtros",
+    "default-not-deletable": "La configuración por defecto no puede ser borrada."
 }
