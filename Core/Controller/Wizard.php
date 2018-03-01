@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -33,6 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Wizard extends Controller
 {
+
     const ITEM_SELECT_LIMIT = 500;
 
     /**
@@ -110,7 +110,7 @@ class Wizard extends Controller
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
-        
+
         $pluginManager = new PluginManager();
         $pluginManager->initControllers();
     }

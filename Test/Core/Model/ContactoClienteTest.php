@@ -36,7 +36,7 @@ final class ContactoClienteTest extends TestCase
 
         $this->assertInstanceOf(ContactoCliente::class, $model);
         $this->assertNull($model->codcliente);
-        $this->assertEquals('', $model->codcontacto);
+        $this->assertNull($model->idcontacto);
         $this->assertTrue($model->test());
     }
 

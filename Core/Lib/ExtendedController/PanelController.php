@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -33,19 +32,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class PanelController extends Base\Controller
 {
+
     /**
      * Indicates the active view
      *
      * @var string
      */
     public $active;
-
-    /**
-     * Model to use with select and autocomplete filters.
-     *
-     * @var CodeModel
-     */
-    private $codeModel;
 
     /**
      * Export data object
@@ -99,13 +92,13 @@ abstract class PanelController extends Base\Controller
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
      * @param string          $className
+     * @param string          $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
 
         $this->active = $this->request->get('active', '');
-        $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->settings = [];
         $this->views = [];
@@ -157,7 +150,9 @@ abstract class PanelController extends Base\Controller
         $action = empty($view) ? '' : $this->request->get('action', '');
 
         // Run operations on the data before reading it
-        $this->execPreviousAction($view, $action);
+        if (!$this->execPreviousAction($view, $action)) {
+            return;
+        }
 
         // Load the model data for each view
         $mainView = array_keys($this->views)[0];
@@ -261,6 +256,14 @@ abstract class PanelController extends Base\Controller
     {
         $status = true;
         switch ($action) {
+            case 'autocomplete':
+                $this->setTemplate(false);
+                $data = $this->requestGet(['source', 'field', 'title', 'term']);
+                $results = $this->autocompleteAction($data);
+                $this->response->setContent(json_encode($results));
+                $status = false;
+                break;
+
             case 'save':
                 $data = $this->request->request->all();
                 $view->loadFromData($data);
@@ -284,10 +287,6 @@ abstract class PanelController extends Base\Controller
     protected function execAfterAction($view, $action)
     {
         switch ($action) {
-            case 'autocomplete':
-                $this->autocompleteAction();
-                break;
-
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->request->get('option'));
@@ -306,20 +305,18 @@ abstract class PanelController extends Base\Controller
     /**
      * Run the autocomplete action.
      * Returns a JSON string for the searched values.
+     *
+     * @param array $data
+     * @return array
      */
-    private function autocompleteAction()
+    protected function autocompleteAction($data): array
     {
-        $this->setTemplate(false);
-        $source = $this->request->get('source');
-        $field = $this->request->get('field');
-        $title = $this->request->get('title');
-        $term = $this->request->get('term');
-
         $results = [];
-        foreach ($this->codeModel->search($source, $field, $title, $term) as $value) {
+        $codeModel = new CodeModel();
+        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
-        $this->response->setContent(json_encode($results));
+        return $results;
     }
 
     /**
@@ -453,6 +450,24 @@ abstract class PanelController extends Base\Controller
     {
         $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
+    }
+
+    /**
+     * Adds a Grid type view to the controller
+     *
+     * @param $parentView
+     * @param $modelName
+     * @param $viewName
+     * @param $viewTitle
+     * @param string $viewIcon
+     */
+    protected function addGridView($parentView, $modelName, $viewName, $viewTitle, $viewIcon = 'fa-list')
+    {
+        $parent = $this->views[$parentView];
+        if (isset($parent)) {
+            $view = new GridView($parent, $viewTitle, $modelName, $viewName, $this->user->nick);
+            $this->addView($viewName, $view, $viewIcon);
+        }
     }
 
     /**

@@ -19,13 +19,14 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\DocumentCalculator;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 
 /**
  * Description of DocumentView
@@ -34,6 +35,7 @@ use FacturaScripts\Core\Model\Base\SalesDocumentLine;
  */
 class DocumentView extends BaseView
 {
+
     /**
      * Document calculator object.
      *
@@ -97,16 +99,6 @@ class DocumentView extends BaseView
     }
 
     /**
-     * Establishes de view/edit state of a column
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-    }
-
-    /**
      * Returns the data of lines to the view.
      *
      * @return string
@@ -119,11 +111,6 @@ class DocumentView extends BaseView
             'rows' => []
         ];
 
-        $moneyFormat = '0.';
-        for ($num = 0; $num < FS_NF0; $num++) {
-            $moneyFormat .= '0';
-        }
-
         foreach ($this->lineOptions as $col) {
             $data['headers'][] = self::$i18n->trans($col->title);
 
@@ -134,10 +121,12 @@ class DocumentView extends BaseView
             if ($col->display === 'none') {
                 $item['editor'] = false;
                 $item['width'] = 1;
-            }
-            if ($item['type'] === 'number' || $item['type'] === 'money') {
+            } elseif ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
-                $item['format'] = $moneyFormat;
+                $item['format'] = DivisaTools::gridMoneyFormat();
+            } elseif ($item['type'] === 'autocomplete') {
+                $item['source'] = $col->widget->values[0];
+                $item['strict'] = false;
             }
             $data['columns'][] = $item;
         }
@@ -167,11 +156,8 @@ class DocumentView extends BaseView
      *
      * @param bool  $code
      * @param array $where
-     * @param array $order
-     * @param int   $offset
-     * @param int   $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [])
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -205,7 +191,7 @@ class DocumentView extends BaseView
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
         unset($data['lines']);
         $this->loadFromData($data);
-        
+
         return $this->calculator->calculateForm($this->model, $newLines);
     }
 
@@ -377,6 +363,8 @@ class DocumentView extends BaseView
      */
     public function setNewCode()
     {
+        /// this can be eliminated when the error is fixed when calculating
+        /// a new code when the primary key is numeric
     }
 
     /**

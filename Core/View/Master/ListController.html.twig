@@ -217,7 +217,7 @@
                                 <input type="hidden" name="active" value="{{ indexView }}"/>
                                 {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
                                 <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
-                                <span class="input-group-btn">
+                                <span class="input-group-prepend">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
                                     </button>

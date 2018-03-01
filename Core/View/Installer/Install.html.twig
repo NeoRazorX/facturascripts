@@ -14,37 +14,50 @@
         <script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript">
-$(document).ready(function () {
-    document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            $(document).ready(function () {
+                document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    $('#db_type').on('change', function () {
-        $('#db_type option:selected').each(function () {
-            str = $(this).val();
-        });
-        if (str === 'mysql') {
-            $('#db_port').val(3306);
-            $('#db_user').val('root');
-            $("#mysql_socket_div").show();
-        } else if (str === 'postgresql') {
-            $('#db_port').val(5432);
-            $('#db_user').val('postgres');
-            $("#mysql_socket_div").hide();
-        }
-    });
+                $('#db_type').on('change', function () {
+                    $('#db_type option:selected').each(function () {
+                        str = $(this).val();
+                    });
+                    if (str === 'mysql') {
+                        $('#db_port').val(3306);
+                        $('#db_user').val('root');
+                        $("#mysql_socket_div").show();
+                    } else if (str === 'postgresql') {
+                        $('#db_port').val(5432);
+                        $('#db_user').val('postgres');
+                        $("#mysql_socket_div").hide();
+                    }
+                });
 
-    $('#fs_lang').on('change', function () {
-        var lang = $("#fs_lang option:selected").val();
-        var url = location.pathname + '?fs_lang=' + lang;
-        window.location.href = url;
-    });
-});
+                $('#fs_lang').on('change', function () {
+                    var lang = $("#fs_lang option:selected").val();
+                    var url = location.pathname + '?fs_lang=' + lang;
+                    window.location.href = url;
+                });
+            });
         </script>
     </head>
     <body>
-        <nav class="navbar navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="" onclick="location.reload();">
-                <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
+                <i class="fa fa-magic fa-fw" aria-hidden="true"></i> {{ i18n.trans('installer') }}
             </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="nav navbar-nav mr-auto"></ul>
+                <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+                    <li class="nav-item">
+                        <a class="nav-link" href="?phpinfo=TRUE">
+                            <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
         <div class="container">
             <div class="row">
@@ -95,11 +108,11 @@ $(document).ready(function () {
                                         </span>
                                         <select id="fs_lang" name="fs_lang" class="form-control">
                                             {% for langCode, langName in i18n.getAvailableLanguages() %}
-                                            {% if langCode == i18n.getLangCode() %}
-                                            <option value="{{ langCode }}" selected="">{{ langName }}</option>
-                                            {% else %}
-                                            <option value="{{ langCode }}">{{ langName }}</option>
-                                            {% endif %}
+                                                {% if langCode == i18n.getLangCode() %}
+                                                    <option value="{{ langCode }}" selected="">{{ langName }}</option>
+                                                {% else %}
+                                                    <option value="{{ langCode }}">{{ langName }}</option>
+                                                {% endif %}
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -116,7 +129,7 @@ $(document).ready(function () {
                                         </span>
                                         <select name="fs_timezone" class="form-control">
                                             {% for tz in timezones %}
-                                            <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
+                                                <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -221,15 +234,15 @@ $(document).ready(function () {
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
-                        <br/><br/><br/>
                     </div>
                 </div>
             </form>
         </div>
         <nav class="navbar fixed-bottom navbar-link bg-light">
-            <a class="navbar-brand" href="https://www.facturascripts.com" target="_blank">
-                &COPY; 2013-{{ 'now'|date('Y')}} FacturaScripts
-            </a>
+            <span class="navbar-text">
+                &COPY; 2013-{{ 'now'|date('Y')}}
+                <a href="https://beta.facturascripts.com" target="_blank">FacturaScripts</a>
+            </span>
         </nav>
     </body>
 </html>

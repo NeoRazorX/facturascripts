@@ -66,13 +66,6 @@ class Contacto extends Base\Contact
     public $codagente;
 
     /**
-     * Primary key.
-     *
-     * @var string
-     */
-    public $codcontacto;
-
-    /**
      * Contact country.
      *
      * @var string
@@ -101,18 +94,18 @@ class Contacto extends Base\Contact
     public $empresa;
 
     /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $idcontacto;
+
+    /**
      * Contact province.
      *
      * @var string
      */
     public $provincia;
-
-    /**
-     * Date of the last communication.
-     *
-     * @var string
-     */
-    public $ultima_comunicacion;
 
     /**
      * Returns the name of the table that uses this model.
@@ -121,7 +114,7 @@ class Contacto extends Base\Contact
      */
     public static function tableName()
     {
-        return 'crm_contactos';
+        return 'contactos';
     }
 
     /**
@@ -131,7 +124,7 @@ class Contacto extends Base\Contact
      */
     public static function primaryColumn()
     {
-        return 'codcontacto';
+        return 'idcontacto';
     }
 
     /**
@@ -141,7 +134,6 @@ class Contacto extends Base\Contact
     {
         parent::clear();
         $this->admitemarketing = true;
-        $this->ultima_comunicacion = date('d-m-Y');
     }
 
     /**

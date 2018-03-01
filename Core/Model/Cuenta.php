@@ -63,6 +63,13 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
+     * Identifier of the special account.
+     *
+     * @var int
+     */
+    public $codcuentaesp;
+
+    /**
      * Identifier of the parent account
      *
      * @var integer
@@ -83,7 +90,7 @@ class Cuenta extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_cuentas';
+        return 'cuentas';
     }
 
     /**
@@ -113,71 +120,34 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * Returns all sub-accounts in the account.
-     *
-     * @return Subcuenta[]
-     */
-    public function getSubAccounts()
-    {
-        $subcuenta = new Subcuenta();
-        return $subcuenta->all([new DataBaseWhere('idcuenta', $this->idcuenta)]);
-    }
-
-    /**
-     * Returns the first account that meets the indicated condition.
-     *
-     * @param DataBaseWhere[] $where
-     * @param array $orderby
-     *
-     * @return null|Cuenta
-     */
-    public function getAccountWithCondition($where, $orderby = [])
-    {
-        if (empty($orderby)) {
-            $orderby = ['codejercicio' => 'DESC', 'codcuenta' => 'ASC'];
-        }
-        $result = $this->all($where, $orderby, 0, 1);
-        if (empty($result)) {
-            return null;
-        }
-        return $result[0];
-    }
-
-    /**
-     * Gets the first selected special account.
-     *
-     * @param string $idcuentaesp
-     * @param string $codejercicio
-     *
-     * @return null|Cuenta
-     */
-    public function getSpecialAccount($idcuentaesp, $codejercicio)
-    {
-        $where = [
-            new DataBaseWhere('idcuentaesp', $idcuentaesp),
-            new DataBaseWhere('codejercicio', $codejercicio)
-        ];
-        return $this->getAccountWithCondition($where);
-    }
-
-    /**
      * Check and load the id of the parent account
      *
      * @return bool
      */
-    private function testParentAccount()
+    private function testErrorInParentAccount(): bool
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
 
-        $account = $this->getAccountWithCondition($where);
-        if (isset($account)) {
-            $this->parent_idcuenta = $account->idcuenta;
-            return TRUE;
+        $account = $this->all($where, ['codcuenta' => 'ASC'], 0, 1);
+        if (empty($account)) {
+            return true;
         }
-        return FALSE;
+
+        $this->parent_idcuenta = $account[0]->parent_idcuenta;
+        return false;
+    }
+
+    /**
+     * TODO: Uncomplete documentation
+     *
+     * @return bool
+     */
+    private function testErrorInAccount(): bool
+    {
+        return empty($this->codcuenta) || empty($this->descripcion) || empty($this->codejercicio);
     }
 
     /**
@@ -187,15 +157,17 @@ class Cuenta extends Base\ModelClass
      */
     public function test()
     {
+        $this->codcuenta = trim($this->codcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if (strlen($this->codcuenta) < 1 || strlen($this->descripcion) < 1) {
+        if ($this->testErrorInAccount())  {
             self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
             return false;
         }
 
+        /// Check and load correct id parent account
         $this->parent_idcuenta = null;
-        if (!empty($this->parent_codcuenta) && !$this->testParentAccount()) {
+        if (!empty($this->parent_codcuenta) && $this->testErrorInParentAccount()) {
             self::$miniLog->alert(self::$i18n->trans('account-parent-error'));
             return false;
         }

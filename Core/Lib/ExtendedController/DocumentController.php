@@ -30,6 +30,9 @@ use FacturaScripts\Core\Base\Translator;
 abstract class DocumentController extends PanelController
 {
 
+    /**
+     * Default item limit for selects.
+     */
     const ITEM_SELECT_LIMIT = 500;
 
     /**
@@ -72,7 +75,7 @@ abstract class DocumentController extends PanelController
                 $data = $this->request->request->all();
                 $result = $view->calculateDocument($data);
                 $this->response->setContent($result);
-                break;
+                return false;
 
             case 'save-document':
                 $this->setTemplate(false);
@@ -80,13 +83,19 @@ abstract class DocumentController extends PanelController
                 $data = $this->request->request->all();
                 $result = $view->saveDocument($data);
                 $this->response->setContent($result);
-                break;
+                return false;
 
             default:
                 return parent::execPreviousAction($view, $action);
         }
     }
 
+    /**
+     * Run the controller after actions
+     *
+     * @param EditView $view
+     * @param string $action
+     */
     protected function execAfterAction($view, $action)
     {
         if ($action === 'export') {

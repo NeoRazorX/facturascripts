@@ -68,11 +68,47 @@ function documentSave() {
     $("#btn-document-save").prop("disabled", false);
 }
 
+function setAutocompletes(columns) {
+    for (var key = 0; key < columns.length; key++) {
+        if (columns[key].type == "autocomplete") {
+            var source = columns[key].source["source"];
+            var field = columns[key].source["fieldcode"];
+            var title = columns[key].source["fieldtitle"];
+            columns[key].source = function (query, process) {
+                var ajaxData = {
+                    term: query,
+                    action: "autocomplete",
+                    source: source,
+                    field: field,
+                    title: title
+                };
+                $.ajax({
+                    type: "POST",
+                    url: documentUrl,
+                    dataType: "json",
+                    data: ajaxData,
+                    success: function (response) {
+                        console.log("data", ajaxData);
+                        console.log("response", response);
+                        var values = [];
+                        response.forEach(function(element) {
+                            values.push(element.key);
+                        });
+                        process(values);
+                    }
+                });
+            }
+        }
+    }
+
+    return columns;
+}
+
 $(document).ready(function () {
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
         data: documentLineData.rows,
-        columns: documentLineData.columns,
+        columns: setAutocompletes(documentLineData.columns),
         rowHeaders: true,
         colHeaders: documentLineData.headers,
         stretchH: "all",

@@ -29,13 +29,6 @@ class ContactoCliente extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $id;
-
-    /**
      * Customer code.
      *
      * @var string
@@ -43,11 +36,18 @@ class ContactoCliente extends Base\ModelClass
     public $codcliente;
 
     /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $id;
+
+    /**
      * Contact code.
      *
-     * @var string
+     * @var int
      */
-    public $codcontacto;
+    public $idcontacto;
 
     /**
      * Returns the name of the table that uses this model.

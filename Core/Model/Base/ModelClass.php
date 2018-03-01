@@ -312,6 +312,8 @@ abstract class ModelClass
      */
     public function newCode($field = '')
     {
+        /// TODO: Review the change to numeric by the cast and be able to indicate
+        /// TODO: a where condition for the calculation
         $sqlWhere = '';
         if (empty($field)) {
             /// Primary key is integer?

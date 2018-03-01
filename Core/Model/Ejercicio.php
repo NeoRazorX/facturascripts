@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\Utils;
 
 /**
- * Accounting year. It is the period in which seats, invoices, delivery notes are grouped ...
+ * Accounting year. It is the period in which accounting entry, invoices, delivery notes are grouped ...
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -66,7 +66,7 @@ class Ejercicio extends Base\ModelClass
     public $estado;
 
     /**
-     * Seat ID of the year end.
+     * Accounting entry ID of the year end.
      *
      * @var int
      */
@@ -80,7 +80,7 @@ class Ejercicio extends Base\ModelClass
     public $idasientopyg;
 
     /**
-     * Opening seat ID.
+     * Opening accounting entry ID.
      *
      * @var int
      */
@@ -221,30 +221,27 @@ class Ejercicio extends Base\ModelClass
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fechainicio <= '
-            . self::$dataBase->var2str($fecha) . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE ' . self::$dataBase->var2str($fecha) . ' BETWEEN fechainicio AND fechafin;';
 
         $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            $eje = new self($data[0]);
-            if ($eje->abierto() || !$soloAbierto) {
-                return $eje;
+        if (empty($data)) {
+            if ($crear && (strtotime($fecha) >= 1)) {
+                $eje = new self();
+                $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
+                $eje->nombre = date('Y', strtotime($fecha));
+                $eje->fechainicio = date('1-1-Y', strtotime($fecha));
+                $eje->fechafin = date('31-12-Y', strtotime($fecha));
+                if ($eje->save()) {
+                    return $eje;
+                }
             }
-        } elseif ($crear) {
-            $eje = new self();
-            $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
-            $eje->nombre = date('Y', strtotime($fecha));
-            $eje->fechainicio = date('1-1-Y', strtotime($fecha));
-            $eje->fechafin = date('31-12-Y', strtotime($fecha));
-
-            if (strtotime($fecha) < 1) {
-                self::$miniLog->alert(self::$i18n->trans('invalid-date', ['%date%' => $fecha]));
-            } elseif ($eje->save()) {
-                return $eje;
-            }
+            self::$miniLog->alert(self::$i18n->trans('invalid-date', ['%date%' => $fecha]));
+            return false;
         }
 
-        return false;
+        $eje = new self($data[0]);
+        return ($eje->abierto() || $soloAbierto === false) ? $eje : false;
     }
 
     /**
@@ -254,6 +251,7 @@ class Ejercicio extends Base\ModelClass
      */
     public function test()
     {
+        /// TODO: Change dates verify to $this->inRange() call
         $status = false;
 
         $this->codejercicio = trim($this->codejercicio);
@@ -288,5 +286,19 @@ class Ejercicio extends Base\ModelClass
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
             . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
+    }
+
+    /**
+     * Check if the indicated date is within the period of the exercise dates
+     *
+     * @param string $dateToCheck        (string with date format)
+     * @return bool
+     */
+    public function inRange($dateToCheck): bool
+    {
+        $start = strtotime($this->fechainicio);
+        $end = strtotime($this->fechafin);
+        $date = strtotime($dateToCheck);
+        return (($date >= $start) && ($date <= $end));
     }
 }

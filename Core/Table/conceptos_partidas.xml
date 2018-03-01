@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : conceptos_partidas.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for predefined concepts for accounting entries table.
+-->
+<table>
+    <column>
+        <name>codconcepto</name>
+        <type>character varying(6)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>conceptos_partidas_pkey</name>
+        <type>PRIMARY KEY (codconcepto)</type>
+    </constraint>
+</table>

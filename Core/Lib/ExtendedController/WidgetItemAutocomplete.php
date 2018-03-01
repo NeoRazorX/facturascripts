@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model;
  */
 class WidgetItemAutocomplete extends WidgetItem
 {
+
     /**
      * Model to use with select and autocomplete filters.
      *
@@ -117,7 +117,7 @@ class WidgetItemAutocomplete extends WidgetItem
             $html .= '<span class="input-group-prepend"><span class="input-group-text">'
                 . '<i class="fa fa-keyboard-o" aria-hidden="true"></i></span></span>';
         } else {
-            $html .= '<span class="input-group-btn">'
+            $html .= '<span class="input-group-prepend">'
                 . '<button type="button" class="btn btn-warning" onclick="$(\'#' . $this->fieldName . 'Autocomplete, #' . $this->fieldName . 'Autocomplete2\').val(\'\');">'
                 . '<i class="fa fa-remove" aria-hidden="true"></i>'
                 . '</button>'

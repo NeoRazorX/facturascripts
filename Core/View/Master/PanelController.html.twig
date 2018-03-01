@@ -28,7 +28,7 @@
 
 {% block css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('Core/Assets/CSS/extendedcontroller.css') }}" />
+    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/extendedcontroller.css') }}" />
     <link rel="stylesheet" href="{{ asset('node_modules/summernote/dist/summernote-bs4.css') }}"/>
 {% endblock %}
 
@@ -122,9 +122,11 @@
                     </a>
                     <div class="dropdown-menu">
                         {% for view in fsc.views %}
-                        <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}">
-                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
-                        </a>
+                            {% if fsc.viewClass(view) != 'HtmlView' %}
+                            <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}">
+                                <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

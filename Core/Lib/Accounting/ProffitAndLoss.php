@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Accounting;
 
 /**
@@ -28,6 +27,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class ProffitAndLoss extends AccountingBase
 {
+
     /**
      * Date from for filter
      *
@@ -109,8 +109,8 @@ class ProffitAndLoss extends AccountingBase
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
             . ' FROM co_cuentascbba ccb '
             . ' INNER JOIN co_codbalances08 cb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN \'6\' AND \'7\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
-            . ' INNER JOIN co_asientos asto on asto.idasiento = pa.idasiento and asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
+            . ' INNER JOIN partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN \'6\' AND \'7\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
+            . ' INNER JOIN asientos asto on asto.idasiento = pa.idasiento and asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
             . ' WHERE cb.naturaleza = \'PG\''
             . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '
             . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
@@ -136,7 +136,7 @@ class ProffitAndLoss extends AccountingBase
             $balance[$index] = [
                 'descripcion' => $index,
                 'saldo' => $linea['saldo'],
-                'saldoprev' => $linea['saldoprev'], ];
+                'saldoprev' => $linea['saldoprev'],];
         } else {
             $balance[$index]['saldo'] += $linea['saldo'];
             $balance[$index]['saldoprev'] += $linea['saldoprev'];

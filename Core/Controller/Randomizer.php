@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -28,9 +27,11 @@ use Symfony\Component\HttpFoundation\Response;
  * Controller to generate random data
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José <info@rsanjoseo.com>
  */
 class Randomizer extends Base\Controller
 {
+
     /**
      * URL where reload.
      *
@@ -78,90 +79,96 @@ class Randomizer extends Base\Controller
      */
     private function execAction($option)
     {
-        $accountingGenerator = new RandomDataGenerator\AccountingGenerator($this->empresa);
-        $documentGenerator = new RandomDataGenerator\DocumentGenerator($this->empresa);
-        $modelDataGenerator = new RandomDataGenerator\ModelDataGenerator($this->empresa);
-
         switch ($option) {
             case 'agentes':
-                $num = $modelDataGenerator->agentes();
-                $this->miniLog->info($this->i18n->trans('generated-agents', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Agentes();
+                $txt = 'generated-agents';
                 break;
 
             case 'albaranescli':
-                $num = $documentGenerator->albaranesCliente();
-                $this->miniLog->info($this->i18n->trans('generated-customer-delivery-notes', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\AlbaranesCliente();
+                $txt = 'generated-customer-delivery-notes';
                 break;
 
             case 'albaranesprov':
-                $num = $documentGenerator->albaranesProveedor();
-                $this->miniLog->info($this->i18n->trans('generated-supplier-delivery-notes', ['%quantity%' => $num]));
-                break;
-
-            case 'articulos':
-                $num = $modelDataGenerator->articulos();
-                $this->miniLog->info($this->i18n->trans('generated-products', ['%quantity%' => $num]));
-                break;
-
-            case 'articulosprov':
-                $num = $modelDataGenerator->articulosProveedor();
-                $this->miniLog->info($this->i18n->trans('generated-products', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\AlbaranesProveedor();
+                $txt = 'generated-supplier-delivery-notes';
                 break;
 
             case 'asientos':
-                $num = $accountingGenerator->asientos();
-                $this->miniLog->info($this->i18n->trans('generated-accounting-entries', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Asientos();
+                $txt = 'generated-accounting-entries';
+                break;
+
+            case 'articulos':
+                $app = new RandomDataGenerator\Articulos();
+                $txt = 'generated-products';
+                break;
+
+            case 'articulosprov':
+                $app = new RandomDataGenerator\ArticulosProveedor();
+                $txt = 'generated-products';
                 break;
 
             case 'clientes':
-                $num = $modelDataGenerator->clientes();
-                $this->miniLog->info($this->i18n->trans('generated-customers', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Clientes();
+                $txt = 'generated-customers';
                 break;
 
             case 'cuentas':
-                $num = $accountingGenerator->cuentas(4);
-                $this->miniLog->info($this->i18n->trans('generated-accounts', ['%quantity%' => $num]));
-                break;
-
-            case 'fabricantes':
-                $num = $modelDataGenerator->fabricantes();
-                $this->miniLog->info($this->i18n->trans('generated-manufacturers', ['%quantity%' => $num]));
-                break;
-
-            case 'familias':
-                $num = $modelDataGenerator->familias();
-                $this->miniLog->info($this->i18n->trans('generated-families', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Cuentas();
+                $txt = 'generated-accounts';
                 break;
 
             case 'grupos':
-                $num = $modelDataGenerator->gruposClientes();
-                $this->miniLog->info($this->i18n->trans('generated-customer-groups', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Grupos();
+                $txt = 'generated-customer-groups';
+                break;
+
+            case 'fabricantes':
+                $app = new RandomDataGenerator\Fabricantes();
+                $txt = 'generated-manufacturers';
+                break;
+
+            case 'familias':
+                $app = new RandomDataGenerator\Familias();
+                $txt = 'generated-families';
                 break;
 
             case 'pedidoscli':
-                $num = $documentGenerator->pedidosCliente();
-                $this->miniLog->info($this->i18n->trans('generated-customer-orders', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\PedidosCliente();
+                $txt = 'generated-customer-orders';
                 break;
 
             case 'pedidosprov':
-                $num = $documentGenerator->pedidosProveedor();
-                $this->miniLog->info($this->i18n->trans('generated-supplier-orders', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\PedidosProveedor();
+                $txt = 'generated-supplier-orders';
                 break;
 
             case 'presupuestoscli':
-                $num = $documentGenerator->presupuestosCliente();
-                $this->miniLog->info($this->i18n->trans('generated-customer-estimations', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\PresupuestosCliente();
+                $txt = 'generated-customer-estimations';
                 break;
 
             case 'proveedores':
-                $num = $modelDataGenerator->proveedores();
-                $this->miniLog->info($this->i18n->trans('generated-supplier', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Proveedores();
+                $txt = 'generated-supplier';
                 break;
 
             case 'subcuentas':
-                $num = $accountingGenerator->subcuentas();
-                $this->miniLog->info($this->i18n->trans('generated-subaccounts', ['%quantity%' => $num]));
+                $app = new RandomDataGenerator\Subcuentas();
+                $txt = 'generated-subaccounts';
                 break;
+
+            default:
+                $app = false;
+                $txt = '';
         }
+
+        if (false !== $app) {
+            $this->miniLog->info($this->i18n->trans($txt, ['%quantity%' => $app->generate()]));
+        }
+
+        return;
     }
 }

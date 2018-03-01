@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditSubcuenta extends ExtendedController\PanelController
 {
+
     /**
      * Load views
      */
@@ -57,7 +57,7 @@ class EditSubcuenta extends ExtendedController\PanelController
 
             case 'ListAsiento':
                 $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
-                $inSQL = 'SELECT idasiento FROM co_partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
+                $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
                 $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
                 $view->loadData(false, $where);
                 break;

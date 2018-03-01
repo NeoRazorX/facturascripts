@@ -29,13 +29,6 @@ class ContactoProveedor extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $id;
-
-    /**
      * Supplier code.
      *
      * @var string
@@ -43,11 +36,18 @@ class ContactoProveedor extends Base\ModelClass
     public $codproveedor;
 
     /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $id;
+
+    /**
      * Contact code.
      *
-     * @var string
+     * @var int
      */
-    public $codcontacto;
+    public $idcontacto;
 
     /**
      * Returns the name of the table that uses this model.

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
@@ -28,12 +27,13 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListAsiento extends ExtendedController\ListController
 {
+
     /**
      * Load views
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento');
+        $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
@@ -42,6 +42,12 @@ class ListAsiento extends ExtendedController\ListController
 
         $this->addOrderBy('ListAsiento', 'numero', 'number');
         $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
+
+        $this->addView('\FacturaScripts\Dinamic\Model\ConceptoPartida', 'ListConceptoPartida', 'predefined-concepts', 'fa-indent');
+        $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
+
+        $this->addOrderBy('ListConceptoPartida', 'codconcepto', 'code');
+        $this->addOrderBy('ListConceptoPartida', 'descripcion', 'description');
     }
 
     /**
@@ -72,10 +78,10 @@ class ListAsiento extends ExtendedController\ListController
                 if ($model->renumber()) {
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
-                break;
+                return true;
 
             default:
-                parent::execPreviousAction($action);
+                return parent::execPreviousAction($action);
         }
     }
 }

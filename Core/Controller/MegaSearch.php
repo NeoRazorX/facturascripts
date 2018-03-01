@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class MegaSearch extends Base\Controller
 {
+
     /**
      * This variable contains the input text as the $query parameter
      * to be used to filter the model data

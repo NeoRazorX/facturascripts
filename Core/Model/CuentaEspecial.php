@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 /**
  * Allows to relate special accounts (SALES, for example)
-  * with the real account or sub-account.
+ * with the real account or sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -50,7 +50,7 @@ class CuentaEspecial extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_cuentasesp';
+        return 'cuentasesp';
     }
 
     /**
@@ -60,7 +60,17 @@ class CuentaEspecial extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idcuentaesp';
+        return 'codcuentaesp';
+    }
+
+    /**
+     * Returns the name of the column that describes the model, such as name, description...
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codcuentaesp';
     }
 
     /**

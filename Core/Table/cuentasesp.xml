@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cuentasesp.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the cuentasesp table.
+-->
+<table>
+    <column>
+        <name>codcuentaesp</name>
+        <type>character varying(6)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>cuentasesp_pkey</name>
+        <type>PRIMARY KEY (codcuentaesp)</type>
+    </constraint>
+</table>

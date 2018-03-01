@@ -35,7 +35,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @var string
      */
-    public $idconceptopar;
+    public $codconcepto;
 
     /**
      * Concept of departure.
@@ -51,7 +51,7 @@ class ConceptoPartida extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_conceptospar';
+        return 'conceptos_partidas';
     }
 
     /**
@@ -61,7 +61,17 @@ class ConceptoPartida extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idconceptopar';
+        return 'codconcepto';
+    }
+
+    /**
+     * Returns the name of the column that describes the model, such as name, description...
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codconcepto';
     }
 
     /**
@@ -74,5 +84,18 @@ class ConceptoPartida extends Base\ModelClass
         $this->concepto = Utils::noHtml($this->concepto);
 
         return true;
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url($type = 'auto', $list = 'List')
+    {
+        return parent::url($type, 'ListAsiento?active=' . $list);
     }
 }

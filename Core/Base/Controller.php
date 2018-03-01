@@ -132,6 +132,7 @@ class Controller
     public $title;
 
     /**
+     * Given uri, default is empty.
      *
      * @var string
      */
@@ -244,6 +245,21 @@ class Controller
             'showonmenu' => true,
             'ordernum' => 100,
         ];
+    }
+
+    /**
+     * Return array with parameters values
+     *
+     * @param array $keys
+     * @return array
+     */
+    protected function requestGet($keys): array
+    {
+        $result = [];
+        foreach ($keys as $value) {
+            $result[$value] = $this->request->get($value);
+        }
+        return $result;
     }
 
     /**
