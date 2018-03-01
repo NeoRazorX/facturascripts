@@ -127,6 +127,7 @@ class DocumentView extends BaseView
             } elseif ($item['type'] === 'autocomplete') {
                 $item['source'] = $col->widget->values[0];
                 $item['strict'] = false;
+                $item['visibleRows'] = 5;
             }
             $data['columns'][] = $item;
         }
