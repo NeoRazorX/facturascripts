@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
@@ -40,14 +41,16 @@ class AssetManager
             'css' => [],
         ];
 
-        $folder = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
-        $jsFile = $folder . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        if (file_exists($jsFile)) {
+        $folder = FS_FOLDER.DIRECTORY_SEPARATOR.'Dinamic'.DIRECTORY_SEPARATOR.'Assets'.DIRECTORY_SEPARATOR;
+        $jsFile = $folder.'JS'.DIRECTORY_SEPARATOR.$name.'.js';
+        if (file_exists($jsFile))
+        {
             $assets['js'][] = $jsFile;
         }
 
-        $cssFile = $folder . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
-        if (file_exists($cssFile)) {
+        $cssFile = $folder.'CSS'.DIRECTORY_SEPARATOR.$name.'.css';
+        if (file_exists($cssFile))
+        {
             $assets['css'][] = $cssFile;
         }
 
