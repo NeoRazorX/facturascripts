@@ -35,7 +35,7 @@
             </column>
             
             <column name="parent" numcolumns="4" order="120" description="desc-parent-family">
-                <widget type="select" fieldname="madre" required="true">
+                <widget type="select" fieldname="madre">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>
             </column>
