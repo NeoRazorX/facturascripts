@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Model\Divisa;
+
 /**
  * DivisaTools give us some basic and common methods for currency numbers.
  *
@@ -27,12 +30,37 @@ class DivisaTools
 {
 
     /**
+     *
+     * @var Divisa
+     */
+    private static $divisas;
+
+    /**
+     *
+     * @var string
+     */
+    private static $symbol;
+
+    /**
      * DivisaTools constructor.
      */
     public function __construct()
     {
         if (!defined('FS_CURRENCY_POS')) {
             define('FS_CURRENCY_POS', 'right');
+        }
+
+        if (!isset(self::$divisas)) {
+            $divisa = new Divisa();
+            self::$divisas = $divisa->all();
+
+            $coddivisa = AppSettings::get('default', 'coddivisa');
+            foreach (self::$divisas as $div) {
+                if ($div->coddivisa == $coddivisa) {
+                    self::$symbol = $div->simbolo;
+                    break;
+                }
+            }
         }
     }
 
@@ -52,7 +80,7 @@ class DivisaTools
             return $txt;
         }
 
-        $symbol = '€';
+        $symbol = self::$symbol;
         if (FS_CURRENCY_POS === 'right') {
             return $txt . ' ' . $symbol;
         }
