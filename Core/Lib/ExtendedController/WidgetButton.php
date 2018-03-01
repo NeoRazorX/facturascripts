@@ -264,6 +264,7 @@ class WidgetButton implements VisualItemInterface
             .'onclick="'.$this->action.'">'
             .$label
             .'</button';
+        return $html;
     }
 
     /**
