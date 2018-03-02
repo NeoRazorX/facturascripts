@@ -34,6 +34,12 @@ class PDFExport implements ExportInterface
     const LIST_LIMIT = 500;
 
     /**
+     *
+     * @var Base\DivisaTools
+     */
+    private $divisaTools;
+
+    /**
      * Translator object
      *
      * @var Base\Translator
@@ -66,6 +72,7 @@ class PDFExport implements ExportInterface
      */
     public function __construct()
     {
+        $this->divisaTools = new Base\DivisaTools();
         $this->i18n = new Base\Translator();
         $this->numberTools = new Base\NumberTools();
         $this->tableWidth = 0.0;
@@ -373,8 +380,11 @@ class PDFExport implements ExportInterface
                 }
 
                 $value = $row->{$col};
-                if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'], false)) {
-                    $value = $this->numberTools->format($value, 2);
+                if ($tableOptions['cols'][$col]['col-type'] === 'number') {
+                    $value = $this->numberTools->format($value);
+                } elseif ($tableOptions['cols'][$col]['col-type'] === 'money') {
+                    $this->divisaTools->findDivisa($row);
+                    $value = $this->divisaTools->format($value, FS_NF0, 'coddivisa');
                 } elseif (is_bool($value)) {
                     $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
                 } elseif (null === $value) {

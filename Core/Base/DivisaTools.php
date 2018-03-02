@@ -86,23 +86,28 @@ class DivisaTools
      *
      * @param float|string $number
      * @param int|string   $decimals
-     * @param bool         $addSymbol
+     * @param string       $decoration
      *
      * @return string
      */
-    public static function format($number, $decimals = FS_NF0, $addSymbol = true)
+    public static function format($number, $decimals = FS_NF0, $decoration = 'symbol')
     {
         $txt = number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
-        if (!$addSymbol) {
-            return $txt;
-        }
 
-        $symbol = self::$selectedDivisa->simbolo;
-        if (FS_CURRENCY_POS === 'right') {
-            return $txt . ' ' . $symbol;
-        }
+        switch ($decoration) {
+            case 'symbol':
+                $symbol = self::$selectedDivisa->simbolo;
+                if (FS_CURRENCY_POS === 'right') {
+                    return $txt . ' ' . $symbol;
+                }
+                return $symbol . ' ' . $txt;
 
-        return $symbol . ' ' . $txt;
+            case 'coddivisa':
+                return $txt . ' ' . self::$selectedDivisa->coddivisa;
+
+            default:
+                return $txt;
+        }
     }
 
     /**
