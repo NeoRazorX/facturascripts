@@ -300,6 +300,7 @@ distintas:
 *  *calculate* : Botón para mostrar un cálculo estadístico.
 *  *action* : Botón para ejecutar una acción en el controlador.
 *  *modal* : Botón para mostrar un formulario modal.
+*  *js* : Botón para hacer una llamada a una función javascript.
 
 El botón de tipo *calculate* es exclusivo del grupo *<rows>* y se detalla más adelante.
 Para los botones *action* y *modal* podemos personalizarlos mediante los atributos:
@@ -318,6 +319,7 @@ Para los botones *action* y *modal* podemos personalizarlos mediante los atribut
 -  **action** : esta propiedad varía según el tipo. Para botones ``action`` indica la acción
    que se envía al controlador, para que éste realice algún tipo de proceso especial.
    Para botones de tipo ``modal`` indica el formulario modal que se debe mostrar al usuario.
+   En el caso de botones tipo js action será el nombre de la función javascript a llamar
 
 
 Ejemplo:
