@@ -29,13 +29,13 @@ class NumberTools
     /**
      * Returns the number format with the number of decimals indicated.
      *
-     * @param float $number
-     * @param int   $decimals
+     * @param float|string $number
+     * @param int|string   $decimals
      *
      * @return string
      */
     public function format($number, $decimals = FS_NF0)
     {
-        return number_format($number, $decimals, FS_NF1, FS_NF2);
+        return number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
     }
 }

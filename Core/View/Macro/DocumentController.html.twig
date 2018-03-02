@@ -33,7 +33,7 @@
 
     <script type="text/javascript">
         documentLineData = {{ view.getLineData() | raw }};
-        documentUrl = '{{ model.url('edit') | raw }}';
+                documentUrl = '{{ model.url('edit') | raw }}';
     </script>
 
     <form name="f_document_primary" action="#" method="post">
@@ -46,7 +46,21 @@
                 {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
             {% endif %}
             {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
-            {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control text-right', disabled: ''}) }}
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-money fa-fw" aria-hidden="true"></i>
+                        </span>
+                    </span>
+                    <input type="text" id="doc_total" name="total" value="{{ model.total }}" class="form-control text-right" disabled="" />
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" onclick="documentSave()">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         <br/>
         <div id="document-lines"></div>
@@ -135,7 +149,7 @@
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente|raw }}" class="form-control autocomplete"
                    data-source="clientes" data-field="codcliente" data-title="razonsocial"
                    placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
-            <span class="input-group-prepend">
+            <span class="input-group-append">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newCustomerModal">
                     <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
                 </button>
@@ -183,7 +197,7 @@
             <input type="text" id="{{ id }}" value="{{ model.nombre|raw }}" class="form-control autocomplete"
                    data-source="proveedores" data-field="codproveedor" data-title="razonsocial"
                    placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
-            <span class="input-group-prepend">
+            <span class="input-group-append">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newSupplierModal">
                     <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
                 </button>
