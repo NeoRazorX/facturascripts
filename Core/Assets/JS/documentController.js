@@ -108,7 +108,7 @@ $(document).ready(function () {
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
         data: documentLineData.rows,
-        columns: setAutocompletes(documentLineData.columns),
+        columns: documentLineData.columns,
         rowHeaders: true,
         colHeaders: documentLineData.headers,
         stretchH: "all",
