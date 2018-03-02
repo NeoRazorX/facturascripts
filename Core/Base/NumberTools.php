@@ -26,6 +26,17 @@ namespace FacturaScripts\Core\Base;
 class NumberTools
 {
 
+    public function __construct()
+    {
+        if (!defined('FS_NF1')) {
+            define('FS_NF1', ',');
+        }
+
+        if (!defined('FS_NF2')) {
+            define('FS_NF2', ' ');
+        }
+    }
+
     /**
      * Returns the number format with the number of decimals indicated.
      *
@@ -34,7 +45,7 @@ class NumberTools
      *
      * @return string
      */
-    public function format($number, $decimals = FS_NF0)
+    public static function format($number, $decimals = FS_NF0)
     {
         return number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
     }

@@ -26,7 +26,7 @@ use FacturaScripts\Core\Model\Divisa;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class DivisaTools
+class DivisaTools extends NumberTools
 {
 
     /**
@@ -46,6 +46,7 @@ class DivisaTools
      */
     public function __construct()
     {
+        parent::__construct();
         if (!defined('FS_CURRENCY_POS')) {
             define('FS_CURRENCY_POS', 'right');
         }
@@ -92,7 +93,7 @@ class DivisaTools
      */
     public static function format($number, $decimals = FS_NF0, $decoration = 'symbol')
     {
-        $txt = number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
+        $txt = parent::format($number, $decimals);
 
         switch ($decoration) {
             case 'symbol':

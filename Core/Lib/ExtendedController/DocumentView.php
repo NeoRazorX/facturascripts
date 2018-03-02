@@ -128,6 +128,7 @@ class DocumentView extends BaseView
                 $item['source'] = $col->widget->values[0];
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
+                $item['trimDropdown'] = false;
             }
             $data['columns'][] = $item;
         }
