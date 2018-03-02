@@ -31,15 +31,15 @@ class DivisaTools
 
     /**
      *
-     * @var Divisa
+     * @var Divisa[]
      */
     private static $divisas;
 
     /**
      *
-     * @var string
+     * @var Divisa
      */
-    private static $symbol;
+    private static $selectedDivisa;
 
     /**
      * DivisaTools constructor.
@@ -57,7 +57,24 @@ class DivisaTools
             $coddivisa = AppSettings::get('default', 'coddivisa');
             foreach (self::$divisas as $div) {
                 if ($div->coddivisa == $coddivisa) {
-                    self::$symbol = $div->simbolo;
+                    self::$selectedDivisa = $div;
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds a coddivisa and uses it as selected currency.
+     * 
+     * @param mixed $model
+     */
+    public function findDivisa($model)
+    {
+        if (isset($model->coddivisa)) {
+            foreach (self::$divisas as $div) {
+                if ($div->coddivisa == $model->coddivisa) {
+                    self::$selectedDivisa = $div;
                     break;
                 }
             }
@@ -80,7 +97,7 @@ class DivisaTools
             return $txt;
         }
 
-        $symbol = self::$symbol;
+        $symbol = self::$selectedDivisa->simbolo;
         if (FS_CURRENCY_POS === 'right') {
             return $txt . ' ' . $symbol;
         }
