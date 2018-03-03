@@ -98,6 +98,10 @@ function getGridColumnName(col) {
     return documentLineData['columns'][physicalColumn]['data'];
 }
 
+function selectCell(row, col, endRow, endCol, scrollToCell, changeListener) {
+    return gridObject.selectCell(row, col, endRow, endCol, scrollToCell, changeListener);
+}
+
 /*
  * EVENT MANAGER
  */
@@ -149,12 +153,13 @@ function grid_beforeChange(changes, source) {
  * Document Ready. Create and configure Grid Object.
  */
 $(document).ready(function () {
-    // Prepare autocomplete columns
-    configureAutocompleteColumns(documentLineData['columns']);
-
     // Grid Data
     var container = document.getElementById("document-lines");
     if (container) {
+        // Prepare autocomplete columns
+        configureAutocompleteColumns(documentLineData['columns']);
+
+        // Create Grid Object
         gridObject = new Handsontable(container, {
             data: documentLineData.rows,
             columns: documentLineData.columns,
