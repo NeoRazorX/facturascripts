@@ -69,18 +69,23 @@ function configureAutocompleteColumns(columns) {
 }
 
 /**
- * Return data structure
+ * Return data structure.
+ * You can indicate the name of the field where to save
+ * the order index of the lines.
  *
+ * @param {string} fieldOrder
  * @returns {Array}
  */
-function getGridData() {
+function getGridData(fieldOrder = null) {
     var rowIndex, lines = [];
     for (var i = 0, max = documentLineData.rows.length; i < max; i++) {
         rowIndex = gridObject.toVisualRow(i);
         if (gridObject.isEmptyRow(rowIndex)) {
             continue;
         }
-        documentLineData.rows[i]['hands_order'] = rowIndex;
+        if (fieldOrder !== null) {
+            documentLineData.rows[i][fieldOrder] = rowIndex;
+        }
         lines.push(documentLineData.rows[i]);
     }
     return lines;
