@@ -19,16 +19,8 @@
 
 var documentLineData = [];
 var gridObject = null;               // TODO: convert to POO
-var controlledColumns = {};
-
-/* Add a column to controlate events */
-function addControlledColumn(columnName) {
-    controlledColumns[columnName] = {
-        value: null,
-        beforeChange: null,
-        afterSelection: null
-    };
-}
+var autocompleteColumns = [];
+var eventManager = {};
 
 /* Generate a single source function for autocomplete columns
  *
@@ -63,11 +55,11 @@ function assignSource(data) {
 function configureAutocompleteColumns(columns) {
     var column = null;
     var keys = Object.keys(columns);
-    for (var i = 0; i < keys.length; i++) {
+    for (var i = 0, max = keys.length; i < max; i++) {
         column = columns[keys[i]];
         if (column['type'] === 'autocomplete') {
             // Add column to list of columns to control
-            addControlledColumn(column['data']);
+            autocompleteColumns.push(column['data']);
 
             // assing calculate function to column
             column['source'] = assignSource(column['data-source']);
@@ -76,66 +68,80 @@ function configureAutocompleteColumns(columns) {
     }
 }
 
+/**
+ * Return data structure
+ *
+ * @returns {Array}
+ */
+function getGridData() {
+    var rowIndex, lines = [];
+    for (var i = 0, max = documentLineData.rows.length; i < max; i++) {
+        rowIndex = gridObject.toVisualRow(i);
+        if (gridObject.isEmptyRow(rowIndex)) {
+            continue;
+        }
+        documentLineData.rows[i]['hands_order'] = rowIndex;
+        lines.push(documentLineData.rows[i]);
+    }
+    return lines;
+}
+
 /* Return column value */
 function getGridFieldData(row, fieldName) {
-    return documentLineData['rows'][row][fieldName];
+    var physicalRow = gridObject.toPhysicalRow(row);
+    return documentLineData['rows'][physicalRow][fieldName];
 }
 
 /* Return field name for a column */
 function getGridColumnName(col) {
-    return documentLineData['columns'][col]['data'];
+    var physicalColumn = gridObject.toPhysicalColumn(col);
+    return documentLineData['columns'][physicalColumn]['data'];
 }
 
 /*
  * EVENT MANAGER
  */
-function afterSelection(row1, col1, row2, col2, preventScrolling) {
+function addEvent(name, fn) {
+    switch (name) {
+        case 'afterSelection':
+        case 'beforeChange':
+            eventManager[name] = fn;
+            break;
+
+        default:
+            Handsontable.hooks.add(name, fn);
+            break;
+    }
+}
+
+function grid_afterSelection(row1, col1, row2, col2, preventScrolling) {
     // Check if editing
     var editor = gridObject.getActiveEditor();
     if (editor && editor.isOpened()) {
         return;
     }
 
-    // Not multiselection
-    if (col1 === col2 && row1 === row2) {
-        var column = null;
-        var keys = Object.keys(controlledColumns);
+    // Call to children event
+    var events = Object.keys(eventManager);
+    if (events.includes('afterSelection')) {
+        eventManager['afterSelection'](row1, col1, row2, col2, preventScrolling);
+    }
+}
 
-        // propagate event to childrens if value has change
-        for (var i = 0; i < keys.length; i++) {
-            column = controlledColumns[keys[i]];
-            var newValue = getGridFieldData(row1, keys[i]);
-            if (newValue !== column.value && column.afterSelection !== null) {
-                column.value = newValue;
-                column.afterSelection(keys[i], newValue, preventScrolling);
+function grid_beforeChange(changes, source) {
+    // Aply correction to autocomplete columns
+    if (autocompleteColumns.length > 0) {
+        for (var i = 0, max = changes.length; i < max; i++) {
+            if (autocompleteColumns.includes(changes[i][1])) {
+                changes[i][3] = changes[i][3].split(' - ', 1)[0];
             }
         }
     }
-    return;
-}
 
-function beforeChange(changes, source) {
-    // Check if the value has changed. Not Multiselection
-    if (changes !== null && changes[0][2] !== changes[0][3]) {
-        var column = null;
-        var keys = Object.keys(controlledColumns);
-        for (var i = 0; i < keys.length; i++) {
-            if (changes[0][1] === keys[i]) {
-                // aply for autocomplete columns
-                if (typeof changes[0][3] === 'string') {
-                    changes[0][3] = changes[0][3].split(' - ', 1)[0];
-                }
-
-                // propagate event to childrens
-                column = controlledColumns[keys[i]];
-                if (column.beforeChange !== null) {
-                    column.beforeChange(changes[0]);
-                }
-
-                // Set new value
-                column.value = changes[0][3];
-            }
-        }
+    // Call to children event
+    var events = Object.keys(eventManager);
+    if (events.includes('beforeChange')) {
+        eventManager['beforeChange'](changes, source);
     }
 }
 
@@ -156,15 +162,16 @@ $(document).ready(function () {
             colHeaders: documentLineData.headers,
             stretchH: "all",
             autoWrapRow: false,
+            contextMenu: false,
             manualRowResize: true,
             manualColumnResize: true,
             manualRowMove: true,
-            manualColumnMove: true,
+            manualColumnMove: false,
             minSpareRows: 1,
             minRows: 6
         });
 
-        Handsontable.hooks.add('afterSelection', afterSelection);
-        Handsontable.hooks.add('beforeChange', beforeChange);
+        Handsontable.hooks.add('afterSelection', grid_afterSelection);
+        Handsontable.hooks.add('beforeChange', grid_beforeChange);
     }
 });
