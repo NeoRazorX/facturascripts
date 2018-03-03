@@ -181,6 +181,13 @@ class Partida extends Base\ModelClass
     public $punteada;
 
     /**
+     * Visual order index
+     *
+     * @var int
+     */
+    public $orden;
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -222,6 +229,7 @@ class Partida extends Base\ModelClass
     {
         parent::clear();
         $this->punteada = false;
+        $this->orden = 0;
         $this->tasaconv = 1.0;
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
 
