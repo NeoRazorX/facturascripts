@@ -626,5 +626,13 @@
     "clone": "Clone",
     "predefined-concepts": "Predefined Concepts",
     "unbalance": "Unbalance",
-    "account-balance": "Account Balance"
+    "account-balance": "Account Balance",
+    "product-decimals": "Product decimals",
+    "currency-position": "Currency position",
+    "compatible": "Compatible",
+    "editable": "Editable",
+    "location": "Location",
+    "balance": "Balance",
+    "balance-account": "Balance account",
+    "balance-account-abreviated": "Balance account abreviated"
 }

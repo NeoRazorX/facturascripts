@@ -34,7 +34,7 @@ class EditBalance extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Balance', 'EditBalance', 'Balance');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Balance', 'EditBalance', 'balance');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\BalanceCuenta', 'EditBalanceCuenta', 'balance-account');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\BalanceCuentaA', 'EditBalanceCuentaA', 'balance-account-abreviated');
     }
