@@ -632,7 +632,6 @@
     "compatible": "Compatible",
     "editable": "Editable",
     "location": "Location",
-    "balance": "Balance",
     "balance-account": "Balance account",
     "balance-account-abreviated": "Balance account abreviated"
 }
