@@ -36,6 +36,7 @@ class WidgetItemSelect extends WidgetItem
      */
     public $values;
 
+     private $i18n;
     /**
      * WidgetItemSelect constructor.
      */
@@ -45,6 +46,7 @@ class WidgetItemSelect extends WidgetItem
 
         $this->type = 'select';
         $this->values = [];
+        $this->i18n=new \FacturaScripts\Core\Base\Translator();
     }
 
     /**
@@ -179,7 +181,7 @@ class WidgetItemSelect extends WidgetItem
         foreach ($this->values as $selectValue) {
             /// don't use strict comparation (===)
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' .  $this->i18n->trans($selectValue['title'])
                 . '</option>';
         }
         $html .= '</select>';
