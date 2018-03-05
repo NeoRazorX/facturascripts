@@ -87,6 +87,13 @@ class EditAsiento extends ExtendedController\PanelController
                 $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                 return false;
 
+            case 'save-document':
+                $this->setTemplate(false);
+                $data = $this->request->request->all();
+                $result = $this->views['EditPartida']->saveData($data);
+                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                return false;
+
             case 'clone':
                 return true; // TODO: Uncomplete
 

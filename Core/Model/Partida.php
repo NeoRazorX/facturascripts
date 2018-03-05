@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base\Utils;
  * It is related to a accounting entry and a sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Partida extends Base\ModelClass
 {
@@ -253,18 +254,18 @@ class Partida extends Base\ModelClass
      */
     private function getIdSubAccount($code, $exercise)
     {
-        if (empty($code)) {
+        if (empty($code) || empty($exercise)) {
             return NULL;
         }
 
         $where = [
             new DataBaseWhere('codejercicio', $exercise),
-            new DataBaseWhere('codcuenta', $code),
+            new DataBaseWhere('codsubcuenta', $code)
         ];
 
-        $account = new Cuenta();
+        $account = new Subcuenta();
         $account->loadFromCode(null, $where);
-        return $account->idcuenta;
+        return $account->idsubcuenta;
     }
 
     /**
@@ -335,9 +336,6 @@ class Partida extends Base\ModelClass
      */
     public function delete()
     {
-        $accounting = new Asiento();
-        $accounting->loadFromCode($this->idasiento);
-
         $inTransaction = self::$dataBase->inTransaction();
         try {
             if ($inTransaction === false) {
@@ -350,9 +348,14 @@ class Partida extends Base\ModelClass
             }
 
             /// update account balance
-            $account = new Subcuenta();
-            $account->idsubcuenta = $this->idsubcuenta;
-            $account->updateBalance($accounting->fecha, ($this->debe * -1), ($this->haber * -1));
+            if (!empty($this->idasiento)) {
+                $accounting = new Asiento();
+                $accounting->loadFromCode($this->idasiento);
+
+                $account = new Subcuenta();
+                $account->idsubcuenta = $this->idsubcuenta;
+                $account->updateBalance($accounting->fecha, ($this->debe * -1), ($this->haber * -1));
+            }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
             self::$dataBase->rollback();
@@ -363,6 +366,6 @@ class Partida extends Base\ModelClass
                 return false;
             }
         }
-        return false;
+        return true;
     }
 }
