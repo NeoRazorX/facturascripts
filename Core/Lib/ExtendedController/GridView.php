@@ -138,7 +138,7 @@ class GridView extends BaseView
             case 'number':
             case 'money':
                 $item['type'] = 'numeric';
-                $item['format'] = Base\DivisaTools::gridMoneyFormat();
+                $item['numericFormat'] = Base\DivisaTools::gridMoneyFormat();
                 break;
 
             default:

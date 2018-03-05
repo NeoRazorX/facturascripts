@@ -116,7 +116,7 @@ class DivisaTools extends NumberTools
      *
      * @param int $decimals
      * 
-     * @return string
+     * @return array
      */
     public static function gridMoneyFormat($decimals = FS_NF0)
     {
@@ -124,6 +124,7 @@ class DivisaTools extends NumberTools
         for ($num = 0; $num < $decimals; $num++) {
             $moneyFormat .= '0';
         }
-        return $moneyFormat;
+
+        return ['pattern' => $moneyFormat];
     }
 }

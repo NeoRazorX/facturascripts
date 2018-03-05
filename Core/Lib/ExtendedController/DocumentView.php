@@ -119,7 +119,7 @@ class DocumentView extends BaseView
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
-                $item['format'] = DivisaTools::gridMoneyFormat();
+                $item['numericFormat'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
                 $item['source'] = $col->widget->values[0];
                 $item['strict'] = false;

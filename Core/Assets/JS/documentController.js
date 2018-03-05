@@ -49,13 +49,15 @@ function documentCalculate() {
         data: data,
         success: function (results) {
             $("#doc_total").val(results.total);
-            var coordinates = hsTable.getSelected();
-            if (typeof results.lines[coordinates[0]] !== 'undefined') {
-                var visualRow = hsTable.toVisualRow(coordinates[0]);
-                documentLineData.rows[visualRow] = results.lines[coordinates[0]];
-                hsTable.render();
-                console.log(documentLineData.rows);
-            }
+
+            var rowPos = 0;
+            results.lines.forEach(function (element) {
+                var visualRow = hsTable.toVisualRow(rowPos);
+                documentLineData.rows[visualRow] = element;
+                rowPos++;
+            });
+            
+            hsTable.render();
         }
     });
 }
