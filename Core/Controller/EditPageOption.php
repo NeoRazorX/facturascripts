@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
 class EditPageOption extends Base\Controller
 {
@@ -89,9 +90,14 @@ class EditPageOption extends Base\Controller
 
         $this->getParams();
         $this->model->getForUser($this->selectedViewName, $this->selectedUser);
-
-        if ($this->request->get('action', '') === 'save') {
-            $this->saveData();
+        $get = $this->request->get('action', '');
+        switch ($get) {
+            case 'save':
+                $this->saveData();
+                break;
+            case 'delete':
+                $this->deleteData();
+                break;
         }
     }
 
@@ -132,6 +138,34 @@ class EditPageOption extends Base\Controller
             return;
         }
         $this->miniLog->alert($this->i18n->trans('data-save-error'));
+    }
+
+    /**
+     * Delete configuration for view
+     */
+    private function deleteData()
+    {
+        $nick = $this->request->get('nick');
+        if (!$nick) {
+            $where = [
+                new Base\DataBase\DataBaseWhere('nick', 'null', 'IS'),
+                new Base\DataBase\DataBaseWhere('name', $this->selectedViewName)
+            ];
+        } else {
+            $where = [
+                new Base\DataBase\DataBaseWhere('nick', $nick),
+                new Base\DataBase\DataBaseWhere('name', $this->selectedViewName)
+            ];
+        }
+
+        $id_all = $this->model->all($where, [], 0, 0);
+
+        if ($id_all[0] && $id_all[0]->delete()) {
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+        } else {
+            $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
+        }
     }
 
     /**
