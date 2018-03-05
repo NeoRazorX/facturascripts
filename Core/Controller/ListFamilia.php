@@ -57,6 +57,6 @@ class ListFamilia extends ExtendedController\ListController
         $this->addOrderBy($className, 'descripcion', 'description');
         $this->addOrderBy($className, 'madre', 'parent');
 
-        $this->addFilterSelect($className, 'madre', 'familias');
+        $this->addFilterSelect($className, 'madre', 'familias', 'codfamilia', 'descripcion');
     }
 }
