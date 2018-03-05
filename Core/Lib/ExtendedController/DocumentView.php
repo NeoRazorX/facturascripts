@@ -121,7 +121,8 @@ class DocumentView extends BaseView
             if ($col->display === 'none') {
                 $item['editor'] = false;
                 $item['width'] = 1;
-            } elseif ($item['type'] === 'number' || $item['type'] === 'money') {
+            }
+            if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
                 $item['format'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
