@@ -58,7 +58,7 @@ class DocumentCalculator
      * @param mixed $doc
      * @param mixed $formLines
      *
-     * @return float
+     * @return string
      */
     public function calculateForm(&$doc, &$formLines)
     {
@@ -70,12 +70,21 @@ class DocumentCalculator
 
         $lines = [];
         foreach ($formLines as $fLine) {
-            if (empty($fLine['cantidad'])) {
+            if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
+                $articulo = new Model\Articulo();
+                if ($articulo->loadFromCode($fLine['referencia'])) {
+                    $fLine['descripcion'] = $articulo->descripcion;
+                    $fLine['cantidad'] = 1;
+                    $fLine['iva'] = $articulo->getIva();
+                    $fLine['pvpunitario'] = $articulo->pvp;
+                }
+            } elseif (empty($fLine['cantidad'])) {
                 continue;
             }
 
             $newLine = new Model\LineaAlbaranCliente();
             $newLine->cantidad = (float) $fLine['cantidad'];
+            $newLine->descripcion = $fLine['descripcion'];
             $newLine->dtopor = (float) $fLine['dtopor'];
             $newLine->irpf = (float) $fLine['irpf'];
             $newLine->iva = (float) $fLine['iva'];
@@ -83,6 +92,7 @@ class DocumentCalculator
             $newLine->recargo = (float) $fLine['recargo'];
             $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
             $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+            $newLine->referencia = $fLine['referencia'];
             $lines[] = $newLine;
         }
 
@@ -93,7 +103,12 @@ class DocumentCalculator
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
-        return round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
+        $json = [
+            'total' => round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0),
+            'lines' => $lines
+        ];
+
+        return json_encode($json);
     }
 
     /**

@@ -161,7 +161,7 @@ abstract class Product extends ModelClass
         if ($this->iva === null) {
             $this->iva = 0;
 
-            if (!$this->codimpuesto === null && isset(self::$impuestos[$this->codimpuesto])) {
+            if ($this->codimpuesto !== null && isset(self::$impuestos[$this->codimpuesto])) {
                 $this->iva = self::$impuestos[$this->codimpuesto]->iva;
             }
         }

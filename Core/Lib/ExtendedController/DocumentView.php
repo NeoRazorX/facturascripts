@@ -22,11 +22,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\DocumentCalculator;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Dinamic\Lib\DocumentCalculator;
 
 /**
  * Description of DocumentView
@@ -186,7 +186,7 @@ class DocumentView extends BaseView
      *
      * @param mixed $data
      *
-     * @return int|float
+     * @return string
      */
     public function calculateDocument(&$data)
     {

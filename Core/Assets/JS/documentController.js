@@ -42,14 +42,20 @@ function documentCalculate() {
     });
     data.action = "calculate-document";
     data.lines = getGridData();
-    console.log(data);
     $.ajax({
         type: "POST",
         url: documentUrl,
-        dataType: "text",
+        dataType: "json",
         data: data,
         success: function (results) {
-            $("#doc_total").val(results);
+            $("#doc_total").val(results.total);
+            var coordinates = hsTable.getSelected();
+            if (typeof results.lines[coordinates[0]] !== 'undefined') {
+                var visualRow = hsTable.toVisualRow(coordinates[0]);
+                documentLineData.rows[visualRow] = results.lines[coordinates[0]];
+                hsTable.render();
+                console.log(documentLineData.rows);
+            }
         }
     });
 }
@@ -90,8 +96,8 @@ function getGridData() {
         if (hsTable.isEmptyRow(rowIndex)) {
             continue;
         }
-        
-        lines.push(documentLineData.rows[i]);
+
+        lines[rowIndex] = documentLineData.rows[i];
     }
     return lines;
 }
@@ -117,7 +123,6 @@ function setAutocompletes(columns) {
                     dataType: "json",
                     data: ajaxData,
                     success: function (response) {
-                        console.log(response);
                         var values = [];
                         response.forEach(function (element) {
                             values.push(element.key + " - " + element.value);
