@@ -246,6 +246,24 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
+     * Return the HTML code to display a button with javascript Action
+     * 
+     * @param string $label
+     * @param string $hint
+     * @param string $formName
+     * @param sring $class
+     */
+    private function getJsHTML($label, $hint, $formName = 'main-form', $class = 'col-sm-auto')
+    {
+
+        $html = '<button type="button" class="' . $class . 'btn btn-' . $this->color . '"'
+            . 'onclick="' . $this->action . '">'
+            . $label
+            . '</button';
+        return $html;
+    }
+
+    /**
      * Returns the HTML code to display a button
      *
      * @param string $label
@@ -266,7 +284,8 @@ class WidgetButton implements VisualItemInterface
 
             case 'modal':
                 return $this->getModalHTML($label, $class);
-
+            case 'js':
+                return $this->getJsHTML($label, $hint, $value, $class);
             default:
                 return '';
         }
