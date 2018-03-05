@@ -55,9 +55,9 @@ function documentSave() {
         dataType: "text",
         data: data,
         success: function (results) {
-            if (results == "OK") {
+            if (results === "OK") {
                 location.reload();
-            } else if (results.substring(0, 4) == "NEW:") {
+            } else if (results.substring(0, 4) === "NEW:") {
                 location.href = results.substring(4);
             } else {
                 alert(results);
@@ -70,7 +70,7 @@ function documentSave() {
 
 function setAutocompletes(columns) {
     for (var key = 0; key < columns.length; key++) {
-        if (columns[key].type == "autocomplete") {
+        if (columns[key].type === "autocomplete") {
             var source = columns[key].source["source"];
             var field = columns[key].source["fieldcode"];
             var title = columns[key].source["fieldtitle"];
@@ -91,13 +91,13 @@ function setAutocompletes(columns) {
                         console.log("data", ajaxData);
                         console.log("response", response);
                         var values = [];
-                        response.forEach(function(element) {
+                        response.forEach(function (element) {
                             values.push(element.key);
                         });
                         process(values);
                     }
                 });
-            }
+            };
         }
     }
 
@@ -116,12 +116,12 @@ $(document).ready(function () {
         manualRowResize: true,
         manualColumnResize: true,
         manualRowMove: true,
-        manualColumnMove: true,
+        manualColumnMove: false,
         contextMenu: true,
         filters: true,
         dropdownMenu: true,
         preventOverflow: "horizontal",
-        minSpareRows: 1,
+        minSpareRows: 1
     });
 
     Handsontable.hooks.add('afterChange', documentCalculate);

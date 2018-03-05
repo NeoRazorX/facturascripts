@@ -166,10 +166,14 @@
         {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
         {% endif %}
 
+        {# checks model url #}
         {% set rowDataHref = view.getClickEvent(model) %}
         {% if rowDataHref is not empty %}
         {% set rowClass = rowClass ~ ' clickableRow' %}
         {% endif %}
+        
+        {# checks model currency #}
+        {{ view.divisaTools.findDivisa(model) }}
 
         <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
             {# Print data columns for row #}

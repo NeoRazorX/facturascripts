@@ -82,8 +82,8 @@ class Ledger extends AccountingBase
     {
         $line['fecha'] = date('d-m-Y', strtotime($line['fecha']));
         $line['concepto'] = $this->fixHtml($line['concepto']);
-        $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, false);
-        $line['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, false);
+        $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');
+        $line['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, '');
 
         return $line;
     }
