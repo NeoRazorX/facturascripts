@@ -31,7 +31,7 @@
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
         <column name="warehouse" display="left" order="120">
-            <widget type="select" fieldname="codalmacen">
+            <widget type="select" fieldname="codalmacen" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>

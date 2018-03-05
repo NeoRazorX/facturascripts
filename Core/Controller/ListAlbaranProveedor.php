@@ -39,10 +39,10 @@ class ListAlbaranProveedor extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListAlbaranProveedor', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'descripcion');
-        $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'proveedores', '', 'nombre');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
+        $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);

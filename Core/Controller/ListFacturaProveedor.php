@@ -39,10 +39,10 @@ class ListFacturaProveedor extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListFacturaProveedor', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListFacturaProveedor', 'total', 'total');
-        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
-        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'proveedores', '', 'nombre');
+        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
+        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
         $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
         $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);

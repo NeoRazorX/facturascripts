@@ -88,7 +88,7 @@
                     <values title=" "> </values>
                 </widget>
             </column>
-            <column name="currency_position" title="currency position" numcolumns="3" order="120">
+            <column name="currency_position" title="currency-position" numcolumns="3" order="120">
                 <widget type="select" fieldname="currency_position" required="true" icon="fa-money">
                     <values title="$ 123">left</values>
                     <values title="123 $">right</values>

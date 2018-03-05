@@ -37,8 +37,8 @@ class ListArticulo extends ExtendedController\ListController
         $this->addView('\FacturaScripts\Dinamic\Model\Articulo', 'ListArticulo', 'products');
         $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
 
-        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'nombre');
-        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'descripcion');
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', 'codfamilia', 'descripcion');
         $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
         $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
 
@@ -51,7 +51,7 @@ class ListArticulo extends ExtendedController\ListController
         $this->addView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
         $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
 
-        $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', '', 'nombre');
+        $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
         $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
         $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
@@ -62,7 +62,7 @@ class ListArticulo extends ExtendedController\ListController
         $this->addView('\FacturaScripts\Dinamic\Model\Stock', 'ListStock', 'stock');
         $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
 
-        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
 
         $this->addOrderBy('ListStock', 'referencia', 'reference');
         $this->addOrderBy('ListStock', 'cantidad', 'quantity');

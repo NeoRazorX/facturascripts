@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,16 +25,28 @@ namespace FacturaScripts\Core\Base;
  */
 class NumberTools
 {
+
+    public function __construct()
+    {
+        if (!defined('FS_NF1')) {
+            define('FS_NF1', ',');
+        }
+
+        if (!defined('FS_NF2')) {
+            define('FS_NF2', ' ');
+        }
+    }
+
     /**
      * Returns the number format with the number of decimals indicated.
      *
-     * @param float $number
-     * @param int   $decimals
+     * @param float|string $number
+     * @param int|string   $decimals
      *
      * @return string
      */
-    public function format($number, $decimals = 0)
+    public static function format($number, $decimals = FS_NF0)
     {
-        return number_format($number, $decimals, FS_NF1, FS_NF2);
+        return number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
     }
 }

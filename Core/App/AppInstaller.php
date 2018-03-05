@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -128,7 +129,7 @@ class AppInstaller
     {
         // Check each needed folder to deploy
         foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
-            if (!file_exists($folder) && !mkdir($folder)) {
+            if (!file_exists($folder) && !mkdir($folder) && !is_dir($folder)) {
                 $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['%folder%' => $folder]));
                 return false;
             }
@@ -245,7 +246,7 @@ class AppInstaller
     private function saveInstall()
     {
         $file = fopen(FS_FOLDER . '/config.php', 'wb');
-        if ($file) {
+        if (\is_resource($file)) {
             fwrite($file, "<?php\n");
             fwrite($file, "define('FS_COOKIES_EXPIRE', 604800);\n");
             fwrite($file, "define('FS_DEBUG', true);\n");
@@ -324,10 +325,8 @@ class AppInstaller
         }
 
         // Omit the DB name because it will be checked on a later stage
-        $connection = new \mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
-        if ($connection->connect_error) {
-            $this->miniLog->critical((string) $connection->connect_error);
-        } else {
+        $connection = @new \mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
+        if (!$connection->connect_error) {
             // Check that the DB exists, if it doesn't, we create a new one
             $dbSelected = \mysqli_select_db($connection, $dbData['name']);
             if ($dbSelected) {
@@ -338,11 +337,10 @@ class AppInstaller
             if ($connection->query($sqlCrearBD)) {
                 return true;
             }
-
-            $this->miniLog->critical((string) $connection->connect_error);
         }
 
         $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
+        $this->miniLog->critical((string) $connection->connect_errno . ': ' . $connection->connect_error);
         return false;
     }
 
@@ -356,23 +354,28 @@ class AppInstaller
     private function testPostgreSql($dbData)
     {
         $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];
-        $connection = \pg_connect($connectionStr . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
-        if ($connection) {
-            // Check that the DB exists, if it doesn't, we create a new one
-            $connection2 = \pg_connect($connectionStr . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
-            if ($connection2) {
+        $connection = @\pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+        if (is_resource($connection)) {
+            // Check that the DB exists, if it doesn't, we try to create a new one
+            $sqlExistsBD = 'SELECT 1 AS result FROM pg_database WHERE datname="' . $dbData['name'] . '"';
+            $result = \pg_query($connection, $sqlExistsBD);
+            if (is_resource($result) && \pg_num_rows($result) > 0) {
                 return true;
             }
 
-            $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            if (\pg_query($connection, $sqlCrearBD)) {
+            $sqlCreateBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
+            $result = \pg_query($connection, $sqlCreateBD);
+            if (is_resource($result)) {
                 return true;
             }
-
-            $this->miniLog->critical((string) \pg_last_error($connection));
         }
 
         $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
+        if (is_resource($connection) && \pg_last_error($connection) !== false) {
+            $this->miniLog->critical((string) \pg_last_error($connection));
+        } else {
+            $this->miniLog->critical($this->i18n->trans('incorrect-connection-data'));
+        }
         return false;
     }
 }
