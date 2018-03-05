@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Description of GridView
@@ -33,6 +34,8 @@ class GridView extends BaseView
      * @var BaseView
      */
     private $parentView;
+
+    private $parentModel;
 
     /**
      * Grid data configuration and data
@@ -56,6 +59,7 @@ class GridView extends BaseView
 
         // Join the parent view
         $this->parentView = $parent;
+        $this->parentModel = $parent->getModel();
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
@@ -90,8 +94,7 @@ class GridView extends BaseView
     private function getAutocompleteSource($values): array
     {
         // Calculate url for grid controller
-        $parentModel = $this->parentView->getModel();
-        $url = $parentModel->url('edit');
+        $url = $this->parentModel->url('edit');
 
         return [
             'url' => $url,
@@ -196,6 +199,106 @@ class GridView extends BaseView
             foreach ($this->model->all($where, $order, 0, 0) as $line) {
                 $this->gridData['rows'][] = (array) $line;
             }
+        }
+    }
+
+    /**
+     * Load data of master document and set data from array
+     *
+     * @param ModelClass $model
+     * @param array $data
+     * @return bool
+     */
+    private function loadDocumentDataFromArray($fieldPK, &$data): bool
+    {
+        if ($this->parentModel->loadFromCode($data[$fieldPK])) {    // old data
+            $this->parentModel->loadFromData($data);                // new data (the web form may not have all the fields)
+            return $this->parentModel->test();
+        }
+        return false;
+    }
+
+    /**
+     * Removes from the database the non-existent detail
+     *
+     * @param ModelClass $model
+     * @param array $linesOld
+     * @param array $linesNew
+     * @return bool
+     */
+    private function deleteLinesOld(&$linesOld, &$linesNew): bool
+    {
+        $fieldPK = $this->model->primaryColumn();
+        $oldIDs = array_column($linesOld, $fieldPK);
+        $newIDs = array_column($linesNew, $fieldPK);
+        $deletedIDs = array_diff($oldIDs, $newIDs);
+
+        foreach ($deletedIDs as $idKey) {
+            $this->model->{$fieldPK} = $idKey;
+            if (!$this->model->delete()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function saveData($data):array
+    {
+        $result = [
+            'error' => false,
+            'message' => ''
+        ];
+
+        try {
+            // load master document data and test it's ok
+            $parentPK = $this->parentModel->primaryColumn();
+            if (!$this->loadDocumentDataFromArray($parentPK, $data['document'])) {
+                throw new Exception(self::$i18n->trans('parent-document-test-error'));
+            }
+
+            // load detail document data (old)
+            $parentValue = $this->parentModel->primaryColumnValue();
+            $linesOld = $this->model->all([new DataBase\DataBaseWhere($parentPK, $parentValue)]);
+
+            // start transaction
+            $dataBase = new DataBase();
+            $dataBase->beginTransaction();
+
+            // delete old lines not used
+            if (!$this->deleteLinesOld($linesOld, $data['lines'])) {
+                throw new Exception(self::$i18n->trans('lines-delete-error'));
+            }
+
+            // Proccess detail document data (new)
+            $this->parentModel->initTotals();
+            foreach ($data['lines'] as $newLine) {
+                $this->model->loadFromData($newLine);
+                if (empty($this->model->primaryColumnValue())) {
+                    $this->model->{$parentPK} = $parentValue;
+                }
+                if (!$this->model->save()) {
+                    throw new Exception(self::$i18n->trans('lines-save-error'));
+                }
+                $this->parentModel->accumulateAmounts($newLine);
+            }
+
+            // save master document
+            if (!$this->parentModel->save()) {
+                throw new Exception(self::$i18n->trans('parent-document-save-error'));
+            }
+
+            // confirm save data into database
+            $dataBase->commit();
+        }
+        catch (Exception $e) {
+            $result['error'] = true;
+            $result['message'] = $e->getMessage();
+        }
+        finally {
+            if ($dataBase->inTransaction()) {
+                $dataBase->rollback();
+            }
+            return $result;
         }
     }
 }

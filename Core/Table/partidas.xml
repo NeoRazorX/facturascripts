@@ -51,6 +51,7 @@
         <name>tasaconv</name>
         <type>double precision</type>
         <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>debe</name>
@@ -98,22 +99,31 @@
         <name>baseimponible</name>
         <type>double precision</type>
         <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>iva</name>
         <type>double precision</type>
         <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>recargo</name>
         <type>double precision</type>
         <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>punteada</name>
         <type>boolean</type>
         <null>NO</null>
         <default>false</default>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>0</default>
     </column>
     <constraint>
         <name>partidas_pkey</name>
