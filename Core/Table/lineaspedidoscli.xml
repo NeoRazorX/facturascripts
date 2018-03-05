@@ -22,11 +22,6 @@
         <null>YES</null>
     </column>
     <column>
-        <name>dtolineal</name>
-        <type>double precision</type>
-        <default>0</default>
-    </column>
-    <column>
         <name>dtopor</name>
         <type>double precision</type>
         <null>NO</null>
@@ -90,11 +85,6 @@
         <type>character varying(18)</type>
     </column>
     <column>
-        <name>totalenalbaran</name>
-        <type>double precision</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>orden</name>
         <type>integer</type>
         <default>0</default>
@@ -115,8 +105,6 @@
     </constraint>
     <constraint>
         <name>ca_lineaspedidoscli_pedidoscli</name>
-        <type>FOREIGN KEY (idpedido)
-            REFERENCES pedidoscli (idpedido)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idpedido) REFERENCES pedidoscli (idpedido) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

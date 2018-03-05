@@ -23,11 +23,6 @@
         <null>YES</null>
     </column>
     <column>
-        <name>dtolineal</name>
-        <type>double precision</type>
-        <default>0</default>
-    </column>
-    <column>
         <name>dtopor</name>
         <type>double precision</type>
         <null>NO</null>
@@ -97,9 +92,7 @@
     </column>
     <constraint>
         <name>ca_lineasalbaranesprov_albaranesprov2</name>
-        <type>FOREIGN KEY (idalbaran)
-            REFERENCES albaranesprov (idalbaran)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idalbaran) REFERENCES albaranesprov (idalbaran) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>lineasalbaranesprov_pkey</name>

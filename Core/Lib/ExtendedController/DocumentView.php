@@ -112,16 +112,12 @@ class DocumentView extends BaseView
         ];
 
         foreach ($this->lineOptions as $col) {
-            $data['headers'][] = self::$i18n->trans($col->title);
-
             $item = [
                 'data' => $col->widget->fieldName,
                 'type' => $col->widget->type,
             ];
-            if ($col->display === 'none') {
-                $item['editor'] = false;
-                $item['width'] = 1;
-            } elseif ($item['type'] === 'number' || $item['type'] === 'money') {
+
+            if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
                 $item['format'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
@@ -130,7 +126,11 @@ class DocumentView extends BaseView
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
             }
-            $data['columns'][] = $item;
+
+            if ($col->display !== 'none') {
+                $data['columns'][] = $item;
+                $data['headers'][] = self::$i18n->trans($col->title);
+            }
         }
 
         foreach ($this->lines as $line) {
@@ -390,7 +390,7 @@ class DocumentView extends BaseView
     }
 
     /**
-     * Process form lines to assign column keys instead of numbers.
+     * Process form lines to assign only configurated columns.
      * Also adds order column.
      *
      * @param array $formLines
@@ -408,8 +408,8 @@ class DocumentView extends BaseView
         $order = count($formLines);
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
-            foreach ($data as $key => $value) {
-                $line[$columns[$key]] = $value;
+            foreach ($this->lineOptions as $col) {
+                $line[$col->widget->fieldName] = $data[$col->widget->fieldName];
             }
             $newLines[] = $line;
             $order--;
