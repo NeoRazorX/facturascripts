@@ -78,8 +78,6 @@ class DocumentCalculator
                     $fLine['iva'] = $articulo->getIva();
                     $fLine['pvpunitario'] = $articulo->pvp;
                 }
-            } elseif (empty($fLine['cantidad'])) {
-                continue;
             }
 
             $newLine = new Model\LineaAlbaranCliente();

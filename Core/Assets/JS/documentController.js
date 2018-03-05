@@ -42,6 +42,8 @@ function documentCalculate() {
     });
     data.action = "calculate-document";
     data.lines = getGridData();
+    console.log('data', data);
+    
     $.ajax({
         type: "POST",
         url: documentUrl,
@@ -58,6 +60,7 @@ function documentCalculate() {
             });
             
             hsTable.render();
+            console.log('results', results);
         }
     });
 }

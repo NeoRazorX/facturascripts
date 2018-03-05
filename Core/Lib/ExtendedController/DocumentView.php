@@ -400,16 +400,11 @@ class DocumentView extends BaseView
     protected function processFormLines($formLines)
     {
         $newLines = [];
-        $columns = [];
-        foreach ($this->lineOptions as $col) {
-            $columns[] = $col->widget->fieldName;
-        }
-
         $order = count($formLines);
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
             foreach ($this->lineOptions as $col) {
-                $line[$col->widget->fieldName] = $data[$col->widget->fieldName];
+                $line[$col->widget->fieldName] = isset($data[$col->widget->fieldName]) ? $data[$col->widget->fieldName] : null;
             }
             $newLines[] = $line;
             $order--;
