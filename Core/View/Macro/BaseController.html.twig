@@ -262,7 +262,7 @@
             <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                     <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
             </button>
-            <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
+            <button class="btn btn-sm btn-primary" id="submit-{{ formName }}" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
             </button>
         </div>
@@ -298,7 +298,7 @@
             {{ column.getEditHTML(value, needTitle)|raw }}
             {% endif %}
         {% endfor %}
-        
+
         <div class="form-group col text-right">
             <div class="d-xs-none"><br/></div>
             {% if keyValue is not empty %}
