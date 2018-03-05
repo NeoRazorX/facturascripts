@@ -201,6 +201,10 @@ class Agente extends Base\Contact
             $this->codagente = $this->newCode();
         }
 
+        if ($this->debaja && empty($this->fechabaja)) {
+            $this->fechabaja = date('d-m-Y');
+        }
+
         return true;
     }
 }

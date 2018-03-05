@@ -41,7 +41,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addOrderBy('ListCuenta', 'codejercicio desc, codcuenta', 'code');
         $this->addOrderBy('ListCuenta', 'codejercicio desc, descripcion', 'description');
 
-        $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
+        $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', 'codejercicio', 'nombre');
 
         /* Special account */
         $this->addView('\FacturaScripts\Dinamic\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');

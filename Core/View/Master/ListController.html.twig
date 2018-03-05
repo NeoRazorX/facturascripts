@@ -195,7 +195,7 @@
             <a href="#{{ modelID }}" class="nav-link {{ active }}" id="{{ modelID }}-tab" data-toggle="tab" role="tab" aria-controls="{{ modelID }}">
                 <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
                 <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count) }}</span>{% endif %}
+                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
             </a>
         </li>
         {% endfor %}
@@ -217,7 +217,7 @@
                                 <input type="hidden" name="active" value="{{ indexView }}"/>
                                 {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
                                 <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
-                                <span class="input-group-prepend">
+                                <span class="input-group-append">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
                                     </button>

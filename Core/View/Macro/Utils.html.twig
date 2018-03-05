@@ -33,10 +33,10 @@
 <div class="btn-group">
     {% if type == 'list' %}
     <a href="#" onclick="goToExport('{{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
-    {% elseif fsc.getURL('edit') matches '/^((.*?)(\?))*(.*)$/' %}
-    <a href="{{ fsc.getURL('edit') }}?action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
-    {% else %}
+    {% elseif '?' in fsc.getURL('edit') %}
     <a href="{{ fsc.getURL('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+    {% else %}
+    <a href="{{ fsc.getURL('edit') }}?action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
     {% endif %}
     <i class="fa fa-print" aria-hidden="true"></i>
         <span class="d-none d-sm-inline-block">&nbsp;{{ print }}</span>
@@ -48,10 +48,10 @@
         {% for key, option in fsc.exportManager.options() %}
             {% if type == 'list' %}
             <a href="#" onclick="goToExport('{{ key }}')" class="dropdown-item">
-            {% elseif fsc.getURL('edit') matches '/^((.*?)(\?))*(.*)$/' %}
-            <a href="{{ fsc.getURL('edit') }}?action=export&option={{ key }}" class="dropdown-item">
-            {% else %}
+            {% elseif '?' in fsc.getURL('edit') %}
             <a href="{{ fsc.getURL('edit') }}&action=export&option={{ key }}" class="dropdown-item">
+            {% else %}
+            <a href="{{ fsc.getURL('edit') }}?action=export&option={{ key }}" class="dropdown-item">
             {% endif %}
             <i class="fa {{ option.icon }} fa-fw" aria-hidden="true"></i> {{ i18n.trans(option.description) }}
             </a>

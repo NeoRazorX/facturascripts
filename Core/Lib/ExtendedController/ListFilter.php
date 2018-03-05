@@ -30,18 +30,18 @@ class ListFilter
 {
 
     /**
-     * Indicates the filter type
-     *
-     * @var string
-     */
-    public $type;
-
-    /**
      * Values and configuration options for the filter
      *
      * @var array
      */
     public $options;
+
+    /**
+     * Indicates the filter type
+     *
+     * @var string
+     */
+    public $type;
 
     /**
      * ListFilter constructor.
@@ -110,18 +110,6 @@ class ListFilter
             default:
                 return '';
         }
-    }
-
-    /**
-     * Check if option value is not null or empty
-     *
-     * @param string $key
-     * @return bool
-     */
-    private function hasValue($key = 'value'): bool
-    {
-        $value = $this->options[$key];
-        return (($value !== null) && ($value !== ''));
     }
 
     /**
@@ -202,35 +190,35 @@ class ListFilter
     }
 
     /**
-     * Creates and returns a select type filter
-     *
-     * @param string $field
-     * @param string $value
+     * Creates and returns a select type filter.
+     * 
      * @param string $table
-     * @param string $where
-     *
+     * @param string $fieldcode
+     * @param string $fieldtitle
+     * @param string $value
+     * 
      * @return ListFilter
      */
-    public static function newSelectFilter($field, $value, $table, $where): ListFilter
+    public static function newSelectFilter($table, $fieldcode, $fieldtitle, $value): ListFilter
     {
-        $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
+        $options = ['table' => $table, 'fieldcode' => $fieldcode, 'fieldtitle' => $fieldtitle, 'value' => $value];
 
         return new self('select', $options);
     }
 
     /**
-     * Creates and returns an autocomplete type filter
-     *
-     * @param string $field
-     * @param string $value
+     * Creates and returns an autocomplete type filter.
+     * 
      * @param string $table
-     * @param string $where
-     *
+     * @param string $fieldcode
+     * @param string $fieldtitle
+     * @param string $value
+     * 
      * @return ListFilter
      */
-    public static function newAutocompleteFilter($field, $value, $table, $where)
+    public static function newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value): ListFilter
     {
-        $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
+        $options = ['table' => $table, 'fieldcode' => $fieldcode, 'fieldtitle' => $fieldtitle, 'value' => $value];
 
         return new self('autocomplete', $options);
     }
@@ -246,7 +234,7 @@ class ListFilter
      *
      * @return ListFilter
      */
-    public static function newCheckboxFilter($field, $value, $label, $inverse, $matchValue)
+    public static function newCheckboxFilter($field, $value, $label, $inverse, $matchValue): ListFilter
     {
         $options = [
             'label' => $label,
@@ -260,21 +248,6 @@ class ListFilter
     }
 
     /**
-     * If number is integer, return the number without decimal part.
-     * Else, return the number with decimal part.
-     *
-     * @param $value
-     *
-     * @return string
-     */
-    private static function checkNumberValue($value)
-    {
-        $values = explode('.', $value, 1);
-
-        return count($values) === 1 ? $values[0] : $values[0] . '.' . $values[1];
-    }
-
-    /**
      * Creates and returns a filter of the specified type [text|number|datepicker]
      *
      * @param string $type    ('text' | 'datepicker' | 'number')
@@ -282,7 +255,7 @@ class ListFilter
      *
      * @return ListFilter
      */
-    public static function newStandardFilter($type, $options)
+    public static function newStandardFilter($type, $options): ListFilter
     {
         if ($type === 'number') {
             $options['valueFrom'] = self::checkNumberValue($options['valueFrom']);
@@ -290,5 +263,33 @@ class ListFilter
         }
 
         return new self($type, $options);
+    }
+
+    /**
+     * Check if option value is not null or empty
+     *
+     * @param string $key
+     * 
+     * @return bool
+     */
+    private function hasValue($key = 'value'): bool
+    {
+        $value = $this->options[$key];
+        return (($value !== null) && ($value !== ''));
+    }
+
+    /**
+     * If number is integer, return the number without decimal part.
+     * Else, return the number with decimal part.
+     *
+     * @param mixed $value
+     *
+     * @return string
+     */
+    private static function checkNumberValue($value): string
+    {
+        $values = explode('.', $value, 1);
+
+        return count($values) === 1 ? $values[0] : $values[0] . '.' . $values[1];
     }
 }

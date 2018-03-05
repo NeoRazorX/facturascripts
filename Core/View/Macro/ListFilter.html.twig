@@ -67,7 +67,7 @@
 <div class="col-md-2">
     <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
         <option value="">{{ any }} {{ key }}</option>
-        {% for data in context.fsc.codeModel.all(filter.options.table, key, filter.options.field) %}
+        {% for data in context.fsc.codeModel.all(filter.options.table, filter.options.fieldcode, filter.options.fieldtitle) %}
         {% if (context.indexView == context.fsc.active) and (filter.options.value != '') and (data.code == filter.options.value) %}
         <option value="{{ data.code }}" selected="">{{ data.description }}</option>
         {% else %}
@@ -103,9 +103,9 @@
             </button>
         </span>
         {% endif %}
-        <input type="text" value="{{ context.fsc.codeModel.getDescription(filter.options.table, key, filter.options.value, filter.options.field) }}"
-               class="form-control autocomplete" data-source="{{ filter.options.table }}" data-field="{{ key }}" data-title="{{ filter.options.field }}"
-               placeholder="{{ any }} {{ filter.options.field }}" autocomplete="off"/>
+        <input type="text" value="{{ context.fsc.codeModel.getDescription(filter.options.table, filter.options.fieldcode, filter.options.value, filter.options.fieldtitle) }}"
+               class="form-control autocomplete" data-source="{{ filter.options.table }}" data-field="{{ filter.options.fieldcode }}" data-title="{{ filter.options.fieldtitle }}"
+               placeholder="{{ any }} {{ filter.options.fieldcode }}" autocomplete="off"/>
     </div>
 </div>
 {% endmacro %}

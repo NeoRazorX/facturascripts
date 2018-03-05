@@ -125,6 +125,8 @@ abstract class App
         $this->response = new Response();
         $this->settings = new AppSettings();
         $this->uri = $uri;
+
+        $this->miniLog->debug('URI: ' . $this->uri);
     }
 
     /**

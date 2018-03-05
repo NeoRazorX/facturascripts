@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Import;
 
+use FacturaScripts\Core\Base\DataBase;
+use ParseCsv\Csv;
+
 /**
  * Common CSV import actions.
  *
@@ -40,8 +43,9 @@ class CSVImport
             return '';
         }
 
-        $csv = new \parseCSV();
+        $csv = new Csv();
         $csv->auto($filePath);
+        $dataBase = new DataBase();
 
         $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $csv->titles) . ') VALUES ';
         $sep = '';
@@ -49,7 +53,7 @@ class CSVImport
             $sql .= $sep . '(';
             $sep2 = '';
             foreach ($row as $value) {
-                $sql .= $sep2 . self::valueToSql($value);
+                $sql .= $sep2 . self::valueToSql($dataBase, $value);
                 $sep2 = ', ';
             }
 
@@ -63,18 +67,19 @@ class CSVImport
 
     /**
      * Returns a value to SQL format.
-     *
-     * @param $value
-     *
+     * 
+     * @param DataBase $dataBase
+     * @param string   $value
+     * 
      * @return string
      */
-    private static function valueToSql($value)
+    private static function valueToSql(DataBase &$dataBase, string $value): string
     {
         if ($value === 'false' || $value === 'true') {
             return $value;
         }
 
-        return "'" . $value . "'";
+        return $dataBase->var2str($value);
     }
 
     /**

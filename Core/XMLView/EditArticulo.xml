@@ -61,7 +61,7 @@
                 <widget type="text" fieldname="equivalencia"/>
             </column>
         </group>
-        <group name="stock" numcolumns="4">
+        <group name="stock" numcolumns="6">
             <column name="stockfis" title="physical-stock" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
@@ -72,26 +72,27 @@
                 <widget type="number" fieldname="stockmax"/>
             </column>
         </group>
-        <group name="vacio" numcolumns="3">
-             
-        </group>
-        <group name="option" numcolumns="5">
-            <column name="nostock" title="no-stock" numcolumns="6" order="100">
+        <group name="options" numcolumns="2">
+            <column name="nostock" title="no-stock" numcolumns="12" order="100">
                 <widget type="checkbox" fieldname="nostock" />
             </column>
-            <column name="secompra" title="for-purchase" numcolumns="6" order="140">
-                <widget type="checkbox" fieldname="secompra" />
-            </column>
-            <column name="sevende" title="for-sale" numcolumns="6" order="120">
-                <widget type="checkbox" fieldname="sevende" />
-            </column>
-            <column name="publico" title="public" numcolumns="6" order="130">
-                <widget type="checkbox" fieldname="publico" />
-            </column> 
-            <column name="trazabilidad" title="traceability" numcolumns="6" order="110">
+            <column name="trazabilidad" title="traceability" numcolumns="12" order="110">
                 <widget type="checkbox" fieldname="trazabilidad"/>
             </column>
-            <column name="bloqueado" title="blocked" numcolumns="6" order="120">
+        </group>
+        <group name="options2" numcolumns="2">
+            <column name="secompra" title="for-purchase" numcolumns="12" order="120">
+                <widget type="checkbox" fieldname="secompra" />
+            </column>
+            <column name="sevende" title="for-sale" numcolumns="12" order="130">
+                <widget type="checkbox" fieldname="sevende" />
+            </column>
+        </group>
+        <group name="options3" numcolumns="2">
+            <column name="publico" title="public" numcolumns="12" order="140">
+                <widget type="checkbox" fieldname="publico" />
+            </column> 
+            <column name="bloqueado" title="blocked" numcolumns="12" order="150">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
         </group>

@@ -57,7 +57,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
         $this->addOrderBy('ListCliente', 'fecha', 'date');
 
-        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
+        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
 
         /* Groups */

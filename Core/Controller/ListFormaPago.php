@@ -56,8 +56,6 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addOrderBy('ListFormaPago', 'codpago', 'code');
         $this->addOrderBy('ListFormaPago', 'descripcion', 'description');
 
-        $this->addFilterSelect('ListFormaPago', 'generación', 'formaspago', '', 'genrecibos');
-        $this->addFilterSelect('ListFormaPago', 'vencimiento', 'formaspago');
         $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied');
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
 

@@ -38,7 +38,7 @@ class ListAsiento extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAsiento', 'amount', 'amount', 'importe');
-        $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', '', 'nombre');
+        $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', 'codejercicio', 'nombre');
 
         $this->addOrderBy('ListAsiento', 'numero', 'number');
         $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc

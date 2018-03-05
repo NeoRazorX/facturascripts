@@ -39,10 +39,10 @@ class ListPedidoProveedor extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListPedidoProveedor', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListPedidoProveedor', 'total', 'total');
-        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'formaspago', '', 'descripcion');
-        $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'proveedores', '', 'nombre');
+        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
+        $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
         $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
         $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);

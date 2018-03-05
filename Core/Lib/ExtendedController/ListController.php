@@ -157,24 +157,25 @@ abstract class ListController extends Base\Controller
      * Runs the actions that alter the data before reading it
      *
      * @param string $action
+     * 
      * @return bool
      */
     protected function execPreviousAction($action)
     {
-        $status = true;
         switch ($action) {
             case 'autocomplete':
                 $this->setTemplate(false);
                 $data = $this->requestGet(['source', 'field', 'title', 'term']);
                 $results = $this->autocompleteAction($data);
                 $this->response->setContent(json_encode($results));
-                break;
+                return false;
 
             case 'delete':
                 $this->deleteAction($this->views[$this->active]);
                 break;
         }
-        return $status;
+
+        return true;
     }
 
     /**
@@ -380,33 +381,33 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Add a select type filter to a table
-     *
+     * Add a select type filter to a table.
+     * 
      * @param string $indexView
-     * @param string $key       (Filter field name identifier)
-     * @param string $table     (Table name)
-     * @param string $where     (Where condition for table)
-     * @param string $field     (Field of the table with the data to show)
+     * @param string $key
+     * @param string $table
+     * @param string $fieldcode
+     * @param string $fieldtitle
      */
-    protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
+    protected function addFilterSelect($indexView, $key, $table, $fieldcode, $fieldtitle)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($field, $value, $table, $where));
+        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($table, $fieldcode, $fieldtitle, $value));
     }
 
     /**
-     * Add an autocomplete type filter to a table
-     *
+     * Add an autocomplete type filter to a table.
+     * 
      * @param string $indexView
-     * @param string $key       (Filter field name identifier)
-     * @param string $table     (Table name)
-     * @param string $where     (Where condition for table)
-     * @param string $field     (Field of the table with the data to show)
+     * @param string $key
+     * @param string $table
+     * @param string $fieldcode
+     * @param string $fieldtitle
      */
-    protected function addFilterAutocomplete($indexView, $key, $table, $where = '', $field = '')
+    protected function addFilterAutocomplete($indexView, $key, $table, $fieldcode, $fieldtitle)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($field, $value, $table, $where));
+        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value));
     }
 
     /**
