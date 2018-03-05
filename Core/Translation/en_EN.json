@@ -624,5 +624,14 @@
     "concept": "Concept",
     "lock-unlock": "Lock-Unlock",
     "clone": "Clone",
-    "predefined-concepts": "Predefined Concepts"
+    "predefined-concepts": "Predefined Concepts",
+    "unbalance": "Unbalance",
+    "account-balance": "Account Balance",
+    "product-decimals": "Product decimals",
+    "currency-position": "Currency position",
+    "compatible": "Compatible",
+    "editable": "Editable",
+    "location": "Location",
+    "balance-account": "Balance account",
+    "balance-account-abreviated": "Balance account abreviated"
 }

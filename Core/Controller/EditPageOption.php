@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,9 +28,17 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
 class EditPageOption extends Base\Controller
 {
+
+    /**
+     * Details of the view configuration
+     *
+     * @var Model\PageOption
+     */
+    public $model;
 
     /**
      * Selected user, for which the controller columns are created or modified
@@ -44,28 +53,6 @@ class EditPageOption extends Base\Controller
      * @var string
      */
     public $selectedViewName;
-
-    /**
-     * Details of the view configuration
-     *
-     * @var Model\PageOption
-     */
-    public $model;
-
-    /**
-     * Initialize all objects and properties.
-     *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
-     * @param string     $className
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->setTemplate('EditPageOption');
-        $this->model = new Model\PageOption();
-    }
 
     /**
      * Load and initialize the parameters sent by the form
@@ -88,10 +75,18 @@ class EditPageOption extends Base\Controller
         parent::privateCore($response, $user, $permissions);
 
         $this->getParams();
+        $this->model = new Model\PageOption();
         $this->model->getForUser($this->selectedViewName, $this->selectedUser);
 
-        if ($this->request->get('action', '') === 'save') {
-            $this->saveData();
+        $action = $this->request->get('action', '');
+        switch ($action) {
+            case 'save':
+                $this->saveData();
+                break;
+
+            case 'delete':
+                $this->deleteData();
+                break;
         }
     }
 
@@ -132,6 +127,31 @@ class EditPageOption extends Base\Controller
             return;
         }
         $this->miniLog->alert($this->i18n->trans('data-save-error'));
+    }
+
+    /**
+     * Delete configuration for view
+     */
+    private function deleteData()
+    {
+        $nick = $this->request->get('nick');
+        $where = [
+            new DataBaseWhere('name', $this->selectedViewName)
+        ];
+
+        if (empty($nick)) {
+            $where[] = new DataBaseWhere('nick', 'null', 'IS');
+        } else {
+            $where[] = new DataBaseWhere('nick', $nick);
+        }
+
+        $rows = $this->model->all($where, [], 0, 1);
+        if ($rows[0] && $rows[0]->delete()) {
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+        } else {
+            $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
+        }
     }
 
     /**

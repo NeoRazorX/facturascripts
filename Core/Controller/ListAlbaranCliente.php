@@ -39,10 +39,10 @@ class ListAlbaranCliente extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListAlbaranCliente', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAlbaranCliente', 'total', 'total');
-        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
-        $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'clientes', '', 'nombre');
+        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');
+        $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'clientes', 'codcliente', 'nombre');
 
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date', 2);

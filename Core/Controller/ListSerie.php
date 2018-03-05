@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,9 +55,7 @@ class ListSerie extends ExtendedController\ListController
 
         $this->addOrderBy($className, 'codserie', 'code');
         $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'codejercicio', 'exercise');
 
-        $this->addFilterSelect($className, 'ejercicio', 'series', '', 'codejercicio');
         $this->addFilterCheckbox($className, 'siniva', 'without-tax', 'siniva');
     }
 }

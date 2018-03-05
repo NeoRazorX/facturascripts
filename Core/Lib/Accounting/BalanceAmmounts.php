@@ -104,9 +104,9 @@ class BalanceAmmounts extends AccountingBase
         return [
             'subcuenta' => $line['codsubcuenta'],
             'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
-            'debe' => $this->divisaTools->format($line['debe'], FS_NF0, false),
-            'haber' => $this->divisaTools->format($line['haber'], FS_NF0, false),
-            'saldo' => $this->divisaTools->format($saldo, FS_NF0, false),
+            'debe' => $this->divisaTools->format($line['debe'], FS_NF0, ''),
+            'haber' => $this->divisaTools->format($line['haber'], FS_NF0, ''),
+            'saldo' => $this->divisaTools->format($saldo, FS_NF0, ''),
         ];
     }
 

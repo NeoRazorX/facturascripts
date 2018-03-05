@@ -67,5 +67,21 @@
                 <widget type="text" fieldname="provincia" />
             </column>
         </group>
+        <group name="other" title="other-data" numcolumns="12">
+            <column name="create-date" numcolumns="3" order="110">
+                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+            </column>
+            <column name="blocked-date" numcolumns="3" order="120">
+                <widget type="datepicker" fieldname="fechabaja" />
+            </column>
+            <column name="blocked" numcolumns="3" order="130">
+                <widget type="checkbox" fieldname="debaja" />
+            </column>
+        </group>
+        <group name="notes">
+            <column name="notes" order="100" numcolumns="12">
+                <widget type="textarea" fieldname="observaciones" />
+            </column>
+        </group>
     </columns>
 </view>

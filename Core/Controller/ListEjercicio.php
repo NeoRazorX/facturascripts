@@ -57,6 +57,6 @@ class ListEjercicio extends ExtendedController\ListController
         $this->addOrderBy($className, 'codejercicio', 'code');
         $this->addOrderBy($className, 'nombre', 'name');
 
-        $this->addFilterSelect($className, 'estado', 'ejercicios');
+        $this->addFilterSelect($className, 'estado', 'ejercicios', 'estado', 'estado');
     }
 }

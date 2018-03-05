@@ -1,15 +1,17 @@
-# Cómo contribuir
+# FacturaScripts
 
 Este proyecto es software libre y todos los desarrolladores son bienvenidos.
 Puedes consultar la lista de tareas a realizar, la documentación y el chat
 para programadores en nuestra página web:
 https://www.facturascripts.com/foro/quieres-colaborar-en-el-desarrollo-de-facturascripts-964.html
 
-# Cómo contribuir
+## Cómo contribuir
 
 Grácias por tu interés en FacturaScripts!
 
 Este documento trata acerca de las Issues (Problemas) y los Pull Request (Peticiones para incorporar cambios).
+
+Si quieres más detalles acerca del código, puedes informarte desde la [documentación](https://www.facturascripts.com/documentacion/facturascripts-2018).
 
 ## Sumario
 
@@ -20,15 +22,15 @@ Este documento trata acerca de las Issues (Problemas) y los Pull Request (Petici
 ## Issues (Problemas)
 
 Cualquier duda, pregunta o error que encuentres en este prototipo lo puedes comentar
-en el chat:
-https://facturascripts.slack.com
+en el chat: [https://facturascripts.slack.com](https://facturascripts.slack.com)
 
 
 ## Pull Requests (Peticiones para incorporar cambios)
 
 Todos los colaboradores de FacturaScripts estarán encantados de revisar tus peticiones! :smile:
 
-Pero por favor, lee lo siguiente antes:
+Pero por favor, lee lo siguiente antes, e intenta ser lo más respetuoso posible con las siguientes recomendaciones, 
+que con el tiempo pasarán a ser requisitos:
 
 ### El contenido
 
@@ -42,45 +44,71 @@ Puedes utilizar los plugins existentes para los diferentes IDEs, que lo hacen en
 * [Atom](https://atom.io/packages/php-cs-fixer)
 * [PHPStorm](https://www.jetbrains.com/help/phpstorm/code-sniffer.html)
 
+Como cada IDE tiene sus particularidades formateando código, aunque se utilice su auto-formateado, recomendamos antes de 
+hacer un commit formatearlo mediantes el siguiente comando:
+
+```bash
+ vendor/bin/phpcbf --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
+```
+
+Así garantizamos que el estilo de código es exactamente el mismo para todos los que contribuimos y que no añadimos 
+cambios que básicamente alteran el estilo.
+
+Además, hay que tener en cuenta, que Travis, una de las herramientas externas que utilizamos, ejecuta el mismo comando 
+antes de analizar el código, y si no está formateado correctamente lo marcará como que no pasa el test.
+
 #### La documentación
 
-La documentación es algo que nos resulta imprescindible a todos para entender mejor como utilizar funciones de código 
-realizado por otros, o incluso para entender que hicimos nosotros mismos hace algún tiempo. 
+La documentación es algo que nos resulta imprescindible a todos para entender mejor cómo utilizar funciones de código 
+realizado por otros, o incluso para entender qué hicimos nosotros mismos hace ya algún tiempo. 
 Entonces, porqué no documentar tus aportes para que los demás también lo tengan más sencillo?
 
 En nuestro caso particular puede revisarse por ejemplo cualquier clase en
 [la base del núcleo de FacturaScripts](https://github.com/NeoRazorX/facturascripts/tree/master/Core/Base) 
 para comprobar que prácticamente todo, por no decir todo, está comentado. De modo que cualquiera 
-puede documentarse rápidamente y saber que y como debe utilizarlo.
+puede documentarse rápidamente y saber qué y cómo debe utilizarlo.
 
 A medida que un proyecto crece y hay más y más contribuidores, esto se vuelve esencial, porqué 
 es lo que nos permite conseguir una mejor integración entre distintas partes sin tener que estar 
 consultando directamente a quien realizó dicho código, a menos que se requiera algún tipo de 
-aclaración, que en dicho caso sería indicativo de que es pertienente mejorar la documentación 
+aclaración, que en dicho caso sería indicativo de que es pertinente mejorar la documentación 
 en cuestión.
 
-Como puedo generarme la documentación?
+Como puedo generar-me la documentación?
 
 Hay varias formas/alternativas aunque termina siendo lo mismo:
-- Con [ApiGen](https://netbeans.org/kb/docs/php/screencast-apigen.html):
-- Con [phpDocumentor](https://netbeans.org/kb/docs/php/screencast-phpdoc.html): 
+- Con [ApiGen](https://netbeans.org/kb/docs/php/screencast-apigen.html)
+- Con [phpDocumentor](https://netbeans.org/kb/docs/php/screencast-phpdoc.html)
 
-
+A título personal, recomiendo phpDocumentor, no porqué me guste más o menos, sino porqué:
+ * Resalta los comentarios `// TODO` como trabajo pendiente, por contra no hace lo mismo con `* TODO`.
+ * Revisa los bloques de documentación de PHP, tanto los que faltan como los incorrectos.
+ * Visualmente hace más claros los elementos públicados y privados.
+ * Muestra en gráfico la relación entre las clases.
 
 #### Los tests (Comprobaciones)
 
-Si tu PR (Pull Request) contiene una corrección, las pruebes deben ser añadidas para probar que el error no se reproduzca.
+Si tu PR (Pull Request) contiene una corrección, las pruebas deben ser añadidas para probar que el error no se reproduzca.
 
 Si tu PR contiene una adición, una nueva característica, éste debe quedar totalmente cubierto por las pruebas.
 
 Algunas reglas que tienen que ser respetadas sobre las pruebas:
 
 * Todos los métodos de prueba deben ser prefijados con `test`. Por ejemplo: `public function testItReturnsNull()`.
-* Todos los métodos de prueba deben estar en formato camel case.
+* Todos los métodos de prueba deben estar en formato camelCase.
 * La mayoría de las veces, las clases de prueba deben tener el mismo nombre que 
 la clase a la que va dirigida y estar sufijadas con `Test`.
 
 ### Escribiendo un Pull Request
+
+Hasta la fecha hemos realizado muchos PR sin seguir ningún tipo de convenio, y principalmente en español.
+
+A partir de ahora, será requisito que los PR se realicen en inglés, para facilitar así que podamos recibir 
+contribuciones desde cualquier parte del planeta, ya que ahora el sistema es multi-idioma, y de paso practicarás y 
+mejorarás tu nivel de inglés ;).
+
+Recuerda que cualquier ejemplo incluido aquí, si está escrito en español, para que quede clara la guía de estilo a seguir 
+por todos, pero debe hacerse lo mismo en inglés.
 
 #### El título
 
@@ -112,29 +140,40 @@ cambios puede utilizarse al momento de liberar una nueva versión para indicar
 todos los cambios acumulados.
 
 En las notas se pueden utilizar las siguientes secciones:
-* `Añadido` para nuevas características.
-* `Cambiado` para indicar cambios en funcionalidades existentes.
-* `Obsoleto` para características que han pasado a estar obsoletas y que serán eliminadas.
-* `Eliminado` para características obsoletas que han sido eliminadas.
-* `Corregido` para cualquier corrección de errores.
-* `Seguridad` para invitar a los usuarios a actualizar en caso de vulnerabilidades.
+* `Added` para nuevas características.
+* `Changed` para indicar cambios en funcionalidades existentes.
+* `Obsolete` para características que han pasado a estar obsoletas y que serán eliminadas.
+* `Deleted` para características obsoletas que han sido eliminadas.
+* `Fixed` para cualquier corrección de errores.
+* `Security` para invitar a los usuarios a actualizar en caso de vulnerabilidades.
 
-Esto facilita que cualquier usuario entienda facilmente todos los cambios que le 
+Esto facilita que cualquier usuario entienda fácilmente todos los cambios que le 
 ofrece la actualización, y así tener más claro si le resulta urgente o no actualizar.
 
 Para más información acerca del formato de changelog seguido: [keepachangelog.com](http://keepachangelog.com/)
 
 #### La rama base
 
-Antes de escribir un PR, debes comprobar a que branch (rama) van dirigídos tus cambios.
+Antes de escribir un PR, debes comprobar a qué branch (rama) van dirigidos tus cambios.
  
 Cada proyecto sigue el convenio [semver](http://semver.org/) para administrar los lanzamientos.
 
 Por ahora se está utilizando principalmente la rama master, pero es posible que esto cambie.
 
+Por ejemplo, lo más coherente podría ser:
+ * La rama `master` sea el código final y estable que vayan a recibir los usuarios finales.
+ * La rama `release-candidate` la que vaya a ser candidata a estable.
+ * La rama `beta` podría utilizarse para probar características nuevas y/o incompletas con ayuda de ciertos usuarios finales.
+ * La rama `dev` pueden ser las que reciban los aportes diarios.
+
+O la que se decida al vuelo sobre determinadas posibles funcionalidades nuevas. Este detalle de ramas, no tiene porqué 
+ser el que finalmente se utilice, pero desglosa bastante de menos a más actividad, lo que puede implicar en determinados 
+períodos de publicación de cambios.
+
 En algunos casos, puede que sea necesario advertir a los usuarios y/o programadores que 
 algunas cosas van a cambiar, y recomendar una nueva forma de hacerlo. Puedes hacerlo 
-lanzando un trigger para ese tipo de error de la siguiente forma:
+lanzando un trigger para ese tipo de error de la siguiente forma (recuerda que el ejemplo está en español, 
+pero debes hacerlo en inglés y/o usando las cadenas de traducción):
 
 ```php
 <?php
@@ -178,14 +217,15 @@ resultan cruciales para lograr este objetivo.
 También hay algunos artículos (o incluso webs de propósito único) sobre esto,
 no podemos recomendar suficiente los siguientes:
 
-* http://rakeroutes.com/blog/deliberate-git
-* http://stopwritingramblingcommitmessages.com
-* http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+* [http://rakeroutes.com/blog/deliberate-git](http://rakeroutes.com/blog/deliberate-git)
+* [http://stopwritingramblingcommitmessages.com](http://stopwritingramblingcommitmessages.com)
+* [http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
+* [https://seesparkbox.com/foundry/atomic_commits_with_git](https://seesparkbox.com/foundry/atomic_commits_with_git)
 
 Como resúmen de todos ellos, el mensaje del commit debe ser claro y conciso y como no, 
 relacionado con el contenido del PR.
 
-La primera línea del commit debe ser corta, mantenla por debajo de los 50 carácteres. 
+La primera línea del commit debe ser corta, mantenla por debajo de los 50 caracteres. 
 Debe ser concisa pero *precisa* con lo que dices. El resto de líneas, si las necesitas, 
 pueden contener una descripción detallada de *porqué* lo has hecho.
 
@@ -211,13 +251,13 @@ puedes explicar porqué lo has hecho y como soluciona algo.
 ```
 Llamar a foo::bar() en lugar de bar::baz()
 
-Esto corregi un error que surge cuando se hace esto o aquello, porque 
-baz() necesita un condesador de flujo objeto que puede no ser definido.
+Esto corrige un error que surge cuando se hace esto o aquello, porque 
+baz() necesita un condensador de flujo objeto que puede no ser definido.
 Corrige #42
 ```
 
 La descripción es opcional, pero muy recomendable. Puede ser preguntada por el 
-equipo si resulta necesária. Un PR puede derivar en conversaciones complicadas, 
+equipo si resulta necesaria. Un PR puede derivar en conversaciones complicadas, 
 difíciles de leer, con muchos enlaces a otras webs.
 
 El mensaje debe ser capaz de vivir sin lo que hayas dicho en el PR, e idealmente 
@@ -247,7 +287,7 @@ Al realizar esta tarea, tratarás de acelerar este proceso, asegurándote de que
 ### Comentando en un PR
 
 Antes de hacer nada y exponer los detalles del PR, se debe tratar de verlo de forma general, 
-para expresar mejor de que trata el PR. Si el PR consiste en corregir un error, lee el error primero.
+para expresar mejor de qué trata el PR. Si el PR consiste en corregir un error, lee el error primero.
 Esto es para evitar que el revisor tenga que reelaborar el PR y luego incorporarlo.
 
 Cosas a buscar:
@@ -256,18 +296,18 @@ Cosas a buscar:
 documentos, pregunta por ellos, ya que será mejor en el momento de la revisión si lo entiendes
 mejor, y la documentación ayuda mucho.
 - Tests que faltan:  Anima a la gente a realizar tests, aunque lo ideal es que se hagan tests 
-para todo, en algunas situaciones no todo es sencillor de testear, mantén esto en mente.
+para todo, en algunas situaciones no todo es sencillo de testear, mantén esto en mente.
 - Partes de código poco claras: haz código claro, usa variables o nombres de clases apropiadas, 
 o usas nombre como `data`, `result`, `LoqueseaManager`, `LoqueseaService`? Los nombres de excepciones 
 siguen siendo significativos si quitas el sufijo `Exception`? Tienen todas las excepciones un 
 mensaje personalizado?
 Está intentando el contribuyente a ser inteligente o claro?
 - Violaciones de los principios [SOLID][solid]:
-    - S: Si una clase tiene unas 3000 líneas, puede que haga demasiadas cosas?
-    - O: ¿Hay una sentencia swith grande que podría crecer en un futuro?
-    - L: ¿El programa se comporta razonable al cambiar una clase con una clase hija?
-    - I: ¿Son las interfaces pequeñas y fáciles de implementar? Si no es así, ¿Pueden dividirse en interfaces más pequeñas?
-    - D: Esta el nombre de una clase hardcodeado en otra clase, con la palabra clave `new` o una llamada estática?
+    - **S**: Si una clase tiene unas 3000 líneas, puede que haga demasiadas cosas?
+    - **O**: ¿Hay una sentencia swicth grande que podría crecer en un futuro?
+    - **L**: ¿El programa se comporta razonable al cambiar una clase con una clase hija?
+    - **I**: ¿Son las interfaces pequeñas y fáciles de implementar? Si no es así, ¿Pueden dividirse en interfaces más pequeñas?
+    - **D**: Está el nombre de una clase hardcodeado en otra clase, con la palabra clave `new` o una llamada estática?
 - Faltas gramaticales/ortográficas, incluidos en los mensajes de commits o las notas de UPGRADE/CHANGELOG.
 - Modificaciones de dependencias: se introdujo algo nuevo, si es así ¿merece la pena?
 
@@ -277,7 +317,7 @@ No se debe dejar una piedra sin mover. Cuando tengas una duda, pregunta por una 
 Si la aclaración parece útil, y no aparece en un comentario en el código o en un mensaje de 
 commit, indicalo y/o haz uso de squash-merge para personalizar el mensaje del commit.
 Idealmente, el historial del proyecto debe ser entendible sin una conexión a internet, y 
-el PR debe ser suficientemente claro sin tener que hechar un vistazo a los cambios.
+el PR debe ser suficientemente claro sin tener que echar un vistazo a los cambios.
 
 Además, asegúrate de que tu feedback es útil, es importante mantener las cosas en marcha, por 
 
@@ -291,14 +331,16 @@ atómicos.
 ### Merging
 
 No unas código que has escrito tu mismo. No unas un código que has revisado tu sólo, en 
-su lugar, aprueba código que también haya sido revisado y aprobado por otros revisores. 
+su lugar, aprueba código que también haya sido revisado y aprobado por otros revisores.
+
 Si sólo hay un commit en el PR, es preferible la función squash, de lo contrario, utiliza 
 un merge.
-Y finalmente, utiliz el sentido común: si ves un PR de un error tipográfico, o si hay una 
-situación (commit defectuooso, requiere revertir) tal vez se pueda combinar directamente.
+
+Y finalmente, utiliza el sentido común: si ves un PR de un error tipográfico, o si hay una 
+situación (commit defectuoso, requiere revertir) tal vez se pueda combinar directamente.
 
 ### Se agradable con el contribuidor
 
-Agradeceles sus contribuciones. Animales si crees que va a ser un proceso largo.
+Agradeceles sus contribuciones. Anímales si crees que va a ser un proceso largo.
 En resumen, intenta que quieran contribuir de nuevo. Si se encuentran bloqueados, 
 intenta proporcionar ayuda con una solución, o contacta con alguien que pueda ayudar.

@@ -28,7 +28,9 @@
             <widget type="text" fieldname="idlinea" />
         </column>
         <column name="reference" order="110">
-            <widget type="text" fieldname="referencia" />
+            <widget type="autocomplete" fieldname="referencia">
+                <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="description" order="120">
             <widget type="text" fieldname="descripcion" />

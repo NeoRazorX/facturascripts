@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExportManager;
 
 /**
@@ -44,34 +45,17 @@ class ListView extends BaseView implements DataViewInterface
     private $cursor;
 
     /**
+     *
+     * @var DivisaTools
+     */
+    public $divisaTools;
+
+    /**
      * Filter configuration preset by the user
      *
      * @var ListFilter[]
      */
     private $filters;
-
-    /**
-     * List of fields where to search in when a search is made
-     *
-     * @var array
-     */
-    private $searchIn;
-
-    /**
-     * List of fields available to order by
-     * Example: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
-     *          key = field_asc | field_desc
-     *
-     * @var array
-     */
-    private $orderby;
-
-    /**
-     * Selected element in the Order By list
-     *
-     * @var string
-     */
-    public $selectedOrderBy;
 
     /**
      * Stores the offset for the cursor
@@ -86,6 +70,29 @@ class ListView extends BaseView implements DataViewInterface
      * @var array
      */
     private $order;
+
+    /**
+     * List of fields available to order by
+     * Example: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
+     *          key = field_asc | field_desc
+     *
+     * @var array
+     */
+    private $orderby;
+
+    /**
+     * List of fields where to search in when a search is made
+     *
+     * @var array
+     */
+    private $searchIn;
+
+    /**
+     * Selected element in the Order By list
+     *
+     * @var string
+     */
+    public $selectedOrderBy;
 
     /**
      * Stores the where parameters for the cursor
@@ -107,11 +114,11 @@ class ListView extends BaseView implements DataViewInterface
         parent::__construct($title, $modelName);
 
         $this->cursor = [];
-        $this->orderby = [];
+        $this->divisaTools = new DivisaTools();
         $this->filters = [];
-        $this->searchIn = [];
-        $this->count = 0;
+        $this->orderby = [];
         $this->selectedOrderBy = '';
+        $this->searchIn = [];
 
         // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);

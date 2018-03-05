@@ -121,10 +121,14 @@ class DocumentView extends BaseView
             if ($col->display === 'none') {
                 $item['editor'] = false;
                 $item['width'] = 1;
-            }
-            if ($item['type'] === 'number' || $item['type'] === 'money') {
+            } elseif ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
                 $item['format'] = DivisaTools::gridMoneyFormat();
+            } elseif ($item['type'] === 'autocomplete') {
+                $item['source'] = $col->widget->values[0];
+                $item['strict'] = false;
+                $item['visibleRows'] = 5;
+                $item['trimDropdown'] = false;
             }
             $data['columns'][] = $item;
         }
