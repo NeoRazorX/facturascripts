@@ -179,7 +179,7 @@ class WidgetItemSelect extends WidgetItem
         foreach ($this->values as $selectValue) {
             /// don't use strict comparation (===)
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $this->i18n->trans($selectValue['title'])
                 . '</option>';
         }
         $html .= '</select>';
