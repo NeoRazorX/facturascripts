@@ -22,11 +22,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\DocumentCalculator;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Dinamic\Lib\DocumentCalculator;
 
 /**
  * Description of DocumentView
@@ -112,25 +112,25 @@ class DocumentView extends BaseView
         ];
 
         foreach ($this->lineOptions as $col) {
-            $data['headers'][] = self::$i18n->trans($col->title);
-
             $item = [
                 'data' => $col->widget->fieldName,
                 'type' => $col->widget->type,
             ];
-            if ($col->display === 'none') {
-                $item['editor'] = false;
-                $item['width'] = 1;
-            } elseif ($item['type'] === 'number' || $item['type'] === 'money') {
+
+            if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
-                $item['format'] = DivisaTools::gridMoneyFormat();
+                $item['numericFormat'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
                 $item['source'] = $col->widget->values[0];
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
             }
-            $data['columns'][] = $item;
+
+            if ($col->display !== 'none') {
+                $data['columns'][] = $item;
+                $data['headers'][] = self::$i18n->trans($col->title);
+            }
         }
 
         foreach ($this->lines as $line) {
@@ -186,7 +186,7 @@ class DocumentView extends BaseView
      *
      * @param mixed $data
      *
-     * @return int|float
+     * @return string
      */
     public function calculateDocument(&$data)
     {
@@ -390,7 +390,7 @@ class DocumentView extends BaseView
     }
 
     /**
-     * Process form lines to assign column keys instead of numbers.
+     * Process form lines to assign only configurated columns.
      * Also adds order column.
      *
      * @param array $formLines
@@ -400,16 +400,11 @@ class DocumentView extends BaseView
     protected function processFormLines($formLines)
     {
         $newLines = [];
-        $columns = [];
-        foreach ($this->lineOptions as $col) {
-            $columns[] = $col->widget->fieldName;
-        }
-
         $order = count($formLines);
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
-            foreach ($data as $key => $value) {
-                $line[$columns[$key]] = $value;
+            foreach ($this->lineOptions as $col) {
+                $line[$col->widget->fieldName] = isset($data[$col->widget->fieldName]) ? $data[$col->widget->fieldName] : null;
             }
             $newLines[] = $line;
             $order--;

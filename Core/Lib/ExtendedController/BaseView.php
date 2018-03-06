@@ -53,6 +53,13 @@ class BaseView
     protected $pageOption;
 
     /**
+     * Contains the translator
+     *
+     * @var Base\Translator
+     */
+    protected static $i18n;
+
+    /**
      * View title
      *
      * @var string
@@ -65,13 +72,6 @@ class BaseView
      * @var int
      */
     public $count;
-
-    /**
-     * Contains the translator
-     *
-     * @var Base\Translator
-     */
-    public static $i18n;
 
     /**
      * Construct and initialize the class
