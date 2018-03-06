@@ -28,29 +28,12 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codserie" onclick="" icon="fa-file-text" required="true" />
             </column>
-            
-            <column name="description" numcolumns="10" order="110">
+            <column name="description" numcolumns="8" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            
-            <column name="without-tax" numcolumns="3" order="120">
+            <column name="without-tax" numcolumns="2" order="120">
                 <widget type="checkbox" fieldname="siniva" />
-            </column>
-
-            <column name="irpf" numcolumns="3" order="120">
-                <widget type="text" fieldname="irpf" />
-            </column>
-
-            <column name="exercise" numcolumns="3" order="120">
-                <widget type="select" fieldname="codejercicio" required="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-
-            <column name="invoice-number" numcolumns="3" order="120">
-                <widget type="text" fieldname="numfactura" />
             </column>
         </group>
     </columns>
 </view>
-
