@@ -343,8 +343,13 @@ class DocumentView extends BaseView
 
         /// add new lines
         $lineClass = $this->lineModelName;
-        foreach ($newLines as $newLine) {
-            if (empty($newLine['idlinea']) && !empty($newLine['descripcion'])) {
+        $skip = true;
+        foreach (array_reverse($newLines) as $newLine) {
+            if (empty($newLine['referencia']) && empty($newLine['descripcion']) && $skip) {
+                continue;
+            }
+
+            if (empty($newLine['idlinea'])) {
                 $newDocLine = new $lineClass($newLine);
                 $newDocLine->idlinea = null;
                 $newDocLine->{$this->model->primaryColumn()} = $this->model->primaryColumnValue();
@@ -354,6 +359,7 @@ class DocumentView extends BaseView
                 if (!$newDocLine->save()) {
                     $result = "ERROR ON NEW LINE";
                 }
+                $skip = false;
             }
         }
 
