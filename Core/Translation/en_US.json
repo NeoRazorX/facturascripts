@@ -1091,5 +1091,6 @@
     "editable": "Editable",
     "location": "Location",
     "balance-account": "Balance account",
-    "balance-account-abreviated": "Balance account abreviated"
+    "balance-account-abreviated": "Balance account abreviated",
+    "invalid-column-lenght": "%column% must have between %min% and %max% characters."
 }
