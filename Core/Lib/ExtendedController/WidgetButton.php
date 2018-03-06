@@ -253,7 +253,7 @@ class WidgetButton implements VisualItemInterface
      * @param string $formName
      * @param sring $class
      */
-    private function getJsHTML($label, $hint, $formName = 'main-form', $class = 'col-sm-auto')
+    private function getJsHTML($label, $formName = 'main-form', $class = 'col-sm-auto')
     {
 
         $html = '<button type="button" class="' . $class . 'btn btn-' . $this->color . '"'
