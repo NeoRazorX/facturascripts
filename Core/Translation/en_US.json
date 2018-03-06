@@ -1081,5 +1081,15 @@
     "concept": "Concept",
     "lock-unlock": "Lock-Unlock",
     "clone": "Clone",
-    "predefined-concepts": "Predefined Concepts"
+    "predefined-concepts": "Predefined Concepts",
+    "php-extension-not-found": "You don't have the %extension% PHP extension installed.",
+    "unbalance": "Unbalance",
+    "account-balance": "Account Balance",
+    "product-decimals": "Product decimals",
+    "currency-position": "Currency position",
+    "compatible": "Compatible",
+    "editable": "Editable",
+    "location": "Location",
+    "balance-account": "Balance account",
+    "balance-account-abreviated": "Balance account abreviated"
 }
