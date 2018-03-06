@@ -328,7 +328,7 @@
     "did-you-disabled-plugins": "bạn đã vô hiệu hóa một plugin?",
     "did-you-reinstall": "bạn đã cài đặt lại để các con thú?",
     "did-you-update-from-facturascripts-2014": "bạn đã nâng cấp từ FacturaScripts 2014 hoặc sớm hơn?",
-    "accept": "chấp nhận",
+    "accept": "Chấp nhận",
     "before-start": "Trước khi bạn bắt đầu...",
     "bootstrap": "bootstrap",
     "cant-write-facturascripts-folder": "thư mục FacturaScripts không có quyền ghi. Những giấy phép được yêu cầu cho mẫu hệ thống, cài đặt plugin, cập nhật, vv...",
@@ -597,7 +597,7 @@
     "user-saved": "La informacion del usuario se ha guardado correctamente",
     "%-surcharge": "% Phụ phí",
     "%-vat": "% VAT",
-    "about": "Trong khoảng",
+    "about": "Giới thiệu",
     "account": "Tài khoản",
     "account-code": "Mã tài khoản",
     "account-data-missing": "Thiếu dữ liệu trong tài khoản",
@@ -1144,5 +1144,6 @@
     "dashboard-card": "Bảng điều khiển (Mục)",
     "creation-date": "Ngày thành lập",
     "display-date": "Ngày hiển thị",
-    "color": "màu"
+    "color": "màu",
+    "%-commission": "% Hoa hồng"
 }

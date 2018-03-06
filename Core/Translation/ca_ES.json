@@ -1154,5 +1154,15 @@
     "concept": "Concepte",
     "lock-unlock": "(Des)Bloquejar",
     "clone": "Duplicar",
-    "predefined-concepts": "Conceptes Predefinits"
+    "predefined-concepts": "Conceptes Predefinits",
+    "php-extension-not-found": "No tens l'extensió %extension% de PHP instal·lada.",
+    "unbalance": "Desquadrament",
+    "account-balance": "Saldo del compte",
+    "product-decimals": "Decimals del Producte",
+    "currency-position": "Posició del símbol de moneda",
+    "compatible": "Compatible",
+    "editable": "Editable",
+    "location": "Localització",
+    "balance-account": "Balanç Comptes",
+    "balance-account-abreviated": "Balanç Comptes Abreviat"
 }
