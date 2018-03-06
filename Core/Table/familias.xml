@@ -24,4 +24,8 @@
         <name>familias_pkey</name>
         <type>PRIMARY KEY (codfamilia)</type>
     </constraint>
+    <constraint>
+        <name>ca_familia_madre</name>
+        <type>FOREIGN KEY (madre) REFERENCES familias (codfamilia) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
 </table>

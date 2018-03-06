@@ -16,9 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var autocompleteColumns = [];
 var documentLineData = [];
 var documentUrl = "";
 var hsTable = null;
+
+function beforeChange(changes, source) {
+    // Check if the value has changed. Not Multiselection
+    if (changes !== null && changes[0][2] !== changes[0][3]) {
+        for (var i = 0; i < autocompleteColumns.length; i++) {
+            if (changes[0][1] === autocompleteColumns[i]) {
+                // aply for autocomplete columns
+                if (typeof changes[0][3] === 'string') {
+                    changes[0][3] = changes[0][3].split(' - ', 1)[0];
+                }
+            }
+        }
+    }
+}
 
 function documentCalculate() {
     var data = {};
@@ -26,15 +41,26 @@ function documentCalculate() {
         data[value.name] = value.value;
     });
     data.action = "calculate-document";
-    data.lines = hsTable.getData();
-    console.log(data);
+    data.lines = getGridData();
+    console.log('data', data);
+    
     $.ajax({
         type: "POST",
         url: documentUrl,
-        dataType: "text",
+        dataType: "json",
         data: data,
         success: function (results) {
-            $("#doc_total").val(results);
+            $("#doc_total").val(results.total);
+
+            var rowPos = 0;
+            results.lines.forEach(function (element) {
+                var visualRow = hsTable.toVisualRow(rowPos);
+                documentLineData.rows[visualRow] = element;
+                rowPos++;
+            });
+            
+            hsTable.render();
+            console.log('results', results);
         }
     });
 }
@@ -47,7 +73,7 @@ function documentSave() {
         data[value.name] = value.value;
     });
     data.action = "save-document";
-    data.lines = hsTable.getData();
+    data.lines = getGridData();
     console.log(data);
     $.ajax({
         type: "POST",
@@ -68,9 +94,23 @@ function documentSave() {
     $("#btn-document-save").prop("disabled", false);
 }
 
+function getGridData() {
+    var rowIndex, lines = [];
+    for (var i = 0, max = documentLineData.rows.length; i < max; i++) {
+        rowIndex = hsTable.toVisualRow(i);
+        if (hsTable.isEmptyRow(rowIndex)) {
+            continue;
+        }
+
+        lines[rowIndex] = documentLineData.rows[i];
+    }
+    return lines;
+}
+
 function setAutocompletes(columns) {
     for (var key = 0; key < columns.length; key++) {
         if (columns[key].type === "autocomplete") {
+            autocompleteColumns.push(columns[key].data);
             var source = columns[key].source["source"];
             var field = columns[key].source["fieldcode"];
             var title = columns[key].source["fieldtitle"];
@@ -88,11 +128,9 @@ function setAutocompletes(columns) {
                     dataType: "json",
                     data: ajaxData,
                     success: function (response) {
-                        console.log("data", ajaxData);
-                        console.log("response", response);
                         var values = [];
                         response.forEach(function (element) {
-                            values.push(element.key);
+                            values.push(element.key + " - " + element.value);
                         });
                         process(values);
                     }
@@ -121,8 +159,9 @@ $(document).ready(function () {
         filters: true,
         dropdownMenu: true,
         preventOverflow: "horizontal",
-        minSpareRows: 1
+        minSpareRows: 5
     });
 
+    Handsontable.hooks.add('beforeChange', beforeChange);
     Handsontable.hooks.add('afterChange', documentCalculate);
 });

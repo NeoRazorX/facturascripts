@@ -248,7 +248,9 @@ class Subcuenta extends Base\ModelClass
             self::$dataBase->exec($sql);
         } catch (Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
+            if (!$inTransaction) {
+                self::$dataBase->rollback();
+            }
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {

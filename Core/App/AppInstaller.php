@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -114,7 +113,7 @@ class AppInstaller
                 break;
 
             default:
-                $this->miniLog->alert($this->i18n->trans('cant-connect-db'));
+                $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
         }
 
         return false;
@@ -364,8 +363,8 @@ class AppInstaller
             }
 
             $sqlCreateBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            $result = \pg_query($connection, $sqlCreateBD);
-            if (is_resource($result)) {
+            $result2 = \pg_query($connection, $sqlCreateBD);
+            if (is_resource($result2)) {
                 return true;
             }
         }
@@ -373,9 +372,8 @@ class AppInstaller
         $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
         if (is_resource($connection) && \pg_last_error($connection) !== false) {
             $this->miniLog->critical((string) \pg_last_error($connection));
-        } else {
-            $this->miniLog->critical($this->i18n->trans('incorrect-connection-data'));
         }
+
         return false;
     }
 }
