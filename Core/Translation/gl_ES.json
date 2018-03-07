@@ -828,7 +828,7 @@
     "invoice-have-rectifying-cant-delete": "A factura xa ten unha rectificación. Non se pode eliminar.",
     "invoice-new-assigned-date": "Xa hai facturas despois da data seleccionada (%oldDate%). Nova data asignada: %newDate%",
     "invoice-number": "Número de factura",
-    "invoice-regularized-cant-change-date": "A factura está dentro dunha regularización de 0. A data non se pode modificar.",
+    "invoice-regularized-cant-change-date": "A factura está dentro dunha regularización %tax%. Non se pode modificar a data.",
     "invoice-regularized-cant-delete": "A factura está dentro dunha regularización de 0. Non se pode eliminar.",
     "is-admin": "É administrador",
     "is-creditor": "É acredor",
