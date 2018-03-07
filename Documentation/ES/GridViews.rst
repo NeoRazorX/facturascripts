@@ -11,7 +11,7 @@ columnas similar a una hoja de cálculo. Este tipo de visualización permite
 al usuario moverse libremente por los datos, cambiar el orden de las filas,
 así como poder crear nuevas líneas, eliminarlas e incluso copiar/cortar y pegar.
 
-  .. note::
+.. note::
      Sólo es posible tener una vista Grid dentro de un PanelController.
      Para el correcto renderizado de estás vistas es necesario usar la plantilla
      GridController en vez de la usada normalmente por PanelController.

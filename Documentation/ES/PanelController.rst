@@ -16,8 +16,7 @@ datos.
 
 Para el uso de este controlador es necesario crear las vistas en formato
 XML, tal y como se describe en el documento
-`XMLViews <./XMLViews>`__,
-incluido en la documentación de **Facturascripts**.
+`XMLViews <XMLViews>`__, incluido en la documentación de **Facturascripts**.
 
 ************************
 Cómo usar el controlador

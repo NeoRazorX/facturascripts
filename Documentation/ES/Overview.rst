@@ -36,6 +36,7 @@ Para instalar un entorno de desarrollo, los pasos a seguir pueden variar según 
 donde desee trabajar. A continuación se detallan un método genérico.
 
 .. code-block:: bash
+
         # Instalando Facturascripts
         git clone https://github.com/NeoRazorX/facturascripts.git
         cd facturascripts
@@ -45,6 +46,7 @@ donde desee trabajar. A continuación se detallan un método genérico.
 En caso de no instalarse correctamente el paquete Composer, podemos instalarlo manualmente
 
 .. code-block:: bash
+
       # Install Composer
       curl -sS https://getcomposer.org/installer | php
 
