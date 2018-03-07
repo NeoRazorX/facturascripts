@@ -1040,7 +1040,7 @@
     "structured-data-csv": "Ficheiro CSV",
     "subaccount": "Subaccounts",
     "subaccount-belongs-other-year": "A subconta %subAccountCode% pertence a outro ano fiscal.",
-    "subaccount-not-found": "Subaccount 0 non atopado.",
+    "subaccount-not-found": "Subaccount %subAccountCode% non atopado.",
     "subaccounts": "Subcuentas",
     "sum-netos-line-tax-must-be": "A suma da rede das liñas de IVE debe ser: 0",
     "sum-total-line-tax-must-be": "A suma dos totais de IVE das liñas de IVE debe ser: 0",
