@@ -1160,5 +1160,10 @@
     "postal-code": "Código Postal",
     "php-extension-not-found": "Non tes a extensión %extension% de PHP instalada.",
     "plugin-not-compatible": "O Plugin %pluginName% non é compatible con FacturaScripts 2018.",
-    "renumber-accounting": "Renumerar asentos"
+    "renumber-accounting": "Renumerar asentos",
+    "exercise-date-out-range": "A data non está no periodo do exercicio.",
+    "accounting-possible-duplicated": "O asento contable posiblemente está duplicado con este outro. Se non é así, para evitar esta mensaxe, simplemente cambie o concepto.",
+    "accounting-within-regularization": "O asento pertence a unha regularización do imposto %tax%. Non pode ser borrado.",
+    "select-user": "Seleccionar Usuario",
+    "social-security-number": "Número Seguridade Social"
 }
