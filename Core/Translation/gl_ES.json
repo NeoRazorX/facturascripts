@@ -1043,7 +1043,7 @@
     "subaccount-not-found": "Subconta %subAccountCode% non atopado.",
     "subaccounts": "Subcuentas",
     "sum-netos-line-tax-must-be": "A suma dos netos das liñas de IVE debe ser: %lineNet%",
-    "sum-total-line-tax-must-be": "A suma dos totais de IVE das liñas de IVE debe ser: 0",
+    "sum-total-line-tax-must-be": "A suma dos totais de IVE das liñas de IVE debe ser: %lineTotalTax%",
     "sum-totalrecargo-line-tax-must-be": "A suma da carga total das liñas de IVE debe ser: 0",
     "supplier": "Provedor",
     "supplier-albaranes": "Notas de entrega dos provedores",
