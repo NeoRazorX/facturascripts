@@ -808,7 +808,7 @@
     "generated-manufacturers": "%quantity% fabricantes xerados.",
     "generated-products": "%quantity% elementos xerados.",
     "generated-subaccounts": "%quantity% subcontas contables xeradas.",
-    "generated-supplier": "0 provedor xerado.",
+    "generated-supplier": "%quantity% provedores xerados.",
     "generated-supplier-delivery-notes": "0 notas de entrega do provedor xeradas.",
     "generated-supplier-orders": "Pedidos de provedores xerados 0.",
     "gift-ticket": "TICKET DO REGALO",
