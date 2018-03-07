@@ -24,10 +24,26 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * Controller to edit a single item from the PedidoProveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @autor Luis Miguel Pérez <luismi@pcrednet.com>
+ * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditPedidoProveedor extends ExtendedController\DocumentController
+class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
 {
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'order';
+        $pagedata['menu'] = 'purchases';
+        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Load views
@@ -35,8 +51,9 @@ class EditPedidoProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->views['Document']->documentType = 'purchase';
-        $this->addEditView($this->getDocumentClassName(), 'EditPedidoProveedor', 'detail', 'fa-edit');
+        
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
+        $this->addEditView($modelName, 'EditPedidoProveedor', 'detail', 'fa-edit');
     }
 
     /**
@@ -44,19 +61,9 @@ class EditPedidoProveedor extends ExtendedController\DocumentController
      *
      * @return string
      */
-    protected function getDocumentClassName()
+    protected function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\PedidoProveedor';
-    }
-
-    /**
-     * Return the document line class name.
-     *
-     * @return string
-     */
-    protected function getDocumentLineClassName()
-    {
-        return '\FacturaScripts\Dinamic\Model\LineaPedidoProveedor';
+        return 'PedidoProveedor';
     }
 
     /**
@@ -73,21 +80,5 @@ class EditPedidoProveedor extends ExtendedController\DocumentController
         }
 
         parent::loadData($keyView, $view);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'order';
-        $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-files-o';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

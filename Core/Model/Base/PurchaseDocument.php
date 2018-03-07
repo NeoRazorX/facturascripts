@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
  * Description of PurchaseDocument
@@ -51,16 +51,25 @@ abstract class PurchaseDocument extends BusinessDocument
      */
     public $numproveedor;
 
+    public function getSubjectColumns()
+    {
+        return ['codproveedor'];
+    }
+
     /**
      * Assign the supplier to the document.
      *
-     * @param Proveedor $proveedor
+     * @param Proveedor[] $subjects
      */
-    public function setProveedor($proveedor)
+    public function setSubject($subjects)
     {
-        $this->codproveedor = $proveedor->codproveedor;
-        $this->nombre = $proveedor->razonsocial;
-        $this->cifnif = $proveedor->cifnif;
+        if (!isset($subjects[0]->codproveedor)) {
+            return;
+        }
+
+        $this->codproveedor = $subjects[0]->codproveedor;
+        $this->nombre = $subjects[0]->razonsocial;
+        $this->cifnif = $subjects[0]->cifnif;
     }
 
     /**

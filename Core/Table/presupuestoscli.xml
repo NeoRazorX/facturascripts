@@ -230,6 +230,10 @@
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
+        <name>ca_presupuestoscli_pedidos</name>
+        <type>FOREIGN KEY (idpedido) REFERENCES pedidoscli (idpedido) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_codigo_presupuestoscli2</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>

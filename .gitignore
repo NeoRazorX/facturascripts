@@ -1,14 +1,6 @@
-###> symfony/framework-bundle ###
-.env
-/public/bundles/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
-
 /.idea/
 /cache/
 /Cache/
-/Dinamic/
 /doc/
 /MyFiles/
 /nbproject/
@@ -17,23 +9,16 @@
 /vendor/
 .DS_Store
 .htaccess
-composer.lock
+.vscode
 config.php
 config-mysql.php
 config-postgresql.php
 generateDoc.sh
-plugin.list
 package-lock.json
 *.cache
 *.lock
-.vscode
 
 # Eclipse config files
 .project
 .settings
 .buildpath
-
-###> symfony/phpunit-bridge ###
-.phpunit
-/phpunit.xml
-###< symfony/phpunit-bridge ###

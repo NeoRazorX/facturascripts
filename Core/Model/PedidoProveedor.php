@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\LineaPedidoProveedor;
 
 /**
  * Supplier order.
@@ -30,13 +31,6 @@ class PedidoProveedor extends Base\PurchaseDocument
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $idpedido;
-
-    /**
      * Related delivery note ID.
      *
      * @var int
@@ -44,13 +38,45 @@ class PedidoProveedor extends Base\PurchaseDocument
     public $idalbaran;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Primary key.
      *
-     * @return string
+     * @var int
      */
-    public static function tableName()
+    public $idpedido;
+
+    /**
+     * Returns the lines associated with the order.
+     *
+     * @return LineaPedidoProveedor[]
+     */
+    public function getLines()
     {
-        return 'pedidosprov';
+        $lineaModel = new LineaPedidoProveedor();
+        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
+
+        return $lineaModel->all($where, [], 0, 0);
+    }
+
+    /**
+     * Returns a new line for this document.
+     * 
+     * @param array $data
+     *
+     * @return LineaPedidoProveedor
+     */
+    public function getNewLine(array $data)
+    {
+        $newLine = new LineaPedidoProveedor($data);
+        $newLine->idpedido = $this->idpedido;
+        return $newLine;
+    }
+    
+    public function install()
+    {
+        parent::install();
+        new AlbaranProveedor();
+        
+        return '';
     }
 
     /**
@@ -64,15 +90,12 @@ class PedidoProveedor extends Base\PurchaseDocument
     }
 
     /**
-     * Returns the lines associated with the order.
+     * Returns the name of the table that uses this model.
      *
-     * @return LineaPedidoProveedor[]
+     * @return string
      */
-    public function getLineas()
+    public static function tableName()
     {
-        $lineaModel = new LineaPedidoProveedor();
-        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
-
-        return $lineaModel->all($where, [], 0, 0);
+        return 'pedidosprov';
     }
 }

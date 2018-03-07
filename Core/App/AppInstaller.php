@@ -356,15 +356,14 @@ class AppInstaller
         $connection = @\pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if (is_resource($connection)) {
             // Check that the DB exists, if it doesn't, we try to create a new one
-            $sqlExistsBD = 'SELECT 1 AS result FROM pg_database WHERE datname="' . $dbData['name'] . '"';
+            $sqlExistsBD = "SELECT 1 AS result FROM pg_database WHERE datname = '" . $dbData['name'] . "';";
             $result = \pg_query($connection, $sqlExistsBD);
             if (is_resource($result) && \pg_num_rows($result) > 0) {
                 return true;
             }
 
             $sqlCreateBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            $result2 = \pg_query($connection, $sqlCreateBD);
-            if (is_resource($result2)) {
+            if (false !== \pg_query($connection, $sqlCreateBD)) {
                 return true;
             }
         }

@@ -228,7 +228,7 @@ class PDFExport implements ExportInterface
             'total' => $this->i18n->trans('total'),
         ];
         $tableData = [];
-        foreach ($model->getlineas() as $line) {
+        foreach ($model->getlines() as $line) {
             $tableData[] = [
                 'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
                 'quantity' => $this->numberTools->format($line->cantidad),

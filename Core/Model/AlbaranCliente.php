@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
 
 /**
  * Customer's delivery note or delivery note. Represents delivery to a customer
@@ -47,23 +48,31 @@ class AlbaranCliente extends Base\SalesDocument
     public $idfactura;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Returns the lines associated with the delivery note.
      *
-     * @return string
+     * @return LineaAlbaranCliente[]
      */
-    public static function tableName()
+    public function getLines()
     {
-        return 'albaranescli';
+        $lineaModel = new LineaAlbaranCliente();
+        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
+
+        return $lineaModel->all($where, $order, 0, 0);
     }
 
     /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
+     * Returns a new line for the document.
+     * 
+     * @param array $data
+     * 
+     * @return LineaAlbaranCliente
      */
-    public static function primaryColumn()
+    public function getNewLine(array $data)
     {
-        return 'idalbaran';
+        $newLine = new LineaAlbaranCliente($data);
+        $newLine->idalbaran = $this->idalbaran;
+        return $newLine;
     }
 
     /**
@@ -83,16 +92,22 @@ class AlbaranCliente extends Base\SalesDocument
     }
 
     /**
-     * Returns the lines associated with the delivery note.
+     * Returns the name of the column that is the model's primary key.
      *
-     * @return LineaAlbaranCliente[]
+     * @return string
      */
-    public function getLineas()
+    public static function primaryColumn()
     {
-        $lineaModel = new LineaAlbaranCliente();
-        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
-        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
+        return 'idalbaran';
+    }
 
-        return $lineaModel->all($where, $order, 0, 0);
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'albaranescli';
     }
 }
