@@ -899,7 +899,7 @@
     "login-cookie-fail": "Fallou a cookie da sesión",
     "login-ok": "Sesión iniciada con éxito (cookie). Usuario: '%nick%'",
     "login-password-fail": "Fallo de sesión",
-    "login-text": "login-text",
+    "login-text": "Introduce o teu nome de usuario e contrasinal para iniciar sesión",
     "login-user-not-found": "Usuario non atopado",
     "logo": "Logo",
     "logout": "Saír",
