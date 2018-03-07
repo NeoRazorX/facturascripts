@@ -1177,5 +1177,6 @@
     "choose-employee": "Elixe empregado",
     "choose-serie": "Elixe serie",
     "choose-currency": "Elixe moeda",
-    "choose-payment-method": "Elixe a forma de pago"
+    "choose-payment-method": "Elixe a forma de pago",
+    "daily": "Diario"
 }
