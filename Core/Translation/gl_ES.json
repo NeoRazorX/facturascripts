@@ -1171,5 +1171,6 @@
     "customer-estimations": "Orzamentos aos clientes",
     "customer-delivery-notes": "Albaráns do cliente",
     "customer-invoices": "Facturas de cliente",
-    "supplier-delivery-notes": "Albaráns de provedores"
+    "supplier-delivery-notes": "Albaráns de provedores",
+    "supplier-invoices": "Facturas do provedor"
 }
