@@ -621,7 +621,7 @@
     "allow-update": "Permitir a actualización",
     "amount": "Cantidade",
     "any": "Calquera",
-    "apc-clear": "APC borrou.",
+    "apc-clear": "APC limpo.",
     "apc-delete-key-item": "Elemento eliminado '%item%' de APC.",
     "apc-get-key-item": "Elemento obtido  '%item%'  de APC.",
     "apc-getarray-key-item": "Elementos de matriz amortizados '0' de APC.",
