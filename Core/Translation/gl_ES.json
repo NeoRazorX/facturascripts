@@ -983,7 +983,7 @@
     "print-list-of-records": "Imprimir lista de rexistros",
     "product": "Produto",
     "product-equivalence-not-valid": "Código de equivalencia do artículo non válido: %equivalencia%. Debe ter entre 1 e 25 caracteres.",
-    "product-reference-not-valid": "Referencia de produto non válida: 0. Debe ter entre 1 e 18 caracteres.",
+    "product-reference-not-valid": "Referencia do artigo non válida: %reference%. Debe ter entre 1 e 18 caracteres.",
     "products": "Produtos",
     "provider-reference": "Referencia do provedor",
     "public": "Público",
