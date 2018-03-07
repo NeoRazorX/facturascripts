@@ -1073,7 +1073,7 @@
     "total": "Total",
     "total-caps": "TOTAL",
     "total-pay-caps": "TOTAL PARA PAGAR",
-    "total-value-error": "Cantidade total de 0 1 incorrecta (2). Importe correcto: 3",
+    "total-value-error": "Valor total de %docType% %docCode% incorrecto (%docTotal%). Valor correcto: %calcTotal%",
     "totalirpf-value-error": "Importe IRPF total de 0 1 incorrecto (2). Importe correcto: 3",
     "totaliva-value-error": "Importe total do imposto de 0 1 incorrecto (2). Importe correcto: 3",
     "totallinea-value-error": "Erro no valor total da liña IVE do imposto 0 da factura. Valor correcto: 1",
