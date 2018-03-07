@@ -925,7 +925,7 @@
     "memcache-not-found": "Non se atopou a clase de Memcache.",
     "memcache-port": "Porto de Memcache",
     "memcache-prefix": "Prefixo de Memcache",
-    "memcache-set-key-item": "Elemento fixado '0' para Memcache.",
+    "memcache-set-key-item": "Elemento asignado \"% item%\" a Memcache.",
     "method-payment": "Método de pagamento",
     "minimum-stock": "Stock mínimo",
     "missing-data-epigraph-group": "Faltan datos no epígrafe do grupo.",
