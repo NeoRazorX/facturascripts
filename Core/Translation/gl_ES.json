@@ -18,8 +18,8 @@
     "mysql-socket-p": "Este campo só é necesario nalgúns hostings MySQL.",
     "preferences": "Preferencias",
     "select-language": "Seleccionar o idioma",
-    "plugin-enabled": "Extensión activada correctamente.",
-    "plugin-disabled": "Extensión desactivada correctamente.",
+    "plugin-enabled": "Plugin activado correctamente.",
+    "plugin-disabled": "O Plugin %pluginName% foi desactivado correctamente.",
     "template-not-found": "Template non atopou",
     "to-do-list": "lista de cousas a facer",
     "user-unsaved": "Non se puido gardar a información do usuario",
@@ -497,7 +497,7 @@
     "plugin-name-added": "Extensión% 1 $ s engadido correctamente. Agora podes activalo.",
     "plugin-name-disabled": "Extensión <b>% 1 $ s </ b> desactivada correctamente.",
     "plugin-name-enabled": "Extensión <b>% 1 $ s </ b> de forma adecuada.",
-    "plugin-deleted": "O complemento %pluginName% eliminouse con éxito.",
+    "plugin-deleted": "Plugin %pluginName% eliminouse con éxito.",
     "reset": "Restablecer os axustes correctamente, prema <a href=\"%1$s#avanzado\"> aquí </a> para continuar.",
     "question-delete-plugin": "Realmente quere borrar esta extensión?",
     "question-download-unstable-plugin": "Este plugin é marcado como inestable Seguro que quere facer a descarga?",
@@ -1158,5 +1158,6 @@
     "name-or-business-name": "Nome ou Razón Social",
     "notchead-accounting": "Asento cuadrado. Neglect: 0",
     "postal-code": "Código Postal",
-    "php-extension-not-found": "Non tes a extensión %extension% de PHP instalada."
+    "php-extension-not-found": "Non tes a extensión %extension% de PHP instalada.",
+    "plugin-not-compatible": "O Plugin %pluginName% non é compatible con FacturaScripts 2018."
 }
