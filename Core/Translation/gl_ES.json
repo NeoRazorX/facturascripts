@@ -1172,5 +1172,6 @@
     "customer-delivery-notes": "Albaráns do cliente",
     "customer-invoices": "Facturas de cliente",
     "supplier-delivery-notes": "Albaráns de provedores",
-    "supplier-invoices": "Facturas do provedor"
+    "supplier-invoices": "Facturas do provedor",
+    "choose-source": "Elixe a orixe"
 }
