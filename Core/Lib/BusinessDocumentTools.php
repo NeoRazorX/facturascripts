@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Articulo;
+use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
 
 /**
@@ -73,22 +74,7 @@ class BusinessDocumentTools
 
         $lines = [];
         foreach ($formLines as $fLine) {
-            if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
-                $this->setProductData($fLine);
-            }
-
-            $newLine = new LineaAlbaranCliente();
-            $newLine->cantidad = (float) $fLine['cantidad'];
-            $newLine->descripcion = $fLine['descripcion'];
-            $newLine->dtopor = (float) $fLine['dtopor'];
-            $newLine->irpf = (float) $fLine['irpf'];
-            $newLine->iva = (float) $fLine['iva'];
-            $newLine->pvpunitario = (float) $fLine['pvpunitario'];
-            $newLine->recargo = (float) $fLine['recargo'];
-            $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
-            $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
-            $newLine->referencia = $fLine['referencia'];
-            $lines[] = $newLine;
+            $lines[] = $this->recalculateLine($fLine);
         }
 
         foreach ($this->getSubtotals($lines) as $subt) {
@@ -149,6 +135,37 @@ class BusinessDocumentTools
         }
 
         return $subtotals;
+    }
+
+    private function recalculateLine(array $fLine)
+    {
+        if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
+            $this->setProductData($fLine);
+        }
+
+        if (empty($fLine['iva'])) {
+            $impuestoModel = new Impuesto();
+            foreach ($impuestoModel->all() as $imp) {
+                if ($imp->isDefault()) {
+                    $fLine['iva'] = $imp->iva;
+                    break;
+                }
+            }
+        }
+
+        $newLine = new LineaAlbaranCliente();
+        $newLine->cantidad = (float) $fLine['cantidad'];
+        $newLine->descripcion = $fLine['descripcion'];
+        $newLine->dtopor = (float) $fLine['dtopor'];
+        $newLine->irpf = (float) $fLine['irpf'];
+        $newLine->iva = (float) $fLine['iva'];
+        $newLine->pvpunitario = (float) $fLine['pvpunitario'];
+        $newLine->recargo = (float) $fLine['recargo'];
+        $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
+        $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+        $newLine->referencia = $fLine['referencia'];
+        
+        return $newLine;
     }
 
     private function setProductData(array &$fLine)
