@@ -938,7 +938,7 @@
     "no-data": "Non hai datos",
     "no-stock": "Ningún stock",
     "not-valid-client-business-name": "Razón social do cliente non válida: %businessName% %fieldName%",
-    "not-valid-client-code": "Código de cliente non válido:",
+    "not-valid-client-code": "Código de cliente non válido: %customerCode% %fieldName%",
     "not-valid-client-name": "Nome do cliente non válido:",
     "not-valid-description-tax": "Descrición do imposto non válida.",
     "not-valid-supplier-business-name": "Nome comercial do provedor non válido.",
