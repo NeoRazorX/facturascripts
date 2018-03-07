@@ -641,7 +641,7 @@
     "barcode": "Código de barras",
     "billing-address": "Enderezo de facturación",
     "blocked": "Bloqueado",
-    "blocked-date": "Bloqueado en",
+    "blocked-date": "Data de bloqueo",
     "business-name": "Nome da empresa",
     "cache-dir": "Directorio da caché '%folderName%'",
     "cancel": "Cancelar",
