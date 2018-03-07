@@ -893,7 +893,7 @@
     "last-ip": "Última IP",
     "latitude": "Latitude",
     "like-than": "Do mesmo xeito que",
-    "loading-controller": "Controlador de carga: '0'",
+    "loading-controller": "Cargando o controlador: '%controllerName%'",
     "locked": "Bloqueado",
     "login": "Iniciar sesión",
     "login-cookie-fail": "Fallou a cookie da sesión",
