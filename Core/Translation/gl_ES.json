@@ -645,7 +645,7 @@
     "business-name": "Razón social",
     "cache-dir": "Cartafol da caché \"% item%\"",
     "cancel": "Cancelar",
-    "cant-assign-date-already-regularized": "Non se pode asignar a data %date% porque xa existe unha regularización %tax% para ese período.",
+    "cant-assign-date-already-regularized": "Non se pode asignar a data %date% porque xa existe unha regularización de %tax% para ese período.",
     "cant-assing-subaccount-supplier": "Non se pode asociar a subconta para o provedor %supplierCode%",
     "cant-associate-customer-subaccount": "Non se puido asociar a subconta para o cliente %customerCode%",
     "cant-create-customer-subaccount": "Non foi posible crear a subconta para o cliente %customerCode%",
