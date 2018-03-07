@@ -28,6 +28,7 @@ In the same way we must establish the rendering template in GridController or
 another that inherits from it.
 
 .. code:: php
+
     class EditAsiento extends ExtendedController\PanelController
     {
         protected function createViews()
@@ -53,7 +54,8 @@ Although these tasks are carried out automatically it is possible to customize
 the appearance creating a new Twig view that inherits from GridController overwriting
 the *gridcard* block.
 
-    ..code:: html
+.. code:: html
+
         {% block gridcard %}
         <div class="col-9 mr-2">
             <div class="card">
@@ -75,7 +77,8 @@ to enter the events to be controlled. In the current version, it is mandatory
 redefining the recording of data when the parent record already exists, so that
 PanelController does not use the normal recording process but the GridView process.
 
-    ..code:: javascript
+.. code:: javascript
+
         function saveAccountEntry() {
             submitButton.prop("disabled", true);
             try {

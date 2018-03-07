@@ -27,7 +27,8 @@ dentro de un controlador `PanelController <PanelController>`__ donde se añadir�
 la vista 'master' y posteriormente la vista Grid. De igual manera debemos establecer
 la plantilla de renderización en GridController u otra que herede de esta.
 
-    .. code:: php
+.. code:: php
+
         class EditAsiento extends ExtendedController\PanelController
         {
             protected function createViews()
@@ -53,7 +54,8 @@ Aunque estas tareas se realizan de manera automática es posible personalizar
 la apariencia creando una nueva vista twig que herede de GridController sobrescribiendo
 el bloque *gridcard*.
 
-    ..code:: html
+.. code:: html
+
         {% block gridcard %}
         <div class="col-9 mr-2">
             <div class="card">
@@ -76,7 +78,8 @@ para introducir los eventos a controlar. En la versión actual, es obligatorio
 redefinir la grabación de datos cuando ya existe el registro padre, para que
 PanelController no use el proceso de grabación normal sino el proceso de GridView.
 
-    ..code:: javascript
+.. code:: javascript
+
         function saveAccountEntry() {
             submitButton.prop("disabled", true);
             try {
