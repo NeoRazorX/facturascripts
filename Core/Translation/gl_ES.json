@@ -645,7 +645,7 @@
     "business-name": "Nome da empresa",
     "cache-dir": "Directorio da caché '%folderName%'",
     "cancel": "Cancelar",
-    "cant-assign-date-already-regularized": "Non podes asignar a data %date% porque xa existe unha regularización de %tax% para ese período.",
+    "cant-assign-date-already-regularized": "Non se pode asignar a data %date% porque xa existe unha regularización %tax% para ese período.",
     "cant-assing-subaccount-supplier": "Non se pode asociar subaccount para o provedor %supplierCode%",
     "cant-associate-customer-subaccount": "Non se puido asociar subcontado para o cliente %customerCode%",
     "cant-create-customer-subaccount": "Non foi posible crear a subconta para o cliente %customerCode%",
