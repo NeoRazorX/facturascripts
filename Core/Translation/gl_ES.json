@@ -428,7 +428,7 @@
     "help-forum": "Foro de ayuda",
     "question-installed-on-hosting": "Instalado en un hosting...",
     "question-installed-on-pc": "Instalado en tu PC...",
-    "invalid-country-code": "Código del país no válido: %1$s.",
+    "invalid-country-code": "Código de país non válido: '% countryCode%'.",
     "invalid-country-name": "Nombre del país no válido: %1$s.",
     "invalid-series-code": "Código de serie no válido: %1$s.",
     "invalid-series-description": "Descripción de serie no válida: %1$s.",
