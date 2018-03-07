@@ -1,6 +1,9 @@
-==============
+.. title:: EditController
+.. highlight:: rst
+
+##############
 EditController
-==============
+##############
 
 It is a **universal controller** for views that want to display the
 complete data of a record of data of a model, in format “tab” or by a
@@ -15,8 +18,9 @@ XML format, as described in the document [XMLViews]
 (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md),
 included in the documentation of **Facturascripts**.
 
+********************
 Using the Controller
-====================
+********************
 
 To use *EditController* we must create a new PHP class that inherits or
 extends from EditController, establishing in the constructor of our new

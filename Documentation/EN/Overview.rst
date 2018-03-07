@@ -1,6 +1,9 @@
-========
+.. title:: Overview
+.. highlight:: rst
+
+########
 Overview
-========
+########
 
 Requirements
 ============
@@ -17,6 +20,14 @@ For development
 
 
 .. _installation:
+
+
+Installation
+============
+Access the website of `FacturaScripts 2018 <https://beta.facturascripts.com/descargar>`_,
+download the beta and decompress the file in your hosting or in the Apache or XAMP folder of your PC.
+Then open the browser and type the appropriate url, that is, the domain
+of your web or http://localhost/facturascripts (if you have installed it in local).
 
 
 Installation for development
@@ -45,7 +56,7 @@ License
 
 Licensed using the `MIT license <http://opensource.org/licenses/MIT>`_.
 
-    Copyright (C) 2013-2017 Carlos Garcia Gomez <carlos@facturascripts.com>
+    Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
 
     This program is free software: you can redistribute it and / or modify
     it under the terms of the GNU Lesser General Public License as

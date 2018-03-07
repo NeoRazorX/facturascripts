@@ -1,11 +1,14 @@
-===========================
+.. title:: PanelController
+.. highlight:: rst
+
+###########################
 Controlador PanelController
-===========================
+###########################
 
 Este controlador, al igual que el controlador *ListController* es un
 **controlador universal** para multiples vistas aunque en este caso se
-permite el uso de distintos tipos de vistas: *ListView*, *EditView* y
-*EditListView*
+permite el uso de distintos tipos de vistas: *ListView*, *EditView*,
+*EditListView* and *GridView*.
 
 El controlador divide la pantalla en dos zonas, una a la izquierda (zona
 de navegación) y otra la derecha donde se visualizan las vistas con los
@@ -16,8 +19,9 @@ XML, tal y como se describe en el documento
 `XMLViews <XMLViews>`__,
 incluido en la documentación de **Facturascripts**.
 
+************************
 Cómo usar el controlador
-========================
+************************
 
 Para utilizar *PanelController* debemos crearnos una nueva clase PHP que
 herede o extienda de PanelController, debiendo implementar los
@@ -49,12 +53,15 @@ grupo de navegación.
    de un modelo.
 -  **addListView**: Añade una vista para visualizar en modo lista
    multiples registros de un modelo.
+-  **addGridView**: Añade una vista que permite editar los datos en un grid
+   de datos de filas y columnas al estilo de una hoja de cálculo.
 
 .. code:: php
 
         $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'Direcciones', 'fa-road');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
+        $this->addGridView('EditAsiento', '\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
 
 Este método tiene una visibilidad de *protected* de manera que los
 plugins pueden ir extendiendo nuestra clase y añadir nuevas vistas, o

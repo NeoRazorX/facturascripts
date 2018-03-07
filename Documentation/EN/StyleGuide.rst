@@ -1,4 +1,6 @@
+.. title:: Style Guide
 .. highlight:: rst
+
 
 ###########
 Style Guide
