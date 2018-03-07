@@ -1039,7 +1039,7 @@
     "stockmin": "Stock mín.",
     "structured-data-csv": "Ficheiro CSV",
     "subaccount": "Subaccounts",
-    "subaccount-belongs-other-year": "A sub-conta 0 pertence a outro exercicio.",
+    "subaccount-belongs-other-year": "A sub-conta %subAccountCode% pertence a outro ano fiscal.",
     "subaccount-not-found": "Subaccount 0 non atopado.",
     "subaccounts": "Subcuentas",
     "sum-netos-line-tax-must-be": "A suma da rede das liñas de IVE debe ser: 0",
