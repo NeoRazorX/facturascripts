@@ -626,7 +626,7 @@
     "apc-get-key-item": "Obter elemento '% item%' de APC.",
     "apc-getarray-key-item": "Elementos de matriz amortizados '0' de APC.",
     "apc-not-found": "Non se atopou a extensión APC.",
-    "apc-set-key-item": "Elemento fixado '%item%' para APC.",
+    "apc-set-key-item": "Elemento asignado '%item%' a APC.",
     "app-preferences": "Preferencias da aplicación",
     "are-you-sure": "Isto non se pode desfacer. Estás seguro de que queres continuar?",
     "attribute": "Atributo",
