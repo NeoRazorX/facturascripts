@@ -1127,7 +1127,7 @@
     "plugin-is-not-yet-enabled": "O complemento aínda non está activado",
     "plugin-yet-deleted": "Extensión eliminada aínda",
     "plugin-yet-enabled": "Plugin aínda activado",
-    "plugin-installed": "Extensión \"% pluginName%\" instalado",
+    "plugin-installed": "Plugin \"% pluginName%\" instalado",
     "can-not-open-zip-file": "Non se pode abrir o ficheiro zip '0'",
     "file-not-supported": "O ficheiro non é compatible",
     "plugin-renamed": "O complemento cambiou o nome de '0' a '1'",
