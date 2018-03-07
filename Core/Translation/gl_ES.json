@@ -498,7 +498,7 @@
     "plugin-name-disabled": "Extensión <b>% 1 $ s </ b> desactivada correctamente.",
     "plugin-name-enabled": "Extensión <b>% 1 $ s </ b> de forma adecuada.",
     "plugin-deleted": "Plugin %pluginName% eliminouse con éxito.",
-    "reset": "Restablecer os axustes correctamente, prema <a href=\"%1$s#avanzado\"> aquí </a> para continuar.",
+    "reset": "Configuración reiniciada correctamente.",
     "question-delete-plugin": "Realmente quere borrar esta extensión?",
     "question-download-unstable-plugin": "Este plugin é marcado como inestable Seguro que quere facer a descarga?",
     "there-are-not-enabled-pages": "Non é a páxina (s)% 1 $ s non está activo (s).",
