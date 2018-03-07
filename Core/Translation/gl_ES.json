@@ -826,7 +826,7 @@
     "installer-requirements": "As seguintes extensións e funcións son necesarias en Facturascripts:",
     "international-identifier": "Identificador internacional",
     "invoice-have-rectifying-cant-delete": "A factura xa ten unha rectificación. Non se pode eliminar.",
-    "invoice-new-assigned-date": "Hai facturas con maior data (0). Nova data asignada: 1",
+    "invoice-new-assigned-date": "Xa hai facturas despois da data seleccionada (%oldDate%). Nova data asignada: %newDate%",
     "invoice-number": "Número de factura",
     "invoice-regularized-cant-change-date": "A factura está dentro dunha regularización de 0. A data non se pode modificar.",
     "invoice-regularized-cant-delete": "A factura está dentro dunha regularización de 0. Non se pode eliminar.",
