@@ -1169,5 +1169,6 @@
     "document-reports": "Informes de documentos",
     "choose-doc-type": "Seleccione o tipo de documento",
     "customer-estimations": "Orzamentos aos clientes",
-    "customer-delivery-notes": "Albaráns do cliente"
+    "customer-delivery-notes": "Albaráns do cliente",
+    "customer-invoices": "Facturas ao cliente"
 }
