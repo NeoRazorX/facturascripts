@@ -806,7 +806,7 @@
     "generated-customers": "%quantity% clientes xerados.",
     "generated-families": "%quantity% de familias xeradas.",
     "generated-manufacturers": "%quantity% fabricantes xerados.",
-    "generated-products": "0 produtos xerados.",
+    "generated-products": "%quantity% elementos xerados.",
     "generated-subaccounts": "0 subaccounts xeradas.",
     "generated-supplier": "0 provedor xerado.",
     "generated-supplier-delivery-notes": "0 notas de entrega do provedor xeradas.",
