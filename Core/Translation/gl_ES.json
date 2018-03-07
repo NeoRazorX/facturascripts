@@ -497,7 +497,7 @@
     "plugin-name-added": "Extensión% 1 $ s engadido correctamente. Agora podes activalo.",
     "plugin-name-disabled": "Extensión <b>% 1 $ s </ b> desactivada correctamente.",
     "plugin-name-enabled": "Extensión <b>% 1 $ s </ b> de forma adecuada.",
-    "plugin-deleted": "% Extensión 1 $ s excluído correctamente.",
+    "plugin-deleted": "O complemento %pluginName% eliminouse con éxito.",
     "reset": "Restablecer os axustes correctamente, prema <a href=\"%1$s#avanzado\"> aquí </a> para continuar.",
     "question-delete-plugin": "Realmente quere borrar esta extensión?",
     "question-download-unstable-plugin": "Este plugin é marcado como inestable Seguro que quere facer a descarga?",
