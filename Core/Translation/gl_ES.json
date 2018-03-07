@@ -1159,5 +1159,6 @@
     "notchead-accounting": "Asento cuadrado. Neglect: 0",
     "postal-code": "Código Postal",
     "php-extension-not-found": "Non tes a extensión %extension% de PHP instalada.",
-    "plugin-not-compatible": "O Plugin %pluginName% non é compatible con FacturaScripts 2018."
+    "plugin-not-compatible": "O Plugin %pluginName% non é compatible con FacturaScripts 2018.",
+    "renumber-accounting": "Renumerar asentos"
 }
