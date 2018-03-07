@@ -1048,7 +1048,7 @@
     "supplier": "Provedor",
     "supplier-albaranes": "Notas de entrega dos provedores",
     "supplier-delivery-note-deleted-successfully": "A nota de entrega do fornecedor 0 eliminouse con éxito.",
-    "supplier-invoice-deleted-successfully": "Compra a factura 0 eliminada correctamente.",
+    "supplier-invoice-deleted-successfully": "A factura de compra %docCode% foi eliminada con éxito.",
     "supplier-orders": "Órdenes dos provedores",
     "supplier-products": "Produtos provedores",
     "supplier-reference": "Referencia do provedor",
