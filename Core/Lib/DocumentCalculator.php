@@ -71,13 +71,7 @@ class DocumentCalculator
         $lines = [];
         foreach ($formLines as $fLine) {
             if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
-                $articulo = new Model\Articulo();
-                if ($articulo->loadFromCode($fLine['referencia'])) {
-                    $fLine['descripcion'] = $articulo->descripcion;
-                    $fLine['cantidad'] = 1;
-                    $fLine['iva'] = $articulo->getIva();
-                    $fLine['pvpunitario'] = $articulo->pvp;
-                }
+                $this->setProductData($fLine);
             }
 
             $newLine = new Model\LineaAlbaranCliente();
@@ -152,5 +146,16 @@ class DocumentCalculator
         }
 
         return $subtotals;
+    }
+
+    private function setProductData(array &$fLine)
+    {
+        $articulo = new Model\Articulo();
+        if ($articulo->loadFromCode($fLine['referencia'])) {
+            $fLine['descripcion'] = $articulo->descripcion;
+            $fLine['cantidad'] = 1;
+            $fLine['iva'] = $articulo->getIva();
+            $fLine['pvpunitario'] = $articulo->pvp;
+        }
     }
 }

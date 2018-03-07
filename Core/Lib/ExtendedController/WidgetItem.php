@@ -411,7 +411,7 @@ abstract class WidgetItem implements VisualItemInterface
     {
         $type = empty($type) ? $this->type : $type;
         $html = $this->getIconHTML()
-            . '<input id="' . $this->fieldName . '" type="' . $type . '" class="form-control' . $extraClass . '"'
+            . '<input type="' . $type . '" class="form-control' . $extraClass . '"'
             . 'name="' . $this->fieldName . '" value="' . $value . '"' . $specialAttributes . ' />';
 
         if (!empty($this->icon)) {
