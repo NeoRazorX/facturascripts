@@ -289,7 +289,7 @@
     "conversion-rate-not-0": "A taxa de conversión non pode ser 0.",
     "conversion-rate-not-0-for-purchases": "A taxa de conversión para compras non pode ser 0.",
     "data-out-of-range": "A data seleccionada está fora do rango do exercicio. Seleccionouse unha mellor.",
-    "invalid-date": "Data %s non válida.",
+    "invalid-date": "Data %date% non válida.",
     "invalid-exercise-code": "Código de exercicio non válido: '%s'.",
     "invalid-exercise-name": "Nome do exercicio non válido: '%s'.",
     "invalid-company-name": "Nombre de empresa non válido: '%s'.",
