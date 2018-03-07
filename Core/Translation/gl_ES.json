@@ -1180,5 +1180,6 @@
     "choose-payment-method": "Elixe a forma de pago",
     "daily": "Diario",
     "monthly": "Mensualmente",
-    "yearly": "Anual"
+    "yearly": "Anual",
+    "infostate-component-title": "Información estatal"
 }
