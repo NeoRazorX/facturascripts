@@ -932,7 +932,7 @@
     "missing-data-subaccount": "Faltan datos da subcuenta.",
     "missing-epigraph-data": "Faltan datos do epígrafe.",
     "nature": "Natureza",
-    "neto-value-error": "Importe neto de 0 1 incorrecto (2). Importe correcto: 3",
+    "neto-value-error": "Valor neto de %docType% %docCode% incorrecto (%docNet%). Valor correcto: %calcNet%",
     "new": "Novo",
     "next": "Seguinte",
     "no-data": "Non hai datos",
