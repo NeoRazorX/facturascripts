@@ -991,7 +991,7 @@
     "purchases": "Compra",
     "pvp": "Prezo de venda polo miúdo",
     "pvpsindto-line-error": "Erro no valor de 'pvpsindto' da liña %reference% do documento. Valor correcto: %totalWithoutDiscount%",
-    "pvptotal-line-error": "Erro no valor pvptotal da liña 0 do documento. Valor correcto: 1",
+    "pvptotal-line-error": "Erro no valor de 'pvptotal' da liña %reference% do documento. Valor correcto: %total%",
     "quantity": "Cantidade",
     "quarter": "Cuarto",
     "rate-code-valid-length": "Código de tarifa non válida. Debe ter entre 1 e 6 caracteres.",
