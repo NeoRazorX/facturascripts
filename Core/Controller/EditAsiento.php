@@ -40,7 +40,7 @@ class EditAsiento extends ExtendedController\PanelController
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
         $this->addGridView('EditAsiento', '\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
-        $this->setTemplate('AccountingEntry');
+        $this->setTemplate('EditAsiento');
     }
 
     /**
@@ -87,13 +87,6 @@ class EditAsiento extends ExtendedController\PanelController
                 $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                 return false;
 
-            case 'save-document':
-                $this->setTemplate(false);
-                $data = $this->request->request->all();
-                $result = $this->views['EditPartida']->saveData($data);
-                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
-                return false;
-
             case 'clone':
                 return true; // TODO: Uncomplete
 
@@ -119,23 +112,6 @@ class EditAsiento extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Run the autocomplete action.
-     * Returns a JSON string for the searched values.
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function autocompleteAction($data): array
-    {
-        $results = [];
-        $codeModel = new Model\CodeModel();
-        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
-            $results[] = $value->code . ' - ' . $value->description;
-        }
-        return $results;
     }
 
     /**
