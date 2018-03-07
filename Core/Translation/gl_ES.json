@@ -990,7 +990,7 @@
     "purchase-rate": "Taxa de compra",
     "purchases": "Compra",
     "pvp": "Prezo de venda polo miúdo",
-    "pvpsindto-line-error": "Erro no valor de pvpsindto da liña 0 do documento. Valor correcto: 1",
+    "pvpsindto-line-error": "Erro no valor de 'pvpsindto' da liña %reference% do documento. Valor correcto: %totalWithoutDiscount%",
     "pvptotal-line-error": "Erro no valor pvptotal da liña 0 do documento. Valor correcto: 1",
     "quantity": "Cantidade",
     "quarter": "Cuarto",
