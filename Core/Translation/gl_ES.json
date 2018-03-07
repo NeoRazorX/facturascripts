@@ -918,7 +918,7 @@
     "maxtoday": "Max hoxe",
     "memcache-clear": "Memcache eliminado.",
     "memcache-delete-key-item": "Eliminouse o elemento '%item%' de Memcache.",
-    "memcache-get-key-item": "Elemento descargado '0' de Memcache.",
+    "memcache-get-key-item": "Obtivo elemento '% item%' de Memcache.",
     "memcache-getarray-key-item": "Elementos de matriz amortizados '0' de Memcache.",
     "memcache-getarray2-key-item": "Getted array2 elementos '0' de Memcache.",
     "memcache-host": "Servidor de Memcache",
