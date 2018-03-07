@@ -1165,5 +1165,6 @@
     "accounting-possible-duplicated": "O asento contable posiblemente está duplicado con este outro. Se non é así, para evitar esta mensaxe, simplemente cambie o concepto.",
     "accounting-within-regularization": "O asento pertence a unha regularización do imposto %tax%. Non pode ser borrado.",
     "select-user": "Seleccionar Usuario",
-    "social-security-number": "Número Seguridade Social"
+    "social-security-number": "Número Seguridade Social",
+    "document-reports": "Informes de documentos"
 }
