@@ -897,7 +897,7 @@
     "locked": "Bloqueado",
     "login": "Iniciar sesión",
     "login-cookie-fail": "Fallou a cookie da sesión",
-    "login-ok": "Iniciar sesión con éxito (cookie). Usuario: '0'",
+    "login-ok": "Sesión iniciada con éxito (cookie). Usuario: '%nick%'",
     "login-password-fail": "Fallo de sesión",
     "login-text": "login-text",
     "login-user-not-found": "Usuario non atopado",
