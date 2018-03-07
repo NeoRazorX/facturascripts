@@ -829,7 +829,7 @@
     "invoice-new-assigned-date": "Xa hai facturas despois da data seleccionada (%oldDate%). Nova data asignada: %newDate%",
     "invoice-number": "Número de factura",
     "invoice-regularized-cant-change-date": "A factura está dentro dunha regularización %tax%. Non se pode modificar a data.",
-    "invoice-regularized-cant-delete": "A factura está dentro dunha regularización de 0. Non se pode eliminar.",
+    "invoice-regularized-cant-delete": "A factura está dentro dunha regularización de %tax%. Non se pode eliminar.",
     "is-admin": "É administrador",
     "is-creditor": "É acredor",
     "is-person": "É un individuo (e non unha empresa)",
@@ -1154,5 +1154,6 @@
     "desc-customer-name-2": "Nome comercial do cliente",
     "error-no-name-in-settings": "Error na vista %viewName%. Falta informar el 'name' nalgunha columna do xml",
     "incorrect-accounting-amount": "O importe do asento é incorrecto.",
-    "incompatible-with-facturascripts": "Incompatible coa versión %version% de FacturaScripts"
+    "incompatible-with-facturascripts": "Incompatible coa versión %version% de FacturaScripts",
+    "name-or-business-name": "Nome ou Razón Social"
 }
