@@ -1042,7 +1042,7 @@
     "subaccount-belongs-other-year": "A subconta %subAccountCode% pertence a outro ano fiscal.",
     "subaccount-not-found": "Subconta %subAccountCode% non atopado.",
     "subaccounts": "Subcuentas",
-    "sum-netos-line-tax-must-be": "A suma da rede das liñas de IVE debe ser: %lineNet%",
+    "sum-netos-line-tax-must-be": "A suma dos netos das liñas de IVE debe ser: %lineNet%",
     "sum-total-line-tax-must-be": "A suma dos totais de IVE das liñas de IVE debe ser: 0",
     "sum-totalrecargo-line-tax-must-be": "A suma da carga total das liñas de IVE debe ser: 0",
     "supplier": "Provedor",
