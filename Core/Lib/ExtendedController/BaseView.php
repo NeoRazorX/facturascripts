@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Model\Base\ModelClass;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -35,7 +34,7 @@ class BaseView
      * Needed model to for the model method calls.
      * In the scope of EditController it contains the view data.
      *
-     * @var ModelClass
+     * @var mixed
      */
     protected $model;
 
