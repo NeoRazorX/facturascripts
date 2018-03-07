@@ -1170,5 +1170,6 @@
     "choose-doc-type": "Seleccione o tipo de documento",
     "customer-estimations": "Orzamentos aos clientes",
     "customer-delivery-notes": "Albaráns do cliente",
-    "customer-invoices": "Facturas de cliente"
+    "customer-invoices": "Facturas de cliente",
+    "supplier-delivery-notes": "Notas de entrega de provedores"
 }
