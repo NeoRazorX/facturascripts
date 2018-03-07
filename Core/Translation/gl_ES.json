@@ -623,7 +623,7 @@
     "any": "Calquera",
     "apc-clear": "APC limpo.",
     "apc-delete-key-item": "Eliminouse o elemento '%item%' de APC.",
-    "apc-get-key-item": "Elemento obtido  '%item%'  de APC.",
+    "apc-get-key-item": "Obter elemento '% item%' de APC.",
     "apc-getarray-key-item": "Elementos de matriz amortizados '0' de APC.",
     "apc-not-found": "Non se atopou a extensión APC.",
     "apc-set-key-item": "Elemento fixado '%item%' para APC.",
