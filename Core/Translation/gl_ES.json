@@ -1178,5 +1178,6 @@
     "choose-serie": "Elixe serie",
     "choose-currency": "Elixe moeda",
     "choose-payment-method": "Elixe a forma de pago",
-    "daily": "Diario"
+    "daily": "Diario",
+    "monthly": "Mensualmente"
 }
