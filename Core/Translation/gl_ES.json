@@ -1060,7 +1060,7 @@
     "symbol": "Símbolo",
     "symbol-comma": ", (coma)",
     "symbol-dot": ". (punto)",
-    "table-checked": "A táboa 0 está marcada.",
+    "table-checked": "Table %tableName% verificado.",
     "tax": "Imposto",
     "tax-code": "Código tributario",
     "tax-transport": "Transporte tributario",
