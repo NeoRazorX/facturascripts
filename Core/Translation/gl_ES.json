@@ -982,7 +982,7 @@
     "print-export-options": "Opcións de impresión e exportación",
     "print-list-of-records": "Imprimir lista de rexistros",
     "product": "Produto",
-    "product-equivalence-not-valid": "Código de equivalencia de produto non válido: 0. Debe ter entre 1 e 25 caracteres.",
+    "product-equivalence-not-valid": "Código de equivalencia do elemento non válido: %equivalencia%. Debe ter entre 1 e 25 caracteres.",
     "product-reference-not-valid": "Referencia de produto non válida: 0. Debe ter entre 1 e 18 caracteres.",
     "products": "Produtos",
     "provider-reference": "Referencia do provedor",
