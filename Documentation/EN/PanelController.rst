@@ -1,11 +1,14 @@
-===============
+.. title:: PanelController
+.. highlight:: rst
+
+###############
 PanelController
-===============
+###############
 
 This controller, like the *ListController*, is a **universal
 controller** for multiple views although in this case the use of
-different types of views is allowed: *ListView*, *EditView* and
-*EditListView*
+different types of views is allowed: *ListView*, *EditView*,
+*EditListView* and *GridView*.
 
 The controller divides the screen into two zones, one to the left
 (navigation zone) and one to the right where the views with the data are
@@ -16,8 +19,9 @@ XML format, as described in the document [XMLViews]
 (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md),
 included in the documentation of **Facturascripts**.
 
+********************
 Using the Controller
-====================
+********************
 
 To use *PanelController* we must create a new PHP class that inherits or
 extends from PanelController, having to implement the following methods:
@@ -44,12 +48,15 @@ the title and icon for the navigation group.
 -  **addEditListView**: Adds a view to edit multiple records of a model.
 -  **addListView**: Adds a view to display in multiple record list mode
    of a model.
+-  **addGridView**: Add a view that allows you to edit the data in a grid
+   of rows and columns data in the style of a spreadsheet.
 
 .. code:: php
 
         $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'Direcciones', 'fa-road');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
+        $this->addGridView('EditAsiento', '\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
 
 This method has a visibility of *protected* so that plugins can extend
 our class and add new views, or modify existing ones.
@@ -107,15 +114,15 @@ Example without specifying the method.
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-    
+
 Example with the method.
 
 .. code:: php
-    
+
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-    $this->setTabsPosition('left'); 
-    
+    $this->setTabsPosition('left');
+
 The tabs when placed below, shows main window and below
 This will show the information of the selected tab.
 
@@ -126,7 +133,7 @@ Example.
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
     $this->setTabsPosition('bottom');
-    
+
 The tabs when they are placed above, will show the information of
 the selected tab.
 
@@ -137,7 +144,7 @@ Example.
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
     $this->setTabsPosition('top');
-    
+
 getPageData
 ===========
 

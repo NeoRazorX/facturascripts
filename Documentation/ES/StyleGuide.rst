@@ -1,3 +1,4 @@
+.. title:: Guía de Estilo
 .. highlight:: rst
 
 ##############

@@ -1,3 +1,6 @@
+.. title:: Models
+.. highlight:: rst
+
 ######
 Models
 ######
@@ -9,10 +12,12 @@ of reading, writing and deleting the data contained in said table.
 The structure of the table is defined in an XML file located in the *Table* folder
 and with the name that the model returns in the public method *tableName*.
 
-In the version *Facturascripts 2018* the use of the models has been restructured
-grouping in a Trait (Traits) called *ModelTrait* the most common operations
+In the version *Facturascripts 2018* the use of the models has been restructured,
+inheriting from the ModelClass class and complementing it in a Trait (Traits)
+called *ModelTrait* thus grouping the most common operations
 and general models, simplifying both the code and the treatment of
-the same delegating to these only the specific characteristics of each one.
+the same ones, delegating to these only the specific characteristics of each one.
+
 
 *********************
 Models of data tables
@@ -20,9 +25,9 @@ Models of data tables
 
 As mentioned in the introduction, each data table has a model in charge
 of the management of its reading, writing and deletion. At the time of declaring the model,
-we must create a new class in which we will include the use of the ModelTrait
-(new class of Facturascripts 2018 based on Traits of PHP),
-together with the list of available fields in the table declared as public.
+we must create a new class that inherits from ModelClass and in which we will
+include the use of the ModelTrait together with the list of available fields in
+the table declared as public.
 
 .. code:: php
 

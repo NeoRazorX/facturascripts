@@ -1,3 +1,6 @@
+.. title:: Views
+.. highlight:: rst
+
 #####
 Views
 #####
@@ -18,9 +21,15 @@ on screen both in the form of visualization and in the number of data records.
    the view has less than 6 columns, or the entire viewing system if the view contains
    6 or more columns of data.
 
+-  **GridView**: View that depends on a parent view of type **Edit** and in which the representation
+    and data manipulation is given by a grid of rows and columns in the style of a spreadsheet.
+    This type of view requires a JavaScript file where different events are controlled, such as
+    creation of the data grid and data viewing and editing events.
+    Form more information view `GridViews <GridViews>`__.
+
 The naming of the views, when we create them, follows the rule: *List* or *Edit* followed
-from the *name of the model*. This is true even if the view is of type *EditList* in which case
-it will be named as if it were of type *Edit*.
+from the *name of the model*. This is true even if the view is of type *EditList* or **GridView**
+in which case it will be named as if it were of type *Edit*.
 
 
 *********
@@ -202,19 +211,27 @@ Examples:
 -  **type**: (mandatory) Indicates the type of widget to use.
    -  **text**: varchar or text fields.     
    -  **number**: Numeric type fields. For this type you can specify
-   the *decimal* attribute to configure the precision to be displayed.
-   The *step* attribute to indicate the increase or decrease when performing
-   a “step” by the forward/reverse control. The attributes *min* and *max*
-   to indicate the minimum and maximum values.
+      the *decimal* attribute to configure the precision to be displayed.
+      The *step* attribute to indicate the increase or decrease when performing
+      a “step” by the forward/reverse control. The attributes *min* and *max*
+      to indicate the minimum and maximum values.
    -  **money**: Fields of type float for amounts.
-   For this type you can specify the *decimal* attribute to set the precision to
-   be displayed instead of the currency.
+      For this type you can specify the *decimal* attribute to set the precision to
+      be displayed instead of the currency.
    -  **checkbox**: Boolean values ​​that are displayed by
-   the icon of a check (true) or a dash (false) respectively.
-
+      the icon of a check (true) or a dash (false) respectively.
    -  **datepicker**: Date type fields, which include a drop-down to
       choose it.
    -  **color**: For color selections.
+   -  **filechooser**: Allows you to select and upload a file.
+   -  **autocomplete**: List of values that are loaded dynamically from a model
+       depending on the text entered by the user. Only one will be used
+       label *<values>* indicating the attributes:
+
+          -  *source*: Indicates the name of the data source table
+          -  *fieldcode*: Indicates the field that contains the value to be recorded in the field of the column
+          -  *fieldtitle*: Indicates the field that contains the value that will be displayed on the screen
+
    -  **select**: List of values ​​set by a set of tags *<values>* described
       within the group *<widget>*. The values ​​can be fixed, including as many
       *<values>* as we need and indicating the attribute *title* and assigning a
@@ -236,6 +253,10 @@ Examples:
        in the style of the *select* type.
 
 .. code:: xml
+
+    <widget type="autocomplete" fieldname="referencia">
+        <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
+    </widget>
 
     <widget type="select" fieldname="documentacion">
         <values title="Pasaporte">PASAPORTE</values>
@@ -287,6 +308,14 @@ As its name suggests it allows to include a button in one of the editing columns
 There are three types of buttons declared by the ``type`` attribute and with functions
 different:
 
+*  *calculate* : Button to show a statistical calculation.
+*  *action* : Button to execute an action in the controller.
+*  *modal* : Button to show a modal form.
+*  *js* : Button to execute a JavaScript function.
+
+The button of type *calculate* is exclusive of the group *<rows>* and is detailed later.
+For the *action* and *modal* buttons we can customize them using the attributes:
+
 -  **type**: indicates the type of button.
 
 -  **icon**: icon that will be displayed to the left of the label.
@@ -301,7 +330,7 @@ different:
 -  **action**: this property varies according to the type. For ``action`` buttons indicates the action
     which is sent to the controller, so that it performs some kind of special process.
     For buttons of type ``modal`` indicates the modal form that should be shown to the user.
-
+    For buttons of type ``js`` indicates the name of the function to execute.
 
 Example:
 
