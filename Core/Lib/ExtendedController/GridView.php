@@ -35,6 +35,11 @@ class GridView extends BaseView
      */
     private $parentView;
 
+    /**
+     * Model of parent data
+     *
+     * @var ModelClass
+     */
     private $parentModel;
 
     /**
@@ -63,16 +68,6 @@ class GridView extends BaseView
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
-    }
-
-    /**
-     * Returns the pointer to the data model
-     *
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->model;
     }
 
     /**

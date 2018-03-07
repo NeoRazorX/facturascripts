@@ -1,3 +1,6 @@
+.. title:: Vistas
+.. highlight:: rst
+
 ######
 Vistas
 ######
@@ -19,8 +22,14 @@ en pantalla tanto en la forma de visualizar como en número de registros de dato
    la vista tiene menos de 6 columnas, o el sistema completo de visionado si la vista contien
    6 o más columnas de datos.
 
+-  **GridView** : Vista que depende de una vista padre de tipo **Edit** y en la que la representación
+   y manipulación de los datos viene dada por un grid de filas y columnas al estilo de una hoja de cálculo.
+   Este tipo de vista requiere de un archivo JavaScript donde se controlan distintos eventos como la
+   creación del data grid y eventos de visualización y edición de datos.
+   Para más información ver `GridViews <GridViews>`__.
+
 El nombrado de las vistas, cuando las creamos, sigue la siguiente regla: *List* o *Edit* seguido
-del *nombre del modelo*. Esto se cumple aún cuando la vista sea del tipo *EditList* en cuyo caso
+del *nombre del modelo*. Esto se cumple aún cuando la vista sea del tipo *EditList* o **GridView** en cuyo caso
 se nombrará como si fuera del tipo *Edit*.
 
 
@@ -222,6 +231,15 @@ Ejemplos:
    -  **datepicker**: Campos de tipo fecha, que incorporan un
       desplegable para elegir la misma.
    -  **color**: Para la selección de colores.
+   -  **filechooser**: Permite seleccionar y subir un archivo.
+   -  **autocomplete**: Lista de valores que se cargan de manera dinámica de un modelo
+      en función del texto introdicido por el usuario. Se utilizará una sóla
+      etiqueta *<values>* indicando los atributos:
+
+          -  *source*: Indica el nombre de la tabla origen de los datos
+          -  *fieldcode*: Indica el campo que contiene el valor a grabar en el campo de la columna
+          -  *fieldtitle*: Indica el campo que contiene el valor que se visualizará en pantalla
+
    -  **select**: Lista de valores establecidos por un conjunto de
       etiquetas *<values>* descritas dentro del grupo *<widget>*. Los
       valores podrán ser fijos, incluyendo tantos *<values>* como
@@ -246,6 +264,10 @@ Ejemplos:
       *<values>* descritas dentro del grupo *<widget>*, al estilo del tipo *select*.
 
 .. code:: xml
+
+        <widget type="autocomplete" fieldname="referencia">
+            <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
+        </widget>
 
         <widget type="select" fieldname="documentacion">
             <values title="Pasaporte">PASAPORTE</values>
@@ -300,6 +322,7 @@ distintas:
 *  *calculate* : Botón para mostrar un cálculo estadístico.
 *  *action* : Botón para ejecutar una acción en el controlador.
 *  *modal* : Botón para mostrar un formulario modal.
+*  *js* : Botón para ejecutar una función JavaScript.
 
 El botón de tipo *calculate* es exclusivo del grupo *<rows>* y se detalla más adelante.
 Para los botones *action* y *modal* podemos personalizarlos mediante los atributos:
@@ -318,6 +341,7 @@ Para los botones *action* y *modal* podemos personalizarlos mediante los atribut
 -  **action** : esta propiedad varía según el tipo. Para botones ``action`` indica la acción
    que se envía al controlador, para que éste realice algún tipo de proceso especial.
    Para botones de tipo ``modal`` indica el formulario modal que se debe mostrar al usuario.
+   Para botones de tipo ``js`` indica el nombre de la función a ejecutar.
 
 
 Ejemplo:

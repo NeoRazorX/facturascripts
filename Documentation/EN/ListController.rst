@@ -1,6 +1,9 @@
-==============
+.. title:: ListController
+.. highlight:: rst
+
+##############
 ListController
-==============
+##############
 
 This controller is a ListView view container, which automatically
 manages the display and filtering of data, showing the information of
@@ -14,8 +17,9 @@ format, as described in the document [XMLViews]
 (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md),
 included in the documentation for **Facturascripts**.
 
+********************
 Using the Controller
-====================
+********************
 
 To use *ListController* we must create a new PHP class that inherits or
 extends from ListController, having to implement the following methods:

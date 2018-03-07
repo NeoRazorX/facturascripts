@@ -1,11 +1,16 @@
+.. title:: Translations
+.. highlight:: rst
+
+############
 Translations
-============
+############
+
 
 Translations will be centralized from http://i18n.facturascripts.com.
 
 The format chosen is a JSON file, with “key” style: “value”, where
 **key** is the reference to the translation and **value** its
-translation.
+translation. The variable values are specified by parameter between '%'.
 
 .. code:: json
 
@@ -13,27 +18,20 @@ translation.
             "common-error": "Error",
             "facturascripts": "FacturaScripts",
             "file": "File",
-            "files": "File",
-            "check-table": "Error checking table '0'"
+            "files": "Files",
+            "check-table": "Error checking table '%tablename%'"
         }
 
-At the moment, the base language is **Core/Translation/es_ES.json**, but
-possibly very soon it will become **Core/Translation/en_EN.json**. So it
-is highly advisable to add any new phrase or word in both files. In the
-translations that are made from the web, only the new available phrases
-that have been inserted from the base language will be seen when doing a
+The base language is the **Core/Translation/en_EN.json **.
+So it is necessary to add new phrases or words in the file.
+In the translations that are made from the web, only the new phrases will be seen
+available that have been inserted from the base language when making a
 commit.
 
-From the debug bar, a new **Translations** tab has been added, showing a
-list of translations used and red ones that have not been translated. So
-it simplifies looking for the use of the terms on each page, without
-having to know exactly where it is used.
+In the debug bar, a new tab has been added
+**Translations** which shows a list of the translations used and
+that could not be translated into the selected language.
 
-It is preferable that when adding new code that uses phrases that will
-need to be translated, add them directly to the es_ES.json and
-en_EN.json files to make it easier for any translator to have them
-available with the maximum possible availability and can be translated
-sooner.
 
 Translation files
 -----------------
