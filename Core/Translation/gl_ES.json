@@ -1166,5 +1166,6 @@
     "accounting-within-regularization": "O asento pertence a unha regularización do imposto %tax%. Non pode ser borrado.",
     "select-user": "Seleccionar Usuario",
     "social-security-number": "Número Seguridade Social",
-    "document-reports": "Informes de documentos"
+    "document-reports": "Informes de documentos",
+    "choose-doc-type": "Seleccione o tipo de documento"
 }
