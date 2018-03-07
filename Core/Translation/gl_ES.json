@@ -809,8 +809,8 @@
     "generated-products": "%quantity% elementos xerados.",
     "generated-subaccounts": "%quantity% subcontas contables xeradas.",
     "generated-supplier": "%quantity% provedores xerados.",
-    "generated-supplier-delivery-notes": "0 notas de entrega do provedor xeradas.",
-    "generated-supplier-orders": "Pedidos de provedores xerados 0.",
+    "generated-supplier-delivery-notes": "%quantity% albaráns de compra xerados.",
+    "generated-supplier-orders": "%quantity% pedidos de provedores xerados.",
     "gift-ticket": "TICKET DO REGALO",
     "greater-than": "Máis grande cá",
     "group": "Grupo",
@@ -1152,5 +1152,7 @@
     "concept-too-large": "Concepto demasiado longo.",
     "desc-customer-name": "Nome polo cal o cliente é coñecido. Para uso interno.",
     "desc-customer-name-2": "Nome comercial do cliente",
-    "error-no-name-in-settings": "Error na vista %viewName%. Falta informar el 'name' nalgunha columna do xml"
+    "error-no-name-in-settings": "Error na vista %viewName%. Falta informar el 'name' nalgunha columna do xml",
+    "incorrect-accounting-amount": "O importe do asento é incorrecto.",
+    "incompatible-with-facturascripts": "Incompatible coa versión %version% de FacturaScripts"
 }
