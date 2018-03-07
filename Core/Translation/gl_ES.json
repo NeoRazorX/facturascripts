@@ -1155,5 +1155,8 @@
     "error-no-name-in-settings": "Error na vista %viewName%. Falta informar el 'name' nalgunha columna do xml",
     "incorrect-accounting-amount": "O importe do asento é incorrecto.",
     "incompatible-with-facturascripts": "Incompatible coa versión %version% de FacturaScripts",
-    "name-or-business-name": "Nome ou Razón Social"
+    "name-or-business-name": "Nome ou Razón Social",
+    "notchead-accounting": "Asento cuadrado. Neglect: 0",
+    "postal-code": "Código Postal",
+    "php-extension-not-found": "Non tes a extensión %extension% de PHP instalada."
 }
