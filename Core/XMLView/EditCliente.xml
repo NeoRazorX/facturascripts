@@ -75,6 +75,12 @@
                     <values></values>
                 </widget>
             </column>
+            <column name="irpf" numcolumns="3" order="160">
+                <widget type="number" fieldname="irpf" icon="fa-percent" />
+            </column>
+            <column name="subaccount" numcolumns="3" order="170">
+                <widget type="text" fieldname="codsubcuenta" />
+            </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="phone" numcolumns="2" order="100">
@@ -94,16 +100,13 @@
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
-            <column name="subaccount" numcolumns="3" order="100">
-                <widget type="text" fieldname="codsubcuenta" />
-            </column>
-            <column name="create-date" numcolumns="3" order="110">
+            <column name="create-date" numcolumns="3" order="100">
                 <widget type="datepicker" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="blocked-date" numcolumns="3" order="120">
+            <column name="blocked-date" numcolumns="3" order="110">
                 <widget type="datepicker" fieldname="fechabaja" />
             </column>
-            <column name="blocked" numcolumns="3" order="130">
+            <column name="blocked" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>

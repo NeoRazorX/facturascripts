@@ -36,12 +36,9 @@ final class SerieTest extends TestCase
 
         $this->assertInstanceOf(Serie::class, $model);
         $this->assertFalse($model->siniva);
-        $this->assertEquals(0.0, $model->irpf);
-        $this->assertEquals(1, $model->numfactura);
         $this->assertFalse($model->test());
 
         $model->siniva = true;
-        $model->numfactura = 2;
         $model->codserie = 'A';
         $model->descripcion = 'Test description';
 

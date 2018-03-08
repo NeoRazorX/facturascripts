@@ -7,9 +7,22 @@
 -->
 <table>
     <column>
+        <name>acreedor</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codimpuestoportes</name>
+        <type>character varying(10)</type>
     </column>
     <column>
         <name>codpago</name>
@@ -29,6 +42,11 @@
         <type>character varying(15)</type>
     </column>
     <column>
+        <name>debaja</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>email</name>
         <type>character varying(100)</type>
     </column>
@@ -37,8 +55,18 @@
         <type>character varying(30)</type>
     </column>
     <column>
-        <name>codimpuestoportes</name>
-        <type>character varying(10)</type>
+        <name>fechaalta</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>fechabaja</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>nombre</name>
@@ -46,12 +74,17 @@
         <null>NO</null>
     </column>
     <column>
-        <name>razonsocial</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
         <name>observaciones</name>
         <type>text</type>
+    </column>
+    <column>
+        <name>personafisica</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>razonsocial</name>
+        <type>character varying(100)</type>
     </column>
     <column>
         <name>regimeniva</name>
@@ -74,33 +107,6 @@
     <column>
         <name>web</name>
         <type>character varying(250)</type>
-    </column>
-    <column>
-        <name>acreedor</name>
-        <type>boolean</type>
-        <default>false</default>
-    </column>
-    <column>
-        <name>personafisica</name>
-        <type>boolean</type>
-        <default>true</default>
-    </column>
-    <column>
-        <name>debaja</name>
-        <type>boolean</type>
-        <default>false</default>
-    </column>
-    <column>
-        <name>fechaalta</name>
-        <type>date</type>
-    </column>
-    <column>
-        <name>fechabaja</name>
-        <type>date</type>
-    </column>
-    <column>
-        <name>codcliente</name>
-        <type>character varying(10)</type>
     </column>
     <constraint>
         <name>proveedores_pkey</name>
