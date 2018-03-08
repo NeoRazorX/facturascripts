@@ -67,7 +67,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return LineaAlbaranProveedor
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaAlbaranProveedor($data);
         $newLine->idalbaran = $this->idalbaran;

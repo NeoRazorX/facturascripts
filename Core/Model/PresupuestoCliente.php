@@ -81,7 +81,7 @@ class PresupuestoCliente extends Base\SalesDocument
      * 
      * @return LineaPresupuestoCliente
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaPresupuestoCliente($data);
         $newLine->idpresupuesto = $this->idpresupuesto;

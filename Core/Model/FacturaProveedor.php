@@ -62,7 +62,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      * 
      * @return LineaFacturaProveedor
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaFacturaProveedor($data);
         $newLine->idfactura = $this->idfactura;

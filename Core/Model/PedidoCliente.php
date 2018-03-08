@@ -72,7 +72,7 @@ class PedidoCliente extends Base\SalesDocument
      *
      * @return LineaPedidoCliente
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaPedidoCliente($data);
         $newLine->idpedido = $this->idpedido;

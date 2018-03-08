@@ -64,7 +64,7 @@ class PedidoProveedor extends Base\PurchaseDocument
      *
      * @return LineaPedidoProveedor
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaPedidoProveedor($data);
         $newLine->idpedido = $this->idpedido;
