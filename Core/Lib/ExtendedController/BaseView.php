@@ -85,7 +85,7 @@ class BaseView
 
         $this->count = 0;
         $this->title = static::$i18n->trans($title);
-        $this->model = empty($modelName) ? null : new $modelName();
+        $this->model = class_exists($modelName) ? new $modelName() : null;
         $this->pageOption = new Model\PageOption();
     }
 
