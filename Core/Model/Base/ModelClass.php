@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -44,7 +44,7 @@ abstract class ModelClass
     /**
      * List of already tested tables.
      *
-     * @var array|null
+     * @var array
      */
     private static $checkedTables;
 

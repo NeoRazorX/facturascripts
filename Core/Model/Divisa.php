@@ -122,23 +122,19 @@ class Divisa extends Base\ModelClass
      */
     public function test()
     {
-        $status = false;
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->simbolo = Utils::noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
-            self::$miniLog->alert(self::$i18n->trans('bage-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']));
         } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,3}$/i', $this->codiso)) {
-            self::$miniLog->alert(self::$i18n->trans('iso-cod-invalid'));
-        } elseif ($this->tasaconv === 0) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codiso', '%min%' => '1', '%max%' => '3']));
+        } elseif ($this->tasaconv === 0 || $this->tasaconvcompra === 0) {
             self::$miniLog->alert(self::$i18n->trans('conversion-rate-not-0'));
-        } elseif ($this->tasaconvcompra === 0) {
-            self::$miniLog->alert(self::$i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
-            self::$cache->delete('m_divisa_all');
-            $status = true;
+            return true;
         }
 
-        return $status;
+        return false;
     }
 }

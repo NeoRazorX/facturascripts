@@ -17,24 +17,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\LineaPedidoCliente;
 
 /**
  * Customer order.
  */
 class PedidoCliente extends Base\SalesDocument
 {
-    use Base\ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var integer
-     */
-    public $idpedido;
+    use Base\ModelTrait;
 
     /**
      * Related delivery note ID.
@@ -44,6 +38,13 @@ class PedidoCliente extends Base\SalesDocument
     public $idalbaran;
 
     /**
+     * Primary key.
+     *
+     * @var integer
+     */
+    public $idpedido;
+
+    /**
      * Expected date of departure of the material.
      *
      * @var string
@@ -51,13 +52,39 @@ class PedidoCliente extends Base\SalesDocument
     public $fechasalida;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Returns the lines associated with the order.
      *
-     * @return string
+     * @return LineaPedidoCliente[]
      */
-    public static function tableName()
+    public function getLines()
     {
-        return 'pedidoscli';
+        $lineaModel = new LineaPedidoCliente();
+        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
+
+        return $lineaModel->all($where, $order, 0, 0);
+    }
+
+    /**
+     * Returns a new line for the document.
+     * 
+     * @param array $data
+     *
+     * @return LineaPedidoCliente
+     */
+    public function getNewLine(array $data)
+    {
+        $newLine = new LineaPedidoCliente($data);
+        $newLine->idpedido = $this->idpedido;
+        return $newLine;
+    }
+    
+    public function install()
+    {
+        parent::install();
+        new AlbaranCliente();
+        
+        return '';
     }
 
     /**
@@ -71,35 +98,12 @@ class PedidoCliente extends Base\SalesDocument
     }
 
     /**
-     * Returns the lines associated with the order.
+     * Returns the name of the table that uses this model.
      *
-     * @return LineaPedidoCliente[]
+     * @return string
      */
-    public function getLineas()
+    public static function tableName()
     {
-        $lineaModel = new LineaPedidoCliente();
-        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
-        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
-        return $lineaModel->all($where, $order, 0, 0);
-    }
-
-    /**
-     * Remove the order from the database.
-          * Returns False in case of failure.
-     *
-     * @return boolean
-     */
-    public function delete()
-    {
-        if (self::$dataBase->exec('DELETE FROM ' . static::tableName() . ' WHERE idpedido = ' . self::$dataBase->var2str($this->idpedido) . ';')) {
-            /// we modify the related budget
-            self::$dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
-                . ' status = 0 WHERE idpedido = ' . self::$dataBase->var2str($this->idpedido) . ';');
-
-            return true;
-        }
-
-        return false;
+        return 'pedidoscli';
     }
 }

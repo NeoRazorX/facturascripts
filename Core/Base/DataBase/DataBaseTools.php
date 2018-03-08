@@ -133,7 +133,7 @@ class DataBaseTools
      * @param array  $dbCons
      * @param bool   $deleteOnly
      *
-     * @return bool
+     * @return string
      */
     private function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
     {

@@ -26,8 +26,24 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditPresupuestoCliente extends ExtendedController\DocumentController
+class EditPresupuestoCliente extends ExtendedController\BusinessDocumentController
 {
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'estimation';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Load views
@@ -35,7 +51,9 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView($this->getDocumentClassName(), 'EditPresupuestoCliente', 'detail');
+        
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
+        $this->addEditView($modelName, 'EditPresupuestoCliente', 'detail');
     }
 
     /**
@@ -43,19 +61,9 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
      *
      * @return string
      */
-    protected function getDocumentClassName()
+    protected function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\PresupuestoCliente';
-    }
-
-    /**
-     * Return the document line class name.
-     *
-     * @return string
-     */
-    protected function getDocumentLineClassName()
-    {
-        return '\FacturaScripts\Dinamic\Model\LineaPresupuestoCliente';
+        return 'PresupuestoCliente';
     }
 
     /**
@@ -72,21 +80,5 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
         }
 
         parent::loadData($keyView, $view);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'estimation';
-        $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-files-o';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

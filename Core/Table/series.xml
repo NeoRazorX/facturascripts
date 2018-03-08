@@ -7,16 +7,6 @@
 -->
 <table>
     <column>
-        <name>irpf</name>
-        <type>double precision</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idcuenta</name>
-        <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>codserie</name>
         <type>character varying(4)</type>
         <null>NO</null>
@@ -30,22 +20,6 @@
         <name>siniva</name>
         <type>boolean</type>
         <null>YES</null>
-    </column>
-    <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>numfactura</name>
-        <type>integer</type>
-        <null>YES</null>
-        <default>1</default>
     </column>
     <constraint>
         <name>series_pkey</name>

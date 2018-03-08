@@ -1,3 +1,6 @@
+.. title:: Models
+.. highlight:: rst
+
 #######
 Modelos
 #######
@@ -9,10 +12,11 @@ de la lectura, escritura y borrado de los datos contenidos en dicha tabla.
 La estructura de la tabla se define en un archivo XML ubicado en la carpeta *Table*
 y con el nombre que el modelo retorna en el método público *tableName*.
 
-En la versión *Facturascripts 2018* se ha reestructurado el uso de los modelos
-agrupando en un Trait (Rasgos) denominado *ModelTrait* las operaciones más comunes
+En la versión *Facturascripts 2018* se ha reestructurado el uso de los modelos,
+heredando de la clase ModelClass y complementandose en un Trait (Rasgos)
+denominado *ModelTrait* agrupando así las operaciones más comunes
 y generales de los modelos, simplificando tanto el código como el tratamiento de
-los mismos delegando a estos sólo las características específicas de cada uno.
+los mismos, delegando a estos sólo las características específicas de cada uno.
 
 **************************
 Modelos de tablas de datos
@@ -20,8 +24,7 @@ Modelos de tablas de datos
 
 Como se ha comentado en la introducción, cada tabla de datos tiene un modelo encargado
 de la gestión de su lectura, escritura y borrado. A la hora de declarar el modelo,
-debemos crear una nueva clase en la que incluiremos el uso del ModelTrait
-(nueva clase de Facturascripts 2018 basada en Traits (Rasgos) de PHP),
+debemos crear una nueva clase que hereda de ModelClass y en la que incluiremos el uso del ModelTrait
 junto con la lista de campos disponibles de la tabla declarados como públicos.
 
 .. code:: php

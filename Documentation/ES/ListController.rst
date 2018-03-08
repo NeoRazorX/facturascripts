@@ -1,6 +1,9 @@
-==========================
+.. title:: ListController
+.. highlight:: rst
+
+##########################
 Controlador ListController
-==========================
+##########################
 
 Este controlador es un contenedor de vistas del tipo ListView, que
 gestiona automáticamente la visualización y filtrado de datos, mostrando
@@ -15,8 +18,9 @@ XML, tal y como se describe en el documento
 `XMLViews <XMLViews>`__,
 incluido en la documentación de **Facturascripts**.
 
+************************
 Cómo usar el controlador
-========================
+************************
 
 Para utilizar *ListController* debemos crearnos una nueva clase PHP que
 herede o extienda de ListController, debiendo implementar los siguientes

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,24 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditAlbaranProveedor extends ExtendedController\DocumentController
+class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
 {
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'delivery-note';
+        $pagedata['menu'] = 'purchases';
+        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Load views
@@ -35,28 +51,19 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->views['Document']->documentType = 'purchase';
-        $this->addEditView($this->getDocumentClassName(), 'EditAlbaranProveedor', 'detail');
+        
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
+        $this->addEditView($modelName, 'EditAlbaranProveedor', 'detail');
     }
-
+    
     /**
      * Return the document class name.
      *
      * @return string
      */
-    protected function getDocumentClassName()
+    protected function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\AlbaranProveedor';
-    }
-
-    /**
-     * Return the document line class name.
-     *
-     * @return string
-     */
-    protected function getDocumentLineClassName()
-    {
-        return '\FacturaScripts\Dinamic\Model\LineaAlbaranProveedor';
+        return 'AlbaranProveedor';
     }
 
     /**
@@ -73,21 +80,5 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
         }
 
         parent::loadData($keyView, $view);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'delivery-note';
-        $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-files-o';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

@@ -71,7 +71,7 @@ class MemcacheAdapter implements AdaptorInterface
         self::$connected = false;
         if (self::$memcache === null) {
             self::$memcache = new \Memcache();
-            if (@self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT)) {
+            if (@self::$memcache->connect(FS_CACHE_HOST, (int) FS_CACHE_PORT)) {
                 self::$connected = true;
                 $this->minilog->debug($this->i18n->trans('using-memcache'));
             } else {
@@ -121,7 +121,7 @@ class MemcacheAdapter implements AdaptorInterface
     {
         $this->minilog->debug($this->i18n->trans('memcache-set-key-item', ['%item%' => $key]));
         if (self::$connected) {
-            return self::$memcache->set(FS_CACHE_PREFIX . $key, $content, false, $expire);
+            return self::$memcache->set(FS_CACHE_PREFIX . $key, $content, 0, $expire);
         }
 
         return false;

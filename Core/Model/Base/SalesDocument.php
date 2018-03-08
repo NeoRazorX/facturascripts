@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
  * Description of SalesDocument
@@ -191,18 +191,27 @@ abstract class SalesDocument extends BusinessDocument
         parent::clear();
         $this->porcomision = 0.0;
     }
+    
+    public function getSubjectColumns()
+    {
+        return ['codcliente'];
+    }
 
     /**
      * Assign the customer to the document.
      *
-     * @param Cliente $cliente
+     * @param Cliente[] $subjects
      */
-    public function setCliente($cliente)
+    public function setSubject($subjects)
     {
-        $this->codcliente = $cliente->codcliente;
-        $this->nombrecliente = $cliente->razonsocial;
-        $this->cifnif = $cliente->cifnif;
-        foreach ($cliente->getDirecciones() as $dir) {
+        if(!isset($subjects[0]->codcliente)) {
+            return;
+        }
+        
+        $this->codcliente = $subjects[0]->codcliente;
+        $this->nombrecliente = $subjects[0]->razonsocial;
+        $this->cifnif = $subjects[0]->cifnif;
+        foreach ($subjects[0]->getDirecciones() as $dir) {
             $this->coddir = $dir->id;
             $this->codpais = $dir->codpais;
             $this->provincia = $dir->provincia;

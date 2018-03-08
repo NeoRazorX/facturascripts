@@ -267,7 +267,7 @@ class User extends Base\ModelClass
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', ['%nick%' => $this->nick]));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
 
             return false;
         }
