@@ -1092,5 +1092,6 @@
     "location": "Location",
     "balance-account": "Balance account",
     "balance-account-abreviated": "Balance account abreviated",
-    "invalid-column-lenght": "%column% must have between %min% and %max% characters."
+    "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
+    "document-states": "Document states"
 }
