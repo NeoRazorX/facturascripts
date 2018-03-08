@@ -1165,5 +1165,6 @@
     "location": "Localització",
     "balance-account": "Balanç Comptes",
     "balance-account-abreviated": "Balanç Comptes Abreviat",
-    "invalid-column-lenght": "%column% ha de tenir entre %min% i %max% caràcters."
+    "invalid-column-lenght": "%column% ha de tenir entre %min% i %max% caràcters.",
+    "document-states": "Estats del document"
 }
