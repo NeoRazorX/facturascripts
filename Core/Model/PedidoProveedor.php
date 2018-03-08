@@ -53,8 +53,9 @@ class PedidoProveedor extends Base\PurchaseDocument
     {
         $lineaModel = new LineaPedidoProveedor();
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all($where, [], 0, 0);
+        return $lineaModel->all($where, $order, 0, 0);
     }
 
     /**

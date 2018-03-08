@@ -13,6 +13,10 @@
         <default>0</default>
     </column>
     <column>
+        <name>codcombinacion</name>
+        <type>character varying(18)</type>
+    </column>
+    <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
         <null>YES</null>
@@ -59,6 +63,21 @@
         <default>0</default>
     </column>
     <column>
+        <name>mostrar_cantidad</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>mostrar_precio</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>porcomision</name>
         <type>double precision</type>
         <null>YES</null>
@@ -90,25 +109,6 @@
     <column>
         <name>referencia</name>
         <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>codcombinacion</name>
-        <type>character varying(18)</type>
-    </column>
-    <column>
-        <name>orden</name>
-        <type>integer</type>
-        <default>0</default>
-    </column>
-    <column>
-        <name>mostrar_cantidad</name>
-        <type>boolean</type>
-        <default>true</default>
-    </column>
-    <column>
-        <name>mostrar_precio</name>
-        <type>boolean</type>
-        <default>true</default>
     </column>
     <constraint>
         <name>ca_lineasalbaranescli_albaranescli2</name>

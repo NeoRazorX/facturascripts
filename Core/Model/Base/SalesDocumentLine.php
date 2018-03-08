@@ -41,13 +41,6 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     public $mostrar_precio;
 
     /**
-     * Position of the line in the document. The higher down.
-     *
-     * @var int
-     */
-    public $orden;
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -55,6 +48,5 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
         parent::clear();
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;
-        $this->orden = 0;
     }
 }

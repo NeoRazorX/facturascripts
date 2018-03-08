@@ -7,29 +7,28 @@
 -->
 <table>
     <column>
-        <name>pvptotal</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>cantidad</name>
         <type>double precision</type>
         <null>NO</null>
     </column>
     <column>
-        <name>irpf</name>
-        <type>double precision</type>
-        <null>YES</null>
+        <name>codcombinacion</name>
+        <type>character varying(18)</type>
     </column>
     <column>
-        <name>recargo</name>
-        <type>double precision</type>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
         <null>YES</null>
     </column>
     <column>
         <name>descripcion</name>
         <type>text</type>
         <null>YES</null>
+    </column>
+    <column>
+        <name>dtopor</name>
+        <type>double precision</type>
+        <null>NO</null>
     </column>
     <column>
         <name>idlinea</name>
@@ -43,8 +42,8 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codimpuesto</name>
-        <type>character varying(10)</type>
+        <name>irpf</name>
+        <type>double precision</type>
         <null>YES</null>
     </column>
     <column>
@@ -53,12 +52,17 @@
         <null>YES</null>
     </column>
     <column>
-        <name>dtopor</name>
+        <name>orden</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>pvpsindto</name>
         <type>double precision</type>
         <null>NO</null>
     </column>
     <column>
-        <name>pvpsindto</name>
+        <name>pvptotal</name>
         <type>double precision</type>
         <null>NO</null>
     </column>
@@ -68,13 +72,14 @@
         <null>NO</null>
     </column>
     <column>
-        <name>referencia</name>
-        <type>character varying(30)</type>
+        <name>recargo</name>
+        <type>double precision</type>
         <null>YES</null>
     </column>
     <column>
-        <name>codcombinacion</name>
-        <type>character varying(18)</type>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
     </column>
     <constraint>
         <name>lineaspedidosprov_pkey</name>

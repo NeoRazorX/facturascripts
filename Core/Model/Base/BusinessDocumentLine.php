@@ -85,6 +85,13 @@ abstract class BusinessDocumentLine extends ModelClass
     public $irpf;
 
     /**
+     * Position of the line in the document. The higher down.
+     *
+     * @var int
+     */
+    public $orden;
+
+    /**
      * Net amount of the line, without taxes.
      *
      * @var float|int
@@ -130,6 +137,7 @@ abstract class BusinessDocumentLine extends ModelClass
         $this->dtopor = 0.0;
         $this->irpf = 0.0;
         $this->iva = 0.0;
+        $this->orden = 0;
         $this->pvpsindto = 0.0;
         $this->pvptotal = 0.0;
         $this->pvpunitario = 0.0;
