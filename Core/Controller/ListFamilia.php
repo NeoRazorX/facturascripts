@@ -50,7 +50,7 @@ class ListFamilia extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Familia', $className);
+        $this->addView('Familia', $className);
         $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
 
         $this->addOrderBy($className, 'codfamilia', 'code');

@@ -50,7 +50,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\AgenciaTransporte', $className);
+        $this->addView('AgenciaTransporte', $className);
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
         $this->addOrderBy($className, 'codtrans', 'code');

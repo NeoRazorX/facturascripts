@@ -50,7 +50,7 @@ class ListAlmacen extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Almacen', $className);
+        $this->addView('Almacen', $className);
         $this->addSearchFields($className, ['nombre', 'codalmacen', 'contacto']);
 
         $this->addOrderBy($className, 'codalmacen', 'code');

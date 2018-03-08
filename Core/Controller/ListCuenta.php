@@ -35,7 +35,7 @@ class ListCuenta extends ExtendedController\ListController
     protected function createViews()
     {
         /* Accounts */
-        $this->addView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+        $this->addView('Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio']);
 
         $this->addOrderBy('ListCuenta', 'codejercicio desc, codcuenta', 'code');
@@ -44,7 +44,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', 'codejercicio', 'nombre');
 
         /* Special account */
-        $this->addView('\FacturaScripts\Dinamic\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
+        $this->addView('CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
 
         $this->addOrderBy('ListCuentaEspecial', 'descripcion', 'description');
