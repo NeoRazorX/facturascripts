@@ -50,7 +50,7 @@ class ListEstadoDocumento extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\EstadoDocumento', $className);
+        $this->addView('EstadoDocumento', $className);
         $this->addSearchFields($className, ['nombre']);
 
         $this->addOrderBy($className, 'idestado', 'id');

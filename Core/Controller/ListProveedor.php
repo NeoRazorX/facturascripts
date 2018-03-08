@@ -49,7 +49,7 @@ class ListProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Proveedor', $className);
+        $this->addView('Proveedor', $className);
         $this->addSearchFields($className, ['nombre', 'razonsocial', 'codproveedor', 'email']);
 
         $this->addOrderBy($className, 'codproveedor', 'code');

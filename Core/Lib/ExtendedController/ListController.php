@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ListController extends Base\Controller
 {
+    const DIR_MODEL = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
      * Indicates the active view
@@ -157,7 +158,7 @@ abstract class ListController extends Base\Controller
      * Runs the actions that alter the data before reading it
      *
      * @param string $action
-     * 
+     *
      * @return bool
      */
     protected function execPreviousAction($action)
@@ -348,7 +349,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addView($modelName, $viewName, $viewTitle = 'search', $icon = 'fa-search')
     {
-        $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->views[$viewName] = new ListView($viewTitle, self::DIR_MODEL . $modelName, $viewName, $this->user->nick);
         $this->icons[$viewName] = $icon;
         if (empty($this->active)) {
             $this->active = $viewName;
@@ -382,7 +383,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Add a select type filter to a table.
-     * 
+     *
      * @param string $indexView
      * @param string $key
      * @param string $table
@@ -397,7 +398,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Add an autocomplete type filter to a table.
-     * 
+     *
      * @param string $indexView
      * @param string $key
      * @param string $table

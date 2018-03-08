@@ -51,7 +51,7 @@ class ListAtributo extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Atributo', $className);
+        $this->addView('Atributo', $className);
         $this->addSearchFields($className, ['nombre', 'codatributo']);
 
         $this->addOrderBy($className, 'codatributo', 'code');

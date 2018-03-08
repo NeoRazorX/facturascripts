@@ -50,14 +50,14 @@ class ListBalance extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Balance', $className);
+        $this->addView('Balance', $className);
         $fields = [
             'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba',
         ];
         $this->addSearchFields($className, $fields);
 
         $this->addOrderBy($className, 'codbalance', 'code');
-        
+
         /// force default order
         $this->addOrderBy($className, 'descripcion1', 'description-1', 2);
         $this->addOrderBy($className, 'descripcion2', 'description-2');

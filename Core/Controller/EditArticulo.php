@@ -35,11 +35,11 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\Stock', 'EditStock', 'stock');
-        $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
-        $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
-        $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
+        $this->addEditView('Articulo', 'EditArticulo', 'products', 'fa-cubes');
+        $this->addEditListView('Stock', 'EditStock', 'stock');
+        $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
+        $this->addListView('ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
+        $this->addListView('ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
 
         /// Disable column
         $this->views['ListArticuloProveedor']->disableColumn('reference', true);

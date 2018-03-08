@@ -50,7 +50,7 @@ class ListSerie extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Serie', $className);
+        $this->addView('Serie', $className);
         $this->addSearchFields($className, ['descripcion', 'codserie', 'codcuenta']);
 
         $this->addOrderBy($className, 'codserie', 'code');

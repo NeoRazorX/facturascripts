@@ -34,7 +34,7 @@ class ListArticuloTraza extends ExtendedController\ListController
     protected function createViews()
     {
         /* Artículos */
-        $this->addView('\FacturaScripts\Dinamic\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability');
+        $this->addView('ArticuloTraza', 'ListArticuloTraza', 'traceability');
         $this->addSearchFields('ListArticuloTraza', ['referencia', 'numserie']);
 
         $this->addOrderBy('ListArticuloTraza', 'referencia', 'reference');

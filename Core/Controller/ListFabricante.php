@@ -50,7 +50,7 @@ class ListFabricante extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Fabricante', $className);
+        $this->addView('Fabricante', $className);
         $this->addSearchFields($className, ['nombre', 'codfabricante']);
 
         $this->addOrderBy($className, 'codfabricante', 'code');

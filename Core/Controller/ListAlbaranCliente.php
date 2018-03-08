@@ -34,7 +34,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'ListAlbaranCliente');
+        $this->addView('AlbaranCliente', 'ListAlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
 
         $this->addFilterDatePicker('ListAlbaranCliente', 'date', 'date', 'fecha');

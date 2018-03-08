@@ -50,7 +50,7 @@ class ListTarifa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Tarifa', $className);
+        $this->addView('Tarifa', $className);
         $this->addSearchFields($className, ['nombre', 'codtarifa']);
 
         $this->addOrderBy($className, 'codtarifa', 'code');

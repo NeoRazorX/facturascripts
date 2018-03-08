@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the CuentaEspecial model

@@ -38,7 +38,7 @@ class EditCliente extends ExtendedController\PanelController
      */
     private function addMainView()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Cliente', 'EditCliente', 'customer');
+        $this->addEditView('Cliente', 'EditCliente', 'customer');
 
         /// Load values option to Fiscal ID select input
         $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
@@ -56,13 +56,13 @@ class EditCliente extends ExtendedController\PanelController
     {
         $this->addMainView();
 
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'same-group', 'fa-users');
-        $this->addListView('\FacturaScripts\Dinamic\Model\FacturaCliente', 'ListFacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addEditListView('DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addEditListView('CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
+        $this->addListView('Cliente', 'ListCliente', 'same-group', 'fa-users');
+        $this->addListView('FacturaCliente', 'ListFacturaCliente', 'invoices', 'fa-files-o');
+        $this->addListView('AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
+        $this->addListView('PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
+        $this->addListView('PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
 
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);
