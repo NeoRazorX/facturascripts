@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\Base\ModelClass;
 
 /**
  * Description of GridView

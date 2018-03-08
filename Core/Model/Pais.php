@@ -105,13 +105,13 @@ class Pais extends Base\ModelClass
         $this->nombre = Utils::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-country-code', ['%countryCode%' => $this->codpais]));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codpais', '%min%' => '1', '%max%' => '20']));
 
             return false;
         }
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('country-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
 
             return false;
         }

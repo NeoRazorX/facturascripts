@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,24 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditFacturaProveedor extends ExtendedController\DocumentController
+class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
 {
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'invoice';
+        $pagedata['menu'] = 'purchases';
+        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Load views
@@ -35,8 +51,9 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->views['Document']->documentType = 'purchase';
-        $this->addEditView($this->getDocumentClassName(), 'EditFacturaProveedor', 'invoice');
+        
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
+        $this->addEditView($modelName, 'EditFacturaProveedor', 'invoice');
     }
 
     /**
@@ -44,19 +61,9 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
      *
      * @return string
      */
-    protected function getDocumentClassName()
+    protected function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\FacturaProveedor';
-    }
-
-    /**
-     * Return the document line class name.
-     *
-     * @return string
-     */
-    protected function getDocumentLineClassName()
-    {
-        return '\FacturaScripts\Dinamic\Model\LineaFacturaProveedor';
+        return 'FacturaProveedor';
     }
 
     /**
@@ -73,21 +80,5 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
         }
 
         parent::loadData($keyView, $view);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'invoice';
-        $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-files-o';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

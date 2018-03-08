@@ -229,6 +229,10 @@
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
+        <name>ca_pedidoscli_albaranes</name>
+        <type>FOREIGN KEY (idalbaran) REFERENCES albaranescli (idalbaran) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_codigo_pedidoscli2</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,10 +24,26 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * Controller to edit a single item from the FacturaCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @autor Luis Miguel Pérez <luismi@pcrednet.com>
+ * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditFacturaCliente extends ExtendedController\DocumentController
+class EditFacturaCliente extends ExtendedController\BusinessDocumentController
 {
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'invoice';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Load views
@@ -35,7 +51,9 @@ class EditFacturaCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView($this->getDocumentClassName(), 'EditFacturaCliente', 'detail', 'fa-edit');
+        
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
+        $this->addEditView($modelName, 'EditFacturaCliente', 'detail', 'fa-edit');
     }
 
     /**
@@ -43,19 +61,9 @@ class EditFacturaCliente extends ExtendedController\DocumentController
      *
      * @return string
      */
-    protected function getDocumentClassName()
+    protected function getModelClassName()
     {
-        return '\FacturaScripts\Dinamic\Model\FacturaCliente';
-    }
-
-    /**
-     * Return the document line class name.
-     *
-     * @return string
-     */
-    protected function getDocumentLineClassName()
-    {
-        return '\FacturaScripts\Dinamic\Model\LineaFacturaCliente';
+        return 'FacturaCliente';
     }
 
     /**
@@ -72,21 +80,5 @@ class EditFacturaCliente extends ExtendedController\DocumentController
         }
 
         parent::loadData($keyView, $view);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'invoice';
-        $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-files-o';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

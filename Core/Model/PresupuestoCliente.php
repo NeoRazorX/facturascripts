@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente;
 
 /**
  * Customer estimation.
@@ -51,26 +52,6 @@ class PresupuestoCliente extends Base\SalesDocument
     public $finoferta;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'presupuestoscli';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'idpresupuesto';
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -84,12 +65,54 @@ class PresupuestoCliente extends Base\SalesDocument
      *
      * @return LineaPresupuestoCliente[]
      */
-    public function getLineas()
+    public function getLines()
     {
         $lineaModel = new LineaPresupuestoCliente();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
         return $lineaModel->all($where, $order, 0, 0);
+    }
+
+    /**
+     * Returns a new line for this document.
+     * 
+     * @param array $data
+     * 
+     * @return LineaPresupuestoCliente
+     */
+    public function getNewLine(array $data)
+    {
+        $newLine = new LineaPresupuestoCliente($data);
+        $newLine->idpresupuesto = $this->idpresupuesto;
+        return $newLine;
+    }
+    
+    public function install()
+    {
+        parent::install();
+        new PedidoCliente();
+        
+        return '';
+    }
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'idpresupuesto';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'presupuestoscli';
     }
 }

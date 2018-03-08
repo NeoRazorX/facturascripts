@@ -33,7 +33,7 @@ class Serie extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key. Varchar (2).
+     * Primary key. Varchar (4).
      *
      * @var string
      */
@@ -52,27 +52,6 @@ class Serie extends Base\ModelClass
      * @var bool
      */
     public $siniva;
-
-    /**
-     * % IRPF withholding of the associated invoices.
-     *
-     * @var float|int
-     */
-    public $irpf;
-
-    /**
-     * Exercise for which we assign the initial numbering of the series.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
-     * Initial numbering for the invoices of this series.
-     *
-     * @var int
-     */
-    public $numfactura;
 
     /**
      * Returns the name of the table that uses this model.
@@ -101,8 +80,6 @@ class Serie extends Base\ModelClass
     {
         parent::clear();
         $this->siniva = false;
-        $this->irpf = 0.0;
-        $this->numfactura = 1;
     }
 
     /**
@@ -122,23 +99,19 @@ class Serie extends Base\ModelClass
      */
     public function test()
     {
-        $status = false;
-
         $this->codserie = trim($this->codserie);
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if ($this->numfactura < 1) {
-            $this->numfactura = 1;
-        }
-
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codserie)) {
-            self::$miniLog->alert(self::$i18n->trans('serie-cod-invalid'));
-        } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('serie-desc-invalid'));
-        } else {
-            $status = true;
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codserie', '%min%' => '1', '%max%' => '4']));
+            return false;
         }
 
-        return $status;
+        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']));
+            return false;
+        }
+
+        return true;
     }
 }

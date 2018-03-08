@@ -122,7 +122,6 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
         if (mt_rand(0, 2) == 0) {
             if ($this->series[0]->codserie != 'R') {
                 $doc->codserie = $this->series[0]->codserie;
-                $doc->irpf = $this->series[0]->irpf;
             }
 
             $doc->observaciones = $this->observaciones($doc->fecha);
@@ -153,7 +152,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
-            $doc->setProveedor($proveedores[$num]);
+            $doc->setSubject([$proveedores[$num]]);
             $regimeniva = $proveedores[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without provider, to check if it breaks ;-)
@@ -180,7 +179,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
-            $doc->setCliente($clientes[$num]);
+            $doc->setSubject([$clientes[$num]]);
             $regimeniva = $clientes[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without the client, to check if it breaks ;-)

@@ -252,25 +252,23 @@ class Ejercicio extends Base\ModelClass
     public function test()
     {
         /// TODO: Change dates verify to $this->inRange() call
-        $status = false;
-
         $this->codejercicio = trim($this->codejercicio);
         $this->nombre = Utils::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
-            self::$miniLog->alert(self::$i18n->trans('fiscal-year-code-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('fiscal-year-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
             self::$miniLog->alert(self::$i18n->trans('start-date-later-end-date', $params));
         } elseif (strtotime($this->fechainicio) < 1) {
             self::$miniLog->alert(self::$i18n->trans('date-invalid'));
         } else {
-            $status = true;
+            return true;
         }
 
-        return $status;
+        return false;
     }
 
     /**

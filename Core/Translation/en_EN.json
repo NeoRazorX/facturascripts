@@ -262,6 +262,7 @@
     "installer-p": "Welcome to the FacturaScripts installer. Fill in the fields required to connect to the database.",
     "installer-requirements": "The follow extensions and functions are needed for FacturaScripts:",
     "international-identifier": "International identifier",
+    "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
     "invalid-country-code": "Invalid country code: %countryCode%.",
     "invalid-date": "Invalid date %date%.",
     "invoice": "Invoice",

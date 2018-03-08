@@ -20,9 +20,8 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\NewCodigoDoc;
-use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\Serie;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Description of BusinessDocument
@@ -202,7 +201,28 @@ abstract class BusinessDocument extends ModelClass
      *
      * @return mixed
      */
-    abstract public function getLineas();
+    abstract public function getLines();
+
+    /**
+     * Returns a new line for this business document.
+     * 
+     * @param array $data
+     * 
+     * @return BusinessDocumentLine[]
+     */
+    abstract public function getNewLine(array $data);
+
+    /**
+     * Returns an array with the column for identify the subject(s),
+     * 
+     * @return BusinessDocumentLine
+     */
+    abstract public function getSubjectColumns();
+
+    /**
+     * Sets subjects for this document.
+     */
+    abstract public function setSubject($subjects);
 
     /**
      * Reset the values of all model properties.
@@ -248,9 +268,18 @@ abstract class BusinessDocument extends ModelClass
      */
     private function newCodigo()
     {
-        $newCodigoDoc = new NewCodigoDoc();
-        $this->numero = (string) $newCodigoDoc->getNumero(static::tableName(), $this->codejercicio, $this->codserie);
-        $this->codigo = $newCodigoDoc->getCodigo(static::tableName(), $this->numero, $this->codserie, $this->codejercicio);
+        $this->numero = '1';
+
+        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
+            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
+            . " AND codserie = " . self::$dataBase->var2str($this->codserie) . ";";
+
+        $data = self::$dataBase->select($sql);
+        if (!empty($data)) {
+            $this->numero = (string) (1 + (int) $data[0]['num']);
+        }
+
+        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
     }
 
     /**
@@ -285,16 +314,18 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * Assign the date and find an accounting exercise.
-     *
-     * @param string $fecha
+     * 
+     * @param string $date
+     * @param string $hour
      */
-    public function setFecha($fecha)
+    public function setDate($date, $hour)
     {
         $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->getByFecha($fecha);
+        $ejercicio = $ejercicioModel->getByFecha($date);
         if ($ejercicio) {
             $this->codejercicio = $ejercicio->codejercicio;
-            $this->fecha = $fecha;
+            $this->fecha = $date;
+            $this->hora = $hour;
         }
     }
 

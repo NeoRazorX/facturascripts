@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
 
 /**
  * Delivery note or purchase order. Represents the reception
@@ -30,6 +30,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AlbaranProveedor extends Base\PurchaseDocument
 {
+
     use Base\ModelTrait;
 
     /**
@@ -47,23 +48,30 @@ class AlbaranProveedor extends Base\PurchaseDocument
     public $idfactura;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Returns the lines associated with the delivery note.
      *
-     * @return string
+     * @return LineaAlbaranProveedor[]
      */
-    public static function tableName()
+    public function getLines()
     {
-        return 'albaranesprov';
+        $lineaModel = new LineaAlbaranProveedor();
+        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
+
+        return $lineaModel->all($where, [], 0, 0);
     }
 
     /**
-     * Returns the name of the column that is the model's primary key.
+     * Returns a new line for the document.
+     * 
+     * @param array $data
      *
-     * @return string
+     * @return LineaAlbaranProveedor
      */
-    public static function primaryColumn()
+    public function getNewLine(array $data)
     {
-        return 'idalbaran';
+        $newLine = new LineaAlbaranProveedor($data);
+        $newLine->idalbaran = $this->idalbaran;
+        return $newLine;
     }
 
     /**
@@ -82,42 +90,22 @@ class AlbaranProveedor extends Base\PurchaseDocument
     }
 
     /**
-     * Returns the lines associated with the delivery note.
+     * Returns the name of the column that is the model's primary key.
      *
-     * @return LineaAlbaranProveedor[]
+     * @return string
      */
-    public function getLineas()
+    public static function primaryColumn()
     {
-        $lineaModel = new LineaAlbaranProveedor();
-        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
-
-        return $lineaModel->all($where, [], 0, 0);
+        return 'idalbaran';
     }
 
     /**
-     * Remove the delivery note from the database.
+     * Returns the name of the table that uses this model.
      *
-     * @return bool
+     * @return string
      */
-    public function delete()
+    public static function tableName()
     {
-        $sql = 'DELETE FROM ' . static::tableName() . ' WHERE idalbaran = ' . self::$dataBase->var2str($this->idalbaran) . ';';
-        if (self::$dataBase->exec($sql)) {
-            if ($this->idfactura) {
-                /**
-                 * We delegate the elimination of the invoice in the corresponding class,
-                                  * You will have to do more things.
-                 */
-                $factura = new FacturaProveedor();
-                $factura0 = $factura->get($this->idfactura);
-                if ($factura0) {
-                    $factura0->delete();
-                }
-            }
-
-            return true;
-        }
-
-        return false;
+        return 'albaranesprov';
     }
 }

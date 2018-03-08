@@ -88,7 +88,7 @@ class APCAdapter implements AdaptorInterface
     {
         $this->minilog->debug($this->i18n->trans('apc-set-key-item', ['%item%' => $key]));
 
-        return apc_store(FS_CACHE_PREFIX . $key, $content, $expire);
+        return (bool) apc_store(FS_CACHE_PREFIX . $key, $content, $expire);
     }
 
     /**
