@@ -35,7 +35,7 @@ class ListPais extends ExtendedController\ListController
     protected function createViews()
     {
         /// Countries
-        $this->addView('\FacturaScripts\Dinamic\Model\Pais', 'ListPais', 'countries', 'fa-globe');
+        $this->addView('Pais', 'ListPais', 'countries', 'fa-globe');
         $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
         $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
@@ -44,7 +44,7 @@ class ListPais extends ExtendedController\ListController
         $this->addOrderBy('ListPais', 'codiso', 'codiso');
 
         /// States
-        $this->addView('\FacturaScripts\Dinamic\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
+        $this->addView('Provincia', 'ListProvincia', 'province', 'fa-map-signs');
         $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
 
         $this->addOrderBy('ListProvincia', 'provincia', 'province');

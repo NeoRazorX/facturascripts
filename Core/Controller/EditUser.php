@@ -37,8 +37,8 @@ class EditUser extends ExtendedController\PanelController
     protected function createViews()
     {
         /// Add all views
-        $this->addEditView('\FacturaScripts\Dinamic\Model\User', 'EditUser', 'user', 'fa-user');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\RoleUser', 'EditRoleUser', 'roles', 'fa-address-card-o');
+        $this->addEditView('User', 'EditUser', 'user', 'fa-user');
+        $this->addEditListView('RoleUser', 'EditRoleUser', 'roles', 'fa-address-card-o');
 
         /// Load values for input selects
         $this->loadHomepageValues();

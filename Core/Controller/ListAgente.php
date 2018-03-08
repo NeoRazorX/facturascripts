@@ -50,7 +50,7 @@ class ListAgente extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Agente', $className);
+        $this->addView('Agente', $className);
         $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
 
         $this->addOrderBy($className, 'codagente', 'code');

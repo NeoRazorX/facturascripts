@@ -36,9 +36,9 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Familia', 'EditFamilia', 'family');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Familia', 'ListFamilia', 'families-children', 'fa-level-down');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Articulo', 'ListArticulo', 'products', 'fa-cubes');
+        $this->addEditView('Familia', 'EditFamilia', 'family');
+        $this->addListView('Familia', 'ListFamilia', 'families-children', 'fa-level-down');
+        $this->addListView('Articulo', 'ListArticulo', 'products', 'fa-cubes');
     }
 
     /**

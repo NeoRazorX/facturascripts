@@ -53,9 +53,9 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Ejercicio', 'EditEjercicio', 'exercise');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta', 'subaccount');
+        $this->addEditView('Ejercicio', 'EditEjercicio', 'exercise');
+        $this->addListView('Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+        $this->addListView('Subcuenta', 'ListSubcuenta', 'subaccount');
 
         /// Disable columns
         $this->views['ListCuenta']->disableColumn('fiscal-exercise', true);

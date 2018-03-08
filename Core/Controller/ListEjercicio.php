@@ -50,7 +50,7 @@ class ListEjercicio extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Ejercicio', $className);
+        $this->addView('Ejercicio', $className);
         $this->addSearchFields($className, ['nombre', 'codejercicio']);
 
         $this->addOrderBy($className, 'fechainicio', 'start-date', 2);

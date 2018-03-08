@@ -51,9 +51,10 @@ class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
     protected function createViews()
     {
         parent::createViews();
-        
-        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
-        $this->addEditView($modelName, 'EditFacturaProveedor', 'invoice');
+
+        $modelName = $this->getModelClassName();
+        $viewName = 'Edit' . $modelName;
+        $this->addEditView($modelName, $viewName, 'invoice');
     }
 
     /**

@@ -34,7 +34,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'ListPresupuestoCliente');
+        $this->addView('PresupuestoCliente', 'ListPresupuestoCliente');
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListPresupuestoCliente', 'date', 'date', 'fecha');

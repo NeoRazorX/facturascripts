@@ -36,9 +36,9 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Cuenta', 'EditCuenta', 'account');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta', 'subaccounts');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'children-accounts');
+        $this->addEditView('Cuenta', 'EditCuenta', 'account');
+        $this->addListView('Subcuenta', 'ListSubcuenta', 'subaccounts');
+        $this->addListView('Cuenta', 'ListCuenta', 'children-accounts');
         $this->setTabsPosition('bottom');
     }
 

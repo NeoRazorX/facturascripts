@@ -33,6 +33,8 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class PanelController extends Base\Controller
 {
 
+    const DIR_MODEL = '\\FacturaScripts\\Dinamic\\Model\\';
+
     /**
      * Indicates the active view
      *
@@ -244,6 +246,18 @@ abstract class PanelController extends Base\Controller
         return $model->primaryDescription();
     }
 
+    private function searchGridView(): string
+    {
+        $result = '';
+        foreach ($this->views as $key => $value) {
+            if ($value instanceof GridView) {
+                $result = $key;
+                break;
+            }
+        }
+        return $result;
+    }
+
     /**
      * Run the actions that alter data before reading it
      *
@@ -268,6 +282,17 @@ abstract class PanelController extends Base\Controller
                 $data = $this->request->request->all();
                 $view->loadFromData($data);
                 $status = $this->editAction($view);
+                break;
+
+            case 'save-document':
+                $keyView = $this->searchGridView();
+                if (!empty($keyView)) {
+                    $this->setTemplate(false);
+                    $data = $this->request->request->all();
+                    $result = $this->views[$keyView]->saveData($data);
+                    $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                    $status = false;
+                }
                 break;
 
             case 'delete':
@@ -420,7 +445,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $view = new EditListView($viewTitle, self::DIR_MODEL . $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -434,7 +459,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $view = new ListView($viewTitle, self::DIR_MODEL . $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -448,7 +473,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $view = new EditView($viewTitle, self::DIR_MODEL . $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -465,7 +490,7 @@ abstract class PanelController extends Base\Controller
     {
         $parent = $this->views[$parentView];
         if (isset($parent)) {
-            $view = new GridView($parent, $viewTitle, $modelName, $viewName, $this->user->nick);
+            $view = new GridView($parent, $viewTitle, self::DIR_MODEL . $modelName, $viewName, $this->user->nick);
             $this->addView($viewName, $view, $viewIcon);
         }
     }
@@ -481,7 +506,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addHtmlView($fileName, $modelName, $viewName, $viewTitle, $viewIcon = 'fa-html5')
     {
-        $view = new HtmlView($viewTitle, $modelName, $fileName);
+        $view = new HtmlView($viewTitle, self::DIR_MODEL . $modelName, $fileName);
         $this->addView($viewName, $view, $viewIcon);
     }
 

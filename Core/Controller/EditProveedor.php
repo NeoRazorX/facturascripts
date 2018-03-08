@@ -38,7 +38,7 @@ class EditProveedor extends ExtendedController\PanelController
      */
     private function addMainView()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Proveedor', 'EditProveedor', 'supplier');
+        $this->addEditView('Proveedor', 'EditProveedor', 'supplier');
 
         /// Load values option to Fiscal ID select input
         $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
@@ -56,12 +56,12 @@ class EditProveedor extends ExtendedController\PanelController
     {
         $this->addMainView();
 
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'products', 'fa-cubes');
-        $this->addListView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        $this->addEditListView('DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView('CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'products', 'fa-cubes');
+        $this->addListView('FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
+        $this->addListView('AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
+        $this->addListView('PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
 
         /// Disable columns
         $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
