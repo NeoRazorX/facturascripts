@@ -96,7 +96,7 @@
                 <widget type="text" fieldname="fax" />
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="email" fieldname="email" />
+                <widget type="email" fieldname="email" icon="fa-envelope" />
             </column>
             <column name="website" numcolumns="3" order="140">
                 <widget type="url" fieldname="web" />

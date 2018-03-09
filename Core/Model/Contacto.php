@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -108,13 +109,13 @@ class Contacto extends Base\Contact
     public $provincia;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
+     * Reset the values of all model properties.
      */
-    public static function tableName()
+    public function clear()
     {
-        return 'contactos';
+        parent::clear();
+        $this->admitemarketing = true;
+        $this->codpais = AppSettings::get('default', 'codpais');
     }
 
     /**
@@ -126,14 +127,20 @@ class Contacto extends Base\Contact
     {
         return 'idcontacto';
     }
+    
+    public function primaryDescriptionColumn()
+    {
+        return 'email';
+    }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-        $this->admitemarketing = true;
+        return 'contactos';
     }
 
     /**
@@ -148,6 +155,7 @@ class Contacto extends Base\Contact
         $this->cargo = Utils::noHtml($this->cargo);
         $this->ciudad = Utils::noHtml($this->ciudad);
         $this->direccion = Utils::noHtml($this->direccion);
+        $this->email = Utils::noHtml($this->email);
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 

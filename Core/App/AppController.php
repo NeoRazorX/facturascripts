@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AppController extends App
 {
 
-    const USER_UPDATE_ACTIVITY_PERIOD = 3600;
+    const USER_UPDATE_ACTIVITY_PERIOD = 300;
 
     /**
      * Controller loaded
@@ -275,7 +275,7 @@ class AppController extends App
         $user = $user0->get($nick);
         if ($user) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
-                $this->updateCookies($user);
+                $this->updateCookies($user, true);
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
                 return $user;
             }
@@ -321,18 +321,18 @@ class AppController extends App
         return false;
     }
 
-    private function updateCookies(User $user)
+    private function updateCookies(User &$user, bool $force = false)
     {
-        if (time() - strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
+        if ($force || \time() - \strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
             $user->newLogkey($this->request->getClientIp());
             $user->save();
-        }
 
-        $expire = time() + FS_COOKIES_EXPIRE;
-        $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
-        $this->response->headers->setCookie(new Cookie('fsLogkey', $user->logkey, $expire));
-        $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
-        $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
+            $expire = time() + FS_COOKIES_EXPIRE;
+            $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
+            $this->response->headers->setCookie(new Cookie('fsLogkey', $user->logkey, $expire));
+            $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
+            $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
+        }
     }
 
     /**

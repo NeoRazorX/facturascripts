@@ -26,129 +26,127 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
-{# Calculate texts according to language #}
-{% set refresh = i18n.trans('refresh-page') %}
-{% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
-{% set add = i18n.trans('add') %}
-{% set disable, enable, delete = i18n.trans('disable'), i18n.trans('enable'), i18n.trans('delete') %}
-{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+    {# Calculate texts according to language #}
+    {% set refresh = i18n.trans('refresh-page') %}
+    {% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
+    {% set add = i18n.trans('add') %}
+    {% set disable, enable, delete = i18n.trans('disable'), i18n.trans('enable'), i18n.trans('delete') %}
+    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
-{# Macros Template Imports #}
-{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+    {# Macros Template Imports #}
+    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
-{# Page Header #}
-<div class="container-fluid">
-    {{ parent() }}
+    {# Page Header #}
+    <div class="container-fluid">
+        {{ parent() }}
 
-    {# Header Row #}
-    <div class="row">
-        <div class="col-sm-7 col-6">
-            <div class="btn-group d-xs-none">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </a>
-                {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
-                    <i class="fa fa-bookmark" aria-hidden="true"></i>
-                </a>
-                {% else %}
-                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-                </a>
-                {% endif %}
-            </div>
-            <div class="btn-group d-xs-none">
-                <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
-                </button>
-            </div>
-        </div>
-        <div class="col-sm-5 col-6 text-right">
-            <h1 style="margin-top: 0px; margin-bottom: 0px;">
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-            </h1>
-        </div>
-    </div>
-    <hr />
-</div>
-
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>{{ i18n.trans('name') }}</th>
-                <th>{{ i18n.trans('description') }}</th>
-                <th class="text-right">{{ i18n.trans('actions') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if fsc.pluginManager.installedPlugins() is empty %}
-            <tr class="table-warning">
-                <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
-            </tr>
-        {% else %}
-            {% for plugin in fsc.pluginManager.installedPlugins() %}
-                {% set trClass = ' class="table-danger"' %}
-                {% if plugin.enabled %}
-                    {% set trClass = ' class="table-success"' %}
-                {% elseif plugin.compatible %}
-                    {% set trClass = '' %}
-                {% endif %}
-                <tr{{ trClass | raw }}>
-                    <td><b>{{ plugin.name }}</b> v{{ plugin.version }}</td>
-                    <td>{{ plugin.description }}</td>
-                    <td class="text-right">
-                        <span class="btn-group d-xs-none">
-                            {% if plugin.enabled %}
-                            <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}" {{ popoverTitle(disable, 'bottom') }}>
-                                <i class="fa fa-close" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
-                            </a>
-                            {% elseif plugin.compatible %}
-                            <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}" {{ popoverTitle(enable, 'bottom') }}>
-                                <i class="fa fa-check" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
-                            </a>
-                            <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}?action=remove&amp;plugin={{ plugin.name }}" {{ popoverTitle(delete, 'bottom') }}>
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
-                            </a>
-                            {% endif %}
-                        </span>
-                    </td>
-                </tr>
-            {% endfor %}
-        {% endif %}
-        </tbody>
-    </table>
-</div>
-
-{# Modal for add new plugins #}
-<form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
-    <input type="hidden" name="action" value="upload" />
-    <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
-                        <span aria-hidden="true">&times;</span>
+        {# Header Row #}
+        <div class="row">
+            <div class="col-sm-7 col-6">
+                <div class="btn-group d-xs-none">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </a>
+                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="btn-group d-xs-none">
+                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
-                        <input type="file" name="plugin[]" multiple="" accept="application/zip"/>
-                        <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
+            </div>
+            <div class="col-sm-5 col-6 text-right">
+                <h1 style="margin-top: 0px; margin-bottom: 0px;">
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                </h1>
+            </div>
+        </div>
+        <hr />
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>{{ i18n.trans('name') }}</th>
+                    <th>{{ i18n.trans('description') }}</th>
+                    <th class="text-right">{{ i18n.trans('actions') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plugin in fsc.pluginManager.installedPlugins() %}
+                    {% set trClass = ' class="table-danger"' %}
+                    {% if plugin.enabled %}
+                        {% set trClass = ' class="table-success"' %}
+                    {% elseif plugin.compatible %}
+                        {% set trClass = '' %}
+                    {% endif %}
+                    <tr{{ trClass | raw }}>
+                        <td><b>{{ plugin.name }}</b> v{{ plugin.version }}</td>
+                        <td>{{ plugin.description }}</td>
+                        <td class="text-right">
+                            <span class="btn-group d-xs-none">
+                                {% if plugin.enabled %}
+                                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}" {{ popoverTitle(disable, 'bottom') }}>
+                                        <i class="fa fa-close" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
+                                    </a>
+                                {% elseif plugin.compatible %}
+                                    <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}" {{ popoverTitle(enable, 'bottom') }}>
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
+                                    </a>
+                                    <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}?action=remove&amp;plugin={{ plugin.name }}" {{ popoverTitle(delete, 'bottom') }}>
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
+                                    </a>
+                                {% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# Modal for add new plugins #}
+    <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="upload" />
+        <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
-                    <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
+                            <input type="file" name="plugin[]" multiple="" accept="application/zip"/>
+                            <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 {% endblock %}

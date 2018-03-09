@@ -35,10 +35,12 @@ class PluginManager
      * Minimum version required of FacturaScripts.
      */
     const MIN_VERSION = 2018;
+
     /**
      * Path to list plugins on file.
      */
     const PLUGIN_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'plugins.json';
+
     /**
      * Plugin path folder.
      */
@@ -174,7 +176,7 @@ class PluginManager
                 self::$minilog->critical(self::$i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));
             }
         }
-        
+
         $menuManager->removeOld($pageNames);
         $menuManager->reload();
     }
@@ -322,7 +324,7 @@ class PluginManager
 
             if ($info['min_version'] >= 2018 && $info['min_version'] <= self::MIN_VERSION) {
                 $info['compatible'] = true;
-                $info['description'] = self::$i18n->trans('compatible');
+                $info['description'] = ('Incompatible' === $info['description']) ? self::$i18n->trans('compatible') : $info['description'];
             } else {
                 $info['description'] = self::$i18n->trans('incompatible-with-facturascripts', ['%version%' => self::MIN_VERSION]);
             }
