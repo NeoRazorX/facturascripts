@@ -41,7 +41,7 @@
                 </widget>
             </column>
             <column name="fiscal-number" title="cifnif" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif" required="true" />
+                <widget type="text" fieldname="cifnif" />
             </column>
             <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
                 <widget type="checkbox" fieldname="personafisica" />

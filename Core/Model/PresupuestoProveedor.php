@@ -75,7 +75,7 @@ class PresupuestoProveedor extends Base\PurchaseDocument
     public function install()
     {
         parent::install();
-        new AlbaranProveedor();
+        new PedidoProveedor();
 
         return '';
     }

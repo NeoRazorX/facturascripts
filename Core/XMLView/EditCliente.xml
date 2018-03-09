@@ -40,7 +40,7 @@
                 </widget>
             </column>
             <column name="vat-id" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif" required="true" />
+                <widget type="text" fieldname="cifnif" />
             </column>
             <column name="fiscal-mode" title="is-person" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
@@ -75,10 +75,13 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="irpf" numcolumns="3" order="160">
+            <column name="surcharge" order="160">
+                <widget type="checkbox" fieldname="recargo" />
+            </column>
+            <column name="irpf" numcolumns="3" order="170">
                 <widget type="number" fieldname="irpf" icon="fa-percent" />
             </column>
-            <column name="subaccount" numcolumns="3" order="170">
+            <column name="subaccount" numcolumns="3" order="180">
                 <widget type="text" fieldname="codsubcuenta" />
             </column>
         </group>
