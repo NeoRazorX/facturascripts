@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var documentUrl = "";
 var accountGraph = null;
-var accountDescription, accountBalance, unbalance, submitButton;
+var accountDescription, accountBalance, unbalance;
 
 /*
  * EVENTS MANAGER Funtions
@@ -139,52 +138,6 @@ function calculateEntryUnbalance() {
     setUnbalance(balance.toFixed(2));
 }
 
-/**
- * Save data to Database
- *
- * @returns {Boolean}
- */
-function saveAccountEntry() {
-    submitButton.prop("disabled", true);
-    try {
-        var mainForm = $("form[name^='EditAsiento-']");
-        var data = {
-            action: "save-document",
-            lines: getGridData('orden'),
-            document: {}
-        };
-
-        $.each(mainForm.serializeArray(), function(key, value) {
-            switch (value.name) {
-                case 'action':
-                    break;
-
-                case 'active':
-                    data[value.name] = value.value;
-                    break;
-
-                default:
-                    data.document[value.name] = value.value;
-                    break;
-            }
-        });
-
-        $.post(
-            documentUrl,
-            data,
-            function (results) {
-                if (results.error) {
-                    alert(results.message);
-                    return;
-                }
-                location.reload();
-            });
-    } finally {
-        submitButton.prop("disabled", false);
-        return false;
-    }
-}
-
 /*
  * Document Ready. Create and configure Objects.
  */
@@ -194,10 +147,6 @@ $(document).ready(function () {
         accountDescription = document.getElementById('account-description');
         accountBalance = document.getElementById('account-balance');
         unbalance = document.getElementById('unbalance');
-        submitButton = $("button[id^='submit-EditAsiento-']");
-
-        // Rewrite submit action
-        submitButton.on('click', saveAccountEntry);
 
         // Calculate initial unbalance
         calculateEntryUnbalance();
