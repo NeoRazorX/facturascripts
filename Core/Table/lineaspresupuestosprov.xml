@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineaspresupuestosprov.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the lineaspresupuestosprov table.
+-->
+<table>
+    <column>
+        <name>cantidad</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codcombinacion</name>
+        <type>character varying(18)</type>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>dtopor</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idlinea</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('lineaspresupuestosprov_idlinea_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idpresupuesto</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>iva</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>pvpsindto</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>pvptotal</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>pvpunitario</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>recargo</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>lineaspresupuestosprov_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineaspresupuestosprov_presupuestosprov</name>
+        <type>FOREIGN KEY (idpresupuesto) REFERENCES presupuestosprov (idpresupuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

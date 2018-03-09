@@ -20,12 +20,12 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaPedidoProveedor;
+use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor;
 
 /**
  * Supplier order.
  */
-class PedidoProveedor extends Base\PurchaseDocument
+class PresupuestoProveedor extends Base\PurchaseDocument
 {
 
     use Base\ModelTrait;
@@ -42,17 +42,17 @@ class PedidoProveedor extends Base\PurchaseDocument
      *
      * @var int
      */
-    public $idpedido;
+    public $idpresupuesto;
 
     /**
      * Returns the lines associated with the order.
      *
-     * @return LineaPedidoProveedor[]
+     * @return LineaPresupuestoProveedor[]
      */
     public function getLines()
     {
-        $lineaModel = new LineaPedidoProveedor();
-        $where = [new DataBaseWhere('idpedido', $this->idpedido)];
+        $lineaModel = new LineaPresupuestoProveedor();
+        $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
         return $lineaModel->all($where, $order, 0, 0);
@@ -63,20 +63,20 @@ class PedidoProveedor extends Base\PurchaseDocument
      * 
      * @param array $data
      *
-     * @return LineaPedidoProveedor
+     * @return LineaPresupuestoProveedor
      */
     public function getNewLine(array $data = [])
     {
-        $newLine = new LineaPedidoProveedor($data);
-        $newLine->idpedido = $this->idpedido;
+        $newLine = new LineaPresupuestoProveedor($data);
+        $newLine->idpresupuesto = $this->idpresupuesto;
         return $newLine;
     }
-    
+
     public function install()
     {
         parent::install();
         new AlbaranProveedor();
-        
+
         return '';
     }
 
@@ -87,7 +87,7 @@ class PedidoProveedor extends Base\PurchaseDocument
      */
     public static function primaryColumn()
     {
-        return 'idpedido';
+        return 'idpresupuesto';
     }
 
     /**
@@ -97,6 +97,6 @@ class PedidoProveedor extends Base\PurchaseDocument
      */
     public static function tableName()
     {
-        return 'pedidosprov';
+        return 'presupuestosprov';
     }
 }
