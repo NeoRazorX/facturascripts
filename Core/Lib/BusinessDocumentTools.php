@@ -25,6 +25,7 @@ use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Description of DocumentCalculator
@@ -45,6 +46,12 @@ class BusinessDocumentTools
      * @var bool
      */
     private $recargo = false;
+
+    /**
+     *
+     * @var bool
+     */
+    private $siniva = false;
 
     /**
      * Recalculates document totals.
@@ -108,6 +115,11 @@ class BusinessDocumentTools
         $doc->totaliva = 0.0;
         $doc->totalirpf = 0.0;
         $doc->totalrecargo = 0.0;
+
+        $serie = new Serie();
+        if ($serie->loadFromCode($doc->codserie)) {
+            $this->siniva = $serie->siniva;
+        }
 
         if ($doc->exists()) {
             return;
@@ -185,7 +197,7 @@ class BusinessDocumentTools
     {
         if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
             $this->setProductData($fLine);
-        } elseif ('' === $fLine['iva']) {
+        } elseif (empty($fLine['iva'])) {
             $impuestoModel = new Impuesto();
             foreach ($impuestoModel->all() as $imp) {
                 if ($imp->isDefault()) {
@@ -207,6 +219,10 @@ class BusinessDocumentTools
         $newLine->iva = (float) $fLine['iva'];
         $newLine->recargo = (float) $fLine['recargo'];
         $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+
+        if ($this->siniva) {
+            $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
+        }
 
         return $newLine;
     }
