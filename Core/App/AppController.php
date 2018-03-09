@@ -37,6 +37,8 @@ use Symfony\Component\HttpFoundation\Response;
 class AppController extends App
 {
 
+    const USER_UPDATE_ACTIVITY_PERIOD = 3600;
+
     /**
      * Controller loaded
      *
@@ -266,35 +268,26 @@ class AppController extends App
         $user0 = new User();
         $nick = $this->request->request->get('fsNick', '');
 
-        if ($nick !== '') {
-            $user = $user0->get($nick);
-            if ($user) {
-                if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
-                    $logKey = $user->newLogkey($this->request->getClientIp());
-                    $user->save();
-                    $expire = time() + FS_COOKIES_EXPIRE;
-                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
-                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, $expire));
-                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
-                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
-                    $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
+        if ($nick === '') {
+            return $this->cookieAuth($user0);
+        }
 
-                    return $user;
-                }
-
-                $this->ipFilter->setAttempt($this->request->getClientIp());
-                $this->miniLog->alert($this->i18n->trans('login-password-fail'));
-
-                return false;
+        $user = $user0->get($nick);
+        if ($user) {
+            if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
+                $this->updateCookies($user);
+                $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
+                return $user;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
-            $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
-
+            $this->miniLog->alert($this->i18n->trans('login-password-fail'));
             return false;
         }
 
-        return $this->cookieAuth($user0);
+        $this->ipFilter->setAttempt($this->request->getClientIp());
+        $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+        return false;
     }
 
     /**
@@ -304,28 +297,42 @@ class AppController extends App
      *
      * @return User|false
      */
-    private function cookieAuth(&$user0)
+    private function cookieAuth(User &$user0)
     {
         $cookieNick = $this->request->cookies->get('fsNick', '');
-        if ($cookieNick !== '') {
-            $cookieUser = $user0->get($cookieNick);
-            if ($cookieUser) {
-                if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
-                    $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
-
-                    return $cookieUser;
-                }
-
-                $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
-                $this->response->headers->clearCookie('fsNick');
-
-                return false;
-            }
-
-            $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+        if ($cookieNick === '') {
+            return false;
         }
 
+        $cookieUser = $user0->get($cookieNick);
+        if ($cookieUser) {
+            if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
+                $this->updateCookies($cookieUser);
+                $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
+                return $cookieUser;
+            }
+
+            $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
+            $this->response->headers->clearCookie('fsNick');
+            return false;
+        }
+
+        $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
         return false;
+    }
+
+    private function updateCookies(User $user)
+    {
+        if (time() - strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
+            $user->newLogkey($this->request->getClientIp());
+            $user->save();
+        }
+
+        $expire = time() + FS_COOKIES_EXPIRE;
+        $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
+        $this->response->headers->setCookie(new Cookie('fsLogkey', $user->logkey, $expire));
+        $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
+        $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
     }
 
     /**
