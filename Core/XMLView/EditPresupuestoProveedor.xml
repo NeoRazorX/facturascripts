@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditPedidoProveedor
+ * Initial description for the controller EditPresupuestoProveedor
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @autor Luis Miguel Pérez <luismi@pcrednet.com>
@@ -27,7 +27,7 @@
     <columns>
         <group name="supplier" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idpedido" required="true" />
+                <widget type="text" fieldname="idpresupuesto" required="true" />
             </column>
             <column name="date" title="date" numcolumns="2" order="100">
                 <widget type="datepicker" fieldname="fecha" required="true" />

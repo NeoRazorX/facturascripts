@@ -34,7 +34,7 @@ class ListArticulo extends ExtendedController\ListController
     protected function createViews()
     {
         /* Artículos */
-        $this->addView('\FacturaScripts\Dinamic\Model\Articulo', 'ListArticulo', 'products');
+        $this->addView('Articulo', 'ListArticulo', 'products');
         $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
 
         $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', 'codfabricante', 'nombre');
@@ -48,7 +48,7 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
 
         /* Artículos de proveedor */
-        $this->addView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
+        $this->addView('ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
         $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
 
         $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
@@ -59,7 +59,7 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
 
         /* Stock */
-        $this->addView('\FacturaScripts\Dinamic\Model\Stock', 'ListStock', 'stock');
+        $this->addView('Stock', 'ListStock', 'stock');
         $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
 
         $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');

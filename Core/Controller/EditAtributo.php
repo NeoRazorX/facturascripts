@@ -37,8 +37,8 @@ class EditAtributo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Atributo', 'EditAtributo', 'attribute');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\AtributoValor', 'EditAtributoValor', 'attribute values', 'fa-road');
+        $this->addEditView('Atributo', 'EditAtributo', 'attribute');
+        $this->addEditListView('AtributoValor', 'EditAtributoValor', 'attribute-values', 'fa-road');
     }
 
     /**

@@ -53,7 +53,7 @@ abstract class EditController extends PanelController
      */
     protected function createViews()
     {
-        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
+        $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $this->getModelClassName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];

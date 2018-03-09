@@ -50,7 +50,7 @@ class ListEmpresa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Empresa', $className);
+        $this->addView('Empresa', $className);
         $this->addSearchFields($className, ['nombre', 'nombrecorto', 'CAST(idempresa AS VARCHAR)']);
 
         $this->addOrderBy($className, 'idempresa', 'code');

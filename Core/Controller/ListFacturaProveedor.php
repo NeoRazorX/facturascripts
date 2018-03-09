@@ -34,7 +34,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor');
+        $this->addView('FacturaProveedor', 'ListFacturaProveedor');
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListFacturaProveedor', 'date', 'date', 'fecha');

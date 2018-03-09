@@ -29,6 +29,10 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>codserie</name>
         <type>character varying(4)</type>
     </column>
@@ -40,6 +44,10 @@
         <name>debaja</name>
         <type>boolean</type>
         <default>false</default>
+    </column>
+    <column>
+        <name>diaspago</name>
+        <type>character varying(10)</type>
     </column>
     <column>
         <name>email</name>
@@ -58,17 +66,28 @@
         <type>date</type>
     </column>
     <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
         <name>nombre</name>
         <type>character varying(100)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>razonsocial</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
         <name>observaciones</name>
         <type>text</type>
+    </column>
+    <column>
+        <name>personafisica</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>razonsocial</name>
+        <type>character varying(100)</type>
     </column>
     <column>
         <name>recargo</name>
@@ -93,21 +112,8 @@
         <default>'NIF'::character varying</default>
     </column>
     <column>
-        <name>personafisica</name>
-        <type>boolean</type>
-        <default>true</default>
-    </column>
-    <column>
         <name>web</name>
         <type>character varying(250)</type>
-    </column>
-    <column>
-        <name>diaspago</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>codproveedor</name>
-        <type>character varying(10)</type>
     </column>
     <constraint>
         <name>clientes_pkey</name>

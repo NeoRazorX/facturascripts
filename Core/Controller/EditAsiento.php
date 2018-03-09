@@ -38,8 +38,8 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
-        $this->addGridView('EditAsiento', '\FacturaScripts\Dinamic\Model\Partida', 'EditPartida', 'accounting-items');
+        $this->addEditView('Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
+        $this->addGridView('EditAsiento', 'Partida', 'EditPartida', 'accounting-items');
         $this->setTemplate('EditAsiento');
     }
 

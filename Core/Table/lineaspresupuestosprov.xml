@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : lineaspedidoscli.xml
+    Document   : lineaspresupuestosprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the lineaspedidoscli table.
+        Structure for the lineaspresupuestosprov table.
 -->
 <table>
     <column>
@@ -34,20 +34,12 @@
         <name>idlinea</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('lineaspedidoscli_idlinea_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>idlineapresupuesto</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>idpedido</name>
-        <type>integer</type>
-        <null>NO</null>
+        <default>nextval('lineaspresupuestosprov_idlinea_seq'::regclass)</default>
     </column>
     <column>
         <name>idpresupuesto</name>
         <type>integer</type>
+        <null>NO</null>
     </column>
     <column>
         <name>irpf</name>
@@ -57,17 +49,7 @@
     <column>
         <name>iva</name>
         <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>mostrar_cantidad</name>
-        <type>boolean</type>
-        <default>true</default>
-    </column>
-    <column>
-        <name>mostrar_precio</name>
-        <type>boolean</type>
-        <default>true</default>
+        <null>YES</null>
     </column>
     <column>
         <name>orden</name>
@@ -100,11 +82,11 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>lineaspedidoscli_pkey</name>
+        <name>lineaspresupuestosprov_pkey</name>
         <type>PRIMARY KEY (idlinea)</type>
     </constraint>
     <constraint>
-        <name>ca_lineaspedidoscli_pedidoscli</name>
-        <type>FOREIGN KEY (idpedido) REFERENCES pedidoscli (idpedido) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_lineaspresupuestosprov_presupuestosprov</name>
+        <type>FOREIGN KEY (idpresupuesto) REFERENCES presupuestosprov (idpresupuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

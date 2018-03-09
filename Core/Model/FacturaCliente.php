@@ -63,7 +63,7 @@ class FacturaCliente extends Base\SalesDocument
      * 
      * @return LineaFacturaCliente
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaFacturaCliente($data);
         $newLine->idfactura = $this->idfactura;

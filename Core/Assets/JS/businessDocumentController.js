@@ -43,7 +43,7 @@ function documentRecalculate() {
     data.action = "recalculate-document";
     data.lines = getGridData();
     console.log('data', data);
-    
+
     $.ajax({
         type: "POST",
         url: documentUrl,
@@ -58,9 +58,12 @@ function documentRecalculate() {
                 documentLineData.rows[visualRow] = element;
                 rowPos++;
             });
-            
+
             hsTable.render();
             console.log('results', results);
+        },
+        error: function (xhr, status, error) {
+            alert(xhr.responseText);
         }
     });
 }
@@ -164,4 +167,8 @@ $(document).ready(function () {
 
     Handsontable.hooks.add('beforeChange', beforeChange);
     Handsontable.hooks.add('afterChange', documentRecalculate);
+
+    $("#doc_codserie").change(function () {
+        documentRecalculate();
+    });
 });

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of presupuestos_y_pedidos
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2018    Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *

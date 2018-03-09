@@ -50,7 +50,7 @@ class ListImpuesto extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('\FacturaScripts\Dinamic\Model\Impuesto', $className);
+        $this->addView('Impuesto', $className);
         $this->addSearchFields($className, ['descripcion', 'codimpuesto']);
 
         $this->addOrderBy($className, 'codimpuesto', 'code');

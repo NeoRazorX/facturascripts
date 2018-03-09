@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : presupuestosprov.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the presupuestosprov table.
+-->
+<table>
+    <column>
+        <name>codigo</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totaleuros</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codpago</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>tasaconv</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>total</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>idpresupuesto</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('presupuestosprov_idpresupuesto_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idpedido</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>femail</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>editable</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>idestado</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>codalmacen</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>numproveedor</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>totalrecargo</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>hora</name>
+        <type>time without time zone</type>
+    </column>
+    <column>
+        <name>neto</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totalirpf</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totaliva</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>character varying(12)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <constraint>
+        <name>presupuestosprov_pkey</name>
+        <type>PRIMARY KEY (idpresupuesto)</type>
+    </constraint>
+    <constraint>
+        <name>ca_presupuestosprov_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_presupuestosprov_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_presupuestosprov_pedidos</name>
+        <type>FOREIGN KEY (idpedido) REFERENCES pedidosprov (idpedido) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_presupuestosprov</name>
+        <type>UNIQUE (codigo,idempresa)</type>
+    </constraint>
+</table>

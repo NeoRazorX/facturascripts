@@ -210,7 +210,7 @@ abstract class BusinessDocument extends ModelClass
      * 
      * @return BusinessDocumentLine[]
      */
-    abstract public function getNewLine(array $data);
+    abstract public function getNewLine(array $data = []);
 
     /**
      * Returns an array with the column for identify the subject(s),

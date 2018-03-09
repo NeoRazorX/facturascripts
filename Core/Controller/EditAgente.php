@@ -35,11 +35,11 @@ class EditAgente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Agente', 'EditAgente', 'agent');
-        $this->addListView('\FacturaScripts\Dinamic\Model\FacturaCliente', 'EditAgenteFacturas', 'invoices', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'EditAgenteAlbaranes', 'delivery-notes', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'EditAgentePedidos', 'orders', 'fa-files-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'EditAgentePresupuestos', 'estimations', 'fa-files-o');
+        $this->addEditView('Agente', 'EditAgente', 'agent');
+        $this->addListView('FacturaCliente', 'EditAgenteFacturas', 'invoices', 'fa-files-o');
+        $this->addListView('AlbaranCliente', 'EditAgenteAlbaranes', 'delivery-notes', 'fa-files-o');
+        $this->addListView('PedidoCliente', 'EditAgentePedidos', 'orders', 'fa-files-o');
+        $this->addListView('PresupuestoCliente', 'EditAgentePresupuestos', 'estimations', 'fa-files-o');
     }
 
     /**

@@ -36,8 +36,8 @@ class EditGrupoClientes extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
-        $this->addListView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+        $this->addEditView('GrupoClientes', 'EditGrupoClientes', 'customer-group');
+        $this->addListView('Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->setTabsPosition('bottom');
 
         /// Disable columns

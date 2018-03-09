@@ -36,7 +36,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $modelName = '\FacturaScripts\Dinamic\Model\Settings';
+        $modelName = 'Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
             $title = strtolower(substr($name, 8));

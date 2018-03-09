@@ -49,7 +49,7 @@ class ListSubcuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta');
+        $this->addView('Subcuenta', 'ListSubcuenta');
         $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion']);
 
         $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', 'codejercicio', 'nombre');
