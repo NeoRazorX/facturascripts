@@ -59,7 +59,8 @@
 
     <rows>
         <row type="actions">
-            <button type="action" label="balance" color="success" action="balance" icon="fa-balance-scale" />
+            <button type="action" label="lock-unlock" color="warning" action="lock" hint="lock-unlock-account-entry" icon="fa-lock" />
+            <button type="action" label="clone" color="info" action="clone" hint="clone-account-entry" icon="fa-clone" />
         </row>
     </rows>
 </view>

@@ -49,11 +49,4 @@
             <widget type="money" fieldname="importe" icon="fa-money" readonly="readonly" />
         </column>
     </columns>
-
-    <rows>
-        <row type="actions">
-            <button type="action" label="lock-unlock" color="warning" action="lock" icon="fa-lock" />
-            <button type="action" label="clone" color="info" action="clone" icon="fa-clone" />
-        </row>
-    </rows>
 </view>
