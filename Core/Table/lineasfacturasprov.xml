@@ -12,6 +12,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>codcombinacion</name>
+        <type>character varying(18)</type>
+    </column>
+    <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
         <null>YES</null>
@@ -62,6 +66,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>orden</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>pvpsindto</name>
         <type>double precision</type>
         <null>NO</null>
@@ -84,10 +93,6 @@
     <column>
         <name>referencia</name>
         <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>codcombinacion</name>
-        <type>character varying(18)</type>
     </column>
     <constraint>
         <name>ca_linea_facturasprov2</name>

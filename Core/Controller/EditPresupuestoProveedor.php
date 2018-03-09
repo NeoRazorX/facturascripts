@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the AlbaranCliente model
+ * Controller to edit a single item from the PresupuestoProveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
+class EditPresupuestoProveedor extends ExtendedController\BusinessDocumentController
 {
 
     /**
@@ -37,7 +37,7 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'delivery-note';
+        $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'purchases';
         $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
@@ -54,7 +54,7 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
 
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
-        $this->addEditView($modelName, $viewName, 'detail');
+        $this->addEditView($modelName, $viewName, 'detail', 'fa-edit');
     }
 
     /**
@@ -64,7 +64,7 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
      */
     protected function getModelClassName()
     {
-        return 'AlbaranProveedor';
+        return 'PresupuestoProveedor';
     }
 
     /**
@@ -75,9 +75,9 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
      */
     protected function loadData($keyView, $view)
     {
-        if ($keyView === 'EditAlbaranProveedor') {
-            $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
-            $view->loadData($idalbaran);
+        if ($keyView === 'EditPresupuestoProveedor') {
+            $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
+            $view->loadData($idpresupuesto);
         }
 
         parent::loadData($keyView, $view);

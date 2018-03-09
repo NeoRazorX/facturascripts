@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaPedidoProveedor extends Base\BusinessDocumentLine
+class LineaPresupuestoProveedor extends Base\BusinessDocumentLine
 {
     use Base\ModelTrait;
 
@@ -34,7 +34,7 @@ class LineaPedidoProveedor extends Base\BusinessDocumentLine
      *
      * @var integer
      */
-    public $idpedido;
+    public $idpresupuesto;
 
     /**
      * Returns the name of the table that uses this model.
@@ -43,6 +43,6 @@ class LineaPedidoProveedor extends Base\BusinessDocumentLine
      */
     public static function tableName()
     {
-        return 'lineaspedidosprov';
+        return 'lineaspresupuestosprov';
     }
 }

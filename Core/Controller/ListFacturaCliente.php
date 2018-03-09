@@ -34,7 +34,7 @@ class ListFacturaCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\FacturaCliente', 'ListFacturaCliente');
+        $this->addView('FacturaCliente', 'ListFacturaCliente');
         $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListFacturaCliente', 'date', 'date', 'fecha');

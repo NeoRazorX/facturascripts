@@ -56,8 +56,9 @@ class AlbaranProveedor extends Base\PurchaseDocument
     {
         $lineaModel = new LineaAlbaranProveedor();
         $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all($where, [], 0, 0);
+        return $lineaModel->all($where, $order, 0, 0);
     }
 
     /**
@@ -67,7 +68,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return LineaAlbaranProveedor
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaAlbaranProveedor($data);
         $newLine->idalbaran = $this->idalbaran;

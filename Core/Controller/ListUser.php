@@ -33,14 +33,14 @@ class ListUser extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('\FacturaScripts\Dinamic\Model\User', 'ListUser', 'users', 'fa-users');
+        $this->addView('User', 'ListUser', 'users', 'fa-users');
         $this->addSearchFields('ListUser', ['nick', 'email']);
 
         $this->addOrderBy('ListUser', 'nick');
         $this->addOrderBy('ListUser', 'email');
 
         /* Roles */
-        $this->addView('\FacturaScripts\Dinamic\Model\Role', 'ListRole', 'roles', 'fa-address-card-o');
+        $this->addView('Role', 'ListRole', 'roles', 'fa-address-card-o');
         $this->addSearchFields('ListRole', ['codrole', 'descripcion']);
 
         $this->addOrderBy('ListRole', 'descripcion', 'description');

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to list the items in the PresupuestoCliente model
+ * Controller to list the items in the PresupuestoProveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListPresupuestoCliente extends ExtendedController\ListController
+class ListPresupuestoProveedor extends ExtendedController\ListController
 {
 
     /**
@@ -34,19 +34,19 @@ class ListPresupuestoCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('PresupuestoCliente', 'ListPresupuestoCliente');
-        $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
+        $this->addView('PresupuestoProveedor', 'ListPresupuestoProveedor');
+        $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'clientes', 'codcliente', 'nombre');
+        $this->addFilterDatePicker('ListPresupuestoProveedor', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListPresupuestoProveedor', 'total', 'total');
+        $this->addFilterSelect('ListPresupuestoProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListPresupuestoProveedor', 'codserie', 'series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListPresupuestoProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
+        $this->addFilterAutocomplete('ListPresupuestoProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
-        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
+        $this->addOrderBy('ListPresupuestoProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListPresupuestoProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListPresupuestoProveedor', 'total', 'amount');
     }
 
     /**
@@ -59,7 +59,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimations';
         $pagedata['icon'] = 'fa-files-o';
-        $pagedata['menu'] = 'sales';
+        $pagedata['menu'] = 'purchases';
 
         return $pagedata;
     }

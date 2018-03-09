@@ -68,7 +68,7 @@ class AlbaranCliente extends Base\SalesDocument
      * 
      * @return LineaAlbaranCliente
      */
-    public function getNewLine(array $data)
+    public function getNewLine(array $data = [])
     {
         $newLine = new LineaAlbaranCliente($data);
         $newLine->idalbaran = $this->idalbaran;

@@ -21,8 +21,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Articulo;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
-use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Description of DocumentCalculator
@@ -33,20 +36,34 @@ class BusinessDocumentTools
 {
 
     /**
+     *
+     * @var float
+     */
+    private $irpf = 0.0;
+
+    /**
+     *
+     * @var bool
+     */
+    private $recargo = false;
+
+    /**
+     *
+     * @var bool
+     */
+    private $siniva = false;
+
+    /**
      * Recalculates document totals.
      *
      * @param BusinessDocument $doc
      */
     public function recalculate(BusinessDocument &$doc)
     {
-        /// clear totals
-        $doc->neto = 0.0;
-        $doc->totaliva = 0.0;
-        $doc->totalirpf = 0.0;
-        $doc->totalrecargo = 0.0;
-
+        $this->clearTotals($doc);
         $lines = $doc->getLines();
         foreach ($this->getSubtotals($lines) as $subt) {
+            $doc->irpf = max([$doc->irpf, $subt['irpf']]);
             $doc->neto += $subt['neto'];
             $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
@@ -66,30 +83,65 @@ class BusinessDocumentTools
      */
     public function recalculateForm(BusinessDocument &$doc, array &$formLines)
     {
-        /// clear totals
-        $doc->neto = 0.0;
-        $doc->totaliva = 0.0;
-        $doc->totalirpf = 0.0;
-        $doc->totalrecargo = 0.0;
-
+        $this->clearTotals($doc);
         $lines = [];
         foreach ($formLines as $fLine) {
-            $lines[] = $this->recalculateLine($fLine);
+            $lines[] = $this->recalculateLine($fLine, $doc);
         }
 
         foreach ($this->getSubtotals($lines) as $subt) {
+            $doc->irpf = max([$doc->irpf, $subt['irpf']]);
             $doc->neto += $subt['neto'];
             $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
+        $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
         $json = [
-            'total' => round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0),
+            'total' => $doc->total,
             'lines' => $lines
         ];
 
         return json_encode($json);
+    }
+
+    private function clearTotals(BusinessDocument &$doc)
+    {
+        $this->irpf = $doc->irpf;
+
+        $doc->irpf = 0.0;
+        $doc->neto = 0.0;
+        $doc->totaliva = 0.0;
+        $doc->totalirpf = 0.0;
+        $doc->totalrecargo = 0.0;
+
+        $serie = new Serie();
+        if ($serie->loadFromCode($doc->codserie)) {
+            $this->siniva = $serie->siniva;
+        }
+
+        if ($doc->exists()) {
+            return;
+        }
+
+        if (isset($doc->codcliente)) {
+            $cliente = new Cliente();
+            if ($cliente->loadFromCode($doc->codcliente)) {
+                $this->irpf = $cliente->irpf;
+                $this->recargo = $cliente->recargo;
+            }
+        } elseif (isset($doc->codproveedor)) {
+            $proveedor = new Proveedor();
+            if ($proveedor->loadFromCode($doc->codproveedor)) {
+                $this->irpf = $proveedor->irpf;
+            }
+
+            $empresa = new Empresa();
+            if ($empresa->loadFromCode($doc->idempresa)) {
+                $this->recargo = $empresa->recequivalencia;
+            }
+        }
     }
 
     /**
@@ -103,10 +155,12 @@ class BusinessDocumentTools
     {
         $irpf = 0.0;
         $subtotals = [];
+        $totalIrpf = 0.0;
         foreach ($lines as $line) {
             $codimpuesto = empty($line->codimpuesto) ? $line->iva . '-' . $line->recargo : $line->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotals)) {
                 $subtotals[$codimpuesto] = [
+                    'irpf' => 0.0,
                     'neto' => 0.0,
                     'totaliva' => 0.0,
                     'totalrecargo' => 0.0,
@@ -114,15 +168,17 @@ class BusinessDocumentTools
                 ];
             }
 
+            $irpf = max([$irpf, $line->irpf]);
             $subtotals[$codimpuesto]['neto'] += $line->pvptotal;
             $subtotals[$codimpuesto]['totaliva'] += $line->pvptotal * $line->iva / 100;
             $subtotals[$codimpuesto]['totalrecargo'] += $line->pvptotal * $line->recargo / 100;
-            $irpf += $line->pvptotal * $line->irpf / 100;
+            $totalIrpf += $line->pvptotal * $line->irpf / 100;
         }
 
         /// IRPF to the first subtotal
         foreach ($subtotals as $key => $value) {
             $subtotals[$key]['irpf'] = $irpf;
+            $subtotals[$key]['totalirpf'] = $totalIrpf;
             break;
         }
 
@@ -137,34 +193,37 @@ class BusinessDocumentTools
         return $subtotals;
     }
 
-    private function recalculateLine(array $fLine)
+    private function recalculateLine(array $fLine, BusinessDocument $doc)
     {
         if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
             $this->setProductData($fLine);
-        }
-
-        if (empty($fLine['iva'])) {
+        } elseif (empty($fLine['iva'])) {
             $impuestoModel = new Impuesto();
             foreach ($impuestoModel->all() as $imp) {
                 if ($imp->isDefault()) {
                     $fLine['iva'] = $imp->iva;
+                    $fLine['recargo'] = $this->recargo ? $imp->recargo : $fLine['recargo'];
                     break;
                 }
             }
         }
 
-        $newLine = new LineaAlbaranCliente();
-        $newLine->cantidad = (float) $fLine['cantidad'];
-        $newLine->descripcion = $fLine['descripcion'];
-        $newLine->dtopor = (float) $fLine['dtopor'];
-        $newLine->irpf = (float) $fLine['irpf'];
-        $newLine->iva = (float) $fLine['iva'];
-        $newLine->pvpunitario = (float) $fLine['pvpunitario'];
-        $newLine->recargo = (float) $fLine['recargo'];
-        $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
-        $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+        $newLine = $doc->getNewLine();
         $newLine->referencia = $fLine['referencia'];
-        
+        $newLine->descripcion = $fLine['descripcion'];
+        $newLine->cantidad = (float) $fLine['cantidad'];
+        $newLine->pvpunitario = (float) $fLine['pvpunitario'];
+        $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
+        $newLine->dtopor = (float) $fLine['dtopor'];
+        $newLine->irpf = empty($fLine['irpf']) ? $this->irpf : (float) $fLine['irpf'];
+        $newLine->iva = (float) $fLine['iva'];
+        $newLine->recargo = (float) $fLine['recargo'];
+        $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+
+        if ($this->siniva) {
+            $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
+        }
+
         return $newLine;
     }
 
@@ -174,8 +233,13 @@ class BusinessDocumentTools
         if ($articulo->loadFromCode($fLine['referencia'])) {
             $fLine['descripcion'] = $articulo->descripcion;
             $fLine['cantidad'] = 1;
-            $fLine['iva'] = $articulo->getIva();
             $fLine['pvpunitario'] = $articulo->pvp;
+
+            $impuesto = new Impuesto();
+            if ($impuesto->loadFromCode($articulo->codimpuesto)) {
+                $fLine['iva'] = $impuesto->iva;
+                $fLine['recargo'] = $this->recargo ? $impuesto->recargo : $fLine['recargo'];
+            }
         }
     }
 }

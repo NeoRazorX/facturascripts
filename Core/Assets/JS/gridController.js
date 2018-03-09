@@ -45,7 +45,11 @@ function assignSource(data) {
                 title: title
             },
             success: function (response) {
-                process(response);
+                var values = [];
+                response.forEach(function (element) {
+                    values.push(element.key + " - " + element.value);
+                });
+                process(values);
             }
         });
     };

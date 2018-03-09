@@ -86,6 +86,14 @@ abstract class ComercialContact extends Contact
      * @var IDFiscal
      */
     private static $idFiscal;
+    
+    /**
+     * % IRPF retention of the document. It is obtained from the series.
+     * Each line can have a different%.
+     * 
+     * @var float|int
+     */
+    public $irpf;
 
     /**
      * True -> the customer is a natural person.

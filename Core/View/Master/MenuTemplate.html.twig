@@ -1,7 +1,8 @@
 {#
    /**
-     * Menu Template
+     * Menu Template.
      *
+     * Load basic structure for pages
      * Establishes the basic characteristics of the Facturascripts.
      *
      * This file is part of FacturaScripts
@@ -44,6 +45,7 @@
         <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
         {% endblock %}
+        {# Add Specific Controller CSS #}
         {% for css in fsc.assets['css'] %}
         <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
@@ -56,6 +58,7 @@
         <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('Dinamic/Assets/JS/custom.js') }}"></script>
         {% endblock %}
+        {# Add Specific Controller JS #}
         {% for js in fsc.assets['js'] %}
         <script src="{{ js }}"></script>
         {% endfor %}
