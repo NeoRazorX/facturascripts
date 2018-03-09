@@ -45,42 +45,51 @@
 {% if fsc.views[masterView].count > 0 %}
 <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
 <script src="Core/Assets/JS/gridController.js"></script>
+<script type="text/javascript">
+    documentUrl = '{{ fsc.views[masterView].getURL('edit') | raw }}';
+</script>
 {% endif %}
 {% endblock %}
 
 {% block body %}
 {# -- Visual macros -- #}
 {% import 'Macro/BaseController.html.twig' as BaseController %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+
+{# -- Working Variables -- #}
+{% set parentIndexView = fsc.views|keys|first %}
+{% set parentView = fsc.views[parentIndexView] %}
+{% set parentModel = parentView.getModel() %}
+{% set isNewRecord = (parentView.count == 0) %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
     {# -- Account View Panel -- #}
     <div class="row">
         <div class="col-12">
-            {% set indexView = fsc.views|keys|first %}
-            {% set view = fsc.views[indexView] %}
+            {% set indexView = fsc.views|keys|first %}       {# it's needed into BaseController into _context #}
 
             {# Info header panels #}
-            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+            {{ BaseController.rowCardsForEditView(_context, parentView, 'header') }}
 
             {# Main Data #}
             <div class="card">
                 <div class="card-body">
                     {# Statistical buttons bar #}
-                    {{ BaseController.rowStatisticsForEditView(_context, view) }}
+                    {{ BaseController.rowStatisticsForEditView(_context, parentView) }}
 
                     {# Main Form #}
-                    {{ BaseController.columnsForEditView(_context, view, view.getModel(), TRUE) }}
+                    {{ BaseController.columnsForEditView(_context, parentView, parentModel, TRUE, isNewRecord) }}
                 </div>
             </div>
             {# Info footers panels and modals forms #}
-            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-            {{ BaseController.modalFormFromColumns(_context, view) }}
+            {{ BaseController.rowCardsForEditView(_context, parentView, 'footer') }}
+            {{ BaseController.modalFormFromColumns(_context, parentView) }}
         </div>
     </div>
 
     {# -- Detail data -- #}
-    {% if fsc.views[indexView].count > 0 %}
+    {% if isNewRecord == FALSE %}
     <div class="row mt-2">
         <div class="col-12">
             {# -- Tabs -- #}
@@ -100,72 +109,104 @@
 
             {# Data #}
             <div class="tab-content" id="optionsindex-tabContent">
-                {% for indexView, view in fsc.views %}
-                    {% if loop.index > 1 %}
-                    {% set active = (loop.index == 2) ? ' show active' : '' %}
-                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
-                        {% set viewType = fsc.viewClass(view) %}
+            {% for indexView, view in fsc.views %}
+                {% if loop.index > 1 %}
+                {% set active = (loop.index == 2) ? ' show active' : '' %}
+                <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                    {% set viewType = fsc.viewClass(view) %}
 
-                        {# List #}
-                        {% if viewType == 'ListView' %}
-                            {{ BaseController.columnsForListView(_context, view) }}
-                        {% endif %}
+                    {# List #}
+                    {% if viewType == 'ListView' %}
+                        {{ BaseController.columnsForListView(_context, view) }}
+                    {% endif %}
 
-                        <div class="mb-2"></div>
+                    <div class="mb-2"></div>
 
-                        {# Grid #}
-                        {% if viewType == 'GridView' %}
-                            <div class="row no-gutters">
-                                {# Prepare grid data & events #}
-                                <script type="text/javascript">
-                                    documentLineData = {{ view.getGridData()|raw }};
-                                </script>
-                                {% block gridcard %}
-                                <div class="col">
-                                    {# Grid data panel #}
-                                    <div class="card">
-                                        <div class="body">
-                                            <div id="document-lines"></div>
+                    {# Grid #}
+                    {% if viewType == 'GridView' %}
+                        {# Information Cards Header #}
+                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+
+                        {# Grid zone #}
+                        <div class="row no-gutters">
+                            {# Prepare grid data & events #}
+                            <script type="text/javascript">
+                                documentLineData = {{ view.getGridData()|raw }};
+                            </script>
+                            {% block gridcard %}
+                            <div class="col">
+                                {# Grid data panel #}
+                                <div class="card">
+                                    <div class="body">
+                                        <div id="document-lines"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endblock %}
+                        </div>
+
+                        {# Buttons actions #}
+                        {% set keyValue = fsc.getFieldValue(parentModel, parentModel.primaryColumn()) %}
+                        {% set formName = parentIndexView ~ '-' ~ keyValue %}
+                        {% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
+                        {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body d-flex justify-content-between" style="padding: 1rem 0rem;">
+                                        <div class="col">
+                                            <a class="btn btn-sm btn-danger" id="delete-document" onclick="deleteRecord('{{ formName }}', 'delete-document');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                                               <i class="fa fa-trash" aria-hidden="true"></i>
+                                                <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
+                                            </a>
+                                        </div>
+
+                                        {{ BaseController.rowActionsForEditView(_context, view, formName) }}
+
+                                        <div class="col text-right">
+                                            <button class="btn btn-sm btn-primary" id="save-document" onclick="saveDocument('{{ formName }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
+                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                                {% endblock %}
                             </div>
-                        {% endif %}
-
-                        {# Edit #}
-                        {% if viewType == 'EditView' %}
-                            {# Information Cards Header #}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                            {# Statistical buttons bar #}
-                            {{ BaseController.rowStatisticsForEditView(_context, view) }}
-
-                            {# Main Form #}
-                            {{ BaseController.columnsForEditView(_context, view, view.getModel(), TRUE) }}
-                        {% endif %}
-
-                        {# Edit Multiple #}
-                        {% if viewType == 'EditListView' %}
-                            {# Information Cards Header #}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                            {# Main Form #}
-                            {{ BaseController.columnsForEditListView(_context, view) }}
-                        {% endif %}
-
-                        {# Html #}
-                        {% if viewType == 'HtmlView' %}
-                        <div>{% include view.fileName ignore missing %}</div>
-                        {% endif %}
-
-                        {# Footer options #}
-                        {% if viewType in ['EditView','EditListView'] %}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                        {% endif %}
-                    </div>
+                        </div>
                     {% endif %}
-                {% endfor %}
+
+                    {# Edit #}
+                    {% if viewType == 'EditView' %}
+                        {# Information Cards Header #}
+                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+
+                        {# Statistical buttons bar #}
+                        {{ BaseController.rowStatisticsForEditView(_context, view) }}
+
+                        {# Main Form #}
+                        {{ BaseController.columnsForEditView(_context, view, view.getModel(), TRUE) }}
+                    {% endif %}
+
+                    {# Edit Multiple #}
+                    {% if viewType == 'EditListView' %}
+                        {# Information Cards Header #}
+                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+
+                        {# Main Form #}
+                        {{ BaseController.columnsForEditListView(_context, view) }}
+                    {% endif %}
+
+                    {# Html #}
+                    {% if viewType == 'HtmlView' %}
+                    <div>{% include view.fileName ignore missing %}</div>
+                    {% endif %}
+
+                    {# Footer options #}
+                    {% if viewType in ['EditView','EditListView', 'GridView'] %}
+                        {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
             </div>
         </div>
     </div>

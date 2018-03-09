@@ -171,7 +171,7 @@
         {% if rowDataHref is not empty %}
         {% set rowClass = rowClass ~ ' clickableRow' %}
         {% endif %}
-        
+
         {# checks model currency #}
         {{ view.divisaTools.findDivisa(model) }}
 
@@ -205,7 +205,7 @@
      * (with or without form)
      */
 #}
-{% macro columnsForEditView(context, view, model, withForm) %}
+{% macro columnsForEditView(context, view, model, withForm, withButtons = TRUE) %}
 {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
 {% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
@@ -237,11 +237,12 @@
         {% endfor %}
 
 {% if withForm == TRUE %}
+    </div>
+    {% if withButtons %}
     {% from 'Macro/BaseController.html.twig' import rowActionsForEditView as rowActionsForEditView %}
     {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
-    </div>
     <div class="row">
         <div class="col">&nbsp;</div>
     </div>
@@ -267,6 +268,7 @@
             </button>
         </div>
     </div>
+    {% endif %}
 </form>
 {% endif %}
 {% endmacro %}

@@ -114,7 +114,7 @@ class WidgetButton implements VisualItemInterface
         $this->label = '';
         $this->icon = '';
         $this->action = '';
-        $this->onClick = '#';
+        $this->onClick = '';
         $this->color = 'light';
         $this->hint = '';
     }
@@ -179,11 +179,29 @@ class WidgetButton implements VisualItemInterface
     /**
      * Returns the HTML code for the onclick event
      *
+     * @param string $onclick
+     * @param string $addParam
      * @return string
      */
-    private function getOnClickHTML()
+    private function getOnClickHTML($onclick, $addParam = '')
     {
-        return empty($this->onClick) ? '' : ' onclick="' . $this->onClick . '"';
+        if (empty($onclick)) {
+            return '';
+        }
+
+        if (empty($addParam)) {
+            return ' onclick="' . $onclick . '" ';
+        }
+
+        $pos = strpos($onclick, ')');
+        if ($pos === FALSE) {
+            return ' onclick="' . $onclick . '(' . $addParam . ')" ';
+        }
+
+        if ($onclick[$pos - 1] !== '(') {
+            $addParam = ', ' . $addParam;
+        }
+        return ' onclick="' . substr($onclick, 0, $pos) . $addParam . ')" ';
     }
 
     /**
@@ -198,7 +216,7 @@ class WidgetButton implements VisualItemInterface
     private function getCalculateHTML($label, $value, $hint)
     {
         $html = '<button type="button" class="btn btn-' . $this->color . '" '
-            . $this->getOnClickHTML() . ' style="margin-right: 5px;" ' . $hint . '>'
+            . $this->getOnClickHTML($this->onClick) . ' style="margin-right: 5px;" ' . $hint . '>'
             . $this->getIconHTML()
             . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
 
@@ -217,8 +235,11 @@ class WidgetButton implements VisualItemInterface
      */
     private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
     {
+        $onclick = empty($this->onClick) ? 'execActionForm()' : $this->onClick;
+        $param = '\'' . $formName . '\',\'' . $this->action . '\'';
+
         $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
-            . ' onclick="execActionForm(\'' . $formName . '\',\'' . $this->action . '\');" ' . $hint . '>'
+            . $this->getOnClickHTML($onclick, $param) . $hint . '>'
             . $this->getIconHTML()
             . $label
             . '</button>';

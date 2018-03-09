@@ -31,9 +31,6 @@
 {% set masterView = fsc.views|keys|first %}
 {% if fsc.views[masterView].count > 0 %}
 <script src="node_modules/chart.js/dist/Chart.min.js"></script>
-<script type="text/javascript">
-    documentUrl = '{{ view.getURL('edit') | raw }}';
-</script>
 {% endif %}
 {% endblock %}
 
@@ -52,7 +49,7 @@
     </div>
     {# Graphic panel #}
     <div class="col">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-header">
                 <small><strong>{{ i18n.trans('account-balance') }}:&nbsp;<span id="account-balance">0.00</span></strong></small>
             </div>
