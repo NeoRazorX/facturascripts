@@ -37,7 +37,7 @@
 <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
-    function deleteRecord(formName) {
+    function deleteRecord(formName, action = 'delete') {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete')|raw }}",
             message: "{{ i18n.trans('are-you-sure') }}",
@@ -53,7 +53,7 @@
             },
             callback: function (result) {
                 if (result) {
-                    execActionForm(formName, 'delete');
+                    execActionForm(formName, action);
                 }
             }
         });

@@ -284,6 +284,10 @@ abstract class PanelController extends Base\Controller
                 $status = $this->editAction($view);
                 break;
 
+            case 'delete':
+                $status = $this->deleteAction($view);
+                break;
+
             case 'save-document':
                 $keyView = $this->searchGridView();
                 if (!empty($keyView)) {
@@ -293,10 +297,6 @@ abstract class PanelController extends Base\Controller
                     $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                     $status = false;
                 }
-                break;
-
-            case 'delete':
-                $status = $this->deleteAction($view);
                 break;
         }
 

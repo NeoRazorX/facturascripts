@@ -17,6 +17,7 @@
  */
 
 
+var documentUrl = location.href;
 var documentLineData = [];
 var gridObject = null;               // TODO: convert to POO
 var autocompleteColumns = [];
@@ -159,6 +160,57 @@ function grid_beforeChange(changes, source) {
 }
 
 /*
+ * User Interface Events
+ */
+/**
+ * Save data to Database
+ *
+ * @param {string} mainFormName
+ * @returns {Boolean}
+ */
+function saveDocument(mainFormName) {
+    var submitButton = document.getElementById('save-document');
+    submitButton.disabled = true;
+    try {
+        var data = {
+            action: "save-document",
+            lines: getGridData('orden'),
+            document: {}
+        };
+
+        var mainForm = $("form[name='" + mainFormName + "']");
+        $.each(mainForm.serializeArray(), function(key, value) {
+            switch (value.name) {
+                case 'action':
+                    break;
+
+                case 'active':
+                    data[value.name] = value.value;
+                    break;
+
+                default:
+                    data.document[value.name] = value.value;
+                    break;
+            }
+        });
+
+        $.post(
+            documentUrl,
+            data,
+            function (results) {
+                if (results.error) {
+                    alert(results.message);
+                    return;
+                }
+                location.reload();
+            });
+    } finally {
+        submitButton.disabled = false;
+        return false;
+    }
+}
+
+/*
  * Document Ready. Create and configure Grid Object.
  */
 $(document).ready(function () {
@@ -182,7 +234,7 @@ $(document).ready(function () {
             manualRowMove: true,
             manualColumnMove: false,
             minSpareRows: 1,
-            minRows: 6
+            minRows: 7
         });
 
         Handsontable.hooks.add('afterSelection', grid_afterSelection);
