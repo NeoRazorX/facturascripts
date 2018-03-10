@@ -40,6 +40,13 @@ class Randomizer extends Base\Controller
     public $urlReload;
 
     /**
+     * Contains the total quantity for each model.
+     *
+     * @var array
+     */
+    public $totalCounter;
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response                   $response
@@ -55,6 +62,8 @@ class Randomizer extends Base\Controller
             $this->execAction($option);
             $this->urlReload = $this->url() . '?gen=' . $option;
         }
+
+        $this->getTotals();
     }
 
     /**
@@ -170,5 +179,34 @@ class Randomizer extends Base\Controller
         }
 
         return;
+    }
+
+    private function getTotals()
+    {
+        $this->totalCounter = [];
+
+        $models = [
+            'agentes' => '\FacturaScripts\Dinamic\Model\Agente',
+            'albaranescli' => '\FacturaScripts\Dinamic\Model\AlbaranCliente',
+            'albaranesprov' => '\FacturaScripts\Dinamic\Model\AlbaranProveedor',
+            'asientos' => '\FacturaScripts\Dinamic\Model\Asiento',
+            'articulos' => '\FacturaScripts\Dinamic\Model\Articulo',
+            'articulosprov' => '\FacturaScripts\Dinamic\Model\ArticuloProveedor',
+            'clientes' => '\FacturaScripts\Dinamic\Model\Cliente',
+            'cuentas' => '\FacturaScripts\Dinamic\Model\Cuenta',
+            'grupos' => '\FacturaScripts\Dinamic\Model\GrupoClientes',
+            'fabricantes' => '\FacturaScripts\Dinamic\Model\Fabricante',
+            'familias' => '\FacturaScripts\Dinamic\Model\Familia',
+            'pedidoscli' => '\FacturaScripts\Dinamic\Model\PedidoCliente',
+            'pedidosprov' => '\FacturaScripts\Dinamic\Model\PedidoProveedor',
+            'presupuestoscli' => '\FacturaScripts\Dinamic\Model\PresupuestoCliente',
+            'proveedores' => '\FacturaScripts\Dinamic\Model\Proveedor',
+            'subcuentas' => '\FacturaScripts\Dinamic\Model\Subcuenta'
+        ];
+
+        foreach ($models as $tag => $modelName) {
+            $model = new $modelName();
+            $this->totalCounter[$tag] = $model->count();
+        }
     }
 }

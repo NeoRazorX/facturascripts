@@ -32,30 +32,36 @@
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=fabricantes" class="btn btn-block btn-info">
                 <i class="fa fa-columns" aria-hidden="true"></i>&nbsp; {{ i18n.trans('manufacturers') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['fabricantes'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=familias" class="btn btn-block btn-info">
                 <i class="fa fa-object-group" aria-hidden="true"></i>&nbsp; {{ i18n.trans('families') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['familias'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=articulos" class="btn btn-block btn-info">
                 <i class="fa fa-cubes" aria-hidden="true"></i>&nbsp; {{ i18n.trans('products') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['products'] }}</span>
+                <span class="badge badge-dark">{{ fsc.totalCounter['articulos'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=articulosprov" class="btn btn-block btn-info">
                 <i class="fa fa-cubes" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-products') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['articulosprov'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=agentes" class="btn btn-block btn-info">
                 <i class="fa fa-users" aria-hidden="true"></i>&nbsp; {{ i18n.trans('agents') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['agentes'] }}</span>
             </a>
             <br/>
         </div>
@@ -70,18 +76,21 @@
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=proveedores" class="btn btn-block btn-info">
                 <i class="fa fa-users" aria-hidden="true"></i>&nbsp; {{ i18n.trans('suppliers') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['proveedores'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=pedidosprov" class="btn btn-block btn-info">
                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-orders') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['pedidosprov'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=albaranesprov" class="btn btn-block btn-info">
                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-albaranes') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['albaranesprov'] }}</span>
             </a>
             <br/>
         </div>
@@ -96,30 +105,35 @@
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=grupos" class="btn btn-block btn-info">
                 <i class="fa fa-folder" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-groups') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['grupos'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=clientes" class="btn btn-block btn-info">
                 <i class="fa fa-users" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customers') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['clientes'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=presupuestoscli" class="btn btn-block btn-info">
                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-presupuestos') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['presupuestoscli'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=pedidoscli" class="btn btn-block btn-info">
                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-orders') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['pedidoscli'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=albaranescli" class="btn btn-block btn-info">
                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-albaranes') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['albaranescli'] }}</span>
             </a>
             <br/>
         </div>
@@ -134,18 +148,21 @@
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=cuentas" class="btn btn-block btn-info">
                 <i class="fa fa-book" aria-hidden="true"></i>&nbsp; {{ i18n.trans('accounting-accounts') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['cuentas'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=subcuentas" class="btn btn-block btn-info">
                 <i class="fa fa-th-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('subaccounts') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['subcuentas'] }}</span>
             </a>
             <br/>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}?gen=asientos" class="btn btn-block btn-info">
                 <i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp; {{ i18n.trans('accounting-entries') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['asientos'] }}</span>
             </a>
             <br/>
         </div>
