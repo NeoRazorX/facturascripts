@@ -9,52 +9,42 @@
     <column>
         <name>descripcion4ba</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion4</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nivel4</name>
         <type>character varying(5)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion3</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>orden3</name>
         <type>character varying(5)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nivel3</name>
         <type>character varying(5)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion2</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nivel2</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion1</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nivel1</name>
         <type>character varying(5)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>naturaleza</name>

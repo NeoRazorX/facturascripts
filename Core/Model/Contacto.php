@@ -32,13 +32,6 @@ class Contacto extends Base\Contact
     use Base\ModelTrait;
 
     /**
-     * True if it supports marketing, but False.
-     *
-     * @var bool
-     */
-    public $admitemarketing;
-
-    /**
      * Last name.
      *
      * @var string
@@ -102,6 +95,27 @@ class Contacto extends Base\Contact
     public $idcontacto;
 
     /**
+     * Last activity date.
+     *
+     * @var string
+     */
+    public $lastactivity;
+
+    /**
+     * Last IP used.
+     *
+     * @var string
+     */
+    public $lastip;
+
+    /**
+     * Session key, saved also in cookie. Regenerated when user log in.
+     *
+     * @var string
+     */
+    public $logkey;
+
+    /**
      * Contact province.
      *
      * @var string
@@ -114,8 +128,24 @@ class Contacto extends Base\Contact
     public function clear()
     {
         parent::clear();
-        $this->admitemarketing = true;
         $this->codpais = AppSettings::get('default', 'codpais');
+    }
+
+    /**
+     * Generates a new login key for the user. It also updates lastactivity
+     * ans last IP.
+     *
+     * @param string $ipAddress
+     *
+     * @return string
+     */
+    public function newLogkey($ipAddress)
+    {
+        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastip = $ipAddress;
+        $this->logkey = Utils::randomString(99);
+
+        return $this->logkey;
     }
 
     /**
@@ -127,7 +157,12 @@ class Contacto extends Base\Contact
     {
         return 'idcontacto';
     }
-    
+
+    /**
+     * Returns the name of the column used to describe this item.
+     * 
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'email';
@@ -155,10 +190,21 @@ class Contacto extends Base\Contact
         $this->cargo = Utils::noHtml($this->cargo);
         $this->ciudad = Utils::noHtml($this->ciudad);
         $this->direccion = Utils::noHtml($this->direccion);
-        $this->email = Utils::noHtml($this->email);
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 
         return true;
+    }
+
+    /**
+     * Verifies the login key.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function verifyLogkey($value)
+    {
+        return $this->logkey === $value;
     }
 }

@@ -9,27 +9,22 @@
     <column>
         <name>idasientocierre</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idasientopyg</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idasientoapertura</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>plancontable</name>
         <type>character varying(2)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>longsubcuenta</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>estado</name>

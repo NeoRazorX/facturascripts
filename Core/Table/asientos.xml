@@ -30,17 +30,14 @@
     <column>
         <name>concepto</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>importe</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>documento</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>editable</name>

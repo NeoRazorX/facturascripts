@@ -18,17 +18,14 @@
     <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuenta</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>dtopor</name>
@@ -38,7 +35,6 @@
     <column>
         <name>idalbaran</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idfactura</name>
@@ -58,7 +54,6 @@
     <column>
         <name>irpf</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>iva</name>
@@ -78,7 +73,6 @@
     <column>
         <name>pvptotal</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>pvpunitario</name>
@@ -88,7 +82,6 @@
     <column>
         <name>recargo</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>referencia</name>

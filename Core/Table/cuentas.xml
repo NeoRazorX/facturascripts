@@ -25,12 +25,10 @@
     <column>
         <name>descripcion</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codcuentaesp</name>
         <type>character varying(6)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>parent_codcuenta</name>
@@ -39,7 +37,6 @@
     <column>
         <name>parent_idcuenta</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>cuentas_pkey</name>
@@ -51,20 +48,14 @@
     </constraint>
     <constraint>
         <name>ca_cuentas_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_cuentas_cuentasesp</name>
-        <type>FOREIGN KEY (codcuentaesp)
-            REFERENCES cuentasesp (codcuentaesp)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codcuentaesp) REFERENCES cuentasesp (codcuentaesp) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_cuentas_parent</name>
-        <type>FOREIGN KEY (parent_idcuenta)
-            REFERENCES cuentas (idcuenta)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (parent_idcuenta) REFERENCES cuentas (idcuenta) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -14,137 +14,110 @@
     <column>
         <name>codsubcuentaacr</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentadeu</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivadedadue</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivadevadue</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivadeventue</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivarepexe</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivarepexp</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivarepre</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivasopagra</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivasopexe</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaivasopimp</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentarep</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentasop</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaacr</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentadeu</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivadedadue</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivadevadue</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivadeventue</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivarepexe</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivarepexp</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivarepre</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivasopagra</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivasopexe</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentaivasopimp</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentarep</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idsubcuentasop</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>iva</name>

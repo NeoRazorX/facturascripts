@@ -215,7 +215,6 @@
     <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>presupuestoscli_pkey</name>

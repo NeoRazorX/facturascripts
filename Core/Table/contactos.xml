@@ -6,11 +6,6 @@
 -->
 <table>
     <column>
-        <name>admitemarketing</name>
-        <type>boolean</type>
-        <default>false</default>
-    </column>
-    <column>
         <name>apellidos</name>
         <type>character varying(150)</type>
     </column>
@@ -60,6 +55,18 @@
         <type>serial</type>
         <null>NO</null>
         <default>nextval('contactos_idcontacto_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>lastactivity</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>lastip</name>
+        <type>character varying(40)</type>
+    </column>
+    <column>
+        <name>logkey</name>
+        <type>character varying(100)</type>
     </column>
     <column>
         <name>nombre</name>

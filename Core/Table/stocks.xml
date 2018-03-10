@@ -30,13 +30,11 @@
     <column>
         <name>horaultreg</name>
         <type>time without time zone</type>
-        <null>YES</null>
         <default>CURRENT_TIMESTAMP</default>
     </column>
     <column>
         <name>nombre</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>pterecibir</name>
@@ -46,7 +44,6 @@
     <column>
         <name>fechaultreg</name>
         <type>date</type>
-        <null>YES</null>
         <default>CURRENT_DATE</default>
     </column>
     <column>
@@ -81,7 +78,6 @@
     <column>
         <name>ubicacion</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>ca_stocks_articulos2</name>

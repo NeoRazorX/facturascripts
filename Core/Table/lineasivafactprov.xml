@@ -9,7 +9,6 @@
     <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idfactura</name>
@@ -60,9 +59,7 @@
     </column>
     <constraint>
         <name>ca_lineaiva_facturasprov2</name>
-        <type>FOREIGN KEY (idfactura)
-            REFERENCES facturasprov (idfactura)
-            ON DELETE CASCADE ON UPDATE CASCADE </type>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE CASCADE ON UPDATE CASCADE </type>
     </constraint>
     <constraint>
         <name>lineasivafactprov_pkey</name>

@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AppController extends App
 {
 
-    const USER_UPDATE_ACTIVITY_PERIOD = 300;
+    const USER_UPDATE_ACTIVITY_PERIOD = 3600;
 
     /**
      * Controller loaded
@@ -201,6 +201,7 @@ class AppController extends App
             } catch (Exception $exc) {
                 $this->debugBar['exceptions']->addException($exc);
                 $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
+                $template = 'Error/ControllerError.html.twig';
             }
         }
 
@@ -265,15 +266,14 @@ class AppController extends App
      */
     private function userAuth()
     {
-        $user0 = new User();
+        $user = new User();
         $nick = $this->request->request->get('fsNick', '');
 
         if ($nick === '') {
-            return $this->cookieAuth($user0);
+            return $this->cookieAuth($user);
         }
 
-        $user = $user0->get($nick);
-        if ($user) {
+        if ($user->loadFromCode($nick)) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                 $this->updateCookies($user, true);
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
@@ -293,23 +293,22 @@ class AppController extends App
     /**
      * Authenticate the user using the cookie.
      *
-     * @param User $user0
+     * @param User $user
      *
-     * @return User|false
+     * @return User
      */
-    private function cookieAuth(User &$user0)
+    private function cookieAuth(User &$user)
     {
         $cookieNick = $this->request->cookies->get('fsNick', '');
         if ($cookieNick === '') {
             return false;
         }
 
-        $cookieUser = $user0->get($cookieNick);
-        if ($cookieUser) {
-            if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
-                $this->updateCookies($cookieUser);
+        if ($user->loadFromCode($cookieNick)) {
+            if ($user->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
+                $this->updateCookies($user);
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
-                return $cookieUser;
+                return $user;
             }
 
             $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
@@ -321,6 +320,12 @@ class AppController extends App
         return false;
     }
 
+    /**
+     * Updates user cookies.
+     *
+     * @param User $user
+     * @param bool $force
+     */
     private function updateCookies(User &$user, bool $force = false)
     {
         if ($force || \time() - \strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {

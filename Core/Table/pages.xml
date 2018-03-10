@@ -20,12 +20,10 @@
     <column>
         <name>menu</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>submenu</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>showonmenu</name>
@@ -42,7 +40,6 @@
     <column>
         <name>icon</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>pages_pkey</name>

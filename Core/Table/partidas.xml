@@ -30,17 +30,14 @@
     <column>
         <name>concepto</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idcontrapartida</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codcontrapartida</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>coddivisa</name>
@@ -78,22 +75,18 @@
     <column>
         <name>documento</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codserie</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>factura</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>baseimponible</name>
@@ -131,20 +124,14 @@
     </constraint>
     <constraint>
         <name>ca_partidas_asientos</name>
-        <type>FOREIGN KEY (idasiento)
-            REFERENCES asientos (idasiento)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_partidas_subcuentas</name>
-        <type>FOREIGN KEY (idsubcuenta)
-            REFERENCES subcuentas (idsubcuenta)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idsubcuenta) REFERENCES subcuentas (idsubcuenta) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_partidas_subcuentas2</name>
-        <type>FOREIGN KEY (idcontrapartida)
-            REFERENCES subcuentas (idsubcuenta)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idcontrapartida) REFERENCES subcuentas (idsubcuenta) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

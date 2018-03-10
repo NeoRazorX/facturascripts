@@ -21,7 +21,6 @@
     <column>
         <name>nick</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>creationdate</name>
@@ -36,7 +35,6 @@
     <column>
         <name>properties</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>dashboarddata_pkey</name>

@@ -14,7 +14,6 @@
     <column>
         <name>descripcion</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>conceptos_partidas_pkey</name>

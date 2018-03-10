@@ -31,7 +31,6 @@
     <column>
         <name>principal</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>cuentasbcopro_pkey</name>

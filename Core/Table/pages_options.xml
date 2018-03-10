@@ -21,27 +21,22 @@
     <column>
         <name>nick</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>columns</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>rows</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>modals</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>filters</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>pages_options_pkey</name>

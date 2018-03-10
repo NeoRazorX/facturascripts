@@ -19,7 +19,6 @@
     <column>
         <name>codtarifa</name>
         <type>character varying(6)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>gruposclientes_pkey</name>
