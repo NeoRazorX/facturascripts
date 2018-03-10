@@ -181,6 +181,9 @@ class Randomizer extends Base\Controller
         return;
     }
 
+    /**
+     * Set totalCounter key for each model.
+     */
     private function getTotals()
     {
         $this->totalCounter = [];
