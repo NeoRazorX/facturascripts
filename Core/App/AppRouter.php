@@ -157,7 +157,8 @@ class AppRouter
     private function getUri()
     {
         $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
-        $uriArray = explode('?', $uri);
+        $uri2 = ($uri === null) ? filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL) : $uri;
+        $uriArray = explode('?', $uri2);
 
         return substr($uriArray[0], strlen(FS_ROUTE));
     }

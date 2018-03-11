@@ -32,6 +32,13 @@ class Contacto extends Base\Contact
     use Base\ModelTrait;
 
     /**
+     * True if it supports marketing, but False.
+     *
+     * @var bool
+     */
+    public $admitemarketing;
+
+    /**
      * Last name.
      *
      * @var string
@@ -128,6 +135,7 @@ class Contacto extends Base\Contact
     public function clear()
     {
         parent::clear();
+        $this->admitemarketing = true;
         $this->codpais = AppSettings::get('default', 'codpais');
     }
 

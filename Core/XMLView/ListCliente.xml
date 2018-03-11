@@ -30,7 +30,7 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="vat-id" order="120">
+        <column name="cifnif" order="120">
             <widget type="text" fieldname="cifnif" />
         </column>
         <column name="email" order="130">

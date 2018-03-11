@@ -6,6 +6,11 @@
 -->
 <table>
     <column>
+        <name>admitemarketing</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>apellidos</name>
         <type>character varying(150)</type>
     </column>

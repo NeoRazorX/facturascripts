@@ -19,7 +19,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
+use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
 
 /**
@@ -53,6 +57,12 @@ class Updater extends Controller
         return $pageData;
     }
 
+    /**
+     * 
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
+     */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
@@ -73,16 +83,8 @@ class Updater extends Controller
             'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')
         ];
 
-        $action = $this->request->get('action');
-        switch ($action) {
-            case 'download':
-                $this->download();
-                break;
-
-            case 'update':
-                $this->update();
-                break;
-        }
+        $action = $this->request->get('action', '');
+        $this->execAction($action);
     }
 
     /**
@@ -115,6 +117,26 @@ class Updater extends Controller
         if ($downloader->download(self::UPDATE_CORE_URL, FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')) {
             $this->miniLog->info('download-completed');
             $this->updaterItems[0]['downloaded'] = true;
+        }
+    }
+
+    /**
+     * Execute selected action.
+     * 
+     * @param string $action
+     */
+    private function execAction(string $action)
+    {
+        switch ($action) {
+            case 'download':
+                $this->download();
+                break;
+
+            case 'update':
+                $this->update();
+                $pluginManager = new PluginManager();
+                $pluginManager->initControllers();
+                break;
         }
     }
 

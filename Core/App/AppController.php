@@ -295,7 +295,7 @@ class AppController extends App
      *
      * @param User $user
      *
-     * @return User
+     * @return User|bool
      */
     private function cookieAuth(User &$user)
     {
