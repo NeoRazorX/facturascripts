@@ -253,7 +253,7 @@ abstract class AbstractRandom
         if (mt_rand(0, 9) == 0) {
             $precio = mt_rand($min, $max2);
         } elseif ($precio < $max1 && mt_rand(0, 2) == 0) {
-            $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0_ART);
+            $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0);
             $precio = min([$max1, $precio]);
         }
 

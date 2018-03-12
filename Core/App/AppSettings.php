@@ -101,7 +101,6 @@ class AppSettings
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],
-            'FS_NF0_ART' => ['property' => 'product_decimals', 'default' => 2],
             'FS_NF1' => ['property' => 'decimal_separator', 'default' => ','],
             'FS_NF2' => ['property' => 'thousands_separator', 'default' => ' '],
             'FS_CURRENCY_POS' => ['property' => 'currency_position', 'default' => 'right'],
