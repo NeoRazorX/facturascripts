@@ -1215,5 +1215,6 @@
     "api": "API",
     "enable-api": "Activar API",
     "default-tax": "Imposto predeterminado",
-    "renumber-accounting-ok": "Renumeración de asentos completada"
+    "renumber-accounting-ok": "Renumeración de asentos completada",
+    "renumber-accounting-error": "Produciuse un erro durante a numeración de entradas no exercicio fiscal %exerciseCode%"
 }
