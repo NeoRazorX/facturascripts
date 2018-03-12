@@ -1185,5 +1185,6 @@
     "page-configuration": "Páxina de configuración",
     "configure-columns": "Configurador de columnas",
     "title": "Título",
-    "display": "Mostrar"
+    "display": "Mostrar",
+    "invalid-column-lenght": "%column% deben ter %min% and %max% caracteres."
 }
