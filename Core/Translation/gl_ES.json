@@ -1195,5 +1195,6 @@
     "right": "dereita",
     "center": "Centro",
     "none": "Ningún",
-    "auto": "Auto"
+    "auto": "Auto",
+    "block-date": "Fecha de bloqueo"
 }
