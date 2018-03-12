@@ -31,16 +31,32 @@ class EditRole extends ExtendedController\PanelController
 {
 
     /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'role';
+        $pagedata['menu'] = 'admin';
+        $pagedata['icon'] = 'fa-id-card-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
         $this->addEditView('Role', 'EditRole', 'rol', 'fa-id-card');
-        $this->addEditListView('RoleAccess', 'ListRoleAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('RoleAccess', 'EditRoleAccess', 'rules', 'fa fa-check-square');
         $this->addEditListView('RoleUser', 'EditRoleUser', 'users', 'fa-address-card-o');
 
         /// Disable columns
-        $this->views['ListRoleAccess']->disableColumn('pagename', true);
+        $this->views['EditRoleAccess']->disableColumn('role', true);
         $this->views['EditRoleUser']->disableColumn('role', true);
     }
 
@@ -59,28 +75,12 @@ class EditRole extends ExtendedController\PanelController
                 break;
 
             case 'EditRoleUser':
-            case 'ListRoleAccess':
+            case 'EditRoleAccess':
                 $codrole = $this->getViewModelValue('EditRole', 'codrole');
                 $where = [new DataBaseWhere('codrole', $codrole)];
                 $view->loadData(false, $where);
                 break;
         }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'role';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-id-card-o';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 
     /**

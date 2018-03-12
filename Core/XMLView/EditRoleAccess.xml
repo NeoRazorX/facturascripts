@@ -19,7 +19,7 @@
  *
  * Initial description for the controller EditUser
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
 -->
 
 <view>
@@ -28,16 +28,38 @@
             <column name="id" display="none" order="100">
                 <widget type="text" fieldname="id"/>
             </column>
-            <column name="user" order="100">
-                <widget type="select" fieldname="nick" required="true">
-                    <values source="users" fieldcode="nick" fieldtitle="nick"></values>
-                </widget>
-            </column>
-            <column name="role" order="100">
+            <column name="role" display="none" order="110">
                 <widget type="select" fieldname="codrole" required="true">
                     <values source="roles" fieldcode="codrole" fieldtitle="descripcion"></values>
                 </widget>
             </column>
+            <column name="pagename" order="120">
+                <widget type="select" fieldname="pagename" required="true">
+                    <values source="pages" fieldcode="name" fieldtitle="title"></values>
+                </widget>
+            </column>
+            <column name="allow-update" order="130">
+                <widget type="checkbox" fieldname="allowupdate" />
+            </column>
+            <column name="allow-delete" order="140">
+                <widget type="checkbox" fieldname="allowdelete" />
+            </column>
         </group>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="footer_actions" footer="specials-actions">
+                <button type="modal" label="add" color="info" action="add-rol-access" icon="fa-user-plus" />
+            </group>
+        </row>
+    </rows>
+    <modals>
+        <group name="add-rol-access" icon="fa-user-plus">
+            <column name="select-menu" title="menu">
+                <widget type="select" fieldname="menu">
+                    <values source="pages" fieldcode="menu" fieldtitle="menu"></values>
+                </widget>
+            </column>
+        </group>
+    </modals>
 </view>
