@@ -1196,5 +1196,6 @@
     "center": "Centro",
     "none": "Ningún",
     "auto": "Auto",
-    "block-date": "Fecha de bloqueo"
+    "block-date": "Fecha de bloqueo",
+    "generate": "Xerar"
 }
