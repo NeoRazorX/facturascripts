@@ -1194,5 +1194,6 @@
     "left": "Esquerda",
     "right": "dereita",
     "center": "Centro",
-    "none": "Ningún"
+    "none": "Ningún",
+    "auto": "Auto"
 }
