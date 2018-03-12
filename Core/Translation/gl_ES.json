@@ -1214,5 +1214,6 @@
     "level": "Nivel",
     "api": "API",
     "enable-api": "Activar API",
-    "default-tax": "Imposto predeterminado"
+    "default-tax": "Imposto predeterminado",
+    "renumber-accounting-ok": "Renumeración de asentos completada"
 }
