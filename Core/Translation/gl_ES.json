@@ -1213,5 +1213,6 @@
     "encrypt": "Encriptación",
     "level": "Nivel",
     "api": "API",
-    "enable-api": "Activar API"
+    "enable-api": "Activar API",
+    "default-tax": "Imposto predeterminado"
 }
