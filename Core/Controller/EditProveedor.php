@@ -62,12 +62,14 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addListView('FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
         $this->addListView('PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        $this->addListView('PresupuestoProveedor', 'ListPresupuestoProveedor', 'estimations', 'fa-files-o');
 
         /// Disable columns
         $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
         $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
         $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
         $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
+        $this->views['ListPresupuestoProveedor']->disableColumn('supplier', true);
     }
 
     /**
