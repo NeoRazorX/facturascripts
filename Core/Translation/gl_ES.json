@@ -1210,5 +1210,7 @@
     "specials-actions": "Accións especiais",
     "test": "Test",
     "mailer": "Controlador de correo",
-    "encrypt": "Encriptación"
+    "encrypt": "Encriptación",
+    "level": "Nivel",
+    "api": "API"
 }
