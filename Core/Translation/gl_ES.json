@@ -1218,5 +1218,7 @@
     "renumber-accounting-ok": "Renumeración de asentos completada",
     "renumber-accounting-error": "Produciuse un erro durante a renumeración de entradas no exercicio fiscal %exerciseCode%",
     "record-save-error": "Produciuse un erro ao gardar os datos",
-    "generate-title": "Executa a creación de informes"
+    "generate-title": "Executa a creación de informes",
+    "tasaconv": "Taxa de conversión",
+    "paid": "Pagado"
 }
