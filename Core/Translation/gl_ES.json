@@ -1186,5 +1186,11 @@
     "configure-columns": "Configurador de columnas",
     "title": "Título",
     "display": "Mostrar",
-    "invalid-column-lenght": "%column% deben ter %min% and %max% caracteres."
+    "invalid-column-lenght": "%column% deben ter %min% and %max% caracteres.",
+    "columns": "Columnas",
+    "sort": "Orde",
+    "title-url": "Título (URL)",
+    "ledger": "Diario",
+    "left": "Esquerda",
+    "right": "Xusto"
 }
