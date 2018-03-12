@@ -68,17 +68,19 @@ class EditRole extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $order = [];
         switch ($keyView) {
             case 'EditRole':
                 $code = $this->request->get('code');
                 $view->loadData($code);
                 break;
 
-            case 'EditRoleUser':
             case 'EditRoleAccess':
+                $order['pagename'] = 'ASC';
+            case 'EditRoleUser':
                 $codrole = $this->getViewModelValue('EditRole', 'codrole');
                 $where = [new DataBaseWhere('codrole', $codrole)];
-                $view->loadData(false, $where);
+                $view->loadData(false, $where, $order, 0, 0);
                 break;
         }
     }

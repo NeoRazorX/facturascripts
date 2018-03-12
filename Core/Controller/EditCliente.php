@@ -79,6 +79,7 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $limit = FS_ITEM_LIMIT;
         switch ($keyView) {
             case 'EditCliente':
                 $code = $this->request->get('code');
@@ -95,13 +96,14 @@ class EditCliente extends ExtendedController\PanelController
 
             case 'EditDireccionCliente':
             case 'EditCuentaBancoCliente':
+                $limit = 0;
             case 'ListFacturaCliente':
             case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
-                $view->loadData(false, $where);
+                $view->loadData(false, $where, [], 0, $limit);
                 break;
         }
     }

@@ -35,7 +35,7 @@
             </column>
             <column name="pagename" order="120">
                 <widget type="select" fieldname="pagename" required="true">
-                    <values source="pages" fieldcode="name" fieldtitle="title"></values>
+                    <values source="pages" fieldcode="name" fieldtitle="name"></values>
                 </widget>
             </column>
             <column name="allow-update" order="130">

@@ -80,6 +80,7 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $limit = FS_ITEM_LIMIT;
         switch ($keyView) {
             case 'EditProveedor':
                 $code = $this->request->get('code');
@@ -88,6 +89,7 @@ class EditProveedor extends ExtendedController\PanelController
 
             case 'EditDireccionProveedor':
             case 'EditCuentaBancoProveedor':
+                $limit = 0;
             case 'ListArticuloProveedor':
             case 'ListFacturaProveedor':
             case 'ListAlbaranProveedor':
@@ -95,7 +97,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListPresupuestoProveedor':
                 $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
-                $view->loadData(false, $where);
+                $view->loadData(false, $where, [], 0, $limit);
                 break;
         }
     }
