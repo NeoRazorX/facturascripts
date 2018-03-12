@@ -1208,5 +1208,7 @@
     "item_limit": "Elementos por páxina",
     "low-security": "Baixa seguridade",
     "specials-actions": "Accións especiais",
-    "test": "Test"
+    "test": "Test",
+    "mailer": "Controlador de correo",
+    "encrypt": "Cifrado"
 }
