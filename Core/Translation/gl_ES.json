@@ -1197,5 +1197,9 @@
     "none": "Ningún",
     "auto": "Auto",
     "block-date": "Fecha de bloqueo",
-    "generate": "Xerar"
+    "generate": "Xerar",
+    "balance-sheet": "Balance de situación",
+    "balance-sheets": "Balance",
+    "balance-ammounts": "Balance de Sumas e Saldos",
+    "profit-and-loss-balance": "Balance de Pérdidas e Gañancias"
 }
