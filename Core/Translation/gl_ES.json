@@ -1212,5 +1212,6 @@
     "mailer": "Controlador de correo",
     "encrypt": "Encriptación",
     "level": "Nivel",
-    "api": "API"
+    "api": "API",
+    "enable-api": "Activar API"
 }
