@@ -1205,5 +1205,7 @@
     "ammount": "Cantidade",
     "serial-number": "Número de serie",
     "default": "Por defecto",
-    "item_limit": "Elementos por páxina"
+    "item_limit": "Elementos por páxina",
+    "low-security": "Baixa seguridade",
+    "specials-actions": "Accións especiais"
 }
