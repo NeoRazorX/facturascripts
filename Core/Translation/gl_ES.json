@@ -1192,5 +1192,7 @@
     "title-url": "Título (URL)",
     "ledger": "Diario",
     "left": "Esquerda",
-    "right": "Xusto"
+    "right": "dereita",
+    "center": "Centro",
+    "none": "Ningún"
 }
