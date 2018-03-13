@@ -153,7 +153,7 @@ class Utils
             ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
         );
 
-        return trim($newt);
+        return ($txt === null) ? null : trim($newt);
     }
 
     /**
@@ -165,14 +165,10 @@ class Utils
      */
     public static function fixHtml($txt)
     {
-        if ($txt === null) {
-            return null;
-        }
-
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
         $final = ['<', '>', "'", "'"];
 
-        return trim(str_replace($original, $final, $txt));
+        return ($txt === null) ? null : trim(str_replace($original, $final, $txt));
     }
 
     /**

@@ -45,6 +45,10 @@ class WidgetItemDateTime extends WidgetItem
      */
     public function getListHTML($value)
     {
+        if (is_numeric($value)) {
+            $value = date('d-m-Y', $value);
+        }
+
         return $this->standardListHTMLWidget($value);
     }
 

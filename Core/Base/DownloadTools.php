@@ -39,7 +39,7 @@ class DownloadTools
      * 
      * @return string
      */
-    public function getContents(string $url, int $timeout = 10): string
+    public function getContents(string $url, int $timeout = 30): string
     {
         if (function_exists('curl_init')) {
             $ch = curl_init();

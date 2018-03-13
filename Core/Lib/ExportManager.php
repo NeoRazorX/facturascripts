@@ -126,9 +126,6 @@ class ExportManager
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
-        /// disable 30 seconds PHP limit
-        set_time_limit(0);
-
         self::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
     }
 
