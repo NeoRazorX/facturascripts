@@ -43,4 +43,9 @@
             <widget type="text" fieldname="generadoc" />
         </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="editable">
+            <option color="table-success">1</option>
+        </row>
+    </rows>
 </view>

@@ -59,7 +59,7 @@
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>
             <column name="update-stock" order="150">
-                <widget type="checkbox" fieldname="editable"></widget>
+                <widget type="checkbox" fieldname="actualizastock"></widget>
             </column>
         </group>
     </columns>
