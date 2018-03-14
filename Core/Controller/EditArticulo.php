@@ -74,6 +74,7 @@ class EditArticulo extends ExtendedController\PanelController
 
             case 'EditStock':
                 $limit = 0;
+                /// no break
             case 'ListArticuloProveedor':
             case 'ListArticuloCombinacion':
             case 'ListArticuloTraza':

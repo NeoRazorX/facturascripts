@@ -90,6 +90,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'EditDireccionProveedor':
             case 'EditCuentaBancoProveedor':
                 $limit = 0;
+                /// no break
             case 'ListArticuloProveedor':
             case 'ListFacturaProveedor':
             case 'ListAlbaranProveedor':

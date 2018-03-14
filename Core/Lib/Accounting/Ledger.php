@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Description of Ledger
  *
@@ -81,7 +83,7 @@ class Ledger extends AccountingBase
     protected function processLine($line)
     {
         $line['fecha'] = date('d-m-Y', strtotime($line['fecha']));
-        $line['concepto'] = $this->fixHtml($line['concepto']);
+        $line['concepto'] = Utils::fixHtml($line['concepto']);
         $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');
         $line['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, '');
 

@@ -97,6 +97,7 @@ class EditCliente extends ExtendedController\PanelController
             case 'EditDireccionCliente':
             case 'EditCuentaBancoCliente':
                 $limit = 0;
+                /// no break
             case 'ListFacturaCliente':
             case 'ListAlbaranCliente':
             case 'ListPedidoCliente':

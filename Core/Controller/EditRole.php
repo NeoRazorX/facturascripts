@@ -77,6 +77,7 @@ class EditRole extends ExtendedController\PanelController
 
             case 'EditRoleAccess':
                 $order['pagename'] = 'ASC';
+                /// no break
             case 'EditRoleUser':
                 $codrole = $this->getViewModelValue('EditRole', 'codrole');
                 $where = [new DataBaseWhere('codrole', $codrole)];
