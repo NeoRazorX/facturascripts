@@ -48,14 +48,14 @@ class Subcuentas extends AbstractRandomAccounting
     {
         $subcuenta = $this->model;
         $this->shuffle($cuentas, new Model\Cuenta());
-
+        $ejercicio = new Model\Ejercicio();
         for ($generated = 0; $generated < $num; ++$generated) {
             $cuenta = $this->getOneItem($cuentas);
-
+            $ejercicioDetails = $ejercicio->get($cuenta->codejercicio);
             $subcuenta->clear();
             $subcuenta->codcuenta = $cuenta->codcuenta;
             $subcuenta->codejercicio = $cuenta->codejercicio;
-            $subcuenta->codsubcuenta = $cuenta->codcuenta . mt_rand(0, 9999);
+            $subcuenta->codsubcuenta = str_pad($cuenta->codcuenta . mt_rand(0, 9999), $ejercicioDetails->longsubcuenta, 0);
             $subcuenta->descripcion = $this->descripcion();
             $subcuenta->idcuenta = $cuenta->idcuenta;
             if (!$subcuenta->save()) {
