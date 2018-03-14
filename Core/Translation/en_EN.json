@@ -162,7 +162,7 @@
     "discharge-date": "Discharge date: %date%",
     "discount": "Discount",
     "document": "Document",
-    "document-status": "Document status",
+    "document-states": "Document states",
     "document-type-valid-length": "Invalid document type. Must be between 1 and 20 characters.",
     "documentation": "Documentation",
     "domicilied": "Domicilied",

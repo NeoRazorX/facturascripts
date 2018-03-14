@@ -56,6 +56,9 @@ class WidgetItemSelect extends WidgetItem
     {
         parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
+        if (!$this->required) {
+            array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
+        }
     }
 
     /**

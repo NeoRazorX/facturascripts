@@ -13,6 +13,11 @@
         <default>nextval('estados_documentos_idestado_seq'::regclass)</default>
     </column>
     <column>
+        <name>tipodoc</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>nombre</name>
         <type>character varying(30)</type>
         <null>NO</null>
@@ -20,6 +25,16 @@
     <column>
         <name>editable</name>
         <type>boolean</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>actualizastock</name>
+        <type>boolean</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>generadoc</name>
+        <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <constraint>

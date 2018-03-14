@@ -28,10 +28,37 @@
             <column name="register-symbol" display="none" order="100">
                 <widget type="text" fieldname="idestado" onclick="EditEstadoDocumento" />
             </column>
-            <column name="name" order="130">
-                <widget type="text" fieldname="nombre" />
+            <column name="name" numcolumns="4" order="110">
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="editable" display="center" order="140">
+            <column name="doc-type" numcolumns="4" order="120">
+                <widget type="select" fieldname="tipodoc" required="true">
+                    <values title="customer-estimation">PresupuestoCliente</values>
+                    <values title="customer-order">PedidoCliente</values>
+                    <values title="customer-delivery-note">AlbaranCliente</values>
+                    <values title="customer-invoice">FacturaCliente</values>
+                    <values title="supplier-estimation">PresupuestoProveedor</values>
+                    <values title="supplier-order">PedidoProveedor</values>
+                    <values title="supplier-delivery-note">AlbaranProveedor</values>
+                    <values title="supplier-invoice">FacturaProveedor</values>
+                </widget>
+            </column>
+            <column name="generate-doc-type" numcolumns="4" order="130">
+                <widget type="select" fieldname="generadoc">
+                    <values title="customer-estimation">PresupuestoCliente</values>
+                    <values title="customer-order">PedidoCliente</values>
+                    <values title="customer-delivery-note">AlbaranCliente</values>
+                    <values title="customer-invoice">FacturaCliente</values>
+                    <values title="supplier-estimation">PresupuestoProveedor</values>
+                    <values title="supplier-order">PedidoProveedor</values>
+                    <values title="supplier-delivery-note">AlbaranProveedor</values>
+                    <values title="supplier-invoice">FacturaProveedor</values>
+                </widget>
+            </column>
+            <column name="editable" order="140">
+                <widget type="checkbox" fieldname="editable"></widget>
+            </column>
+            <column name="update-stock" order="150">
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>
         </group>

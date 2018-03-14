@@ -27,13 +27,20 @@
         <column name="register-symbol" order="100">
             <widget type="text" fieldname="idestado" onclick="EditEstadoDocumento" />
         </column>
-        <column name="name" order="130">
+        <column name="doc-type" order="110">
+            <widget type="text" fieldname="tipodoc" />
+        </column>
+        <column name="name" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="editable" display="center" order="140">
+        <column name="editable" display="center" order="130">
             <widget type="checkbox" fieldname="editable"></widget>
         </column>
+        <column name="update-stock" display="center" order="140">
+            <widget type="checkbox" fieldname="actualizastock"></widget>
+        </column>
+        <column name="generate-doc-type" display="right" order="150">
+            <widget type="text" fieldname="generadoc" />
+        </column>
     </columns>
-    <filters>
-    </filters>
 </view>
