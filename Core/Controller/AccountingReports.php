@@ -83,7 +83,6 @@ class AccountingReports extends Controller
 
         switch ($action) {
             case 'libro-mayor':
-                $this->setTemplate(false);
                 $ledger = new Accounting\Ledger();
                 $pages = $ledger->generate($dateFrom, $dateTo);
                 break;
