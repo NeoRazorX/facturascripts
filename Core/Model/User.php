@@ -74,6 +74,13 @@ class User extends Base\ModelClass
     public $langcode;
 
     /**
+     * Last activity date.
+     *
+     * @var string
+     */
+    public $lastactivity;
+
+    /**
      * Last IP used.
      *
      * @var string
@@ -81,11 +88,11 @@ class User extends Base\ModelClass
     public $lastip;
 
     /**
-     * Last activity date.
+     * Indicates the level of security that the user can access
      *
-     * @var string
+     * @var integer
      */
-    public $lastactivity;
+    public $level;
 
     /**
      * Session key, saved also in cookie. Regenerated when user log in.
@@ -123,30 +130,16 @@ class User extends Base\ModelClass
     public $password;
 
     /**
-     * Indicates the level of security that the user can access
-     *
-     * @var integer
+     * Reset the values of all model properties.
      */
-    public $level;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function clear()
     {
-        return 'users';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'nick';
+        parent::clear();
+        $this->enabled = true;
+        $this->homepage = 'Dashboard';
+        $this->idempresa = AppSettings::get('default', 'idempresa', 1);
+        $this->langcode = FS_LANG;
+        $this->level = 1;
     }
 
     /**
@@ -170,49 +163,6 @@ class User extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->langcode = FS_LANG;
-        $this->homepage = 'Dashboard';
-        $this->idempresa = AppSettings::get('default', 'idempresa', 1);
-        $this->enabled = true;
-        $this->level = 1;
-    }
-
-    /**
-     * Asigns the new password to the user.
-     *
-     * @param string $value
-     */
-    public function setPassword($value)
-    {
-        $this->password = password_hash($value, PASSWORD_DEFAULT);
-    }
-
-    /**
-     * Verifies password. It also rehash the password if needed.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyPassword($value)
-    {
-        if (password_verify($value, $this->password)) {
-            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
-                $this->setPassword($value);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Generates a new login key for the user. It also updates lastactivity
      * ans last IP.
      *
@@ -230,29 +180,33 @@ class User extends Base\ModelClass
     }
 
     /**
-     * Verifies the login key.
+     * Returns the name of the column that is the model's primary key.
      *
-     * @param string $value
-     *
-     * @return bool
+     * @return string
      */
-    public function verifyLogkey($value)
+    public static function primaryColumn()
     {
-        return $this->logkey === $value;
+        return 'nick';
     }
 
     /**
-     * Check the null value of the fields
+     * Asigns the new password to the user.
+     *
+     * @param string $value
      */
-    private function checkEmptyValues()
+    public function setPassword($value)
     {
-        if ($this->lastactivity === '') {
-            $this->lastactivity = null;
-        }
+        $this->password = password_hash($value, PASSWORD_DEFAULT);
+    }
 
-        if ($this->level === null) {
-            $this->level = 0;
-        }
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'users';
     }
 
     /**
@@ -283,5 +237,51 @@ class User extends Base\ModelClass
         }
 
         return true;
+    }
+
+    /**
+     * Verifies the login key.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function verifyLogkey($value)
+    {
+        return $this->logkey === $value;
+    }
+
+    /**
+     * Verifies password. It also rehash the password if needed.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function verifyPassword($value)
+    {
+        if (password_verify($value, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($value);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check the null value of the fields
+     */
+    private function checkEmptyValues()
+    {
+        if ($this->lastactivity === '') {
+            $this->lastactivity = null;
+        }
+
+        if ($this->level === null) {
+            $this->level = 0;
+        }
     }
 }

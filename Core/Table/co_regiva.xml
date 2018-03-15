@@ -14,12 +14,10 @@
     <column>
         <name>codsubcuentaacr</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentadeu</name>
         <type>character varying(15)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fechaasiento</name>

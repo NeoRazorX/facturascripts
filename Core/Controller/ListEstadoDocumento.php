@@ -37,8 +37,8 @@ class ListEstadoDocumento extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'document-status';
-        $pagedata['icon'] = 'fa-tag';
+        $pagedata['title'] = 'document-states';
+        $pagedata['icon'] = 'fa-tags';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -49,11 +49,15 @@ class ListEstadoDocumento extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('EstadoDocumento', $className);
-        $this->addSearchFields($className, ['nombre']);
+        $this->addView('EstadoDocumento', 'ListEstadoDocumento', 'states', 'fa-tags');
+        $this->addSearchFields('ListEstadoDocumento', ['nombre']);
 
-        $this->addOrderBy($className, 'idestado', 'id');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy('ListEstadoDocumento', 'idestado', 'id');
+        $this->addOrderBy('ListEstadoDocumento', 'nombre', 'name');
+
+        $this->addFilterSelect('ListEstadoDocumento', 'tipodoc', 'estados_documentos', 'tipodoc', 'tipodoc');
+        $this->addFilterSelect('ListEstadoDocumento', 'generadoc', 'estados_documentos', 'generadoc', 'generadoc');
+        $this->addFilterCheckbox('ListEstadoDocumento', 'editable', 'editable');
+        $this->addFilterCheckbox('ListEstadoDocumento', 'actualizastock', 'update-stock');
     }
 }

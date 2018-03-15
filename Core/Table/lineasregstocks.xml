@@ -21,7 +21,6 @@
     <column>
         <name>codalmacendest</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fecha</name>
@@ -47,7 +46,6 @@
     <column>
         <name>motivo</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nick</name>
@@ -59,8 +57,6 @@
     </constraint>
     <constraint>
         <name>ca_lineasregstocks_stocks</name>
-        <type>FOREIGN KEY (idstock)
-            REFERENCES stocks (idstock)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idstock) REFERENCES stocks (idstock) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

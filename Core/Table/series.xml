@@ -14,12 +14,10 @@
     <column>
         <name>descripcion</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>siniva</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>series_pkey</name>

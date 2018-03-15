@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Model\Subcuenta;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Description of BalanceAmmounts

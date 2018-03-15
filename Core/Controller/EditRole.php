@@ -31,43 +31,6 @@ class EditRole extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('Role', 'EditRole', 'rol', 'fa-id-card');
-        $this->addEditListView('RoleAccess', 'ListRoleAccess', 'rules', 'fa fa-check-square');
-        $this->addEditListView('RoleUser', 'EditRoleUser', 'users', 'fa-address-card-o');
-
-        /// Disable columns
-        $this->views['ListRoleAccess']->disableColumn('pagename', true);
-        $this->views['EditRoleUser']->disableColumn('role', true);
-    }
-
-    /**
-     * Load view data
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        switch ($keyView) {
-            case 'EditRole':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'EditRoleUser':
-            case 'ListRoleAccess':
-                $codrole = $this->getViewModelValue('EditRole', 'codrole');
-                $where = [new DataBaseWhere('codrole', $codrole)];
-                $view->loadData(false, $where);
-                break;
-        }
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -81,6 +44,46 @@ class EditRole extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('Role', 'EditRole', 'rol', 'fa-id-card');
+        $this->addEditListView('RoleAccess', 'EditRoleAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('RoleUser', 'EditRoleUser', 'users', 'fa-address-card-o');
+
+        /// Disable columns
+        $this->views['EditRoleAccess']->disableColumn('role', true);
+        $this->views['EditRoleUser']->disableColumn('role', true);
+    }
+
+    /**
+     * Load view data
+     *
+     * @param string                      $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        $order = [];
+        switch ($keyView) {
+            case 'EditRole':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'EditRoleAccess':
+                $order['pagename'] = 'ASC';
+                /// no break
+            case 'EditRoleUser':
+                $codrole = $this->getViewModelValue('EditRole', 'codrole');
+                $where = [new DataBaseWhere('codrole', $codrole)];
+                $view->loadData(false, $where, $order, 0, 0);
+                break;
+        }
     }
 
     /**

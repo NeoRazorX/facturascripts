@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Description of AccountingBase
@@ -30,8 +29,6 @@ use FacturaScripts\Core\Base\Utils;
  */
 abstract class AccountingBase
 {
-
-    use Utils;
 
     /**
      * Link with the active dataBase

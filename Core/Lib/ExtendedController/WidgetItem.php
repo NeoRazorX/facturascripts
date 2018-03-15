@@ -123,6 +123,7 @@ abstract class WidgetItem implements VisualItemInterface
             case 'color':
                 return new WidgetItemColor();
 
+            case 'date':
             case 'datepicker':
                 return new WidgetItemDateTime();
 

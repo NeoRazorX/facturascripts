@@ -18,10 +18,10 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * Description of AccountingPlanImport

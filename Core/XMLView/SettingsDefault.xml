@@ -70,11 +70,6 @@
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
-            <column name="product_decimals" title="product-decimals" numcolumns="3" order="110">
-                <widget type="select" fieldname="product_decimals" required="true" icon="fa-sort-numeric-asc">
-                    <values start="0" end="6" step="1"></values>
-                </widget>
-            </column>
             <column name="decimal_separator" title="decimal" numcolumns="3" order="120">
                 <widget type="select" fieldname="decimal_separator" required="true" icon="fa-calculator">
                     <values title=",">,</values>

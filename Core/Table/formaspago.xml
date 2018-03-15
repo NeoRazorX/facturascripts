@@ -14,7 +14,6 @@
     <column>
         <name>descripcion</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>genrecibos</name>
@@ -24,23 +23,19 @@
     <column>
         <name>codcuenta</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>domiciliado</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>imprimir</name>
         <type>boolean</type>
-        <null>YES</null>
         <default>true</default>
     </column>
     <column>
         <name>vencimiento</name>
         <type>character varying(20)</type>
-        <null>YES</null>
         <default>'+1month'::character varying</default>
     </column>
     <constraint>

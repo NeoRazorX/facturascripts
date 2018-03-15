@@ -40,7 +40,6 @@
     <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>debe</name>
@@ -70,20 +69,14 @@
     </constraint>
     <constraint>
         <name>ca_subcuentas_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_subcuentas_cuentas</name>
-        <type>FOREIGN KEY (idcuenta)
-            REFERENCES cuentas (idcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idcuenta) REFERENCES cuentas (idcuenta) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_subcuentas_impuestos</name>
-        <type>FOREIGN KEY (codimpuesto)
-            REFERENCES impuestos (codimpuesto)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -101,6 +102,27 @@ class Contacto extends Base\Contact
     public $idcontacto;
 
     /**
+     * Last activity date.
+     *
+     * @var string
+     */
+    public $lastactivity;
+
+    /**
+     * Last IP used.
+     *
+     * @var string
+     */
+    public $lastip;
+
+    /**
+     * Session key, saved also in cookie. Regenerated when user log in.
+     *
+     * @var string
+     */
+    public $logkey;
+
+    /**
      * Contact province.
      *
      * @var string
@@ -108,13 +130,30 @@ class Contacto extends Base\Contact
     public $provincia;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->admitemarketing = true;
+        $this->codpais = AppSettings::get('default', 'codpais');
+    }
+
+    /**
+     * Generates a new login key for the user. It also updates lastactivity
+     * ans last IP.
+     *
+     * @param string $ipAddress
      *
      * @return string
      */
-    public static function tableName()
+    public function newLogkey($ipAddress)
     {
-        return 'contactos';
+        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastip = $ipAddress;
+        $this->logkey = Utils::randomString(99);
+
+        return $this->logkey;
     }
 
     /**
@@ -128,12 +167,23 @@ class Contacto extends Base\Contact
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the column used to describe this item.
+     * 
+     * @return string
      */
-    public function clear()
+    public function primaryDescriptionColumn()
     {
-        parent::clear();
-        $this->admitemarketing = true;
+        return 'email';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'contactos';
     }
 
     /**
@@ -152,5 +202,17 @@ class Contacto extends Base\Contact
         $this->provincia = Utils::noHtml($this->provincia);
 
         return true;
+    }
+
+    /**
+     * Verifies the login key.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function verifyLogkey($value)
+    {
+        return $this->logkey === $value;
     }
 }

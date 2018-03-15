@@ -62,12 +62,14 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addListView('FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
         $this->addListView('PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        $this->addListView('PresupuestoProveedor', 'ListPresupuestoProveedor', 'estimations', 'fa-files-o');
 
         /// Disable columns
         $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
         $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
         $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
         $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
+        $this->views['ListPresupuestoProveedor']->disableColumn('supplier', true);
     }
 
     /**
@@ -78,6 +80,7 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $limit = FS_ITEM_LIMIT;
         switch ($keyView) {
             case 'EditProveedor':
                 $code = $this->request->get('code');
@@ -86,6 +89,8 @@ class EditProveedor extends ExtendedController\PanelController
 
             case 'EditDireccionProveedor':
             case 'EditCuentaBancoProveedor':
+                $limit = 0;
+                /// no break
             case 'ListArticuloProveedor':
             case 'ListFacturaProveedor':
             case 'ListAlbaranProveedor':
@@ -93,7 +98,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListPresupuestoProveedor':
                 $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
-                $view->loadData(false, $where);
+                $view->loadData(false, $where, [], 0, $limit);
                 break;
         }
     }

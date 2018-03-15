@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,6 +56,9 @@ class WidgetItemSelect extends WidgetItem
     {
         parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
+        if (!$this->required) {
+            array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
+        }
     }
 
     /**

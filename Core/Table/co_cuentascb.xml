@@ -9,7 +9,6 @@
     <column>
         <name>desccuenta</name>
         <type>character varying(255)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codcuenta</name>

@@ -9,22 +9,18 @@
     <column>
         <name>validarprov</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codiso</name>
         <type>character varying(2)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>bandera</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nombre</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpais</name>

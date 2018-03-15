@@ -18,12 +18,10 @@
     <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>dtopor</name>
@@ -52,7 +50,6 @@
     <column>
         <name>irpf</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>iva</name>
@@ -92,12 +89,10 @@
     <column>
         <name>recargo</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>referencia</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>lineaspedidoscli_pkey</name>

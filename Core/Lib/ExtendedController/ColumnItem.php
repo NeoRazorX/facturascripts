@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Description of ColumnItem
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa    <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
@@ -56,127 +57,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $widget;
 
     /**
-     * Create and load the structure of a column based on an XML file
-     *
-     * @param \SimpleXMLElement $column
-     *
-     * @return GroupItem|ColumnItem
-     */
-    public static function newFromXML($column)
-    {
-        $result = new self();
-        $result->loadFromXML($column);
-
-        return $result;
-    }
-
-    /**
-     * Create and load the structure of a column based on the database
-     *
-     * @param array $column
-     *
-     * @return ColumnItem
-     */
-    public static function newFromJSON($column)
-    {
-        $result = new self();
-        $result->loadFromJSON($column);
-
-        return $result;
-    }
-
-    /**
      * Constructs and initializes the class
      */
     public function __construct()
     {
         parent::__construct();
-
         $this->level = 1;
         $this->description = '';
         $this->display = 'left';
-        $this->widget = null;
-    }
-
-    /**
-     * Loads the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement $column
-     */
-    public function loadFromXML($column)
-    {
-        parent::loadFromXML($column);
-
-        if (empty($this->title)) {
-            $this->title = $this->name;
-        }
-
-        $column_atributes = $column->attributes();
-        $this->description = (string) $column_atributes->description;
-
-        if (!empty($column_atributes->display)) {
-            $this->display = (string) $column_atributes->display;
-        }
-
-        if (!empty($column_atributes->level)) {
-            $this->level = (int) $column_atributes->level;
-        }
-
-        switch (true) {
-            case isset($column->widget):
-                $this->widget = WidgetItem::newFromXML($column);
-                break;
-
-            case isset($column->button):
-                $this->widget = WidgetButton::newFromXML($column->button);
-                break;
-        }
-    }
-
-    /**
-     * Loads the attributes structure from a JSON file
-     *
-     * @param array $column
-     */
-    public function loadFromJSON($column)
-    {
-        parent::loadFromJSON($column);
-        $this->description = (string) $column['description'];
-        $this->display = (string) $column['display'];
-        $this->level = (int) $column['level'];
-
-        if (!empty($this->widget)) {
-            unset($this->widget);
-        }
-
-        switch ($column['widget']['type']) {
-            case 'modal':
-            case 'action':
-                $this->widget = WidgetButton::newFromJSON($column['widget']);
-                break;
-
-            default:
-                $this->widget = WidgetItem::newFromJSON($column['widget']);
-        }
-    }
-
-    /**
-     * Loads a group of database columns from a JSON file
-     *
-     * @param array $columns
-     *
-     * @return ColumnItem[]
-     */
-    public function columnsFromJSON($columns)
-    {
-        $result = [];
-        foreach ($columns as $data) {
-            $columnItem = new self();
-            $columnItem->loadFromJSON($data);
-            $result[] = $columnItem;
-        }
-
-        return $result;
     }
 
     /**
@@ -198,33 +86,22 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Generates HTML code for the element's header display
+     * Loads a group of database columns from a JSON file
      *
-     * @param string $value
+     * @param array $columns
      *
-     * @return string
+     * @return ColumnItem[]
      */
-    public function getHeaderHTML($value)
+    public function columnsFromJSON($columns)
     {
-        $html = parent::getHeaderHTML($value);
-
-        if (!empty($this->description)) {
-            $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
+        $result = [];
+        foreach ($columns as $data) {
+            $columnItem = new self();
+            $columnItem->loadFromJSON($data);
+            $result[] = $columnItem;
         }
 
-        return $html;
-    }
-
-    /**
-     * Generates the HTML code to display the model data for the List controllers
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getListHTML($value)
-    {
-        return $this->widget->getListHTML($value);
+        return $result;
     }
 
     /**
@@ -265,23 +142,125 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Returns the HTML code to display a non special field
+     * Generates HTML code for the element's header display
      *
-     * @param string $header
      * @param string $value
-     * @param array  $data
      *
      * @return string
      */
-    private function standardHTMLColumn($header, $value, $data)
+    public function getHeaderHTML($value)
     {
-        $label = ($header !== null) ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>'
-            . $header . '</label>' : '';
-        $input = $this->widget->getEditHTML($value);
+        $html = parent::getHeaderHTML($value);
 
-        return '<div class="form-group' . $data['ColumnClass'] . '">'
-            . $label . $input . $data['ColumnDescription'] . $data['ColumnRequired']
-            . '</div>';
+        if (!empty($this->description)) {
+            $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Generates the HTML code to display the model data for the List controllers
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getListHTML($value)
+    {
+        return $this->widget->getListHTML($value);
+    }
+
+    /**
+     * Loads the attributes structure from a JSON file
+     *
+     * @param array $column
+     */
+    public function loadFromJSON($column)
+    {
+        parent::loadFromJSON($column);
+        $this->description = (string) $column['description'];
+        $this->display = (string) $column['display'];
+        $this->level = (int) $column['level'];
+
+        if (!empty($this->widget)) {
+            unset($this->widget);
+        }
+
+        switch ($column['widget']['type']) {
+            case 'modal':
+            case 'action':
+                $this->widget = WidgetButton::newFromJSON($column['widget']);
+                break;
+
+            default:
+                $this->widget = WidgetItem::newFromJSON($column['widget']);
+        }
+    }
+
+    /**
+     * Loads the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement $column
+     */
+    public function loadFromXML($column)
+    {
+        parent::loadFromXML($column);
+
+        if (empty($this->title)) {
+            $this->title = $this->name;
+        }
+
+        $column_atributes = $column->attributes();
+        $this->description = (string) $column_atributes->description;
+
+        if (!empty($column_atributes->display)) {
+            $this->display = (string) $column_atributes->display;
+        }
+
+        if (!empty($column_atributes->level)) {
+            $this->level = (int) $column_atributes->level;
+        }
+
+        switch (true) {
+            case isset($column->widget):
+                $this->widget = WidgetItem::newFromXML($column);
+                break;
+
+            case isset($column->button):
+                $this->widget = WidgetButton::newFromXML($column->button);
+                break;
+        }
+    }
+
+    /**
+     * Create and load the structure of a column based on the database
+     *
+     * @param array $column
+     *
+     * @return ColumnItem
+     */
+    public static function newFromJSON($column)
+    {
+        $result = new self();
+        $result->loadFromJSON($column);
+
+        return $result;
+    }
+
+    /**
+     * Create and load the structure of a column based on an XML file
+     *
+     * @param \SimpleXMLElement $column
+     *
+     * @return GroupItem|ColumnItem
+     */
+    public static function newFromXML($column)
+    {
+        $result = new self();
+        $result->loadFromXML($column);
+
+        return $result;
     }
 
     /**
@@ -312,8 +291,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     private function checkboxHTMLColumn($header, $value, $data)
     {
         $input = $this->widget->getEditHTML($value);
-        $label = !empty($header) ? '<label class="form-check-label mb-2 mr-sm-2'
-            . ' mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>' : '';
+        $label = empty($header) ? $input : '<label class="form-check-label mb-2 mr-sm-2'
+            . ' mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>';
 
         $result = '<div class="' . $data['ColumnClass'] . '">'
             . '<div class="form-check">' . $label . $data['ColumnDescription'] . '</div>'
@@ -321,6 +300,73 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '</div>';
 
         return $result;
+    }
+
+    /**
+     * Returns the column class
+     *
+     * @return string
+     */
+    protected function getColumnClass()
+    {
+        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
+    }
+
+    /**
+     * Executes the function list ($properties) to get the column properties
+     *
+     * @param string[] $properties
+     *
+     * @return array
+     */
+    private function getColumnData($properties)
+    {
+        $result = [];
+        foreach ($properties as $value) {
+            $function = 'get' . $value;
+            $result[$value] = $this->$function();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns the HTML code to display a description
+     *
+     * @return string
+     */
+    protected function getColumnDescription()
+    {
+        $description = '';
+        if (!empty($this->description)) {
+            $description = $this->i18n->trans($this->description);
+        }
+
+        if ($this->widget->type === 'filechooser') {
+            $description = ' ' . $this->i18n->trans('help-server-accepts-filesize', ['%size%' => $this->widget->getMaxFileUpload()]);
+        }
+
+        return empty($description) ? '' : '<small class="form-text text-muted">' . $description . '</small>';
+    }
+
+    /**
+     * Returns the HTML code to display a popover with the specified string
+     *
+     * @return string
+     */
+    protected function getColumnHint()
+    {
+        return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
+    }
+
+    /**
+     * Returns the HTML code to display if a column is required or not
+     *
+     * @return string
+     */
+    protected function getColumnRequired()
+    {
+        return '';
     }
 
     /**
@@ -360,70 +406,22 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Executes the function list ($properties) to get the column properties
+     * Returns the HTML code to display a non special field
      *
-     * @param string[] $properties
-     *
-     * @return array
-     */
-    private function getColumnData($properties)
-    {
-        $result = [];
-        foreach ($properties as $value) {
-            $function = 'get' . $value;
-            $result[$value] = $this->$function();
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns the column class
+     * @param string $header
+     * @param string $value
+     * @param array  $data
      *
      * @return string
      */
-    protected function getColumnClass()
+    private function standardHTMLColumn($header, $value, $data)
     {
-        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
-    }
+        $label = empty($header) ? '' : '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>'
+            . $header . '</label>';
+        $input = $this->widget->getEditHTML($value);
 
-    /**
-     * Returns the HTML code to display a popover with the specified string
-     *
-     * @return string
-     */
-    protected function getColumnHint()
-    {
-        return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
-    }
-
-    /**
-     * Returns the HTML code to display if a column is required or not
-     *
-     * @return string
-     */
-    protected function getColumnRequired()
-    {
-        return !$this->widget->required ? '' : '<div class="invalid-feedback">'
-            . $this->i18n->trans('please-enter-value') . '</div>';
-    }
-
-    /**
-     * Returns the HTML code to display a description
-     *
-     * @return string
-     */
-    protected function getColumnDescription()
-    {
-        $description = '';
-        if (!empty($this->description)) {
-            $description = $this->i18n->trans($this->description);
-        }
-
-        if ($this->widget->type === 'filechooser') {
-            $description = ' ' . $this->i18n->trans('help-server-accepts-filesize', ['%size%' => $this->widget->getMaxFileUpload()]);
-        }
-
-        return empty($description) ? '' : '<small class="form-text text-muted">' . $description . '</small>';
+        return '<div class="form-group' . $data['ColumnClass'] . '">'
+            . $label . $input . $data['ColumnDescription'] . $data['ColumnRequired']
+            . '</div>';
     }
 }

@@ -25,12 +25,10 @@
     <column>
         <name>codisoprov</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostal2d</name>
         <type>character varying(2)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>latitud</name>

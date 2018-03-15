@@ -44,12 +44,10 @@
     <column>
         <name>refcombinacion</name>
         <type>character varying(18)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codbarras</name>
         <type>character varying(18)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>impactoprecio</name>
@@ -60,7 +58,6 @@
     <column>
         <name>stockfis</name>
         <type>double precision</type>
-        <null>YES</null>
         <default>0</default>
     </column>
     <constraint>

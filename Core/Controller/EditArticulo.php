@@ -65,6 +65,7 @@ class EditArticulo extends ExtendedController\PanelController
             unset($this->views['ListArticuloTraza']);
         }
 
+        $limit = FS_ITEM_LIMIT;
         switch ($keyView) {
             case 'EditArticulo':
                 $code = $this->request->get('code');
@@ -72,12 +73,14 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'EditStock':
+                $limit = 0;
+                /// no break
             case 'ListArticuloProveedor':
             case 'ListArticuloCombinacion':
             case 'ListArticuloTraza':
                 $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
-                $view->loadData(false, $where);
+                $view->loadData(false, $where, [], 0, $limit);
                 break;
         }
     }

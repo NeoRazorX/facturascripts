@@ -33,6 +33,27 @@ class EstadoDocumento extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     * True if this states must update product stock.
+     *
+     * @var bool
+     */
+    public $actualizastock;
+
+    /**
+     * If the state is editable or not.
+     *
+     * @var bool
+     */
+    public $editable;
+
+    /**
+     * Name of the document to generate when this state is selected.
+     *
+     * @var string
+     */
+    public $generadoc;
+
+    /**
      * Primary key.
      *
      * @var int
@@ -47,20 +68,20 @@ class EstadoDocumento extends Base\ModelClass
     public $nombre;
 
     /**
-     * If the state is editable or not.
-     *
-     * @var bool
+     * Document type: custommer invoice, supplier order, etc...
+     * @var string
      */
-    public $editable;
+    public $tipodoc;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
+     * Reset the values of all model properties.
      */
-    public static function tableName()
+    public function clear()
     {
-        return 'estados_documentos';
+        parent::clear();
+        $this->actualizastock = false;
+        $this->editable = true;
+        $this->tipodoc = 'PedidoProveedor';
     }
 
     /**
@@ -74,12 +95,13 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-        $this->editable = true;
+        return 'estados_documentos';
     }
 
     /**

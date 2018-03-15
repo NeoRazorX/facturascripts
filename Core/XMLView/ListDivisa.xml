@@ -37,14 +37,10 @@
             <widget type="text" fieldname="codiso" />
         </column>
         <column name="sales-rate" display="right" order="140">
-            <widget type="number" decimal="4" fieldname="tasaconv">
-                <option color="red">&lt;1</option>
-            </widget>
+            <widget type="number" decimal="4" fieldname="tasaconv" />
         </column>
         <column name="purchase-rate" display="right" order="150">
-            <widget type="number" decimal="4" fieldname="tasaconvcompra">
-                <option color="red">&gt;1</option>
-            </widget>
+            <widget type="number" decimal="4" fieldname="tasaconvcompra" />
         </column>
     </columns>
 </view>

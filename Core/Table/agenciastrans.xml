@@ -19,12 +19,10 @@
     <column>
         <name>telefono</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>web</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>activo</name>

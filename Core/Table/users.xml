@@ -7,40 +7,14 @@
 -->
 <table>
     <column>
-        <name>nick</name>
-        <type>character varying(50)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>password</name>
-        <type>character varying(255)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>email</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>logkey</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>lastactivity</name>
-        <type>timestamp</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>lastip</name>
-        <type>character varying(40)</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>admin</name>
         <type>boolean</type>
         <null>NO</null>
         <default>false</default>
+    </column>
+    <column>
+        <name>email</name>
+        <type>character varying(100)</type>
     </column>
     <column>
         <name>enabled</name>
@@ -49,25 +23,44 @@
         <default>true</default>
     </column>
     <column>
-        <name>langcode</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>homepage</name>
         <type>character varying(30)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>YES</null>
+    </column>
+    <column>
+        <name>langcode</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>lastactivity</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>lastip</name>
+        <type>character varying(40)</type>
     </column>
     <column>
         <name>level</name>
         <type>integer</type>
         <null>NO</null>
         <default>1</default>
+    </column>
+    <column>
+        <name>logkey</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>password</name>
+        <type>character varying(255)</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>users_pkey</name>
