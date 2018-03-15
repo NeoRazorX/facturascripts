@@ -56,9 +56,6 @@ class WidgetItemSelect extends WidgetItem
     {
         parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
-        if (!$this->required) {
-            array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
-        }
     }
 
     /**
@@ -82,8 +79,8 @@ class WidgetItemSelect extends WidgetItem
         $this->values = [];
         foreach ($rows as $codeModel) {
             if ($codeModel->code === null) {
-                $codeModel->code = '---null---';
-                $codeModel->description = '------';
+                array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
+                continue;
             }
 
             $this->values[] = [
@@ -129,6 +126,10 @@ class WidgetItemSelect extends WidgetItem
         $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
         $this->setValuesFromCodeModel($rows);
         unset($rows);
+
+        if ($allowEmpty && $this->values[0]['value'] !== '---null---') {
+            array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
+        }
     }
 
     /**
