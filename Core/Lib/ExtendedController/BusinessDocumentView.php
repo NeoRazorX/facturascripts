@@ -39,7 +39,7 @@ class BusinessDocumentView extends BaseView
 
     /**
      *
-     * @var EstadoDocumento
+     * @var array
      */
     public $documentStates;
 

@@ -196,7 +196,7 @@ class ListFilter
      * @param string $fieldcode
      * @param string $fieldtitle
      * @param string $value
-     * @param string $where
+     * @param array  $where
      * 
      * @return ListFilter
      */
@@ -214,7 +214,7 @@ class ListFilter
      * @param string $fieldcode
      * @param string $fieldtitle
      * @param string $value
-     * @param string $where
+     * @param array  $where
      * 
      * @return ListFilter
      */
