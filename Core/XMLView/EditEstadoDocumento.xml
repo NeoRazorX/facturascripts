@@ -55,10 +55,13 @@
                     <values title="supplier-invoice">FacturaProveedor</values>
                 </widget>
             </column>
-            <column name="editable" order="140">
+            <column name="default" order="140">
+                <widget type="checkbox" fieldname="predeterminado"></widget>
+            </column>
+            <column name="editable" order="150">
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>
-            <column name="update-stock" order="150">
+            <column name="update-stock" order="160">
                 <widget type="checkbox" fieldname="actualizastock"></widget>
             </column>
         </group>

@@ -57,6 +57,7 @@ class ListEstadoDocumento extends ExtendedController\ListController
 
         $this->addFilterSelect('ListEstadoDocumento', 'tipodoc', 'estados_documentos', 'tipodoc', 'tipodoc');
         $this->addFilterSelect('ListEstadoDocumento', 'generadoc', 'estados_documentos', 'generadoc', 'generadoc');
+        $this->addFilterCheckbox('ListEstadoDocumento', 'predeterminado', 'default');
         $this->addFilterCheckbox('ListEstadoDocumento', 'editable', 'editable');
         $this->addFilterCheckbox('ListEstadoDocumento', 'actualizastock', 'update-stock');
     }
