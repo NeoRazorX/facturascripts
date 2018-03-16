@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\App;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Twig_Function;
@@ -87,11 +88,19 @@ class WebRender
     {
         $twig = new Twig_Environment($this->loader, $this->getOptions());
 
-        /// extra functions
+        /// asset functions
         $assetFunction = new Twig_Function('asset', function ($string) {
             return FS_ROUTE . '/' . $string;
         });
         $twig->addFunction($assetFunction);
+
+        /// assetCombine functions
+        $assetCombineFunction = new Twig_Function('assetCombine', function ($fileList) {
+            return AssetManager::combine($fileList);
+        });
+        $twig->addFunction($assetCombineFunction);
+
+        /// debug extension
         $twig->addExtension(new Twig_Extension_Debug());
 
         return $twig;
@@ -122,8 +131,8 @@ class WebRender
     /**
      * Returns the data into the standard output.
      *
-     * @param $template
-     * @param $params
+     * @param string $template
+     * @param array  $params
      *
      * @return string
      */
