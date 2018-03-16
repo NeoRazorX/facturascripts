@@ -49,11 +49,11 @@ class Ledger extends AccountingBase
 
         $ledger = [];
         foreach ($results as $line) {
-            $ledger[] = $this->processLine($line);
+             $ledger[$line['codcuenta']][] = $this->processLine($line);
         }
 
         /// every page is a table
-        $pages = [$ledger];
+        $pages = $ledger;
         return $pages;
     }
 
@@ -64,11 +64,14 @@ class Ledger extends AccountingBase
      */
     protected function getData()
     {
-        $sql = 'SELECT asto.numero, asto.fecha, part.codsubcuenta, part.concepto, part.debe, part.haber'
-            . ' FROM asientos as asto, partidas AS part WHERE asto.idasiento = part.idasiento '
+        $sql = 'SELECT asto.numero, asto.fecha, subc.codcuenta, part.codsubcuenta, part.concepto, part.debe, part.haber'
+            . ' FROM asientos as asto, partidas AS part, subcuentas as subc '
+            . ' WHERE asto.idasiento = part.idasiento '
             . ' AND fecha >= ' . $this->dataBase->var2str($this->dateFrom)
             . ' AND fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' ORDER BY asto.numero, part.codsubcuenta ASC';
+            . ' AND subc.codejercicio = asto.codejercicio '
+            . ' AND subc.codsubcuenta = part.codsubcuenta '
+            . ' ORDER BY subc.codcuenta, asto.fecha, asto.numero ASC';
 
         return $this->dataBase->select($sql);
     }
