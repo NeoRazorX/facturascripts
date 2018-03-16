@@ -180,7 +180,7 @@ class MenuManager
             'title' => 'ASC',
         ];
 
-        $pages = self::$pageModel->all($where, $order);
+        $pages = self::$pageModel->all($where, $order, 0, 0);
         if (self::$user && self::$user->admin) {
             return $pages;
         }
