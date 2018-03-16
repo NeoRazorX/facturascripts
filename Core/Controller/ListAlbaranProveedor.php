@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -39,6 +40,10 @@ class ListAlbaranProveedor extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListAlbaranProveedor', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'AlbaranProveedor')];
+        $this->addFilterSelect('ListAlbaranProveedor', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
+
         $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', 'codserie', 'descripcion');
         $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');

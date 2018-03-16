@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -39,6 +40,10 @@ class ListFacturaCliente extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListFacturaCliente', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListFacturaCliente', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'FacturaCliente')];
+        $this->addFilterSelect('ListFacturaCliente', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
+
         $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', 'codserie', 'descripcion');
         $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');

@@ -196,12 +196,13 @@ class ListFilter
      * @param string $fieldcode
      * @param string $fieldtitle
      * @param string $value
+     * @param string $where
      * 
      * @return ListFilter
      */
-    public static function newSelectFilter($table, $fieldcode, $fieldtitle, $value): ListFilter
+    public static function newSelectFilter($table, $fieldcode, $fieldtitle, $value, $where = []): ListFilter
     {
-        $options = ['table' => $table, 'fieldcode' => $fieldcode, 'fieldtitle' => $fieldtitle, 'value' => $value];
+        $options = ['table' => $table, 'fieldcode' => $fieldcode, 'fieldtitle' => $fieldtitle, 'value' => $value, 'where' => $where];
 
         return new self('select', $options);
     }
@@ -213,12 +214,13 @@ class ListFilter
      * @param string $fieldcode
      * @param string $fieldtitle
      * @param string $value
+     * @param string $where
      * 
      * @return ListFilter
      */
-    public static function newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value): ListFilter
+    public static function newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value, $where = []): ListFilter
     {
-        $options = ['table' => $table, 'fieldcode' => $fieldcode, 'fieldtitle' => $fieldtitle, 'value' => $value];
+        $options = ['table' => $table, 'fieldcode' => $fieldcode, 'fieldtitle' => $fieldtitle, 'value' => $value, 'where' => $where];
 
         return new self('autocomplete', $options);
     }

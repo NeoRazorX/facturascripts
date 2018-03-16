@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -39,6 +40,10 @@ class ListPresupuestoCliente extends ExtendedController\ListController
 
         $this->addFilterDatePicker('ListPresupuestoCliente', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $this->addFilterSelect('ListPresupuestoCliente', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
+
         $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', 'codserie', 'descripcion');
         $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');
