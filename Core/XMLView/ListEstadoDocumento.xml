@@ -33,13 +33,16 @@
         <column name="name" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="editable" display="center" order="130">
+        <column name="default" display="center" order="130">
+            <widget type="checkbox" fieldname="predeterminado"></widget>
+        </column>
+        <column name="editable" display="center" order="140">
             <widget type="checkbox" fieldname="editable"></widget>
         </column>
-        <column name="update-stock" display="center" order="140">
+        <column name="update-stock" display="center" order="150">
             <widget type="checkbox" fieldname="actualizastock"></widget>
         </column>
-        <column name="generate-doc-type" display="right" order="150">
+        <column name="generate-doc-type" display="right" order="160">
             <widget type="text" fieldname="generadoc" />
         </column>
     </columns>

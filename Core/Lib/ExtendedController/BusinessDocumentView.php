@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -35,6 +36,12 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  */
 class BusinessDocumentView extends BaseView
 {
+
+    /**
+     *
+     * @var array
+     */
+    public $documentStates;
 
     /**
      *
@@ -67,6 +74,7 @@ class BusinessDocumentView extends BaseView
     public function __construct($title, $modelName, $lineXMLView, $userNick)
     {
         parent::__construct($title, $modelName);
+        $this->documentStates = [];
         $this->documentTools = new BusinessDocumentTools();
 
         // Loads the view configuration for the user
@@ -78,6 +86,11 @@ class BusinessDocumentView extends BaseView
         }
 
         $this->lines = [];
+
+        // Loads document states
+        $estadoDocModel = new EstadoDocumento();
+        $modelClass = explode('\\', $modelName);
+        $this->documentStates = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
     }
 
     /**
@@ -342,15 +355,6 @@ class BusinessDocumentView extends BaseView
         }
 
         return $result;
-    }
-
-    /**
-     * Set new code to the document.
-     */
-    public function setNewCode()
-    {
-        /// this can be eliminated when the error is fixed when calculating
-        /// a new code when the primary key is numeric
     }
 
     /**

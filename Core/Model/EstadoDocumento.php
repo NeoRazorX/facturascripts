@@ -26,6 +26,7 @@ use FacturaScripts\Core\Base\Utils;
  * For example: Earrings, Approved, ...
  *
  * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
+ * @author Carlos García Gómez     <carlos@facturascripts.com>
  */
 class EstadoDocumento extends Base\ModelClass
 {
@@ -68,6 +69,13 @@ class EstadoDocumento extends Base\ModelClass
     public $nombre;
 
     /**
+     * Sets this state as default for tipodoc.
+     *
+     * @var bool
+     */
+    public $predeterminado;
+
+    /**
      * Document type: custommer invoice, supplier order, etc...
      * @var string
      */
@@ -81,6 +89,7 @@ class EstadoDocumento extends Base\ModelClass
         parent::clear();
         $this->actualizastock = false;
         $this->editable = true;
+        $this->predeterminado = false;
         $this->tipodoc = 'PedidoProveedor';
     }
 

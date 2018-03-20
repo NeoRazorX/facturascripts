@@ -71,6 +71,14 @@ abstract class Contact extends ModelClass
     public $observaciones;
 
     /**
+     * True -> the customer is a natural person.
+     * False -> the client is a legal person (company).
+     *
+     * @var boolean
+     */
+    public $personafisica;
+
+    /**
      * Phone 1 of the person.
      *
      * @var string
@@ -91,6 +99,7 @@ abstract class Contact extends ModelClass
     {
         parent::clear();
         $this->fechaalta = date('d-m-Y');
+        $this->personafisica = true;
     }
 
     /**

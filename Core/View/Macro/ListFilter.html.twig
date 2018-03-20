@@ -67,7 +67,7 @@
 <div class="col-md-2">
     <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
         <option value="">{{ any }} {{ key }}</option>
-        {% for data in context.fsc.codeModel.all(filter.options.table, filter.options.fieldcode, filter.options.fieldtitle) %}
+        {% for data in context.fsc.codeModel.all(filter.options.table, filter.options.fieldcode, filter.options.fieldtitle, true, filter.options.where) %}
         {% if (context.indexView == context.fsc.active) and (filter.options.value != '') and (data.code == filter.options.value) %}
         <option value="{{ data.code }}" selected="">{{ data.description }}</option>
         {% else %}

@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ListController extends Base\Controller
 {
+
     const DIR_MODEL = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -389,11 +390,12 @@ abstract class ListController extends Base\Controller
      * @param string $table
      * @param string $fieldcode
      * @param string $fieldtitle
+     * @param array  $where
      */
-    protected function addFilterSelect($indexView, $key, $table, $fieldcode, $fieldtitle)
+    protected function addFilterSelect($indexView, $key, $table, $fieldcode, $fieldtitle, $where = [])
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($table, $fieldcode, $fieldtitle, $value));
+        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($table, $fieldcode, $fieldtitle, $value, $where));
     }
 
     /**
@@ -404,11 +406,12 @@ abstract class ListController extends Base\Controller
      * @param string $table
      * @param string $fieldcode
      * @param string $fieldtitle
+     * @param array  $where
      */
-    protected function addFilterAutocomplete($indexView, $key, $table, $fieldcode, $fieldtitle)
+    protected function addFilterAutocomplete($indexView, $key, $table, $fieldcode, $fieldtitle, $where = [])
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value));
+        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value, $where));
     }
 
     /**

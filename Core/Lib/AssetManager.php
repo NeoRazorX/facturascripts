@@ -33,7 +33,7 @@ class AssetManager
      *
      * @return array
      */
-    public static function getAssetsForPage($name)
+    public static function getAssetsForPage(string $name): array
     {
         $assets = [
             'js' => [],
@@ -48,6 +48,44 @@ class AssetManager
         if (file_exists(FS_FOLDER . $cssFile)) {
             $assets['css'][] = FS_ROUTE . $cssFile;
         }
+
         return $assets;
+    }
+
+    /**
+     * Combine and returns the content of the selected files.
+     *
+     * @param array $fileList
+     *
+     * @return string
+     */
+    public static function combine(array $fileList): string
+    {
+        $txt = '';
+        foreach ($fileList as $file) {
+            $content = file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . $file) . "\n";
+            $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $file);
+        }
+
+        return $txt;
+    }
+
+    public static function fixCombineContent(string $data, string $url): string
+    {
+        // Replace relative paths
+        $replace = [
+            'url(../' => "url(" . dirname($url, 2) . '/',
+            "url('../" => "url('" . dirname($url, 2) . '/',
+        ];
+        $buffer = \str_replace(array_keys($replace), $replace, $data);
+
+        // Remove comments
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        
+        // Remove space after colons
+        $buffer = str_replace(': ', ':', $buffer);
+        
+        // Remove whitespace
+        return str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
     }
 }

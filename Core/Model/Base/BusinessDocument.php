@@ -19,8 +19,10 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -246,6 +248,14 @@ abstract class BusinessDocument extends ModelClass
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
+
+        $estadoDocModel = new EstadoDocumento();
+        $where = [new DataBaseWhere('tipodoc', $this->modelClassName())];
+        foreach ($estadoDocModel->all($where) as $estado) {
+            $this->idestado = $estado->idestado;
+            $this->editable = $estado->editable;
+            break;
+        }
     }
 
     /**
