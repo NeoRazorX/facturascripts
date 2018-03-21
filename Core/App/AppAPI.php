@@ -179,21 +179,15 @@ class AppAPI extends App
                         $model->{$key} = $value;
                     }
                     if($model->save()) {
-                        $data = $model;
+                        $data = (array) $model;
                     } else {
-                        $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                        $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+
+                        $data = [];
                         foreach($this->miniLog->read() as $msg) {
                             $data['error'] = $msg;
                         }
                     }
-                    break;
-
-                case 'PUT':
-                    $data = [];
-                    break;
-
-                case 'DELETE':
-                    $data = [];
                     break;
 
                 default:
@@ -226,10 +220,6 @@ class AppAPI extends App
             $model = new $modelName();
 
             switch ($this->request->getMethod()) {
-                case 'POST':
-                    $data = [];
-                    break;
-
                 case 'PUT':
                     $model = $model->get($cod);
                     foreach($this->request->request->all() as $key => $value) {
@@ -238,7 +228,9 @@ class AppAPI extends App
                     if($model->save()) {
                         $data = $model;
                     } else {
-                        $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                        $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+
+                        $data = [];
                         foreach($this->miniLog->read() as $msg) {
                             $data['error'] = $msg;
                         }
