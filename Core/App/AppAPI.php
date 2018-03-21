@@ -175,7 +175,17 @@ class AppAPI extends App
 
             switch ($this->request->getMethod()) {
                 case 'POST':
-                    $data = [];
+                    foreach($this->request->request->all() as $key => $value) {
+                        $model->{$key} = $value;
+                    }
+                    if($model->save()) {
+                        $data = $model;
+                    } else {
+                        $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                        foreach($this->miniLog->read() as $msg) {
+                            $data['error'] = $msg;
+                        }
+                    }
                     break;
 
                 case 'PUT':
@@ -221,7 +231,18 @@ class AppAPI extends App
                     break;
 
                 case 'PUT':
-                    $data = [];
+                    $model = $model->get($cod);
+                    foreach($this->request->request->all() as $key => $value) {
+                        $model->{$key} = $value;
+                    }
+                    if($model->save()) {
+                        $data = $model;
+                    } else {
+                        $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                        foreach($this->miniLog->read() as $msg) {
+                            $data['error'] = $msg;
+                        }
+                    }
                     break;
 
                 case 'DELETE':
