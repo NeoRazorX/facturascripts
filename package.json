@@ -35,6 +35,6 @@
     "jquery-ui-dist": "^1.12.x",
     "jscolor-picker": "^2.0.4",
     "popper.js": "^1.13.0",
-    "summernote": "^0.8.9"
+    "sceditor": "^2.x"
   }
 }
