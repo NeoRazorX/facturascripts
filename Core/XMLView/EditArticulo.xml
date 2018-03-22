@@ -65,12 +65,6 @@
             <column name="stockfis" title="physical-stock" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
-            <column name="stockmin" title="minimum-stock" numcolumns="4" order="100">
-                <widget type="number" fieldname="stockmin"/>
-            </column>
-            <column name="stockmax" title="maximum-stock" numcolumns="4" order="210">
-                <widget type="number" fieldname="stockmax"/>
-            </column>
         </group>
         <group name="options" numcolumns="2">
             <column name="nostock" title="no-stock" numcolumns="12" order="100">

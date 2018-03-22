@@ -102,27 +102,6 @@ class Stock extends Base\ModelClass
     public $stockmax;
 
     /**
-     * Amount last regularization.
-     *
-     * @var float|int
-     */
-    public $cantidadultreg;
-
-    /**
-     * Last regularization date.
-     *
-     * @var string
-     */
-    public $fechaultreg;
-
-    /**
-     * Last regularization time.
-     *
-     * @var string
-     */
-    public $horaultreg;
-
-    /**
      * Location.
      *
      * @var string
@@ -171,13 +150,12 @@ class Stock extends Base\ModelClass
     {
         parent::clear();
         $this->nombre = '';
-        $this->cantidad = 0;
+        $this->cantidad = 0.0;
         $this->reservada = 0;
         $this->disponible = 0;
         $this->pterecibir = 0;
         $this->stockmin = 0;
         $this->stockmax = 0;
-        $this->cantidadultreg = 0;
     }
 
     /**

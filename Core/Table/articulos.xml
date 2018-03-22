@@ -16,11 +16,6 @@
         <type>character varying(25)</type>
     </column>
     <column>
-        <name>stockmin</name>
-        <type>double precision</type>
-        <default>0</default>
-    </column>
-    <column>
         <name>observaciones</name>
         <type>text</type>
     </column>
@@ -34,11 +29,6 @@
     </column>
     <column>
         <name>stockfis</name>
-        <type>double precision</type>
-        <default>0</default>
-    </column>
-    <column>
-        <name>stockmax</name>
         <type>double precision</type>
         <default>0</default>
     </column>
