@@ -8,6 +8,11 @@
 <table>
     <column>
         <name>actualizastock</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>bloquear</name>
         <type>boolean</type>
         <null>NO</null>
     </column>
