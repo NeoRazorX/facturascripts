@@ -122,20 +122,6 @@ class Articulo extends Base\Product
     public $equivalencia;
 
     /**
-     * The minimum stock that there should be.
-     *
-     * @var float|int
-     */
-    public $stockmin;
-
-    /**
-     * The maximum stock that there should be.
-     *
-     * @var float|int
-     */
-    public $stockmax;
-
-    /**
      * True -> allow sales without stock.
      *
      * @var bool
@@ -220,8 +206,6 @@ class Articulo extends Base\Product
         $this->pvp = 0.0;
         $this->secompra = true;
         $this->sevende = true;
-        $this->stockmax = 0.0;
-        $this->stockmin = 0.0;
     }
 
     /**
