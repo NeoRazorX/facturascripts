@@ -42,7 +42,6 @@ final class StockTest extends TestCase
         $this->assertEquals(0, $model->pterecibir);
         $this->assertEquals(0, $model->stockmin);
         $this->assertEquals(0, $model->stockmax);
-        $this->assertEquals(0, $model->cantidadultreg);
         $this->assertTrue($model->test());
 
         $model->nombre = 'Test name';
