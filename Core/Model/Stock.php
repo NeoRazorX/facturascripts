@@ -62,42 +62,42 @@ class Stock extends Base\ModelClass
     /**
      * Quantity.
      *
-     * @var float|int
+     * @var float
      */
     public $cantidad;
 
     /**
      * Reserved.
      *
-     * @var float|int
+     * @var float
      */
     public $reservada;
 
     /**
      * Available.
      *
-     * @var float|int
+     * @var float
      */
     public $disponible;
 
     /**
      * Pending receipt.
      *
-     * @var float|int
+     * @var float
      */
     public $pterecibir;
 
     /**
      * Minimum stock.
      *
-     * @var float|int
+     * @var float
      */
     public $stockmin;
 
     /**
      * Maximum stock.
      *
-     * @var float|int
+     * @var float
      */
     public $stockmax;
 
@@ -151,11 +151,11 @@ class Stock extends Base\ModelClass
         parent::clear();
         $this->nombre = '';
         $this->cantidad = 0.0;
-        $this->reservada = 0;
-        $this->disponible = 0;
-        $this->pterecibir = 0;
-        $this->stockmin = 0;
-        $this->stockmax = 0;
+        $this->reservada = 0.0;
+        $this->disponible = 0.0;
+        $this->pterecibir = 0.0;
+        $this->stockmin = 0.0;
+        $this->stockmax = 0.0;
     }
 
     /**
