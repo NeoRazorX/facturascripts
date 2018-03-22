@@ -412,8 +412,6 @@ class Articulo extends Base\Product
 
         if ($this->nostock) {
             $this->ventasinstock = true;
-            $this->stockmax = 0.0;
-            $this->stockmin = 0.0;
         }
 
         if ($this->bloqueado) {
