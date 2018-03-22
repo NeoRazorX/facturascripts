@@ -62,42 +62,42 @@ class Stock extends Base\ModelClass
     /**
      * Quantity.
      *
-     * @var float
+     * @var float|int
      */
     public $cantidad;
 
     /**
      * Reserved.
      *
-     * @var float
+     * @var float|int
      */
     public $reservada;
 
     /**
      * Available.
      *
-     * @var float
+     * @var float|int
      */
     public $disponible;
 
     /**
      * Pending receipt.
      *
-     * @var float
+     * @var float|int
      */
     public $pterecibir;
 
     /**
      * Minimum stock.
      *
-     * @var float
+     * @var float|int
      */
     public $stockmin;
 
     /**
      * Maximum stock.
      *
-     * @var float
+     * @var float|int
      */
     public $stockmax;
 

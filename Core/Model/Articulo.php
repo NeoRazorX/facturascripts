@@ -56,7 +56,7 @@ class Articulo extends Base\Product
     /**
      * Price of the item, without taxes.
      *
-     * @var float
+     * @var float|int
      */
     public $pvp;
 
@@ -65,14 +65,14 @@ class Articulo extends Base\Product
      * This value is not stored in the database, that is,
      * is not remembered.
      *
-     * @var float
+     * @var float|int
      */
     public $pvp_ant;
 
     /**
      * Average cost when buying the item. Calculated.
      *
-     * @var float
+     * @var float|int
      */
     public $costemedio;
 
@@ -81,7 +81,7 @@ class Articulo extends Base\Product
      * It is not necessarily the purchase price, it can include
      * also other costs.
      *
-     * @var float
+     * @var float|int
      */
     public $preciocoste;
 
