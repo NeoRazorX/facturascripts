@@ -1257,7 +1257,7 @@
     "balance-account-abreviated": "Balance Cuentas Abreviado",
     "invalid-column-lenght": "%column% ha de tener entre %min% y %max% caracteres.",
     "document-states": "Estados del documento",
-    "vat-register": "Registro de Impuestos",
+    "vat-register": "Libro Impuestos",
     "hint-vat-register": "Ver/Modificar registro de Impuesto",
     "clone-account-entry": "Duplicar el asiento contable",
     "lock-unlock-account-entry": "Bloquear/Desbloquear el asiento contable",
