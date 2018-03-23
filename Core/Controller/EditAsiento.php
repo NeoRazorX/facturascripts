@@ -83,7 +83,8 @@ class EditAsiento extends ExtendedController\PanelController
                 $this->setTemplate(false);
                 $subaccount = $this->request->get('codsubcuenta', '');
                 $exercise = $this->request->get('codejercicio', '');
-                $result = $this->getAccountData($exercise, $subaccount);
+                $source = $this->request->get('source', '');
+                $result = $this->getAccountData($exercise, $subaccount, $source);
                 $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                 return false;
 
@@ -118,46 +119,60 @@ class EditAsiento extends ExtendedController\PanelController
     }
 
     /**
+     * Returns VAT data for an id VAT
+     *
+     * @param string $idVAT
+     * @return array
+     */
+    private function getVATDetaill($idVAT): array
+    {
+        $result = [];
+        if (!empty($idVAT)) {
+            $vat = new Model\Impuesto();
+            if ($vat->loadFromCode($idVAT)) {
+                $result['vat'] = $vat->iva;
+                $result['surcharge'] = $vat->recargo;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Load total data from subaccount
      *
      * @param string $exercise
-     * @param string $subaccount
+     * @param string $codeSubAccount
+     * @param string $source
      * @return array
      */
-    private function getAccountData($exercise, $subaccount): array
+    private function getAccountData($exercise, $codeSubAccount, $source): array
     {
         $result = [
-            'subaccount' => $subaccount,
+            'subaccount' => $codeSubAccount,
             'description' => '',
+            'source' => $source,
+            'vat' => [],
             'balance' => 0.00,
             'detail' => [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
         ];
 
-        if (empty($exercise) or empty($subaccount)) {
+        if (empty($exercise) or empty($codeSubAccount)) {
             return $result;
         }
 
         $where = [
-            new DataBaseWhere('codsubcuenta', $subaccount),
+            new DataBaseWhere('codsubcuenta', $codeSubAccount),
             new DataBaseWhere('codejercicio', $exercise)
         ];
 
-        $account = new Model\Subcuenta();
-        if ($account->loadFromCode(null, $where)) {
-            $result['description'] = $account->descripcion;
-
-            $where = [new DataBaseWhere('idsubcuenta', $account->idsubcuenta)];
+        $subAccount = new Model\Subcuenta();
+        if ($subAccount->loadFromCode(null, $where)) {
             $balance = new Model\SubcuentaSaldo();
-            foreach ($balance->all($where) as $values) {
-                $result['detail'][$values->mes] = $values->saldo;
-                $result['balance'] += $values->saldo;
-            }
-        }
 
-        // Aply round to imports
-        $result['balance'] = round($result['balance'], (int) FS_NF0);
-        foreach ($result['detail'] as $key => $value) {
-            $result['detail'][$key] = round($value, (int) FS_NF0);
+            $result['description'] = $subAccount->descripcion;
+            $result['vat'] = $this->getVatDetaill($subAccount->codimpuesto);
+            $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
         }
 
         // Return account data
