@@ -203,6 +203,7 @@
                     {# Footer options #}
                     {% if viewType in ['EditView','EditListView', 'GridView'] %}
                         {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                        {{ BaseController.modalFormFromColumns(_context, view) }}
                     {% endif %}
                 </div>
                 {% endif %}
