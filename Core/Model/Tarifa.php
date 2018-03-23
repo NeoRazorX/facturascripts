@@ -103,16 +103,6 @@ class Tarifa extends Base\ModelClass
     }
 
     /**
-     * Assign a percentage increase.
-     *
-     * @param float $dto
-     */
-    public function setX($dto)
-    {
-        $this->incporcentual = $this->applyFormula($dto);
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
