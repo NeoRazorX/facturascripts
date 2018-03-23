@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -139,7 +139,8 @@ class WidgetButton implements VisualItemInterface
      * Return optional atribute value
      *
      * @param string $field
-     * @param array $atributes
+     * @param mixed  $atributes
+     * 
      * @return string
      */
     private function getOptionalAtribute($field, &$atributes): string
@@ -157,15 +158,15 @@ class WidgetButton implements VisualItemInterface
      */
     public function loadFromXML($button)
     {
-        $widget_atributes = $button->attributes();
-        $this->type = (string) $widget_atributes->type;
-        $this->label = (string) $widget_atributes->label;
-        $this->icon = (string) $widget_atributes->icon;
-        $this->action = (string) $widget_atributes->action;
-        $this->hint = (string) $widget_atributes->hint;
-        $this->id = $this->getOptionalAtribute('id', $widget_atributes);
-        $this->color = $this->getOptionalAtribute('color', $widget_atributes);
-        $this->onClick = $this->getOptionalAtribute('onclick', $widget_atributes);
+        $widgetAtributes = $button->attributes();
+        $this->type = (string) $widgetAtributes->type;
+        $this->label = (string) $widgetAtributes->label;
+        $this->icon = (string) $widgetAtributes->icon;
+        $this->action = (string) $widgetAtributes->action;
+        $this->hint = (string) $widgetAtributes->hint;
+        $this->id = $this->getOptionalAtribute('id', $widgetAtributes);
+        $this->color = $this->getOptionalAtribute('color', $widgetAtributes);
+        $this->onClick = $this->getOptionalAtribute('onclick', $widgetAtributes);
     }
 
     /**
