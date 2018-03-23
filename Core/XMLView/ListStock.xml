@@ -27,19 +27,28 @@
         <column name="reference" display="left" order="100">
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
-        <column name="warehouse" display="left" order="120">
+        <column name="warehouse" display="left" order="110">
             <widget type="text" fieldname="codalmacen" />
         </column>
-        <column name="location" display="left" order="125">
+        <column name="location" display="left" order="120">
             <widget type="text" fieldname="ubicacion" />
         </column>
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="stockmin" display="right" order="140">
+        <column name="reserved" display="right" order="140">
+            <widget type="number" fieldname="reservada" />
+        </column>
+        <column name="pending-reception" display="right" order="150">
+            <widget type="number" fieldname="pterecibir" />
+        </column>
+        <column name="available" display="right" order="160">
+            <widget type="number" fieldname="disponible" />
+        </column>
+        <column name="stockmin" display="right" order="170">
             <widget type="number" fieldname="stockmin" />
         </column>
-        <column name="stockmax" display="right" order="150">
+        <column name="stockmax" display="right" order="180">
             <widget type="number" fieldname="stockmax" />
         </column>
     </columns>

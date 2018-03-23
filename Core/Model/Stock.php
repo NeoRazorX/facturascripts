@@ -67,21 +67,21 @@ class Stock extends Base\ModelClass
     public $cantidad;
 
     /**
-     * Reserved.
+     * Reserved on customer orders.
      *
      * @var float|int
      */
     public $reservada;
 
     /**
-     * Available.
+     * Available. Is the quantity minus reserved.
      *
      * @var float|int
      */
     public $disponible;
 
     /**
-     * Pending receipt.
+     * Pending receipt. Merchandise pending receipt from the supplier.
      *
      * @var float|int
      */
