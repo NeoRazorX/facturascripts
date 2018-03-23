@@ -20,6 +20,7 @@
  * Initial description for the controller EditStock
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
+ * @author Rafael San José <info@rsanjoseo.com>
 -->
 
 <view>
@@ -27,7 +28,7 @@
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idstock" />
         </column>
-        <column name="reference" display="none" order="100">
+        <column name="reference" display="none" order="110">
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
         <column name="warehouse" display="left" order="120">
@@ -35,14 +36,23 @@
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="quantity" display="right" order="130">
-            <widget type="number" fieldname="cantidad" />
-        </column>
-        <column name="stockmin" display="right" order="140">
+        <column name="stockmin" display="right" order="130">
             <widget type="number" fieldname="stockmin" />
         </column>
-        <column name="stockmax" display="right" order="150">
+        <column name="stockmax" display="right" order="140">
             <widget type="number" fieldname="stockmax" />
+        </column>
+        <column name="quantity" display="right" order="200">
+            <widget type="number" fieldname="cantidad" />
+        </column>
+        <column name="reserved" display="right" order="210">
+            <widget type="number" fieldname="reservada" readonly="true"/>
+        </column>
+        <column name="pending-reception" display="right" order="220">
+            <widget type="number" fieldname="pterecibir" readonly="true"/>
+        </column>
+        <column name="available" display="right" order="230">
+            <widget type="number" fieldname="disponible" readonly="true"/>
         </column>
     </columns>
 </view>
