@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Description of SubcuentaSaldo
  *
@@ -161,5 +163,25 @@ class SubcuentaSaldo extends Base\ModelClass
             . ' AND mes = ' . $month;
 
         return self::$dataBase->exec($sql);
+    }
+
+    /**
+     * Load in an array "detail" the monthly balances of a sub-account
+     * and return the sum of them.
+     *
+     * @param int $idSubAccount
+     * @param array $detail
+     * @return float
+     */
+    public function setSubAccountBalance($idSubAccount, &$detail): float
+    {
+        $result = 0;
+        $where = [new DataBaseWhere('idsubcuenta', $idSubAccount)];
+        foreach ($this->all($where, ['mes' => 'ASC']) as $values) {
+            $detail[$values->mes - 1] = round($values->saldo, (int) FS_NF0);
+            $result += $values->saldo;
+        }
+
+        return round($result, (int) FS_NF0);
     }
 }
