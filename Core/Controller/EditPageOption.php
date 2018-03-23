@@ -55,11 +55,20 @@ class EditPageOption extends Base\Controller
     public $selectedViewName;
 
     /**
+     * Contains the url to go back.
+     *
+     * @var string
+     */
+    public $backPage;
+
+    /**
      * Load and initialize the parameters sent by the form
      */
     private function getParams()
     {
         $this->selectedViewName = $this->request->get('code');
+        $this->backPage = $this->request->get('url') ? : $this->selectedViewName;
+
         $this->selectedUser = $this->user->admin ? $this->request->get('nick', null) : $this->user->nick;
     }
 

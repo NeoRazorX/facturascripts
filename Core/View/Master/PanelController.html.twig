@@ -110,6 +110,8 @@
     {# -- Calculate common values -- #}
     {% set list_url = fsc.getURL('list') %}
     {% set edit_url = fsc.getURL('edit') %}
+    {% set mainModel = fsc.views|first %}
+    {% set actual_url = mainModel.model.url() | url_encode %}
 
     {# -- Visual macros -- #}
     {% from 'Macro/Utils.html.twig' import exportData as exportData %}
@@ -124,7 +126,7 @@
                         <i class="fa fa-arrow-left" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                     </a>
-                    <a href="{{ edit_url }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
+                    <a href="{{ actual_url }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
                 </div>
@@ -137,7 +139,7 @@
                         <div class="dropdown-menu">
                             {% for view in fsc.views %}
                                 {% if fsc.viewClass(view) != 'HtmlView' %}
-                                    <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}">
+                                    <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}&url={{ actual_url }}">
                                         <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
                                     </a>
                                 {% endif %}
