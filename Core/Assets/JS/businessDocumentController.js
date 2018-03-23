@@ -84,10 +84,8 @@ function documentSave() {
         dataType: "text",
         data: data,
         success: function (results) {
-            if (results === "OK") {
-                location.reload();
-            } else if (results.substring(0, 4) === "NEW:") {
-                location.href = results.substring(4);
+            if (results.substring(0, 3) === "OK:") {
+                location.href = results.substring(3);
             } else {
                 alert(results);
             }

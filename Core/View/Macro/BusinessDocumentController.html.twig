@@ -33,7 +33,7 @@
 
     <script type="text/javascript">
         documentLineData = {{ view.getLineData() | raw }};
-                documentUrl = '{{ model.url('edit') | raw }}';
+        documentUrl = '{{ model.url('edit') | raw }}';
     </script>
 
     <form name="f_document_primary" action="#" method="post">
@@ -58,7 +58,7 @@
                     </span>
                     <input type="text" id="doc_total" name="total" value="{{ model.total }}" class="form-control text-right" disabled="" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" onclick="documentSave()">
+                        <button type="button" class="btn btn-primary" onclick="documentSave()">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -88,7 +88,7 @@
                 </a>
             </div>
             <div class="col-6 text-right">
-                <button type="button" id="btn-document-save" class="btn btn-sm btn-primary" onclick="documentSave()">
+                <button type="button" class="btn btn-sm btn-primary" onclick="documentSave()">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
                 </button>
             </div>
