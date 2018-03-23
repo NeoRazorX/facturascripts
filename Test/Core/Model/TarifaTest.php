@@ -37,7 +37,7 @@ final class TarifaTest extends TestCase
         $this->assertInstanceOf(Tarifa::class, $model);
         $this->assertEquals(0, $model->incporcentual);
         $this->assertEquals(0, $model->inclineal);
-        $this->assertEquals('pvp', $model->aplicar_a);
+        $this->assertEquals('pvp', $model->aplicar);
         $this->assertTrue($model->mincoste);
         $this->assertTrue($model->maxpvp);
         $this->assertFalse($model->test());
