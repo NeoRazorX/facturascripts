@@ -1166,5 +1166,15 @@
     "balance-account": "Balanç Comptes",
     "balance-account-abreviated": "Balanç Comptes Abreviat",
     "invalid-column-lenght": "%column% ha de tenir entre %min% i %max% caràcters.",
-    "document-states": "Estats del document"
+    "document-states": "Estats del document",
+    "vat-register": "Registre d'Impostos",
+    "hint-vat-register": "Veure/Modificar registre d'Impost",
+    "clone-account-entry": "Duplicar l'assentament comptable",
+    "lock-unlock-account-entry": "Bloquejar / Desbloquejar l'assentament comptable",
+    "vat-document": "Document",
+    "desc-vat-document": "Identificador del document on s'aplica l'impost",
+    "desc-vat-id": "Identificador fiscal",
+    "tax-base": "Base imposable",
+    "pct-vat": "% Impost",
+    "pct-surcharge": "% Recàrrec"
 }
