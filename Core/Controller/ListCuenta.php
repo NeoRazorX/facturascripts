@@ -45,10 +45,10 @@ class ListCuenta extends ExtendedController\ListController
 
         /* Special account */
         $this->addView('CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
-        $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
+        $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuentaesp']);
 
         $this->addOrderBy('ListCuentaEspecial', 'descripcion', 'description');
-        $this->addOrderBy('ListCuentaEspecial', 'codsubcuenta', 'code');
+        $this->addOrderBy('ListCuentaEspecial', 'codcuentaesp', 'code');
     }
 
     /**

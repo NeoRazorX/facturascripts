@@ -25,18 +25,20 @@
 <view>
     <columns>
         <group name="data" numcolumns="12" title="rates">
-            <column name="codtarifa" title="code-rate" numcolumns="2" order="100"
-                    description="desc-rate-code">
-                <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true" />
+            <column name="codtarifa" title="code" numcolumns="3" order="100">
+                <widget type="text" fieldname="codtarifa" icon="fa-money" required="true" />
             </column>
-            <column name="nombre" title="name" numcolumns="4" order="110">
+            <column name="nombre" title="name" numcolumns="6" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="aplicar_a" title="formula-to-apply" numcolumns="2" order="120">
-                <widget type="text" fieldname="aplicar_a" required="false" />
+            <column name="aplicar" title="formula-to-apply" numcolumns="3" order="120">
+                <widget type="select" fieldname="aplicar">
+                    <values title="formula-sale-price">pvp</values>
+                    <values title="formula-cost-price">coste</values>
+                </widget>
             </column>
         </group>
-        <group name="check" numcolumns="12" title="check">
+        <group name="check" numcolumns="12">
             <column name="mincoste" title="dont-sell-below-cost" numcolumns="4" order="130">
                 <widget type="checkbox" fieldname="mincoste" />
             </column>
@@ -46,4 +48,3 @@
         </group>
     </columns>
 </view>
-

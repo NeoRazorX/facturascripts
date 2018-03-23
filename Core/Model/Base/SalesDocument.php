@@ -189,6 +189,7 @@ abstract class SalesDocument extends BusinessDocument
     public function clear()
     {
         parent::clear();
+        $this->direccion = '';
         $this->porcomision = 0.0;
     }
     

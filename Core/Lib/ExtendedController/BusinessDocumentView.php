@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -35,6 +36,12 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  */
 class BusinessDocumentView extends BaseView
 {
+
+    /**
+     *
+     * @var array
+     */
+    public $documentStates;
 
     /**
      *
@@ -67,6 +74,7 @@ class BusinessDocumentView extends BaseView
     public function __construct($title, $modelName, $lineXMLView, $userNick)
     {
         parent::__construct($title, $modelName);
+        $this->documentStates = [];
         $this->documentTools = new BusinessDocumentTools();
 
         // Loads the view configuration for the user
@@ -78,6 +86,11 @@ class BusinessDocumentView extends BaseView
         }
 
         $this->lines = [];
+
+        // Loads document states
+        $estadoDocModel = new EstadoDocumento();
+        $modelClass = explode('\\', $modelName);
+        $this->documentStates = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
     }
 
     /**
@@ -157,7 +170,6 @@ class BusinessDocumentView extends BaseView
             $this->model->loadFromCode($code);
         }
 
-        $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
         $this->title = $this->model->codigo;
@@ -208,7 +220,6 @@ class BusinessDocumentView extends BaseView
             return $result;
         }
 
-        $new = empty($this->model->primaryColumnValue());
         if ($this->save()) {
             $result = $this->saveLines($newLines);
         } else {
@@ -217,8 +228,7 @@ class BusinessDocumentView extends BaseView
 
         if ($result === 'OK') {
             $this->documentTools->recalculate($this->model);
-            $result = $this->model->save() ? 'OK' : 'ERROR';
-            return $new ? 'NEW:' . $this->model->url() : $result;
+            return $this->model->save() ? 'OK:' . $this->model->url() : 'ERROR';
         }
 
         $miniLog = new MiniLog();
@@ -342,15 +352,6 @@ class BusinessDocumentView extends BaseView
         }
 
         return $result;
-    }
-
-    /**
-     * Set new code to the document.
-     */
-    public function setNewCode()
-    {
-        /// this can be eliminated when the error is fixed when calculating
-        /// a new code when the primary key is numeric
     }
 
     /**

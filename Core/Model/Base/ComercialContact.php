@@ -86,7 +86,7 @@ abstract class ComercialContact extends Contact
      * @var IDFiscal
      */
     private static $idFiscal;
-    
+
     /**
      * % IRPF retention of the document. It is obtained from the series.
      * Each line can have a different%.
@@ -94,14 +94,6 @@ abstract class ComercialContact extends Contact
      * @var float|int
      */
     public $irpf;
-
-    /**
-     * True -> the customer is a natural person.
-     * False -> the client is a legal person (company).
-     *
-     * @var boolean
-     */
-    public $personafisica;
 
     /**
      * Social reason of the client, that is, the official name. The one that appears on the invoices.
@@ -167,10 +159,8 @@ abstract class ComercialContact extends Contact
     public function clear()
     {
         parent::clear();
-        $this->cifnif = '';
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->debaja = false;
-        $this->personafisica = true;
         $this->regimeniva = self::$regimenIVA->defaultValue();
         $this->tipoidfiscal = self::$idFiscal->defaultValue();
     }

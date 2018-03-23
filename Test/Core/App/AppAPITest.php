@@ -59,7 +59,7 @@ class AppAPITest extends \PHPUnit_Framework_TestCase
      */
     public function testRun()
     {
-        $mustRun = AppSettings::get('default', 'enable_api', false);
+        $mustRun = ('true' == AppSettings::get('default', 'enable_api', false));
         $this->assertEquals($this->object->run(), $mustRun);
     }
 }

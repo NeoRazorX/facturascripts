@@ -33,18 +33,28 @@
         <column name="name" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="editable" display="center" order="130">
+        <column name="default" display="center" order="130">
+            <widget type="checkbox" fieldname="predeterminado"></widget>
+        </column>
+        <column name="editable" display="center" order="140">
             <widget type="checkbox" fieldname="editable"></widget>
         </column>
-        <column name="update-stock" display="center" order="140">
-            <widget type="checkbox" fieldname="actualizastock"></widget>
+        <column name="update-stock" display="center" order="150">
+            <widget type="select" fieldname="actualizastock">
+                <values title="book">-2</values>
+                <values title="subtract">-1</values>
+                <values title="do-nothing">0</values>
+                <values title="add">1</values>
+                <values title="foresee">2</values>
+            </widget>
         </column>
-        <column name="generate-doc-type" display="right" order="150">
+        <column name="generate-doc-type" display="right" order="160">
             <widget type="text" fieldname="generadoc" />
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="editable">
+        <row type="status" fieldname="actualizastock">
+            <option color="table-danger">-1</option>
             <option color="table-success">1</option>
         </row>
     </rows>

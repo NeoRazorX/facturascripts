@@ -175,15 +175,19 @@ class AppAPI extends App
 
             switch ($this->request->getMethod()) {
                 case 'POST':
-                    $data = [];
-                    break;
+                    foreach($this->request->request->all() as $key => $value) {
+                        $model->{$key} = $value;
+                    }
+                    if($model->save()) {
+                        $data = (array) $model;
+                    } else {
+                        $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
-                case 'PUT':
-                    $data = [];
-                    break;
-
-                case 'DELETE':
-                    $data = [];
+                        $data = [];
+                        foreach($this->miniLog->read() as $msg) {
+                            $data['error'] = $msg;
+                        }
+                    }
                     break;
 
                 default:
@@ -216,12 +220,21 @@ class AppAPI extends App
             $model = new $modelName();
 
             switch ($this->request->getMethod()) {
-                case 'POST':
-                    $data = [];
-                    break;
-
                 case 'PUT':
-                    $data = [];
+                    $model = $model->get($cod);
+                    foreach($this->request->request->all() as $key => $value) {
+                        $model->{$key} = $value;
+                    }
+                    if($model->save()) {
+                        $data = $model;
+                    } else {
+                        $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+
+                        $data = [];
+                        foreach($this->miniLog->read() as $msg) {
+                            $data['error'] = $msg;
+                        }
+                    }
                     break;
 
                 case 'DELETE':

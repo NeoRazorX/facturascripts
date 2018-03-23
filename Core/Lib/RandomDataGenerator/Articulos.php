@@ -84,8 +84,6 @@ class Articulos extends AbstractRandom
             $art->codimpuesto = $this->impuestos[0]->codimpuesto;
             $art->setPvpIva($this->precio(1, 49, 699));
             $art->costemedio = $art->preciocoste = $this->cantidad(0, $art->pvp, $art->pvp + 1);
-            $art->stockmin = mt_rand(0, 10);
-            $art->stockmax = mt_rand($art->stockmin + 1, $art->stockmin + 1000);
 
             switch (mt_rand(0, 2)) {
                 case 0:

@@ -40,8 +40,6 @@ final class ArticuloTest extends TestCase
         $this->assertEquals(0.0, $model->pvp);
         $this->assertTrue($model->secompra);
         $this->assertTrue($model->sevende);
-        $this->assertEquals(0.0, $model->stockmax);
-        $this->assertEquals(0.0, $model->stockmin);
         $this->assertTrue($model->test());
 
         $model->descripcion = 'Test name';

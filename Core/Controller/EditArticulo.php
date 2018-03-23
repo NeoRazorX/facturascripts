@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@ class EditArticulo extends ExtendedController\PanelController
     {
         $this->addEditView('Articulo', 'EditArticulo', 'products', 'fa-cubes');
         $this->addEditListView('Stock', 'EditStock', 'stock');
-        $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
+        $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-users');
         $this->addListView('ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
         $this->addListView('ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
 

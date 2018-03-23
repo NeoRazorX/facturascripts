@@ -61,21 +61,21 @@
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tax-transport" numcolumns="3" order="120">
+            <column name="subaccount" numcolumns="3" order="120">
+                <widget type="text" fieldname="codsubcuenta" />
+            </column>
+            <column name="tax-transport" numcolumns="3" order="130">
                 <widget type="select" fieldname="codimpuestoportes">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="vat-regime" order="130" numcolumns="3">
+            <column name="vat-regime" order="140" numcolumns="3">
                 <widget type="select" fieldname="regimeniva">
                     <values></values>
                 </widget>
             </column>
             <column name="irpf" numcolumns="3" order="140">
                 <widget type="number" fieldname="irpf" icon="fa-percent" />
-            </column>
-            <column name="subaccount" numcolumns="3" order="150">
-                <widget type="text" fieldname="codsubcuenta" />
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
@@ -97,10 +97,10 @@
         </group>
         <group name="other" title="other-data" numcolumns="12">
             <column name="create-date" numcolumns="3" order="100">
-                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+                <widget type="datepicker" fieldname="fechaalta" icon="fa-calendar" readonly="true" />
             </column>
             <column name="blocked-date" numcolumns="3" order="110">
-                <widget type="datepicker" fieldname="fechabaja" />
+                <widget type="datepicker" fieldname="fechabaja" icon="fa-calendar" />
             </column>
             <column name="blocked" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="debaja" />

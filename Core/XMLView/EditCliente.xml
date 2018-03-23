@@ -65,24 +65,24 @@
             <column name="payment-days" description="desc-payment-days" numcolumns="3" order="130">
                 <widget type="text" fieldname="diaspago" />
             </column>
-            <column name="agent" numcolumns="3" titleurl="ListUser" order="140">
+            <column name="subaccount" numcolumns="3" order="140">
+                <widget type="text" fieldname="codsubcuenta" />
+            </column>
+            <column name="agent" numcolumns="3" titleurl="ListUser" order="150">
                 <widget type="select" fieldname="codagente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>
             </column>
-            <column name="vat-regime" numcolumns="3" order="150">
+            <column name="irpf" numcolumns="3" order="160">
+                <widget type="number" fieldname="irpf" icon="fa-percent" />
+            </column>
+            <column name="vat-regime" numcolumns="3" order="170">
                 <widget type="select" fieldname="regimeniva">
                     <values></values>
                 </widget>
             </column>
-            <column name="surcharge" order="160">
+            <column name="surcharge" order="180">
                 <widget type="checkbox" fieldname="recargo" />
-            </column>
-            <column name="irpf" numcolumns="3" order="170">
-                <widget type="number" fieldname="irpf" icon="fa-percent" />
-            </column>
-            <column name="subaccount" numcolumns="3" order="180">
-                <widget type="text" fieldname="codsubcuenta" />
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
@@ -104,10 +104,10 @@
         </group>
         <group name="other" title="other-data" numcolumns="12">
             <column name="create-date" numcolumns="3" order="100">
-                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+                <widget type="datepicker" fieldname="fechaalta" icon="fa-calendar" readonly="true" />
             </column>
             <column name="blocked-date" numcolumns="3" order="110">
-                <widget type="datepicker" fieldname="fechabaja" />
+                <widget type="datepicker" fieldname="fechabaja" icon="fa-calendar" />
             </column>
             <column name="blocked" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="debaja" />

@@ -39,6 +39,7 @@
     <form name="f_document_primary" action="#" method="post">
         <input type="hidden" name="action"/>
         <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
+        <input id="doc_idestado" type="hidden" name="idestado" value="{{ model.idestado }}"/>
         <div class="form-row">
             {% if 'codcliente' in model.getSubjectColumns() %}
                 {{ macros.customerSelect(context.i18n, 'codcliente', 'codcliente', model) }}
@@ -47,6 +48,7 @@
                 {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
             {% endif %}
             {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
+            {{ macros.stateSelect(model, view) }}
             <div class="col">
                 <div class="input-group">
                     <span class="input-group-prepend">
@@ -56,7 +58,7 @@
                     </span>
                     <input type="text" id="doc_total" name="total" value="{{ model.total }}" class="form-control text-right" disabled="" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" onclick="documentSave()">
+                        <button type="button" class="btn btn-primary" onclick="documentSave()">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -86,7 +88,7 @@
                 </a>
             </div>
             <div class="col-6 text-right">
-                <button type="button" id="btn-document-save" class="btn btn-sm btn-primary" onclick="documentSave()">
+                <button type="button" class="btn btn-sm btn-primary" onclick="documentSave()">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
                 </button>
             </div>
@@ -230,6 +232,29 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro stateSelect(model, view) %}
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% for state in view.documentStates %}
+                {% if model.idestado == state.idestado %}{{ state.nombre }}{% endif %}
+            {% endfor %}
+        </button>
+        <div class="dropdown-menu">
+            {% for state in view.documentStates %}
+                {% if model.idestado == state.idestado %}
+                    <a class="dropdown-item active" href="#">
+                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                    </a>
+                {% else %}
+                    <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ state.idestado }}');documentSave();">
+                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                    </a>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 {% endmacro %}

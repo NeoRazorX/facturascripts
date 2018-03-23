@@ -117,6 +117,13 @@ class PluginManager
      */
     public function enable($pluginName)
     {
+        /// is pluginName enabled?
+        foreach (self::$enabledPlugins as $i => $value) {
+            if ($value['name'] === $pluginName) {
+                return;
+            }
+        }
+
         foreach ($this->installedPlugins() as $plugin) {
             if ($plugin['name'] === $pluginName) {
                 self::$enabledPlugins[] = $plugin;

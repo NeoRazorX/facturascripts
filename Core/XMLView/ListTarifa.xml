@@ -31,7 +31,7 @@
             <widget type="text" fieldname="nombre" />
         </column>
         <column name="formula" title="formula-to-apply" order="120">
-            <widget type="select" fieldname="aplicar_a">
+            <widget type="select" fieldname="aplicar">
                 <values title="formula-sale-price">pvp</values>
                 <values title="formula-cost-price">coste</values>
             </widget>
