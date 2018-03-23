@@ -1167,7 +1167,7 @@
     "balance-account-abreviated": "Balanç Comptes Abreviat",
     "invalid-column-lenght": "%column% ha de tenir entre %min% i %max% caràcters.",
     "document-states": "Estats del document",
-    "vat-register": "Registre d'Impostos",
+    "vat-register": "Llibre d'Impostos",
     "hint-vat-register": "Veure/Modificar registre d'Impost",
     "clone-account-entry": "Duplicar l'assentament comptable",
     "lock-unlock-account-entry": "Bloquejar / Desbloquejar l'assentament comptable",
