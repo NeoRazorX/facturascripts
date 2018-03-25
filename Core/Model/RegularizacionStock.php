@@ -23,6 +23,7 @@ namespace FacturaScripts\Core\Model;
  * Regularization of the stock of a warehouse of articles on a specific date.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José <info@rsanjoseo.com>
  */
 class RegularizacionStock extends Base\ModelClass
 {
@@ -33,19 +34,26 @@ class RegularizacionStock extends Base\ModelClass
      *
      * @var int
      */
-    public $id;
+    public $idreg;
 
     /**
-     * Stock ID, in the stock model.
+     * Reference of the main product
+     *
+     * @var string|null
+     */
+    public $referencia;
+
+    /**
+     * Reference of the combination, if exists. Null if not exist.
      *
      * @var int
      */
-    public $idstock;
+    public $codcombinacion;
 
     /**
      * Initial amount.
      *
-     * @var float|int
+     * @var string|null
      */
     public $cantidadini;
 
@@ -57,25 +65,25 @@ class RegularizacionStock extends Base\ModelClass
     public $cantidadfin;
 
     /**
-     * Destination warehouse code.
+     * Warehouse code.
      *
      * @var string
      */
-    public $codalmacendest;
+    public $codalmacen;
 
     /**
-     * Date.
+     * Date of regularization.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Time.
+     * Hour of regularization.
      *
      * @var string
      */
-    public $hora;
+    public $hour;
 
     /**
      * Reason of the regularization.
@@ -108,7 +116,7 @@ class RegularizacionStock extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'id';
+        return 'idreg';
     }
 
     /**
@@ -117,23 +125,40 @@ class RegularizacionStock extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->cantidadini = 0;
-        $this->cantidadfin = 0;
+
+        $this->cantidadini = 0.0;
+        $this->cantidadfin = 0.0;
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->motivo = '';
     }
 
     /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if ($this->cantidadini === $this->cantidadfin) {
+            self::$miniLog->alert(self::$i18n->trans('same-quantity-regularization'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+       * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
      */
     public function install()
     {
-        new Stock();
+        // new RegularizacionStock();
 
         return '';
     }

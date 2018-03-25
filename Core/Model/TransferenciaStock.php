@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,55 +20,56 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Description of transferencia_stock
+ * Regularization of the stock of a warehouse of articles on a specific date.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José <info@rsanjoseo.com>
  */
 class TransferenciaStock extends Base\ModelClass
 {
     use Base\ModelTrait;
 
     /**
-     * Primary key. integer
+     * Primary key.
      *
      * @var int
      */
     public $idtrans;
 
     /**
-     * Código de almacén de destino
-     *
-     * @var string
-     */
-    public $codalmadestino;
-
-    /**
-     * Código de almacén de origen
-     *
-     * @var string
-     */
-    public $codalmaorigen;
-
-    /**
-     * Fecha de la transferencia
+     * Date of regularization.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Hora de la transferencia
+     * Hour of regularization.
      *
      * @var string
      */
     public $hora;
 
     /**
-     * Usuario que realiza la transferencia
+     * Warehouse from which the goods leave
+     *
+     * @var string|null
+     */
+    public $sourcecodalmacen;
+
+    /**
+     * Warehouse where the goods arrives.
+     *
+     * @var int
+     */
+    public $destinationcodalmacen;
+
+    /**
+     * Nick of the user who has done the regularization.
      *
      * @var string
      */
-    public $usuario;
+    public $nick;
 
     /**
      * Returns the name of the table that uses this model.
@@ -101,14 +102,28 @@ class TransferenciaStock extends Base\ModelClass
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        // new TransferenciaStock();
+
+        return '';
+    }
+
+    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        if ($this->codalmadestino === $this->codalmaorigen) {
-            self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
+        if ($this->sourcecodalmacen === $this->destinationcodalmacen) {
+            self::$miniLog->alert(self::$i18n->trans('not-use-same-warehouse'));
 
             return false;
         }

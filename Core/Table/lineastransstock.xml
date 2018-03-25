@@ -7,15 +7,6 @@
 -->
 <table>
     <column>
-        <name>cantidad</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>descripcion</name>
-        <type>text</type>
-    </column>
-    <column>
         <name>idlinea</name>
         <type>serial</type>
         <null>NO</null>
@@ -23,13 +14,30 @@
     </column>
     <column>
         <name>idtrans</name>
-        <type>integer</type>
+        <type>serial</type>
         <null>NO</null>
     </column>
     <column>
         <name>referencia</name>
         <type>character varying(30)</type>
         <null>NO</null>
+        <comment>Reference of the main product</comment>
+    </column>
+    <column>
+        <name>codigo</name>
+        <type>character varying(18)</type>
+        <default>null</default>
+        <comment>Reference of the combination, if exists. Null if not exist.</comment>
+    </column>
+    <column>
+        <name>cantidad</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <comment>Amount of moved goods</comment>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
     </column>
     <constraint>
         <name>lineastransstock_pkey</name>

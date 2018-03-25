@@ -43,11 +43,18 @@ class LineaTransferenciaStock extends Base\ModelClass
     public $idtrans;
 
     /**
-     * Reference.
+     * Reference of the main product.
      *
      * @var string
      */
     public $referencia;
+
+    /**
+     * Reference of the combination, if exists. Null if not exist.
+     *
+     * @var string
+     */
+    public $codigo;
 
     /**
      * Quantity.
@@ -70,7 +77,7 @@ class LineaTransferenciaStock extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'lineastranstocks';
+        return 'lineastransstock';
     }
 
     /**
@@ -89,7 +96,24 @@ class LineaTransferenciaStock extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->cantidad = 0;
+        $this->cantidad = 0.0;
+        $this->descripcion = '';
+    }
+
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if ($this->cantidad <= 0) {
+            self::$miniLog->alert(self::$i18n->trans('quantity-not-0'));
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -102,7 +126,7 @@ class LineaTransferenciaStock extends Base\ModelClass
     public function install()
     {
         /// we force the check of the stock transfers table
-        new TransferenciaStock();
+        //new TransferenciaStock();
 
         return '';
     }
