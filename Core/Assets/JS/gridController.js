@@ -267,7 +267,20 @@ $(document).ready(function () {
             manualRowMove: true,
             manualColumnMove: false,
             minSpareRows: 1,
-            minRows: 7
+            minRows: 7,
+            enterMoves: {row: 0, col: 1}
+        });
+
+        gridObject.updateSettings({
+            enterMoves: function() {
+                var selected = getColumnSelected();
+                if (selected === (gridObject.countCols() - 1)) {
+                    selectCell(selected + 1, 0);
+                    return { row: 0, col: 0 };
+                }
+
+                return { row: 0, col: 1 };
+            }
         });
 
         Handsontable.hooks.add('afterSelection', grid_afterSelection);
