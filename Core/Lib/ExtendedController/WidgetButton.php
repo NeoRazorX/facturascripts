@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-/**
+/**   
  * Description of WidgetButton
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
