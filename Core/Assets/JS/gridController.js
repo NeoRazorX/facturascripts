@@ -114,6 +114,7 @@ function setGridRowValues(row, values) {
     for (var i = 0, max = values.length; i < max; i++) {
         documentLineData['rows'][physicalRow][values[i].field] = values[i].value;
     }
+    gridObject.render();
 }
 
 /* Return field name for a column */
