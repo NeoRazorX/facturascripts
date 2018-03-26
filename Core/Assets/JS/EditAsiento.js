@@ -118,13 +118,9 @@ function setAccountData(data) {
     // Calculate VAT Process
     var hasVAT = (Object.keys(data.vat).length > 0);
     vatRegister.disabled = (hasVAT === false);
-    if (data.source === 'afterChange' && hasVAT) {
-        if (accountData.row !== null) {
-            var values = [
-                {'field': 'iva', 'value': accountData.vat.vat },
-                {'field': 'recargo', 'value': accountData.vat.surcharge }
-            ];
-            setGridRowValues(accountData.row, values);      // Assign new VAT to data grid record
+    if (data.source === 'afterChange' && accountData.row !== null) {
+        setGridRowValues(accountData.row, valuesForNewAccount(hasVAT));      // Assign new VAT to data grid record
+        if (hasVAT) {
             showVATRegister(null, 'VAT-Register');
         }
     }
@@ -157,8 +153,17 @@ function clearAccountData() {
  * @param {number} balance
  */
 function setUnbalance(balance) {
-    var amount = Number(unbalance.textContent) + Number(balance);
+    var amount = getUnbalance() + Number(balance);
     unbalance.textContent = amount.toFixed(2);
+}
+
+/**
+ * Get actual unbalance from accounting entries
+ *
+ * @returns {number}
+ */
+function getUnbalance() {
+    return Number(unbalance.textContent);
 }
 
 /**
@@ -174,21 +179,70 @@ function calculateEntryUnbalance() {
 }
 
 /**
+ * Assign initial values to new accounting entry
+ *
+ * @param {boolean} hasVAT
+ * @returns {Array}
+ */
+function valuesForNewAccount(hasVAT) {
+    var result = [];
+    if (accountData.row > 0) {
+        // Calculate values from before row
+        var values = getGridRowValues(accountData.row - 1);
+        var unbalance = getUnbalance();
+        var offsetting = values['codcontrapartida'];
+        if (offsetting === accountData.subaccount) {
+            offsetting = values['codsubcuenta'];
+        }
+
+        // Set initial values
+        result.push({'field': 'concepto', 'value': values['concepto']});
+        result.push({'field': 'codcontrapartida', 'value': offsetting });
+
+        if (unbalance < 0) {
+            result.push({'field': 'debe', 'value': (unbalance * -1)});
+            result.push({'field': 'haber', 'value': 0.00});
+        } else {
+            result.push({'field': 'debe', 'value': 0.00});
+            result.push({'field': 'haber', 'value': unbalance});
+        }
+
+        // Set VAT values
+        if (hasVAT) {
+            result.push({'field': 'iva', 'value': accountData.vat.vat });
+            result.push({'field': 'recargo', 'value': accountData.vat.surcharge });
+            result.push({'field': 'baseimponible', 'value': values['debe'] + values['haber']});
+        };
+    };
+    return result;
+}
+
+/**
  * Hide VAT Register form and save data into grid data
  *
  * @returns {Boolean}
  */
 function saveVATRegister() {
     var vatForm = vatModal.find('.modal-content form');
+    var taxBase = vatForm.find('.modal-body [name="baseimponible"]').val();
+    var pctVat = vatForm.find('.modal-body [name="iva"]').val();
+    var pctSurcharge = vatForm.find('.modal-body [name="recargo"]').val();
+    var taxVat = (taxBase * (pctVat / 100.00)) + (taxBase * (pctSurcharge / 100.00));
+    var field = Number(getGridFieldData(accountData.row, 'debe')) > 0 ? 'haber' : 'debe';
+
     var values = [
         {'field': 'documento', 'value': vatForm.find('.modal-body [name="documento"]').val() },
         {'field': 'cifnif', 'value': vatForm.find('.modal-body [name="cifnif"]').val() },
-        {'field': 'baseimponible', 'value': vatForm.find('.modal-body [name="baseimponible"]').val() },
-        {'field': 'iva', 'value': vatForm.find('.modal-body [name="iva"]').val() },
-        {'field': 'recargo', 'value': vatForm.find('.modal-body [name="recargo"]').val() }
+        {'field': 'baseimponible', 'value': taxBase },
+        {'field': 'iva', 'value': pctVat },
+        {'field': 'recargo', 'value': pctSurcharge },
+        {'field': 'debe', 'value': 0.00 },
+        {'field': 'haber', 'value': 0.00 },
+        {'field': field, 'value': taxVat }
     ];
     setGridRowValues(accountData.row, values);
     vatModal.modal('hide');
+    selectCell(accountData.row + 1, 0, accountData.row + 1, 0, true);
     return false;
 }
 
@@ -205,11 +259,12 @@ function showVATRegister(mainForm, action) {
             vatModal = $('#' + action);
         }
 
-        // Load data from documentLineData to modal form
+        // Load data from documentLineData and master document to modal form
         var values = getGridRowValues(accountData.row);
         var vatForm = vatModal.find('.modal-content form');
+        var document = $('.card-body input[name="documento"]').val();
         var docForm = vatForm.find('.modal-body [name="documento"]');
-        docForm.val(values['documento']);
+        docForm.val(document);
         vatForm.find('.modal-body [name="cifnif"]').val(values['cifnif']);
         vatForm.find('.modal-body [name="baseimponible"]').val(values['baseimponible']);
         vatForm.find('.modal-body [name="iva"]').val(values['iva']);

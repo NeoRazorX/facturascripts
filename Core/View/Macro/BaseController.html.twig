@@ -121,12 +121,12 @@
 {% set actions = view.getRow('actions') %}
 {% if actions is not empty %}
 {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-<div class="col">
+<div class="col d-flex justify-content-center">
     {% for button in actions.buttons %}
         {% set label = context.i18n.trans(button.label) %}
         {% set hint = context.i18n.trans(button.hint) %}
         {% set hint = popoverTitle(hint, 'bottom') %}
-        {{ button.getHTML(label, formName, hint, 'btn-sm')|raw }}
+        {{ button.getHTML(label, formName, hint, 'btn-sm mr-1')|raw }}
     {% endfor %}
 </div>
 {% endif %}
