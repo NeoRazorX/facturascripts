@@ -53,7 +53,7 @@ class RegularizacionStock extends Base\ModelClass
     /**
      * Initial amount.
      *
-     * @var string|null
+     * @var float|null
      */
     public $cantidadini;
 
