@@ -81,6 +81,12 @@ class EditTransferenciaStock extends ExtendedController\PanelController
      */
     protected function execPreviousAction($view, $action)
     {
+        $status = parent::execPreviousAction($view, $action);
+
+        if ($status == false) {
+            return $status;
+        }
+
         switch ($action) {
             case 'save':
                 if ($this->active == 'EditTransferenciaStock') {
@@ -89,10 +95,8 @@ class EditTransferenciaStock extends ExtendedController\PanelController
                     if ($this->editAction($view) && $view->getModel()->nick == null) {
                         $model = $view->getModel();
                         $model->nick = $this->user->nick;
-                        $model->save();
+                        $status = $model->save();
                     }
-                } else {
-                    return parent::execPreviousAction($view, $action);
                 }
                 break;
 
@@ -100,7 +104,7 @@ class EditTransferenciaStock extends ExtendedController\PanelController
                 return parent::execPreviousAction($view, $action);
         }
 
-        return false;
+        return $status;
     }
 
     /**
