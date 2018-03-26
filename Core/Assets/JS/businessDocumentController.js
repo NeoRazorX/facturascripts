@@ -160,7 +160,8 @@ $(document).ready(function () {
         filters: true,
         dropdownMenu: true,
         preventOverflow: "horizontal",
-        minSpareRows: 5
+        minSpareRows: 5,
+        enterMoves: {row: 0, col: 1}
     });
 
     Handsontable.hooks.add('beforeChange', beforeChange);
