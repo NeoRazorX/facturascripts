@@ -65,10 +65,8 @@
         </group>
     </columns>
     <rows>
-        <row type="footer">
-            <group name="footer1" footer="specials-actions">
-                <button type="action" label="test" color="info" action="testmail" icon="fa-envelope" />
-            </group>
+        <row type="actions">
+            <button type="action" label="test" color="info" action="testmail" icon="fa-envelope" />
         </row>
     </rows>
 </view>
