@@ -33,12 +33,12 @@
             <widget type="text" fieldname="hora" _readonly="true" />
         </column>
         <column name="source-warehouse" order="130">
-            <widget type="select" fieldname="sourcecodalmacen" required="true" _readonly="true">
+            <widget type="select" fieldname="codalmorigen" required="true" _readonly="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
         <column name="destination-warehouse" order="140">
-            <widget type="select" fieldname="destinationcodalmacen" required="true" _readonly="true">
+            <widget type="select" fieldname="codalmdestino" required="true" _readonly="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>

@@ -77,7 +77,7 @@ class LineaTransferenciaStock extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'lineastransstock';
+        return 'lineastranstocks';
     }
 
     /**
@@ -126,7 +126,7 @@ class LineaTransferenciaStock extends Base\ModelClass
     public function install()
     {
         /// we force the check of the stock transfers table
-        //new TransferenciaStock();
+        new TransferenciaStock();
 
         return '';
     }

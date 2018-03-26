@@ -55,14 +55,14 @@ class TransferenciaStock extends Base\ModelClass
      *
      * @var string|null
      */
-    public $sourcecodalmacen;
+    public $codalmorigen;
 
     /**
      * Warehouse where the goods arrives.
      *
      * @var int
      */
-    public $destinationcodalmacen;
+    public $codalmdestino;
 
     /**
      * Nick of the user who has done the regularization.
@@ -102,27 +102,13 @@ class TransferenciaStock extends Base\ModelClass
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        // new TransferenciaStock();
-
-        return '';
-    }
-
-    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        if ($this->sourcecodalmacen === $this->destinationcodalmacen) {
+        if ($this->codalmorigen == $this->codalmdestino) {
             self::$miniLog->alert(self::$i18n->trans('not-use-same-warehouse'));
 
             return false;

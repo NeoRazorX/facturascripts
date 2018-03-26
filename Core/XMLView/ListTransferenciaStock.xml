@@ -33,10 +33,10 @@
             <widget type="text" fieldname="hora" _readonly="true" />
         </column>
         <column name="source-warehouse" order="130">
-            <widget type="text" fieldname="sourcecodalmacen" _readonly="true" />
+            <widget type="text" fieldname="codalmorigen" _readonly="true" />
         </column>
         <column name="destination-warehouse" order="140">
-            <widget type="text" fieldname="destinationcodalmacen" _readonly="true" />
+            <widget type="text" fieldname="codalmdestino" _readonly="true" />
         </column>
         <column name="user" order="150">
             <widget type="text" fieldname="usuario" _readonly="true" />

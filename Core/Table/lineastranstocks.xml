@@ -10,7 +10,7 @@
         <name>idlinea</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('lineastransstock_idlinea_seq'::regclass)</default>
+        <default>nextval('lineastranstocks_idlinea_seq'::regclass)</default>
     </column>
     <column>
         <name>idtrans</name>

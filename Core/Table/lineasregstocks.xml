@@ -10,7 +10,7 @@
         <name>idreg</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('lineasregstocks_id_seq'::regclass)</default>
+        <default>nextval('lineasregstocks_idreg_seq'::regclass)</default>
     </column>
     <column>
         <name>fecha</name>

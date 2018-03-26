@@ -23,12 +23,12 @@
         <null>NO</null>
     </column>
     <column>
-        <name>sourcecodalmacen</name>
+        <name>codalmorigen</name>
         <type>character varying(4)</type>
         <comment>Warehouse from which the goods leave</comment>
     </column>
     <column>
-        <name>destinationcodalmacen</name>
+        <name>codalmdestino</name>
         <type>character varying(4)</type>
         <comment>Warehouse where the goods arrives</comment>
     </column>

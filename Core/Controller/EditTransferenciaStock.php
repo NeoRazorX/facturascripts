@@ -24,6 +24,12 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Regularization of the stock of a warehouse of articles on a specific date.
  *
+ * Fix: When creating the field id_reg is not started, until it is saved.
+ * The detail tab is activated, trying to save the data with id_reg = 0, and
+ * giving referential integrity error.
+ * The tab is activated by pressing save, even if an error occurs that does
+ * not allow saving.
+ *
  * @author Rafael San José <info@rsanjoseo.com>
  */
 class EditTransferenciaStock extends ExtendedController\PanelController

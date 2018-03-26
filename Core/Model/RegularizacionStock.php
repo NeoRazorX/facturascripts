@@ -158,8 +158,6 @@ class RegularizacionStock extends Base\ModelClass
      */
     public function install()
     {
-        // new RegularizacionStock();
-
         return '';
     }
 }
