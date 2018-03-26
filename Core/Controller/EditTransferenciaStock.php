@@ -83,7 +83,7 @@ class EditTransferenciaStock extends ExtendedController\PanelController
     {
         $status = parent::execPreviousAction($view, $action);
 
-        if ($status == false) {
+        if ($status === false) {
             return $status;
         }
 
