@@ -1093,5 +1093,15 @@
     "balance-account": "Balance account",
     "balance-account-abreviated": "Balance account abreviated",
     "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
-    "document-states": "Document states"
+    "document-states": "Document states",
+    "vat-register": "VAT registration",
+    "hint-vat-register": "View/Modify VAT registration",
+    "clone-account-entry": "Duplicate the accounting entry",
+    "lock-unlock-account-entry": "Block/Unlock the accounting entry",
+    "vat-document": "VAT Document",
+    "desc-vat-document": "Identifier of the document where the tax is applied",
+    "desc-vat-id": "Tax identifier",
+    "tax-base": "Tax base",
+    "pct-vat": "VAT rate",
+    "pct-surcharge": "Surcharge rate"
 }
