@@ -354,12 +354,16 @@ abstract class BusinessDocument extends ModelClass
          * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if (Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
-            return true;
+        if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+            self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+            return false;
         }
 
-        self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
-
-        return false;
+        $estadoDoc = new EstadoDocumento();
+        if($estadoDoc->loadFromCode($this->idestado)) {
+            $this->editable = $estadoDoc->editable;
+        }
+        
+        return true;
     }
 }

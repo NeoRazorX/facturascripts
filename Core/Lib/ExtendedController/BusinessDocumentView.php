@@ -221,7 +221,7 @@ class BusinessDocumentView extends BaseView
         }
 
         if ($this->save()) {
-            $result = $this->saveLines($newLines);
+            $result = $this->model->editable ? $this->saveLines($newLines) : 'OK';
         } else {
             $result = 'ERROR';
         }
