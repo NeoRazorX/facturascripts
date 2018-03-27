@@ -273,9 +273,9 @@ $(document).ready(function () {
 
         gridObject.updateSettings({
             enterMoves: function() {
-                var selected = getColumnSelected();
-                if (selected === (gridObject.countCols() - 1)) {
-                    selectCell(selected + 1, 0);
+                var selected = gridObject.getSelected()[0];
+                if (selected[1] === (gridObject.countCols() - 1)) {
+                    selectCell(selected[0] + 1, 0);
                     return { row: 0, col: 0 };
                 }
 
