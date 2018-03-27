@@ -102,14 +102,47 @@ function getGridFieldData(row, fieldName) {
     return documentLineData['rows'][physicalRow][fieldName];
 }
 
+/* Return row values */
+function getGridRowValues(row) {
+    var physicalRow = gridObject.toPhysicalRow(row);
+    return documentLineData['rows'][physicalRow];
+}
+
+/* Set row value */
+function setGridRowValues(row, values) {
+    var physicalRow = gridObject.toPhysicalRow(row);
+    for (var i = 0, max = values.length; i < max; i++) {
+        documentLineData['rows'][physicalRow][values[i].field] = values[i].value;
+    }
+    gridObject.render();
+}
+
 /* Return field name for a column */
 function getGridColumnName(col) {
     var physicalColumn = gridObject.toPhysicalColumn(col);
     return documentLineData['columns'][physicalColumn]['data'];
 }
 
+/* Select cell range */
 function selectCell(row, col, endRow, endCol, scrollToCell, changeListener) {
     return gridObject.selectCell(row, col, endRow, endCol, scrollToCell, changeListener);
+}
+
+/* Deselect actual selected cell */
+function deselectCell() {
+    gridObject.deselectCell();
+}
+
+/* Return actual row selected */
+function getRowSelected() {
+    var selected = gridObject.getSelected();
+    return selected.length > 0 ? gridObject.getSelected()[0][0] : null;
+}
+
+/* Return actual column selected */
+function getColumnSelected() {
+    var selected = gridObject.getSelected();
+    return selected.length > 0 ? gridObject.getSelected()[0][1] : null;
 }
 
 /*
@@ -234,7 +267,20 @@ $(document).ready(function () {
             manualRowMove: true,
             manualColumnMove: false,
             minSpareRows: 1,
-            minRows: 7
+            minRows: 7,
+            enterMoves: {row: 0, col: 1}
+        });
+
+        gridObject.updateSettings({
+            enterMoves: function() {
+                var selected = getColumnSelected();
+                if (selected === (gridObject.countCols() - 1)) {
+                    selectCell(selected + 1, 0);
+                    return { row: 0, col: 0 };
+                }
+
+                return { row: 0, col: 1 };
+            }
         });
 
         Handsontable.hooks.add('afterSelection', grid_afterSelection);

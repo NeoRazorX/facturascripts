@@ -121,12 +121,12 @@
 {% set actions = view.getRow('actions') %}
 {% if actions is not empty %}
 {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-<div class="col">
+<div class="col d-flex justify-content-center">
     {% for button in actions.buttons %}
         {% set label = context.i18n.trans(button.label) %}
         {% set hint = context.i18n.trans(button.hint) %}
         {% set hint = popoverTitle(hint, 'bottom') %}
-        {{ button.getHTML(label, formName, hint, 'btn-sm')|raw }}
+        {{ button.getHTML(label, formName, hint, 'btn-sm mr-1')|raw }}
     {% endfor %}
 </div>
 {% endif %}
@@ -369,7 +369,7 @@
     {% set formName = context.indexView ~ '-' ~ group.name %}
     {% set model = view.getModel() %}
 
-    <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form name="{{ formName }}" action="{{ context.fsc.getURL('edit') }}" method="post" enctype="multipart/form-data" class="form" role="form">

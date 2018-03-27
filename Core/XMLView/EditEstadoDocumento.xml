@@ -43,7 +43,16 @@
                     <values title="supplier-invoice">FacturaProveedor</values>
                 </widget>
             </column>
-            <column name="generate-doc-type" numcolumns="4" order="130">
+            <column name="update-stock" order="130">
+                <widget type="select" fieldname="actualizastock">
+                    <values title="book">-2</values>
+                    <values title="subtract">-1</values>
+                    <values title="do-nothing">0</values>
+                    <values title="add">1</values>
+                    <values title="foresee">2</values>
+                </widget>
+            </column>
+            <column name="generate-doc-type" numcolumns="4" order="140">
                 <widget type="select" fieldname="generadoc">
                     <values title="customer-estimation">PresupuestoCliente</values>
                     <values title="customer-order">PedidoCliente</values>
@@ -55,16 +64,12 @@
                     <values title="supplier-invoice">FacturaProveedor</values>
                 </widget>
             </column>
-            <column name="default" order="140">
-                <widget type="checkbox" fieldname="predeterminado"></widget>
-            </column>
             <column name="editable" order="150">
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>
-            <column name="update-stock" order="160">
-                <widget type="checkbox" fieldname="actualizastock"></widget>
+            <column name="default" order="160">
+                <widget type="checkbox" fieldname="predeterminado"></widget>
             </column>
         </group>
     </columns>
 </view>
-

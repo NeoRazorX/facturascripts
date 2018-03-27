@@ -84,8 +84,13 @@ class WidgetItemText extends WidgetItem
         $specialAttributes = $this->specialAttributes();
 
         switch ($this->type) {
+            case 'bbcode':
+                $html = '<textarea name="' . $this->fieldName . '" class="form-control bbcode" rows="10" '
+                    . $specialAttributes . '>' . $value . '</textarea>';
+                break;
+            
             case 'html':
-                $html = '<textarea name="' . $this->fieldName . '" class="form-control summernote" rows="3" '
+                $html = '<textarea name="' . $this->fieldName . '" class="form-control htmleditor" rows="10" '
                     . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -124,7 +124,7 @@ class MenuItem
 
         $html = empty($parent) ? '<li class="nav-item dropdown' . $active . '">'
             . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown"'
-            . ' aria-haspopup="true" aria-expanded="false">&nbsp; ' . \ucfirst($this->title) . '</a>'
+            . ' aria-haspopup="true" aria-expanded="false">' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">' : '<li class="dropdown-submenu">'
             . '<a class="dropdown-item' . $active . '" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw"'
             . ' aria-hidden="true"></i> &nbsp; ' . \ucfirst($this->title) . '</a>'

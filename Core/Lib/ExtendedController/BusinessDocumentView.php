@@ -170,7 +170,6 @@ class BusinessDocumentView extends BaseView
             $this->model->loadFromCode($code);
         }
 
-        $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
         $this->title = $this->model->codigo;
@@ -221,7 +220,6 @@ class BusinessDocumentView extends BaseView
             return $result;
         }
 
-        $new = empty($this->model->primaryColumnValue());
         if ($this->save()) {
             $result = $this->saveLines($newLines);
         } else {
@@ -230,8 +228,7 @@ class BusinessDocumentView extends BaseView
 
         if ($result === 'OK') {
             $this->documentTools->recalculate($this->model);
-            $result = $this->model->save() ? 'OK' : 'ERROR';
-            return $new ? 'NEW:' . $this->model->url() : $result;
+            return $this->model->save() ? 'OK:' . $this->model->url() : 'ERROR';
         }
 
         $miniLog = new MiniLog();

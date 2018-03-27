@@ -84,10 +84,8 @@ function documentSave() {
         dataType: "text",
         data: data,
         success: function (results) {
-            if (results === "OK") {
-                location.reload();
-            } else if (results.substring(0, 4) === "NEW:") {
-                location.href = results.substring(4);
+            if (results.substring(0, 3) === "OK:") {
+                location.href = results.substring(3);
             } else {
                 alert(results);
             }
@@ -162,7 +160,8 @@ $(document).ready(function () {
         filters: true,
         dropdownMenu: true,
         preventOverflow: "horizontal",
-        minSpareRows: 5
+        minSpareRows: 5,
+        enterMoves: {row: 0, col: 1}
     });
 
     Handsontable.hooks.add('beforeChange', beforeChange);

@@ -32,11 +32,11 @@
             <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="% IVA" numcolumns="2" order="120">
-                <widget type="number" fieldname="iva" required="true" />
+            <column name="percentage-vat" numcolumns="2" order="120">
+                <widget type="number" decimal="2" fieldname="iva" required="true" />
             </column>
-            <column name="% Recargo" numcolumns="2" order="130">
-                <widget type="number" fieldname="recargo" />
+            <column name="percentage-surcharge" numcolumns="2" order="130">
+                <widget type="number" decimal="2" fieldname="recargo" />
             </column>
         </group>
     </columns>

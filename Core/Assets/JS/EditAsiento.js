@@ -16,23 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var accountDescription, accountBalance, unbalance, vatRegister;
+var vatModal = null;
 var accountGraph = null;
-var accountDescription, accountBalance, unbalance;
+var accountData = {'subaccount': '', 'vat': [], 'row': null};
 
 /*
  * EVENTS MANAGER Funtions
  */
 function data_afterSelection(row1, col1, row2, col2, preventScrolling) {
     if (col1 === col2 && row1 === row2) {
-        var fieldName = getGridColumnName(col1);
-        if (fieldName === 'codsubcuenta') {
-            var account = getGridFieldData(row1, fieldName);
-            loadAccountData(account);
+        accountData.row = getRowSelected();
+        var subAccount = getGridFieldData(row1, 'codsubcuenta');
+        if (subAccount !== accountData.subaccount) {
+            loadAccountData(subAccount, 'afterSelection');
         }
     }
 }
 
-function data_beforeChange(changes, source) {
+function data_afterChange(changes, source) {
     if (changes === null) {
         return;
     }
@@ -42,7 +44,7 @@ function data_beforeChange(changes, source) {
             switch (changes[i][1]) {
                 case 'codsubcuenta':
                     var account = (max === 1) ? changes[0][3] : null;
-                    loadAccountData(account);
+                    loadAccountData(account, 'afterChange');
                     break;
 
                 case 'debe':
@@ -60,6 +62,13 @@ function data_beforeChange(changes, source) {
     }
 }
 
+function data_beforeKeyDown(event) {
+    if (event.keyCode === 13) {
+    }
+    if (event.keyCode === 9) {
+    }
+}
+
 /*
  * AUXILIAR Funtions
  */
@@ -67,8 +76,9 @@ function data_beforeChange(changes, source) {
  * Load account data from server
  *
  * @param {string} account
+ * @param {string} source
  */
-function loadAccountData(account) {
+function loadAccountData(account, source) {
     if (account === null || account === '') {
         clearAccountData();
         return;
@@ -76,6 +86,7 @@ function loadAccountData(account) {
 
     var exercise = $('input[name=codejercicio]')[0];
     var data = {
+        source: source,
         action: 'account-data',
         codsubcuenta: account,
         codejercicio: exercise.value
@@ -89,9 +100,13 @@ function loadAccountData(account) {
  * @param {json} data
  */
 function setAccountData(data) {
+    // Save subAccount data
+    accountData.subaccount = data.subaccount;
+    accountData.vat = data.vat;
+
     // Update data labels
-    accountDescription.innerText = data.description;
-    accountBalance.innerText = data.balance;
+    accountDescription.textContent = data.description;
+    accountBalance.textContent = data.balance;
 
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
@@ -99,14 +114,30 @@ function setAccountData(data) {
         dataset.data = Object.values(data.detail);
     });
     accountGraph.update();
+
+    // Calculate VAT Process
+    var hasVAT = (Object.keys(data.vat).length > 0);
+    vatRegister.disabled = (hasVAT === false);
+    if (data.source === 'afterChange' && accountData.row !== null) {
+        setGridRowValues(accountData.row, valuesForNewAccount(hasVAT));      // Assign new VAT to data grid record
+        if (hasVAT) {
+            showVATRegister(null, 'VAT-Register');
+        }
+    }
 }
 
 /**
  * Clear data and graphic of subaccount
  */
 function clearAccountData() {
-    accountDescription.innerText = '';
-    accountBalance.innerText = '';
+    // Clear subAccount data
+    accountData.subaccount = '';
+    accountData.vat = [];
+
+    // Update data labels
+    accountDescription.textContent = '';
+    accountBalance.textContent = '';
+    vatRegister.disabled = true;
 
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
@@ -122,8 +153,17 @@ function clearAccountData() {
  * @param {number} balance
  */
 function setUnbalance(balance) {
-    var amount = Number(unbalance.innerText) + Number(balance);
-    unbalance.innerText = amount.toFixed(2);
+    var amount = getUnbalance() + Number(balance);
+    unbalance.textContent = amount.toFixed(2);
+}
+
+/**
+ * Get actual unbalance from accounting entries
+ *
+ * @returns {number}
+ */
+function getUnbalance() {
+    return Number(unbalance.textContent);
 }
 
 /**
@@ -138,6 +178,108 @@ function calculateEntryUnbalance() {
     setUnbalance(balance.toFixed(2));
 }
 
+/**
+ * Assign initial values to new accounting entry
+ *
+ * @param {boolean} hasVAT
+ * @returns {Array}
+ */
+function valuesForNewAccount(hasVAT) {
+    var result = [];
+    if (accountData.row > 0) {
+        // Calculate values from before row
+        var values = getGridRowValues(accountData.row - 1);
+        var unbalance = getUnbalance();
+        var offsetting = values['codcontrapartida'];
+        if (offsetting === accountData.subaccount) {
+            offsetting = values['codsubcuenta'];
+        }
+
+        // Set initial values
+        result.push({'field': 'concepto', 'value': values['concepto']});
+        result.push({'field': 'codcontrapartida', 'value': offsetting });
+
+        if (unbalance < 0) {
+            result.push({'field': 'debe', 'value': (unbalance * -1)});
+            result.push({'field': 'haber', 'value': 0.00});
+        } else {
+            result.push({'field': 'debe', 'value': 0.00});
+            result.push({'field': 'haber', 'value': unbalance});
+        }
+
+        // Set VAT values
+        if (hasVAT) {
+            result.push({'field': 'iva', 'value': accountData.vat.vat });
+            result.push({'field': 'recargo', 'value': accountData.vat.surcharge });
+            result.push({'field': 'baseimponible', 'value': values['debe'] + values['haber']});
+        };
+    };
+    return result;
+}
+
+/**
+ * Hide VAT Register form and save data into grid data
+ *
+ * @returns {Boolean}
+ */
+function saveVATRegister() {
+    var vatForm = vatModal.find('.modal-content form');
+    var taxBase = vatForm.find('.modal-body [name="baseimponible"]').val();
+    var pctVat = vatForm.find('.modal-body [name="iva"]').val();
+    var pctSurcharge = vatForm.find('.modal-body [name="recargo"]').val();
+    var taxVat = (taxBase * (pctVat / 100.00)) + (taxBase * (pctSurcharge / 100.00));
+    var field = Number(getGridFieldData(accountData.row, 'debe')) > 0 ? 'haber' : 'debe';
+
+    var values = [
+        {'field': 'documento', 'value': vatForm.find('.modal-body [name="documento"]').val() },
+        {'field': 'cifnif', 'value': vatForm.find('.modal-body [name="cifnif"]').val() },
+        {'field': 'baseimponible', 'value': taxBase },
+        {'field': 'iva', 'value': pctVat },
+        {'field': 'recargo', 'value': pctSurcharge },
+        {'field': 'debe', 'value': 0.00 },
+        {'field': 'haber', 'value': 0.00 },
+        {'field': field, 'value': taxVat }
+    ];
+    setGridRowValues(accountData.row, values);
+    vatModal.modal('hide');
+    selectCell(accountData.row + 1, 0, accountData.row + 1, 0, true);
+    return false;
+}
+
+/**
+ * Show VAT Register for account entry
+ *
+ * @param {string} mainForm
+ * @param {string} action
+ */
+function showVATRegister(mainForm, action) {
+    if (accountData.row !== null) {
+        // Set form object, first time
+        if (vatModal === null) {
+            vatModal = $('#' + action);
+        }
+
+        // Load data from documentLineData and master document to modal form
+        var values = getGridRowValues(accountData.row);
+        var vatForm = vatModal.find('.modal-content form');
+        var document = $('.card-body input[name="documento"]').val();
+        var docForm = vatForm.find('.modal-body [name="documento"]');
+        docForm.val(document);
+        vatForm.find('.modal-body [name="cifnif"]').val(values['cifnif']);
+        vatForm.find('.modal-body [name="baseimponible"]').val(values['baseimponible']);
+        vatForm.find('.modal-body [name="iva"]').val(values['iva']);
+        vatForm.find('.modal-body [name="recargo"]').val(values['recargo']);
+
+        // Redired submit action
+        vatForm[0].onsubmit = saveVATRegister;
+
+        // Show VAT modal form
+        deselectCell();          // Force deselect grid data
+        vatModal.modal('show');
+        docForm.focus();
+    }
+}
+
 /*
  * Document Ready. Create and configure Objects.
  */
@@ -147,13 +289,16 @@ $(document).ready(function () {
         accountDescription = document.getElementById('account-description');
         accountBalance = document.getElementById('account-balance');
         unbalance = document.getElementById('unbalance');
+        vatRegister = document.getElementById('vat-register-btn');
+        vatRegister.disabled = true;
 
         // Calculate initial unbalance
         calculateEntryUnbalance();
 
         // Add control events to Grid Controller
-        addEvent('beforeChange', data_beforeChange);
+        addEvent('afterChange', data_afterChange);
         addEvent('afterSelection', data_afterSelection);
+        addEvent('beforeKeyDown', data_beforeKeyDown);
 
         // Graphic bars
         var ctx = document.getElementById('detail-balance');

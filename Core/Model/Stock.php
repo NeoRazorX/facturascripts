@@ -67,21 +67,21 @@ class Stock extends Base\ModelClass
     public $cantidad;
 
     /**
-     * Reserved.
+     * Reserved on customer orders.
      *
      * @var float|int
      */
     public $reservada;
 
     /**
-     * Available.
+     * Available. Is the quantity minus reserved.
      *
      * @var float|int
      */
     public $disponible;
 
     /**
-     * Pending receipt.
+     * Pending receipt. Merchandise pending receipt from the supplier.
      *
      * @var float|int
      */
@@ -100,27 +100,6 @@ class Stock extends Base\ModelClass
      * @var float|int
      */
     public $stockmax;
-
-    /**
-     * Amount last regularization.
-     *
-     * @var float|int
-     */
-    public $cantidadultreg;
-
-    /**
-     * Last regularization date.
-     *
-     * @var string
-     */
-    public $fechaultreg;
-
-    /**
-     * Last regularization time.
-     *
-     * @var string
-     */
-    public $horaultreg;
 
     /**
      * Location.
@@ -171,13 +150,12 @@ class Stock extends Base\ModelClass
     {
         parent::clear();
         $this->nombre = '';
-        $this->cantidad = 0;
-        $this->reservada = 0;
-        $this->disponible = 0;
-        $this->pterecibir = 0;
-        $this->stockmin = 0;
-        $this->stockmax = 0;
-        $this->cantidadultreg = 0;
+        $this->cantidad = 0.0;
+        $this->reservada = 0.0;
+        $this->disponible = 0.0;
+        $this->pterecibir = 0.0;
+        $this->stockmin = 0.0;
+        $this->stockmax = 0.0;
     }
 
     /**

@@ -61,18 +61,12 @@
                 <widget type="text" fieldname="equivalencia"/>
             </column>
         </group>
-        <group name="stock" numcolumns="6">
-            <column name="stockfis" title="physical-stock" numcolumns="4" order="100">
+        <group name="stock" numcolumns="3">
+            <column name="stockfis" title="physical-stock" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
-            <column name="stockmin" title="minimum-stock" numcolumns="4" order="100">
-                <widget type="number" fieldname="stockmin"/>
-            </column>
-            <column name="stockmax" title="maximum-stock" numcolumns="4" order="210">
-                <widget type="number" fieldname="stockmax"/>
-            </column>
         </group>
-        <group name="options" numcolumns="2">
+        <group name="options" numcolumns="3">
             <column name="nostock" title="no-stock" numcolumns="12" order="100">
                 <widget type="checkbox" fieldname="nostock" />
             </column>
@@ -80,7 +74,7 @@
                 <widget type="checkbox" fieldname="trazabilidad"/>
             </column>
         </group>
-        <group name="options2" numcolumns="2">
+        <group name="options2" numcolumns="3">
             <column name="secompra" title="for-purchase" numcolumns="12" order="120">
                 <widget type="checkbox" fieldname="secompra" />
             </column>
@@ -88,7 +82,7 @@
                 <widget type="checkbox" fieldname="sevende" />
             </column>
         </group>
-        <group name="options3" numcolumns="2">
+        <group name="options3" numcolumns="3">
             <column name="publico" title="public" numcolumns="12" order="140">
                 <widget type="checkbox" fieldname="publico" />
             </column> 

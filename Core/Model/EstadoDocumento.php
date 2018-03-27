@@ -36,9 +36,15 @@ class EstadoDocumento extends Base\ModelClass
     /**
      * True if this states must update product stock.
      *
-     * @var bool
+     * @var int
      */
     public $actualizastock;
+
+    /**
+     *
+     * @var bool
+     */
+    public $bloquear;
 
     /**
      * If the state is editable or not.
@@ -87,10 +93,25 @@ class EstadoDocumento extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->actualizastock = false;
+        $this->actualizastock = 0;
+        $this->bloquear = false;
         $this->editable = true;
         $this->predeterminado = false;
         $this->tipodoc = 'PedidoProveedor';
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function delete()
+    {
+        if ($this->bloquear) {
+            self::$miniLog->alert(self::$i18n->trans('locked'));
+            return false;
+        }
+
+        return parent::delete();
     }
 
     /**
@@ -101,6 +122,20 @@ class EstadoDocumento extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'idestado';
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function save()
+    {
+        if ($this->bloquear) {
+            self::$miniLog->alert(self::$i18n->trans('locked'));
+            return false;
+        }
+
+        return parent::save();
     }
 
     /**
@@ -121,6 +156,11 @@ class EstadoDocumento extends Base\ModelClass
     public function test()
     {
         $this->nombre = Utils::noHtml($this->nombre);
+
+        if (empty($this->tipodoc) || empty($this->nombre)) {
+            return false;
+        }
+
         return true;
     }
 }

@@ -28,107 +28,111 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG')|slice(0, 2) }}" xml:lang="{{ constant('FS_LANG')|slice(0, 2) }}" >
     <head>
         {% block meta %}
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>{{ i18n.trans(fsc.title) | capitalize }}</title>
-        <meta name="description" content="{{ i18n.trans('meta-description') }}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="generator" content="FacturaScripts" />
-        <meta name="robots" content="noindex" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title>{{ i18n.trans(fsc.title) | capitalize }}</title>
+            <meta name="description" content="{{ i18n.trans('meta-description') }}" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta name="generator" content="FacturaScripts" />
+            <meta name="robots" content="noindex" />
         {% endblock %}
         {% block icons %}
-        <link rel="shortcut icon" href="{{ asset('Dinamic/Assets/Images/favicon.ico') }}" />
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}" />
+            <link rel="shortcut icon" href="{{ asset('Dinamic/Assets/Images/favicon.ico') }}" />
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}" />
         {% endblock %}
         {% block css %}
-        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('node_modules/font-awesome/css/font-awesome.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
+            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('node_modules/font-awesome/css/font-awesome.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
         {% endblock %}
         {# Add Specific Controller CSS #}
         {% for css in fsc.assets['css'] %}
-        <link rel="stylesheet" href="{{ css }}" />
+            <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
         {% block javascript %}
-        <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ asset('node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-        <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-        <script src="{{ asset('node_modules/bootbox/bootbox.min.js') }}"></script>
-        <script src="{{ asset('node_modules/jscolor-picker/jscolor.min.js') }}"></script>
-        <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('Dinamic/Assets/JS/custom.js') }}"></script>
+            <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+            <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('node_modules/bootbox/bootbox.min.js') }}"></script>
+            <script src="{{ asset('node_modules/jscolor-picker/jscolor.min.js') }}"></script>
+            <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
+            <script src="{{ asset('Dinamic/Assets/JS/custom.js') }}"></script>
         {% endblock %}
         {# Add Specific Controller JS #}
         {% for js in fsc.assets['js'] %}
-        <script src="{{ js }}"></script>
+            <script src="{{ js }}"></script>
         {% endfor %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
     {% block fullBody %}
-    <body>
-        {% block navbar %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top d-print-none">
-            {% block navbarContent %}
-            <a class="navbar-brand" href="index.php">
-                <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
-                <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto }}</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="nav navbar-nav mr-auto">
-                    {% for menuItem in menuManager.getMenu() %}
-                    {{ menuItem.getHTML()|raw }}
-                    {% endfor %}
-                </ul>
-                <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-                    <li class="nav-item dropdown">
-                        <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="user-list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user-circle d-xs-none" aria-hidden="true"></i>
-                            <span class="d-none d-xl-inline">&nbsp;{{ fsc.user.nick }}</span>
+        <body>
+            {% block navbar %}
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top d-print-none">
+                    {% block navbarContent %}
+                        <a class="navbar-brand" href="index.php">
+                            <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
+                            <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto }}</span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
-                            <a class="dropdown-item" href="{{ fsc.user.url() }}">
-                                <i class="fa fa-user-circle fa-fw" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="?logout=TRUE">
-                                <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
-                            </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="nav navbar-nav mr-auto">
+                                {% for menuItem in menuManager.getMenu() %}
+                                    {{ menuItem.getHTML()|raw }}
+                                {% endfor %}
+                            </ul>
+                            <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="user-list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-user-circle d-xs-none" aria-hidden="true"></i>
+                                        <span class="d-none d-xl-inline">&nbsp;{{ fsc.user.nick }}</span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
+                                        <a class="dropdown-item" href="{{ fsc.user.url() }}">
+                                            <i class="fa fa-user-circle fa-fw" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="?logout=TRUE">
+                                            <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                            {% if template != 'MegaSearch.html.twig' %}
+                                <form action="MegaSearch" method="post" class="form-inline my-2 my-lg-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="query" placeholder="{{ i18n.trans('search') }}"/>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-info" type="button">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% endif %}
                         </div>
-                    </li>
-                </ul>
-                {% if template != 'MegaSearch.html.twig' %}
-                <form action="MegaSearch" method="post" class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="text" name="query" placeholder="{{ i18n.trans('search') }}" aria-label="Search"/>
-                    <button class="btn btn-outline-info my-2 my-sm-0 d-none d-xl-block" type="submit">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                    </button>
-                </form>
-                {% endif %}
-            </div>
+                    {% endblock %}
+                </nav>
             {% endblock %}
-        </nav>
-        {% endblock %}
-        <br/>
-        {% block messages %}
-        {% from 'Macro/Utils.html.twig' import message as show_message %}
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
-                    {{ show_message(log, ['warning'], 'warning') }}
-                    {{ show_message(log, ['notice'], 'success') }}
-                    {{ show_message(log, ['info'], 'info') }}
+            <br/>
+            {% block messages %}
+                {% from 'Macro/Utils.html.twig' import message as show_message %}
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+                            {{ show_message(log, ['warning'], 'warning') }}
+                            {{ show_message(log, ['notice'], 'success') }}
+                            {{ show_message(log, ['info'], 'info') }}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        {% endblock %}
+            {% endblock %}
         {% block bodyHeaderOptions %}{% endblock %}
-        {% block body %}{% endblock %}
-        <br/>
-        {{ debugBarRender.render()|raw }}
-    </body>
-    {% endblock %}
+    {% block body %}{% endblock %}
+    <br/>
+    {{ debugBarRender.render()|raw }}
+</body>
+{% endblock %}
 </html>

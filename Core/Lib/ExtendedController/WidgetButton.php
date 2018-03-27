@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,6 +76,13 @@ class WidgetButton implements VisualItemInterface
     public $color;
 
     /**
+     * Unique ID for button
+     *
+     * @var string
+     */
+    public $id;
+
+    /**
      * Create and load the structure of attributes from a XML file.
      *
      * @param \SimpleXMLElement $button
@@ -117,6 +124,7 @@ class WidgetButton implements VisualItemInterface
         $this->onClick = '';
         $this->color = 'light';
         $this->hint = '';
+        $this->id = '';
     }
 
     /**
@@ -128,26 +136,37 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
+     * Return optional atribute value
+     *
+     * @param string $field
+     * @param mixed  $atributes
+     * 
+     * @return string
+     */
+    private function getOptionalAtribute($field, &$atributes): string
+    {
+        if (!empty($atributes->{$field})) {
+            return (string) $atributes->{$field};
+        }
+        return '';
+    }
+
+    /**
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $button
      */
     public function loadFromXML($button)
     {
-        $widget_atributes = $button->attributes();
-        $this->type = (string) $widget_atributes->type;
-        $this->label = (string) $widget_atributes->label;
-        $this->icon = (string) $widget_atributes->icon;
-        $this->action = (string) $widget_atributes->action;
-        $this->hint = (string) $widget_atributes->hint;
-
-        if (!empty($widget_atributes->color)) {
-            $this->color = (string) $widget_atributes->color;
-        }
-
-        if (!empty($widget_atributes->onclick)) {
-            $this->onClick = (string) $widget_atributes->onclick;
-        }
+        $widgetAtributes = $button->attributes();
+        $this->type = (string) $widgetAtributes->type;
+        $this->label = (string) $widgetAtributes->label;
+        $this->icon = (string) $widgetAtributes->icon;
+        $this->action = (string) $widgetAtributes->action;
+        $this->hint = (string) $widgetAtributes->hint;
+        $this->id = $this->getOptionalAtribute('id', $widgetAtributes);
+        $this->color = $this->getOptionalAtribute('color', $widgetAtributes);
+        $this->onClick = $this->getOptionalAtribute('onclick', $widgetAtributes);
     }
 
     /**
@@ -171,9 +190,19 @@ class WidgetButton implements VisualItemInterface
      *
      * @return string
      */
-    private function getIconHTML()
+    private function getIconHTML(): string
     {
         return empty($this->icon) ? '' : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
+    }
+
+    /**
+     * Returns the HTML code for the id
+     *
+     * @return string
+     */
+    private function getIdHTML(): string
+    {
+        return empty($this->id) ? '' : ' id="' . $this->id . '" ';
     }
 
     /**
@@ -216,6 +245,7 @@ class WidgetButton implements VisualItemInterface
     private function getCalculateHTML($label, $value, $hint)
     {
         $html = '<button type="button" class="btn btn-' . $this->color . '" '
+            . $this->getIdHTML()
             . $this->getOnClickHTML($this->onClick) . ' style="margin-right: 5px;" ' . $hint . '>'
             . $this->getIconHTML()
             . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
@@ -239,6 +269,7 @@ class WidgetButton implements VisualItemInterface
         $param = '\'' . $formName . '\',\'' . $this->action . '\'';
 
         $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
+            . $this->getIdHTML()
             . $this->getOnClickHTML($onclick, $param) . $hint . '>'
             . $this->getIconHTML()
             . $label
@@ -258,6 +289,7 @@ class WidgetButton implements VisualItemInterface
     private function getModalHTML($label, $class = 'col-sm-auto')
     {
         $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
+            . $this->getIdHTML()
             . ' data-toggle="modal" data-target="#' . $this->action . '">'
             . $this->getIconHTML()
             . $label

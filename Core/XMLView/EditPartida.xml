@@ -59,8 +59,33 @@
 
     <rows>
         <row type="actions">
-            <button type="action" label="lock-unlock" color="warning" action="lock" hint="lock-unlock-account-entry" icon="fa-lock" />
+            <button type="action" id="vat-register-btn" label="vat-register" color="info" action="VAT-Register" onclick="showVATRegister" hint="hint-vat-register" icon="fa-book" />
             <button type="action" label="clone" color="info" action="clone" hint="clone-account-entry" icon="fa-clone" />
+            <button type="action" label="lock-unlock" color="warning" action="lock" hint="lock-unlock-account-entry" icon="fa-lock" />
         </row>
     </rows>
+
+    <modals>
+        <group name="VAT-Register" title="VAT-Register" icon="fa-book">
+            <column name="vat-document" numcolumns="6" description="desc-vat-document">
+                <widget type="text" fieldname="documento" required="true" />
+            </column>
+
+            <column name="vat-id" numcolumns="6" description="desc-vat-id">
+                <widget type="text" fieldname="cifnif" required="true" />
+            </column>
+
+            <column name="tax-base" numcolumns="6">
+                <widget type="money" decimal="2" fieldname="baseimponible" />
+            </column>
+
+            <column name="pct-vat" numcolumns="3">
+                <widget type="number" decimal="2" fieldname="iva" />
+            </column>
+
+            <column name="pct-surcharge" numcolumns="3">
+                <widget type="number" decimal="2" fieldname="recargo" />
+            </column>
+        </group>
+    </modals>
 </view>

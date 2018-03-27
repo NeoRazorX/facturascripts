@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.navbar .dropdown-toggle::after {
+    display: none;
+}
+
 .table th {
     border-top: none;
 }
