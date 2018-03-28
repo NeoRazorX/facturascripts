@@ -74,8 +74,13 @@
             + '<input type="hidden" name="option" value="' + option + '"/>');
         $('#formSearch' + tabActive).submit();
     }
-    function goToOptions() {
-        window.location.href = 'EditPageOption?code=' + tabActive;
+    function goToOptions(url) {
+        var previous = '';
+        if (typeof url !== 'undefined') {
+            var tab = tabActive.substring(4);
+            previous = '&url=' + encodeURIComponent(url + '#' + tab);
+        }
+        window.location.href = 'EditPageOption?code=' + tabActive + previous;
     }
     function insertRecord() {
         var url = { {{ fsc.getStringURLs('new') | raw }} };
@@ -131,6 +136,7 @@
 
 {# Calculate common values #}
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
+{% set actual_url = fsc.views[fsc.active].getModel().url() %}
 
 {# Macros Template Imports #}
 {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
@@ -168,7 +174,7 @@
                    <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions()" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ actual_url }}')" {{ popoverTitle(options_title, 'bottom') }}>
                    <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
