@@ -31,7 +31,6 @@
             <column name="tipo" title="type" numcolumns="12" order="110">
                 <widget type="select" fieldname="tipo">
                     <values title="simple">simple</values>
-                    <values title="with-attributes">attributes</values>
                 </widget>
             </column>
         </group>
