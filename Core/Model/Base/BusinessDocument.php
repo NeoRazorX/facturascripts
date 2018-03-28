@@ -83,6 +83,19 @@ abstract class BusinessDocument extends ModelClass
     public $codserie;
 
     /**
+     * indicates whether the document can be modified
+     *
+     * @var bool
+     */
+    public $editable;
+
+    /**
+     *
+     * @var EstadoDocumento[]
+     */
+    private static $estados;
+
+    /**
      * Date of the document.
      *
      * @var string
@@ -111,6 +124,13 @@ abstract class BusinessDocument extends ModelClass
     public $idempresa;
 
     /**
+     * Document state, from EstadoDocumento model.
+     *
+     * @var int
+     */
+    public $idestado;
+
+    /**
      * % IRPF retention of the document. It is obtained from the series.
      * Each line can have a different%.
      *
@@ -132,6 +152,13 @@ abstract class BusinessDocument extends ModelClass
      * @var float|int
      */
     public $neto;
+
+    /**
+     * Notes of the document.
+     *
+     * @var string
+     */
+    public $observaciones;
 
     /**
      * Rate of conversion to Euros of the selected currency.
@@ -176,27 +203,6 @@ abstract class BusinessDocument extends ModelClass
      * @var float|int
      */
     public $totalrecargo;
-
-    /**
-     * Notes of the document.
-     *
-     * @var string
-     */
-    public $observaciones;
-
-    /**
-     * indicates whether the document can be modified
-     *
-     * @var bool
-     */
-    public $editable;
-
-    /**
-     * Document state, from EstadoDocumento model.
-     *
-     * @var int
-     */
-    public $idestado;
 
     /**
      * Returns the lines associated with the document.
@@ -249,12 +255,18 @@ abstract class BusinessDocument extends ModelClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
 
-        $estadoDocModel = new EstadoDocumento();
-        $where = [new DataBaseWhere('tipodoc', $this->modelClassName())];
-        foreach ($estadoDocModel->all($where) as $estado) {
-            $this->idestado = $estado->idestado;
-            $this->editable = $estado->editable;
-            break;
+        if (!isset(self::$estados)) {
+            $estadoDocModel = new EstadoDocumento();
+            self::$estados = $estadoDocModel->all([], [], 0, 0);
+        }
+
+        /// select default status
+        foreach (self::$estados as $estado) {
+            if ($estado->tipodoc === $this->modelClassName() && $estado->predeterminado) {
+                $this->idestado = $estado->idestado;
+                $this->editable = $estado->editable;
+                break;
+            }
         }
     }
 
@@ -360,10 +372,10 @@ abstract class BusinessDocument extends ModelClass
         }
 
         $estadoDoc = new EstadoDocumento();
-        if($estadoDoc->loadFromCode($this->idestado)) {
+        if ($estadoDoc->loadFromCode($this->idestado)) {
             $this->editable = $estadoDoc->editable;
         }
-        
+
         return true;
     }
 }
