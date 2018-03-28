@@ -162,7 +162,7 @@ function addEvent(name, fn) {
     }
 }
 
-function grid_afterSelection(row1, col1, row2, col2, preventScrolling) {
+function eventAfterSelection(row1, col1, row2, col2, preventScrolling) {
     // Check if editing
     var editor = gridObject.getActiveEditor();
     if (editor && editor.isOpened()) {
@@ -176,7 +176,7 @@ function grid_afterSelection(row1, col1, row2, col2, preventScrolling) {
     }
 }
 
-function grid_beforeChange(changes, source) {
+function eventBeforeChange(changes, source) {
     // Aply correction to autocomplete columns
     var isAutoComplete = false;
     if (autocompleteColumns.length > 0) {
@@ -196,7 +196,7 @@ function grid_beforeChange(changes, source) {
     }
 }
 
-function grid_enterMoves() {
+function eventEnterMoves() {
     var result = { row: 0, col: 1 };
     var selected = gridObject.getSelected()[0];
     var jump = true;
@@ -296,11 +296,11 @@ $(document).ready(function () {
             minSpareRows: 1,
             minRows: 7,
             enterMoves: function() {
-                return grid_enterMoves();
+                return eventEnterMoves();
             }
         });
 
-        Handsontable.hooks.add('afterSelection', grid_afterSelection);
-        Handsontable.hooks.add('beforeChange', grid_beforeChange);
+        Handsontable.hooks.add('afterSelection', eventAfterSelection);
+        Handsontable.hooks.add('beforeChange', eventBeforeChange);
     }
 });
