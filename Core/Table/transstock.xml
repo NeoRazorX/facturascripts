@@ -7,18 +7,10 @@
 -->
 <table>
     <column>
-        <name>usuario</name>
-        <type>character varying(12)</type>
-    </column>
-    <column>
-        <name>codalmadestino</name>
-        <type>character varying(4)</type>
+        <name>idtrans</name>
+        <type>serial</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>codalmaorigen</name>
-        <type>character varying(4)</type>
-        <null>NO</null>
+        <default>nextval('transstock_idtrans_seq'::regclass)</default>
     </column>
     <column>
         <name>fecha</name>
@@ -31,10 +23,18 @@
         <null>NO</null>
     </column>
     <column>
-        <name>idtrans</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('transstock_idtrans_seq'::regclass)</default>
+        <name>codalmorigen</name>
+        <type>character varying(4)</type>
+        <comment>Warehouse from which the goods leave</comment>
+    </column>
+    <column>
+        <name>codalmdestino</name>
+        <type>character varying(4)</type>
+        <comment>Warehouse where the goods arrives</comment>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(12)</type>
     </column>
     <constraint>
         <name>transstock_pkey</name>
