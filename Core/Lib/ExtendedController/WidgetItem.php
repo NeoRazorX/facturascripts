@@ -28,6 +28,12 @@ abstract class WidgetItem implements VisualItemInterface
 {
 
     /**
+     *
+     * @var bool
+     */
+    private static $autofocus;
+
+    /**
      * Field name with the data that the widget displays
      *
      * @var string
@@ -35,18 +41,39 @@ abstract class WidgetItem implements VisualItemInterface
     public $fieldName;
 
     /**
-     * Type of widget displayed
-     *
-     * @var string
-     */
-    public $type;
-
-    /**
      * Additional information for the user
      *
      * @var string
      */
     public $hint;
+
+    /**
+     * Icon used as a value or to accompany the widget
+     *
+     * @var string
+     */
+    public $icon;
+
+    /**
+     * Indicates that the max length of value
+     *
+     * @var integer
+     */
+    public $maxLength;
+
+    /**
+     * Destination controller to go to when the displayed data is clicked
+     *
+     * @var string
+     */
+    public $onClick;
+
+    /**
+     * Visual options to configure the widget
+     *
+     * @var array
+     */
+    public $options;
 
     /**
      * Indicates that the field is read only
@@ -63,32 +90,11 @@ abstract class WidgetItem implements VisualItemInterface
     public $required;
 
     /**
-     * Indicates that the max length of value
-     *
-     * @var integer
-     */
-    public $maxLength;
-
-    /**
-     * Icon used as a value or to accompany the widget
+     * Type of widget displayed
      *
      * @var string
      */
-    public $icon;
-
-    /**
-     * Destination controller to go to when the displayed data is clicked
-     *
-     * @var string
-     */
-    public $onClick;
-
-    /**
-     * Visual options to configure the widget
-     *
-     * @var array
-     */
-    public $options;
+    public $type;
 
     /**
      * Generates the html code to display the model data for List controller
@@ -390,10 +396,10 @@ abstract class WidgetItem implements VisualItemInterface
             return '';
         }
 
-        $text = empty($text) ? $value : $text;
+        $text2 = empty($text) ? $value : $text;
         $style = $this->getTextOptionsHTML($value);
-        $html = empty($this->onClick) ? '<span' . $style . '>' . $text . '</span>' : '<a href="' . $this->onClick
-            . '?code=' . $value . '" ' . $style . '>' . $text . '</a>';
+        $html = empty($this->onClick) ? '<span' . $style . '>' . $text2 . '</span>' : '<a href="' . $this->onClick
+            . '?code=' . $value . '" ' . $style . '>' . $text2 . '</a>';
 
         return $html;
     }
@@ -410,9 +416,14 @@ abstract class WidgetItem implements VisualItemInterface
      */
     protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
-        $type = empty($type) ? $this->type : $type;
+        if (!$this->readOnly && self::$autofocus !== false) {
+            $specialAttributes .= ' autofocus=""';
+            self::$autofocus = true;
+        }
+
+        $type2 = empty($type) ? $this->type : $type;
         $html = $this->getIconHTML()
-            . '<input type="' . $type . '" class="form-control' . $extraClass . '"'
+            . '<input type="' . $type2 . '" class="form-control' . $extraClass . '"'
             . 'name="' . $this->fieldName . '" value="' . $value . '"' . $specialAttributes . ' />';
 
         if (!empty($this->icon)) {
