@@ -30,8 +30,8 @@
             </column>
             <column name="tipo" title="type" numcolumns="12" order="110">
                 <widget type="select" fieldname="tipo">
-                    <values title="product-simple">simple</values>
-                    <values title="producto-atributes">atributos</values>
+                    <values title="simple">simple</values>
+                    <values title="with-attributes">attributes</values>
                 </widget>
             </column>
         </group>
