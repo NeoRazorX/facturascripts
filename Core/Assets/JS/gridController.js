@@ -34,7 +34,7 @@ function assignSource(data) {
     var title = data.title.slice(0);
 
     return function (query, process) {
-        query = query.split(' - ', 1)[0];
+        query = query.split(' -- ', 1)[0];
         $.ajax({
             url: data.url,
             dataType: 'json',
@@ -48,7 +48,7 @@ function assignSource(data) {
             success: function (response) {
                 var values = [];
                 response.forEach(function (element) {
-                    values.push(element.key + " - " + element.value);
+                    values.push(element.key + " -- " + element.value);
                 });
                 process(values);
             }
@@ -152,6 +152,7 @@ function addEvent(name, fn) {
     switch (name) {
         case 'afterSelection':
         case 'beforeChange':
+        case 'enterMoves':
             eventManager[name] = fn;
             break;
 
@@ -177,10 +178,13 @@ function grid_afterSelection(row1, col1, row2, col2, preventScrolling) {
 
 function grid_beforeChange(changes, source) {
     // Aply correction to autocomplete columns
+    var isAutoComplete = false;
     if (autocompleteColumns.length > 0) {
         for (var i = 0, max = changes.length; i < max; i++) {
             if (autocompleteColumns.includes(changes[i][1])) {
-                changes[i][3] = changes[i][3].split(' - ', 1)[0];
+                var values = changes[i][3].split(' -- ');
+                changes[i][3] = values[0];
+                isAutoComplete = (values.length > 1);
             }
         }
     }
@@ -188,8 +192,31 @@ function grid_beforeChange(changes, source) {
     // Call to children event
     var events = Object.keys(eventManager);
     if (events.includes('beforeChange')) {
-        eventManager['beforeChange'](changes, source);
+        eventManager['beforeChange'](changes, source, isAutoComplete);
     }
+}
+
+function grid_enterMoves() {
+    var result = { row: 0, col: 1 };
+    var selected = gridObject.getSelected()[0];
+    var jump = true;
+
+    // Call to children event
+    var events = Object.keys(eventManager);
+    if (events.includes('enterMoves')) {
+        var fieldName = getGridColumnName(selected[1]);
+        jump = eventManager['enterMoves'](result, fieldName);    // parameters to children: (move, fieldName)
+    }
+
+    // if there is a column jump, we control that you do not exceed the number of existing columns
+    if (jump) {
+        if ((selected[1] + result.col) >= gridObject.countCols()) {
+            selectCell(selected[0] + 1, 0);
+            result = { row: 0, col: 0 };
+        }
+        return result;
+    }
+    return { row: 0, col: 0 };      // no jump
 }
 
 /*
@@ -268,18 +295,8 @@ $(document).ready(function () {
             manualColumnMove: false,
             minSpareRows: 1,
             minRows: 7,
-            enterMoves: {row: 0, col: 1}
-        });
-
-        gridObject.updateSettings({
             enterMoves: function() {
-                var selected = gridObject.getSelected()[0];
-                if (selected[1] === (gridObject.countCols() - 1)) {
-                    selectCell(selected[0] + 1, 0);
-                    return { row: 0, col: 0 };
-                }
-
-                return { row: 0, col: 1 };
+                return grid_enterMoves();
             }
         });
 
