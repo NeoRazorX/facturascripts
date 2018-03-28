@@ -31,33 +31,7 @@ class Stock extends Base\ModelClass
 
     use Base\ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $idstock;
-
-    /**
-     * Warehouse code.
-     *
-     * @var string
-     */
-    public $codalmacen;
-
-    /**
-     * Reference.
-     *
-     * @var string
-     */
-    public $referencia;
-
-    /**
-     * Name.
-     *
-     * @var string
-     */
-    public $nombre;
+    const MAX_DECIMALS = 3;
 
     /**
      * Quantity.
@@ -67,11 +41,11 @@ class Stock extends Base\ModelClass
     public $cantidad;
 
     /**
-     * Reserved on customer orders.
+     * Warehouse code.
      *
-     * @var float|int
+     * @var string
      */
-    public $reservada;
+    public $codalmacen;
 
     /**
      * Available. Is the quantity minus reserved.
@@ -81,6 +55,13 @@ class Stock extends Base\ModelClass
     public $disponible;
 
     /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $idstock;
+
+    /**
      * Pending receipt. Merchandise pending receipt from the supplier.
      *
      * @var float|int
@@ -88,11 +69,18 @@ class Stock extends Base\ModelClass
     public $pterecibir;
 
     /**
-     * Minimum stock.
+     * Reference.
+     *
+     * @var string
+     */
+    public $referencia;
+
+    /**
+     * Reserved on customer orders.
      *
      * @var float|int
      */
-    public $stockmin;
+    public $reservada;
 
     /**
      * Maximum stock.
@@ -102,6 +90,13 @@ class Stock extends Base\ModelClass
     public $stockmax;
 
     /**
+     * Minimum stock.
+     *
+     * @var float|int
+     */
+    public $stockmin;
+
+    /**
      * Location.
      *
      * @var string
@@ -109,23 +104,17 @@ class Stock extends Base\ModelClass
     public $ubicacion;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
+     * Reset the values of all model properties.
      */
-    public static function tableName()
+    public function clear()
     {
-        return 'stocks';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'idstock';
+        parent::clear();
+        $this->cantidad = 0.0;
+        $this->disponible = 0.0;
+        $this->pterecibir = 0.0;
+        $this->reservada = 0.0;
+        $this->stockmax = 0.0;
+        $this->stockmin = 0.0;
     }
 
     /**
@@ -144,34 +133,28 @@ class Stock extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->nombre = '';
-        $this->cantidad = 0.0;
-        $this->reservada = 0.0;
-        $this->disponible = 0.0;
-        $this->pterecibir = 0.0;
-        $this->stockmin = 0.0;
-        $this->stockmax = 0.0;
-    }
-
-    /**
-     * Returns the name of the store.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    public function getNombre()
+    public static function primaryColumn()
     {
-        $almacenModel = new Almacen();
-        $almacen = $almacenModel->get($this->codalmacen);
-        if ($almacen) {
-            $this->nombre = $almacen->nombre;
+        return 'idstock';
+    }
+
+    public function save()
+    {
+        if (parent::save()) {
+            $articulo = new Articulo();
+            if ($articulo->loadFromCode($this->referencia)) {
+                $articulo->stockfis = $this->totalFromArticulo($this->referencia);
+                return $articulo->save();
+            }
+
+            return true;
         }
 
-        return $this->nombre;
+        return false;
     }
 
     /**
@@ -198,25 +181,13 @@ class Stock extends Base\ModelClass
     }
 
     /**
-     * Returns the stock by reference and additionally by warehouse.
+     * Returns the name of the table that uses this model.
      *
-     * @param string $ref
-     * @param bool   $codalmacen
-     *
-     * @return Stock|false
+     * @return string
      */
-    public function getByReferencia($ref, $codalmacen = false)
+    public static function tableName()
     {
-        $where = [new DataBaseWhere('referencia', $ref)];
-        if ($codalmacen) {
-            $where[] = new DataBaseWhere('codalmacen', $codalmacen);
-        }
-
-        foreach ($this->all($where) as $stock) {
-            return $stock;
-        }
-
-        return false;
+        return 'stocks';
     }
 
     /**
@@ -226,8 +197,8 @@ class Stock extends Base\ModelClass
      */
     public function test()
     {
-        $this->cantidad = round($this->cantidad, 3);
-        $this->reservada = round($this->reservada, 3);
+        $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
+        $this->reservada = round($this->reservada, self::MAX_DECIMALS);
         $this->disponible = $this->cantidad - $this->reservada;
         $this->ubicacion = Utils::noHtml($this->ubicacion);
 
@@ -235,27 +206,22 @@ class Stock extends Base\ModelClass
     }
 
     /**
-     * Returns the total stock by reference and additionally by warehouse.
+     * Returns the total stock by reference.
      *
      * @param string $ref
-     * @param bool   $codalmacen
      *
-     * @return float|int
+     * @return float
      */
-    public function totalFromArticulo($ref, $codalmacen = false)
+    public function totalFromArticulo($ref)
     {
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . static::tableName()
             . ' WHERE referencia = ' . self::$dataBase->var2str($ref);
 
-        if ($codalmacen) {
-            $sql .= ' AND codalmacen = ' . self::$dataBase->var2str($codalmacen);
-        }
-
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
-            return round((float) $data[0]['total'], 3);
+            return round((float) $data[0]['total'], self::MAX_DECIMALS);
         }
 
-        return 0;
+        return 0.0;
     }
 }
