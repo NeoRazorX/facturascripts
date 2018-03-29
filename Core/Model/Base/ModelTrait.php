@@ -62,6 +62,16 @@ trait ModelTrait
     }
 
     /**
+     * Returns the list of fields in the table.
+     *
+     * @return array
+     */
+    public function getModelFields()
+    {
+        return static::$fields;
+    }
+
+    /**
      * Assign the values of the $data array to the model properties.
      *
      * @param array    $data
@@ -131,16 +141,6 @@ trait ModelTrait
     public function modelName()
     {
         return get_class($this);
-    }
-
-    /**
-     * Returns the list of fields in the table.
-     *
-     * @return array
-     */
-    protected function getModelFields()
-    {
-        return static::$fields;
     }
 
     /**

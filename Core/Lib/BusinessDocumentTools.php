@@ -209,8 +209,9 @@ class BusinessDocumentTools
         }
 
         $newLine = $doc->getNewLine();
-        $newLine->referencia = $fLine['referencia'];
-        $newLine->descripcion = $fLine['descripcion'];
+        foreach($fLine as $key => $value) {
+            $newLine->{$key} = $value;
+        }
         $newLine->cantidad = (float) $fLine['cantidad'];
         $newLine->pvpunitario = (float) $fLine['pvpunitario'];
         $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;

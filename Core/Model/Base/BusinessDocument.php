@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -131,6 +130,12 @@ abstract class BusinessDocument extends ModelClass
     public $idestado;
 
     /**
+     *
+     * @var int
+     */
+    private $idestadoAnt;
+
+    /**
      * % IRPF retention of the document. It is obtained from the series.
      * Each line can have a different%.
      *
@@ -232,6 +237,12 @@ abstract class BusinessDocument extends ModelClass
      */
     abstract public function setSubject($subjects);
 
+    public function __construct($data = [])
+    {
+        parent::__construct($data);
+        $this->idestadoAnt = $this->idestado;
+    }
+
     /**
      * Reset the values of all model properties.
      */
@@ -268,6 +279,21 @@ abstract class BusinessDocument extends ModelClass
                 break;
             }
         }
+    }
+
+    /**
+     * 
+     * @return EstadoDocumento
+     */
+    public function getState()
+    {
+        foreach (self::$estados as $state) {
+            if ($state->idestado === $this->idestado) {
+                return $state;
+            }
+        }
+
+        return new EstadoDocumento();
     }
 
     /**
@@ -323,11 +349,11 @@ abstract class BusinessDocument extends ModelClass
     {
         if ($this->test()) {
             if ($this->exists()) {
+                $this->checkState();
                 return $this->saveUpdate();
             }
 
             $this->newCodigo();
-
             return $this->saveInsert();
         }
 
@@ -340,7 +366,7 @@ abstract class BusinessDocument extends ModelClass
      * @param string $date
      * @param string $hour
      */
-    public function setDate($date, $hour)
+    public function setDate(string $date, string $hour)
     {
         $ejercicioModel = new Ejercicio();
         $ejercicio = $ejercicioModel->getByFecha($date);
@@ -377,5 +403,17 @@ abstract class BusinessDocument extends ModelClass
         }
 
         return true;
+    }
+
+    private function checkState()
+    {
+        if ($this->idestado !== $this->idestadoAnt) {
+            $state = $this->getState();
+            foreach ($this->getLines() as $line) {
+                $line->actualizastock = $state->actualizastock;
+                $line->save();
+                $line->updateStock($this->codalmacen);
+            }
+        }
     }
 }

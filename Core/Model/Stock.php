@@ -158,29 +158,6 @@ class Stock extends Base\ModelClass
     }
 
     /**
-     * Assign the amount.
-     *
-     * @param int $cant
-     */
-    public function setCantidad($cant = 0)
-    {
-        $this->cantidad = (float) $cant;
-        $this->disponible = $this->cantidad - $this->reservada;
-    }
-
-    /**
-     * Add the amount.
-     *
-     * @param int $cant
-     */
-    public function sumCantidad($cant = 0)
-    {
-        /// convertimos a flot por si acaso nos ha llegado un string
-        $this->cantidad += (float) $cant;
-        $this->disponible = $this->cantidad - $this->reservada;
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
