@@ -35,7 +35,6 @@ final class StockTest extends TestCase
         $model = new Stock();
 
         $this->assertInstanceOf(Stock::class, $model);
-        $this->assertEquals('', $model->nombre);
         $this->assertEquals(0, $model->cantidad);
         $this->assertEquals(0, $model->reservada);
         $this->assertEquals(0, $model->disponible);
@@ -44,7 +43,6 @@ final class StockTest extends TestCase
         $this->assertEquals(0, $model->stockmax);
         $this->assertTrue($model->test());
 
-        $model->nombre = 'Test name';
         $model->cantidad = 2;
         $model->reservada = 1;
         $model->disponible = 1;
