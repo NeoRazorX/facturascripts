@@ -252,11 +252,6 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
             $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
 
             if ($lin->save()) {
-                if (isset($articulos[$numlineas])) {
-                    /// descontamos del stock
-                    $articulos[$numlineas]->sumStock($doc->codalmacen, $lin->cantidad * $modStock);
-                }
-
                 $doc->neto += $lin->pvptotal;
                 $doc->totaliva += ($lin->pvptotal * $lin->iva / 100);
                 $doc->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
