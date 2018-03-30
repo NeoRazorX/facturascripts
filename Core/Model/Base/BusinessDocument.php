@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 
 /**
  * Description of BusinessDocument
@@ -280,19 +281,19 @@ abstract class BusinessDocument extends ModelClass
             }
         }
     }
-    
+
     public function delete()
     {
         $lines = $this->getLines();
-        if( parent::delete() ) {
-            foreach($lines as $line) {
+        if (parent::delete()) {
+            foreach ($lines as $line) {
                 $line->cantidad = 0;
                 $line->updateStock($this->codalmacen);
             }
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -364,8 +365,7 @@ abstract class BusinessDocument extends ModelClass
     {
         if ($this->test()) {
             if ($this->exists()) {
-                $this->checkState();
-                return $this->saveUpdate();
+                return $this->checkState() ? $this->saveUpdate() : false;
             }
 
             $this->newCodigo();
@@ -422,13 +422,25 @@ abstract class BusinessDocument extends ModelClass
 
     private function checkState()
     {
-        if ($this->idestado !== $this->idestadoAnt) {
-            $state = $this->getState();
-            foreach ($this->getLines() as $line) {
-                $line->actualizastock = $state->actualizastock;
-                $line->save();
-                $line->updateStock($this->codalmacen);
+        if ($this->idestado == $this->idestadoAnt) {
+            return true;
+        }
+
+        $state = $this->getState();
+        foreach ($this->getLines() as $line) {
+            $line->actualizastock = $state->actualizastock;
+            $line->save();
+            $line->updateStock($this->codalmacen);
+        }
+
+        if (!empty($state->generadoc)) {
+            $docGenerator = new BusinessDocumentGenerator();
+            if (!$docGenerator->generate($this, $state->generadoc)) {
+                return false;
             }
         }
+
+        $this->idestadoAnt = $this->idestado;
+        return true;
     }
 }
