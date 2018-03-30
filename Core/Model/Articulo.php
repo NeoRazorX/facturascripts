@@ -189,6 +189,30 @@ class Articulo extends Base\Product
     }
 
     /**
+     * Sets the retail price.
+     *
+     * @param float $pvp
+     */
+    public function setPvp($pvp)
+    {
+        $pvp2 = round($pvp, FS_NF0 + 2);
+
+        if (!Utils::floatcmp($this->pvp, $pvp2, FS_NF0 + 2)) {
+            $this->pvp = $pvp2;
+        }
+    }
+
+    /**
+     * Sets the retail price with VAT.
+     *
+     * @param float $pvp
+     */
+    public function setPvpIva($pvp)
+    {
+        $this->setPvp((100 * $pvp) / (100 + $this->getIva()));
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string

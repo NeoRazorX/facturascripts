@@ -280,6 +280,21 @@ abstract class BusinessDocument extends ModelClass
             }
         }
     }
+    
+    public function delete()
+    {
+        $lines = $this->getLines();
+        if( parent::delete() ) {
+            foreach($lines as $line) {
+                $line->cantidad = 0;
+                $line->updateStock($this->codalmacen);
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
 
     /**
      * 
