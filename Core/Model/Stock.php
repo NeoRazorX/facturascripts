@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -175,7 +174,17 @@ class Stock extends Base\ModelClass
     public function test()
     {
         $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
+
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
+        if ($this->reservada < 0) {
+            $this->reservada = 0;
+        }
+
+        $this->pterecibir = round($this->pterecibir, self::MAX_DECIMALS);
+        if ($this->pterecibir < 0) {
+            $this->pterecibir = 0;
+        }
+
         $this->disponible = $this->cantidad - $this->reservada;
         $this->ubicacion = Utils::noHtml($this->ubicacion);
 

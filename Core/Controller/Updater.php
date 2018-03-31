@@ -51,6 +51,7 @@ class Updater extends Controller
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
+        $pageData['submenu'] = 'control-panel';
         $pageData['title'] = 'updater';
         $pageData['icon'] = 'fa-cloud-download';
 

@@ -331,7 +331,10 @@ abstract class BusinessDocument extends ModelClass
     {
         if (parent::loadFromCode($cod, $where, $orderby)) {
             $this->idestadoAnt = $this->idestado;
+            return true;
         }
+
+        return false;
     }
 
     /**

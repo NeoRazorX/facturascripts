@@ -60,6 +60,8 @@ class BusinessDocumentGenerator
             if (!$newLine->save()) {
                 return false;
             }
+
+            $newLine->updateStock($newDoc->codalmacen);
         }
 
         return true;
