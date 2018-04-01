@@ -136,7 +136,6 @@
 
 {# Calculate common values #}
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
-{% set current_url = list_url | url_encode %}
 
 {# Macros Template Imports #}
 {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
@@ -174,7 +173,7 @@
                    <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ current_url }}')" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}')" {{ popoverTitle(options_title, 'bottom') }}>
                    <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
