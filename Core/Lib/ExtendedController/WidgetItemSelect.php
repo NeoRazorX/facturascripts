@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,14 +48,58 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller.
+     * Values are loaded from Model\PageOption::getForUser()
      *
-     * @param \SimpleXMLElement $column
+     * @param string $value
+     *
+     * @return string
      */
-    public function loadFromXML($column)
+    public function getEditHTML($value)
     {
-        parent::loadFromXML($column);
-        $this->getAttributesGroup($this->values, $column->widget->values);
+        $specialAttributes = $this->specialAttributes();
+
+        if ($this->readOnly) {
+            return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
+        }
+
+        if (!$this->required) {
+            array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
+        }
+
+        $html = $this->getIconHTML()
+            . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '" class="form-control"' . $specialAttributes . '>';
+
+        foreach ($this->values as $selectValue) {
+            /// don't use strict comparation (===)
+            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
+                . '</option>';
+        }
+        $html .= '</select>';
+
+        if (!empty($this->icon)) {
+            $html .= '</div>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Generates the HTML code to display the data in the List controller
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getListHTML($value)
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        return '<span>' . $value . '</span>';
     }
 
     /**
@@ -70,24 +114,39 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the value list from an array with value and title (description)
+     * Loads the attributes structure from a XML file
      *
-     * @param array $rows
+     * @param \SimpleXMLElement $column
      */
-    public function setValuesFromCodeModel(&$rows)
+    public function loadFromXML($column)
     {
-        $this->values = [];
-        foreach ($rows as $codeModel) {
-            if ($codeModel->code === null) {
-                array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
-                continue;
-            }
+        parent::loadFromXML($column);
+        $this->getAttributesGroup($this->values, $column->widget->values);
+    }
 
-            $this->values[] = [
-                'value' => $codeModel->code,
-                'title' => $codeModel->description,
-            ];
-        }
+    /**
+     * Load values from model.
+     */
+    public function loadValuesFromModel()
+    {
+        $tableName = $this->values[0]['source'];
+        $fieldCode = $this->values[0]['fieldcode'];
+        $fieldDesc = $this->values[0]['fieldtitle'];
+        $allowEmpty = !$this->required;
+        $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
+        $this->setValuesFromCodeModel($rows);
+    }
+
+    /**
+     * Load values from array.
+     */
+    public function loadValuesFromRange()
+    {
+        $start = $this->values[0]['start'];
+        $end = $this->values[0]['end'];
+        $step = $this->values[0]['step'];
+        $values = range($start, $end, $step);
+        $this->setValuesFromArray($values);
     }
 
     /**
@@ -115,83 +174,22 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Load values from model.
-     */
-    public function loadValuesFromModel()
-    {
-        $tableName = $this->values[0]['source'];
-        $fieldCode = $this->values[0]['fieldcode'];
-        $fieldDesc = $this->values[0]['fieldtitle'];
-        $allowEmpty = !$this->required;
-        $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
-        $this->setValuesFromCodeModel($rows);
-        unset($rows);
-
-        if ($allowEmpty && $this->values[0]['value'] !== '---null---') {
-            array_unshift($this->values, ['value' => '---null---', 'title' => '------']);
-        }
-    }
-
-    /**
-     * Load values from array.
-     */
-    public function loadValuesFromRange()
-    {
-        $start = $this->values[0]['start'];
-        $end = $this->values[0]['end'];
-        $step = $this->values[0]['step'];
-        $values = range($start, $end, $step);
-        $this->setValuesFromArray($values);
-    }
-
-    /**
-     * Generates the HTML code to display the data in the List controller
+     * Loads the value list from an array with value and title (description)
      *
-     * @param string $value
-     *
-     * @return string
+     * @param array $rows
      */
-    public function getListHTML($value)
+    public function setValuesFromCodeModel(&$rows)
     {
-        if ($value === null || $value === '') {
-            return '';
+        $this->values = [];
+        foreach ($rows as $codeModel) {
+            if ($codeModel->code === null) {
+                continue;
+            }
+
+            $this->values[] = [
+                'value' => $codeModel->code,
+                'title' => $codeModel->description,
+            ];
         }
-
-        return '<span>' . $value . '</span>';
-    }
-
-    /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller.
-     * Values are loaded from Model\PageOption::getForUser()
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getEditHTML($value)
-    {
-        $specialAttributes = $this->specialAttributes();
-
-        if ($this->readOnly) {
-            return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
-        }
-
-        $html = $this->getIconHTML()
-            . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
-            . '" class="form-control"' . $specialAttributes . '>';
-
-        foreach ($this->values as $selectValue) {
-            /// don't use strict comparation (===)
-            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
-                . '</option>';
-        }
-        $html .= '</select>';
-
-        if (!empty($this->icon)) {
-            $html .= '</div>';
-        }
-
-        return $html;
     }
 }

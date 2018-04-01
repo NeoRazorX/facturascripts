@@ -35,12 +35,12 @@
                 <widget type="text" fieldname="razonsocial" required="true" />
             </column>
             <column name="fiscal-id" numcolumns="2" order="130">
-                <widget type="select" fieldname="tipoidfiscal">
+                <widget type="select" fieldname="tipoidfiscal" required="true">
                     <values></values>
                 </widget>
             </column>
             <column name="vat-id" numcolumns="2" order="140" description="desc-vat-id">
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="cifnif"/>
             </column>
             <column name="fiscal-mode" title="is-person" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
@@ -77,7 +77,7 @@
                 <widget type="number" fieldname="irpf" icon="fa-percent" />
             </column>
             <column name="vat-regime" numcolumns="3" order="170">
-                <widget type="select" fieldname="regimeniva">
+                <widget type="select" fieldname="regimeniva" required="true">
                     <values></values>
                 </widget>
             </column>
