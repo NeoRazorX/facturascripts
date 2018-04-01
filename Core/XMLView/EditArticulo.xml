@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />
             </column>
             <column name="tipo" title="type" numcolumns="12" order="110">
-                <widget type="select" fieldname="tipo">
+                <widget type="select" fieldname="tipo" required="true">
                     <values title="simple">simple</values>
                 </widget>
             </column>

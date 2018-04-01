@@ -330,12 +330,17 @@ abstract class WidgetItem implements VisualItemInterface
      */
     protected function specialAttributes()
     {
-        $hint = $this->getHintHTML($this->hint);
-        $readOnly = empty($this->readOnly) ? '' : ' readonly=""';
-        $required = empty($this->required) ? '' : ' required=""';
-        $maxLength = empty($this->maxLength) ? '' : ' maxlength="' . $this->maxLength . '"';
+        $attributes = $this->getHintHTML($this->hint);
+        $attributes .= empty($this->readOnly) ? '' : ' readonly=""';
+        $attributes .= empty($this->required) ? '' : ' required=""';
+        $attributes .= empty($this->maxLength) ? '' : ' maxlength="' . $this->maxLength . '"';
 
-        return $hint . $readOnly . $required . $maxLength;
+        if (!$this->readOnly && self::$autofocus) {
+            $attributes .= ' autofocus=""';
+            self::$autofocus = false;
+        }
+
+        return $attributes;
     }
 
     /**
@@ -350,11 +355,6 @@ abstract class WidgetItem implements VisualItemInterface
      */
     protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
-        if (!$this->readOnly && self::$autofocus) {
-            $specialAttributes .= ' autofocus=""';
-            self::$autofocus = false;
-        }
-
         $type2 = empty($type) ? $this->type : $type;
         $html = $this->getIconHTML()
             . '<input type="' . $type2 . '" class="form-control' . $extraClass . '"'

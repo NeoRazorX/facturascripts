@@ -71,10 +71,10 @@ class WidgetItemSelect extends WidgetItem
             . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
             . '" class="form-control"' . $specialAttributes . '>';
 
-        foreach ($this->values as $selectValue) {
+        foreach ($this->values as $option) {
             /// don't use strict comparation (===)
-            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
+            $selected = ($option['value'] == $value) ? ' selected="selected" ' : '';
+            $html .= '<option value="' . $option['value'] . '" ' . $selected . '>' . $option['title']
                 . '</option>';
         }
         $html .= '</select>';
@@ -97,6 +97,13 @@ class WidgetItemSelect extends WidgetItem
     {
         if ($value === null || $value === '') {
             return '';
+        }
+
+        foreach ($this->values as $option) {
+            /// don't use strict comparation (===)
+            if ($option['value'] == $value) {
+                return '<span>' . $option['title'] . '</span>';
+            }
         }
 
         return '<span>' . $value . '</span>';
