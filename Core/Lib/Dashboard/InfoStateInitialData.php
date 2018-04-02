@@ -90,7 +90,7 @@ class InfoStateInitialData
         $result['values'] = [
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
             ['name' => 'for-sale', 'sql' => 'SUM(CASE WHEN sevende THEN 1 ELSE 0 END)', 'type' => 'int'],
-            ['name' => 'no-stock', 'sql' => 'SUM(CASE WHEN (sevende AND stockfis < stockmin) THEN 1 ELSE 0 END)', 'type' => 'int'],
+            ['name' => 'no-stock', 'sql' => 'SUM(CASE WHEN (sevende AND stockfis < 0) THEN 1 ELSE 0 END)', 'type' => 'int'],
             ['name' => 'locked', 'sql' => 'SUM(CASE WHEN bloqueado THEN 1 ELSE 0 END)', 'type' => 'int'],
         ];
 
