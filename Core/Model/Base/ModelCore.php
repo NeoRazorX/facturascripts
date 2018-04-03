@@ -203,6 +203,16 @@ abstract class ModelCore
     }
 
     /**
+     * Returns the current value of the main column of the model.
+     *
+     * @return mixed
+     */
+    public function primaryColumnValue()
+    {
+        return $this->{$this->primaryColumn()};
+    }
+
+    /**
      * Check and update the structure of the table if necessary.
      *
      * @return bool

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Dashboard extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -37,13 +37,6 @@ class Dashboard extends Base\ModelClass
     public $component;
 
     /**
-     * id version of component.
-     *
-     * @var string
-     */
-    public $version;
-
-    /**
      * Position into dashboard.
      *
      * @var integer
@@ -51,37 +44,11 @@ class Dashboard extends Base\ModelClass
     public $location;
 
     /**
-     * Returns the name of the table that uses this model.
+     * id version of component.
      *
-     * @return string
+     * @var string
      */
-    public static function tableName()
-    {
-        return 'dashboard';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'component';
-    }
-
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url($type = 'auto', $list = 'List')
-    {
-        return parent::url($type, '');
-    }
+    public $version;
 
     /**
      * This function is called when creating the model table.
@@ -95,5 +62,38 @@ class Dashboard extends Base\ModelClass
         return 'INSERT INTO ' . static::tableName() . " (component, version, location) VALUES ('Messages','1.0 (Beta)', 0);"
             . 'INSERT INTO ' . static::tableName() . " (component, version, location) VALUES ('Tasks','1.0 (Beta)', 0);"
             . 'INSERT INTO ' . static::tableName() . " (component, version, location) VALUES ('InfoState','1.0 (Beta)', 0);";
+    }
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'component';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'dashboard';
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, '');
     }
 }

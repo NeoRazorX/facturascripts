@@ -95,6 +95,32 @@ class PageOption extends Base\ModelClass
     }
 
     /**
+     * Get the settings for the driver and user
+     *
+     * @param string $name
+     * @param string $nick
+     */
+    public function getForUser(string $name, string $nick)
+    {
+        $where = $this->getPageFilter($name, $nick);
+        $orderby = ['nick' => 'ASC'];
+
+        // Load data from database, if not exist install xmlview
+        if (!$this->loadFromCode('', $where, $orderby)) {
+            $this->name = $name;
+
+            if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
+                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $name]));
+
+                return;
+            }
+        }
+
+        /// Apply values to dynamic Select widgets
+        ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
+    }
+
+    /**
      * This function is called when creating the model table.
      * Returns the SQL that will be executed after the creation of the table,
      * useful to insert default values.
@@ -115,7 +141,7 @@ class PageOption extends Base\ModelClass
      * @param array $data
      * @param array $exclude
      */
-    public function loadFromData(array $data = array(), array $exclude = array())
+    public function loadFromData(array $data = [], array $exclude = [])
     {
         array_push($exclude, 'columns', 'modals', 'filters', 'rows', 'code', 'action');
         parent::loadFromData($data, $exclude);
@@ -162,32 +188,6 @@ class PageOption extends Base\ModelClass
     }
 
     /**
-     * Get the settings for the driver and user
-     *
-     * @param string $name
-     * @param string $nick
-     */
-    public function getForUser($name, $nick)
-    {
-        $where = $this->getPageFilter($name, $nick);
-        $orderby = ['nick' => 'ASC'];
-
-        // Load data from database, if not exist install xmlview
-        if (!$this->loadFromCode('', $where, $orderby)) {
-            $this->name = $name;
-
-            if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
-                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $name]));
-
-                return;
-            }
-        }
-
-        /// Apply values to dynamic Select widgets
-        ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
-    }
-
-    /**
      * Returns the where filter to locate the view configuration
      *
      * @param string $name
@@ -195,7 +195,7 @@ class PageOption extends Base\ModelClass
      *
      * @return Database\DataBaseWhere[]
      */
-    private function getPageFilter($name, $nick)
+    private function getPageFilter(string $name, string $nick)
     {
         return [
             new DataBase\DataBaseWhere('nick', $nick),
@@ -212,7 +212,7 @@ class PageOption extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert($values = [])
+    protected function saveInsert(array $values = [])
     {
         return parent::saveInsert($this->getEncodeValues());
     }
@@ -224,7 +224,7 @@ class PageOption extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate($values = [])
+    protected function saveUpdate(array $values = [])
     {
         return parent::saveUpdate($this->getEncodeValues());
     }

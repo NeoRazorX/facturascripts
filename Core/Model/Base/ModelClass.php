@@ -30,13 +30,6 @@ abstract class ModelClass extends ModelCore
 {
 
     /**
-     * Check an array of data so that it has the correct structure of the model.
-     *
-     * @param array $data
-     */
-    abstract public function checkArrayData(&$data);
-
-    /**
      * Returns the name of the class of the model.
      *
      * @return string
@@ -60,7 +53,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return array
      */
-    public function all(array $where = [], array $order = [], $offset = 0, $limit = 50)
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
     {
         $modelList = [];
         $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
@@ -74,6 +67,23 @@ abstract class ModelClass extends ModelCore
         }
 
         return $modelList;
+    }
+
+    /**
+     * Check an array of data so that it has the correct structure of the model.
+     *
+     * @param array $data
+     */
+    public function checkArrayData(array &$data)
+    {
+        foreach ($this->getModelFields() as $field => $values) {
+            if (in_array($values['type'], ['boolean', 'tinyint(1)']) && !isset($data[$field])) {
+                $data[$field] = false;
+            } elseif (isset($data[$field]) && $data[$field] === '---null---') {
+                /// ---null--- text comes from widgetItemSelect.
+                $data[$field] = null;
+            }
+        }
     }
 
     /**
@@ -129,9 +139,9 @@ abstract class ModelClass extends ModelCore
      *
      * @param string $cod
      *
-     * @return mixed|bool
+     * @return mixed
      */
-    public function get($cod)
+    public function get(string $cod)
     {
         $data = $this->getRecord($cod);
         if (!empty($data)) {
@@ -157,7 +167,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function loadFromCode($cod, $where = null, $orderby = [])
+    public function loadFromCode(string $cod, $where = null, array $orderby = [])
     {
         $data = $this->getRecord($cod, $where, $orderby);
         if (empty($data)) {
@@ -178,10 +188,8 @@ abstract class ModelClass extends ModelCore
      *
      * @return int
      */
-    public function newCode($field = '')
+    public function newCode(string $field = '')
     {
-        /// TODO: Review the change to numeric by the cast and be able to indicate
-        /// TODO: a where condition for the calculation
         $sqlWhere = '';
         if (empty($field)) {
             /// Primary key is integer?
@@ -209,16 +217,6 @@ abstract class ModelClass extends ModelCore
         }
 
         return 1 + (int) $cod[0]['cod'];
-    }
-
-    /**
-     * Returns the current value of the main column of the model.
-     *
-     * @return mixed
-     */
-    public function primaryColumnValue()
-    {
-        return $this->{$this->primaryColumn()};
     }
 
     /**
@@ -283,7 +281,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
@@ -340,7 +338,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return array
      */
-    private function getRecord($cod, $where = null, $orderby = [])
+    private function getRecord(string $cod, $where = null, array $orderby = [])
     {
         $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
@@ -356,7 +354,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveInsert($values = [])
+    protected function saveInsert(array $values = [])
     {
         $insertFields = [];
         $insertValues = [];
@@ -390,7 +388,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveUpdate($values = [])
+    protected function saveUpdate(array $values = [])
     {
         $sql = 'UPDATE ' . static::tableName();
         $coma = ' SET';

@@ -71,7 +71,7 @@ class BusinessDocumentView extends BaseView
      * @param string $lineXMLView
      * @param string $userNick
      */
-    public function __construct($title, $modelName, $lineXMLView, $userNick)
+    public function __construct(string $title, string $modelName, string $lineXMLView, string $userNick)
     {
         parent::__construct($title, $modelName);
         $this->documentStates = [];
@@ -145,7 +145,7 @@ class BusinessDocumentView extends BaseView
      *
      * @param ExportManager $exportManager
      */
-    public function export(&$exportManager)
+    public function export(ExportManager &$exportManager)
     {
         $exportManager->generateDocumentPage($this->model);
     }
@@ -157,7 +157,7 @@ class BusinessDocumentView extends BaseView
      * @param bool  $code
      * @param array $where
      */
-    public function loadData($code = false, $where = [])
+    public function loadData(bool $code = false, array $where = [])
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -181,11 +181,11 @@ class BusinessDocumentView extends BaseView
     /**
      * Loads data, recalculate document and returns a json with the results.
      *
-     * @param mixed $data
+     * @param array $data
      *
      * @return string
      */
-    public function recalculateDocument(&$data)
+    public function recalculateDocument(array &$data)
     {
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
         unset($data['lines']);
@@ -197,11 +197,11 @@ class BusinessDocumentView extends BaseView
     /**
      * Save all document related data.
      *
-     * @param $data
+     * @param array $data
      *
      * @return string
      */
-    public function saveDocument(&$data)
+    public function saveDocument(array &$data)
     {
         $result = 'OK';
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
@@ -251,7 +251,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return string
      */
-    private function setCustomer($codcliente, $newCliente = '', $newCifnif = '')
+    private function setCustomer(string $codcliente, string $newCliente = '', string $newCifnif = '')
     {
         if ($this->model->codcliente === $codcliente && !empty($this->model->codcliente)) {
             return 'OK';
@@ -283,7 +283,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return string
      */
-    private function setSupplier($codproveedor, $newProveedor = '', $newCifnif = '')
+    private function setSupplier(string $codproveedor, string $newProveedor = '', string $newCifnif = '')
     {
         if ($this->model->codproveedor === $codproveedor && !empty($this->model->codproveedor)) {
             return 'OK';
@@ -309,11 +309,11 @@ class BusinessDocumentView extends BaseView
     /**
      * Saves the lines for the document.
      *
-     * @param $newLines
+     * @param array $newLines
      *
      * @return string
      */
-    private function saveLines(&$newLines)
+    private function saveLines(array &$newLines)
     {
         $result = 'OK';
 
@@ -368,7 +368,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return bool
      */
-    protected function updateLine($oldLine, $newLine)
+    protected function updateLine($oldLine, array $newLine)
     {
         foreach ($newLine as $key => $value) {
             $oldLine->{$key} = $value;
@@ -392,7 +392,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return array
      */
-    protected function processFormLines($formLines)
+    protected function processFormLines(array $formLines)
     {
         $newLines = [];
         $order = count($formLines);

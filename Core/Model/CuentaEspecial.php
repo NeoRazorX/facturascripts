@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,14 +26,8 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaEspecial extends Base\ModelClass
 {
-    use Base\ModelTrait;
 
-    /**
-     * Special account identifier.
-     *
-     * @var string
-     */
-    public $idcuentaesp;
+    use Base\ModelTrait;
 
     /**
      * Description of the special account.
@@ -44,14 +37,11 @@ class CuentaEspecial extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Return the name of the tabel that this model uses.
+     * Special account identifier.
      *
-     * @return string
+     * @var string
      */
-    public static function tableName()
-    {
-        return 'cuentasesp';
-    }
+    public $idcuentaesp;
 
     /**
      * Return the name of the column that is the model's primary key.
@@ -74,6 +64,16 @@ class CuentaEspecial extends Base\ModelClass
     }
 
     /**
+     * Return the name of the tabel that this model uses.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'cuentasesp';
+    }
+
+    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type
@@ -81,7 +81,7 @@ class CuentaEspecial extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCuenta?active=List');
     }

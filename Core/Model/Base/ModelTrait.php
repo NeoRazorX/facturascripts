@@ -37,30 +37,6 @@ trait ModelTrait
     protected static $fields;
 
     /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    abstract public static function primaryColumn();
-
-    /**
-     * Check an array of data so that it has the correct structure of the model.
-     *
-     * @param array $data
-     */
-    public function checkArrayData(&$data)
-    {
-        foreach (self::$fields as $field => $values) {
-            if (in_array($values['type'], ['boolean', 'tinyint(1)']) && !isset($data[$field])) {
-                $data[$field] = false;
-            } elseif (isset($data[$field]) && $data[$field] === '---null---') {
-                /// ---null--- text comes from widgetItemSelect.
-                $data[$field] = null;
-            }
-        }
-    }
-
-    /**
      * Returns the list of fields in the table.
      *
      * @return array

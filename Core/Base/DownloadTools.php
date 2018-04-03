@@ -100,7 +100,7 @@ class DownloadTools
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($http_code == 301 || $http_code == 302) {
             list($header) = explode("\r\n\r\n", $data, 2);
-            $matches = array();
+            $matches = [];
             preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
             $url = trim(str_replace($matches[1], "", $matches[0]));
             $url_parsed = parse_url($url);

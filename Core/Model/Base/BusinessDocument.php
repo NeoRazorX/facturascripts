@@ -145,19 +145,19 @@ abstract class BusinessDocument extends ModelClass
     public $irpf;
 
     /**
+     * Sum of the pvptotal of lines. Total of the document before taxes.
+     *
+     * @var float|int
+     */
+    public $neto;
+
+    /**
      * Number of the document.
      * Unique within the series + exercise.
      *
      * @var string
      */
     public $numero;
-
-    /**
-     * Sum of the pvptotal of lines. Total of the document before taxes.
-     *
-     * @var float|int
-     */
-    public $neto;
 
     /**
      * Notes of the document.
@@ -238,7 +238,11 @@ abstract class BusinessDocument extends ModelClass
      */
     abstract public function setSubject($subjects);
 
-    public function __construct($data = [])
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->idestadoAnt = $this->idestado;
@@ -327,7 +331,7 @@ abstract class BusinessDocument extends ModelClass
         return '';
     }
 
-    public function loadFromCode($cod, $where = null, $orderby = [])
+    public function loadFromCode(string $cod, $where = null, array $orderby = [])
     {
         if (parent::loadFromCode($cod, $where, $orderby)) {
             $this->idestadoAnt = $this->idestado;

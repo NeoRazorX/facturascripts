@@ -47,16 +47,6 @@ class Role extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'roles';
-    }
-
-    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -64,6 +54,16 @@ class Role extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'codrole';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'roles';
     }
 
     /**
@@ -87,7 +87,7 @@ class Role extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListUser?active=List');
     }

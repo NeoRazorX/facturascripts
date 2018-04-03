@@ -38,13 +38,6 @@ class GrupoClientes extends Base\ModelClass
     public $codgrupo;
 
     /**
-     * Group name.
-     *
-     * @var string
-     */
-    public $nombre;
-
-    /**
      * Code of the associated rate, if any.
      *
      * @var string
@@ -52,13 +45,25 @@ class GrupoClientes extends Base\ModelClass
     public $codtarifa;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Group name.
+     *
+     * @var string
+     */
+    public $nombre;
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
-    public static function tableName()
+    public function install()
     {
-        return 'gruposclientes';
+        /// As there is a key outside of tariffs, we have to check that table before
+        new Tarifa();
+
+        return '';
     }
 
     /**
@@ -82,6 +87,16 @@ class GrupoClientes extends Base\ModelClass
     }
 
     /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'gruposclientes';
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
      *
      * @return bool
@@ -94,21 +109,6 @@ class GrupoClientes extends Base\ModelClass
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// As there is a key outside of tariffs, we have to check that table before
-        new Tarifa();
-
-        return '';
-    }
-
-    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type
@@ -116,7 +116,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCliente?active=List');
     }

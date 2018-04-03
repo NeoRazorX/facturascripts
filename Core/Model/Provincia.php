@@ -32,27 +32,6 @@ class Provincia extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Identify the registry.
-     *
-     * @var string
-     */
-    public $idprovincia;
-
-    /**
-     * Country code associated with the province.
-     *
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Name of the province.
-     *
-     * @var string
-     */
-    public $provincia;
-
-    /**
      * 'Normalized' code in Spain to identify the provinces.
      *
      * @url: https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias
@@ -62,6 +41,13 @@ class Provincia extends Base\ModelClass
     public $codisoprov;
 
     /**
+     * Country code associated with the province.
+     *
+     * @var string
+     */
+    public $codpais;
+
+    /**
      * Postal code associated with the province.
      *
      * @url: https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png
@@ -69,6 +55,13 @@ class Provincia extends Base\ModelClass
      * @var string
      */
     public $codpostal2d;
+
+    /**
+     * Identify the registry.
+     *
+     * @var string
+     */
+    public $idprovincia;
 
     /**
      * Latitude associated with the place.
@@ -85,14 +78,11 @@ class Provincia extends Base\ModelClass
     public $longitud;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Name of the province.
      *
-     * @return string
+     * @var string
      */
-    public static function tableName()
-    {
-        return 'provincias';
-    }
+    public $provincia;
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -102,6 +92,16 @@ class Provincia extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'idprovincia';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'provincias';
     }
 
     /**
@@ -124,7 +124,7 @@ class Provincia extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListPais?active=List');
     }

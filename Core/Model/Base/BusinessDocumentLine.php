@@ -114,18 +114,18 @@ abstract class BusinessDocumentLine extends ModelClass
     public $orden;
 
     /**
-     * Net amount of the line, without taxes.
-     *
-     * @var float|int
-     */
-    public $pvptotal;
-
-    /**
      * Net amount without discounts.
      *
      * @var float|int
      */
     public $pvpsindto;
+
+    /**
+     * Net amount of the line, without taxes.
+     *
+     * @var float|int
+     */
+    public $pvptotal;
 
     /**
      * Price of the item, one unit.
@@ -148,7 +148,11 @@ abstract class BusinessDocumentLine extends ModelClass
      */
     public $referencia;
 
-    public function __construct($data = [])
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->actualizastockAnt = isset($this->actualizastock) ? $this->actualizastock : 0;
