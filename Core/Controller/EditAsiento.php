@@ -167,7 +167,7 @@ class EditAsiento extends ExtendedController\PanelController
         ];
 
         $subAccount = new Model\Subcuenta();
-        if ($subAccount->loadFromCode(null, $where)) {
+        if ($subAccount->loadFromCode('', $where)) {
             $balance = new Model\SubcuentaSaldo();
 
             $result['description'] = $subAccount->descripcion;
