@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,9 +30,22 @@ use FacturaScripts\Core\Lib\ExtendedController;
 class PageOption extends Base\ModelClass
 {
 
-    use Base\ModelTrait {
-        loadFromData as traitLoadFromData;
-    }
+    use Base\ModelTrait;
+
+    /**
+     * Definition of the columns. It is called columns but it always
+     * contains GroupItem, which contains the columns.
+     *
+     * @var array
+     */
+    public $columns;
+
+    /**
+     * Defining custom filters
+     *
+     * @var array
+     */
+    public $filters;
 
     /**
      * Identifier
@@ -40,6 +53,13 @@ class PageOption extends Base\ModelClass
      * @var int
      */
     public $id;
+
+    /**
+     * Definition of modal forms
+     *
+     * @var array
+     */
+    public $modals;
 
     /**
      * Name of the page (controller).
@@ -63,45 +83,15 @@ class PageOption extends Base\ModelClass
     public $rows;
 
     /**
-     * Definition of modal forms
-     *
-     * @var array
+     * Reset values of all model properties.
      */
-    public $modals;
-
-    /**
-     * Definition of the columns. It is called columns but it always
-     * contains GroupItem, which contains the columns.
-     *
-     * @var array
-     */
-    public $columns;
-
-    /**
-     * Defining custom filters
-     *
-     * @var array
-     */
-    public $filters;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function clear()
     {
-        return 'pages_options';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'id';
+        parent::clear();
+        $this->columns = [];
+        $this->modals = [];
+        $this->filters = [];
+        $this->rows = [];
     }
 
     /**
@@ -120,32 +110,40 @@ class PageOption extends Base\ModelClass
     }
 
     /**
-     * Reset values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->columns = [];
-        $this->modals = [];
-        $this->filters = [];
-        $this->rows = [];
-    }
-
-    /**
      * Load the data from an array
      *
      * @param array $data
      * @param array $exclude
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function loadFromData(array $data = array(), array $exclude = array())
     {
         array_push($exclude, 'columns', 'modals', 'filters', 'rows', 'code', 'action');
-        $this->traitLoadFromData($data, $exclude);
+        parent::loadFromData($data, $exclude);
 
         $columns = json_decode($data['columns'], true);
         $modals = json_decode($data['modals'], true);
         $rows = json_decode($data['rows'], true);
         ExtendedController\VisualItemLoadEngine::loadJSON($columns, $modals, $rows, $this);
+    }
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'id';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'pages_options';
     }
 
     /**
@@ -160,52 +158,6 @@ class PageOption extends Base\ModelClass
             'modals' => json_encode($this->modals),
             'filters' => json_encode($this->filters),
             'rows' => json_encode($this->rows),
-        ];
-    }
-
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert($values = [])
-    {
-        $values = $this->getEncodeValues();
-
-        return parent::saveInsert($values);
-    }
-
-    /**
-     * Update the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate($values = [])
-    {
-        $values = $this->getEncodeValues();
-
-        return parent::saveUpdate($values);
-    }
-
-    /**
-     * Returns the where filter to locate the view configuration
-     *
-     * @param string $name
-     * @param string $nick
-     *
-     * @return Database\DataBaseWhere[]
-     */
-    private function getPageFilter($name, $nick)
-    {
-        return [
-            new DataBase\DataBaseWhere('nick', $nick),
-            new DataBase\DataBaseWhere('name', $name),
-            new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            new DataBase\DataBaseWhere('name', $name),
         ];
     }
 
@@ -233,5 +185,47 @@ class PageOption extends Base\ModelClass
 
         /// Apply values to dynamic Select widgets
         ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
+    }
+
+    /**
+     * Returns the where filter to locate the view configuration
+     *
+     * @param string $name
+     * @param string $nick
+     *
+     * @return Database\DataBaseWhere[]
+     */
+    private function getPageFilter($name, $nick)
+    {
+        return [
+            new DataBase\DataBaseWhere('nick', $nick),
+            new DataBase\DataBaseWhere('name', $name),
+            new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+            new DataBase\DataBaseWhere('name', $name),
+        ];
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert($values = [])
+    {
+        return parent::saveInsert($this->getEncodeValues());
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate($values = [])
+    {
+        return parent::saveUpdate($this->getEncodeValues());
     }
 }

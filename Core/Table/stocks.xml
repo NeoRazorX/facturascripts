@@ -7,38 +7,19 @@
 -->
 <table>
     <column>
-        <name>referencia</name>
-        <type>character varying(30)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>disponible</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>stockmin</name>
+        <name>cantidad</name>
         <type>double precision</type>
         <null>NO</null>
         <default>0</default>
     </column>
     <column>
-        <name>reservada</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>nombre</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>pterecibir</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>codalmacen</name>
         <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>disponible</name>
+        <type>double precision</type>
         <null>NO</null>
     </column>
     <column>
@@ -48,13 +29,28 @@
         <default>nextval('stocks_idstock_seq'::regclass)</default>
     </column>
     <column>
-        <name>cantidad</name>
+        <name>pterecibir</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>reservada</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>stockmax</name>
         <type>double precision</type>
         <null>NO</null>
         <default>0</default>
     </column>
     <column>
-        <name>stockmax</name>
+        <name>stockmin</name>
         <type>double precision</type>
         <null>NO</null>
         <default>0</default>

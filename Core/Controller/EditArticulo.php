@@ -38,8 +38,6 @@ class EditArticulo extends ExtendedController\PanelController
         $this->addEditView('Articulo', 'EditArticulo', 'products', 'fa-cubes');
         $this->addEditListView('Stock', 'EditStock', 'stock');
         $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-users');
-        $this->addListView('ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
-        $this->addListView('ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
 
         /// Disable column
         $this->views['ListArticuloProveedor']->disableColumn('reference', true);
@@ -57,14 +55,6 @@ class EditArticulo extends ExtendedController\PanelController
             unset($this->views['ListArticuloProveedor']);
         }
 
-        if ($this->getViewModelValue('EditArticulo', 'tipo') !== 'atributos') {
-            unset($this->views['ListArticuloCombinacion']);
-        }
-
-        if ($this->getViewModelValue('EditArticulo', 'trazabilidad') === false) {
-            unset($this->views['ListArticuloTraza']);
-        }
-
         $limit = FS_ITEM_LIMIT;
         switch ($keyView) {
             case 'EditArticulo':
@@ -76,8 +66,6 @@ class EditArticulo extends ExtendedController\PanelController
                 $limit = 0;
                 /// no break
             case 'ListArticuloProveedor':
-            case 'ListArticuloCombinacion':
-            case 'ListArticuloTraza':
                 $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData(false, $where, [], 0, $limit);

@@ -135,7 +135,19 @@ class EstadoDocumento extends Base\ModelClass
             return false;
         }
 
-        return parent::save();
+        if (parent::save()) {
+            if ($this->predeterminado) {
+                $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
+                    . " WHERE predeterminado = true"
+                    . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
+                    . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
+                return self::$dataBase->exec($sql);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

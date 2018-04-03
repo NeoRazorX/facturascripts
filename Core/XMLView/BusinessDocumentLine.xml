@@ -34,9 +34,7 @@
             <widget type="text" fieldname="descripcion" />
         </column>
         <column name="quantity" display="right" order="130">
-            <widget type="number" fieldname="cantidad">
-                <option color="red">&lt;0</option>
-            </widget>
+            <widget type="number" fieldname="cantidad" />
         </column>
         <column name="price" display="right" order="140">
             <widget type="money" fieldname="pvpunitario" />

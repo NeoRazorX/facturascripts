@@ -137,7 +137,7 @@
                         <div class="dropdown-menu">
                             {% for view in fsc.views %}
                                 {% if fsc.viewClass(view) != 'HtmlView' %}
-                                    <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}">
+                                    <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}&url={{ edit_url | url_encode }}">
                                         <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
                                     </a>
                                 {% endif %}
@@ -145,8 +145,10 @@
                         </div>
                     </div>
                 </div>
-                {# -- Adds print and export options -- #}
-                {{ exportData(fsc, i18n, 'edit') }}
+                {% if fsc.hasData %}
+                    {# -- Adds print and export options -- #}
+                    {{ exportData(fsc, i18n, 'edit') }}
+                {% endif %}
             </div>
             <div class="col-6 text-right">
                 <h2>

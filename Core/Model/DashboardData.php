@@ -27,16 +27,7 @@ namespace FacturaScripts\Core\Model;
 class DashboardData extends Base\ModelClass
 {
 
-    use Base\ModelTrait {
-        loadFromData as traitLoadFromData;
-    }
-
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $id;
+    use Base\ModelTrait;
 
     /**
      * Name of visual component
@@ -44,13 +35,6 @@ class DashboardData extends Base\ModelClass
      * @var string
      */
     public $component;
-
-    /**
-     * Nick of the user to whom the card is addressed.
-     *
-     * @var string
-     */
-    public $nick;
 
     /**
      * Date creation of the card.
@@ -67,57 +51,25 @@ class DashboardData extends Base\ModelClass
     public $displaydate;
 
     /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $id;
+
+    /**
+     * Nick of the user to whom the card is addressed.
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
      * Set of configuration values
      *
      * @var array
      */
     public $properties;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'dashboard_data';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'id';
-    }
-
-    /**
-     * This function is called when creating the model table.
-     * Returns the SQL that will be executed after the creation of the table,
-     * useful to insert default values.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new User();
-        new Dashboard();
-
-        return '';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->creationdate = date('d-m-Y');
-        $this->displaydate = date('d-m-Y');
-        $this->properties = [];
-    }
 
     /**
      * Check an array of data so that it has the correct structure of the model.
@@ -138,15 +90,51 @@ class DashboardData extends Base\ModelClass
     }
 
     /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->creationdate = date('d-m-Y');
+        $this->displaydate = date('d-m-Y');
+        $this->properties = [];
+    }
+
+    /**
+     * This function is called when creating the model table.
+     * Returns the SQL that will be executed after the creation of the table,
+     * useful to insert default values.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new User();
+        new Dashboard();
+
+        return '';
+    }
+
+    /**
      * Assign the values of the $data array to the model properties.
      *
-     * @param array    $data
-     * @param string[] $exclude
+     * @param array $data
+     * @param array $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
     {
-        $this->traitLoadFromData($data, ['properties']);
+        parent::loadFromData($data, ['properties']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
+    }
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'id';
     }
 
     /**
@@ -158,9 +146,7 @@ class DashboardData extends Base\ModelClass
      */
     protected function saveInsert($values = [])
     {
-        $values = ['properties' => json_encode($this->properties)];
-
-        return parent::saveInsert($values);
+        return parent::saveInsert(['properties' => json_encode($this->properties)]);
     }
 
     /**
@@ -172,9 +158,17 @@ class DashboardData extends Base\ModelClass
      */
     protected function saveUpdate($values = [])
     {
-        $values = ['properties' => json_encode($this->properties)];
+        return parent::saveUpdate(['properties' => json_encode($this->properties)]);
+    }
 
-        return parent::saveUpdate($values);
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'dashboard_data';
     }
 
     /**

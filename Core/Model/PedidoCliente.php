@@ -76,6 +76,10 @@ class PedidoCliente extends Base\SalesDocument
     {
         $newLine = new LineaPedidoCliente($data);
         $newLine->idpedido = $this->idpedido;
+        
+        $state = $this->getState();
+        $newLine->actualizastock = $state->actualizastock;
+        
         return $newLine;
     }
     

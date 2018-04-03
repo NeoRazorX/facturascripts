@@ -19,11 +19,11 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 
 /**
  * Description of BusinessDocument
@@ -83,6 +83,19 @@ abstract class BusinessDocument extends ModelClass
     public $codserie;
 
     /**
+     * indicates whether the document can be modified
+     *
+     * @var bool
+     */
+    public $editable;
+
+    /**
+     *
+     * @var EstadoDocumento[]
+     */
+    private static $estados;
+
+    /**
      * Date of the document.
      *
      * @var string
@@ -111,6 +124,19 @@ abstract class BusinessDocument extends ModelClass
     public $idempresa;
 
     /**
+     * Document state, from EstadoDocumento model.
+     *
+     * @var int
+     */
+    public $idestado;
+
+    /**
+     *
+     * @var int
+     */
+    private $idestadoAnt;
+
+    /**
      * % IRPF retention of the document. It is obtained from the series.
      * Each line can have a different%.
      *
@@ -132,6 +158,13 @@ abstract class BusinessDocument extends ModelClass
      * @var float|int
      */
     public $neto;
+
+    /**
+     * Notes of the document.
+     *
+     * @var string
+     */
+    public $observaciones;
 
     /**
      * Rate of conversion to Euros of the selected currency.
@@ -178,27 +211,6 @@ abstract class BusinessDocument extends ModelClass
     public $totalrecargo;
 
     /**
-     * Notes of the document.
-     *
-     * @var string
-     */
-    public $observaciones;
-
-    /**
-     * indicates whether the document can be modified
-     *
-     * @var bool
-     */
-    public $editable;
-
-    /**
-     * Document state, from EstadoDocumento model.
-     *
-     * @var int
-     */
-    public $idestado;
-
-    /**
      * Returns the lines associated with the document.
      *
      * @return mixed
@@ -226,6 +238,12 @@ abstract class BusinessDocument extends ModelClass
      */
     abstract public function setSubject($subjects);
 
+    public function __construct($data = [])
+    {
+        parent::__construct($data);
+        $this->idestadoAnt = $this->idestado;
+    }
+
     /**
      * Reset the values of all model properties.
      */
@@ -249,13 +267,49 @@ abstract class BusinessDocument extends ModelClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
 
-        $estadoDocModel = new EstadoDocumento();
-        $where = [new DataBaseWhere('tipodoc', $this->modelClassName())];
-        foreach ($estadoDocModel->all($where) as $estado) {
-            $this->idestado = $estado->idestado;
-            $this->editable = $estado->editable;
-            break;
+        if (!isset(self::$estados)) {
+            $estadoDocModel = new EstadoDocumento();
+            self::$estados = $estadoDocModel->all([], [], 0, 0);
         }
+
+        /// select default status
+        foreach (self::$estados as $estado) {
+            if ($estado->tipodoc === $this->modelClassName() && $estado->predeterminado) {
+                $this->idestado = $estado->idestado;
+                $this->editable = $estado->editable;
+                break;
+            }
+        }
+    }
+
+    public function delete()
+    {
+        $lines = $this->getLines();
+        if (parent::delete()) {
+            foreach ($lines as $line) {
+                $line->cantidad = 0;
+                $line->updateStock($this->codalmacen);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @return EstadoDocumento
+     */
+    public function getState()
+    {
+        foreach (self::$estados as $state) {
+            if ($state->idestado === $this->idestado) {
+                return $state;
+            }
+        }
+
+        return new EstadoDocumento();
     }
 
     /**
@@ -271,6 +325,16 @@ abstract class BusinessDocument extends ModelClass
         new Ejercicio();
 
         return '';
+    }
+
+    public function loadFromCode($cod, $where = null, $orderby = [])
+    {
+        if (parent::loadFromCode($cod, $where, $orderby)) {
+            $this->idestadoAnt = $this->idestado;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -311,11 +375,10 @@ abstract class BusinessDocument extends ModelClass
     {
         if ($this->test()) {
             if ($this->exists()) {
-                return $this->saveUpdate();
+                return $this->checkState() ? $this->saveUpdate() : false;
             }
 
             $this->newCodigo();
-
             return $this->saveInsert();
         }
 
@@ -328,7 +391,7 @@ abstract class BusinessDocument extends ModelClass
      * @param string $date
      * @param string $hour
      */
-    public function setDate($date, $hour)
+    public function setDate(string $date, string $hour)
     {
         $ejercicioModel = new Ejercicio();
         $ejercicio = $ejercicioModel->getByFecha($date);
@@ -354,12 +417,40 @@ abstract class BusinessDocument extends ModelClass
          * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if (Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+        if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+            self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+            return false;
+        }
+
+        $estadoDoc = new EstadoDocumento();
+        if ($estadoDoc->loadFromCode($this->idestado)) {
+            $this->editable = $estadoDoc->editable;
+        }
+
+        return true;
+    }
+
+    private function checkState()
+    {
+        if ($this->idestado == $this->idestadoAnt) {
             return true;
         }
 
-        self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+        $state = $this->getState();
+        foreach ($this->getLines() as $line) {
+            $line->actualizastock = $state->actualizastock;
+            $line->save();
+            $line->updateStock($this->codalmacen);
+        }
 
-        return false;
+        if (!empty($state->generadoc)) {
+            $docGenerator = new BusinessDocumentGenerator();
+            if (!$docGenerator->generate($this, $state->generadoc)) {
+                return false;
+            }
+        }
+
+        $this->idestadoAnt = $this->idestado;
+        return true;
     }
 }

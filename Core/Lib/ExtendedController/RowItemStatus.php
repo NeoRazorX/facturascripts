@@ -89,19 +89,24 @@ class RowItemStatus extends RowItem
     public function getStatus($value)
     {
         foreach ($this->options as $option) {
-            /// don't use strict comparation (===)
-            if ($option['value'] == $value) {
-                return $option['color'];
-            }
+            switch ($option['value'][0]) {
+                case '>':
+                    if ($value > (float) substr($option['value'], 1)) {
+                        return $option['color'];
+                    }
+                    break;
 
-            $operator = $option['value'][0];
-            $value2 = (float) substr($option['value'], 1);
-            if ($operator === '>' && $value > $value2) {
-                return $option['color'];
-            }
+                case '<':
+                    if ($value < (float) substr($option['value'], 1)) {
+                        return $option['color'];
+                    }
+                    break;
 
-            if ($operator === '<' && $value < $value2) {
-                return $option['color'];
+                default:
+                    /// don't use strict comparation (===)
+                    if ($option['value'] == $value) {
+                        return $option['color'];
+                    }
             }
         }
 

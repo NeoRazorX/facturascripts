@@ -29,32 +29,11 @@ class ArticuloProveedor extends Base\Product
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $id;
-
-    /**
      * Código del proveedor asociado.
      *
      * @var string
      */
     public $codproveedor;
-
-    /**
-     * Referencia del artículo para el proveedor.
-     *
-     * @var string
-     */
-    public $refproveedor;
-
-    /**
-     * Precio neto al que nos ofrece el proveedor este producto.
-     *
-     * @var float|int
-     */
-    public $precio;
 
     /**
      * Descuento sobre el precio que nos hace el proveedor.
@@ -64,23 +43,34 @@ class ArticuloProveedor extends Base\Product
     public $dto;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Primary key.
      *
-     * @return string
+     * @var int
      */
-    public static function tableName()
-    {
-        return 'articulosprov';
-    }
+    public $id;
 
     /**
-     * Returns the name of the column that is the model's primary key.
+     * Precio neto al que nos ofrece el proveedor este producto.
      *
-     * @return string
+     * @var float|int
      */
-    public static function primaryColumn()
+    public $precio;
+
+    /**
+     * Referencia del artículo para el proveedor.
+     *
+     * @var string
+     */
+    public $refproveedor;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
     {
-        return 'id';
+        parent::clear();
+        $this->precio = 0.0;
+        $this->dto = 0.0;
     }
 
     /**
@@ -99,13 +89,23 @@ class ArticuloProveedor extends Base\Product
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
      */
-    public function clear()
+    public static function primaryColumn()
     {
-        parent::clear();
-        $this->precio = 0.0;
-        $this->dto = 0.0;
+        return 'id';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'articulosprov';
     }
 
     /**

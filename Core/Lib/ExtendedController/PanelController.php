@@ -48,6 +48,13 @@ abstract class PanelController extends Base\Controller
      * @var ExportManager
      */
     public $exportManager;
+    
+    /**
+     * Indicates if the main view has data or is empty.
+     *
+     * @var bool
+     */
+    public $hasData;
 
     /**
      * List of configuration options for each of the views
@@ -102,6 +109,7 @@ abstract class PanelController extends Base\Controller
 
         $this->active = $this->request->get('active', '');
         $this->exportManager = new ExportManager();
+        $this->hasData = false;
         $this->settings = [];
         $this->views = [];
 
@@ -158,17 +166,17 @@ abstract class PanelController extends Base\Controller
 
         // Load the model data for each view
         $mainView = array_keys($this->views)[0];
-        $hasData = false;
         foreach ($this->views as $keyView => $dataView) {
             $this->loadData($keyView, $dataView);
 
             // check if we are processing the main view
             if ($keyView == $mainView) {
-                $hasData = $dataView->count > 0;
+                $this->hasData = $dataView->count > 0;
                 continue;
             }
+            
             // check if the view should be active
-            $this->settings[$keyView]['active'] = $this->checkActiveView($dataView, $hasData);
+            $this->settings[$keyView]['active'] = $this->checkActiveView($dataView, $this->hasData);
         }
 
         // General operations with the loaded data
