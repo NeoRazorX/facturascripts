@@ -18,7 +18,10 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\Articulo;
+use FacturaScripts\Dinamic\Model\Stock;
 
 /**
  * Description of BusinessDocumentLine
@@ -29,11 +32,30 @@ abstract class BusinessDocumentLine extends ModelClass
 {
 
     /**
+     * True if this states must update product stock.
+     *
+     * @var int
+     */
+    public $actualizastock;
+
+    /**
+     *
+     * @var int
+     */
+    private $actualizastockAnt;
+
+    /**
      * Quantity.
      *
      * @var float|int
      */
     public $cantidad;
+
+    /**
+     *
+     * @var float|int
+     */
+    private $cantidadAnt;
 
     /**
      * Code of the selected combination, in the case of articles with attributes.
@@ -126,12 +148,20 @@ abstract class BusinessDocumentLine extends ModelClass
      */
     public $referencia;
 
+    public function __construct($data = [])
+    {
+        parent::__construct($data);
+        $this->actualizastockAnt = isset($this->actualizastock) ? $this->actualizastock : 0;
+        $this->cantidadAnt = isset($this->cantidad) ? $this->cantidad : 0;
+    }
+
     /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
+        $this->actualizastock = 0;
         $this->cantidad = 0.0;
         $this->descripcion = '';
         $this->dtopor = 0.0;
@@ -142,6 +172,16 @@ abstract class BusinessDocumentLine extends ModelClass
         $this->pvptotal = 0.0;
         $this->pvpunitario = 0.0;
         $this->recargo = 0.0;
+    }
+
+    public function delete()
+    {
+        if (parent::delete()) {
+            $this->cantidad = 0;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -166,5 +206,51 @@ abstract class BusinessDocumentLine extends ModelClass
         $this->pvptotal = $this->pvpsindto * (100 - $this->dtopor) / 100;
 
         return true;
+    }
+
+    public function updateStock(string $codalmacen)
+    {
+        if ($this->actualizastock === $this->actualizastockAnt && $this->cantidad === $this->cantidadAnt) {
+            return true;
+        }
+
+        $articulo = new Articulo();
+        if (!empty($this->referencia) && $articulo->loadFromCode($this->referencia)) {
+            if ($articulo->nostock) {
+                return true;
+            }
+
+            $stock = new Stock();
+            if (!$stock->loadFromCode('', [new DataBaseWhere('codalmacen', $codalmacen), new DataBaseWhere('referencia', $this->referencia)])) {
+                $stock->codalmacen = $codalmacen;
+                $stock->referencia = $this->referencia;
+            }
+
+            $this->applyStockChanges($this->actualizastockAnt, $this->cantidadAnt * -1, $stock);
+            $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
+            $this->actualizastockAnt = $this->actualizastock;
+            $this->cantidadAnt = $this->cantidad;
+            return $stock->save();
+        }
+
+        return true;
+    }
+
+    private function applyStockChanges(int $mode, float $quantity, Stock $stock)
+    {
+        switch ($mode) {
+            case 1:
+            case -1:
+                $stock->cantidad += $mode * $quantity;
+                break;
+
+            case 2:
+                $stock->pterecibir += $quantity;
+                break;
+
+            case -2:
+                $stock->reservada += $quantity;
+                break;
+        }
     }
 }

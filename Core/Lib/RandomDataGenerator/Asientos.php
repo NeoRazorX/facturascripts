@@ -49,6 +49,10 @@ class Asientos extends AbstractRandomAccounting
         $partida = new Model\Partida();
         $this->shuffle($subcuentas, new Model\Subcuenta());
 
+        if (count($subcuentas) < 10) {
+            return 0;
+        }
+
         for ($generated = 0; $generated < $num; ++$generated) {
             $ejercicio = $this->getOneItem($this->ejercicios);
 

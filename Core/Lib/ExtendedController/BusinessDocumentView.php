@@ -129,7 +129,10 @@ class BusinessDocumentView extends BaseView
         }
 
         foreach ($this->lines as $line) {
-            $lineArray = (array) $line;
+            $lineArray = [];
+            foreach ($line->getModelFields() as $key => $field) {
+                $lineArray[$key] = $line->{$key};
+            }
             $lineArray['descripcion'] = Utils::fixHtml($lineArray['descripcion']);
             $data['rows'][] = $lineArray;
         }
@@ -221,7 +224,7 @@ class BusinessDocumentView extends BaseView
         }
 
         if ($this->save()) {
-            $result = $this->saveLines($newLines);
+            $result = $this->model->editable ? $this->saveLines($newLines) : 'OK';
         } else {
             $result = 'ERROR';
         }
@@ -329,6 +332,7 @@ class BusinessDocumentView extends BaseView
 
             if (!$found) {
                 $oldLine->delete();
+                $oldLine->updateStock($this->model->codalmacen);
             }
         }
 
@@ -344,7 +348,9 @@ class BusinessDocumentView extends BaseView
                 $newDocLine->pvpsindto = $newDocLine->pvpunitario * $newDocLine->cantidad;
                 $newDocLine->pvptotal = $newDocLine->pvpsindto * (100 - $newDocLine->dtopor) / 100;
 
-                if (!$newDocLine->save()) {
+                if ($newDocLine->save()) {
+                    $newDocLine->updateStock($this->model->codalmacen);
+                } else {
                     $result = "ERROR ON NEW LINE";
                 }
                 $skip = false;
@@ -371,7 +377,11 @@ class BusinessDocumentView extends BaseView
         $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;
         $oldLine->pvptotal = $oldLine->pvpsindto * (100 - $oldLine->dtopor) / 100;
 
-        return $oldLine->save();
+        if ($oldLine->save()) {
+            return $oldLine->updateStock($this->model->codalmacen);
+        }
+
+        return false;
     }
 
     /**

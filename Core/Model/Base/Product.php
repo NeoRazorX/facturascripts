@@ -106,25 +106,6 @@ abstract class Product extends ModelClass
     }
 
     /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        $this->codbarras = Utils::noHtml($this->codbarras);
-        $this->descripcion = Utils::noHtml($this->descripcion);
-        $this->partnumber = Utils::noHtml($this->partnumber);
-        $this->referencia = Utils::noHtml($this->referencia);
-        
-        if ($this->nostock) {
-            $this->stockfis = 0.0;
-        }
-        
-        return true;
-    }
-
-    /**
      * Returns the tax on the item.
      *
      * @return bool|Impuesto
@@ -189,14 +170,33 @@ abstract class Product extends ModelClass
         if ($codimpuesto !== $this->codimpuesto) {
             $this->codimpuesto = $codimpuesto;
             $this->iva = null;
+        }
 
-            if (!isset(self::$impuestos)) {
-                self::$impuestos = [];
-                $impuestoModel = new Impuesto();
-                foreach ($impuestoModel->all() as $imp) {
-                    self::$impuestos[$imp->codimpuesto] = $imp;
-                }
+        if (!isset(self::$impuestos)) {
+            self::$impuestos = [];
+            $impuestoModel = new Impuesto();
+            foreach ($impuestoModel->all() as $imp) {
+                self::$impuestos[$imp->codimpuesto] = $imp;
             }
         }
+    }
+
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        $this->codbarras = Utils::noHtml($this->codbarras);
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->partnumber = Utils::noHtml($this->partnumber);
+        $this->referencia = Utils::noHtml($this->referencia);
+
+        if ($this->nostock) {
+            $this->stockfis = 0.0;
+        }
+
+        return true;
     }
 }

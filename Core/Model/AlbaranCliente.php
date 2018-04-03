@@ -72,6 +72,10 @@ class AlbaranCliente extends Base\SalesDocument
     {
         $newLine = new LineaAlbaranCliente($data);
         $newLine->idalbaran = $this->idalbaran;
+        
+        $state = $this->getState();
+        $newLine->actualizastock = $state->actualizastock;
+        
         return $newLine;
     }
 

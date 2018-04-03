@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -62,53 +61,13 @@ trait ModelTrait
     }
 
     /**
-     * Assign the values of the $data array to the model properties.
+     * Returns the list of fields in the table.
      *
-     * @param array    $data
-     * @param string[] $exclude
+     * @return array
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function getModelFields()
     {
-        foreach ($data as $key => $value) {
-            if (in_array($key, $exclude)) {
-                continue;
-            } elseif (!isset(self::$fields[$key])) {
-                $this->{$key} = $value;
-                continue;
-            }
-
-            // We check if it is a varchar (with established length) or another type of data
-            $field = self::$fields[$key];
-            $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
-
-            switch ($type) {
-                case 'tinyint':
-                case 'boolean':
-                    $this->{$key} = Utils::str2bool($value);
-                    break;
-
-                case 'integer':
-                case 'int':
-                    $this->{$key} = $this->getIntergerValueForField($field, $value);
-                    break;
-
-                case 'double':
-                case 'double precision':
-                case 'float':
-                    $this->{$key} = empty($value) ? 0.00 : (float) $value;
-                    break;
-
-                case 'date':
-                    $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
-                    break;
-
-                default:
-                    if ($value === null && $field['is_nullable'] === 'NO') {
-                        $value = '';
-                    }
-                    $this->{$key} = $value;
-            }
-        }
+        return static::$fields;
     }
 
     /**
@@ -134,16 +93,6 @@ trait ModelTrait
     }
 
     /**
-     * Returns the list of fields in the table.
-     *
-     * @return array
-     */
-    protected function getModelFields()
-    {
-        return static::$fields;
-    }
-
-    /**
      * Loads table fields if is necessary.
      *
      * @param DataBase  $dataBase
@@ -154,26 +103,5 @@ trait ModelTrait
         if (empty(self::$fields)) {
             self::$fields = ($dataBase->tableExists($tableName) ? $dataBase->getColumns($tableName) : []);
         }
-    }
-
-    /**
-     * Returns the integer value by controlling special cases for the PK and FK.
-     *
-     * @param array  $field
-     * @param string $value
-     *
-     * @return integer|NULL
-     */
-    private function getIntergerValueForField($field, $value)
-    {
-        if (!empty($value)) {
-            return (int) $value;
-        }
-
-        if ($field['name'] === static::primaryColumn()) {
-            return null;
-        }
-
-        return ($field['is_nullable'] === 'NO') ? 0 : null;
     }
 }

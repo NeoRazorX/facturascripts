@@ -36,22 +36,22 @@
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="stockmin" display="right" order="130">
-            <widget type="number" fieldname="stockmin" />
-        </column>
-        <column name="stockmax" display="right" order="140">
-            <widget type="number" fieldname="stockmax" />
-        </column>
-        <column name="quantity" display="right" order="200">
+        <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="reserved" display="right" order="210">
+        <column name="stockmin" display="right" order="140">
+            <widget type="number" fieldname="stockmin" />
+        </column>
+        <column name="stockmax" display="right" order="150">
+            <widget type="number" fieldname="stockmax" />
+        </column>
+        <column name="reserved" display="right" order="160">
             <widget type="number" fieldname="reservada" readonly="true"/>
         </column>
-        <column name="pending-reception" display="right" order="220">
+        <column name="pending-reception" display="right" order="170">
             <widget type="number" fieldname="pterecibir" readonly="true"/>
         </column>
-        <column name="available" display="right" order="230">
+        <column name="available" display="right" order="180">
             <widget type="number" fieldname="disponible" readonly="true"/>
         </column>
     </columns>

@@ -36,7 +36,7 @@
                 <widget type="text" fieldname="razonsocial" required="true" />
             </column>
             <column name="fiscal-id" numcolumns="2" order="130">
-                <widget type="select" fieldname="tipoidfiscal">
+                <widget type="select" fieldname="tipoidfiscal" required="true">
                     <values></values>
                 </widget>
             </column>
@@ -70,7 +70,7 @@
                 </widget>
             </column>
             <column name="vat-regime" order="140" numcolumns="3">
-                <widget type="select" fieldname="regimeniva">
+                <widget type="select" fieldname="regimeniva" required="true">
                     <values></values>
                 </widget>
             </column>

@@ -122,12 +122,21 @@ class Articulos extends AbstractRandom
             }
 
             if (mt_rand(0, 2) == 0) {
-                $art->sumStock($this->getOneItem($this->almacenes)->codalmacen, mt_rand(0, 1000));
+                $this->sumStock($art, mt_rand(0, 1000));
             } else {
-                $art->sumStock($this->getOneItem($this->almacenes)->codalmacen, mt_rand(0, 20));
+                $this->sumStock($art, mt_rand(0, 20));
             }
         }
 
         return $generated;
+    }
+
+    private function sumStock($art, $quantity)
+    {
+        $stock = new Model\Stock();
+        $stock->referencia = $art->referencia;
+        $stock->codalmacen = $this->getOneItem($this->almacenes)->codalmacen;
+        $stock->cantidad = $quantity;
+        $stock->save();
     }
 }

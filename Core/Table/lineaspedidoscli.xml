@@ -7,6 +7,12 @@
 -->
 <table>
     <column>
+        <name>actualizastock</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>-2</default>
+    </column>
+    <column>
         <name>cantidad</name>
         <type>double precision</type>
         <null>NO</null>
@@ -89,6 +95,7 @@
     <column>
         <name>recargo</name>
         <type>double precision</type>
+        <null>NO</null>
     </column>
     <column>
         <name>referencia</name>

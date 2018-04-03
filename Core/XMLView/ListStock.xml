@@ -36,20 +36,20 @@
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="reserved" display="right" order="140">
-            <widget type="number" fieldname="reservada" />
-        </column>
-        <column name="pending-reception" display="right" order="150">
-            <widget type="number" fieldname="pterecibir" />
-        </column>
-        <column name="available" display="right" order="160">
-            <widget type="number" fieldname="disponible" />
-        </column>
-        <column name="stockmin" display="right" order="170">
+        <column name="stockmin" display="right" order="140">
             <widget type="number" fieldname="stockmin" />
         </column>
-        <column name="stockmax" display="right" order="180">
+        <column name="stockmax" display="right" order="150">
             <widget type="number" fieldname="stockmax" />
+        </column>
+        <column name="reserved" display="right" order="160">
+            <widget type="number" fieldname="reservada" />
+        </column>
+        <column name="pending-reception" display="right" order="170">
+            <widget type="number" fieldname="pterecibir" />
+        </column>
+        <column name="available" display="right" order="180">
+            <widget type="number" fieldname="disponible" />
         </column>
     </columns>
     <rows>

@@ -7,10 +7,15 @@
 -->
 <table>
     <column>
+        <name>actualizastock</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>-1</default>
+    </column>
+    <column>
         <name>cantidad</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>codcombinacion</name>
@@ -28,7 +33,6 @@
         <name>dtopor</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>idalbaran</name>
@@ -57,7 +61,6 @@
         <name>iva</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>mostrar_cantidad</name>
@@ -82,24 +85,21 @@
         <name>pvpsindto</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>pvptotal</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>pvpunitario</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>recargo</name>
         <type>double precision</type>
-        <default>0</default>
+        <null>NO</null>
     </column>
     <column>
         <name>referencia</name>

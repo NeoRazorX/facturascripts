@@ -66,28 +66,28 @@
             </div>
         </div>
         <br/>
+        {% if model.editable == false %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info text-center">{{ context.i18n.trans('non-editable-document') }}</div>
+                </div>
+            </div>
+        {% endif %}
         <div id="document-lines"></div>
         <br/>
         <div class="form-row">
-            {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
-            {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
-            {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
-            {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
-            {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <br/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
+            <div class="col">
                 <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary')">
                     <i class="fa fa-trash" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ context.i18n.trans('delete') }}</span>
                 </a>
             </div>
-            <div class="col-6 text-right">
+            {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
+            {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
+            {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
+            {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
+            {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
+            <div class="col text-right">
                 <button type="button" class="btn btn-sm btn-primary" onclick="documentSave()">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
                 </button>
@@ -240,18 +240,33 @@
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% for state in view.documentStates %}
-                {% if model.idestado == state.idestado %}{{ state.nombre }}{% endif %}
+                {% if model.idestado == state.idestado %}
+                    {% if state.editable %}
+                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                    {% else %}
+                        <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                    {% endif %}
+                {% endif %}
             {% endfor %}
         </button>
         <div class="dropdown-menu">
             {% for state in view.documentStates %}
                 {% if model.idestado == state.idestado %}
                     <a class="dropdown-item active" href="#">
-                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% if state.editable %}
+                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% else %}
+                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% endif %}
                     </a>
                 {% else %}
-                    <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ state.idestado }}');documentSave();">
-                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                    <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ state.idestado }}');
+                            documentSave();">
+                        {% if state.editable %}
+                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% else %}
+                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% endif %}
                     </a>
                 {% endif %}
             {% endfor %}
