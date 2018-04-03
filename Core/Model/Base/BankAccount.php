@@ -59,6 +59,28 @@ abstract class BankAccount extends ModelClass
     public $swift;
 
     /**
+     * Returns the IBAN with or without spaces.
+     *
+     * @param bool $espacios
+     *
+     * @return string
+     */
+    public function getIban(bool $espacios = false)
+    {
+        $iban = str_replace(' ', '', $this->iban);
+        if ($espacios) {
+            $txt = '';
+            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
+                $txt .= substr($iban, $i, 4) . ' ';
+            }
+
+            return $txt;
+        }
+
+        return $iban;
+    }
+
+    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
@@ -78,35 +100,22 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * Returns the IBAN with or without spaces.
+     * Check if the DC's of an IBAN are correct.
      *
-     * @param bool $espacios
-     *
-     * @return string
-     */
-    public function getIban($espacios = false)
-    {
-        $iban = str_replace(' ', '', $this->iban);
-        if ($espacios) {
-            $txt = '';
-            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
-                $txt .= substr($iban, $i, 4) . ' ';
-            }
-
-            return $txt;
-        }
-
-        return $iban;
-    }
-
-    /**
-     * Check the reported bank details.
+     * @param string $iban
      *
      * @return boolean
      */
-    protected function testBankAccount()
+    public function verificarIBAN(string $iban)
     {
-        return (empty($this->iban) || $this->verificarIBAN($this->iban));
+        if (strlen($iban) != 24) {
+            return false;
+        }
+
+        $codpais = substr($iban, 0, 2);
+        $ccc = substr($iban, -20);
+
+        return $iban == $this->calcularIBAN($ccc, $codpais);
     }
 
     /**
@@ -117,7 +126,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return string
      */
-    private function calcularIBAN($ccc, $codpais = '')
+    private function calcularIBAN(string $ccc, string $codpais = '')
     {
         $pais = substr($codpais, 0, 2);
         $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
@@ -137,21 +146,12 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * Check if the DC's of an IBAN are correct.
-     *
-     * @param string $iban
+     * Check the reported bank details.
      *
      * @return boolean
      */
-    public function verificarIBAN($iban)
+    protected function testBankAccount()
     {
-        if (strlen($iban) != 24) {
-            return false;
-        }
-
-        $codpais = substr($iban, 0, 2);
-        $ccc = substr($iban, -20);
-
-        return $iban == $this->calcularIBAN($ccc, $codpais);
+        return (empty($this->iban) || $this->verificarIBAN($this->iban));
     }
 }

@@ -143,7 +143,7 @@ abstract class ComercialContact extends Contact
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (self::$idFiscal === null) {
             self::$idFiscal = new IDFiscal();

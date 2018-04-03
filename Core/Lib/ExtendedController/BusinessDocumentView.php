@@ -154,24 +154,15 @@ class BusinessDocumentView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param bool  $code
-     * @param array $where
+     * @param string $code
      */
-    public function loadData(bool $code = false, array $where = [])
+    public function loadData(string $code)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
         }
 
-        if (is_array($code)) {
-            foreach ($code as $fieldName => $value) {
-                $where[] = new DataBaseWhere($fieldName, $value);
-            }
-            $this->model->loadFromCode('', $where);
-        } else {
-            $this->model->loadFromCode($code);
-        }
-
+        $this->model->loadFromCode($code);
         $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
         $this->title = $this->model->codigo;

@@ -83,7 +83,7 @@ abstract class ModelCore
      * @param DataBase  $dataBase
      * @param string    $tableName
      */
-    abstract protected function loadModelFields(&$dataBase, $tableName);
+    abstract protected function loadModelFields(DataBase &$dataBase, string $tableName);
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -104,7 +104,7 @@ abstract class ModelCore
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (self::$cache === null) {
             self::$cache = new Cache();

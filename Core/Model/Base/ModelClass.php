@@ -167,7 +167,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function loadFromCode(string $cod, $where = null, array $orderby = [])
+    public function loadFromCode($cod, $where = null, array $orderby = [])
     {
         $data = $this->getRecord($cod, $where, $orderby);
         if (empty($data)) {
@@ -338,7 +338,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return array
      */
-    private function getRecord(string $cod, $where = null, array $orderby = [])
+    private function getRecord($cod, $where = null, array $orderby = [])
     {
         $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
