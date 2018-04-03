@@ -39,6 +39,27 @@ abstract class BusinessDocumentController extends PanelController
     abstract protected function getModelClassName();
 
     /**
+     * Returns an array with all data from selected model.
+     *
+     * @param string $modelName
+     *
+     * @return mixed
+     */
+    public function getSelectValues($modelName)
+    {
+        $values = [];
+        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $model = new $modelName();
+
+        $order = [$model->primaryDescriptionColumn() => 'ASC'];
+        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
+        }
+
+        return $values;
+    }
+
+    /**
      * Load views and document.
      */
     protected function createViews()
@@ -104,6 +125,16 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
+     * Return the name of the xml file with the column configuration por lines.
+     *
+     * @return string
+     */
+    protected function getLineXMLView()
+    {
+        return 'BusinessDocumentLine';
+    }
+
+    /**
      * Load view data procedure
      *
      * @param string   $keyView
@@ -115,36 +146,5 @@ abstract class BusinessDocumentController extends PanelController
         if ($keyView === 'Document' && !empty($iddoc)) {
             $view->loadData($iddoc);
         }
-    }
-
-    /**
-     * Return the name of the xml file with the column configuration por lines.
-     *
-     * @return string
-     */
-    protected function getLineXMLView()
-    {
-        return 'BusinessDocumentLine';
-    }
-
-    /**
-     * Returns an array with all data from selected model.
-     *
-     * @param string $modelName
-     *
-     * @return mixed
-     */
-    public function getSelectValues($modelName)
-    {
-        $values = [];
-        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
-        $model = new $modelName();
-
-        $order = [$model->primaryDescriptionColumn() => 'ASC'];
-        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
-            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
-        }
-
-        return $values;
     }
 }

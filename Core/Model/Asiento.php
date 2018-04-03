@@ -94,7 +94,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
      *
      * @param array $detail
      */
-    public function accumulateAmounts(&$detail)
+    public function accumulateAmounts(array &$detail)
     {
         $this->importe += round(floatval($detail['haber']), (int) FS_NF0);
     }

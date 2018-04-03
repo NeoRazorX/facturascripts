@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,15 +24,16 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 interface GridDocumentInterface
 {
-    /**
-     * Initializes the total fields
-     */
-    public function initTotals();
 
     /**
      * Accumulate the amounts of the detail in the document
      *
-     * @param type $detail
+     * @param array $detail
      */
-    public function accumulateAmounts(&$detail);
+    public function accumulateAmounts(array &$detail);
+
+    /**
+     * Initializes the total fields
+     */
+    public function initTotals();
 }
