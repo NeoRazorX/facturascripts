@@ -24,34 +24,23 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="9">
-            <column name="id" order="100" display="none">
-                <widget type="text" fieldname="idcuenta" onclick="" />
-            </column>
-            <column name="account" numcolumns="3" order="100">
-                <widget type="text" fieldname="codcuenta" maxlength="10" icon="fa-bar-chart" onclick="" />
-            </column>
-            <column name="description" order="110">
-                <widget type="text" fieldname="descripcion" onclick="" />
-            </column>
-        </group>
-        <group name="data2" numcolumns="3">
-            <column name="fiscal-exercise" order="100">
-                <widget type="select" fieldname="codejercicio" required="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-        </group>
-        <group name="others" numcolumns="9">
-            <column name="parent-account" numcolumns="3" order="100">
-                <widget type="text" fieldname="parent_codcuenta" maxlength="10" icon="fa-bar-chart" />
-            </column>
-            <column name="special-account-id" numcolumns="7" order="120">
-                <widget type="select" fieldname="codcuentaesp">
-                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-        </group>
+        <column name="id" order="100" display="none">
+            <widget type="text" fieldname="idcuenta" />
+        </column>
+        <column name="account" numcolumns="2" order="110">
+            <widget type="text" fieldname="codcuenta" maxlength="10" icon="fa-bar-chart" />
+        </column>
+        <column name="description" numcolumns="6" order="120">
+            <widget type="text" fieldname="descripcion" />
+        </column>
+        <column name="parent-account" numcolumns="2" order="130">
+            <widget type="text" fieldname="parent_codcuenta" maxlength="10" icon="fa-bar-chart" />
+        </column>
+        <column name="fiscal-exercise" numcolumns="2" order="140">
+            <widget type="select" fieldname="codejercicio" required="true">
+                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+            </widget>
+        </column>
     </columns>
 </view>
 

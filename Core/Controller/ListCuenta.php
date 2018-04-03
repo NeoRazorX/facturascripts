@@ -34,6 +34,15 @@ class ListCuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
+        /* Sub-Accounts */
+        $this->addView('Subcuenta', 'ListSubcuenta', 'subaccounts', 'fa-th-list');
+        $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion', 'codejercicio']);
+
+        $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', 'codejercicio', 'nombre');
+
+        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
+        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
+
         /* Accounts */
         $this->addView('Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio']);
