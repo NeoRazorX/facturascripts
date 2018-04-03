@@ -48,8 +48,11 @@ class Ledger extends AccountingBase
         }
 
         $ledger = [];
+        $ledgerAccount = [];
         foreach ($results as $line) {
-             $ledger[$line['codcuenta']][] = $this->processLine($line);
+            $this->processHeader($ledgerAccount[$line['codcuenta']], $line);
+            $ledger[$line['codcuenta']][0] = $this->processLine($ledgerAccount[$line['codcuenta']]);
+            $ledger[$line['codcuenta']][] = $this->processLine($line);
         }
 
         /// every page is a table
@@ -64,16 +67,40 @@ class Ledger extends AccountingBase
      */
     protected function getData()
     {
-        $sql = 'SELECT asto.numero, asto.fecha, subc.codcuenta, part.codsubcuenta, part.concepto, part.debe, part.haber'
-            . ' FROM asientos as asto, partidas AS part, subcuentas as subc '
+        $sql = 'SELECT asto.fecha, asto.numero, subc.codcuenta, cuentas.descripcion '
+            . ' as cuenta_descripcion, part.codsubcuenta, part.concepto, part.debe, part.haber '
+            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
             . ' WHERE asto.idasiento = part.idasiento '
-            . ' AND fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND fecha <= ' . $this->dataBase->var2str($this->dateTo)
+            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
+            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
             . ' AND subc.codejercicio = asto.codejercicio '
+            . ' AND cuentas.codejercicio = asto.codejercicio '
             . ' AND subc.codsubcuenta = part.codsubcuenta '
-            . ' ORDER BY subc.codcuenta, asto.fecha, asto.numero ASC';
-
+            . ' AND subc.idcuenta = cuentas.idcuenta '
+            . ' ORDER BY asto.fecha, subc.codcuenta, part.codsubcuenta, asto.numero ASC';
         return $this->dataBase->select($sql);
+    }
+
+    /**
+     * Process the header data to use the appropiate formats.
+     *
+     * @param array $line
+     *
+     * @return array
+     */
+    protected function processHeader(&$ledgerAccount, $line)
+    {
+        $ledgerAccount['fecha'] = \date('d-m-Y', strtotime($this->dateFrom));
+        $ledgerAccount['numero'] = "";
+        $ledgerAccount['cuenta'] = $line['codcuenta'];
+        $ledgerAccount['concepto'] = $line['cuenta_descripcion'];
+        if(isset($ledgerAccount['debe'])){
+            $ledgerAccount['debe'] += $line['debe'];
+            $ledgerAccount['haber'] += $line['debe'];
+        } else {
+            $ledgerAccount['debe'] = $line['debe'];
+            $ledgerAccount['haber'] = $line['debe'];
+        }
     }
 
     /**
@@ -85,11 +112,11 @@ class Ledger extends AccountingBase
      */
     protected function processLine($line)
     {
-        $line['fecha'] = date('d-m-Y', strtotime($line['fecha']));
-        $line['concepto'] = Utils::fixHtml($line['concepto']);
-        $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');
-        $line['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, '');
-
-        return $line;
+        $item['fecha'] = date('d-m-Y', strtotime($line['fecha']));
+        $item['cuenta'] = (isset($line['cuenta']))?$line['cuenta']:$line['codsubcuenta'];
+        $item['concepto'] = Utils::fixHtml($line['concepto']);
+        $item['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');
+        $item['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, '');
+        return $item;
     }
 }
