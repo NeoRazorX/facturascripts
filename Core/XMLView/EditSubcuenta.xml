@@ -27,13 +27,18 @@
     <columns>
         <group name="primary-data" numcolumns="12">
             <column name="id" order="100" display="none">
-                <widget type="text" fieldname="idsubcuenta" onclick="" />
+                <widget type="text" fieldname="idsubcuenta" />
             </column>
-            <column name="subaccount" numcolumns="3" order="100">
+            <column name="subaccount" numcolumns="2" order="100">
                 <widget type="text" fieldname="codsubcuenta" readonly="true" />
             </column>
-            <column name="description" numcolumns="9" order="100">
+            <column name="description" numcolumns="7" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
+            </column>
+            <column name="special-account-id" numcolumns="3" order="120">
+                <widget type="select" fieldname="codcuentaesp">
+                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
         <group name="seccondary-data" numcolumns="12">

@@ -75,6 +75,13 @@ class Subcuenta extends Base\ModelClass
     public $codejercicio;
 
     /**
+     * Identifier of the special account.
+     *
+     * @var int
+     */
+    public $codcuentaesp;
+
+    /**
      * Tax code.
      *
      * @var string
@@ -131,6 +138,7 @@ class Subcuenta extends Base\ModelClass
      */
     public function install()
     {
+        new CuentaEspecial();
         new Cuenta();
         return '';
     }
@@ -261,5 +269,18 @@ class Subcuenta extends Base\ModelClass
         }
 
         return true;
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url($type = 'auto', $list = 'List')
+    {
+        return parent::url($type, 'ListCuenta?active=List');
     }
 }
