@@ -39,7 +39,6 @@ final class RegularizacionStockTest extends TestCase
         $this->assertEquals(0, $model->cantidadini);
         $this->assertEquals(0, $model->cantidadfin);
         $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertEquals($now->format('H:i:s'), $model->hora);
         $this->assertEquals('', $model->motivo);
         $this->assertTrue($model->test());
 
