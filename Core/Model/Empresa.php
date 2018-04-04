@@ -28,6 +28,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
  */
 class Empresa extends Base\Contact
 {
+
     use Base\ModelTrait;
 
     /**
@@ -122,13 +123,32 @@ class Empresa extends Base\Contact
     public $web;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+
+        $regimenIVA = new RegimenIVA();
+        $this->regimeniva = $regimenIVA::defaultValue();
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
-    public static function tableName()
+    public function install()
     {
-        return 'empresas';
+        $num = mt_rand(1, 9999);
+
+        return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono1,codpais,apartado,'
+            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto,personafisica)'
+            . "VALUES (1,NULL,'https://www.facturascripts.com',"
+            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
+            . "'Empresa " . $num . " S.L.','E-" . $num . "','0');";
     }
 
     /**
@@ -152,14 +172,13 @@ class Empresa extends Base\Contact
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-
-        $regimenIVA = new RegimenIVA();
-        $this->regimeniva = $regimenIVA::defaultValue();
+        return 'empresas';
     }
 
     /**
@@ -183,23 +202,5 @@ class Empresa extends Base\Contact
         }
 
         return parent::test();
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        $num = mt_rand(1, 9999);
-
-        return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono1,codpais,apartado,'
-            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto,personafisica)'
-            . "VALUES (1,NULL,'https://www.facturascripts.com',"
-            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
-            . "'Empresa " . $num . " S.L.','E-" . $num . "','0');";
     }
 }
