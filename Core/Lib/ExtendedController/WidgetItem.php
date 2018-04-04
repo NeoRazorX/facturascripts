@@ -427,6 +427,10 @@ abstract class WidgetItem implements VisualItemInterface
             case 'select':
                 return new WidgetItemSelect();
 
+            case 'thumbnail':
+            case 'picture':
+                return new WidgetItemImage($type);
+
             default:
                 return new WidgetItemText($type);
         }
