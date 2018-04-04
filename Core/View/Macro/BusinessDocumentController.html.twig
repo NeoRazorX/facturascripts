@@ -66,7 +66,7 @@
             </div>
         </div>
         <br/>
-        {% if model.editable == false %}
+        {% if model.editable == false and model.exists() %}
             <div class="row">
                 <div class="col-12">
                     <div class="alert alert-info text-center">{{ context.i18n.trans('non-editable-document') }}</div>
