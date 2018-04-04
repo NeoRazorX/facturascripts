@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Articulo;
@@ -209,8 +210,8 @@ class BusinessDocumentTools
         }
 
         $newLine = $doc->getNewLine();
-        foreach($fLine as $key => $value) {
-            $newLine->{$key} = $value;
+        foreach ($fLine as $key => $value) {
+            $newLine->{$key} = ($key === 'descripcion') ? Utils::fixHtml($value) : $value;
         }
         $newLine->cantidad = (float) $fLine['cantidad'];
         $newLine->pvpunitario = (float) $fLine['pvpunitario'];

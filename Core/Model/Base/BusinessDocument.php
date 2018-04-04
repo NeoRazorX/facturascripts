@@ -342,25 +342,6 @@ abstract class BusinessDocument extends ModelClass
     }
 
     /**
-     * Generates a new code.
-     */
-    private function newCodigo()
-    {
-        $this->numero = '1';
-
-        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
-            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
-            . " AND codserie = " . self::$dataBase->var2str($this->codserie) . ";";
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            $this->numero = (string) (1 + (int) $data[0]['num']);
-        }
-
-        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
-    }
-
-    /**
      * Returns the description of the column that is the model's primary key.
      *
      * @return string
@@ -456,5 +437,24 @@ abstract class BusinessDocument extends ModelClass
 
         $this->idestadoAnt = $this->idestado;
         return true;
+    }
+
+    /**
+     * Generates a new code.
+     */
+    private function newCodigo()
+    {
+        $this->numero = '1';
+
+        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
+            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
+            . " AND codserie = " . self::$dataBase->var2str($this->codserie) . ";";
+
+        $data = self::$dataBase->select($sql);
+        if (!empty($data)) {
+            $this->numero = (string) (1 + (int) $data[0]['num']);
+        }
+
+        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
     }
 }
