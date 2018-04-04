@@ -60,7 +60,6 @@ final class AlbaranClienteTest extends TestCase
         $this->assertEquals(null, $model->codpaisenv);
         $this->assertEquals(date('d-m-Y'), $model->fecha);
         $this->assertEquals(null, $model->femail);
-        $this->assertEquals(date('H:i:s'), $model->hora);
         $this->assertEquals(AppSettings::get('default', 'idempresa'), $model->idempresa);
         $this->assertEquals(0.0, $model->irpf);
         $this->assertEquals(0.0, $model->neto);

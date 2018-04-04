@@ -37,7 +37,6 @@ final class TransferenciaStockTest extends TestCase
         $now = new \DateTime();
         $this->assertInstanceOf(TransferenciaStock::class, $model);
         $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertEquals($now->format('H:i:s'), $model->hora);
         $this->assertFalse($model->test());
     }
 
