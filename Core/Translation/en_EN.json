@@ -647,7 +647,7 @@
     "tax-base": "Tax base",
     "pct-vat": "VAT rate",
     "pct-surcharge": "Surcharge rate",
-    "mother-group": "Mother group",
-    "mother-group-cant-be-the-same-group": "Mother group can't be the same group",
-    "mother-group-invalid": "Invalid mother group <b>%motherGroup%</b>, causing circular relation."
+    "parent-group": "Parent group",
+    "parent-group-cant-be-the-same-group": "Parent group can't be the same group",
+    "parent-group-invalid": "Invalid parent group <b>%parentGroup%</b>, causing circular relation."
 }

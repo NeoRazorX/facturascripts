@@ -31,8 +31,8 @@
             <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="mother-group" numcolumns="4" order="120">
-                <widget type="select" fieldname="madre">
+            <column name="parent-group" numcolumns="4" order="120">
+                <widget type="select" fieldname="parent">
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>

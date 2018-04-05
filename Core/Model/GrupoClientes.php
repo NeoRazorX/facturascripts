@@ -52,11 +52,11 @@ class GrupoClientes extends Base\ModelClass
     public $nombre;
 
     /**
-     * Mother group.
+     * Parent group.
      *
      * @var string
      */
-    public $madre;
+    public $parent;
 
     /**
      * This function is called when creating the model table. Returns the SQL
@@ -139,12 +139,12 @@ class GrupoClientes extends Base\ModelClass
      */
     private function checkCircularRelationGroup()
     {
-        if ($this->madre === null) {
+        if ($this->parent === null) {
             return false;
         }
-        if ($this->codgrupo === $this->madre) {
-            self::$miniLog->alert(self::$i18n->trans('mother-group-cant-be-the-same-group'));
-            $this->madre = null;
+        if ($this->codgrupo === $this->parent) {
+            self::$miniLog->alert(self::$i18n->trans('parent-group-cant-be-the-same-group'));
+            $this->parent = null;
             return true;
         }
 
@@ -152,16 +152,16 @@ class GrupoClientes extends Base\ModelClass
         $group = $this;
 
         do {
-            if (\in_array($group->madre, $subgroups, true)) {
-                $group = $group->get($this->madre);
-                self::$miniLog->alert(self::$i18n->trans('mother-group-invalid', ['%motherGroup%' => $group->nombre]));
-                $this->madre = null;
+            if (\in_array($group->parent, $subgroups, true)) {
+                $group = $group->get($this->parent);
+                self::$miniLog->alert(self::$i18n->trans('parent-group-invalid', ['%parentGroup%' => $group->nombre]));
+                $this->parent = null;
                 return true;
             }
             $subgroups[] = $group->codgrupo;
             $groupNext = new GrupoClientes();
-            $group = $groupNext->get($group->madre);
-        } while ($group->madre !== null);
+            $group = $groupNext->get($group->parent);
+        } while ($group->parent !== null);
 
         return false;
     }

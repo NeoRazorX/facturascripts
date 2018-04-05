@@ -21,7 +21,7 @@
         <type>character varying(6)</type>
     </column>
     <column>
-        <name>madre</name>
+        <name>parent</name>
         <type>character varying(6)</type>
     </column>
     <constraint>
