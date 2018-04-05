@@ -48,7 +48,7 @@ class ApiKey extends Base\ModelClass
      *
      * @var string
      */
-    public $descripcion;
+    public $description;
 
     /**
      * Enabled/Disabled.
@@ -98,7 +98,7 @@ class ApiKey extends Base\ModelClass
     {
         parent::clear();
         $this->apikey = '';
-        $this->descripcion = '';
+        $this->description = '';
         $this->enabled = false;
         $this->creationdate = date('d-m-Y');
     }
