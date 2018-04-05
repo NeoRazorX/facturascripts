@@ -139,14 +139,13 @@ class GrupoClientes extends Base\ModelClass
      */
     private function checkCircularRelationGroup()
     {
+        if ($this->madre === null) {
+            return false;
+        }
         if ($this->codgrupo === $this->madre) {
             self::$miniLog->alert(self::$i18n->trans('mother-group-cant-be-the-same-group'));
             $this->madre = null;
             return true;
-        }
-
-        if ($this->madre === null) {
-            return false;
         }
 
         $subgroups = [];
