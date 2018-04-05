@@ -28,10 +28,14 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codgrupo" icon="fa-folder-open" required="true" />
             </column>
-            
-            <column name="description" numcolumns="10" order="110">
+            <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
-            </column>            
+            </column>
+            <column name="mother-group" numcolumns="4" order="120">
+                <widget type="select" fieldname="madre">
+                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+                </widget>
+            </column>
         </group>
     </columns>
 </view>

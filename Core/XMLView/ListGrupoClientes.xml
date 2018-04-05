@@ -30,5 +30,10 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
+        <column name="mother-group" order="120">
+            <widget type="select" fieldname="madre">
+                <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+            </widget>
+        </column>
     </columns>
 </view>

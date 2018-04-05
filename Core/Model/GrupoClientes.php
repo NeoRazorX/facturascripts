@@ -52,6 +52,13 @@ class GrupoClientes extends Base\ModelClass
     public $nombre;
 
     /**
+     * Mother group.
+     *
+     * @var string
+     */
+    public $madre;
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -105,6 +112,10 @@ class GrupoClientes extends Base\ModelClass
     {
         $this->nombre = Utils::noHtml($this->nombre);
 
+        if ($this->checkCircularRelationGroup()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -119,5 +130,41 @@ class GrupoClientes extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCliente?active=List');
+    }
+
+    /**
+     * Check if exists a circular relation between groups.
+     *
+     * @return bool
+     */
+    private function checkCircularRelationGroup()
+    {
+        if ($this->codgrupo === $this->madre) {
+            self::$miniLog->alert(self::$i18n->trans('mother-group-cant-be-the-same-group'));
+            $this->madre = null;
+            return true;
+        }
+
+        if ($this->madre === null) {
+            return false;
+        }
+
+        $subgroups = [];
+        $group = $this;
+
+        do {
+            if (!\in_array($group->madre, $subgroups, true)) {
+                $subgroups[] = $group->codgrupo;
+                $groupNext = new GrupoClientes();
+                $group = $groupNext->get($group->madre);
+            } else {
+                $group = $group->get($this->madre);
+                self::$miniLog->alert(self::$i18n->trans('mother-group-invalid', ['%motherGroup%' => $group->nombre]));
+                $this->madre = null;
+                return true;
+            }
+        } while ($group->madre !== null);
+
+        return false;
     }
 }

@@ -646,5 +646,8 @@
     "desc-vat-id": "Tax identifier",
     "tax-base": "Tax base",
     "pct-vat": "VAT rate",
-    "pct-surcharge": "Surcharge rate"
+    "pct-surcharge": "Surcharge rate",
+    "mother-group": "Mother group",
+    "mother-group-cant-be-the-same-group": "Mother group can't be the same group",
+    "mother-group-invalid": "Invalid mother group <b>%motherGroup%</b>, causing circular relation."
 }

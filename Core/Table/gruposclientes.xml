@@ -20,6 +20,10 @@
         <name>codtarifa</name>
         <type>character varying(6)</type>
     </column>
+    <column>
+        <name>madre</name>
+        <type>character varying(6)</type>
+    </column>
     <constraint>
         <name>gruposclientes_pkey</name>
         <type>PRIMARY KEY (codgrupo)</type>
