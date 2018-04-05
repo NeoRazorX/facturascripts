@@ -152,16 +152,15 @@ class GrupoClientes extends Base\ModelClass
         $group = $this;
 
         do {
-            if (!\in_array($group->madre, $subgroups, true)) {
-                $subgroups[] = $group->codgrupo;
-                $groupNext = new GrupoClientes();
-                $group = $groupNext->get($group->madre);
-            } else {
+            if (\in_array($group->madre, $subgroups, true)) {
                 $group = $group->get($this->madre);
                 self::$miniLog->alert(self::$i18n->trans('mother-group-invalid', ['%motherGroup%' => $group->nombre]));
                 $this->madre = null;
                 return true;
             }
+            $subgroups[] = $group->codgrupo;
+            $groupNext = new GrupoClientes();
+            $group = $groupNext->get($group->madre);
         } while ($group->madre !== null);
 
         return false;
