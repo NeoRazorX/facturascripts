@@ -88,14 +88,13 @@
      */
 #}
 {% macro rowStatisticsForEditView(context, view) %}
+{% set header = view.getRow('statistics') %}
+{% if header is not empty %}
 {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-
 <div class="row" style="margin-top: -.5rem">
     <div class="col-12">
         <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
             <div class="btn-group btn-group-lg" role="group">
-                {% set header = view.getRow('statistics') %}
-                {% if header is not empty %}
                     {% for button in header.buttons %}
                         {% set value = attribute(context.fsc, button.action, [view]) %}
                         {% set label = context.i18n.trans(button.label) %}
@@ -103,11 +102,11 @@
                         {% set hint = popoverTitle(hint, 'bottom') %}
                         {{ button.getHTML(label, value, hint)|raw }}
                     {% endfor %}
-                {% endif %}
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 {% endmacro %}
 
 
@@ -248,7 +247,7 @@
     </div>
     <div class="row">
         <div class="col">
-            {% if keyValue is not empty %}
+            {% if view.count > 0 %}
             {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
             <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                <i class="fa fa-trash" aria-hidden="true"></i>
