@@ -193,23 +193,6 @@ class Controller
     }
 
     /**
-     * Returns a field value for the loaded data model
-     *
-     * @param mixed  $model
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $fieldName)
-    {
-        if (isset($model->{$fieldName})) {
-            return $model->{$fieldName};
-        }
-
-        return null;
-    }
-
-    /**
      * Set the template to use for this controller.
      *
      * @param string|false $template

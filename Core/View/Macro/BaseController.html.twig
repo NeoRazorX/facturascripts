@@ -37,7 +37,7 @@
     {% set remove_title = context.i18n.trans('delete-record') %}
     {% set undo_title = context.i18n.trans('restore-data') %}
     {% set save_title = context.i18n.trans('save-data') %}
-    {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+    {% set keyValue = attribute(model, model.primaryColumn()) %}
     {% set formName = context.indexView ~ '-' ~ keyValue %}
 
     <form name="{{ formName }}" action="{{ context.fsc.getURL('edit') }}" method="post" enctype="multipart/form-data" class="form" role="form">
@@ -46,7 +46,7 @@
         {% for group in view.getColumns() %}
             <div class="form-row {% if needTitle %}align-items-center{% endif %}">
                 {% for column in group.columns %}
-                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {% set value = attribute(model, column.widget.fieldName) %}
                     {% if column.display == 'none' %}
                         <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                     {% elseif column.level <= context.fsc.user.level %}
@@ -114,7 +114,7 @@
      */
 #}
 {% macro columnsForEditView(context, view, model, withForm, withButtons = TRUE) %}
-    {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+    {% set keyValue = attribute(model, model.primaryColumn()) %}
     {% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
     {% if withForm == TRUE %}
@@ -131,7 +131,7 @@
                             <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                         {% endif %}
                         {% for column in group.columns %}
-                            {% set value = column.widget.fieldName is null ? '' : context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                            {% set value = attribute(model, column.widget.fieldName) %}
                             {% if column.display == 'none' %}
                                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                             {% else %}
@@ -279,7 +279,7 @@
                         <div class="modal-body">
                             <div class="row">
                                 {% for column in group.columns %}
-                                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                                    {% set value = attribute(model, column.widget.fieldName) %}
                                     {% if column.display == 'none' %}
                                         <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                                     {% else %}
