@@ -39,18 +39,6 @@ class WidgetItemFileChooser extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display the data in the List controller
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getListHTML($value)
-    {
-        return $this->standardListHTMLWidget($value);
-    }
-
-    /**
      * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
@@ -67,6 +55,18 @@ class WidgetItemFileChooser extends WidgetItem
         }
 
         return $html;
+    }
+
+    /**
+     * Generates the HTML code to display the data in the List controller
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getListHTML($value)
+    {
+        return $this->standardListHTMLWidget($value);
     }
 
     /**

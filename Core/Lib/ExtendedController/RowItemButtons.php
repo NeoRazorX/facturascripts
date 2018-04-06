@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,16 +45,6 @@ class RowItemButtons extends RowItem
     }
 
     /**
-     * Creates the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement[] $row
-     */
-    public function loadFromXML($row)
-    {
-        $this->buttons = $this->loadButtonsFromXML($row);
-    }
-
-    /**
      * Creates the attributes structure from a JSON file
      *
      * @param array $row
@@ -65,7 +55,16 @@ class RowItemButtons extends RowItem
         foreach ($row['buttons'] as $button) {
             $widgetButton = WidgetButton::newFromJSON($button);
             $this->buttons[] = $widgetButton;
-            unset($widgetButton);
         }
+    }
+
+    /**
+     * Creates the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement[] $row
+     */
+    public function loadFromXML($row)
+    {
+        $this->buttons = $this->loadButtonsFromXML($row);
     }
 }

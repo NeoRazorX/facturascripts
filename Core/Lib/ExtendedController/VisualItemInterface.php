@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,25 +27,11 @@ interface VisualItemInterface
 {
 
     /**
-     * Create and load element structure from XML file
+     * Generates the HTML code to display the header for the visual element
      *
-     * @param \SimpleXMLElement $item
+     * @param string $value
      */
-    public static function newFromXML($item);
-
-    /**
-     * Create and load element structure from JSON file
-     *
-     * @param array $item
-     */
-    public static function newFromJSON($item);
-
-    /**
-     * Loads the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement $items
-     */
-    public function loadFromXML($items);
+    public function getHeaderHTML($value);
 
     /**
      * Loads the attributes structure from a JSON file
@@ -55,9 +41,23 @@ interface VisualItemInterface
     public function loadFromJSON($items);
 
     /**
-     * Generates the HTML code to display the header for the visual element
+     * Loads the attributes structure from a XML file
      *
-     * @param string $value
+     * @param \SimpleXMLElement $items
      */
-    public function getHeaderHTML($value);
+    public function loadFromXML($items);
+
+    /**
+     * Create and load element structure from JSON file
+     *
+     * @param array $item
+     */
+    public static function newFromJSON($item);
+
+    /**
+     * Create and load element structure from XML file
+     *
+     * @param \SimpleXMLElement $item
+     */
+    public static function newFromXML($item);
 }

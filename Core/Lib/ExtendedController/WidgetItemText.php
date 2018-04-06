@@ -34,42 +34,7 @@ class WidgetItemText extends WidgetItem
     public function __construct($type)
     {
         parent::__construct();
-
         $this->type = $type;
-    }
-
-    /**
-     * Formats text to a given maximum length
-     *
-     * @param string $txt
-     * @param int    $len
-     *
-     * @return string
-     */
-    private function getTextResume($txt, $len = 60)
-    {
-        if (mb_strlen($txt) < $len) {
-            return $txt;
-        }
-
-        return mb_substr($txt, 0, $len - 3) . '...';
-    }
-
-    /**
-     * Generates the HTML code to display the data in the List controller
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getListHTML($value)
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-        $txt = $this->getTextResume($value);
-
-        return $this->standardListHTMLWidget($value, $txt);
     }
 
     /**
@@ -88,7 +53,7 @@ class WidgetItemText extends WidgetItem
                 $html = '<textarea name="' . $this->fieldName . '" class="form-control bbcode" rows="10" '
                     . $specialAttributes . '>' . $value . '</textarea>';
                 break;
-            
+
             case 'html':
                 $html = '<textarea name="' . $this->fieldName . '" class="form-control htmleditor" rows="10" '
                     . $specialAttributes . '>' . $value . '</textarea>';
@@ -104,5 +69,39 @@ class WidgetItemText extends WidgetItem
         }
 
         return $html;
+    }
+
+    /**
+     * Generates the HTML code to display the data in the List controller
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getListHTML($value)
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        $txt = $this->getTextResume($value);
+        return $this->standardListHTMLWidget($value, $txt);
+    }
+
+    /**
+     * Formats text to a given maximum length
+     *
+     * @param string $txt
+     * @param int    $len
+     *
+     * @return string
+     */
+    private function getTextResume($txt, $len = 60)
+    {
+        if (mb_strlen($txt) < $len) {
+            return $txt;
+        }
+
+        return mb_substr($txt, 0, $len - 3) . '...';
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,18 +37,25 @@ class WidgetItemCheckBox extends WidgetItem
     }
 
     /**
-     * Generates the HTML code for special attributes like:
-     *  - hint
-     *  - read only
-     *  - mandatory value
+     * Generates the HTML code to display and edit  the data in the List / Edit controller
+     *
+     * @param string $value
      *
      * @return string
      */
-    protected function specialAttributes()
+    public function getEditHTML($value)
     {
-        $readOnly = empty($this->readOnly) ? '' : ' disabled';
+        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked="" ' : '';
+        $html = $this->getIconHTML()
+            . '<input name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '" class="form-check-input" type="checkbox" value="true" '
+            . $this->specialAttributes() . $checked . '/>';
 
-        return parent::specialAttributes() . $readOnly;
+        if (!empty($this->icon)) {
+            $html .= '</div>';
+        }
+
+        return $html;
     }
 
     /**
@@ -72,26 +79,16 @@ class WidgetItemCheckBox extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the List / Edit controller
-     *
-     * @param string $value
+     * Generates the HTML code for special attributes like:
+     *  - hint
+     *  - read only
+     *  - mandatory value
      *
      * @return string
      */
-    public function getEditHTML($value)
+    protected function specialAttributes()
     {
-        $specialAttributes = $this->specialAttributes();
-        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked="" ' : '';
-
-        $html = $this->getIconHTML()
-            . '<input name="' . $this->fieldName . '" id="' . $this->fieldName
-            . '" class="form-check-input" type="checkbox" value="true" '
-            . $specialAttributes . $checked . '/>';
-
-        if (!empty($this->icon)) {
-            $html .= '</div>';
-        }
-
-        return $html;
+        $readOnly = empty($this->readOnly) ? '' : ' disabled';
+        return parent::specialAttributes() . $readOnly;
     }
 }
