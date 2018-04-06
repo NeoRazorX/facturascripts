@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,20 +49,17 @@ class ListBalance extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Balance', $className);
+        $this->addView('ListBalance', 'Balance');
         $fields = [
             'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba',
         ];
-        $this->addSearchFields($className, $fields);
+        $this->addSearchFields('ListBalance', $fields);
 
-        $this->addOrderBy($className, 'codbalance', 'code');
-
-        /// force default order
-        $this->addOrderBy($className, 'descripcion1', 'description-1', 2);
-        $this->addOrderBy($className, 'descripcion2', 'description-2');
-        $this->addOrderBy($className, 'descripcion3', 'description-3');
-        $this->addOrderBy($className, 'descripcion4', 'description-4');
-        $this->addOrderBy($className, 'descripcion4ba', 'description-4ba');
+        $this->addOrderBy('ListBalance', 'codbalance', 'code');
+        $this->addOrderBy('ListBalance', 'descripcion1', 'description-1', 2);
+        $this->addOrderBy('ListBalance', 'descripcion2', 'description-2');
+        $this->addOrderBy('ListBalance', 'descripcion3', 'description-3');
+        $this->addOrderBy('ListBalance', 'descripcion4', 'description-4');
+        $this->addOrderBy('ListBalance', 'descripcion4ba', 'description-4ba');
     }
 }

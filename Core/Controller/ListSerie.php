@@ -49,13 +49,12 @@ class ListSerie extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Serie', $className);
-        $this->addSearchFields($className, ['descripcion', 'codserie', 'codcuenta']);
+        $this->addView('ListSerie', 'Serie');
+        $this->addSearchFields('ListSerie', ['descripcion', 'codserie', 'codcuenta']);
 
-        $this->addOrderBy($className, 'codserie', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy('ListSerie', 'codserie', 'code');
+        $this->addOrderBy('ListSerie', 'descripcion', 'description');
 
-        $this->addFilterCheckbox($className, 'siniva', 'without-tax', 'siniva');
+        $this->addFilterCheckbox('ListSerie', 'siniva', 'without-tax', 'siniva');
     }
 }

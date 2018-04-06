@@ -49,16 +49,31 @@ class ListEstadoDocumento extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('EstadoDocumento', 'ListEstadoDocumento', 'states', 'fa-tags');
+        $this->addView('ListEstadoDocumento', 'EstadoDocumento', 'states', 'fa-tags');
         $this->addSearchFields('ListEstadoDocumento', ['nombre']);
-
         $this->addOrderBy('ListEstadoDocumento', 'idestado', 'id');
         $this->addOrderBy('ListEstadoDocumento', 'nombre', 'name');
 
-        $this->addFilterSelect('ListEstadoDocumento', 'tipodoc', 'estados_documentos', 'tipodoc', 'tipodoc');
-        $this->addFilterSelect('ListEstadoDocumento', 'generadoc', 'estados_documentos', 'generadoc', 'generadoc');
-        $this->addFilterSelect('ListEstadoDocumento', 'actualizastock', 'estados_documentos', 'actualizastock', 'actualizastock');
-        $this->addFilterCheckbox('ListEstadoDocumento', 'predeterminado', 'default');
-        $this->addFilterCheckbox('ListEstadoDocumento', 'editable', 'editable');
+        $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
+        $this->addFilterSelect('ListEstadoDocumento', 'tipodoc', 'doc-type', 'tipodoc', $types);
+
+        $generateTypes = $this->codeModel->all('estados_documentos', 'generadoc', 'generadoc');
+        $this->addFilterSelect('ListEstadoDocumento', 'generadoc', 'generate-doc-type', 'generadoc', $generateTypes);
+
+        $this->addFilterSelect('ListEstadoDocumento', 'actualizastock', 'update-stock', 'actualizastock', $this->getActualizastockValues());
+        $this->addFilterCheckbox('ListEstadoDocumento', 'predeterminado', 'default', 'predeterminado');
+        $this->addFilterCheckbox('ListEstadoDocumento', 'editable', 'editable', 'editable');
+    }
+
+    private function getActualizastockValues()
+    {
+        return [
+            ['code' => null, 'description' => '------'],
+            ['code' => -2, 'description' => $this->i18n->trans('book')],
+            ['code' => -1, 'description' => $this->i18n->trans('subtract')],
+            ['code' => 0, 'description' => $this->i18n->trans('do-nothing')],
+            ['code' => 1, 'description' => $this->i18n->trans('add')],
+            ['code' => 2, 'description' => $this->i18n->trans('foresee')],
+        ];
     }
 }

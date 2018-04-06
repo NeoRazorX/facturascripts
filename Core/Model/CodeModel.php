@@ -77,30 +77,26 @@ class CodeModel
      * @param string $fieldCode
      * @param string $fieldDescription
      * @param bool   $addEmpty
-     * @param DataBaseWhere[] $where
+     * @param array  $where
      *
      * @return self[]
      */
     public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = true, $where = [])
     {
         $result = [];
+        if ($addEmpty) {
+            $result[] = new self(['code' => null, 'description' => '------']);
+        }
 
         if (self::$dataBase === null) {
             self::$dataBase = new Base\DataBase();
         }
 
         if (self::$dataBase->tableExists($tableName)) {
-            if ($addEmpty) {
-                $result[] = new self(['code' => null, 'description' => '------']);
-            }
-            $sqlWhere = DataBaseWhere::getSQLWhere($where);
             $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
-                . 'FROM ' . $tableName . $sqlWhere . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, self::ALL_LIMIT);
-            if (!empty($data)) {
-                foreach ($data as $d) {
-                    $result[] = new self($d);
-                }
+                . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
+            foreach (self::$dataBase->selectLimit($sql, self::ALL_LIMIT) as $d) {
+                $result[] = new self($d);
             }
         }
 

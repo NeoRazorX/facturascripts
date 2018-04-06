@@ -125,133 +125,14 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Returns the link text for a given model
+     * Defines a new option to filter the data with
      *
-     * @param $data
-     *
-     * @return string
+     * @param string     $key
+     * @param ListFilter $filter
      */
-    public function getClickEvent($data)
+    public function addFilter(string $key, ListFilter $filter)
     {
-        foreach ($this->getColumns() as $col) {
-            if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
-                return $col->widget->onClick . '?code=' . $data->{$col->widget->fieldName};
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * Returns the read data list in Model format
-     *
-     * @return array
-     */
-    public function getCursor()
-    {
-        return $this->cursor;
-    }
-
-    /**
-     * Returns the list of defined filters
-     *
-     * @return ListFilter[]
-     */
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    /**
-     * Returns the field list for the search, in WhereDatabase format
-     *
-     * @return string
-     */
-    public function getSearchIn()
-    {
-        return implode('|', $this->searchIn);
-    }
-
-    /**
-     * Returns the list of defined Order By
-     *
-     * @return array
-     */
-    public function getOrderBy()
-    {
-        return $this->orderby;
-    }
-
-    /**
-     * List of columns and its configuration
-     * (Array of ColumnItem)
-     *
-     * @return ColumnItem[]
-     */
-    public function getColumns()
-    {
-        $keys = array_keys($this->pageOption->columns);
-        if (empty($keys)) {
-            return [];
-        }
-
-        $key = $keys[0];
-
-        return $this->pageOption->columns[$key]->columns;
-    }
-
-    /**
-     * Returns the indicated Order By in array format
-     *
-     * @param string $orderKey
-     *
-     * @return array
-     */
-    public function getSQLOrderBy($orderKey = '')
-    {
-        if (empty($this->orderby)) {
-            return [];
-        }
-
-        if ($orderKey === '') {
-            $orderKey = array_keys($this->orderby)[0];
-        }
-
-        $orderby = explode('_', $orderKey);
-
-        return [$orderby[0] => $orderby[1]];
-    }
-
-    /**
-     * Checks and establishes the selected value in the Order By
-     *
-     * @param string $orderKey
-     */
-    public function setSelectedOrderBy($orderKey)
-    {
-        $keys = array_keys($this->orderby);
-        if (empty($orderKey) || !in_array($orderKey, $keys, false)) {
-            if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
-            }
-        } else {
-            $this->selectedOrderBy = $orderKey;
-        }
-    }
-
-    /**
-     * Adds the given fields to the list of fields to search in
-     *
-     * @param array $fields
-     */
-    public function addSearchIn($fields)
-    {
-        if (is_array($fields)) {
-            // TODO: Error: Perhaps array_merge/array_replace can be used instead.
-            // Feel free to disable the inspection if '+' is intended.
-            //$this->searchIn = array_merge($this->searchIn, $fields);
-            $this->searchIn += $fields;
-        }
+        $this->filters[$key] = $filter;
     }
 
     /**
@@ -287,22 +168,18 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Defines a new option to filter the data with
+     * Adds the given fields to the list of fields to search in
      *
-     * @param string     $key
-     * @param ListFilter $filter
+     * @param array $fields
      */
-    public function addFilter($key, $filter)
+    public function addSearchIn($fields)
     {
-        if (empty($filter->options['field'])) {
-            $filter->options['field'] = $key;
+        if (is_array($fields)) {
+            // TODO: Error: Perhaps array_merge/array_replace can be used instead.
+            // Feel free to disable the inspection if '+' is intended.
+            //$this->searchIn = array_merge($this->searchIn, $fields);
+            $this->searchIn += $fields;
         }
-
-        if (isset($filter->options['label'])) {
-            $filter->options['label'] = static::$i18n->trans($filter->options['label']);
-        }
-
-        $this->filters[$key] = $filter;
     }
 
     /**
@@ -317,6 +194,116 @@ class ListView extends BaseView implements DataViewInterface
         if (!empty($column)) {
             $column->display = $disabled ? 'none' : 'left';
         }
+    }
+
+    /**
+     * Method to export the view data
+     *
+     * @param ExportManager $exportManager
+     */
+    public function export(&$exportManager)
+    {
+        if ($this->count > 0) {
+            $exportManager->generateListModelPage(
+                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            );
+        }
+    }
+
+    /**
+     * Returns the link text for a given model
+     *
+     * @param $data
+     *
+     * @return string
+     */
+    public function getClickEvent($data)
+    {
+        foreach ($this->getColumns() as $col) {
+            if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
+                return $col->widget->onClick . '?code=' . $data->{$col->widget->fieldName};
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * List of columns and its configuration
+     * (Array of ColumnItem)
+     *
+     * @return ColumnItem[]
+     */
+    public function getColumns()
+    {
+        $keys = array_keys($this->pageOption->columns);
+        if (empty($keys)) {
+            return [];
+        }
+
+        $key = $keys[0];
+        return $this->pageOption->columns[$key]->columns;
+    }
+
+    /**
+     * Returns the read data list in Model format
+     *
+     * @return array
+     */
+    public function getCursor()
+    {
+        return $this->cursor;
+    }
+
+    /**
+     * Returns the list of defined filters
+     *
+     * @return ListFilter[]
+     */
+    public function getFilters()
+    {
+        return $this->filters;
+    }
+
+    /**
+     * Returns the list of defined Order By
+     *
+     * @return array
+     */
+    public function getOrderBy()
+    {
+        return $this->orderby;
+    }
+
+    /**
+     * Returns the field list for the search, in WhereDatabase format
+     *
+     * @return string
+     */
+    public function getSearchIn()
+    {
+        return implode('|', $this->searchIn);
+    }
+
+    /**
+     * Returns the indicated Order By in array format
+     *
+     * @param string $orderKey
+     *
+     * @return array
+     */
+    public function getSQLOrderBy($orderKey = '')
+    {
+        if (empty($this->orderby)) {
+            return [];
+        }
+
+        if ($orderKey === '') {
+            $orderKey = array_keys($this->orderby)[0];
+        }
+
+        $orderby = explode('_', $orderKey);
+        return [$orderby[0] => $orderby[1]];
     }
 
     /**
@@ -344,16 +331,19 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Method to export the view data
+     * Checks and establishes the selected value in the Order By
      *
-     * @param ExportManager $exportManager
+     * @param string $orderKey
      */
-    public function export(&$exportManager)
+    public function setSelectedOrderBy($orderKey)
     {
-        if ($this->count > 0) {
-            $exportManager->generateListModelPage(
-                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
-            );
+        $keys = array_keys($this->orderby);
+        if (empty($orderKey) || !in_array($orderKey, $keys, false)) {
+            if (empty($this->selectedOrderBy)) {
+                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
+            }
+        } else {
+            $this->selectedOrderBy = $orderKey;
         }
     }
 }

@@ -31,30 +31,6 @@ class ListAlbaranProveedor extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('AlbaranProveedor', 'ListAlbaranProveedor');
-        $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
-
-        $this->addFilterDatePicker('ListAlbaranProveedor', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'AlbaranProveedor')];
-        $this->addFilterSelect('ListAlbaranProveedor', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
-
-        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -67,5 +43,36 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListAlbaranProveedor', 'AlbaranProveedor');
+        $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
+
+        $this->addFilterDatePicker('ListAlbaranProveedor', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'AlbaranProveedor')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListAlbaranProveedor', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
+
+        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
     }
 }

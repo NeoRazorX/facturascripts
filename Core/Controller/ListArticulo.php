@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,47 +29,6 @@ class ListArticulo extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        /* Artículos */
-        $this->addView('Articulo', 'ListArticulo', 'products');
-        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
-
-        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', 'codfabricante', 'nombre');
-        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', 'codfamilia', 'descripcion');
-        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
-        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
-
-        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
-        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
-        $this->addOrderBy('ListArticulo', 'pvp', 'price');
-        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
-
-        /* Artículos de proveedor */
-        $this->addView('ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
-        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
-
-        $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
-        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
-
-        /* Stock */
-        $this->addView('Stock', 'ListStock', 'stock');
-        $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
-
-        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-
-        $this->addOrderBy('ListStock', 'referencia', 'reference');
-        $this->addOrderBy('ListStock', 'cantidad', 'quantity');
-        $this->addOrderBy('ListStock', 'disponible', 'available');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -82,5 +41,61 @@ class ListArticulo extends ExtendedController\ListController
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->createViewArticulo();
+        $this->createViewArticuloProveedor();
+        $this->createViewStock();
+    }
+
+    private function createViewArticulo()
+    {
+        $this->addView('ListArticulo', 'Articulo', 'products');
+        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
+
+        $selectValues = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'manufacturer', 'codfabricante', $selectValues);
+
+        $familyValues = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'family', 'codfamilia', $familyValues);
+
+        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
+        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
+
+        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
+        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
+        $this->addOrderBy('ListArticulo', 'pvp', 'price');
+        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
+    }
+
+    private function createViewArticuloProveedor()
+    {
+        $this->addView('ListArticuloProveedor', 'ArticuloProveedor', 'supplier-products');
+        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
+
+        $this->addFilterAutocomplete('ListArticuloProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
+
+        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
+        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
+        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
+    }
+
+    private function createViewStock()
+    {
+        $this->addView('ListStock', 'Stock', 'stock');
+        $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
+
+        $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', 'codalmacen', $selectValues);
+
+        $this->addOrderBy('ListStock', 'referencia', 'reference');
+        $this->addOrderBy('ListStock', 'cantidad', 'quantity');
+        $this->addOrderBy('ListStock', 'disponible', 'available');
     }
 }

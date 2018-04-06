@@ -114,6 +114,42 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Returns an array for JS of URLs for the elements in a view
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getStringURLs(string $type): string
+    {
+        $result = '';
+        $sep = '';
+        foreach ($this->views as $key => $view) {
+            $result .= $sep . $key . ': "' . $view->getURL($type) . '"';
+            $sep = ', ';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Creates an array with the available "jumps" to paginate the model data with the specified view
+     *
+     * @param string $indexView
+     *
+     * @return array
+     */
+    public function pagination(string $indexView)
+    {
+        $offset = $this->getOffSet($indexView);
+        $count = $this->views[$indexView]->count;
+        $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
+
+        $paginationObj = new Base\Pagination($url);
+        return $paginationObj->getPages($count, $offset);
+    }
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response                   $response
@@ -156,48 +192,155 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Runs the actions that alter the data before reading it
-     *
-     * @param string $action
-     *
-     * @return bool
+     * Add an autocomplete type filter to the ListView.
+     * 
+     * @param string $indexView
+     * @param string $key        (Filter identifier)
+     * @param string $label      (Human reader description)
+     * @param string $field      (Field of the model to apply filter)
+     * @param string $table      (Table to search)
+     * @param string $fieldcode  (Primary column of the table to search and match)
+     * @param string $fieldtitle (Column to show name or description)
+     * @param array  $where      (Estra where conditions)
      */
-    protected function execPreviousAction($action)
+    protected function addFilterAutocomplete($indexView, $key, $label, $field, $table, $fieldcode, $fieldtitle, $where = [])
     {
-        switch ($action) {
-            case 'autocomplete':
-                $this->setTemplate(false);
-                $data = $this->requestGet(['source', 'field', 'title', 'term']);
-                $results = $this->autocompleteAction($data);
-                $this->response->setContent(json_encode($results));
-                return false;
-
-            case 'delete':
-                $this->deleteAction($this->views[$this->active]);
-                break;
-        }
-
-        return true;
+        $value = ($indexView == $this->active) ? $this->request->get($key, '') : '';
+        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fieldcode, $fieldtitle, $value, $where));
     }
 
     /**
-     * Runs the controller actions
+     * Adds a boolean condition type filter to the ListView.
      *
-     * @param string $action
+     * @param string $indexView
+     * @param string $key        (Filter identifier)
+     * @param string $label      (Human reader description)
+     * @param string $field      (Field of the model to apply filter)
+     * @param bool   $inverse    (If you need to invert the selected value)
+     * @param mixed  $matchValue (Value to match)
      */
-    protected function execAfterAction($action)
+    protected function addFilterCheckbox($indexView, $key, $label, $field, $inverse = false, $matchValue = true)
     {
-        switch ($action) {
-            case 'export':
-                $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option'));
-                $this->views[$this->active]->export($this->exportManager);
-                $this->exportManager->show($this->response);
-                break;
+        $value = ($indexView == $this->active) ? $this->request->get($key, '') : '';
+        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
+    }
 
-            case 'megasearch':
-                $this->megaSearchAction();
-                break;
+    /**
+     * Adds a date type filter
+     *
+     * @param string $indexView
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     */
+    protected function addFilterDatePicker($indexView, $key, $label, $field)
+    {
+        $this->addFilterFromType($indexView, $key, $label, $field, 'datepicker');
+    }
+
+    /**
+     * Adds a filter to a type of field.
+     *
+     * @param string $indexView
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     * @param string $type
+     */
+    private function addFilterFromType($indexView, $key, $label, $field, $type)
+    {
+        $config = [
+            'field' => $field,
+            'label' => $label,
+            'valueFrom' => ($indexView == $this->active) ? $this->request->get($key . '-from', '') : '',
+            'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
+            'valueTo' => ($indexView == $this->active) ? $this->request->get($key . '-to', '') : '',
+            'operatorTo' => $this->request->get($key . '-to-operator', '<='),
+        ];
+
+        $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
+    }
+
+    /**
+     * Adds a numeric type filter
+     *
+     * @param string $indexView
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     */
+    protected function addFilterNumber($indexView, $key, $label, $field)
+    {
+        $this->addFilterFromType($indexView, $key, $label, $field, 'number');
+    }
+
+    /**
+     * Add a select type filter to a ListView.
+     * 
+     * @param string $indexView
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     * @param array  $values    (Values to show)
+     */
+    protected function addFilterSelect($indexView, $key, $label, $field, $values = [])
+    {
+        $value = ($indexView == $this->active) ? $this->request->get($key, '') : '';
+        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($label, $field, $values, $value));
+    }
+
+    /**
+     * Adds a text type filter
+     *
+     * @param string $indexView
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     */
+    protected function addFilterText($indexView, $key, $label, $field)
+    {
+        $this->addFilterFromType($indexView, $key, $label, $field, 'text');
+    }
+
+    /**
+     * Adds a field to a view's Order By list
+     *
+     * @param string $indexView
+     * @param string $field
+     * @param string $label
+     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
+     */
+    protected function addOrderBy($indexView, $field, $label = '', $default = 0)
+    {
+        $this->views[$indexView]->addOrderBy($field, $label, $default);
+    }
+
+    /**
+     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
+     * To use integer columns, use CAST(columnName AS CHAR(50)).
+     *
+     * @param string   $indexView
+     * @param string[] $fields
+     */
+    protected function addSearchFields($indexView, $fields)
+    {
+        $this->views[$indexView]->addSearchIn($fields);
+    }
+
+    /**
+     * Creates and adds a view to the controller.
+     *
+     * @param string $indexView
+     * @param string $modelName
+     * @param string $viewTitle
+     * @param string $icon
+     */
+    protected function addView($indexView, $modelName, $viewTitle = 'search', $icon = 'fa-search')
+    {
+        $this->views[$indexView] = new ListView($viewTitle, self::DIR_MODEL . $modelName, $indexView, $this->user->nick);
+        $this->icons[$indexView] = $icon;
+        if (empty($this->active)) {
+            $this->active = $indexView;
         }
     }
 
@@ -252,6 +395,134 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Runs the controller actions
+     *
+     * @param string $action
+     */
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'export':
+                $this->setTemplate(false);
+                $this->exportManager->newDoc($this->request->get('option'));
+                $this->views[$this->active]->export($this->exportManager);
+                $this->exportManager->show($this->response);
+                break;
+
+            case 'megasearch':
+                $this->megaSearchAction();
+                break;
+        }
+    }
+
+    /**
+     * Runs the actions that alter the data before reading it
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'autocomplete':
+                $this->setTemplate(false);
+                $data = $this->requestGet(['source', 'field', 'title', 'term']);
+                $results = $this->autocompleteAction($data);
+                $this->response->setContent(json_encode($results));
+                return false;
+
+            case 'delete':
+                $this->deleteAction($this->views[$this->active]);
+                break;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns the offset value for the specified view
+     *
+     * @param string $indexView
+     *
+     * @return int
+     */
+    private function getOffSet($indexView)
+    {
+        return ($indexView === $this->active) ? $this->offset : 0;
+    }
+
+    /**
+     * Returns a string with the parameters in the controller call url
+     *
+     * @param string $indexView
+     *
+     * @return string
+     */
+    private function getParams($indexView)
+    {
+        $result = '';
+        if ($indexView === $this->active) {
+            $join = '?';
+            if (!empty($this->query)) {
+                $result = $join . 'query=' . $this->query;
+                $join = '&';
+            }
+
+            foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
+                $result .= $filter->getParams($key, $join);
+                $join = '&';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns columns title for megaSearchAction function.
+     *
+     * @param ListView $view
+     * @param int      $maxColumns
+     *
+     * @return array
+     */
+    private function getTextColumns($view, $maxColumns)
+    {
+        $result = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
+                $result[] = $col->widget->fieldName;
+                if (count($result) === $maxColumns) {
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Establishes the WHERE clause according to the defined filters
+     *
+     * @return DataBaseWhere[]
+     */
+    protected function getWhere()
+    {
+        $result = [];
+
+        if ($this->query !== '') {
+            $fields = $this->views[$this->active]->getSearchIn();
+            $result[] = new DataBaseWhere($fields, Base\Utils::noHtml($this->query), 'LIKE');
+        }
+
+        foreach ($this->views[$this->active]->getFilters() as $filter) {
+            $filter->getDataBaseWhere($result);
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns a JSON response to MegaSearch.
      */
     protected function megaSearchAction()
@@ -294,278 +565,5 @@ abstract class ListController extends Base\Controller
         }
 
         $this->response->setContent(json_encode($json));
-    }
-
-    /**
-     * Returns columns title for megaSearchAction function.
-     *
-     * @param ListView $view
-     * @param int      $maxColumns
-     *
-     * @return array
-     */
-    private function getTextColumns($view, $maxColumns)
-    {
-        $result = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
-                $result[] = $col->widget->fieldName;
-                if (count($result) === $maxColumns) {
-                    break;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Establishes the WHERE clause according to the defined filters
-     *
-     * @return DataBaseWhere[]
-     */
-    protected function getWhere()
-    {
-        $result = [];
-
-        if ($this->query !== '') {
-            $fields = $this->views[$this->active]->getSearchIn();
-            $result[] = new DataBaseWhere($fields, Base\Utils::noHtml($this->query), 'LIKE');
-        }
-
-        foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-            $filter->getDataBaseWhere($result, $key);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Creates and adds a view to the controller
-     *
-     * @param string $modelName
-     * @param string $viewName
-     * @param string $viewTitle
-     * @param string $icon
-     */
-    protected function addView($modelName, $viewName, $viewTitle = 'search', $icon = 'fa-search')
-    {
-        $this->views[$viewName] = new ListView($viewTitle, self::DIR_MODEL . $modelName, $viewName, $this->user->nick);
-        $this->icons[$viewName] = $icon;
-        if (empty($this->active)) {
-            $this->active = $viewName;
-        }
-    }
-
-    /**
-     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
-     * To use integer columns, use CAST(columnName AS CHAR(50)).
-     *
-     * @param string   $indexView
-     * @param string[] $fields
-     */
-    protected function addSearchFields($indexView, $fields)
-    {
-        $this->views[$indexView]->addSearchIn($fields);
-    }
-
-    /**
-     * Adds a field to a view's Order By list
-     *
-     * @param string $indexView
-     * @param string $field
-     * @param string $label
-     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
-     */
-    protected function addOrderBy($indexView, $field, $label = '', $default = 0)
-    {
-        $this->views[$indexView]->addOrderBy($field, $label, $default);
-    }
-
-    /**
-     * Add a select type filter to a table.
-     *
-     * @param string $indexView
-     * @param string $key
-     * @param string $table
-     * @param string $fieldcode
-     * @param string $fieldtitle
-     * @param array  $where
-     */
-    protected function addFilterSelect($indexView, $key, $table, $fieldcode, $fieldtitle, $where = [])
-    {
-        $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($table, $fieldcode, $fieldtitle, $value, $where));
-    }
-
-    /**
-     * Add an autocomplete type filter to a table.
-     *
-     * @param string $indexView
-     * @param string $key
-     * @param string $table
-     * @param string $fieldcode
-     * @param string $fieldtitle
-     * @param array  $where
-     */
-    protected function addFilterAutocomplete($indexView, $key, $table, $fieldcode, $fieldtitle, $where = [])
-    {
-        $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($table, $fieldcode, $fieldtitle, $value, $where));
-    }
-
-    /**
-     * Adds a boolean condition type filter
-     *
-     * @param string $indexView
-     * @param string $key        (Filter identifier)
-     * @param string $label      (Human reader description)
-     * @param string $field      (Field of the table to apply filter)
-     * @param bool   $inverse    (If you need to invert the selected value)
-     * @param mixed  $matchValue (Value to match)
-     */
-    protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false, $matchValue = true)
-    {
-        $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
-    }
-
-    /**
-     * Adds a filter to a type of field.
-     *
-     * @param string $indexView
-     * @param string $key
-     * @param string $type
-     * @param string $label
-     * @param string $field
-     */
-    private function addFilterFromType($indexView, $key, $type, $label, $field)
-    {
-        $config = [
-            'field' => $field,
-            'label' => $label,
-            'valueFrom' => $this->request->get($key . '-from'),
-            'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
-            'valueTo' => $this->request->get($key . '-to'),
-            'operatorTo' => $this->request->get($key . '-to-operator', '<='),
-        ];
-
-        $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
-    }
-
-    /**
-     * Adds a date type filter
-     *
-     * @param string $indexView
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
-     */
-    protected function addFilterDatePicker($indexView, $key, $label, $field = '')
-    {
-        $this->addFilterFromType($indexView, $key, 'datepicker', $label, $field);
-    }
-
-    /**
-     * Adds a text type filter
-     *
-     * @param string $indexView
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
-     */
-    protected function addFilterText($indexView, $key, $label, $field = '')
-    {
-        $this->addFilterFromType($indexView, $key, 'text', $label, $field);
-    }
-
-    /**
-     * Adds a numeric type filter
-     *
-     * @param string $indexView
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
-     */
-    protected function addFilterNumber($indexView, $key, $label, $field = '')
-    {
-        $this->addFilterFromType($indexView, $key, 'number', $label, $field);
-    }
-
-    /**
-     * Returns the offset value for the specified view
-     *
-     * @param string $indexView
-     *
-     * @return int
-     */
-    private function getOffSet($indexView)
-    {
-        return ($indexView === $this->active) ? $this->offset : 0;
-    }
-
-    /**
-     * Returns a string with the parameters in the controller call url
-     *
-     * @param string $indexView
-     *
-     * @return string
-     */
-    private function getParams($indexView)
-    {
-        $result = '';
-        if ($indexView === $this->active) {
-            $join = '?';
-            if (!empty($this->query)) {
-                $result = $join . 'query=' . $this->query;
-                $join = '&';
-            }
-
-            foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-                $result .= $filter->getParams($key, $join);
-                $join = '&';
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Creates an array with the available "jumps" to paginate the model data with the specified view
-     *
-     * @param string $indexView
-     *
-     * @return array
-     */
-    public function pagination($indexView)
-    {
-        $offset = $this->getOffSet($indexView);
-        $count = $this->views[$indexView]->count;
-        $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
-
-        $paginationObj = new Base\Pagination($url);
-        $result = $paginationObj->getPages($count, $offset);
-        unset($paginationObj);
-
-        return $result;
-    }
-
-    /**
-     * Returns an array for JS of URLs for the elements in a view
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getStringURLs($type)
-    {
-        $result = '';
-        $sep = '';
-        foreach ($this->views as $key => $view) {
-            $result .= $sep . $key . ': "' . $view->getURL($type) . '"';
-            $sep = ', ';
-        }
-
-        return $result;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,11 +49,10 @@ class ListFabricante extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Fabricante', $className);
-        $this->addSearchFields($className, ['nombre', 'codfabricante']);
+        $this->addView('ListFabricante', 'Fabricante');
+        $this->addSearchFields('ListFabricante', ['nombre', 'codfabricante']);
 
-        $this->addOrderBy($className, 'codfabricante', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy('ListFabricante', 'codfabricante', 'code');
+        $this->addOrderBy('ListFabricante', 'nombre', 'name');
     }
 }

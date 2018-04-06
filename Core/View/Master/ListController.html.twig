@@ -242,13 +242,13 @@
 
                         {# Add new column filter #}
                         {% if filter.type == 'autocomplete' %}
-                        {{ ListFilter.filterForAutocompleteInput(_context, key1, filter) }}
+                        {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
                         {% elseif filter.type == 'select' %}
-                        {{ ListFilter.filterForSelectInput(_context, key1, filter) }}
+                        {{ ListFilter.filterSelect(_context, key1, filter) }}
                         {% elseif filter.type == 'checkbox' %}
-                        {{ ListFilter.filterForCheckBoxInput(_context, key1, filter) }}
+                        {{ ListFilter.filterCheckbox(_context, key1, filter) }}
                         {% else %}
-                        {{ ListFilter.filterForTextInput(_context, key1, filter) }}
+                        {{ ListFilter.filterText(_context, key1, filter) }}
                         {% set columnsUsed = columnsUsed + 2 %}
                         {% endif %}
 

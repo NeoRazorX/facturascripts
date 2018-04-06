@@ -33,49 +33,26 @@
      */
 #}
 {% macro buttonOrderBy(context, view) %}
-<div class="col">
-    <div class="btn-group float-md-right">
-        {% set orderbylist = view.getOrderBy() %}
-        <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }} fa-fw" aria-hidden="true"></i>
-            {{ orderbylist[view.selectedOrderBy]['label'] }}
-            <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
-            {% for key, orderby in orderbylist %}
-            <a class="dropdown-item" href="#" onclick="setOrder('{{ key }}')">
-                <i class="fa {{ orderby['icon'] }} fa-fw" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
-                {% if view.selectedOrderBy == key %}
-                <i class="fa fa-check" aria-hidden="true"></i>
-                {% endif %}
-            </a>
-            {% endfor %}
+    <div class="col">
+        <div class="btn-group float-md-right">
+            {% set orderbylist = view.getOrderBy() %}
+            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }} fa-fw" aria-hidden="true"></i>
+                {{ orderbylist[view.selectedOrderBy]['label'] }}
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
+                {% for key, orderby in orderbylist %}
+                    <a class="dropdown-item" href="#" onclick="setOrder('{{ key }}')">
+                        <i class="fa {{ orderby['icon'] }} fa-fw" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
+                        {% if view.selectedOrderBy == key %}
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
-{% endmacro %}
-
-
-{#
-   /**
-     * Generates the code for a Select filter in a ListController
-     */
-#}
-{% macro filterForSelectInput(context, key, filter) %}
-{% set any = context.i18n.trans('any') %}
-
-<div class="col-md-2">
-    <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
-        <option value="">{{ any }} {{ key }}</option>
-        {% for data in context.fsc.codeModel.all(filter.options.table, filter.options.fieldcode, filter.options.fieldtitle, true, filter.options.where) %}
-        {% if (context.indexView == context.fsc.active) and (filter.options.value != '') and (data.code == filter.options.value) %}
-        <option value="{{ data.code }}" selected="">{{ data.description }}</option>
-        {% else %}
-        <option value="{{ data.code }}">{{ data.description }}</option>
-        {% endif %}
-        {% endfor %}
-    </select>
-</div>
 {% endmacro %}
 
 
@@ -84,30 +61,29 @@
      * Generates the code for an Autcomplete filter in a ListController
      */
 #}
-{% macro filterForAutocompleteInput(context, key, filter) %}
-{% set any = context.i18n.trans('any') %}
+{% macro filterAutocomplete(context, key, filter) %}
+    {% set label = context.i18n.trans(filter.options.label) %}
 
-<div class="col-md-2">
-    <input type="hidden" id="{{ key }}Autocomplete" name="{{ key }}" value="{{ filter.options.value }}" />
-    <div class="input-group">
-        {% if filter.options.value is empty %}
-        <span class="input-group-prepend" title="{{ key }}">
-            <span class="input-group-text">
-                <i class="fa fa-keyboard-o" aria-hidden="true"></i>
-            </span>
-        </span>
-        {% else %}
-        <span class="input-group-prepend" title="{{ key }}">
-            <button class="btn btn-warning" type="button" onclick="$('#{{ key }}Autocomplete').val('');$('#{{ key }}Autocomplete').form().submit();">
-                <i class="fa fa-remove" aria-hidden="true"></i>
-            </button>
-        </span>
-        {% endif %}
-        <input type="text" value="{{ context.fsc.codeModel.getDescription(filter.options.table, filter.options.fieldcode, filter.options.value, filter.options.fieldtitle) }}"
-               class="form-control autocomplete" data-source="{{ filter.options.table }}" data-field="{{ filter.options.fieldcode }}" data-title="{{ filter.options.fieldtitle }}"
-               placeholder="{{ any }} {{ filter.options.fieldcode }}" autocomplete="off"/>
+    <div class="col-md-2">
+        <input type="hidden" id="{{ key }}Autocomplete" name="{{ key }}" value="{{ filter.options.value }}" />
+        <div class="input-group">
+            {% if filter.options.value is empty %}
+                <span class="input-group-prepend" title="{{ key }}">
+                    <span class="input-group-text">
+                        <i class="fa fa-keyboard-o" aria-hidden="true"></i>
+                    </span>
+                </span>
+            {% else %}
+                <span class="input-group-prepend" title="{{ key }}">
+                    <button class="btn btn-warning" type="button" onclick="$('#{{ key }}Autocomplete').val('');$('#{{ key }}Autocomplete').form().submit();">
+                        <i class="fa fa-remove" aria-hidden="true"></i>
+                    </button>
+                </span>
+            {% endif %}
+            <input type="text" value="{{ filter.getCurrentValue() }}" class="form-control autocomplete" data-source="{{ filter.options.table }}"
+                   data-field="{{ filter.options.fieldcode }}" data-title="{{ filter.options.fieldtitle }}" placeholder="{{ label }}" autocomplete="off"/>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
@@ -116,19 +92,44 @@
      * Generates the code for a Checkbox filter in a ListController
      */
 #}
-{% macro filterForCheckBoxInput(context, key, filter) %}
-<div class="col-md-2">
-    <div class="form-check mb-2 mb-sm-0">
-        <label class="form-check-label">
-            {% if (context.indexView == context.fsc.active) and filter.options.value %}
-            <input class="form-check-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
-            {% else %}
-            <input class="form-check-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
-            {% endif %}
-            {{ filter.options.label }}
-        </label>
+{% macro filterCheckbox(context, key, filter) %}
+    {% set label = context.i18n.trans(filter.options.label) %}
+
+    <div class="col-md-2">
+        <div class="form-check mb-2 mb-sm-0">
+            <label class="form-check-label">
+                {% if filter.options.value %}
+                    <input class="form-check-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+                {% else %}
+                    <input class="form-check-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
+                {% endif %}
+                {{ label }}
+            </label>
+        </div>
     </div>
-</div>
+{% endmacro %}
+
+
+{#
+   /**
+     * Generates the code for a Select filter in a ListController
+     */
+#}
+{% macro filterSelect(context, key, filter) %}
+    {% set label = context.i18n.trans(filter.options.label) %}
+
+    <div class="col-md-2">
+        <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
+            <option value="">{{ label }}</option>
+            {% for data in filter.options.values %}
+                {% if (filter.options.value != '') and (data.code == filter.options.value) %}
+                    <option value="{{ data.code }}" selected="">{{ data.description }}</option>
+                {% else %}
+                    <option value="{{ data.code }}">{{ data.description }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
 {% endmacro %}
 
 
@@ -137,45 +138,47 @@
      * Generate the code for a Text filter in a ListController
      */
 #}
-{% macro filterForTextInput(context, key, filter) %}
-<div class="col-md-2">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
-                   class="btn btn-outline-secondary dropdown-toggle"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+{% macro filterText(context, key, filter) %}
+    {% set label = context.i18n.trans(filter.options.label) %}
 
-            <div class="dropdown-menu">
-                <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
-                {% for keyOperator, valueOperator in filter.getFilterOperators() %}
-                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>
-                {% endfor %}
-            </div>
-        </div>
-        <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />
-        <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
-               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
-               autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
-    </div>
-</div>
-<div class="col-md-2">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
-                   class="btn btn-outline-secondary dropdown-toggle"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+    <div class="col-md-2">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
+                       class="btn btn-outline-secondary dropdown-toggle"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
 
-            <div class="dropdown-menu">
-                <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
-                {% for keyOperator, valueOperator in filter.getFilterOperators() %}
-                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>
-                {% endfor %}
+                <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                        <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ label }}</a>
+                    {% endfor %}
+                </div>
             </div>
+            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />
+            <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ label }}"
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
-        <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />
-        <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
-               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
-               autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
     </div>
-</div>
+    <div class="col-md-2">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
+                       class="btn btn-outline-secondary dropdown-toggle"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+
+                <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                        <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />
+            <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ label }}"
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
+        </div>
+    </div>
 {% endmacro %}
