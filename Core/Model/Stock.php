@@ -210,4 +210,17 @@ class Stock extends Base\ModelClass
 
         return 0.0;
     }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListArticulo?active=List');
+    }
 }

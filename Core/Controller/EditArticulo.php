@@ -36,7 +36,7 @@ class EditArticulo extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addEditListView('Stock', 'EditStock', 'stock');
+        $this->addEditListView('Stock', 'EditStock', 'stock', 'fa-tasks');
         $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-users');
 
         /// Disable column

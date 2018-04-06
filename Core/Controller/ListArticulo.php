@@ -75,7 +75,7 @@ class ListArticulo extends ExtendedController\ListController
 
     private function createViewArticuloProveedor()
     {
-        $this->addView('ListArticuloProveedor', 'ArticuloProveedor', 'supplier-products');
+        $this->addView('ListArticuloProveedor', 'ArticuloProveedor', 'supplier-products', 'fa-users');
         $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
 
         $this->addFilterAutocomplete('ListArticuloProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
@@ -88,11 +88,11 @@ class ListArticulo extends ExtendedController\ListController
 
     private function createViewStock()
     {
-        $this->addView('ListStock', 'Stock', 'stock');
+        $this->addView('ListStock', 'Stock', 'stock', 'fa-tasks');
         $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
 
         $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', 'codalmacen', $selectValues);
+        $this->addFilterSelect('ListStock', 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
 
         $this->addOrderBy('ListStock', 'referencia', 'reference');
         $this->addOrderBy('ListStock', 'cantidad', 'quantity');

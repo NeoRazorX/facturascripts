@@ -27,291 +27,289 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block javascript %}
-{{ parent() }}
+    {{ parent() }}
 
-<script type="text/javascript">
-    var tabActive = '{{ fsc.active }}';
-    function deleteFromList() {
-        var deleteCodes = [];
-        $('.tab' + tabActive + ' .listDelete').each(function() {
-            if ($(this).prop('checked')) {
-                deleteCodes.push($(this).val());
-            }
-        });
-        if (deleteCodes.length) {
-            bootbox.confirm({
-                title: "{{ i18n.trans('confirm-delete')|raw }}",
-                message: "{{ i18n.trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+    <script type="text/javascript">
+        var tabActive = '{{ fsc.active }}';
+        function deleteFromList() {
+            var deleteCodes = getLineCodes();
+            if (deleteCodes.length) {
+                bootbox.confirm({
+                    title: "{{ i18n.trans('confirm-delete')|raw }}",
+                    message: "{{ i18n.trans('are-you-sure') }}",
+                    closeButton: false,
+                    buttons: {
+                        cancel: {
+                            label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+                        },
+                        confirm: {
+                            label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
+                            className: 'btn-danger'
+                        }
                     },
-                    confirm: {
-                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
-                        className: 'btn-danger'
+                    callback: function (result) {
+                        if (result) {
+                            execActionForm('delete');
+                        }
                     }
-                },
-                callback: function (result) {
-                    if (result) {
-                        document.f_list_delete.active.value = tabActive;
-                        document.f_list_delete.code.value = deleteCodes.join();
-                        document.f_list_delete.submit();
-                    }
-                }
-            });
-        }
+                });
+            }
 
-        return false;
-    }
-    function execActionForm(formName, actionValue) {
-        var form = document.forms[formName];
-        form.action.value = actionValue;
-        form.submit();
-    }
-    function goToExport(option) {
-        $('#formSearch' + tabActive).append('<input type="hidden" name="action" value="export"/>'
-            + '<input type="hidden" name="option" value="' + option + '"/>');
-        $('#formSearch' + tabActive).submit();
-    }
-    function goToOptions(url) {
-        var previous = '';
-        if (typeof url !== 'undefined') {
-            var tab = tabActive.substring(4);
-            previous = '&url=' + encodeURIComponent(url + '#' + tab);
+            return false;
         }
-        window.location.href = 'EditPageOption?code=' + tabActive + previous;
-    }
-    function insertRecord() {
-        var url = { {{ fsc.getStringURLs('new') | raw }} };
-        document.insert_form.action = url[tabActive];
-        document.insert_form.submit();
-    }
-    function setOperator(buttonID, operator) {
-        document.getElementById(buttonID + '-operator').value = operator;
-        document.getElementById(buttonID + '-btn').value = operator;
-        $('#formSearch' + tabActive).submit();
-    }
-    function setOrder(value) {
-        $("#formSearch" + tabActive + " :input[name='order']").val(value);
-        $('#formSearch' + tabActive).submit();
-    }
-    $(document).ready(function () {
-        // set focus on tab change
-        $('#mainTabs').on('shown.bs.tab', function (e) {
-            tabActive = 'List' + e.target.hash.substring(1);
-            var formName = '#formSearch' + tabActive + ' :text:first';
-            $(formName).focus().select();
-        });
-        // set/unset all delete checkbox
-        $('.listDeleteCB').click(function() {
-            var checked = $(this).prop('checked');
-            $('.listDelete').prop('checked', checked);
-        });
-        // autocomplete filters
-        $('.autocomplete').each(function() {
-            var field = $(this).attr('data-field');
-            $(this).autocomplete({
-                source: '{{ fsc.url() }}?action=autocomplete&source=' + $(this).attr('data-source')
-                        + '&field=' + field + '&title=' + $(this).attr('data-title'),
-                select: function(event, ui) {
-                    $('#' + field + 'Autocomplete').val(ui.item.key);
-                    $(this).form().submit();
+        function execActionForm(actionValue) {
+            var form = document.getElementById('form' + tabActive);
+            $('<input>').attr({type: 'hidden', name: 'action'}).appendTo(form);
+            $('<input>').attr({type: 'hidden', name: 'code'}).appendTo(form);
+            var lineCodes = getLineCodes();
+            form.action.value = actionValue;
+            form.code.value = lineCodes.join();
+            form.submit();
+        }
+        function getLineCodes() {
+            var lineCodes = [];
+            $('.tab' + tabActive + ' .listAction').each(function () {
+                if ($(this).prop('checked')) {
+                    lineCodes.push($(this).val());
                 }
             });
+            return lineCodes;
+        }
+        function goToExport(option) {
+            $('#form' + tabActive).append('<input type="hidden" name="option" value="' + option + '"/>');
+            execActionForm('export');
+        }
+        function goToOptions(url) {
+            var previous = '';
+            if (typeof url !== 'undefined') {
+                var tab = tabActive.substring(4);
+                previous = '&url=' + encodeURIComponent(url + '#' + tab);
+            }
+            window.location.href = 'EditPageOption?code=' + tabActive + previous;
+        }
+        function insertRecord() {
+            var urls = { {{ fsc.getStringURLs('new') | raw }} };
+            document.insertForm.action = urls[tabActive];
+            document.insertForm.submit();
+        }
+        function setOperator(buttonID, operator) {
+            document.getElementById(buttonID + '-operator').value = operator;
+            document.getElementById(buttonID + '-btn').value = operator;
+            $('#form' + tabActive).submit();
+        }
+        function setOrder(value) {
+            $("#form" + tabActive + " :input[name='order']").val(value);
+            $('#form' + tabActive).submit();
+        }
+        $(document).ready(function () {
+            // set focus on tab change
+            $('#mainTabs').on('shown.bs.tab', function (e) {
+                tabActive = e.target.hash.substring(1);
+                $('#form' + tabActive + ' :text:first').focus().select();
+            });
+            // set/unset all delete checkbox
+            $('.listActionCB').click(function () {
+                var checked = $(this).prop('checked');
+                $('.listAction').prop('checked', checked);
+            });
+            // autocomplete filters
+            $('.autocomplete').each(function () {
+                var field = $(this).attr('data-field');
+                $(this).autocomplete({
+                    source: '{{ fsc.url() }}?action=autocomplete&source=' + $(this).attr('data-source')
+                            + '&field=' + field + '&title=' + $(this).attr('data-title'),
+                    select: function (event, ui) {
+                        $('#' + field + 'Autocomplete').val(ui.item.key);
+                        $(this).form().submit();
+                    }
+                });
+            });
         });
-    });</script>
+    </script>
 {% endblock %}
 
 {% block body %}
-{# Calculate texts according to language #}
-{% set refresh = i18n.trans('refresh-page') %}
-{% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
-{% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
-{% set print, print_title = i18n.trans('print'), i18n.trans('print-list-of-records') %}
-{% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
-{% set search_title = i18n.trans('filter-records-containing-indicated-value') %}
-{% set panel_header = i18n.trans('common-data') %}
-{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+    {# Calculate texts according to language #}
+    {% set refresh = i18n.trans('refresh-page') %}
+    {% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
+    {% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
+    {% set print, print_title = i18n.trans('print'), i18n.trans('print-list-of-records') %}
+    {% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
+    {% set search_title = i18n.trans('filter-records-containing-indicated-value') %}
+    {% set panel_header = i18n.trans('common-data') %}
+    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
-{# Calculate common values #}
-{% set list_url = fsc.views[fsc.active].getURL('list') %}
+    {# Calculate common values #}
+    {% set list_url = fsc.views[fsc.active].getURL('list') %}
 
-{# Macros Template Imports #}
-{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html.twig' import exportData as exportData %}
-{% import 'Macro/BaseController.html.twig' as BaseController %}
-{% import 'Macro/ListFilter.html.twig' as ListFilter %}
+    {# Macros Template Imports #}
+    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+    {% from 'Macro/Utils.html.twig' import exportData as exportData %}
+    {% import 'Macro/BaseController.html.twig' as BaseController %}
+    {% import 'Macro/ListFilter.html.twig' as ListFilter %}
 
-{# Page Header #}
-<div class="container-fluid d-print-none">
-    {{ parent() }}
-    <div class="d-none">
-        <form action="#" method="post" name="insert_form">
-            <input type="hidden" name="action" value="insert"/>
-        </form>
-    </div>
-    {# Header Row #}
-    <div class="row">
-        <div class="col-sm-7 col-6">
-            <div class="btn-group d-xs-none">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
-                   <i class="fa fa-refresh" aria-hidden="true"></i>
-                </a>
-                {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
-                   <i class="fa fa-bookmark" aria-hidden="true"></i>
-                </a>
-                {% else %}
-                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                   <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-                </a>
-                {% endif %}
+    {# Page Header #}
+    <div class="container-fluid d-print-none">
+        {{ parent() }}
+        <div class="d-none">
+            <form action="#" method="post" name="insertForm">
+                <input type="hidden" name="action" value="insert"/>
+            </form>
+        </div>
+        {# Header Row #}
+        <div class="row">
+            <div class="col-sm-7 col-6">
+                <div class="btn-group d-xs-none">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </a>
+                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                        <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="btn-group">
+                    <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                    </a>
+                    <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}')" {{ popoverTitle(options_title, 'bottom') }}>
+                        <i class="fa fa-wrench" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                    </a>
+                    {# Adds print and export options #}
+                    {{ exportData(fsc, i18n) }}
+                </div>
             </div>
-            <div class="btn-group">
-                <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
-                   <i class="fa fa-plus" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
-                </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}')" {{ popoverTitle(options_title, 'bottom') }}>
-                   <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
-                </a>
-                {# Adds print and export options #}
-                {{ exportData(fsc, i18n) }}
+            <div class="col-sm-5 col-6 text-right">
+                <h2 style="margin-top: 0px;">
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                </h2>
             </div>
         </div>
-        <div class="col-sm-5 col-6 text-right">
-            <h2 style="margin-top: 0px;">
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-            </h2>
-        </div>
     </div>
-</div>
 
-{# Main Data #}
-<div>
-    {# Tabs declaration #}
-    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
-        {% for indexView, view in fsc.views %}
-        <li class="nav-item" {{ popoverTitle(view.title, 'bottom') }}>
-            {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            {% set modelID = view.getModelID() %}
-            <a href="#{{ modelID }}" class="nav-link {{ active }}" id="{{ modelID }}-tab" data-toggle="tab" role="tab" aria-controls="{{ modelID }}">
-                <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
-                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+    {# Main Data #}
+    <div>
+        {# Tabs declaration #}
+        <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+            {% for indexView, view in fsc.views %}
+                <li class="nav-item" {{ popoverTitle(view.title, 'bottom') }}>
+                    {% set active = (indexView == fsc.active) ? 'active' : '' %}
+                    <a href="#{{ indexView }}" class="nav-link {{ active }}" data-toggle="tab" role="tab" aria-controls="{{ indexView }}">
+                        <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
+                        {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
 
-    {# Main Tab #}
-    <div class="tab-content" id="mainTabsContent">
-        {% for indexView, view in fsc.views %}
-        {% set active = (indexView == fsc.active) ? 'active' : '' %}
-        <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
-            {# Filters Row #}
-            <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
-                <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
-                <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
-                    <div class="row align-items-center">
-                        {# Main filter #}
-                        <div class="col-md-2">
-                            <div class="input-group">
-                                <input type="hidden" name="active" value="{{ indexView }}"/>
-                                {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
-                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
-                                <span class="input-group-append">
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fa fa-search" aria-hidden="true"></i>
-                                    </button>
-                                </span>
+        {# Main Tab #}
+        <div class="tab-content" id="mainTabsContent">
+            {% for indexView, view in fsc.views %}
+                {% set active = (indexView == fsc.active) ? 'active' : '' %}
+                <div class="tab-pane {{ active }}" id="{{ indexView }}" role="tabpanel">
+                    {# Filters Row #}
+                    <form name="form{{ indexView }}" id="form{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
+                        <input type="hidden" name="active" value="{{ indexView }}"/>
+                        <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
+                        <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
+                            <div class="row align-items-center">
+                                {# Main filter #}
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
+                                        <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
+                                        <span class="input-group-append">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {# Aditionals filters #}
+                                {% set columnsUsed = 2 %}
+                                {% for key1, filter in view.getFilters() %}
+                                    {# Add new column filter #}
+                                    {% if filter.type == 'autocomplete' %}
+                                        {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
+                                    {% elseif filter.type == 'select' %}
+                                        {{ ListFilter.filterSelect(_context, key1, filter) }}
+                                    {% elseif filter.type == 'checkbox' %}
+                                        {{ ListFilter.filterCheckbox(_context, key1, filter) }}
+                                    {% else %}
+                                        {{ ListFilter.filterText(_context, key1, filter) }}
+                                        {% set columnsUsed = columnsUsed + 2 %}
+                                    {% endif %}
+
+                                    {# subtract the available space #}
+                                    {% set columnsUsed = columnsUsed + 2 %}
+                                    {# check if there is space available for columns #}
+                                    {% if (columnsUsed % 12) == 0 %}
+                                    </div>
+                                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">
+                                        {% set columnsUsed = 0 %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {# Order by selector #}
+                                {{ ListFilter.buttonOrderBy(_context, view) }}
                             </div>
                         </div>
+                    </form>
 
-                        {# Aditionals filters #}
-                        {% set columnsUsed = 2 %}
-                        {% for key1, filter in view.getFilters() %}
-                        {# check if there is space available for columns #}
-                        {% if (columnsUsed % 12) == 0 %}
+                    {# Data Row #}
+                    <div class="table-responsive">
+                        {# Data Table #}
+                        {{ BaseController.columnsForListView(_context, view, true) }}
                     </div>
-                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">
-                        {% set columnsUsed = 0 %}
-                        {% endif %}
 
-                        {# Add new column filter #}
-                        {% if filter.type == 'autocomplete' %}
-                        {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
-                        {% elseif filter.type == 'select' %}
-                        {{ ListFilter.filterSelect(_context, key1, filter) }}
-                        {% elseif filter.type == 'checkbox' %}
-                        {{ ListFilter.filterCheckbox(_context, key1, filter) }}
-                        {% else %}
-                        {{ ListFilter.filterText(_context, key1, filter) }}
-                        {% set columnsUsed = columnsUsed + 2 %}
-                        {% endif %}
-
-                        {# subtract the available space #}
-                        {% set columnsUsed = columnsUsed + 2 %}
-                        {% endfor %}
-
-                        {# Order by selector #}
-                        {{ ListFilter.buttonOrderBy(_context, view) }}
-                    </div>
-                </div>
-            </form>
-
-            {# Data Row #}
-            <div class="table-responsive">
-                {# Data Table #}
-                {{ BaseController.columnsForListView(_context, view) }}
-            </div>
-
-            {# Footer Navigation #}
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-10 text-center">
-                        <div class="btn-group">
-                            {% for item in fsc.pagination(indexView) %}
-                            {% if item.active %}
-                            <a class="btn btn-primary">{{ item.page }}</a>
-                            {% else %}
-                            <a class="btn btn-light" href="{{ item.url }}">
-                                {% if item.icon %}
-                                <i class="fa {{ item.icon }}" aria-hidden="true"></i>
-                                {% else %}
-                                <span>{{ item.page }}</span>
+                    {# Footer Navigation #}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-10 text-center">
+                                <div class="btn-group">
+                                    {% for item in fsc.pagination(indexView) %}
+                                        {% if item.active %}
+                                            <a class="btn btn-primary">{{ item.page }}</a>
+                                        {% else %}
+                                            <a class="btn btn-light" href="{{ item.url }}">
+                                                {% if item.icon %}
+                                                    <i class="fa {{ item.icon }}" aria-hidden="true"></i>
+                                                {% else %}
+                                                    <span>{{ item.page }}</span>
+                                                {% endif %}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <br/>
+                                <br/>
+                            </div>
+                            <div class="col-2 text-right">
+                                {% if view.getCursor() is not empty %}
+                                    <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
                                 {% endif %}
-                            </a>
-                            {% endif %}
-                            {% endfor %}
+                            </div>
                         </div>
-                        <br/>
-                        <br/>
-                    </div>
-                    <div class="col-2 text-right">
-                        {% if view.getCursor() is not empty %}
-                        <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
-                            <i class="fa fa-trash" aria-hidden="true"></i>
-                        </a>
-                        {% endif %}
+                        <div class="row">
+                            <div class="col-12">
+                                {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                                {{ BaseController.modalFormFromColumns(_context, view) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                        {{ BaseController.modalFormFromColumns(_context, view) }}
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-        <form name="f_list_delete" action="{{ fsc.url() }}" method="post">
-            <input type="hidden" name="active" value=""/>
-            <input type="hidden" name="action" value="delete"/>
-            <input type="hidden" name="code" value=""/>
-        </form>
     </div>
-</div>
 {% endblock %}

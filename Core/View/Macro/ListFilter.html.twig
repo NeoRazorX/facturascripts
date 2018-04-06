@@ -33,8 +33,8 @@
      */
 #}
 {% macro buttonOrderBy(context, view) %}
-    <div class="col">
-        <div class="btn-group float-md-right">
+    <div class="col text-right">
+        <div class="btn-group">
             {% set orderbylist = view.getOrderBy() %}
             <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }} fa-fw" aria-hidden="true"></i>
