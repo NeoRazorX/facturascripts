@@ -76,7 +76,7 @@ class DashboardData extends Base\ModelClass
      *
      * @param array $data
      */
-    public function checkArrayData(&$data)
+    public function checkArrayData(array &$data)
     {
         $properties = [];
         foreach ($data as $key => $value) {
@@ -144,7 +144,7 @@ class DashboardData extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert($values = [])
+    protected function saveInsert(array $values = [])
     {
         return parent::saveInsert(['properties' => json_encode($this->properties)]);
     }
@@ -156,7 +156,7 @@ class DashboardData extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate($values = [])
+    protected function saveUpdate(array $values = [])
     {
         return parent::saveUpdate(['properties' => json_encode($this->properties)]);
     }
@@ -179,7 +179,7 @@ class DashboardData extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();

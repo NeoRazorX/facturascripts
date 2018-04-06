@@ -63,13 +63,6 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Identifier of the special account.
-     *
-     * @var int
-     */
-    public $codcuentaesp;
-
-    /**
      * Identifier of the parent account
      *
      * @var integer
@@ -114,7 +107,6 @@ class Cuenta extends Base\ModelClass
     {
         /// force the parents tables
         new Ejercicio();
-        new CuentaEspecial();
 
         return '';
     }

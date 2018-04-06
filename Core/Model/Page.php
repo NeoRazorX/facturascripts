@@ -80,23 +80,13 @@ class Page extends Base\ModelClass
     public $icon;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
+     * Reset the values of all model properties.
      */
-    public static function tableName()
+    public function clear()
     {
-        return 'pages';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'name';
+        parent::clear();
+        $this->showonmenu = true;
+        $this->ordernum = 100;
     }
 
     /**
@@ -112,13 +102,23 @@ class Page extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
      */
-    public function clear()
+    public static function primaryColumn()
     {
-        parent::clear();
-        $this->showonmenu = true;
-        $this->ordernum = 100;
+        return 'name';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'pages';
     }
 
     /**
@@ -129,7 +129,7 @@ class Page extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return $this->name;
     }

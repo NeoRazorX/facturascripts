@@ -61,7 +61,7 @@ class Settings extends Base\ModelClass
      *
      * @param array $data
      */
-    public function checkArrayData(&$data)
+    public function checkArrayData(array &$data)
     {
         $properties = [];
         foreach ($data as $key => $value) {
@@ -121,7 +121,7 @@ class Settings extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert($values = [])
+    protected function saveInsert(array $values = [])
     {
         return parent::saveInsert(['properties' => json_encode($this->properties)]);
     }
@@ -133,7 +133,7 @@ class Settings extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate($values = [])
+    protected function saveUpdate(array $values = [])
     {
         return parent::saveUpdate(['properties' => json_encode($this->properties)]);
     }

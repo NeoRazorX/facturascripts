@@ -52,7 +52,7 @@ class Cuentas extends AbstractRandomAccounting
             $madre = floor($codigo / 10);
 
             $ejercicio = $this->getOneItem($this->ejercicios)->codejercicio;
-            foreach (array($madre, $codigo) as $value) {
+            foreach ([$madre, $codigo] as $value) {
                 $cuenta->clear();
                 $cuenta->codejercicio = $ejercicio;
                 $cuenta->codcuenta = $value;

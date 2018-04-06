@@ -71,7 +71,7 @@ class BusinessDocumentView extends BaseView
      * @param string $lineXMLView
      * @param string $userNick
      */
-    public function __construct($title, $modelName, $lineXMLView, $userNick)
+    public function __construct(string $title, string $modelName, string $lineXMLView, string $userNick)
     {
         parent::__construct($title, $modelName);
         $this->documentStates = [];
@@ -145,7 +145,7 @@ class BusinessDocumentView extends BaseView
      *
      * @param ExportManager $exportManager
      */
-    public function export(&$exportManager)
+    public function export(ExportManager &$exportManager)
     {
         $exportManager->generateDocumentPage($this->model);
     }
@@ -154,25 +154,15 @@ class BusinessDocumentView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param bool  $code
-     * @param array $where
+     * @param string $code
      */
-    public function loadData($code = false, $where = [])
+    public function loadData(string $code)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
         }
 
-        if (is_array($code)) {
-            $where = [];
-            foreach ($code as $fieldName => $value) {
-                $where[] = new DataBaseWhere($fieldName, $value);
-            }
-            $this->model->loadFromCode('', $where);
-        } else {
-            $this->model->loadFromCode($code);
-        }
-
+        $this->model->loadFromCode($code);
         $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
         $this->title = $this->model->codigo;
@@ -181,11 +171,11 @@ class BusinessDocumentView extends BaseView
     /**
      * Loads data, recalculate document and returns a json with the results.
      *
-     * @param mixed $data
+     * @param array $data
      *
      * @return string
      */
-    public function recalculateDocument(&$data)
+    public function recalculateDocument(array &$data)
     {
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
         unset($data['lines']);
@@ -197,11 +187,11 @@ class BusinessDocumentView extends BaseView
     /**
      * Save all document related data.
      *
-     * @param $data
+     * @param array $data
      *
      * @return string
      */
-    public function saveDocument(&$data)
+    public function saveDocument(array &$data)
     {
         $result = 'OK';
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
@@ -223,8 +213,9 @@ class BusinessDocumentView extends BaseView
             return $result;
         }
 
+        $exists = $this->model->exists();
         if ($this->save()) {
-            $result = $this->model->editable ? $this->saveLines($newLines) : 'OK';
+            $result = ($this->model->editable || !$exists) ? $this->saveLines($newLines) : 'OK';
         } else {
             $result = 'ERROR';
         }
@@ -251,7 +242,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return string
      */
-    private function setCustomer($codcliente, $newCliente = '', $newCifnif = '')
+    private function setCustomer(string $codcliente, string $newCliente = '', string $newCifnif = '')
     {
         if ($this->model->codcliente === $codcliente && !empty($this->model->codcliente)) {
             return 'OK';
@@ -283,7 +274,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return string
      */
-    private function setSupplier($codproveedor, $newProveedor = '', $newCifnif = '')
+    private function setSupplier(string $codproveedor, string $newProveedor = '', string $newCifnif = '')
     {
         if ($this->model->codproveedor === $codproveedor && !empty($this->model->codproveedor)) {
             return 'OK';
@@ -309,11 +300,11 @@ class BusinessDocumentView extends BaseView
     /**
      * Saves the lines for the document.
      *
-     * @param $newLines
+     * @param array $newLines
      *
      * @return string
      */
-    private function saveLines(&$newLines)
+    private function saveLines(array &$newLines)
     {
         $result = 'OK';
 
@@ -368,7 +359,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return bool
      */
-    protected function updateLine($oldLine, $newLine)
+    protected function updateLine($oldLine, array $newLine)
     {
         foreach ($newLine as $key => $value) {
             $oldLine->{$key} = $value;
@@ -392,7 +383,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return array
      */
-    protected function processFormLines($formLines)
+    protected function processFormLines(array $formLines)
     {
         $newLines = [];
         $order = count($formLines);

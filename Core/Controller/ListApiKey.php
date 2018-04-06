@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,12 +21,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to list the items in the Subcuenta model
+ * Controller to list the items in the ApiKey model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class ListSubcuenta extends ExtendedController\ListController
+class ListApiKey extends ExtendedController\ListController
 {
 
     /**
@@ -36,12 +35,12 @@ class ListSubcuenta extends ExtendedController\ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'subaccounts';
-        $pagedata['icon'] = 'fa-th-list';
-        $pagedata['menu'] = 'accounting';
+        $pageData = parent::getPageData();
+        $pageData['title'] = 'api-keys';
+        $pageData['icon'] = 'fa-key';
+        $pageData['menu'] = 'admin';
 
-        return $pagedata;
+        return $pageData;
     }
 
     /**
@@ -49,12 +48,14 @@ class ListSubcuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('Subcuenta', 'ListSubcuenta');
-        $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion']);
+        $className = $this->getClassName();
+        $this->addView('ApiKey', $className);
+        $this->addSearchFields($className, ['descripcion', 'apikey', 'nick']);
 
-        $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', 'codejercicio', 'nombre');
+        $this->addOrderBy($className, 'apikey', 'api-key', 1);
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'nick', 'nick');
 
-        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
-        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
+        $this->addFilterCheckbox($className, 'enabled', 'enabled', 'enabled');
     }
 }

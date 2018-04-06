@@ -79,7 +79,7 @@ class BaseView
      * @param string $title
      * @param string $modelName
      */
-    public function __construct($title, $modelName)
+    public function __construct(string $title, string $modelName)
     {
         static::$i18n = new Base\Translator();
 
@@ -94,7 +94,7 @@ class BaseView
      *
      * @param array $data
      */
-    public function loadFromData(&$data)
+    public function loadFromData(array &$data)
     {
         $fieldKey = $this->model->primaryColumn();
         $fieldValue = $data[$fieldKey];
@@ -137,7 +137,7 @@ class BaseView
      *
      * @return bool
      */
-    public function delete($code)
+    public function delete(string $code)
     {
         if ($this->model->loadFromCode($code)) {
             return $this->model->delete();
@@ -163,7 +163,7 @@ class BaseView
      *
      * @return ColumnItem
      */
-    public function columnForName($columnName)
+    public function columnForName(string $columnName)
     {
         $result = null;
         foreach ($this->pageOption->columns as $group) {
@@ -188,7 +188,7 @@ class BaseView
      *
      * @return ColumnItem
      */
-    public function columnForField($fieldName)
+    public function columnForField(string $fieldName)
     {
         $result = null;
         foreach ($this->pageOption->columns as $group) {
@@ -213,7 +213,7 @@ class BaseView
      *
      * @return RowItem
      */
-    public function getRow($key)
+    public function getRow(string $key)
     {
         return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
     }
@@ -235,7 +235,7 @@ class BaseView
      *
      * @return string
      */
-    public function getURL($type)
+    public function getURL(string $type)
     {
         return empty($this->model) ? '' : $this->model->url($type);
     }

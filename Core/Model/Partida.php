@@ -264,7 +264,7 @@ class Partida extends Base\ModelClass
         ];
 
         $account = new Subcuenta();
-        $account->loadFromCode(null, $where);
+        $account->loadFromCode('', $where);
         return $account->idsubcuenta;
     }
 
