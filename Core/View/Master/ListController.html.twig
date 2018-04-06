@@ -82,8 +82,7 @@
         function goToOptions(url) {
             var previous = '';
             if (typeof url !== 'undefined') {
-                var tab = tabActive.substring(4);
-                previous = '&url=' + encodeURIComponent(url + '#' + tab);
+                previous = '&url=' + encodeURIComponent(url + '?active=' + tabActive);
             }
             window.location.href = 'EditPageOption?code=' + tabActive + previous;
         }
