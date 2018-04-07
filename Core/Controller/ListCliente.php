@@ -67,5 +67,7 @@ class ListCliente extends ExtendedController\ListController
 
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
         $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
+        
+        $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
     }
 }
