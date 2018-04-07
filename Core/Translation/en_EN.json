@@ -652,5 +652,5 @@
     "created": "Created",
     "parent-group": "Parent group",
     "parent-group-cant-be-the-same-group": "Parent group can't be the same group",
-    "parent-group-invalid": "Invalid parent group <b>%parentGroup%</b>, causing circular relation."
+    "parent-group-loop": "Parent group %parentGroup% causing circular relation."
 }
