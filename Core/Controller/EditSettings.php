@@ -32,66 +32,24 @@ class EditSettings extends ExtendedController\PanelController
     const KEY_SETTINGS = 'Settings';
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $modelName = 'Settings';
-        $icon = $this->getPageData()['icon'];
-        foreach ($this->allSettingsXMLViews() as $name) {
-            $title = strtolower(substr($name, 8));
-            $this->addEditView($modelName, $name, $title, $icon);
-        }
-
-        $this->addHtmlView('Block/About.html', null, 'about', 'about');
-        $this->testViews();
-    }
-
-    /**
-     * Load view data
+     * Returns the configuration property value for a specified $field
      *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        if (empty($view->getModel())) {
-            return;
-        }
-
-        $code = $this->getKeyFromViewName($keyView);
-        $view->loadData($code);
-
-        $model = $view->getModel();
-        if ($model->name === null) {
-            $model->name = strtolower(substr($keyView, 8));
-            $model->save();
-        }
-    }
-
-    /**
-     * Run the controller after actions
+     * @param mixed  $model
+     * @param string $field
      *
-     * @param ExtendedController\EditView $view
-     * @param string                      $action
+     * @return mixed
      */
-    protected function execAfterAction($view, $action)
+    public function getFieldValue($model, $field)
     {
-        switch ($action) {
-            case 'export':
-                $this->setTemplate(false);
-                $this->exportAction();
-                break;
-
-            case 'testmail':
-                $emailTools = new EmailTools();
-                if ($emailTools->test()) {
-                    $this->miniLog->info($this->i18n->trans('mail-test-ok'));
-                } else {
-                    $this->miniLog->error($this->i18n->trans('mail-test-error'));
-                }
-                break;
+        if (isset($model->{$field})) {
+            return $model->{$field};
         }
+
+        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
+            return $model->properties[$field];
+        }
+
+        return null;
     }
 
     /**
@@ -131,40 +89,6 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the configuration property value for a specified $field
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        $value = parent::getFieldValue($model, $field);
-        if (isset($value)) {
-            return $value;
-        }
-
-        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
-            return $model->properties[$field];
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the view id for a specified $viewName
-     *
-     * @param string $viewName
-     *
-     * @return string
-     */
-    private function getKeyFromViewName($viewName)
-    {
-        return strtolower(substr($viewName, strlen(self::KEY_SETTINGS)));
-    }
-
-    /**
      * Return a list of all XML view files on XMLView folder.
      *
      * @return array
@@ -180,6 +104,107 @@ class EditSettings extends ExtendedController\PanelController
         }
 
         return $names;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $modelName = 'Settings';
+        $icon = $this->getPageData()['icon'];
+        foreach ($this->allSettingsXMLViews() as $name) {
+            $title = strtolower(substr($name, 8));
+            $this->addEditView($modelName, $name, $title, $icon);
+        }
+
+        $this->addHtmlView('Block/About.html', null, 'about', 'about');
+        $this->testViews();
+    }
+
+    /**
+     * Run the controller after actions
+     *
+     * @param ExtendedController\EditView $view
+     * @param string                      $action
+     */
+    protected function execAfterAction($view, $action)
+    {
+        switch ($action) {
+            case 'export':
+                $this->setTemplate(false);
+                $this->exportAction();
+                break;
+
+            case 'testmail':
+                $emailTools = new EmailTools();
+                if ($emailTools->test()) {
+                    $this->miniLog->info($this->i18n->trans('mail-test-ok'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('mail-test-error'));
+                }
+                break;
+        }
+    }
+
+    /**
+     * Exports data from views.
+     */
+    private function exportAction()
+    {
+        $this->exportManager->newDoc($this->request->get('option'));
+        foreach ($this->views as $view) {
+            $model = $view->getModel();
+            if ($model === null || !isset($model->properties)) {
+                continue;
+            }
+
+            $headers = ['key' => 'key', 'value' => 'value'];
+            $rows = [];
+            foreach ($model->properties as $key => $value) {
+                $rows[] = ['key' => $key, 'value' => $value];
+            }
+
+            if (count($rows) > 0) {
+                $this->exportManager->generateTablePage($headers, $rows);
+            }
+        }
+
+        $this->exportManager->show($this->response);
+    }
+
+    /**
+     * Returns the view id for a specified $viewName
+     *
+     * @param string $viewName
+     *
+     * @return string
+     */
+    private function getKeyFromViewName($viewName)
+    {
+        return strtolower(substr($viewName, strlen(self::KEY_SETTINGS)));
+    }
+
+    /**
+     * Load view data
+     *
+     * @param string                      $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        if (empty($view->getModel())) {
+            return;
+        }
+
+        $code = $this->getKeyFromViewName($keyView);
+        $view->loadData($code);
+
+        $model = $view->getModel();
+        if ($model->name === null) {
+            $model->name = strtolower(substr($keyView, 8));
+            $model->save();
+        }
     }
 
     /**
@@ -212,31 +237,5 @@ class EditSettings extends ExtendedController\PanelController
                 $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
             }
         }
-    }
-
-    /**
-     * Exports data from views.
-     */
-    private function exportAction()
-    {
-        $this->exportManager->newDoc($this->request->get('option'));
-        foreach ($this->views as $view) {
-            $model = $view->getModel();
-            if ($model === null || !isset($model->properties)) {
-                continue;
-            }
-
-            $headers = ['key' => 'key', 'value' => 'value'];
-            $rows = [];
-            foreach ($model->properties as $key => $value) {
-                $rows[] = ['key' => $key, 'value' => $value];
-            }
-
-            if (count($rows) > 0) {
-                $this->exportManager->generateTablePage($headers, $rows);
-            }
-        }
-
-        $this->exportManager->show($this->response);
     }
 }
