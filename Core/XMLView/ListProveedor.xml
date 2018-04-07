@@ -24,25 +24,25 @@
 
 <view>
     <columns>
-        <column name="code" display="left" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
         </column>
-        <column name="name" display="left" order="110">
+        <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="cifnif" display="left" order="130">
+        <column name="cifnif" order="130">
             <widget type="text" fieldname="cifnif" />
         </column>
-        <column name="email" display="left" order="140">
+        <column name="email" order="140">
             <widget type="text" fieldname="email" />
         </column>
-        <column name="phone" display="left" order="150">
+        <column name="phone" order="150">
             <widget type="text" fieldname="telefono1" />
         </column>
         <column name="phone2" display="none" order="160">
             <widget type="text" fieldname="telefono2" />
         </column>
-        <column name="notes" display="left" order="180">
+        <column name="notes" order="180">
             <widget type="text" fieldname="observaciones" />
         </column>
         <column name="blocked" display="none" order="190">

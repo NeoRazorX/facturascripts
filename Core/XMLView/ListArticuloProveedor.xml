@@ -30,13 +30,13 @@
         <column name="reference" order="100">
             <widget type="text" fieldname="referencia" icon="fa-barcode" required="true" />
         </column>
-        <column name="supplier" display="left" order="100">
+        <column name="supplier" order="100">
             <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
         </column>
         <column name="supplier-reference" order="110">
             <widget type="text" fieldname="refproveedor" icon="fa-barcode" required="true" />
         </column>
-        <column name="description" display="left" order="110">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
         <column name="price" title="pvp" display="right" order="150">

@@ -31,7 +31,7 @@
             <column name="codcliente" display="none" order="110">
                 <widget type="text" fieldname="codcliente" readonly="true" required="true" />
             </column>
-            <column name="description" display="left" order="120">
+            <column name="description" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             <column name="shipping-address" numcolumns="2" display="center" order="130">
@@ -45,25 +45,25 @@
             </column>
         </group>
         <group name="address" numcolumns="12">
-            <column name="address" display="left" order="150">
+            <column name="address" order="150">
                 <widget type="text" fieldname="direccion" />
             </column>
-            <column name="postalmail" numcolumns="2" display="left" order="160">
+            <column name="postalmail" numcolumns="2" order="160">
                 <widget type="text" fieldname="apartado" />
             </column>
-            <column name="city" numcolumns="2" display="left" order="170">
+            <column name="city" numcolumns="2" order="170">
                 <widget type="text" fieldname="ciudad" />
             </column>
-            <column name="zip-code" numcolumns="1" display="left" order="180">
+            <column name="zip-code" numcolumns="1" order="180">
                 <widget type="text" fieldname="codpostal" />
             </column>
             <column name="idprovince" display="none" order="190">
                 <widget type="number" decimal="0" fieldname="idprovincia" readonly="true" required="true" />
             </column>
-            <column name="province" numcolumns="2" display="left" order="195">
+            <column name="province" numcolumns="2" order="195">
                 <widget type="text" fieldname="provincia" />
             </column>
-            <column name="country" numcolumns="2" display="left" order="200">
+            <column name="country" numcolumns="2" order="200">
                 <widget type="select" fieldname="codpais">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>

@@ -24,13 +24,13 @@
 
 <view>
     <columns>
-        <column name="reference" display="left" order="100">
+        <column name="reference" order="100">
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
-        <column name="warehouse" display="left" order="110">
+        <column name="warehouse" order="110">
             <widget type="text" fieldname="codalmacen" />
         </column>
-        <column name="location" display="left" order="120">
+        <column name="location" order="120">
             <widget type="text" fieldname="ubicacion" />
         </column>
         <column name="quantity" display="right" order="130">
