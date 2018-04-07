@@ -31,30 +31,6 @@ class ListPresupuestoCliente extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('PresupuestoCliente', 'ListPresupuestoCliente');
-        $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
-
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $this->addFilterSelect('ListPresupuestoCliente', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
-
-        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'clientes', 'codcliente', 'nombre');
-
-        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -67,5 +43,36 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListPresupuestoCliente', 'PresupuestoCliente');
+        $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
+
+        $this->addFilterDatePicker('ListPresupuestoCliente', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListPresupuestoCliente', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
+
+        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
+        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
     }
 }

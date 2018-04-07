@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,30 +31,6 @@ class ListPedidoCliente extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('PedidoCliente', 'ListPedidoCliente');
-        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
-
-        $this->addFilterDatePicker('ListPedidoCliente', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListPedidoCliente', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'PedidoCliente')];
-        $this->addFilterSelect('ListPedidoCliente', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
-
-        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListPedidoCliente', 'codcliente', 'clientes', 'codcliente', 'nombre');
-
-        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -67,5 +43,36 @@ class ListPedidoCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListPedidoCliente', 'PedidoCliente');
+        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
+
+        $this->addFilterDatePicker('ListPedidoCliente', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListPedidoCliente', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'PedidoCliente')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListPedidoCliente', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListPedidoCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
+
+        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date', 2);
+        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
     }
 }

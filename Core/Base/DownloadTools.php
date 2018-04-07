@@ -51,12 +51,6 @@ class DownloadTools
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
             }
 
-            /**
-             * In some cases is necesary to disable some flags.
-             */
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
             $data = curl_exec($ch);
             $info = curl_getinfo($ch);
             if ($info['http_code'] == 200) {

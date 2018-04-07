@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,14 +49,14 @@ class ListFamilia extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Familia', $className);
-        $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
+        $this->addView('ListFamilia', 'Familia');
+        $this->addSearchFields('ListFamilia', ['descripcion', 'codfamilia', 'madre']);
 
-        $this->addOrderBy($className, 'codfamilia', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'madre', 'parent');
+        $this->addOrderBy('ListFamilia', 'codfamilia', 'code');
+        $this->addOrderBy('ListFamilia', 'descripcion', 'description');
+        $this->addOrderBy('ListFamilia', 'madre', 'parent');
 
-        $this->addFilterSelect($className, 'madre', 'familias', 'codfamilia', 'descripcion');
+        $selectValues = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect('ListFamilia', 'madre', 'parent', 'madre', $selectValues);
     }
 }

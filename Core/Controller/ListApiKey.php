@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,14 +48,13 @@ class ListApiKey extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('ApiKey', $className);
-        $this->addSearchFields($className, ['descripcion', 'apikey', 'nick']);
+        $this->addView('ListApiKey', 'ApiKey');
+        $this->addSearchFields('ListApiKey', ['descripcion', 'apikey', 'nick']);
 
-        $this->addOrderBy($className, 'apikey', 'api-key', 1);
-        $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'nick', 'nick');
+        $this->addOrderBy('ListApiKey', 'apikey', 'api-key');
+        $this->addOrderBy('ListApiKey', 'descripcion', 'description');
+        $this->addOrderBy('ListApiKey', 'nick', 'nick');
 
-        $this->addFilterCheckbox($className, 'enabled', 'enabled', 'enabled');
+        $this->addFilterCheckbox('ListApiKey', 'enabled', 'enabled', 'enabled');
     }
 }

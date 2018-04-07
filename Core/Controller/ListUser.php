@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,26 +29,6 @@ class ListUser extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('User', 'ListUser', 'users', 'fa-users');
-        $this->addSearchFields('ListUser', ['nick', 'email']);
-
-        $this->addOrderBy('ListUser', 'nick');
-        $this->addOrderBy('ListUser', 'email');
-        $this->addOrderBy('ListUser', 'lastactivity', 'last-activity');
-
-        /* Roles */
-        $this->addView('Role', 'ListRole', 'roles', 'fa-address-card-o');
-        $this->addSearchFields('ListRole', ['codrole', 'descripcion']);
-
-        $this->addOrderBy('ListRole', 'descripcion', 'description');
-        $this->addOrderBy('ListRole', 'codrole', 'code');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -61,5 +41,25 @@ class ListUser extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListUser', 'User', 'users', 'fa-users');
+        $this->addSearchFields('ListUser', ['nick', 'email']);
+
+        $this->addOrderBy('ListUser', 'nick');
+        $this->addOrderBy('ListUser', 'email');
+        $this->addOrderBy('ListUser', 'lastactivity', 'last-activity');
+
+        /* Roles */
+        $this->addView('ListRole', 'Role', 'roles', 'fa-address-card-o');
+        $this->addSearchFields('ListRole', ['codrole', 'descripcion']);
+
+        $this->addOrderBy('ListRole', 'descripcion', 'description');
+        $this->addOrderBy('ListRole', 'codrole', 'code');
     }
 }

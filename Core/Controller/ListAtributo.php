@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,11 +50,10 @@ class ListAtributo extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Atributo', $className);
-        $this->addSearchFields($className, ['nombre', 'codatributo']);
+        $this->addView('ListAtributo', 'Atributo');
+        $this->addSearchFields('ListAtributo', ['nombre', 'codatributo']);
 
-        $this->addOrderBy($className, 'codatributo', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy('ListAtributo', 'codatributo', 'code');
+        $this->addOrderBy('ListAtributo', 'nombre', 'name');
     }
 }

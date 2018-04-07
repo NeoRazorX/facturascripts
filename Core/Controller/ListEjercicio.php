@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,14 +49,11 @@ class ListEjercicio extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Ejercicio', $className);
-        $this->addSearchFields($className, ['nombre', 'codejercicio']);
+        $this->addView('ListEjercicio', 'Ejercicio');
+        $this->addSearchFields('ListEjercicio', ['nombre', 'codejercicio']);
 
-        $this->addOrderBy($className, 'fechainicio', 'start-date', 2);
-        $this->addOrderBy($className, 'codejercicio', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
-
-        $this->addFilterSelect($className, 'estado', 'ejercicios', 'estado', 'estado');
+        $this->addOrderBy('ListEjercicio', 'fechainicio', 'start-date', 2);
+        $this->addOrderBy('ListEjercicio', 'codejercicio', 'code');
+        $this->addOrderBy('ListEjercicio', 'nombre', 'name');
     }
 }

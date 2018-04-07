@@ -31,30 +31,6 @@ class ListPedidoProveedor extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('PedidoProveedor', 'ListPedidoProveedor');
-        $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
-
-        $this->addFilterDatePicker('ListPedidoProveedor', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListPedidoProveedor', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'PedidoProveedor')];
-        $this->addFilterSelect('ListPedidoProveedor', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
-
-        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -67,5 +43,36 @@ class ListPedidoProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListPedidoProveedor', 'PedidoProveedor');
+        $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
+
+        $this->addFilterDatePicker('ListPedidoProveedor', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListPedidoProveedor', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'PedidoProveedor')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListPedidoProveedor', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
+
+        $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
     }
 }
