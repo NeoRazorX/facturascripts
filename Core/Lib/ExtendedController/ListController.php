@@ -114,6 +114,19 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Returns the configuration property value for a specified $field
+     *
+     * @param mixed  $model
+     * @param string $field
+     *
+     * @return mixed
+     */
+    public function getFieldValue($model, $field)
+    {
+        return isset($model->{$field}) ? $model->{$field} : null;
+    }
+
+    /**
      * Returns an array for JS of URLs for the elements in a view
      *
      * @param string $type

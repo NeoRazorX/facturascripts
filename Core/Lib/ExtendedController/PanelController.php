@@ -117,6 +117,19 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
+     * Returns the configuration property value for a specified $field
+     *
+     * @param mixed  $model
+     * @param string $field
+     *
+     * @return mixed
+     */
+    public function getFieldValue($model, $field)
+    {
+        return isset($model->{$field}) ? $model->{$field} : null;
+    }
+
+    /**
      * Descriptive identifier for humans of the main data editing record.
      *
      * @return string
