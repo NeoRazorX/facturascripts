@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,23 +32,6 @@ class EditUser extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        /// Add all views
-        $this->addEditView('User', 'EditUser', 'user', 'fa-user');
-        $this->addEditListView('RoleUser', 'EditRoleUser', 'roles', 'fa-address-card-o');
-
-        /// Load values for input selects
-        $this->loadHomepageValues();
-        $this->loadLanguageValues();
-
-        /// Disable column
-        $this->views['EditRoleUser']->disableColumn('user', true);
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -65,44 +48,20 @@ class EditUser extends ExtendedController\PanelController
     }
 
     /**
-     * Load view data proedure
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
+     * Load views
      */
-    protected function loadData($keyView, $view)
+    protected function createViews()
     {
-        switch ($keyView) {
-            case 'EditUser':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
+        /// Add all views
+        $this->addEditView('EditUser', 'User', 'user', 'fa-user');
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fa-address-card-o');
 
-            case 'EditRoleUser':
-                $nick = $this->getViewModelValue('EditUser', 'nick');
-                $where = [new DataBaseWhere('nick', $nick)];
-                $view->loadData(false, $where, [], 0, 0);
-                break;
-        }
-    }
+        /// Load values for input selects
+        $this->loadHomepageValues();
+        $this->loadLanguageValues();
 
-    /**
-     * Load a list of pages where user has access that can be setted as homepage.
-     */
-    private function loadHomepageValues()
-    {
-        $user = new Model\User();
-        $code = $this->request->get('code');
-
-        $userPages = [
-            ['value' => '---null---', 'title' => '------'],
-        ];
-        if ($user->loadFromCode($code)) {
-            $userPages = $this->getUserPages($user);
-        }
-
-        $columnHomepage = $this->views['EditUser']->columnForName('homepage');
-        $columnHomepage->widget->setValuesFromArray($userPages);
+        /// Disable column
+        $this->views['EditRoleUser']->disableColumn('user', true);
     }
 
     /**
@@ -136,6 +95,47 @@ class EditUser extends ExtendedController\PanelController
         }
 
         return $pageList;
+    }
+
+    /**
+     * Load view data proedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditUser':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'EditRoleUser':
+                $nick = $this->getViewModelValue('EditUser', 'nick');
+                $where = [new DataBaseWhere('nick', $nick)];
+                $view->loadData(false, $where, [], 0, 0);
+                break;
+        }
+    }
+
+    /**
+     * Load a list of pages where user has access that can be setted as homepage.
+     */
+    private function loadHomepageValues()
+    {
+        $user = new Model\User();
+        $code = $this->request->get('code');
+
+        $userPages = [
+            ['value' => '---null---', 'title' => '------'],
+        ];
+        if ($user->loadFromCode($code)) {
+            $userPages = $this->getUserPages($user);
+        }
+
+        $columnHomepage = $this->views['EditUser']->columnForName('homepage');
+        $columnHomepage->widget->setValuesFromArray($userPages);
     }
 
     /**

@@ -74,12 +74,11 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Run the actions that alter data before reading it.
      *
-     * @param BaseView $view
      * @param string   $action
      *
      * @return bool
      */
-    protected function execPreviousAction($view, $action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'recalculate-document':
@@ -99,17 +98,16 @@ abstract class BusinessDocumentController extends PanelController
                 return false;
 
             default:
-                return parent::execPreviousAction($view, $action);
+                return parent::execPreviousAction($action);
         }
     }
 
     /**
      * Run the controller after actions
      *
-     * @param EditView $view
      * @param string $action
      */
-    protected function execAfterAction($view, $action)
+    protected function execAfterAction($action)
     {
         if ($action === 'export') {
             $this->setTemplate(false);
@@ -120,7 +118,7 @@ abstract class BusinessDocumentController extends PanelController
             }
             $this->exportManager->show($this->response);
         } else {
-            parent::execAfterAction($view, $action);
+            parent::execAfterAction($action);
         }
     }
 
@@ -137,13 +135,13 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Load view data procedure
      *
-     * @param string   $keyView
+     * @param string   $viewName
      * @param BaseView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
         $iddoc = $this->request->get('code', '');
-        if ($keyView === 'Document' && !empty($iddoc)) {
+        if ($viewName === 'Document' && !empty($iddoc)) {
             $view->loadData($iddoc);
         }
     }

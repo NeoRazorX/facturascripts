@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class ListController extends Base\Controller
 {
 
-    const DIR_MODEL = '\\FacturaScripts\\Dinamic\\Model\\';
+    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
      * Indicates the active view
@@ -124,8 +124,8 @@ abstract class ListController extends Base\Controller
     {
         $result = '';
         $sep = '';
-        foreach ($this->views as $key => $view) {
-            $result .= $sep . $key . ': "' . $view->getURL($type) . '"';
+        foreach ($this->views as $viewName => $view) {
+            $result .= $sep . $viewName . ': "' . $view->getURL($type) . '"';
             $sep = ', ';
         }
 
@@ -135,15 +135,15 @@ abstract class ListController extends Base\Controller
     /**
      * Creates an array with the available "jumps" to paginate the model data with the specified view
      *
-     * @param string $indexView
+     * @param string $viewName
      *
      * @return array
      */
-    public function pagination(string $indexView)
+    public function pagination(string $viewName)
     {
-        $offset = $this->getOffSet($indexView);
-        $count = $this->views[$indexView]->count;
-        $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
+        $offset = $this->getOffSet($viewName);
+        $count = $this->views[$viewName]->count;
+        $url = $this->views[$viewName]->getURL('list') . $this->getParams($viewName);
 
         $paginationObj = new Base\Pagination($url);
         return $paginationObj->getPages($count, $offset);
@@ -169,21 +169,21 @@ abstract class ListController extends Base\Controller
         // Operations with data, before execute action
         if ($this->execPreviousAction($action)) {
             // Load data for every view
-            foreach ($this->views as $key => $listView) {
+            foreach ($this->views as $viewName => $listView) {
                 $where = [];
                 $orderKey = '';
 
                 // If processing the selected view, calculate order and filters
-                if ($this->active == $key) {
+                if ($this->active == $viewName) {
                     $orderKey = $this->request->get('order', '');
                     $where = $this->getWhere();
                 }
 
                 // Set selected order by
-                $this->views[$key]->setSelectedOrderBy($orderKey);
+                $this->views[$viewName]->setSelectedOrderBy($orderKey);
 
                 // Load data using filter and order
-                $listView->loadData(false, $where, [], $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+                $listView->loadData(false, $where, [], $this->getOffSet($viewName), Base\Pagination::FS_ITEM_LIMIT);
             }
 
             // Operations with data, after execute action
@@ -194,7 +194,7 @@ abstract class ListController extends Base\Controller
     /**
      * Add an autocomplete type filter to the ListView.
      * 
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key        (Filter identifier)
      * @param string $label      (Human reader description)
      * @param string $field      (Field of the model to apply filter)
@@ -203,144 +203,144 @@ abstract class ListController extends Base\Controller
      * @param string $fieldtitle (Column to show name or description)
      * @param array  $where      (Estra where conditions)
      */
-    protected function addFilterAutocomplete($indexView, $key, $label, $field, $table, $fieldcode, $fieldtitle, $where = [])
+    protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode, $fieldtitle, $where = [])
     {
-        $value = ($indexView == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fieldcode, $fieldtitle, $value, $where));
+        $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
+        $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fieldcode, $fieldtitle, $value, $where));
     }
 
     /**
      * Adds a boolean condition type filter to the ListView.
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key        (Filter identifier)
      * @param string $label      (Human reader description)
      * @param string $field      (Field of the model to apply filter)
      * @param bool   $inverse    (If you need to invert the selected value)
      * @param mixed  $matchValue (Value to match)
      */
-    protected function addFilterCheckbox($indexView, $key, $label, $field, $inverse = false, $matchValue = true)
+    protected function addFilterCheckbox($viewName, $key, $label, $field, $inverse = false, $matchValue = true)
     {
-        $value = ($indexView == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
+        $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
+        $this->views[$viewName]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
     }
 
     /**
      * Adds a date type filter
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
      */
-    protected function addFilterDatePicker($indexView, $key, $label, $field)
+    protected function addFilterDatePicker($viewName, $key, $label, $field)
     {
-        $this->addFilterFromType($indexView, $key, $label, $field, 'datepicker');
+        $this->addFilterFromType($viewName, $key, $label, $field, 'datepicker');
     }
 
     /**
      * Adds a filter to a type of field.
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
      * @param string $type
      */
-    private function addFilterFromType($indexView, $key, $label, $field, $type)
+    private function addFilterFromType($viewName, $key, $label, $field, $type)
     {
         $config = [
             'field' => $field,
             'label' => $label,
-            'valueFrom' => ($indexView == $this->active) ? $this->request->get($key . '-from', '') : '',
+            'valueFrom' => ($viewName == $this->active) ? $this->request->get($key . '-from', '') : '',
             'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
-            'valueTo' => ($indexView == $this->active) ? $this->request->get($key . '-to', '') : '',
+            'valueTo' => ($viewName == $this->active) ? $this->request->get($key . '-to', '') : '',
             'operatorTo' => $this->request->get($key . '-to-operator', '<='),
         ];
 
-        $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
+        $this->views[$viewName]->addFilter($key, ListFilter::newStandardFilter($type, $config));
     }
 
     /**
      * Adds a numeric type filter
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
      */
-    protected function addFilterNumber($indexView, $key, $label, $field)
+    protected function addFilterNumber($viewName, $key, $label, $field)
     {
-        $this->addFilterFromType($indexView, $key, $label, $field, 'number');
+        $this->addFilterFromType($viewName, $key, $label, $field, 'number');
     }
 
     /**
      * Add a select type filter to a ListView.
      * 
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
      * @param array  $values    (Values to show)
      */
-    protected function addFilterSelect($indexView, $key, $label, $field, $values = [])
+    protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
-        $value = ($indexView == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($label, $field, $values, $value));
+        $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
+        $this->views[$viewName]->addFilter($key, ListFilter::newSelectFilter($label, $field, $values, $value));
     }
 
     /**
      * Adds a text type filter
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
      */
-    protected function addFilterText($indexView, $key, $label, $field)
+    protected function addFilterText($viewName, $key, $label, $field)
     {
-        $this->addFilterFromType($indexView, $key, $label, $field, 'text');
+        $this->addFilterFromType($viewName, $key, $label, $field, 'text');
     }
 
     /**
      * Adds a field to a view's Order By list
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $field
      * @param string $label
      * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
      */
-    protected function addOrderBy($indexView, $field, $label = '', $default = 0)
+    protected function addOrderBy($viewName, $field, $label = '', $default = 0)
     {
-        $this->views[$indexView]->addOrderBy($field, $label, $default);
+        $this->views[$viewName]->addOrderBy($field, $label, $default);
     }
 
     /**
      * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
      * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
-     * @param string   $indexView
+     * @param string   $viewName
      * @param string[] $fields
      */
-    protected function addSearchFields($indexView, $fields)
+    protected function addSearchFields($viewName, $fields)
     {
-        $this->views[$indexView]->addSearchIn($fields);
+        $this->views[$viewName]->addSearchIn($fields);
     }
 
     /**
      * Creates and adds a view to the controller.
      *
-     * @param string $indexView
+     * @param string $viewName
      * @param string $modelName
      * @param string $viewTitle
      * @param string $icon
      */
-    protected function addView($indexView, $modelName, $viewTitle = 'search', $icon = 'fa-search')
+    protected function addView($viewName, $modelName, $viewTitle = 'search', $icon = 'fa-search')
     {
-        $this->views[$indexView] = new ListView($viewTitle, self::DIR_MODEL . $modelName, $indexView, $this->user->nick);
-        $this->icons[$indexView] = $icon;
+        $this->views[$viewName] = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
+        $this->icons[$viewName] = $icon;
         if (empty($this->active)) {
-            $this->active = $indexView;
+            $this->active = $viewName;
         }
     }
 
@@ -443,26 +443,26 @@ abstract class ListController extends Base\Controller
     /**
      * Returns the offset value for the specified view
      *
-     * @param string $indexView
+     * @param string $viewName
      *
      * @return int
      */
-    private function getOffSet($indexView)
+    private function getOffSet($viewName)
     {
-        return ($indexView === $this->active) ? $this->offset : 0;
+        return ($viewName === $this->active) ? $this->offset : 0;
     }
 
     /**
      * Returns a string with the parameters in the controller call url
      *
-     * @param string $indexView
+     * @param string $viewName
      *
      * @return string
      */
-    private function getParams($indexView)
+    private function getParams($viewName)
     {
         $result = '';
-        if ($indexView === $this->active) {
+        if ($viewName === $this->active) {
             $join = '?';
             if (!empty($this->query)) {
                 $result = $join . 'query=' . $this->query;
@@ -538,11 +538,11 @@ abstract class ListController extends Base\Controller
         ];
 
         /// we search in all listviews
-        foreach ($this->views as $key => $listView) {
-            if (!isset($json[$key])) {
-                $json[$key] = [
+        foreach ($this->views as $viewName => $listView) {
+            if (!isset($json[$viewName])) {
+                $json[$viewName] = [
                     'title' => $listView->title,
-                    'icon' => $this->icons[$key],
+                    'icon' => $this->icons[$viewName],
                     'columns' => [],
                     'results' => [],
                 ];
@@ -553,14 +553,14 @@ abstract class ListController extends Base\Controller
             $listView->loadData(false, $where, [], 0, Base\Pagination::FS_ITEM_LIMIT);
 
             $cols = $this->getTextColumns($listView, 6);
-            $json[$key]['columns'] = $cols;
+            $json[$viewName]['columns'] = $cols;
 
             foreach ($listView->getCursor() as $item) {
                 $jItem = ['url' => $item->url()];
                 foreach ($cols as $col) {
                     $jItem[$col] = $item->{$col};
                 }
-                $json[$key]['results'][] = $jItem;
+                $json[$viewName]['results'][] = $jItem;
             }
         }
 

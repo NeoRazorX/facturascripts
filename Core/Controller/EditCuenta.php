@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,25 +32,41 @@ class EditCuenta extends ExtendedController\PanelController
 {
 
     /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounts';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-bar-chart';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
-        $this->addEditView('Cuenta', 'EditCuenta', 'account');
-        $this->addListView('Subcuenta', 'ListSubcuenta', 'subaccounts');
-        $this->addListView('Cuenta', 'ListCuenta', 'children-accounts');
+        $this->addEditView('EditCuenta', 'Cuenta', 'account');
+        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts');
+        $this->addListView('ListCuenta', 'Cuenta', 'children-accounts');
         $this->setTabsPosition('bottom');
     }
 
     /**
      * Load view data procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
-        switch ($keyView) {
+        switch ($viewName) {
             case 'EditCuenta':
                 $code = $this->request->get('code');
                 $view->loadData($code);
@@ -68,21 +84,5 @@ class EditCuenta extends ExtendedController\PanelController
                 $view->loadData(false, $where);
                 break;
         }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounts';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-bar-chart';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

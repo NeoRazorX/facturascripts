@@ -32,41 +32,6 @@ class EditGrupoClientes extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('GrupoClientes', 'EditGrupoClientes', 'customer-group');
-        $this->addListView('Cliente', 'ListCliente', 'customers', 'fa-users');
-        $this->setTabsPosition('bottom');
-
-        /// Disable columns
-        $this->views['ListCliente']->disableColumn('group', true);
-    }
-
-    /**
-     * Procedure responsible for loading the data to be displayed.
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        switch ($keyView) {
-            case 'EditGrupoClientes':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'ListCliente':
-                $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
-                $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                $view->loadData(false, $where);
-                break;
-        }
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -80,5 +45,40 @@ class EditGrupoClientes extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('EditGrupoClientes', 'GrupoClientes', 'customer-group');
+        $this->addListView('ListCliente', 'Cliente', 'customers', 'fa-users');
+        $this->setTabsPosition('bottom');
+
+        /// Disable columns
+        $this->views['ListCliente']->disableColumn('group', true);
+    }
+
+    /**
+     * Procedure responsible for loading the data to be displayed.
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditGrupoClientes':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'ListCliente':
+                $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
+                $where = [new DataBaseWhere('codgrupo', $codgrupo)];
+                $view->loadData(false, $where);
+                break;
+        }
     }
 }

@@ -54,7 +54,7 @@ class EditPresupuestoCliente extends ExtendedController\BusinessDocumentControll
 
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
-        $this->addEditView($modelName, $viewName, 'detail');
+        $this->addEditView($viewName, $modelName, 'detail');
     }
 
     /**
@@ -70,16 +70,16 @@ class EditPresupuestoCliente extends ExtendedController\BusinessDocumentControll
     /**
      * Load data view procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
-        if ($keyView === 'EditPresupuestoCliente') {
+        if ($viewName === 'EditPresupuestoCliente') {
             $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
             $view->loadData($idpresupuesto);
         }
 
-        parent::loadData($keyView, $view);
+        parent::loadData($viewName, $view);
     }
 }

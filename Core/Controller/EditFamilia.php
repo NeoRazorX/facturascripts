@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,24 +32,40 @@ class EditFamilia extends ExtendedController\PanelController
 {
 
     /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'family';
+        $pagedata['menu'] = 'warehouse';
+        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
-        $this->addEditView('Familia', 'EditFamilia', 'family');
-        $this->addListView('Familia', 'ListFamilia', 'families-children', 'fa-level-down');
-        $this->addListView('Articulo', 'ListArticulo', 'products', 'fa-cubes');
+        $this->addEditView('EditFamilia', 'Familia', 'family');
+        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down');
+        $this->addListView('ListArticulo', 'Articulo', 'products', 'fa-cubes');
     }
 
     /**
      * Load view data procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
-        switch ($keyView) {
+        switch ($viewName) {
             case 'EditFamilia':
                 $code = $this->request->get('code');
                 $view->loadData($code);
@@ -67,21 +83,5 @@ class EditFamilia extends ExtendedController\PanelController
                 $view->loadData(false, $where);
                 break;
         }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'family';
-        $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-object-group';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 }

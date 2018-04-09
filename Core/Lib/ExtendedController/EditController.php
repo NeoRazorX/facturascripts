@@ -57,16 +57,17 @@ abstract class EditController extends PanelController
         $viewName = 'Edit' . $this->getModelClassName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];
-        $this->addEditView($modelName, $viewName, $title, $viewIcon);
+        
+        $this->addEditView($viewName, $modelName, $title, $viewIcon);
     }
 
     /**
      * Loads the data to display
      *
-     * @param string   $keyView
+     * @param string   $viewName
      * @param BaseView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
         $code = $this->request->get('code');
         $view->loadData($code);
@@ -79,7 +80,7 @@ abstract class EditController extends PanelController
      */
     public function getModel()
     {
-        $viewKey = array_keys($this->views)[0];
-        return $this->views[$viewKey]->getModel();
+        $viewName = array_keys($this->views)[0];
+        return $this->views[$viewName]->getModel();
     }
 }

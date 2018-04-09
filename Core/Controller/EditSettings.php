@@ -115,20 +115,19 @@ class EditSettings extends ExtendedController\PanelController
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
             $title = strtolower(substr($name, 8));
-            $this->addEditView($modelName, $name, $title, $icon);
+            $this->addEditView($name, $modelName, $title, $icon);
         }
 
-        $this->addHtmlView('Block/About.html', null, 'about', 'about');
+        $this->addHtmlView('about', 'Block/About.html', null, 'about');
         $this->testViews();
     }
 
     /**
      * Run the controller after actions
      *
-     * @param ExtendedController\EditView $view
-     * @param string                      $action
+     * @param string $action
      */
-    protected function execAfterAction($view, $action)
+    protected function execAfterAction($action)
     {
         switch ($action) {
             case 'export':
@@ -188,21 +187,21 @@ class EditSettings extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
         if (empty($view->getModel())) {
             return;
         }
 
-        $code = $this->getKeyFromViewName($keyView);
+        $code = $this->getKeyFromViewName($viewName);
         $view->loadData($code);
 
         $model = $view->getModel();
         if ($model->name === null) {
-            $model->name = strtolower(substr($keyView, 8));
+            $model->name = strtolower(substr($viewName, 8));
             $model->save();
         }
     }

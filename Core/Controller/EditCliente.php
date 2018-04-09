@@ -34,98 +34,6 @@ class EditCliente extends ExtendedController\PanelController
 {
 
     /**
-     * Create and configure main view
-     */
-    private function addMainView()
-    {
-        $this->addEditView('Cliente', 'EditCliente', 'customer');
-
-        /// Load values option to Fiscal ID select input
-        $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
-
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
-    }
-
-    /**
-     * Create views
-     */
-    protected function createViews()
-    {
-        $this->addMainView();
-
-        $this->addEditListView('DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
-        $this->addEditListView('CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
-        $this->addListView('Cliente', 'ListCliente', 'same-group', 'fa-users');
-        $this->addListView('FacturaCliente', 'ListFacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView('AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView('PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView('PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
-
-        /// Disable columns
-        $this->views['ListFacturaCliente']->disableColumn('customer', true);
-        $this->views['ListAlbaranCliente']->disableColumn('customer', true);
-        $this->views['ListPedidoCliente']->disableColumn('customer', true);
-        $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
-    }
-
-    /**
-     * Load view data procedure
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        $limit = FS_ITEM_LIMIT;
-        switch ($keyView) {
-            case 'EditCliente':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'ListCliente':
-                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
-                if (!empty($codgrupo)) {
-                    $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                    $view->loadData(false, $where);
-                }
-                break;
-
-            case 'EditDireccionCliente':
-            case 'EditCuentaBancoCliente':
-                $limit = 0;
-                /// no break
-            case 'ListFacturaCliente':
-            case 'ListAlbaranCliente':
-            case 'ListPedidoCliente':
-            case 'ListPresupuestoCliente':
-                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-                $where = [new DataBaseWhere('codcliente', $codcliente)];
-                $view->loadData(false, $where, [], 0, $limit);
-                break;
-        }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customer';
-        $pagedata['icon'] = 'fa-users';
-        $pagedata['menu'] = 'sales';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
-    }
-
-    /**
      * Returns the sum of the customer's total delivery notes.
      *
      * @param ExtendedController\EditView $view
@@ -159,5 +67,97 @@ class EditCliente extends ExtendedController\PanelController
         $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
 
         return $this->divisaTools->format($totalModel->totals['total'], 2);
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'customer';
+        $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'sales';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
+     * Create and configure main view
+     */
+    private function addMainView()
+    {
+        $this->addEditView('EditCliente', 'Cliente', 'customer');
+
+        /// Load values option to Fiscal ID select input
+        $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
+        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
+
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
+    }
+
+    /**
+     * Create views
+     */
+    protected function createViews()
+    {
+        $this->addMainView();
+
+        $this->addEditListView('EditDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
+        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
+        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
+
+        /// Disable columns
+        $this->views['ListFacturaCliente']->disableColumn('customer', true);
+        $this->views['ListAlbaranCliente']->disableColumn('customer', true);
+        $this->views['ListPedidoCliente']->disableColumn('customer', true);
+        $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        $limit = FS_ITEM_LIMIT;
+        switch ($viewName) {
+            case 'EditCliente':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'ListCliente':
+                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
+                if (!empty($codgrupo)) {
+                    $where = [new DataBaseWhere('codgrupo', $codgrupo)];
+                    $view->loadData(false, $where);
+                }
+                break;
+
+            case 'EditDireccionCliente':
+            case 'EditCuentaBancoCliente':
+                $limit = 0;
+            /// no break
+            case 'ListFacturaCliente':
+            case 'ListAlbaranCliente':
+            case 'ListPedidoCliente':
+            case 'ListPresupuestoCliente':
+                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+                $where = [new DataBaseWhere('codcliente', $codcliente)];
+                $view->loadData(false, $where, [], 0, $limit);
+                break;
+        }
     }
 }

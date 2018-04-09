@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,46 +47,6 @@ class EditRole extends ExtendedController\PanelController
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('Role', 'EditRole', 'rol', 'fa-id-card');
-        $this->addEditListView('RoleAccess', 'EditRoleAccess', 'rules', 'fa fa-check-square');
-        $this->addEditListView('RoleUser', 'EditRoleUser', 'users', 'fa-address-card-o');
-
-        /// Disable columns
-        $this->views['EditRoleAccess']->disableColumn('role', true);
-        $this->views['EditRoleUser']->disableColumn('role', true);
-    }
-
-    /**
-     * Load view data
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        $order = [];
-        switch ($keyView) {
-            case 'EditRole':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'EditRoleAccess':
-                $order['pagename'] = 'ASC';
-                /// no break
-            case 'EditRoleUser':
-                $codrole = $this->getViewModelValue('EditRole', 'codrole');
-                $where = [new DataBaseWhere('codrole', $codrole)];
-                $view->loadData(false, $where, $order, 0, 0);
-                break;
-        }
-    }
-
-    /**
      * Add the indicated page list to the Role group
      * and all users who are in that group
      *
@@ -100,6 +60,53 @@ class EditRole extends ExtendedController\PanelController
         // add Pages to Rol
         if (!Model\RoleAccess::addPagesToRole($codrole, $pages)) {
             throw new \Exception(self::$i18n->trans('cancel-process'));
+        }
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('EditRole', 'Role', 'rol', 'fa-id-card');
+        $this->addEditListView('EditRoleAccess', 'RoleAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fa-address-card-o');
+
+        /// Disable columns
+        $this->views['EditRoleAccess']->disableColumn('role', true);
+        $this->views['EditRoleUser']->disableColumn('role', true);
+    }
+
+    /**
+     * Run the actions that alter data before reading it
+     *
+     * @param string   $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'add-rol-access':
+                $codrole = $this->request->get('code', '');
+                $pages = $this->getPages();
+                if (empty($pages) || empty($codrole)) {
+                    return true;
+                }
+
+                $this->dataBase->beginTransaction();
+                try {
+                    $this->addRoleAccess($codrole, $pages);
+                    $this->dataBase->commit();
+                } catch (\Exception $e) {
+                    $this->dataBase->rollback();
+                    $this->miniLog->notice($e->getMessage());
+                }
+
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
         }
     }
 
@@ -123,36 +130,28 @@ class EditRole extends ExtendedController\PanelController
     }
 
     /**
-     * Run the actions that alter data before reading it
+     * Load view data
      *
-     * @param BaseView $view
-     * @param string   $action
-     *
-     * @return bool
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
      */
-    protected function execPreviousAction($view, $action)
+    protected function loadData($viewName, $view)
     {
-        switch ($action) {
-            case 'add-rol-access':
-                $codrole = $this->request->get('code', '');
-                $pages = $this->getPages();
-                if (empty($pages) || empty($codrole)) {
-                    return true;
-                }
+        $order = [];
+        switch ($viewName) {
+            case 'EditRole':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
 
-                $this->dataBase->beginTransaction();
-                try {
-                    $this->addRoleAccess($codrole, $pages);
-                    $this->dataBase->commit();
-                } catch (\Exception $e) {
-                    $this->dataBase->rollback();
-                    $this->miniLog->notice($e->getMessage());
-                }
-
-                return true;
-
-            default:
-                return parent::execPreviousAction($view, $action);
+            case 'EditRoleAccess':
+                $order['pagename'] = 'ASC';
+            /// no break
+            case 'EditRoleUser':
+                $codrole = $this->getViewModelValue('EditRole', 'codrole');
+                $where = [new DataBaseWhere('codrole', $codrole)];
+                $view->loadData(false, $where, $order, 0, 0);
+                break;
         }
     }
 }
