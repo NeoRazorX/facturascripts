@@ -99,15 +99,31 @@ abstract class BaseController extends Base\Controller
      * Run the autocomplete action.
      * Returns a JSON string for the searched values.
      *
-     * @param array $data
      * @return array
      */
-    protected function autocompleteAction($data): array
+    protected function autocompleteAction(): array
     {
         $results = [];
+        $data = $this->requestGet(['source', 'field', 'title', 'term']);
         foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
+    }
+
+    /**
+     * Return array with parameters values
+     *
+     * @param array $keys
+     * 
+     * @return array
+     */
+    protected function requestGet($keys): array
+    {
+        $result = [];
+        foreach ($keys as $value) {
+            $result[$value] = $this->request->get($value);
+        }
+        return $result;
     }
 }

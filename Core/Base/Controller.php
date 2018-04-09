@@ -264,19 +264,4 @@ class Controller
     {
         return $this->className;
     }
-
-    /**
-     * Return array with parameters values
-     *
-     * @param array $keys
-     * @return array
-     */
-    protected function requestGet($keys): array
-    {
-        $result = [];
-        foreach ($keys as $value) {
-            $result[$value] = $this->request->get($value);
-        }
-        return $result;
-    }
 }

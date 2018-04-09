@@ -377,8 +377,7 @@ abstract class ListController extends BaseController
         switch ($action) {
             case 'autocomplete':
                 $this->setTemplate(false);
-                $data = $this->requestGet(['source', 'field', 'title', 'term']);
-                $results = $this->autocompleteAction($data);
+                $results = $this->autocompleteAction();
                 $this->response->setContent(json_encode($results));
                 return false;
 
