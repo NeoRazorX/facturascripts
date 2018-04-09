@@ -74,7 +74,7 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Run the actions that alter data before reading it.
      *
-     * @param string   $action
+     * @param string $action
      *
      * @return bool
      */
@@ -85,7 +85,7 @@ abstract class BusinessDocumentController extends PanelController
                 $this->setTemplate(false);
 
                 $data = $this->request->request->all();
-                $result = $view->recalculateDocument($data);
+                $result = $this->views[$this->active]->recalculateDocument($data);
                 $this->response->setContent($result);
                 return false;
 

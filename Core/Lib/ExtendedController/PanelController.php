@@ -117,7 +117,7 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Returns the configuration property value for a specified $field
+     * Returns the configuration property value for a specified $field.
      *
      * @param mixed  $model
      * @param string $field

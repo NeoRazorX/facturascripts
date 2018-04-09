@@ -33,7 +33,7 @@ abstract class EditController extends PanelController
     abstract public function getModelClassName();
 
     /**
-     * Starts all the objects and properties
+     * Starts all the objects and properties.
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
@@ -47,7 +47,18 @@ abstract class EditController extends PanelController
     }
 
     /**
-     * Create the view to display
+     * Pointer to the data model.
+     *
+     * @return mixed
+     */
+    public function getModel()
+    {
+        $viewName = array_keys($this->views)[0];
+        return $this->views[$viewName]->getModel();
+    }
+
+    /**
+     * Create the view to display.
      *
      * @return EditView
      */
@@ -62,7 +73,7 @@ abstract class EditController extends PanelController
     }
 
     /**
-     * Loads the data to display
+     * Loads the data to display.
      *
      * @param string   $viewName
      * @param BaseView $view
@@ -71,16 +82,5 @@ abstract class EditController extends PanelController
     {
         $code = $this->request->get('code');
         $view->loadData($code);
-    }
-
-    /**
-     * Pointer to the data model
-     *
-     * @return mixed
-     */
-    public function getModel()
-    {
-        $viewName = array_keys($this->views)[0];
-        return $this->views[$viewName]->getModel();
     }
 }

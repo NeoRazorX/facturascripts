@@ -37,7 +37,7 @@ abstract class ListController extends Base\Controller
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
-     * Indicates the active view
+     * Indicates the active view.
      *
      * @var string
      */
@@ -51,47 +51,47 @@ abstract class ListController extends Base\Controller
     public $codeModel;
 
     /**
-     * Object to export data
+     * Object to export data.
      *
      * @var ExportManager
      */
     public $exportManager;
 
     /**
-     * List of icons for each of the views
+     * List of icons for each of the views.
      *
      * @var array
      */
     public $icons;
 
     /**
-     * First row to select from the database
+     * First row to select from the database.
      *
      * @var int
      */
     protected $offset;
 
     /**
-     * This string contains the text sent as a query parameter, used to filter the model data
+     * This string contains the text sent as a query parameter, used to filter the model data.
      *
      * @var string
      */
     public $query;
 
     /**
-     * List of views displayed by the controller
+     * List of views displayed by the controller.
      *
      * @var ListView[]
      */
     public $views;
 
     /**
-     * Inserts the views to display
+     * Inserts the views to display.
      */
     abstract protected function createViews();
 
     /**
-     * Initializes all the objects and properties
+     * Initializes all the objects and properties.
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
@@ -114,7 +114,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns the configuration property value for a specified $field
+     * Returns the configuration property value for a specified $field.
      *
      * @param mixed  $model
      * @param string $field
@@ -127,7 +127,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns an array for JS of URLs for the elements in a view
+     * Returns an array for JS of URLs for the elements in a view.
      *
      * @param string $type
      *
@@ -146,7 +146,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Creates an array with the available "jumps" to paginate the model data with the specified view
+     * Creates an array with the available "jumps" to paginate the model data with the specified view.
      *
      * @param string $viewName
      *
@@ -239,7 +239,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a date type filter
+     * Adds a date type filter to the ListView.
      *
      * @param string $viewName
      * @param string $key       (Filter identifier)
@@ -252,7 +252,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a filter to a type of field.
+     * Adds a filter to a type of field to the ListView.
      *
      * @param string $viewName
      * @param string $key       (Filter identifier)
@@ -275,7 +275,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a numeric type filter
+     * Adds a numeric type filter to the ListView.
      *
      * @param string $viewName
      * @param string $key       (Filter identifier)
@@ -303,7 +303,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a text type filter
+     * Adds a text type filter to the ListView.
      *
      * @param string $viewName
      * @param string $key       (Filter identifier)
@@ -316,7 +316,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a field to a view's Order By list
+     * Adds an order field to the ListView.
      *
      * @param string $viewName
      * @param string $field
@@ -329,7 +329,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
+     * Adds a list of fields (separated by "|") to the search field of the ListView..
      * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
      * @param string   $viewName
@@ -341,7 +341,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Creates and adds a view to the controller.
+     * Creates and adds a ListView to the controller.
      *
      * @param string $viewName
      * @param string $modelName
@@ -374,7 +374,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Delete data action
+     * Delete data action method.
      *
      * @param BaseView $view View upon which the action is made
      *
@@ -408,7 +408,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Runs the controller actions
+     * Runs the controller actions after data read.
      *
      * @param string $action
      */
@@ -429,7 +429,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Runs the actions that alter the data before reading it
+     * Runs the actions that alter the data before reading it.
      *
      * @param string $action
      *
@@ -454,7 +454,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns the offset value for the specified view
+     * Returns the offset value for the specified view.
      *
      * @param string $viewName
      *
@@ -466,7 +466,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns a string with the parameters in the controller call url
+     * Returns a string with the parameters in the controller call url.
      *
      * @param string $viewName
      *
@@ -503,11 +503,13 @@ abstract class ListController extends Base\Controller
     {
         $result = [];
         foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
-                $result[] = $col->widget->fieldName;
-                if (count($result) === $maxColumns) {
-                    break;
-                }
+            if ($col->display === 'none' || !in_array($col->widget->type, ['text', 'money'], false)) {
+                continue;
+            }
+            
+            $result[] = $col->widget->fieldName;
+            if (count($result) === $maxColumns) {
+                break;
             }
         }
 
@@ -515,7 +517,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Establishes the WHERE clause according to the defined filters
+     * Establishes the WHERE clause according to the defined filters.
      *
      * @return DataBaseWhere[]
      */
