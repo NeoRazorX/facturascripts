@@ -63,6 +63,13 @@ abstract class ListController extends Base\Controller
      * @var array
      */
     public $icons;
+    
+    /**
+     * Tools to work with numbers.
+     *
+     * @var Base\NumberTools
+     */
+    public $numberTools;
 
     /**
      * First row to select from the database.
@@ -108,6 +115,7 @@ abstract class ListController extends Base\Controller
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->icons = [];
+        $this->numberTools = new Base\NumberTools();
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
@@ -416,7 +424,7 @@ abstract class ListController extends Base\Controller
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option'));
+                $this->exportManager->newDoc($this->request->get('option', ''));
                 $this->views[$this->active]->export($this->exportManager);
                 $this->exportManager->show($this->response);
                 break;

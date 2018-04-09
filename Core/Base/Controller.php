@@ -62,13 +62,6 @@ class Controller
     protected $dataBase;
 
     /**
-     * Tools to work with currencies.
-     *
-     * @var DivisaTools
-     */
-    public $divisaTools;
-
-    /**
      * Selected company.
      *
      * @var Model\Empresa|false
@@ -88,13 +81,6 @@ class Controller
      * @var MiniLog
      */
     protected $miniLog;
-
-    /**
-     * Tools to work with numbers.
-     *
-     * @var NumberTools
-     */
-    public $numberTools;
 
     /**
      * User permissions on this controller.
@@ -160,10 +146,8 @@ class Controller
         $this->cache = &$cache;
         $this->className = $className;
         $this->dataBase = new DataBase();
-        $this->divisaTools = new DivisaTools();
         $this->i18n = &$i18n;
         $this->miniLog = &$miniLog;
-        $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;
@@ -180,36 +164,6 @@ class Controller
     protected function getClassName()
     {
         return $this->className;
-    }
-
-    /**
-     * Return the template to use for this controller.
-     *
-     * @return string|false
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
-     * Set the template to use for this controller.
-     *
-     * @param string|false $template
-     *
-     * @return bool
-     */
-    public function setTemplate($template)
-    {
-        if ($template === false) {
-            $this->template = false;
-
-            return true;
-        }
-
-        $this->template = $template . '.html.twig';
-
-        return true;
     }
 
     /**
@@ -231,39 +185,13 @@ class Controller
     }
 
     /**
-     * Return array with parameters values
+     * Return the template to use for this controller.
      *
-     * @param array $keys
-     * @return array
+     * @return string|false
      */
-    protected function requestGet($keys): array
+    public function getTemplate()
     {
-        $result = [];
-        foreach ($keys as $value) {
-            $result[$value] = $this->request->get($value);
-        }
-        return $result;
-    }
-
-    /**
-     * Return the URL of the actual controller.
-     *
-     * @return string
-     */
-    public function url()
-    {
-        return $this->className;
-    }
-
-    /**
-     * Execute the public part of the controller.
-     *
-     * @param Response $response
-     */
-    public function publicCore(&$response)
-    {
-        $this->response = &$response;
-        $this->template = 'Login/Login.html.twig';
+        return $this->template;
     }
 
     /**
@@ -294,5 +222,61 @@ class Controller
             $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
             $this->user->save();
         }
+    }
+
+    /**
+     * Execute the public part of the controller.
+     *
+     * @param Response $response
+     */
+    public function publicCore(&$response)
+    {
+        $this->response = &$response;
+        $this->template = 'Login/Login.html.twig';
+    }
+
+    /**
+     * Set the template to use for this controller.
+     *
+     * @param string|false $template
+     *
+     * @return bool
+     */
+    public function setTemplate($template)
+    {
+        if ($template === false) {
+            $this->template = false;
+
+            return true;
+        }
+
+        $this->template = $template . '.html.twig';
+
+        return true;
+    }
+
+    /**
+     * Return the URL of the actual controller.
+     *
+     * @return string
+     */
+    public function url()
+    {
+        return $this->className;
+    }
+
+    /**
+     * Return array with parameters values
+     *
+     * @param array $keys
+     * @return array
+     */
+    protected function requestGet($keys): array
+    {
+        $result = [];
+        foreach ($keys as $value) {
+            $result[$value] = $this->request->get($value);
+        }
+        return $result;
     }
 }

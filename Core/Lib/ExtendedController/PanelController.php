@@ -360,6 +360,7 @@ abstract class PanelController extends Base\Controller
      * Returns a JSON string for the searched values.
      *
      * @param array $data
+     * 
      * @return array
      */
     protected function autocompleteAction($data): array
@@ -445,7 +446,7 @@ abstract class PanelController extends Base\Controller
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option'));
+                $this->exportManager->newDoc($this->request->get('option', ''));
                 foreach ($this->views as $selectedView) {
                     $selectedView->export($this->exportManager);
                 }
