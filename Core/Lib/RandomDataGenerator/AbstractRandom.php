@@ -222,7 +222,7 @@ abstract class AbstractRandom
             'Pagado', 'Faltan piezas', 'No se corresponde con lo solicitado.',
             'Muy caro', 'Muy barato', 'Mala calidad',
             'La parte contratante de la primera parte será la parte contratante de la primera parte.',
-            'Esto "no funcion"', 'Tacaño', "Marina D'or"
+            'Esto "no funciona"', 'Tacaño', "Marina D'or"
         ];
 
         /// Add a lot of Blas as an option
