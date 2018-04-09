@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,35 +51,6 @@ class RowItemStatus extends RowItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement $row
-     */
-    public function loadFromXML($row)
-    {
-        $row_atributes = $row->attributes();
-        $this->fieldName = (string) $row_atributes->fieldname;
-
-        foreach ($row->option as $option) {
-            $values = $this->getAttributesFromXML($option);
-            $this->options[] = $values;
-            unset($values);
-        }
-    }
-
-    /**
-     * Loads the attributes structure from a JSON file
-     *
-     * @param array $row
-     */
-    public function loadFromJSON($row)
-    {
-        $this->type = (string) $row['type'];
-        $this->fieldName = (string) $row['fieldName'];
-        $this->options = (array) $row['options'];
-    }
-
-    /**
      * Returns the status for a given value
      *
      * @param string $value
@@ -111,5 +82,33 @@ class RowItemStatus extends RowItem
         }
 
         return 'table-light';
+    }
+
+    /**
+     * Loads the attributes structure from a JSON file
+     *
+     * @param array $row
+     */
+    public function loadFromJSON($row)
+    {
+        $this->type = (string) $row['type'];
+        $this->fieldName = (string) $row['fieldName'];
+        $this->options = (array) $row['options'];
+    }
+
+    /**
+     * Loads the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement $row
+     */
+    public function loadFromXML($row)
+    {
+        $row_atributes = $row->attributes();
+        $this->fieldName = (string) $row_atributes->fieldname;
+
+        foreach ($row->option as $option) {
+            $values = $this->getAttributesFromXML($option);
+            $this->options[] = $values;
+        }
     }
 }

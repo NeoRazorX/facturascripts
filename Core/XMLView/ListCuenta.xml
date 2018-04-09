@@ -36,7 +36,7 @@
         <column name="description" order="120">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="parent-account" order="130" display="left">
+        <column name="parent-account" order="130">
             <widget type="text" fieldname="parent_codcuenta" />
         </column>
     </columns>

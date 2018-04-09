@@ -56,44 +56,6 @@ class WidgetItemAutocomplete extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement $column
-     */
-    public function loadFromXML($column)
-    {
-        parent::loadFromXML($column);
-        $this->getAttributesGroup($this->values, $column->widget->values);
-    }
-
-    /**
-     * Loads the attributes structure from a JSON file
-     *
-     * @param array $widget
-     */
-    public function loadFromJSON($widget)
-    {
-        parent::loadFromJSON($widget);
-        $this->values = (array) $widget['values'];
-    }
-
-    /**
-     * Generates the HTML code to display the data in the List controller
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getListHTML($value)
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-
-        return '<span>' . $value . '</span>';
-    }
-
-    /**
      * Generates the HTML code to display and edit the data in the Edit / EditList controller.
      * Values are loaded from Model\PageOption::getForUser()
      *
@@ -133,6 +95,22 @@ class WidgetItemAutocomplete extends WidgetItem
     }
 
     /**
+     * Generates the HTML code to display the data in the List controller
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getListHTML($value)
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        return '<span>' . $value . '</span>';
+    }
+
+    /**
      * Get the text for the given value
      *
      * @param string $value
@@ -146,5 +124,27 @@ class WidgetItemAutocomplete extends WidgetItem
         $fieldDesc = $this->values[0]['fieldtitle'];
 
         return $this->codeModel->getDescription($tableName, $fieldCode, $value, $fieldDesc);
+    }
+
+    /**
+     * Loads the attributes structure from a JSON file
+     *
+     * @param array $widget
+     */
+    public function loadFromJSON($widget)
+    {
+        parent::loadFromJSON($widget);
+        $this->values = (array) $widget['values'];
+    }
+
+    /**
+     * Loads the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement $column
+     */
+    public function loadFromXML($column)
+    {
+        parent::loadFromXML($column);
+        $this->getAttributesGroup($this->values, $column->widget->values);
     }
 }

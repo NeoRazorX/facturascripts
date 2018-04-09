@@ -147,7 +147,7 @@ class PluginDeploy
             if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
                 $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
             } elseif ($infoFile['filename'] !== '' && is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
-                if ($infoFile['extension'] === 'php') {
+                if (isset($infoFile['extension']) && $infoFile['extension'] === 'php') {
                     $this->linkClassFile($fileName, $folder, $place, $pluginName);
                 } else {
                     $filePath = $path . DIRECTORY_SEPARATOR . $fileName;

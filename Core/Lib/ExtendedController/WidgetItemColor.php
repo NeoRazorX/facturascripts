@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,18 +37,6 @@ class WidgetItemColor extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display the data in the List controller
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getListHTML($value)
-    {
-        return $this->standardListHTMLWidget($value);
-    }
-
-    /**
      * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
@@ -58,7 +46,18 @@ class WidgetItemColor extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-
         return $this->standardEditHTMLWidget($value, $specialAttributes, ' jscolor', 'text');
+    }
+
+    /**
+     * Generates the HTML code to display the data in the List controller
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getListHTML($value)
+    {
+        return $this->standardListHTMLWidget($value);
     }
 }

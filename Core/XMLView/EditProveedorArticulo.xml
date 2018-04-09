@@ -31,7 +31,7 @@
         <column name="codprovider" display="none" order="100">
             <widget type="text" fieldname="codproveedor" readonly="true" required="true" />
         </column>
-        <column name="reference" numcolumns="4" display="left" order="110">
+        <column name="reference" numcolumns="4" order="110">
             <widget type="select" fieldname="referencia" >
                 <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
             </widget>
@@ -45,13 +45,13 @@
         <column name="partnumber" order="140" numcolumns="2">
             <widget type="text" fieldname="partnumber"   />
         </column>
-        <column name="precio" numcolumns="2" display="left" order="110">
+        <column name="precio" numcolumns="2" order="110">
             <widget type="number" fieldname="precio" />
         </column>
         <column name="dto" order="120" numcolumns="2">
             <widget type="number" fieldname="dto"/>
         </column>
-        <column name="tax" numcolumns="4" display="left" order="110">
+        <column name="tax" numcolumns="4" order="110">
             <widget type="select" fieldname="codimpuesto" >
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
             </widget>

@@ -48,7 +48,7 @@ abstract class PanelController extends Base\Controller
      * @var ExportManager
      */
     public $exportManager;
-    
+
     /**
      * Indicates if the main view has data or is empty.
      *
@@ -174,7 +174,7 @@ abstract class PanelController extends Base\Controller
                 $this->hasData = $dataView->count > 0;
                 continue;
             }
-            
+
             // check if the view should be active
             $this->settings[$keyView]['active'] = $this->checkActiveView($dataView, $this->hasData);
         }
@@ -197,23 +197,6 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Returns a field value for the loaded data model
-     *
-     * @param mixed  $model
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $fieldName)
-    {
-        if (isset($model->{$fieldName})) {
-            return $model->{$fieldName};
-        }
-
-        return null;
-    }
-
-    /**
      * Return the value for a field in the model of the view.
      *
      * @param string $viewName
@@ -225,7 +208,7 @@ abstract class PanelController extends Base\Controller
     {
         $model = $this->views[$viewName]->getModel();
 
-        return $this->getFieldValue($model, $fieldName);
+        return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
     }
 
     /**

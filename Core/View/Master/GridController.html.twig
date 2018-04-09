@@ -146,7 +146,7 @@
                         </div>
 
                         {# Buttons actions #}
-                        {% set keyValue = fsc.getFieldValue(parentModel, parentModel.primaryColumn()) %}
+                        {% set keyValue = attribute(parentModel, parentModel.primaryColumn()) %}
                         {% set formName = parentIndexView ~ '-' ~ keyValue %}
                         {% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
                         {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
