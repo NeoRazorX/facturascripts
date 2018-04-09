@@ -20,8 +20,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExportManager;
-use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,31 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class ListController extends Base\Controller
+abstract class ListController extends BaseController
 {
-
-    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
-
-    /**
-     * Indicates the active view.
-     *
-     * @var string
-     */
-    public $active;
-
-    /**
-     * Model to use with select and autocomplete filters.
-     *
-     * @var CodeModel
-     */
-    public $codeModel;
-
-    /**
-     * Object to export data.
-     *
-     * @var ExportManager
-     */
-    public $exportManager;
 
     /**
      * List of icons for each of the views.
@@ -86,18 +61,6 @@ abstract class ListController extends Base\Controller
     public $query;
 
     /**
-     * List of views displayed by the controller.
-     *
-     * @var ListView[]
-     */
-    public $views;
-
-    /**
-     * Inserts the views to display.
-     */
-    abstract protected function createViews();
-
-    /**
      * Initializes all the objects and properties.
      *
      * @param Base\Cache      $cache
@@ -111,27 +74,10 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->active = $this->request->get('active', '');
-        $this->codeModel = new CodeModel();
-        $this->exportManager = new ExportManager();
         $this->icons = [];
         $this->numberTools = new Base\NumberTools();
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
-        $this->views = [];
-    }
-
-    /**
-     * Returns the configuration property value for a specified $field.
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        return isset($model->{$field}) ? $model->{$field} : null;
     }
 
     /**
@@ -363,22 +309,6 @@ abstract class ListController extends Base\Controller
         if (empty($this->active)) {
             $this->active = $viewName;
         }
-    }
-
-    /**
-     * Run the autocomplete action.
-     * Returns a JSON string for the searched values.
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function autocompleteAction($data): array
-    {
-        $results = [];
-        foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
-            $results[] = ['key' => $value->code, 'value' => $value->description];
-        }
-        return $results;
     }
 
     /**

@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\ExportManager;
-use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,24 +28,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class PanelController extends Base\Controller
+abstract class PanelController extends BaseController
 {
-
-    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
-
-    /**
-     * Indicates the active view.
-     *
-     * @var string
-     */
-    public $active;
-
-    /**
-     * Export data object.
-     *
-     * @var ExportManager
-     */
-    public $exportManager;
 
     /**
      * Indicates if the main view has data or is empty.
@@ -75,18 +57,6 @@ abstract class PanelController extends Base\Controller
     public $tabsPosition;
 
     /**
-     * List of views displayed by the controller.
-     *
-     * @var BaseView[]
-     */
-    public $views;
-
-    /**
-     * Inserts the views to display.
-     */
-    abstract protected function createViews();
-
-    /**
      * Loads the data to display.
      *
      * @param string   $viewName
@@ -107,26 +77,10 @@ abstract class PanelController extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
 
-        $this->active = $this->request->get('active', '');
-        $this->exportManager = new ExportManager();
         $this->hasData = false;
         $this->settings = [];
-        $this->views = [];
 
         $this->setTabsPosition('left');
-    }
-
-    /**
-     * Returns the configuration property value for a specified $field.
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        return isset($model->{$field}) ? $model->{$field} : null;
     }
 
     /**
@@ -353,24 +307,6 @@ abstract class PanelController extends Base\Controller
         if (empty($this->active)) {
             $this->active = $viewName;
         }
-    }
-
-    /**
-     * Run the autocomplete action.
-     * Returns a JSON string for the searched values.
-     *
-     * @param array $data
-     * 
-     * @return array
-     */
-    protected function autocompleteAction($data): array
-    {
-        $results = [];
-        $codeModel = new CodeModel();
-        foreach ($codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
-            $results[] = ['key' => $value->code, 'value' => $value->description];
-        }
-        return $results;
     }
 
     /**
