@@ -40,6 +40,7 @@ class EditArticulo extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'product';
         $pagedata['icon'] = 'fa-cube';
+        $pagedata['menu'] = 'warehouse';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
