@@ -83,7 +83,7 @@ class AccountingReports extends Controller
 
     /**
      * Execute main actions.
-     *
+     * Filter bi date-from date-to format and grouping
      * @param $action
      */
     private function execAction($action)
