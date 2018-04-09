@@ -376,11 +376,9 @@ abstract class ListController extends Base\Controller
     /**
      * Delete data action method.
      *
-     * @param BaseView $view View upon which the action is made
-     *
      * @return bool
      */
-    protected function deleteAction($view)
+    protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
@@ -391,7 +389,8 @@ abstract class ListController extends Base\Controller
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
-            if ($view->delete($cod)) {
+            $model = $this->views[$this->active]->getModel();
+            if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {
                 $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
@@ -446,7 +445,7 @@ abstract class ListController extends Base\Controller
                 return false;
 
             case 'delete':
-                $this->deleteAction($this->views[$this->active]);
+                $this->deleteAction();
                 break;
         }
 
@@ -506,7 +505,7 @@ abstract class ListController extends Base\Controller
             if ($col->display === 'none' || !in_array($col->widget->type, ['text', 'money'], false)) {
                 continue;
             }
-            
+
             $result[] = $col->widget->fieldName;
             if (count($result) === $maxColumns) {
                 break;

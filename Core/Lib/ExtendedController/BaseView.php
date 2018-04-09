@@ -131,22 +131,6 @@ class BaseView
     }
 
     /**
-     * Deletes from the database the row with the given code
-     *
-     * @param string $code
-     *
-     * @return bool
-     */
-    public function delete(string $code)
-    {
-        if ($this->model->loadFromCode($code)) {
-            return $this->model->delete();
-        }
-
-        return false;
-    }
-
-    /**
      * Returns the pointer to the data model
      *
      * @return mixed

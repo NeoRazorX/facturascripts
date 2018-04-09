@@ -388,11 +388,9 @@ abstract class PanelController extends Base\Controller
     /**
      * Action to delete data.
      *
-     * @param BaseView $view
-     *
      * @return bool
      */
-    protected function deleteAction($view)
+    protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
@@ -400,8 +398,9 @@ abstract class PanelController extends Base\Controller
             return false;
         }
 
-        $fieldKey = $view->getModel()->primaryColumn();
-        if ($view->delete($this->request->get($fieldKey))) {
+        $model = $this->views[$this->active]->getModel();
+        $code = $this->request->get($model->primaryColumn(), '');
+        if ($model->loadFromCode($code) && $model->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
 
             return true;
@@ -482,7 +481,7 @@ abstract class PanelController extends Base\Controller
                 return $this->editAction($this->views[$this->active]);
 
             case 'delete':
-                return $this->deleteAction($this->views[$this->active]);
+                return $this->deleteAction();
 
             case 'save-document':
                 $viewName = $this->searchGridView();
