@@ -1103,5 +1103,7 @@
     "desc-vat-id": "Tax identifier",
     "tax-base": "Tax base",
     "pct-vat": "VAT rate",
-    "pct-surcharge": "Surcharge rate"
+    "pct-surcharge": "Surcharge rate",
+    "report-non-grouping-account": "Non group by account",
+    "report-grouping-account": "Group by account"
 }

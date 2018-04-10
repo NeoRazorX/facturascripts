@@ -73,7 +73,7 @@ abstract class AccountingBase
      *
      * @return mixed
      */
-    abstract public function generate($dateFrom, $dateTo);
+    abstract public function generate($dateFrom, $dateTo, $grouping);
 
     /**
      * AccountingBase constructor.

@@ -53,7 +53,7 @@ class BalanceAmmounts extends AccountingBase
      *
      * @return array
      */
-    public function generate($dateFrom, $dateTo)
+    public function generate($dateFrom, $dateTo, $grouping)
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;

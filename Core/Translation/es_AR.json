@@ -1237,5 +1237,7 @@
     "concept": "Concepto",
     "lock-unlock": "(Des)Bloquear",
     "clone": "Duplicar",
-    "predefined-concepts": "Conceptos Predefinidos"
+    "predefined-concepts": "Conceptos Predefinidos",
+    "report-non-grouping-account": "No agrupar por cuentas",
+    "report-grouping-account": "Agrupar por cuentas"
 }
