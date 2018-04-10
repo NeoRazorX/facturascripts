@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 use FacturaScripts\Core\Model\ApiKey;
 
@@ -315,7 +314,11 @@ class AppAPI extends App
     /**
      * Returns true if the client is authenticated with the header token.
      *
-     * @return bool
+     * @param string token The token to check as api key
+     *
+     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
+     *
+     * @return boolean
      */
     private function checkAuthToken()
     {
@@ -323,8 +326,9 @@ class AppAPI extends App
 
         if(NULL != $token)
         {
-            return (new ApiKey())->loadFromCode('', 'token=' . $token . ' AND enabled=1');
+            return (new ApiKey())->checkAuthToken($token);
         }
+
         return FALSE;
     }
 }
