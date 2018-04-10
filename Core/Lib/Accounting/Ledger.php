@@ -119,7 +119,7 @@ class Ledger extends AccountingBase
         $ledgerAccount['numero'] = false;
         $ledgerAccount['cuenta'] = $line['codcuenta'];
         $ledgerAccount['concepto'] = $line['cuenta_descripcion'];
-        if(!isset($ledgerAccount['debe'])){
+        if (!isset($ledgerAccount['debe'])) {
             $ledgerAccount['debe'] = 0;
             $ledgerAccount['haber'] = 0;
         }
@@ -138,11 +138,12 @@ class Ledger extends AccountingBase
      */
     protected function processLine($line, $grouping)
     {
-        if(($grouping == 'non-group')) {
+        $item = array();
+        if (($grouping == 'non-group')) {
             $item['fecha'] = ($line['fecha']) ?? date('d-m-Y', strtotime($line['fecha']));
             $item['numero'] = ($line['numero']) ?? $line['numero'];
         }
-        $item['cuenta'] = (isset($line['cuenta']))?$line['cuenta']:$line['codsubcuenta'];
+        $item['cuenta'] = (isset($line['cuenta'])) ? $line['cuenta'] : $line['codsubcuenta'];
         $item['concepto'] = Utils::fixHtml($line['concepto']);
         $item['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');
         $item['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, '');
