@@ -1266,5 +1266,7 @@
     "desc-vat-id": "Identificador fiscal",
     "tax-base": "Base Imponible",
     "pct-vat": "% Impuesto",
-    "pct-surcharge": "% Recargo"
+    "pct-surcharge": "% Recargo",
+    "report-non-grouping-account": "No agrupar por cuentas",
+    "report-grouping-account": "Agrupar por cuentas"
 }

@@ -53,7 +53,7 @@ class Ledger extends AccountingBase
         $ledgerAccount = [];
         foreach ($results as $line) {
             $this->processHeader($ledgerAccount[$line['codcuenta']], $line);
-            $ledger[$line['codcuenta']][0] = $this->processLineGrouping($ledgerAccount[$line['codcuenta']]);
+            $ledger[$line['codcuenta']][0] = $this->processLine($ledgerAccount[$line['codcuenta']], $grouping);
             $ledger[$line['codcuenta']][] = $this->processLine($line, $grouping);
         }
 
@@ -70,7 +70,8 @@ class Ledger extends AccountingBase
     protected function getDataGrouped()
     {
         $sql = 'SELECT subc.codcuenta, cuentas.descripcion '
-            . ' as cuenta_descripcion, part.codsubcuenta, subc.descripcion as concepto, sum(part.debe) as debe, sum(part.haber) as haber '
+            . ' as cuenta_descripcion, part.codsubcuenta, subc.descripcion as concepto, '
+            . ' sum(part.debe) as debe, sum(part.haber) as haber '
             . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
             . ' WHERE asto.idasiento = part.idasiento '
             . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
@@ -114,6 +115,8 @@ class Ledger extends AccountingBase
      */
     protected function processHeader(&$ledgerAccount, $line)
     {
+        $ledgerAccount['fecha'] = false;
+        $ledgerAccount['numero'] = false;
         $ledgerAccount['cuenta'] = $line['codcuenta'];
         $ledgerAccount['concepto'] = $line['cuenta_descripcion'];
         if(isset($ledgerAccount['debe'])){
@@ -137,8 +140,8 @@ class Ledger extends AccountingBase
     protected function processLine($line, $grouping)
     {
         if(($grouping == 'non-group')) {
-            $item['fecha'] = date('d-m-Y', strtotime($line['fecha']));
-            $item['numero'] = $line['numero'];
+            $item['fecha'] = ($line['fecha']) ?? date('d-m-Y', strtotime($line['fecha']));
+            $item['numero'] = ($line['numero']) ?? $line['numero'];
         }
         $item['cuenta'] = (isset($line['cuenta']))?$line['cuenta']:$line['codsubcuenta'];
         $item['concepto'] = Utils::fixHtml($line['concepto']);

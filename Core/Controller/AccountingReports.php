@@ -102,17 +102,17 @@ class AccountingReports extends Controller
 
             case 'sumas-saldos':
                 $balanceAmmount = new Accounting\BalanceAmmounts();
-                $pages = $balanceAmmount->generate($dateFrom, $dateTo);
+                $pages = $balanceAmmount->generate($dateFrom, $dateTo, $grouping);
                 break;
 
             case 'situacion':
                 $balanceSheet = new Accounting\BalanceSheet();
-                $pages = $balanceSheet->generate($dateFrom, $dateTo);
+                $pages = $balanceSheet->generate($dateFrom, $dateTo, $grouping);
                 break;
 
             case 'pyg':
                 $proffitAndLoss = new Accounting\ProffitAndLoss();
-                $pages = $proffitAndLoss->generate($dateFrom, $dateTo);
+                $pages = $proffitAndLoss->generate($dateFrom, $dateTo, $grouping);
                 break;
         }
 

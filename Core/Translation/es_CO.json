@@ -1247,5 +1247,7 @@
     "editable": "Editable",
     "location": "Localización",
     "balance-account": "Balance Cuentas",
-    "balance-account-abreviated": "Balance Cuentas Abreviado"
+    "balance-account-abreviated": "Balance Cuentas Abreviado",
+    "report-non-grouping-account": "No agrupar por cuentas",
+    "report-grouping-account": "Agrupar por cuentas"
 }
