@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\App;
 
 use Symfony\Component\HttpFoundation\Response;
 use FacturaScripts\Core\Model\ApiKey;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * AppAPI is the class used for API.
