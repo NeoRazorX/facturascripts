@@ -18,8 +18,9 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Model\ApiKey;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * AppAPI is the class used for API.
@@ -57,6 +58,13 @@ class AppAPI extends App
         if ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
+
+            return false;
+        }
+
+        if (!$this->checkAuthToken()) {
+            $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $this->response->setContent(json_encode(['error' => 'AUTH-TOKEN-INVALID']));
 
             return false;
         }
@@ -302,5 +310,26 @@ class AppAPI extends App
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Returns true if the client is authenticated with the header token.
+     *
+     * @param string token The token to check as api key
+     *
+     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
+     *
+     * @return boolean
+     */
+    private function checkAuthToken()
+    {
+        $token = $this->request->headers->get('Token');
+
+        if(NULL != $token)
+        {
+            return (new ApiKey())->checkAuthToken($token);
+        }
+
+        return FALSE;
     }
 }
