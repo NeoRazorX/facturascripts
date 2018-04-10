@@ -119,13 +119,12 @@ class Ledger extends AccountingBase
         $ledgerAccount['numero'] = false;
         $ledgerAccount['cuenta'] = $line['codcuenta'];
         $ledgerAccount['concepto'] = $line['cuenta_descripcion'];
-        if(isset($ledgerAccount['debe'])){
-            $ledgerAccount['debe'] += $line['debe'];
-            $ledgerAccount['haber'] += $line['debe'];
-        } else {
-            $ledgerAccount['debe'] = $line['debe'];
-            $ledgerAccount['haber'] = $line['debe'];
+        if(!isset($ledgerAccount['debe'])){
+            $ledgerAccount['debe'] = 0;
+            $ledgerAccount['haber'] = 0;
         }
+        $ledgerAccount['debe'] += $line['debe'];
+        $ledgerAccount['haber'] += $line['haber'];
     }
 
     /**
