@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,7 @@ use FacturaScripts\Core\Model\Base\ModelClass;
  */
 class GridView extends BaseView
 {
+
     /**
      * Parent container of grid data
      *
@@ -54,10 +55,10 @@ class GridView extends BaseView
      * EditView constructor and initialization.
      *
      * @param BaseView $parent
-     * @param string $title
-     * @param string $modelName
-     * @param string $viewName
-     * @param string $userNick
+     * @param string   $title
+     * @param string   $modelName
+     * @param string   $viewName
+     * @param string   $userNick
      */
     public function __construct(&$parent, $title, $modelName, $viewName, $userNick)
     {
@@ -85,6 +86,7 @@ class GridView extends BaseView
      * Configure autocomplete column with data to Grid component
      *
      * @param array $values
+     * 
      * @return array
      */
     private function getAutocompleteSource($values): array
@@ -105,6 +107,7 @@ class GridView extends BaseView
      * a value from the list of values
      *
      * @param array $values
+     * 
      * @return bool
      */
     private function getAutocompeteStrict($values): bool
@@ -116,6 +119,7 @@ class GridView extends BaseView
      * Return grid column configuration
      *
      * @param ColumnItem $column
+     * 
      * @return array
      */
     private function getItemForColumn($column): array
@@ -201,8 +205,9 @@ class GridView extends BaseView
     /**
      * Load data of master document and set data from array
      *
-     * @param ModelClass $model
-     * @param array $data
+     * @param string $fieldPK
+     * @param array  $data
+     * 
      * @return bool
      */
     private function loadDocumentDataFromArray($fieldPK, &$data): bool
@@ -217,9 +222,9 @@ class GridView extends BaseView
     /**
      * Removes from the database the non-existent detail
      *
-     * @param ModelClass $model
      * @param array $linesOld
      * @param array $linesNew
+     * 
      * @return bool
      */
     private function deleteLinesOld(&$linesOld, &$linesNew): bool
@@ -238,7 +243,7 @@ class GridView extends BaseView
         return true;
     }
 
-    public function saveData($data):array
+    public function saveData($data): array
     {
         $result = [
             'error' => false,
@@ -285,12 +290,10 @@ class GridView extends BaseView
 
             // confirm save data into database
             $dataBase->commit();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result['error'] = true;
             $result['message'] = $e->getMessage();
-        }
-        finally {
+        } finally {
             if ($dataBase->inTransaction()) {
                 $dataBase->rollback();
             }

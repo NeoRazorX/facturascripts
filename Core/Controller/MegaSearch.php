@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,6 +53,20 @@ class MegaSearch extends Base\Controller
     public $sections;
 
     /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pageData = parent::getPageData();
+        $pageData['menu'] = 'reports';
+        $pageData['showonmenu'] = false;
+
+        return $pageData;
+    }
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response                   $response
@@ -70,19 +84,6 @@ class MegaSearch extends Base\Controller
         if ($this->query !== '') {
             $this->pageSearch();
         }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pageData = parent::getPageData();
-        $pageData['showonmenu'] = false;
-
-        return $pageData;
     }
 
     /**

@@ -171,7 +171,7 @@ abstract class PanelController extends BaseController
             }
 
             // check if the view should be active
-            $this->settings[$viewName]['active'] = $this->checkActiveView($view, $this->hasData);
+            $this->settings[$viewName]['active'] = $this->hasData;
         }
 
         // General operations with the loaded data
@@ -310,19 +310,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Check if the view should be active.
-     *
-     * @param BaseView $view
-     * @param bool     $mainViewHasData
-     *
-     * @return bool
-     */
-    protected function checkActiveView(&$view, $mainViewHasData)
-    {
-        return $mainViewHasData;
-    }
-
-    /**
      * Action to delete data.
      *
      * @return bool
@@ -349,11 +336,9 @@ abstract class PanelController extends BaseController
     /**
      * Run the data edits.
      *
-     * @param BaseView $view
-     *
      * @return bool
      */
-    protected function editAction($view)
+    protected function editAction()
     {
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
@@ -361,7 +346,8 @@ abstract class PanelController extends BaseController
             return false;
         }
 
-        if ($view->save()) {
+        if ($this->views[$this->active]->model->save()) {
+            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
 
             return true;
@@ -390,7 +376,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'insert':
-                $this->insertAction($this->views[$this->active]);
+                $this->insertAction();
                 break;
         }
     }
@@ -414,7 +400,7 @@ abstract class PanelController extends BaseController
             case 'save':
                 $data = $this->request->request->all();
                 $this->views[$this->active]->loadFromData($data);
-                return $this->editAction($this->views[$this->active]);
+                return $this->editAction();
 
             case 'delete':
                 return $this->deleteAction();
@@ -436,12 +422,10 @@ abstract class PanelController extends BaseController
 
     /**
      * Run the data insert action.
-     *
-     * @param EditView $view
      */
-    protected function insertAction($view)
+    protected function insertAction()
     {
-        $view->setNewCode();
+        $this->views[$this->active]->setNewCode();
     }
 
     /**

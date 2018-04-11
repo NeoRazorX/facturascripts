@@ -38,7 +38,7 @@ abstract class ListController extends BaseController
      * @var array
      */
     public $icons;
-    
+
     /**
      * Tools to work with numbers.
      *
@@ -134,28 +134,30 @@ abstract class ListController extends BaseController
         $action = $this->request->get('action', '');
 
         // Operations with data, before execute action
-        if ($this->execPreviousAction($action)) {
-            // Load data for every view
-            foreach ($this->views as $viewName => $listView) {
-                $where = [];
-                $orderKey = '';
+        if (!$this->execPreviousAction($action)) {
+            return;
+        }
 
-                // If processing the selected view, calculate order and filters
-                if ($this->active == $viewName) {
-                    $orderKey = $this->request->get('order', '');
-                    $where = $this->getWhere();
-                }
+        // Load data for every view
+        foreach ($this->views as $viewName => $listView) {
+            $where = [];
+            $orderKey = '';
 
-                // Set selected order by
-                $this->views[$viewName]->setSelectedOrderBy($orderKey);
-
-                // Load data using filter and order
-                $listView->loadData(false, $where, [], $this->getOffSet($viewName), Base\Pagination::FS_ITEM_LIMIT);
+            // If processing the selected view, calculate order and filters
+            if ($this->active == $viewName) {
+                $orderKey = $this->request->get('order', '');
+                $where = $this->getWhere();
             }
 
-            // Operations with data, after execute action
-            $this->execAfterAction($action);
+            // Set selected order by
+            $this->views[$viewName]->setSelectedOrderBy($orderKey);
+
+            // Load data using filter and order
+            $listView->loadData(false, $where, [], $this->getOffSet($viewName), Base\Pagination::FS_ITEM_LIMIT);
         }
+
+        // Operations with data, after execute action
+        $this->execAfterAction($action);
     }
 
     /**
@@ -324,10 +326,10 @@ abstract class ListController extends BaseController
             return false;
         }
 
+        $model = $this->views[$this->active]->getModel();
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
-            $model = $this->views[$this->active]->getModel();
             if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {

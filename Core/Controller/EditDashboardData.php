@@ -95,13 +95,11 @@ class EditDashboardData extends ExtendedController\EditController
     /**
      * Run the data edits
      *
-     * @param BaseView $view
-     *
      * @return bool
      */
-    protected function editAction($view)
+    protected function editAction()
     {
-        $model = $view->getModel();
+        $model = $this->views[$this->active]->getModel();
         $properties = array_keys($this->getPropertiesFields());
         $fields = array_keys($model->properties);
         foreach ($fields as $key) {
@@ -110,7 +108,7 @@ class EditDashboardData extends ExtendedController\EditController
             }
         }
 
-        return parent::editAction($view);
+        return parent::editAction();
     }
 
     /**

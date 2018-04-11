@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,6 +47,40 @@ class EditView extends BaseView implements DataViewInterface
     }
 
     /**
+     * Establishes the column edit state
+     *
+     * @param string $columnName
+     * @param bool   $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->widget->readOnly = $disabled;
+        }
+    }
+
+    /**
+     * Method to export the view data
+     *
+     * @param ExportManager $exportManager
+     */
+    public function export(&$exportManager)
+    {
+        $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
+    }
+
+    /**
+     * Returns the column configuration
+     *
+     * @return GroupItem[]
+     */
+    public function getColumns()
+    {
+        return $this->pageOption->columns;
+    }
+
+    /**
      * Returns the text for the data panel header
      *
      * @return string
@@ -64,30 +98,6 @@ class EditView extends BaseView implements DataViewInterface
     public function getPanelFooter()
     {
         return '';
-    }
-
-    /**
-     * Returns the column configuration
-     *
-     * @return GroupItem[]
-     */
-    public function getColumns()
-    {
-        return $this->pageOption->columns;
-    }
-
-    /**
-     * Establishes the column edit state
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
     }
 
     /**
@@ -123,15 +133,5 @@ class EditView extends BaseView implements DataViewInterface
         if (!empty($column)) {
             $column->widget->readOnly = ($this->count > 0);
         }
-    }
-
-    /**
-     * Method to export the view data
-     *
-     * @param ExportManager $exportManager
-     */
-    public function export(&$exportManager)
-    {
-        $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
     }
 }

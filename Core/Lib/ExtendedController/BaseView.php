@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,19 +31,32 @@ class BaseView
 {
 
     /**
-     * Needed model to for the model method calls.
-     * In the scope of EditController it contains the view data.
+     * Total count of read rows.
      *
-     * @var mixed
+     * @var int
      */
-    protected $model;
+    public $count;
+
+    /**
+     * Contains the translator.
+     *
+     * @var Base\Translator
+     */
+    protected static $i18n;
+
+    /**
+     * Model to use in this view.
+     *
+     * @var Model\Base\ModelClass
+     */
+    public $model;
 
     /**
      * Stores the new code from the save() procedure, to use in loadData().
      *
      * @var string
      */
-    protected $newCode;
+    public $newCode;
 
     /**
      * Columns and filters configuration
@@ -53,25 +66,11 @@ class BaseView
     protected $pageOption;
 
     /**
-     * Contains the translator
-     *
-     * @var Base\Translator
-     */
-    protected static $i18n;
-
-    /**
      * View title
      *
      * @var string
      */
     public $title;
-
-    /**
-     * Total count of read rows
-     *
-     * @var int
-     */
-    public $count;
 
     /**
      * Construct and initialize the class
@@ -87,82 +86,6 @@ class BaseView
         $this->title = static::$i18n->trans($title);
         $this->model = class_exists($modelName) ? new $modelName() : null;
         $this->pageOption = new Model\PageOption();
-    }
-
-    /**
-     * Verifies the structure and loads into the model the given data array
-     *
-     * @param array $data
-     */
-    public function loadFromData(array &$data)
-    {
-        $fieldKey = $this->model->primaryColumn();
-        $fieldValue = $data[$fieldKey];
-        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
-            $this->model->loadFromCode($fieldValue);
-        }
-
-        $this->model->checkArrayData($data);
-        $this->model->loadFromData($data, ['action', 'active']);
-    }
-
-    /**
-     * Saves the model data into the database for persistence
-     *
-     * @return bool
-     */
-    public function save()
-    {
-        if ($this->model->save()) {
-            $this->newCode = $this->model->primaryColumnValue();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Calculate and set new code for PK of the model
-     */
-    public function setNewCode()
-    {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
-    }
-
-    /**
-     * Returns the pointer to the data model
-     *
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
-     * Gets the column by the column name
-     *
-     * @param string $columnName
-     *
-     * @return ColumnItem
-     */
-    public function columnForName(string $columnName)
-    {
-        $result = null;
-        foreach ($this->pageOption->columns as $group) {
-            foreach ($group->columns as $key => $column) {
-                if ($key === $columnName) {
-                    $result = $column;
-                    break;
-                }
-            }
-            if (!empty($result)) {
-                break;
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -191,15 +114,28 @@ class BaseView
     }
 
     /**
-     * If it exists, return the specified row type
+     * Gets the column by the column name
      *
-     * @param string $key
+     * @param string $columnName
      *
-     * @return RowItem
+     * @return ColumnItem
      */
-    public function getRow(string $key)
+    public function columnForName(string $columnName)
     {
-        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
+        $result = null;
+        foreach ($this->pageOption->columns as $group) {
+            foreach ($group->columns as $key => $column) {
+                if ($key === $columnName) {
+                    $result = $column;
+                    break;
+                }
+            }
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -210,6 +146,28 @@ class BaseView
     public function getModals()
     {
         return $this->pageOption->modals;
+    }
+
+    /**
+     * Returns the pointer to the data model
+     *
+     * @return Model\Base\ModelClass
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * If it exists, return the specified row type
+     *
+     * @param string $key
+     *
+     * @return RowItem
+     */
+    public function getRow(string $key)
+    {
+        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
     }
 
     /**
@@ -225,16 +183,6 @@ class BaseView
     }
 
     /**
-     * Returns the model identifier
-     *
-     * @return string
-     */
-    public function getModelID()
-    {
-        return empty($this->model) ? '' : $this->model->modelClassName();
-    }
-
-    /**
      * Returns the name.
      *
      * @return string
@@ -242,5 +190,30 @@ class BaseView
     public function getViewName()
     {
         return $this->pageOption->name;
+    }
+
+    /**
+     * Verifies the structure and loads into the model the given data array
+     *
+     * @param array $data
+     */
+    public function loadFromData(array &$data)
+    {
+        $fieldKey = $this->model->primaryColumn();
+        $fieldValue = $data[$fieldKey];
+        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
+            $this->model->loadFromCode($fieldValue);
+        }
+
+        $this->model->checkArrayData($data);
+        $this->model->loadFromData($data, ['action', 'active']);
+    }
+
+    /**
+     * Calculate and set new code for PK of the model
+     */
+    public function setNewCode()
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 }
