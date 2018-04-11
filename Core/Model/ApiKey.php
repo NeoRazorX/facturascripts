@@ -119,8 +119,8 @@ class ApiKey extends Base\ModelClass
     {
         // SELECT id FROM api_keys WHERE apikey='TOKEN' AND enabled=1
         $where = [
-            new DataBaseWhere('apikey', $token, 'AND'),
-            new DataBaseWhere('enabled', 1)
+            new DataBaseWhere('apikey', $token),
+            new DataBaseWhere('enabled', true)
         ];
         return $this->loadFromCode('', $where);
     }

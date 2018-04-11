@@ -322,8 +322,7 @@ class AppAPI extends App
     private function checkAuthToken()
     {
         $token = $this->request->headers->get('Token');
-
-        if (NULL != $token) {
+        if (null !== $token) {
             return (new ApiKey())->checkAuthToken($token);
         }
 
