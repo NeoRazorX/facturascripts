@@ -400,10 +400,12 @@ abstract class PanelController extends BaseController
             case 'save':
                 $data = $this->request->request->all();
                 $this->views[$this->active]->loadFromData($data);
-                return $this->editAction();
+                $this->editAction();
+                break;
 
             case 'delete':
-                return $this->deleteAction();
+                $this->deleteAction();
+                break;
 
             case 'save-document':
                 $viewName = $this->searchGridView();
