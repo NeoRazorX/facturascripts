@@ -363,7 +363,7 @@ abstract class BusinessDocumentController extends PanelController
         $oldLine->pvptotal = $oldLine->pvpsindto * (100 - $oldLine->dtopor) / 100;
 
         if ($oldLine->save()) {
-            return $oldLine->updateStock($this->model->codalmacen);
+            return $oldLine->updateStock($this->views[$this->active]->model->codalmacen);
         }
 
         return false;

@@ -103,13 +103,13 @@ class EditView extends BaseView implements DataViewInterface
     /**
      * Load the data in the model property, according to the code specified.
      *
-     * @param mixed           $code
+     * @param string          $code
      * @param DataBaseWhere[] $where
      * @param array           $order
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
