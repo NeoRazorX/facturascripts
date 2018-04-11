@@ -18,9 +18,9 @@
  */
 namespace FacturaScripts\Core\App;
 
-use Symfony\Component\HttpFoundation\Response;
-use FacturaScripts\Core\Model\ApiKey;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\ApiKey;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AppAPI is the class used for API.
@@ -183,16 +183,16 @@ class AppAPI extends App
 
             switch ($this->request->getMethod()) {
                 case 'POST':
-                    foreach($this->request->request->all() as $key => $value) {
+                    foreach ($this->request->request->all() as $key => $value) {
                         $model->{$key} = $value;
                     }
-                    if($model->save()) {
+                    if ($model->save()) {
                         $data = (array) $model;
                     } else {
                         $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
                         $data = [];
-                        foreach($this->miniLog->read() as $msg) {
+                        foreach ($this->miniLog->read() as $msg) {
                             $data['error'] = $msg;
                         }
                     }
@@ -230,16 +230,16 @@ class AppAPI extends App
             switch ($this->request->getMethod()) {
                 case 'PUT':
                     $model = $model->get($cod);
-                    foreach($this->request->request->all() as $key => $value) {
+                    foreach ($this->request->request->all() as $key => $value) {
                         $model->{$key} = $value;
                     }
-                    if($model->save()) {
+                    if ($model->save()) {
                         $data = $model;
                     } else {
                         $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
                         $data = [];
-                        foreach($this->miniLog->read() as $msg) {
+                        foreach ($this->miniLog->read() as $msg) {
                             $data['error'] = $msg;
                         }
                     }
@@ -315,8 +315,6 @@ class AppAPI extends App
     /**
      * Returns true if the client is authenticated with the header token.
      *
-     * @param string token The token to check as api key
-     *
      * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
      *
      * @return boolean
@@ -325,8 +323,7 @@ class AppAPI extends App
     {
         $token = $this->request->headers->get('Token');
 
-        if(NULL != $token)
-        {
+        if (NULL != $token) {
             return (new ApiKey())->checkAuthToken($token);
         }
 

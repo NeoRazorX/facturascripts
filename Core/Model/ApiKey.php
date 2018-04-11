@@ -26,6 +26,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * that will be generated to synchronize different applications.
  *
  * @author Joe Nilson <joenilson at gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ApiKey extends Base\ModelClass
 {
@@ -108,13 +109,13 @@ class ApiKey extends Base\ModelClass
     /**
      * Checks the token provided as api key
      *
-     * @param string token The token to check as api key
+     * @param string $token The token to check as api key
      *
      * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
      *
      * @return boolean
      */
-    public function checkAuthToken(string $token = NULL)
+    public function checkAuthToken(string $token)
     {
         // SELECT id FROM api_keys WHERE apikey='TOKEN' AND enabled=1
         $where = [
