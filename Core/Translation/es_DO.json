@@ -236,7 +236,7 @@
     "post-office-box": "apartado",
     "blank-index": "¡Operación no válida!",
     "invoice": "factura",
-    "invoice-rectifying": "factura_rectificativa",
+    "invoice-rectifying": "nota de credito",
     "simplified-invoice": "factura simplificada",
     "invoices": "facturas",
     "irpf": "IRPF",
@@ -825,7 +825,7 @@
     "incorrect-seat-amount": "Importe del asiento incorrecto.",
     "installer-requirements": "Las siguientes extensiones y funciones son necesarias en FacturaScripts:",
     "international-identifier": "Identificación internacional",
-    "invoice-have-rectifying-cant-delete": "La factura ya tiene una rectificativa. No se puede eliminar.",
+    "invoice-have-rectifying-cant-delete": "La factura ya tiene una nota de crédito. No se puede eliminar.",
     "invoice-new-assigned-date": "Ya hay facturas posteriores a la fecha seleccionada (%oldDate%). Nueva fecha asignada: %newDate%",
     "invoice-number": "Número de factura",
     "invoice-regularized-cant-change-date": "La factura se encuentra dentro de una regularización de %tax%. No se puede modificar la fecha.",
@@ -1247,5 +1247,7 @@
     "editable": "Editable",
     "location": "Localización",
     "balance-account": "Balance Cuentas",
-    "balance-account-abreviated": "Balance Cuentas Abreviado"
+    "balance-account-abreviated": "Balance Cuentas Abreviado",
+    "report-non-grouping-account": "No agrupar por cuentas",
+    "report-grouping-account": "Agrupar por cuentas"
 }

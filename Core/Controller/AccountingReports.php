@@ -49,6 +49,14 @@ class AccountingReports extends Controller
     public $exportManager;
 
     /**
+     *
+     * Array of report grouping options
+     * non grouping report and group by account
+     * @var array
+     */
+    public $reportGrouping;
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response              $response
@@ -62,6 +70,10 @@ class AccountingReports extends Controller
         $ejercicioModel = new Ejercicio();
         $this->ejercicios = $ejercicioModel->all([], ['fechainicio' => 'DESC']);
         $this->exportManager = new ExportManager();
+        $this->reportGrouping = [
+                            'non-group'=>['description' => 'report-non-grouping-account'],
+                            'group'=>['description' => 'report-grouping-account']
+        ];
 
         $action = $this->request->get('action', '');
         if ($action !== '') {
@@ -71,7 +83,7 @@ class AccountingReports extends Controller
 
     /**
      * Execute main actions.
-     *
+     * Filter bi date-from date-to format and grouping
      * @param $action
      */
     private function execAction($action)
@@ -80,27 +92,27 @@ class AccountingReports extends Controller
         $dateFrom = $this->request->get('date-from');
         $dateTo = $this->request->get('date-to');
         $format = $this->request->get('format');
+        $grouping = $this->request->get('grouping');
 
         switch ($action) {
             case 'libro-mayor':
-                $this->setTemplate(false);
                 $ledger = new Accounting\Ledger();
-                $pages = $ledger->generate($dateFrom, $dateTo);
+                $pages = $ledger->generate($dateFrom, $dateTo, $grouping);
                 break;
 
             case 'sumas-saldos':
                 $balanceAmmount = new Accounting\BalanceAmmounts();
-                $pages = $balanceAmmount->generate($dateFrom, $dateTo);
+                $pages = $balanceAmmount->generate($dateFrom, $dateTo, $grouping);
                 break;
 
             case 'situacion':
                 $balanceSheet = new Accounting\BalanceSheet();
-                $pages = $balanceSheet->generate($dateFrom, $dateTo);
+                $pages = $balanceSheet->generate($dateFrom, $dateTo, $grouping);
                 break;
 
             case 'pyg':
                 $proffitAndLoss = new Accounting\ProffitAndLoss();
-                $pages = $proffitAndLoss->generate($dateFrom, $dateTo);
+                $pages = $proffitAndLoss->generate($dateFrom, $dateTo, $grouping);
                 break;
         }
 
