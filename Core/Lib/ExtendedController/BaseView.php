@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model\PageOption;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -47,7 +47,7 @@ class BaseView
     /**
      * Model to use in this view.
      *
-     * @var Model\Base\ModelClass
+     * @var mixed
      */
     public $model;
 
@@ -61,7 +61,7 @@ class BaseView
     /**
      * Columns and filters configuration
      *
-     * @var Model\PageOption
+     * @var PageOption
      */
     protected $pageOption;
 
@@ -85,7 +85,7 @@ class BaseView
         $this->count = 0;
         $this->title = static::$i18n->trans($title);
         $this->model = class_exists($modelName) ? new $modelName() : null;
-        $this->pageOption = new Model\PageOption();
+        $this->pageOption = new PageOption();
     }
 
     /**
@@ -151,7 +151,7 @@ class BaseView
     /**
      * Returns the pointer to the data model
      *
-     * @return Model\Base\ModelClass
+     * @return mixed
      */
     public function getModel()
     {

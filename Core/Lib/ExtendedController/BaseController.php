@@ -29,6 +29,7 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 abstract class BaseController extends Base\Controller
 {
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -55,7 +56,7 @@ abstract class BaseController extends Base\Controller
     /**
      * List of views displayed by the controller.
      *
-     * @var BaseView[]
+     * @var mixed
      */
     public $views;
 
@@ -63,7 +64,7 @@ abstract class BaseController extends Base\Controller
      * Inserts the views to display.
      */
     abstract protected function createViews();
-    
+
     /**
      * Initializes all the objects and properties.
      *
