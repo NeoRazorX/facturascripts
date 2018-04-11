@@ -375,8 +375,10 @@ abstract class BusinessDocument extends ModelClass
      * 
      * @param string $date
      * @param string $hour
+     * 
+     * @return bool
      */
-    public function setDate(string $date, string $hour)
+    public function setDate(string $date, string $hour): bool
     {
         $ejercicioModel = new Ejercicio();
         $ejercicio = $ejercicioModel->getByFecha($date);
@@ -384,7 +386,10 @@ abstract class BusinessDocument extends ModelClass
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             $this->hora = $hour;
+            return true;
         }
+        
+        return false;
     }
 
     /**

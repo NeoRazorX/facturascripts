@@ -71,10 +71,11 @@ abstract class BaseController extends Base\Controller
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
      * @param string          $className
+     * @param string          $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
 
         $this->active = $this->request->get('active', '');
         $this->codeModel = new CodeModel();
