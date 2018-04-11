@@ -84,7 +84,7 @@ class EditArticulo extends ExtendedController\PanelController
             case 'ListArticuloProveedor':
                 $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
-                $view->loadData(false, $where, [], 0, $limit);
+                $view->loadData('', $where, [], 0, $limit);
                 break;
         }
     }

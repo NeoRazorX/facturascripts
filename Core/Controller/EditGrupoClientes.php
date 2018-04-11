@@ -77,7 +77,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
             case 'ListCliente':
                 $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
                 $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                $view->loadData(false, $where);
+                $view->loadData('', $where);
                 break;
         }
     }

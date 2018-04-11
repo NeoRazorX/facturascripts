@@ -145,7 +145,7 @@ class EditCliente extends ExtendedController\PanelController
                 $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
                 if (!empty($codgrupo)) {
                     $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                    $view->loadData(false, $where);
+                    $view->loadData('', $where);
                 }
                 break;
 
@@ -159,7 +159,7 @@ class EditCliente extends ExtendedController\PanelController
             case 'ListPresupuestoCliente':
                 $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
-                $view->loadData(false, $where, [], 0, $limit);
+                $view->loadData('', $where, [], 0, $limit);
                 break;
         }
     }

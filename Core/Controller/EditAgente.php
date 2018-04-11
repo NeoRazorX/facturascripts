@@ -77,7 +77,7 @@ class EditAgente extends ExtendedController\PanelController
             case 'EditAgenteFacturas':
                 $codagente = $this->getViewModelValue('EditAgente', 'codagente');
                 $where = [new DataBaseWhere('codagente', $codagente)];
-                $view->loadData(false, $where);
+                $view->loadData('', $where);
                 break;
         }
     }
