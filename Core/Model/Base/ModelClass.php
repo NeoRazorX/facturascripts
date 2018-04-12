@@ -293,7 +293,7 @@ abstract class ModelClass extends ModelCore
                 break;
 
             case 'edit':
-                $result .= 'Edit' . $model . '?code=' . $value;
+                $result .= is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . $value;
                 break;
 
             case 'new':
