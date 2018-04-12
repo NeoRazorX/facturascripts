@@ -42,8 +42,9 @@ class Ledger extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
+        $grouping = (isset($params['grouping']) && $params['grouping']);
 
-        $results = (isset($params['grouping']) && $params['grouping']) ? $this->getDataGrouped() : $this->getData();
+        $results = $grouping ? $this->getDataGrouped() : $this->getData();
         if (empty($results)) {
             return [];
         }
@@ -140,14 +141,14 @@ class Ledger extends AccountingBase
      * then we dont return the 'fecha' and 'numero' fields
      * 
      * @param array $line
-     * @param string $grouping
+     * @param bool  $grouping
      *
      * @return array
      */
     protected function processLine($line, $grouping)
     {
-        $item = array();
-        if (($grouping == 'non-group')) {
+        $item = [];
+        if (!$grouping) {
             $item['fecha'] = ($line['fecha']) ?? date('d-m-Y', strtotime($line['fecha']));
             $item['numero'] = ($line['numero']) ?? $line['numero'];
         }
