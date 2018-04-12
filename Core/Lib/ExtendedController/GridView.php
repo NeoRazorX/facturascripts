@@ -227,15 +227,17 @@ class GridView extends BaseView
      */
     private function deleteLinesOld(&$linesOld, &$linesNew): bool
     {
-        $fieldPK = $this->model->primaryColumn();
-        $oldIDs = array_column($linesOld, $fieldPK);
-        $newIDs = array_column($linesNew, $fieldPK);
-        $deletedIDs = array_diff($oldIDs, $newIDs);
+        if (!empty($linesOld)) {
+            $fieldPK = $this->model->primaryColumn();
+            $oldIDs = array_column($linesOld, $fieldPK);
+            $newIDs = array_column($linesNew, $fieldPK);
+            $deletedIDs = array_diff($oldIDs, $newIDs);
 
-        foreach ($deletedIDs as $idKey) {
-            $this->model->{$fieldPK} = $idKey;
-            if (!$this->model->delete()) {
-                return false;
+            foreach ($deletedIDs as $idKey) {
+                $this->model->{$fieldPK} = $idKey;
+                if (!$this->model->delete()) {
+                    return false;
+                }
             }
         }
         return true;

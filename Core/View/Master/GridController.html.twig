@@ -173,7 +173,7 @@
                                         {{ BaseController.rowActionsForEditView(_context, view, parentIndexView) }}
 
                                         <div class="col-2 text-right">
-                                            <button class="btn btn-sm btn-primary" id="save-document" onclick="saveDocument('{{ parentIndexView }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
+                                            <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ parentIndexView }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
                                                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                                             </button>
                                         </div>
