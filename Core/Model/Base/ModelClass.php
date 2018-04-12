@@ -185,7 +185,7 @@ abstract class ModelClass extends ModelCore
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
-     * @param array $where
+     * @param array  $where
      *
      * @return int
      */
@@ -208,10 +208,9 @@ abstract class ModelClass extends ModelCore
 
         /// Set Cast to Integer if field it's not
         if (!$isInteger) {
-            $field = self::$dataBase->sql2Int($field);
-
             /// Set Where to Integers values only
             $where[] = new DataBase\DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
+            $field = self::$dataBase->sql2Int($field);
         }
 
         /// Search for new code value
@@ -243,11 +242,7 @@ abstract class ModelClass extends ModelCore
     public function primaryDescription()
     {
         $field = $this->primaryDescriptionColumn();
-        if (isset($this->{$field})) {
-            return $this->{$field};
-        }
-
-        return (string) $this->primaryColumnValue();
+        return isset($this->{$field}) ? $this->{$field} : (string) $this->primaryColumnValue();
     }
 
     /**
