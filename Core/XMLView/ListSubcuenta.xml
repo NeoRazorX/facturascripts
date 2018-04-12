@@ -39,13 +39,15 @@
         <column name="id-account-special" order="140">
             <widget type="text" fieldname="codcuentaesp" />
         </column>
-        <column name="balance" order="150" display="right">
+        <column name="taxes" order="150">
+            <widget type="text" fieldname="codimpuesto" />
+        </column>
+        <column name="balance" order="160" display="right">
             <widget type="money" fieldname="saldo" />
         </column>
     </columns>
     <rows>
         <row type="status" fieldname="saldo">
-            <option color="table-warning">0</option>
             <option color="table-danger">&lt;0</option>
             <option color="table-success">&gt;0</option>
         </row>

@@ -77,7 +77,7 @@ class Subcuenta extends Base\ModelClass
     /**
      * Identifier of the special account.
      *
-     * @var int
+     * @var string
      */
     public $codcuentaesp;
 
@@ -152,6 +152,18 @@ class Subcuenta extends Base\ModelClass
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
+    }
+
+    public function getSpecialAccountCode()
+    {
+        $result = $this->codcuentaesp;
+        if (empty($result)) {
+            $account = new Cuenta();
+            if ($account->loadFromCode($this->idcuenta)) {
+                $result = $account->codcuentaesp;
+            }
+        }
+        return $result;
     }
 
     /**
