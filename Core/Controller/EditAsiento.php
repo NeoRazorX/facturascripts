@@ -74,7 +74,7 @@ class EditAsiento extends ExtendedController\PanelController
                 $this->setTemplate(false);
                 $data = $this->request->request->all();
                 $result = $this->recalculateDocument($data);
-                $this->response->setContent(json_encode($result), JSON_FORCE_OBJECT);
+                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                 return false;
 
             case 'account-data':
@@ -143,7 +143,7 @@ class EditAsiento extends ExtendedController\PanelController
 
         if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
             // if the sub-account is the same as the previous offsetting
-            if ($line['codsubcuenta'] === $data['lines'][$index -1]['codcontrapartida']) {
+            if ($line['codsubcuenta'] === $data['lines'][$index - 1]['codcontrapartida']) {
                 $field = 'haber';
                 if ($unbalance < 0) {
                     $field = 'debe';
@@ -164,9 +164,7 @@ class EditAsiento extends ExtendedController\PanelController
 
         if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
             // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
-            $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida'])
-                ? $previousLine['codsubcuenta']
-                : $previousLine['codcontrapartida'];
+            $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
         }
     }
 
@@ -211,7 +209,7 @@ class EditAsiento extends ExtendedController\PanelController
      */
     private function searchVatDataFromClient($codeSubAccount, &$values)
     {
-        $where = [ new DataBaseWhere('codsubcuenta', $codeSubAccount) ];
+        $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
         $client = new Model\Cliente();
         if ($client->loadFromCode(null, $where)) {
             $values['code'] = $client->codcliente;
@@ -229,7 +227,7 @@ class EditAsiento extends ExtendedController\PanelController
      */
     private function searchVatDataFromSupplier($codeSubAccount, &$values)
     {
-        $where = [ new DataBaseWhere('codsubcuenta', $codeSubAccount) ];
+        $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
         $supplier = new Model\Proveedor();
         if ($supplier->loadFromCode(null, $where)) {
             $values['code'] = $supplier->codproveedor;
@@ -248,7 +246,7 @@ class EditAsiento extends ExtendedController\PanelController
      */
     private function getAccountVatID($exercise, $codeSubAccount): array
     {
-        $result = [ 'group' => '', 'code' => '', 'description' => '', 'id' => '', 'surcharge' => false ];
+        $result = ['group' => '', 'code' => '', 'description' => '', 'id' => '', 'surcharge' => false];
         if (empty($exercise) || empty($codeSubAccount)) {
             return $result;
         }
@@ -326,9 +324,7 @@ class EditAsiento extends ExtendedController\PanelController
                 $result['subaccount'] = $this->getAccountData($data['document']['codejercicio'], $line['codsubcuenta']);
 
                 $result['vat'] = $this->recalculateVatRegister(
-                    $line, $data['document'],
-                    $result['subaccount']['codevat'],
-                    $result['unbalance']
+                    $line, $data['document'], $result['subaccount']['codevat'], $result['unbalance']
                 );
             }
         }

@@ -376,7 +376,6 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'insert':
-                $this->insertAction();
                 break;
         }
     }
@@ -421,14 +420,6 @@ abstract class PanelController extends BaseController
         }
 
         return true;
-    }
-
-    /**
-     * Run the data insert action.
-     */
-    protected function insertAction()
-    {
-        $this->views[$this->active]->setNewCode();
     }
 
     /**
