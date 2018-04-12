@@ -73,56 +73,36 @@ class AppAPI extends App
     }
 
     /**
-     * Check if API is disabled
+     * Returns true if the client is authenticated with the header token.
      *
-     * @return mixed
+     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
+     *
+     * @return boolean
      */
-    private function isDisabled()
+    private function checkAuthToken()
     {
-        return $this->settings->get('default', 'enable_api', false) !== 'true';
+        $token = $this->request->headers->get('Token', '');
+        if (empty($token)) {
+            return false;
+        }
+
+        return (new ApiKey())->checkAuthToken($token);
     }
 
     /**
-     * Selects the API version if it is supported
+     * Expose resource
      *
-     * @return bool
+     * @param array $map
      */
-    private function selectVersion()
+    private function exposeResources(&$map)
     {
-        if ($this->getUriParam(1) === '3') {
-            return $this->selectResource();
+        $json = ['resources' => []];
+
+        foreach (array_keys($map) as $key) {
+            $json['resources'][] = $key;
         }
 
-        $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-        $this->response->setContent(json_encode(['error' => 'API-VERSION-NOT-FOUND']));
-
-        return true;
-    }
-
-    /**
-     * Selects the resource
-     *
-     * @return bool
-     */
-    private function selectResource()
-    {
-        $map = $this->getResourcesMap();
-
-        $resourceName = $this->getUriParam(2);
-        if ($resourceName === '') {
-            $this->exposeResources($map);
-
-            return true;
-        }
-
-        $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $map[$resourceName];
-        $cod = $this->getUriParam(3);
-
-        if ($cod === '') {
-            return $this->processResource($modelName);
-        }
-
-        return $this->processResourceParam($modelName, $cod);
+        $this->response->setContent(json_encode($json));
     }
 
     /**
@@ -139,6 +119,36 @@ class AppAPI extends App
         $array = $this->request->get($key, $default);
 
         return is_array($array) ? $array : []; /// if is string has bad format
+    }
+
+    /**
+     * Load resource map
+     *
+     * @return array
+     */
+    private function getResourcesMap()
+    {
+        $resources = [];
+        foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
+            if (substr($fName, -4) === '.php') {
+                $modelName = substr($fName, 0, -4);
+
+                /// Conversion to plural
+                if (substr($modelName, -1) === 's') {
+                    $plural = strtolower($modelName);
+                } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {
+                    $plural = strtolower($modelName) . 's';
+                } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
+                    $plural = strtolower($modelName) . 's';
+                } else {
+                    $plural = strtolower($modelName) . 'es';
+                }
+
+                $resources[$plural] = $modelName;
+            }
+        }
+
+        return $resources;
     }
 
     /**
@@ -161,6 +171,16 @@ class AppAPI extends App
         }
 
         return $where;
+    }
+
+    /**
+     * Check if API is disabled
+     *
+     * @return mixed
+     */
+    private function isDisabled()
+    {
+        return $this->settings->get('default', 'enable_api', false) !== 'true';
     }
 
     /**
@@ -267,65 +287,45 @@ class AppAPI extends App
     }
 
     /**
-     * Load resource map
+     * Selects the resource
      *
-     * @return array
+     * @return bool
      */
-    private function getResourcesMap()
+    private function selectResource()
     {
-        $resources = [];
-        foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
-            if (substr($fName, -4) === '.php') {
-                $modelName = substr($fName, 0, -4);
+        $map = $this->getResourcesMap();
 
-                /// Conversion to plural
-                if (substr($modelName, -1) === 's') {
-                    $plural = strtolower($modelName);
-                } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {
-                    $plural = strtolower($modelName) . 's';
-                } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
-                    $plural = strtolower($modelName) . 's';
-                } else {
-                    $plural = strtolower($modelName) . 'es';
-                }
+        $resourceName = $this->getUriParam(2);
+        if ($resourceName === '') {
+            $this->exposeResources($map);
 
-                $resources[$plural] = $modelName;
-            }
+            return true;
         }
 
-        return $resources;
+        $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $map[$resourceName];
+        $cod = $this->getUriParam(3);
+
+        if ($cod === '') {
+            return $this->processResource($modelName);
+        }
+
+        return $this->processResourceParam($modelName, $cod);
     }
 
     /**
-     * Expose resource
+     * Selects the API version if it is supported
      *
-     * @param array $map
+     * @return bool
      */
-    private function exposeResources(&$map)
+    private function selectVersion()
     {
-        $json = ['resources' => []];
-
-        foreach (array_keys($map) as $key) {
-            $json['resources'][] = $key;
+        if ($this->getUriParam(1) === '3') {
+            return $this->selectResource();
         }
 
-        $this->response->setContent(json_encode($json));
-    }
+        $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+        $this->response->setContent(json_encode(['error' => 'API-VERSION-NOT-FOUND']));
 
-    /**
-     * Returns true if the client is authenticated with the header token.
-     *
-     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
-     *
-     * @return boolean
-     */
-    private function checkAuthToken()
-    {
-        $token = $this->request->headers->get('Token');
-        if (null !== $token) {
-            return (new ApiKey())->checkAuthToken($token);
-        }
-
-        return FALSE;
+        return true;
     }
 }
