@@ -185,31 +185,37 @@ abstract class ModelClass extends ModelCore
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
+     * @param array $where
      *
      * @return int
      */
-    public function newCode(string $field = '')
+    public function newCode(string $field = '', array $where = [])
     {
-        $sqlWhere = '';
+        $isInteger = false;
+
+        /// if not field value take PK Field
         if (empty($field)) {
-            /// Primary key is integer?
-            foreach ($this->getModelFields() as $tableField => $fieldData) {
-                if ($tableField === $this->primaryColumn() && in_array($fieldData['type'], ['integer', 'int', 'serial'])) {
-                    $field = $this->primaryColumn();
-                    break;
-                }
+            $field = $this->primaryColumn();
+        }
+
+        /// Check if field is integer
+        foreach ($this->getModelFields() as $tableField => $fieldData) {
+            if ($tableField === $field && in_array($fieldData['type'], ['integer', 'int', 'serial'])) {
+                $isInteger = true;
+                break;
             }
         }
 
-        if (empty($field)) {
-            /// Set Cast to Integer of PK Field
-            $field = self::$dataBase->sql2Int($this->primaryColumn());
+        /// Set Cast to Integer if field it's not
+        if (!$isInteger) {
+            $field = self::$dataBase->sql2Int($field);
 
             /// Set Where to Integers values only
-            $where = [new DataBase\DataBaseWhere($this->primaryColumn(), '^-?[0-9]+$', 'REGEXP')];
-            $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
+            $where[] = new DataBase\DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
         }
 
+        /// Search for new code value
+        $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
         $cod = self::$dataBase->select($sql);
         if (empty($cod)) {
