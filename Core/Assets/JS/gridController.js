@@ -16,12 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @author Artex Trading sa <jcuello@artextrading.com>
+ */
 
 var documentUrl = location.href;
 var documentLineData = [];
 var gridObject = null;               // TODO: convert to POO
 var autocompleteColumns = [];
 var eventManager = {};
+var cellSelected = { row: null, column: null };
 
 /* Generate a single source function for autocomplete columns
  *
@@ -35,16 +39,18 @@ function assignSource(data) {
 
     return function (query, process) {
         query = query.split(' -- ', 1)[0];
+        var ajaxData = {
+            term: query,
+            action: 'autocomplete',
+            source: source,
+            field: field,
+            title: title
+        };
         $.ajax({
+            type: "POST",
             url: data.url,
             dataType: 'json',
-            data: {
-                term: query,
-                action: 'autocomplete',
-                source: source,
-                field: field,
-                title: title
-            },
+            data: ajaxData,
             success: function (response) {
                 var values = [];
                 response.forEach(function (element) {
@@ -136,12 +142,18 @@ function deselectCell() {
 /* Return actual row selected */
 function getRowSelected() {
     var selected = gridObject.getSelected();
+    if (selected === undefined) {
+        return cellSelected.row;
+    }
     return selected.length > 0 ? gridObject.getSelected()[0][0] : null;
 }
 
 /* Return actual column selected */
 function getColumnSelected() {
     var selected = gridObject.getSelected();
+    if (selected === undefined) {
+        return cellSelected.column;
+    }
     return selected.length > 0 ? gridObject.getSelected()[0][1] : null;
 }
 
@@ -152,7 +164,6 @@ function addEvent(name, fn) {
     switch (name) {
         case 'afterSelection':
         case 'beforeChange':
-        case 'enterMoves':
             eventManager[name] = fn;
             break;
 
@@ -168,6 +179,10 @@ function eventAfterSelection(row1, col1, row2, col2, preventScrolling) {
     if (editor && editor.isOpened()) {
         return;
     }
+
+    // save selected cell
+    cellSelected.row = row1;
+    cellSelected.column = col1;
 
     // Call to children event
     var events = Object.keys(eventManager);
@@ -196,29 +211,6 @@ function eventBeforeChange(changes, source) {
     }
 }
 
-function eventEnterMoves() {
-    var result = { row: 0, col: 1 };
-    var selected = gridObject.getSelected()[0];
-    var jump = true;
-
-    // Call to children event
-    var events = Object.keys(eventManager);
-    if (events.includes('enterMoves')) {
-        var fieldName = getGridColumnName(selected[1]);
-        jump = eventManager['enterMoves'](result, fieldName);    // parameters to children: (move, fieldName)
-    }
-
-    // if there is a column jump, we control that you do not exceed the number of existing columns
-    if (jump) {
-        if ((selected[1] + result.col) >= gridObject.countCols()) {
-            selectCell(selected[0] + 1, 0);
-            result = { row: 0, col: 0 };
-        }
-        return result;
-    }
-    return { row: 0, col: 0 };      // no jump
-}
-
 /*
  * User Interface Events
  */
@@ -234,36 +226,30 @@ function saveDocument(mainFormName) {
     try {
         var data = {
             action: "save-document",
-            lines: getGridData('orden'),
+            lines: getGridData('order'),
             document: {}
         };
-
-        var mainForm = $("form[name='" + mainFormName + "']");
+        var mainForm = $("form[name=" + mainFormName + "]");
         $.each(mainForm.serializeArray(), function(key, value) {
-            switch (value.name) {
-                case 'action':
-                    break;
-
-                case 'active':
-                    data[value.name] = value.value;
-                    break;
-
-                default:
-                    data.document[value.name] = value.value;
-                    break;
-            }
+            data.document[value.name] = value.value;
         });
 
-        $.post(
-            documentUrl,
-            data,
-            function (results) {
+        $.ajax({
+            type: "POST",
+            url: documentUrl,
+            dataType: "json",
+            data: data,
+            success: function (results) {
                 if (results.error) {
                     alert(results.message);
-                    return;
+                    return false;
                 }
                 location.reload();
-            });
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+            }
+        });
     } finally {
         submitButton.disabled = false;
         return false;
@@ -287,17 +273,16 @@ $(document).ready(function () {
             rowHeaders: true,
             colHeaders: documentLineData.headers,
             stretchH: "all",
-            autoWrapRow: false,
+            autoWrapRow: true,
             contextMenu: false,
             manualRowResize: true,
             manualColumnResize: true,
             manualRowMove: true,
             manualColumnMove: false,
+            filters: true,
             minSpareRows: 1,
             minRows: 7,
-            enterMoves: function() {
-                return eventEnterMoves();
-            }
+            enterMoves: {row: 0, col: 1}
         });
 
         Handsontable.hooks.add('afterSelection', eventAfterSelection);
