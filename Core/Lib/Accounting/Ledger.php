@@ -31,20 +31,19 @@ class Ledger extends AccountingBase
 
     /**
      * Generate the ledger between two dates.
-     * the third parameter will give us the grouping or not option
-     * to return the data
+     * 
      * @param string $dateFrom
      * @param string $dateTo
-     * @param string $grouping
-     *
+     * @param array  $params
+     * 
      * @return array
      */
-    public function generate($dateFrom, $dateTo, $grouping)
+    public function generate(string $dateFrom, string $dateTo, array $params = [])
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
 
-        $results = ($grouping == 'non-group') ? $this->getData() : $this->getDataGrouped();
+        $results = (isset($params['grouping']) && $params['grouping']) ? $this->getDataGrouped() : $this->getData();
         if (empty($results)) {
             return [];
         }
@@ -69,6 +68,10 @@ class Ledger extends AccountingBase
      */
     protected function getDataGrouped()
     {
+        if (!$this->dataBase->tableExists('partidas')) {
+            return [];
+        }
+
         $sql = 'SELECT subc.codcuenta, cuentas.descripcion '
             . ' as cuenta_descripcion, part.codsubcuenta, subc.descripcion as concepto, '
             . ' sum(part.debe) as debe, sum(part.haber) as haber '
@@ -92,6 +95,10 @@ class Ledger extends AccountingBase
      */
     protected function getData()
     {
+        if (!$this->dataBase->tableExists('partidas')) {
+            return [];
+        }
+
         $sql = 'SELECT asto.fecha, asto.numero, subc.codcuenta, cuentas.descripcion '
             . ' as cuenta_descripcion, part.codsubcuenta, part.concepto, part.debe, part.haber '
             . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
@@ -131,6 +138,7 @@ class Ledger extends AccountingBase
      * Process the line data to use the appropiate formats.
      * If the $grouping variable is not equal to non-group
      * then we dont return the 'fecha' and 'numero' fields
+     * 
      * @param array $line
      * @param string $grouping
      *

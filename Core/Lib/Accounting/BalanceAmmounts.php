@@ -47,13 +47,14 @@ class BalanceAmmounts extends AccountingBase
 
     /**
      * Generate the balance ammounts between two dates.
-     *
+     * 
      * @param string $dateFrom
      * @param string $dateTo
-     *
+     * @param array  $params
+     * 
      * @return array
      */
-    public function generate($dateFrom, $dateTo, $grouping)
+    public function generate(string $dateFrom, string $dateTo, array $params = [])
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
@@ -80,6 +81,10 @@ class BalanceAmmounts extends AccountingBase
      */
     protected function getData()
     {
+        if (!$this->dataBase->tableExists('partidas')) {
+            return [];
+        }
+
         $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) AS debe, SUM(partida.haber) AS haber'
             . ' FROM partidas as partida, asientos as asiento'
             . ' WHERE asiento.idasiento = partida.idasiento'

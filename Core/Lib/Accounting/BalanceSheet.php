@@ -45,14 +45,15 @@ class BalanceSheet extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * Generate the balance ammounts between two dates.     *
-     *
+     * Generate the balance ammounts between two dates.
+     * 
      * @param string $dateFrom
      * @param string $dateTo
-     *
+     * @param array  $params
+     * 
      * @return array
      */
-    public function generate($dateFrom, $dateTo, $grouping)
+    public function generate(string $dateFrom, string $dateTo, array $params = [])
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;

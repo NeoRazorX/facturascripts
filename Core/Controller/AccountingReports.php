@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Description of AccountingReports
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AccountingReports extends Controller
 {
@@ -49,12 +49,34 @@ class AccountingReports extends Controller
     public $exportManager;
 
     /**
+     * Return the basic data for this page.
      *
-     * Array of report grouping options
-     * non grouping report and group by account
-     * @var array
+     * @return array
      */
-    public $reportGrouping;
+    public function getPageData()
+    {
+        $pageData = parent::getPageData();
+        $pageData['menu'] = 'reports';
+        $pageData['title'] = 'accounting-reports';
+        $pageData['icon'] = 'fa-balance-scale';
+
+        return $pageData;
+    }
+
+    /**
+     * Return list of accounting documents
+     *
+     * @return array
+     */
+    public function getReports()
+    {
+        return [
+            'ledger' => ['description' => 'ledger', 'grouping' => true],
+            'balance-ammounts' => ['description' => 'balance-ammounts', 'grouping' => false],
+            'balance-sheet' => ['description' => 'balance-sheet', 'grouping' => false],
+            'profit' => ['description' => 'profit-and-loss-balance', 'grouping' => false],
+        ];
+    }
 
     /**
      * Runs the controller's private logic.
@@ -70,10 +92,6 @@ class AccountingReports extends Controller
         $ejercicioModel = new Ejercicio();
         $this->ejercicios = $ejercicioModel->all([], ['fechainicio' => 'DESC']);
         $this->exportManager = new ExportManager();
-        $this->reportGrouping = [
-                            'non-group'=>['description' => 'report-non-grouping-account'],
-                            'group'=>['description' => 'report-grouping-account']
-        ];
 
         $action = $this->request->get('action', '');
         if ($action !== '') {
@@ -84,35 +102,36 @@ class AccountingReports extends Controller
     /**
      * Execute main actions.
      * Filter bi date-from date-to format and grouping
+     * 
      * @param $action
      */
     private function execAction($action)
     {
         $pages = [];
-        $dateFrom = $this->request->get('date-from');
-        $dateTo = $this->request->get('date-to');
-        $format = $this->request->get('format');
-        $grouping = $this->request->get('grouping');
+        $dateFrom = $this->request->get('date-from', '');
+        $dateTo = $this->request->get('date-to', '');
+        $format = $this->request->get('format', '');
+        $params = ['grouping' => ('YES' == $this->request->get('grouping', 'YES'))];
 
         switch ($action) {
-            case 'libro-mayor':
+            case 'ledger':
                 $ledger = new Accounting\Ledger();
-                $pages = $ledger->generate($dateFrom, $dateTo, $grouping);
+                $pages = $ledger->generate($dateFrom, $dateTo, $params);
                 break;
 
-            case 'sumas-saldos':
+            case 'balance-ammounts':
                 $balanceAmmount = new Accounting\BalanceAmmounts();
-                $pages = $balanceAmmount->generate($dateFrom, $dateTo, $grouping);
+                $pages = $balanceAmmount->generate($dateFrom, $dateTo, $params);
                 break;
 
-            case 'situacion':
+            case 'balance-sheet':
                 $balanceSheet = new Accounting\BalanceSheet();
-                $pages = $balanceSheet->generate($dateFrom, $dateTo, $grouping);
+                $pages = $balanceSheet->generate($dateFrom, $dateTo, $params);
                 break;
 
-            case 'pyg':
-                $proffitAndLoss = new Accounting\ProffitAndLoss();
-                $pages = $proffitAndLoss->generate($dateFrom, $dateTo, $grouping);
+            case 'profit':
+                $profitAndLoss = new Accounting\ProfitAndLoss();
+                $pages = $profitAndLoss->generate($dateFrom, $dateTo, $params);
                 break;
         }
 
@@ -124,36 +143,6 @@ class AccountingReports extends Controller
 
         $this->setTemplate(false);
         $this->exportData($pages, $format);
-    }
-
-    /**
-     * Return list of accounting documents
-     *
-     * @return array
-     */
-    public function getReports()
-    {
-        return [
-            'libro-mayor' => 'ledger',
-            'sumas-saldos' => 'balance-ammounts',
-            'situacion' => 'balance-sheet',
-            'pyg' => 'profit-and-loss-balance',
-        ];
-    }
-
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'reports';
-        $pageData['title'] = 'accounting-reports';
-        $pageData['icon'] = 'fa-balance-scale';
-
-        return $pageData;
     }
 
     /**

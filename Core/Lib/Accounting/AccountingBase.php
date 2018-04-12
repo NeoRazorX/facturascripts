@@ -59,21 +59,14 @@ abstract class AccountingBase
     protected $dateTo;
 
     /**
-     * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
-     *
-     * @return array
+     * Generate the balance ammounts between two dates.
      */
-    abstract protected function getData();
+    abstract public function generate(string $dateFrom, string $dateTo, array $params = []);
 
     /**
-     * Generate the balance ammounts between two dates.
-     *
-     * @param string $dateFrom
-     * @param string $dateTo
-     *
-     * @return mixed
+     * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
      */
-    abstract public function generate($dateFrom, $dateTo, $grouping);
+    abstract protected function getData();
 
     /**
      * AccountingBase constructor.
