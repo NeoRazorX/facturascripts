@@ -86,7 +86,7 @@ class GridView extends BaseView
      * Configure autocomplete column with data to Grid component
      *
      * @param array $values
-     * 
+     *
      * @return array
      */
     private function getAutocompleteSource($values): array
@@ -107,7 +107,7 @@ class GridView extends BaseView
      * a value from the list of values
      *
      * @param array $values
-     * 
+     *
      * @return bool
      */
     private function getAutocompeteStrict($values): bool
@@ -119,7 +119,7 @@ class GridView extends BaseView
      * Return grid column configuration
      *
      * @param ColumnItem $column
-     * 
+     *
      * @return array
      */
     private function getItemForColumn($column): array
@@ -182,7 +182,6 @@ class GridView extends BaseView
 
     /**
      * Load the data in the cursor property, according to the where filter specified.
-     * Adds an empty row/model at the end of the loaded data.
      *
      * @param DataBaseWhere[] $where
      * @param array           $order
@@ -206,14 +205,13 @@ class GridView extends BaseView
      * Load data of master document and set data from array
      *
      * @param string $fieldPK
-     * @param array  $data
-     * 
+     * @param array $data
      * @return bool
      */
     private function loadDocumentDataFromArray($fieldPK, &$data): bool
     {
         if ($this->parentModel->loadFromCode($data[$fieldPK])) {    // old data
-            $this->parentModel->loadFromData($data);                // new data (the web form may not have all the fields)
+            $this->parentModel->loadFromData($data, ['action', 'active']);  // new data (the web form may not have all the fields)
             return $this->parentModel->test();
         }
         return false;
@@ -224,20 +222,22 @@ class GridView extends BaseView
      *
      * @param array $linesOld
      * @param array $linesNew
-     * 
+     *
      * @return bool
      */
     private function deleteLinesOld(&$linesOld, &$linesNew): bool
     {
-        $fieldPK = $this->model->primaryColumn();
-        $oldIDs = array_column($linesOld, $fieldPK);
-        $newIDs = array_column($linesNew, $fieldPK);
-        $deletedIDs = array_diff($oldIDs, $newIDs);
+        if (!empty($linesOld)) {
+            $fieldPK = $this->model->primaryColumn();
+            $oldIDs = array_column($linesOld, $fieldPK);
+            $newIDs = array_column($linesNew, $fieldPK);
+            $deletedIDs = array_diff($oldIDs, $newIDs);
 
-        foreach ($deletedIDs as $idKey) {
-            $this->model->{$fieldPK} = $idKey;
-            if (!$this->model->delete()) {
-                return false;
+            foreach ($deletedIDs as $idKey) {
+                $this->model->{$fieldPK} = $idKey;
+                if (!$this->model->delete()) {
+                    return false;
+                }
             }
         }
         return true;
@@ -299,5 +299,25 @@ class GridView extends BaseView
             }
             return $result;
         }
+    }
+
+    public function processFormLines(&$lines): array
+    {
+        $result = [];
+        $primaryKey = $this->model->primaryColumn();
+        foreach ($lines as $data) {
+            if (!isset($data[$primaryKey])) {
+                foreach ($this->pageOption->columns as $group) {
+                    foreach ($group->columns as $col) {
+                        if (!isset($data[$col->widget->fieldName])) {
+                            $data[$col->widget->fieldName] = null;   // TODO: maybe the widget can have a default value method instead of null
+                        }
+                    }
+                }
+            }
+            $result[] = $data;
+        }
+
+        return $result;
     }
 }

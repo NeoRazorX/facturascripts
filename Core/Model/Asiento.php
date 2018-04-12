@@ -229,22 +229,14 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
+     * @param array $where
      *
      * @return int
      */
-    public function newCode(string $field = ''): int
+    public function newCode(string $field = '', array $where = [])
     {
-        /// TODO: When the base function is corrected it will not be necessary to overwrite it
-        $where = [new DataBase\DataBaseWhere('codejercicio', $this->codejercicio)];
-        $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
-
-        $sql = 'SELECT MAX(numero) as cod FROM ' . static::tableName() . $sqlWhere;
-        $cod = self::$dataBase->select($sql);
-        if (empty($cod)) {
-            return 1;
-        }
-
-        return 1 + (int) $cod[0]['cod'];
+        $where[] = new DataBase\DataBaseWhere('codejercicio', $this->codejercicio);
+        return parent::newCode($field, $where);
     }
 
     /**

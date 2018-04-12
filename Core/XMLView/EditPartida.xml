@@ -59,7 +59,7 @@
 
     <rows>
         <row type="actions">
-            <button type="action" id="vat-register-btn" label="vat-register" color="info" action="VAT-Register" onclick="showVATRegister" hint="hint-vat-register" icon="fa-book" />
+            <button type="action" id="vat-register-btn" label="vat-register" color="info" action="VAT-Register" onclick="showVatRegister" hint="hint-vat-register" icon="fa-book" />
             <button type="action" label="clone" color="info" action="clone" hint="clone-account-entry" icon="fa-clone" />
             <button type="action" label="lock-unlock" color="warning" action="lock" hint="lock-unlock-account-entry" icon="fa-lock" />
         </row>

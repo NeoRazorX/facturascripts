@@ -63,6 +63,13 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
+     * Identifier of the special account.
+     *
+     * @var string
+     */
+    public $codcuentaesp;
+
+    /**
      * Identifier of the parent account
      *
      * @var integer

@@ -36,7 +36,10 @@
         <column name="description" order="120">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="parent-account" order="130">
+        <column name="id-account-special" order="130">
+            <widget type="text" fieldname="codcuentaesp" />
+        </column>
+        <column name="parent-account" order="140">
             <widget type="text" fieldname="parent_codcuenta" />
         </column>
     </columns>
