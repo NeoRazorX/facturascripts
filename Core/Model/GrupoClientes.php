@@ -38,13 +38,6 @@ class GrupoClientes extends Base\ModelClass
     public $codgrupo;
 
     /**
-     * Group name.
-     *
-     * @var string
-     */
-    public $nombre;
-
-    /**
      * Code of the associated rate, if any.
      *
      * @var string
@@ -52,13 +45,32 @@ class GrupoClientes extends Base\ModelClass
     public $codtarifa;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Group name.
+     *
+     * @var string
+     */
+    public $nombre;
+
+    /**
+     * Parent group.
+     *
+     * @var string
+     */
+    public $parent;
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
-    public static function tableName()
+    public function install()
     {
-        return 'gruposclientes';
+        /// As there is a key outside of tariffs, we have to check that table before
+        new Tarifa();
+
+        return '';
     }
 
     /**
@@ -82,6 +94,16 @@ class GrupoClientes extends Base\ModelClass
     }
 
     /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'gruposclientes';
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
      *
      * @return bool
@@ -90,22 +112,7 @@ class GrupoClientes extends Base\ModelClass
     {
         $this->nombre = Utils::noHtml($this->nombre);
 
-        return true;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// As there is a key outside of tariffs, we have to check that table before
-        new Tarifa();
-
-        return '';
+        return !$this->checkCircularRelation();
     }
 
     /**
@@ -116,8 +123,41 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCliente?active=List');
+    }
+
+    /**
+     * Check if exists a circular relation between groups.
+     *
+     * @return bool
+     */
+    private function checkCircularRelation()
+    {
+        if ($this->parent === null) {
+            return false;
+        }
+
+        if ($this->codgrupo === $this->parent) {
+            self::$miniLog->alert(self::$i18n->trans('parent-group-cant-be-the-same-group'));
+            return true;
+        }
+
+        $subgroups = [$this->codgrupo];
+        $group = $this->get($this->parent);
+        while ($group->parent !== null) {
+            if (in_array($group->parent, $subgroups)) {
+                self::$miniLog->alert(self::$i18n->trans('parent-group-loop', ['%parentGroup%' => $group->codgrupo]));
+                return true;
+            }
+
+            $subgroups[] = $group->parent;
+            if (!$group->loadFromCode($group->parent)) {
+                break;
+            }
+        }
+
+        return false;
     }
 }

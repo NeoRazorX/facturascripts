@@ -142,7 +142,7 @@ class AccountingPlanImport
                     new DataBaseWhere('codcuenta', $epigrafeElement['codgrupo'])
                 ];
                 $epigrafeGroup = new Model\Cuenta();
-                $epigrafeGroup->loadfromCode(NULL, $wherePadre);
+                $epigrafeGroup->loadfromCode('', $wherePadre);
 
                 if (empty($epigrafeGroup)) {
                     self::$miniLog->alert(self::$i18n->trans('epigrafe-group-error'));
@@ -182,7 +182,7 @@ class AccountingPlanImport
                     new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
                     new DataBaseWhere('codcuenta', $accountElement['codepigrafe'])
                 ];
-                $epigrafe->loadFromCode(NULL, $wherePadre);
+                $epigrafe->loadFromCode('', $wherePadre);
 
                 if (empty($epigrafe)) {
                     self::$miniLog->alert(self::$i18n->trans('epigrafe-error'));
@@ -222,7 +222,7 @@ class AccountingPlanImport
                     new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
                     new DataBaseWhere('codcuenta', $subaccountElement['codcuenta'])
                 ];
-                $account->loadFromCode(NULL, $whereAccount);
+                $account->loadFromCode('', $whereAccount);
 
                 if (empty($account)) {
                     self::$miniLog->alert(self::$i18n->trans('account-error'));

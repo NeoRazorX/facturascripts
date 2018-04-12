@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\ApiKey;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -57,6 +58,13 @@ class AppAPI extends App
         if ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
+
+            return false;
+        }
+
+        if (!$this->checkAuthToken()) {
+            $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $this->response->setContent(json_encode(['error' => 'AUTH-TOKEN-INVALID']));
 
             return false;
         }
@@ -175,16 +183,16 @@ class AppAPI extends App
 
             switch ($this->request->getMethod()) {
                 case 'POST':
-                    foreach($this->request->request->all() as $key => $value) {
+                    foreach ($this->request->request->all() as $key => $value) {
                         $model->{$key} = $value;
                     }
-                    if($model->save()) {
+                    if ($model->save()) {
                         $data = (array) $model;
                     } else {
                         $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
                         $data = [];
-                        foreach($this->miniLog->read() as $msg) {
+                        foreach ($this->miniLog->read() as $msg) {
                             $data['error'] = $msg;
                         }
                     }
@@ -222,16 +230,16 @@ class AppAPI extends App
             switch ($this->request->getMethod()) {
                 case 'PUT':
                     $model = $model->get($cod);
-                    foreach($this->request->request->all() as $key => $value) {
+                    foreach ($this->request->request->all() as $key => $value) {
                         $model->{$key} = $value;
                     }
-                    if($model->save()) {
+                    if ($model->save()) {
                         $data = $model;
                     } else {
                         $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
                         $data = [];
-                        foreach($this->miniLog->read() as $msg) {
+                        foreach ($this->miniLog->read() as $msg) {
                             $data['error'] = $msg;
                         }
                     }
@@ -302,5 +310,22 @@ class AppAPI extends App
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Returns true if the client is authenticated with the header token.
+     *
+     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
+     *
+     * @return boolean
+     */
+    private function checkAuthToken()
+    {
+        $token = $this->request->headers->get('Token');
+        if (null !== $token) {
+            return (new ApiKey())->checkAuthToken($token);
+        }
+
+        return FALSE;
     }
 }

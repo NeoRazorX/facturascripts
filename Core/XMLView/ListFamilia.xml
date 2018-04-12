@@ -31,7 +31,9 @@
             <widget type="text" fieldname="descripcion" />
         </column>
         <column name="parent" order="200">
-            <widget type="text" fieldname="madre" />
+            <widget type="select" fieldname="madre" onclick="EditFamilia">
+                <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+            </widget>
         </column>
     </columns>
 </view>

@@ -44,7 +44,6 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertEquals(AppSettings::get('default', 'codpago'), $model->codpago);
         $this->assertEquals(AppSettings::get('default', 'codserie'), $model->codserie);
         $this->assertEquals(date('d-m-Y'), $model->fecha);
-        $this->assertEquals(date('H:i:s'), $model->hora);
         $this->assertEquals(AppSettings::get('default', 'idempresa'), $model->idempresa);
         $this->assertEquals(0.0, $model->irpf);
         $this->assertEquals(0.0, $model->neto);

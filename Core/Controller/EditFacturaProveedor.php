@@ -54,7 +54,7 @@ class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
 
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
-        $this->addEditView($modelName, $viewName, 'invoice');
+        $this->addEditView($viewName, $modelName, 'invoice');
     }
 
     /**
@@ -70,16 +70,16 @@ class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
     /**
      * Load data view procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
-        if ($keyView === 'EditFacturaProveedor') {
+        if ($viewName === 'EditFacturaProveedor') {
             $idfactura = $this->getViewModelValue('Document', 'idfactura');
             $view->loadData($idfactura);
         }
 
-        parent::loadData($keyView, $view);
+        parent::loadData($viewName, $view);
     }
 }

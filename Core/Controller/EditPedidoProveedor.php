@@ -54,7 +54,7 @@ class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
 
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
-        $this->addEditView($modelName, $viewName, 'detail', 'fa-edit');
+        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
     }
 
     /**
@@ -70,16 +70,16 @@ class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
     /**
      * Load data view procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
-        if ($keyView === 'EditPedidoProveedor') {
+        if ($viewName === 'EditPedidoProveedor') {
             $idpedido = $this->getViewModelValue('Document', 'idpedido');
             $view->loadData($idpedido);
         }
 
-        parent::loadData($keyView, $view);
+        parent::loadData($viewName, $view);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,39 +30,6 @@ class EditBalance extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('Balance', 'EditBalance', 'balance');
-        $this->addEditListView('BalanceCuenta', 'EditBalanceCuenta', 'balance-account');
-        $this->addEditListView('BalanceCuentaA', 'EditBalanceCuentaA', 'balance-account-abreviated');
-    }
-
-    /**
-     * Load view data procedure
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        switch ($keyView) {
-            case 'EditBalance':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'EditBalanceCuenta':
-            case 'EditBalanceCuentaA':
-                $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
-                $where = [new DataBaseWhere('codbalance', $codbalance)];
-                $view->loadData(false, $where, [], 0, 0);
-                break;
-        }
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -76,5 +43,38 @@ class EditBalance extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('EditBalance', 'Balance', 'balance');
+        $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account');
+        $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditBalance':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'EditBalanceCuenta':
+            case 'EditBalanceCuentaA':
+                $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
+                $where = [new DataBaseWhere('codbalance', $codbalance)];
+                $view->loadData('', $where, [], 0, 0);
+                break;
+        }
     }
 }

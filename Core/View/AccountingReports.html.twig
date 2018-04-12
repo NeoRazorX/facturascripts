@@ -34,6 +34,7 @@
 
 {# -- Others Values -- #}
 {% set exportOptions = fsc.exportManager.options() %}
+{% set reportGrouping = fsc.reportGrouping %}
 {% set reports = fsc.getReports() %}
 
 {# -- Visual macros -- #}
@@ -104,22 +105,32 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <input type="text" name="date-from" value="{{ ejercicio.fechainicio }}" class="form-control datepicker" autocomplete="off"/>
                                         </div>
                                     </div>
 
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <input type="text" name="date-to" value="{{ ejercicio.fechafin }}" class="form-control datepicker" autocomplete="off"/>
                                         </div>
                                     </div>
 
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <select name="format" class="form-control">
                                                 {% for key, option in exportOptions %}
+                                                <option value="{{ key }}">{{ i18n.trans(option['description']) }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <select name="grouping" class="form-control">
+                                                {% for key, option in reportGrouping %}
                                                 <option value="{{ key }}">{{ i18n.trans(option['description']) }}</option>
                                                 {% endfor %}
                                             </select>

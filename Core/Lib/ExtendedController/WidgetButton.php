@@ -27,11 +27,18 @@ class WidgetButton implements VisualItemInterface
 {
 
     /**
-     * Type of button.
+     * Action for the button.
      *
      * @var string
      */
-    public $type;
+    public $action;
+
+    /**
+     * Color for the button.
+     *
+     * @var string
+     */
+    public $color;
 
     /**
      * Aditional code for the button.
@@ -48,11 +55,11 @@ class WidgetButton implements VisualItemInterface
     public $icon;
 
     /**
-     * JavaScritp action for the button.
+     * Unique ID for button
      *
      * @var string
      */
-    public $onClick;
+    public $id;
 
     /**
      * Label for the button.
@@ -62,69 +69,32 @@ class WidgetButton implements VisualItemInterface
     public $label;
 
     /**
-     * Action for the button.
+     * JavaScritp action for the button.
      *
      * @var string
      */
-    public $action;
+    public $onClick;
 
     /**
-     * Color for the button.
+     * Type of button.
      *
      * @var string
      */
-    public $color;
-
-    /**
-     * Unique ID for button
-     *
-     * @var string
-     */
-    public $id;
-
-    /**
-     * Create and load the structure of attributes from a XML file.
-     *
-     * @param \SimpleXMLElement $button
-     *
-     * @return WidgetButton
-     */
-    public static function newFromXML($button)
-    {
-        $widget = new self();
-        $widget->loadFromXML($button);
-
-        return $widget;
-    }
-
-    /**
-     * Create and load element structure from JSON file
-     *
-     * @param array $button
-     *
-     * @return WidgetButton
-     */
-    public static function newFromJSON($button)
-    {
-        $widget = new self();
-        $widget->loadFromJSON($button);
-
-        return $widget;
-    }
+    public $type;
 
     /**
      * WidgetButton constructor.
      */
     public function __construct()
     {
-        $this->type = 'action';
-        $this->label = '';
-        $this->icon = '';
         $this->action = '';
-        $this->onClick = '';
         $this->color = 'light';
         $this->hint = '';
+        $this->icon = '';
         $this->id = '';
+        $this->label = '';
+        $this->onClick = '';
+        $this->type = 'action';
     }
 
     /**
@@ -136,19 +106,71 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
-     * Return optional atribute value
+     * Generate the html code to visualize the visual element header
      *
-     * @param string $field
-     * @param mixed  $atributes
-     * 
+     * @param string $value
+     *
      * @return string
      */
-    private function getOptionalAtribute($field, &$atributes): string
+    public function getHeaderHTML($value)
     {
-        if (!empty($atributes->{$field})) {
-            return (string) $atributes->{$field};
-        }
         return '';
+    }
+
+    /**
+     * Returns the HTML code to show a popover with the received text.
+     *
+     * @param string $hint
+     *
+     * @return string
+     */
+    public function getHintHTML($hint)
+    {
+        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="'
+            . $hint . '" ';
+    }
+
+    /**
+     * Returns the HTML code to display a button
+     *
+     * @param string $label
+     * @param string $value
+     * @param string $hint
+     * @param string $class
+     *
+     * @return string
+     */
+    public function getHTML($label, $value = '', $hint = '', $class = 'col-sm-auto')
+    {
+        switch ($this->type) {
+            case 'calculate':
+                return $this->getCalculateHTML($label, $value, $hint);
+
+            case 'action':
+                return $this->getActionHTML($label, $hint, $value, $class);
+
+            case 'modal':
+                return $this->getModalHTML($label, $class);
+
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Loads the attributes structure from a JSON file
+     *
+     * @param array $button
+     */
+    public function loadFromJSON($button)
+    {
+        $this->type = (string) $button['type'];
+        $this->label = (string) $button['label'];
+        $this->icon = (string) $button['icon'];
+        $this->action = (string) $button['action'];
+        $this->hint = (string) $button['hint'];
+        $this->color = (string) $button['color'];
+        $this->onClick = (string) $button['onClick'];
     }
 
     /**
@@ -170,19 +192,74 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
-     * Loads the attributes structure from a JSON file
+     * Create and load element structure from JSON file
      *
      * @param array $button
+     *
+     * @return WidgetButton
      */
-    public function loadFromJSON($button)
+    public static function newFromJSON($button)
     {
-        $this->type = (string) $button['type'];
-        $this->label = (string) $button['label'];
-        $this->icon = (string) $button['icon'];
-        $this->action = (string) $button['action'];
-        $this->hint = (string) $button['hint'];
-        $this->color = (string) $button['color'];
-        $this->onClick = (string) $button['onClick'];
+        $widget = new self();
+        $widget->loadFromJSON($button);
+
+        return $widget;
+    }
+
+    /**
+     * Create and load the structure of attributes from a XML file.
+     *
+     * @param \SimpleXMLElement $button
+     *
+     * @return WidgetButton
+     */
+    public static function newFromXML($button)
+    {
+        $widget = new self();
+        $widget->loadFromXML($button);
+
+        return $widget;
+    }
+
+    /**
+     * Returns the HTML code to display an action button
+     *
+     * @param string $label
+     * @param string $hint
+     * @param string $formName
+     * @param string $class
+     *
+     * @return string
+     */
+    private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
+    {
+        $onclick = empty($this->onClick) ? 'execActionForm()' : $this->onClick;
+        $param = '\'' . $formName . '\',\'' . $this->action . '\'';
+
+        return '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
+            . $this->getIdHTML()
+            . $this->getOnClickHTML($onclick, $param) . $hint . '>'
+            . $this->getIconHTML()
+            . $label
+            . '</button>';
+    }
+
+    /**
+     * Returns the HTML code to display a statistic button
+     *
+     * @param string $label
+     * @param string $value
+     * @param string $hint
+     *
+     * @return string
+     */
+    private function getCalculateHTML($label, $value, $hint)
+    {
+        return '<button type="button" class="btn btn-' . $this->color . '" '
+            . $this->getIdHTML()
+            . $this->getOnClickHTML($this->onClick) . ' style="margin-right: 5px;" ' . $hint . '>'
+            . $this->getIconHTML()
+            . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
     }
 
     /**
@@ -203,6 +280,23 @@ class WidgetButton implements VisualItemInterface
     private function getIdHTML(): string
     {
         return empty($this->id) ? '' : ' id="' . $this->id . '" ';
+    }
+
+    /**
+     * Returns the HTML code to display a button that links to a modal form
+     *
+     * @param string $label
+     * @param string $class
+     *
+     * @return string
+     */
+    private function getModalHTML($label, $class = 'col-sm-auto')
+    {
+        return '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
+            . $this->getIdHTML()
+            . ' data-toggle="modal" data-target="#' . $this->action . '">'
+            . $this->getIconHTML() . $label
+            . '</button>';
     }
 
     /**
@@ -234,119 +328,15 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
-     * Returns the HTML code to display a statistic button
+     * Return optional atribute value
      *
-     * @param string $label
-     * @param string $value
-     * @param string $hint
-     *
+     * @param string $field
+     * @param mixed  $atributes
+     * 
      * @return string
      */
-    private function getCalculateHTML($label, $value, $hint)
+    private function getOptionalAtribute($field, &$atributes): string
     {
-        $html = '<button type="button" class="btn btn-' . $this->color . '" '
-            . $this->getIdHTML()
-            . $this->getOnClickHTML($this->onClick) . ' style="margin-right: 5px;" ' . $hint . '>'
-            . $this->getIconHTML()
-            . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
-
-        return $html;
-    }
-
-    /**
-     * Returns the HTML code to display an action button
-     *
-     * @param string $label
-     * @param string $hint
-     * @param string $formName
-     * @param string $class
-     *
-     * @return string
-     */
-    private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
-    {
-        $onclick = empty($this->onClick) ? 'execActionForm()' : $this->onClick;
-        $param = '\'' . $formName . '\',\'' . $this->action . '\'';
-
-        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
-            . $this->getIdHTML()
-            . $this->getOnClickHTML($onclick, $param) . $hint . '>'
-            . $this->getIconHTML()
-            . $label
-            . '</button>';
-
-        return $html;
-    }
-
-    /**
-     * Returns the HTML code to display a button that links to a modal form
-     *
-     * @param string $label
-     * @param string $class
-     *
-     * @return string
-     */
-    private function getModalHTML($label, $class = 'col-sm-auto')
-    {
-        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
-            . $this->getIdHTML()
-            . ' data-toggle="modal" data-target="#' . $this->action . '">'
-            . $this->getIconHTML()
-            . $label
-            . '</button>';
-
-        return $html;
-    }
-
-    /**
-     * Returns the HTML code to display a button
-     *
-     * @param string $label
-     * @param string $value
-     * @param string $hint
-     * @param string $class
-     *
-     * @return string
-     */
-    public function getHTML($label, $value = '', $hint = '', $class = 'col-sm-auto')
-    {
-        switch ($this->type) {
-            case 'calculate':
-                return $this->getCalculateHTML($label, $value, $hint);
-
-            case 'action':
-                return $this->getActionHTML($label, $hint, $value, $class);
-
-            case 'modal':
-                return $this->getModalHTML($label, $class);
-
-            default:
-                return '';
-        }
-    }
-
-    /**
-     * Generate the html code to visualize the visual element header
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getHeaderHTML($value)
-    {
-        return '';
-    }
-
-    /**
-     * Returns the HTML code to show a popover with the received text.
-     *
-     * @param string $hint
-     *
-     * @return string
-     */
-    public function getHintHTML($hint)
-    {
-        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="'
-            . $hint . '" ';
+        return empty($atributes->{$field}) ? '' : (string) $atributes->{$field};
     }
 }

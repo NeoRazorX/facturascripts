@@ -28,6 +28,7 @@ abstract class WidgetItem implements VisualItemInterface
 {
 
     /**
+     * To put the focus on the first editable input.
      *
      * @var bool
      */
@@ -117,12 +118,12 @@ abstract class WidgetItem implements VisualItemInterface
     {
         $this->fieldName = '';
         $this->hint = '';
-        $this->readOnly = false;
-        $this->required = false;
-        $this->maxLength = 0;
         $this->icon = null;
+        $this->maxLength = 0;
         $this->onClick = '';
         $this->options = [];
+        $this->readOnly = false;
+        $this->required = false;
     }
 
     /**
@@ -383,10 +384,8 @@ abstract class WidgetItem implements VisualItemInterface
 
         $text2 = empty($text) ? $value : $text;
         $style = $this->getTextOptionsHTML($value);
-        $html = empty($this->onClick) ? '<span' . $style . '>' . $text2 . '</span>' : '<a href="' . $this->onClick
+        return empty($this->onClick) ? '<span' . $style . '>' . $text2 . '</span>' : '<a href="' . $this->onClick
             . '?code=' . $value . '" ' . $style . '>' . $text2 . '</a>';
-
-        return $html;
     }
 
     /**

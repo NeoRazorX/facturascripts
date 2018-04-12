@@ -31,49 +31,6 @@ class EditArticulo extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addEditListView('Stock', 'EditStock', 'stock');
-        $this->addListView('ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-users');
-
-        /// Disable column
-        $this->views['ListArticuloProveedor']->disableColumn('reference', true);
-    }
-
-    /**
-     * Load view data procedure
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
-            unset($this->views['ListArticuloProveedor']);
-        }
-
-        $limit = FS_ITEM_LIMIT;
-        switch ($keyView) {
-            case 'EditArticulo':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'EditStock':
-                $limit = 0;
-                /// no break
-            case 'ListArticuloProveedor':
-                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
-                $where = [new DataBaseWhere('referencia', $referencia)];
-                $view->loadData(false, $where, [], 0, $limit);
-                break;
-        }
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -83,8 +40,52 @@ class EditArticulo extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'product';
         $pagedata['icon'] = 'fa-cube';
+        $pagedata['menu'] = 'warehouse';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('EditArticulo', 'Articulo', 'products', 'fa-cubes');
+        $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
+        $this->addListView('ListArticuloProveedor', 'ArticuloProveedor', 'suppliers', 'fa-users');
+
+        /// Disable column
+        $this->views['ListArticuloProveedor']->disableColumn('reference', true);
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
+            unset($this->views['ListArticuloProveedor']);
+        }
+
+        $limit = FS_ITEM_LIMIT;
+        switch ($viewName) {
+            case 'EditArticulo':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'EditStock':
+                $limit = 0;
+            /// no break
+            case 'ListArticuloProveedor':
+                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
+                $where = [new DataBaseWhere('referencia', $referencia)];
+                $view->loadData('', $where, [], 0, $limit);
+                break;
+        }
     }
 }

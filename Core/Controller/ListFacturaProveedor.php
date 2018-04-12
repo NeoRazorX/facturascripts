@@ -31,30 +31,6 @@ class ListFacturaProveedor extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaProveedor', 'ListFacturaProveedor');
-        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
-
-        $this->addFilterDatePicker('ListFacturaProveedor', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListFacturaProveedor', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'FacturaProveedor')];
-        $this->addFilterSelect('ListFacturaProveedor', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
-
-        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -67,5 +43,37 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListFacturaProveedor', 'FacturaProveedor');
+        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
+
+        $this->addFilterDatePicker('ListFacturaProveedor', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListFacturaProveedor', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'FacturaProveedor')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListFacturaProveedor', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
+        $this->addFilterCheckbox('ListFacturaProveedor', 'paid', 'paid', 'pagada');
+
+        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
     }
 }

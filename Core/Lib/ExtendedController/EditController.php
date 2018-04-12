@@ -33,21 +33,33 @@ abstract class EditController extends PanelController
     abstract public function getModelClassName();
 
     /**
-     * Starts all the objects and properties
+     * Starts all the objects and properties.
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
      * @param string          $className
+     * @param string          $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
         $this->setTabsPosition('bottom');
     }
 
     /**
-     * Create the view to display
+     * Pointer to the data model.
+     *
+     * @return mixed
+     */
+    public function getModel()
+    {
+        $viewName = array_keys($this->views)[0];
+        return $this->views[$viewName]->getModel();
+    }
+
+    /**
+     * Create the view to display.
      *
      * @return EditView
      */
@@ -57,29 +69,19 @@ abstract class EditController extends PanelController
         $viewName = 'Edit' . $this->getModelClassName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];
-        $this->addEditView($modelName, $viewName, $title, $viewIcon);
+        
+        $this->addEditView($viewName, $modelName, $title, $viewIcon);
     }
 
     /**
-     * Loads the data to display
+     * Loads the data to display.
      *
-     * @param string   $keyView
+     * @param string   $viewName
      * @param BaseView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
         $code = $this->request->get('code');
         $view->loadData($code);
-    }
-
-    /**
-     * Pointer to the data model
-     *
-     * @return mixed
-     */
-    public function getModel()
-    {
-        $viewKey = array_keys($this->views)[0];
-        return $this->views[$viewKey]->getModel();
     }
 }

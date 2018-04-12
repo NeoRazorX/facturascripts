@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBanco extends Base\BankAccount
 {
+
     use Base\ModelTrait;
 
     /**
@@ -34,16 +34,6 @@ class CuentaBanco extends Base\BankAccount
      * @var string
      */
     public $codsubcuenta;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'cuentasbanco';
-    }
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -56,6 +46,16 @@ class CuentaBanco extends Base\BankAccount
     }
 
     /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'cuentasbanco';
+    }
+
+    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type
@@ -63,7 +63,7 @@ class CuentaBanco extends Base\BankAccount
      *
      * @return string
      */
-    public function url($type = 'auto', $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListFormaPago?active=List');
     }

@@ -80,6 +80,13 @@
             <br/>
         </div>
         <div class="col-4">
+            <a href="{{ fsc.url() }}?gen=presupuestosprov" class="btn btn-block btn-info">
+                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-estimations') }}
+                <span class="badge badge-dark">{{ fsc.totalCounter['presupuestosprov'] }}</span>
+            </a>
+            <br/>
+        </div>
+        <div class="col-4">
             <a href="{{ fsc.url() }}?gen=pedidosprov" class="btn btn-block btn-info">
                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-orders') }}
                 <span class="badge badge-dark">{{ fsc.totalCounter['pedidosprov'] }}</span>

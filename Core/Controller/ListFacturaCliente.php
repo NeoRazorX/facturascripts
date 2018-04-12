@@ -31,31 +31,6 @@ class ListFacturaCliente extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaCliente', 'ListFacturaCliente');
-        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
-
-        $this->addFilterDatePicker('ListFacturaCliente', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListFacturaCliente', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'FacturaCliente')];
-        $this->addFilterSelect('ListFacturaCliente', 'idestado', 'estados_documentos', 'idestado', 'nombre', $where);
-
-        $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', 'codpago', 'descripcion');
-        $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'clientes', 'codcliente', 'nombre');
-        $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
-
-        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -68,5 +43,37 @@ class ListFacturaCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addView('ListFacturaCliente', 'FacturaCliente');
+        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
+
+        $this->addFilterDatePicker('ListFacturaCliente', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListFacturaCliente', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'FacturaCliente')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListFacturaCliente', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
+        $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
+
+        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
+        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
     }
 }

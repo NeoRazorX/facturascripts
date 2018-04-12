@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,29 +30,6 @@ class ListPais extends ExtendedController\ListController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        /// Countries
-        $this->addView('Pais', 'ListPais', 'countries', 'fa-globe');
-        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
-
-        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
-        $this->addOrderBy('ListPais', 'codpais', 'code');
-        $this->addOrderBy('ListPais', 'nombre', 'name');
-        $this->addOrderBy('ListPais', 'codiso', 'codiso');
-
-        /// States
-        $this->addView('Provincia', 'ListProvincia', 'province', 'fa-map-signs');
-        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
-
-        $this->addOrderBy('ListProvincia', 'provincia', 'province');
-        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
-        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -65,5 +42,28 @@ class ListPais extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        /// Countries
+        $this->addView('ListPais', 'Pais', 'countries', 'fa-globe');
+        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
+
+        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states', 'validarprov');
+        $this->addOrderBy('ListPais', 'codpais', 'code');
+        $this->addOrderBy('ListPais', 'nombre', 'name');
+        $this->addOrderBy('ListPais', 'codiso', 'codiso');
+
+        /// States
+        $this->addView('ListProvincia', 'Provincia', 'province', 'fa-map-signs');
+        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
+
+        $this->addOrderBy('ListProvincia', 'provincia', 'province');
+        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
+        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
     }
 }

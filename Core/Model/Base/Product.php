@@ -25,7 +25,7 @@ use FacturaScripts\Core\Model\Impuesto;
 /**
  * Description of Product
  *
- * @author carlos
+ * @author Carlos García Gómez
  */
 abstract class Product extends ModelClass
 {
@@ -125,7 +125,7 @@ abstract class Product extends ModelClass
      *
      * @return float|null
      */
-    public function getIva($reload = false)
+    public function getIva(bool $reload = false)
     {
         if ($reload) {
             $this->iva = null;
@@ -165,7 +165,7 @@ abstract class Product extends ModelClass
      *
      * @param string $codimpuesto
      */
-    public function setImpuesto($codimpuesto)
+    public function setImpuesto(string $codimpuesto)
     {
         if ($codimpuesto !== $this->codimpuesto) {
             $this->codimpuesto = $codimpuesto;

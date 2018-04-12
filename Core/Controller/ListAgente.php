@@ -49,16 +49,19 @@ class ListAgente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Agente', $className);
-        $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
+        $this->addView('ListAgente', 'Agente');
+        $this->addSearchFields('ListAgente', ['nombre', 'apellidos', 'codagente', 'email']);
 
-        $this->addOrderBy($className, 'codagente', 'code');
-        $this->addOrderBy($className, 'concat(nombre,apellidos)', 'name', 1);
-        $this->addOrderBy($className, 'provincia', 'province');
+        $this->addOrderBy('ListAgente', 'codagente', 'code');
+        $this->addOrderBy('ListAgente', 'concat(nombre,apellidos)', 'name', 1);
+        $this->addOrderBy('ListAgente', 'provincia', 'province');
 
-        $this->addFilterSelect($className, 'cargo', 'agentes', 'cargo', 'cargo');
-        $this->addFilterSelect($className, 'ciudad', 'agentes', 'ciudad', 'ciudad');
-        $this->addFilterCheckbox($className, 'debaja', 'suspended', 'debaja');
+        $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
+        $this->addFilterSelect('ListAgente', 'cargo', 'position', 'cargo', $selectValues);
+
+        $cityValues = $this->codeModel->all('agentes', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListAgente', 'ciudad', 'city', 'ciudad', $cityValues);
+
+        $this->addFilterCheckbox('ListAgente', 'debaja', 'suspended', 'debaja');
     }
 }

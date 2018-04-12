@@ -53,9 +53,9 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('Ejercicio', 'EditEjercicio', 'exercise');
-        $this->addListView('Cuenta', 'ListCuenta', 'accounts', 'fa-book');
-        $this->addListView('Subcuenta', 'ListSubcuenta', 'subaccount');
+        $this->addEditView('EditEjercicio', 'Ejercicio', 'exercise');
+        $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');
+        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccount');
 
         /// Disable columns
         $this->views['ListCuenta']->disableColumn('fiscal-exercise', true);
@@ -65,15 +65,15 @@ class EditEjercicio extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
         $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
         $where = [new DataBaseWhere('codejercicio', $codejercicio)];
 
-        switch ($keyView) {
+        switch ($viewName) {
             case 'EditEjercicio':
                 $code = $this->request->get('code');
                 $view->loadData($code);
@@ -92,10 +92,9 @@ class EditEjercicio extends ExtendedController\PanelController
     /**
      * Run the controller after actions
      *
-     * @param ExtendedController\EditView $view
      * @param string $action
      */
-    protected function execAfterAction($view, $action)
+    protected function execAfterAction($action)
     {
         switch ($action) {
             case 'import-accounting':
@@ -103,7 +102,7 @@ class EditEjercicio extends ExtendedController\PanelController
                 break;
 
             default:
-                parent::execAfterAction($view, $action);
+                parent::execAfterAction($action);
         }
     }
 

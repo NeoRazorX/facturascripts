@@ -86,6 +86,6 @@ class AssetManager
         $buffer = str_replace(': ', ':', $buffer);
         
         // Remove whitespace
-        return str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+        return str_replace(["\r\n", "\r", "\n", "\t", '  ', '    ', '    '], '', $buffer);
     }
 }

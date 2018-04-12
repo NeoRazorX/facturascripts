@@ -82,7 +82,7 @@ class ExportManager
     /**
      * Create a new doc and set headers.
      *
-     * @param string   $option
+     * @param string $option
      */
     public function newDoc($option)
     {

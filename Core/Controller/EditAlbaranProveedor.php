@@ -54,7 +54,7 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
 
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
-        $this->addEditView($modelName, $viewName, 'detail');
+        $this->addEditView($viewName, $modelName, 'detail');
     }
 
     /**
@@ -70,16 +70,16 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
     /**
      * Load data view procedure
      *
-     * @param string                      $keyView
+     * @param string                      $viewName
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
+    protected function loadData($viewName, $view)
     {
-        if ($keyView === 'EditAlbaranProveedor') {
+        if ($viewName === 'EditAlbaranProveedor') {
             $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
             $view->loadData($idalbaran);
         }
 
-        parent::loadData($keyView, $view);
+        parent::loadData($viewName, $view);
     }
 }

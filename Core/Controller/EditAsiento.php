@@ -35,49 +35,39 @@ class EditAsiento extends ExtendedController\PanelController
 {
 
     /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData(): array
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounting-entries';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-balance-scale';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
-        $this->addEditView('Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
-        $this->addGridView('EditAsiento', 'Partida', 'EditPartida', 'accounting-items');
+        $this->addEditView('EditAsiento', 'Asiento', 'accounting-entry', 'fa-balance-scale');
+        $this->addGridView('EditPartida', 'EditAsiento', 'Partida', 'accounting-items');
         $this->setTemplate('EditAsiento');
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\BaseView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        switch ($keyView) {
-            case 'EditAsiento':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'EditPartida':
-                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
-                if (!empty($idasiento)) {
-                    $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $orderby = ['idpartida' => 'ASC'];
-                    $view->loadData($where, $orderby);
-                }
-                break;
-        }
     }
 
     /**
      * Run the actions that alter data before reading it
      *
-     * @param BaseView $view
      * @param string   $action
      *
      * @return bool
      */
-    protected function execPreviousAction($view, $action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'recalculate-document':
@@ -105,24 +95,8 @@ class EditAsiento extends ExtendedController\PanelController
                 return true; // TODO: Uncomplete
 
             default:
-                return parent::execPreviousAction($view, $action);
+                return parent::execPreviousAction($action);
         }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData(): array
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entries';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-balance-scale';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 
     /**
@@ -300,7 +274,6 @@ class EditAsiento extends ExtendedController\PanelController
                     $this->searchVatDataFromSupplier($codeSubAccount, $result);
                     break;
             }
-
         }
         return $result;
     }
@@ -364,5 +337,50 @@ class EditAsiento extends ExtendedController\PanelController
         }
 
         return $result;
+    }
+
+    /**
+     * Returns VAT data for an id VAT
+     *
+     * @param string $idVAT
+     * @return array
+     */
+    private function getVATDetaill($idVAT): array
+    {
+        $result = [];
+        if (!empty($idVAT)) {
+            $vat = new Model\Impuesto();
+            if ($vat->loadFromCode($idVAT)) {
+                $result['vat'] = $vat->iva;
+                $result['surcharge'] = $vat->recargo;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Load data view procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditAsiento':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'EditPartida':
+                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
+                if (!empty($idasiento)) {
+                    $where = [new DataBaseWhere('idasiento', $idasiento)];
+                    $orderby = ['idpartida' => 'ASC'];
+                    $view->loadData($where, $orderby);
+                }
+                break;
+        }
     }
 }

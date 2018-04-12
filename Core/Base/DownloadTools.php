@@ -51,12 +51,6 @@ class DownloadTools
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
             }
 
-            /**
-             * In some cases is necesary to disable some flags.
-             */
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
             $data = curl_exec($ch);
             $info = curl_getinfo($ch);
             if ($info['http_code'] == 200) {
@@ -100,7 +94,7 @@ class DownloadTools
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($http_code == 301 || $http_code == 302) {
             list($header) = explode("\r\n\r\n", $data, 2);
-            $matches = array();
+            $matches = [];
             preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
             $url = trim(str_replace($matches[1], "", $matches[0]));
             $url_parsed = parse_url($url);

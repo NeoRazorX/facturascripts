@@ -99,14 +99,17 @@ class WidgetItemSelect extends WidgetItem
             return '';
         }
 
+        $txt = $value;
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)
             if ($option['value'] == $value) {
-                return '<span>' . $option['title'] . '</span>';
+                $txt = $option['title'];
+                break;
             }
         }
 
-        return '<span>' . $value . '</span>';
+        return empty($this->onClick) ? '<span>' . $txt . '</span>' : '<a href="' . $this->onClick
+            . '?code=' . $value . '">' . $txt . '</a>';
     }
 
     /**

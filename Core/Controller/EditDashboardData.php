@@ -33,6 +33,51 @@ class EditDashboardData extends ExtendedController\EditController
 {
 
     /**
+     * Returns the configuration property value for a specified $field
+     *
+     * @param mixed  $model
+     * @param string $field
+     *
+     * @return mixed
+     */
+    public function getFieldValue($model, $field)
+    {
+        if (isset($model->{$field})) {
+            return $model->{$field};
+        }
+
+        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
+            return $model->properties[$field];
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'DashboardData';
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'dashboard-card';
+        $pagedata['menu'] = 'reports';
+        $pagedata['icon'] = 'fa-dashboard';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response                   $response
@@ -48,6 +93,25 @@ class EditDashboardData extends ExtendedController\EditController
     }
 
     /**
+     * Run the data edits
+     *
+     * @return bool
+     */
+    protected function editAction()
+    {
+        $model = $this->views[$this->active]->getModel();
+        $properties = array_keys($this->getPropertiesFields());
+        $fields = array_keys($model->properties);
+        foreach ($fields as $key) {
+            if (!in_array($key, $properties, false)) {
+                unset($model->properties[$key]);
+            }
+        }
+
+        return parent::editAction();
+    }
+
+    /**
      * Return the propierties fields.
      *
      * @return mixed
@@ -55,7 +119,7 @@ class EditDashboardData extends ExtendedController\EditController
     private function getPropertiesFields()
     {
         $model = $this->getModel();
-        $component = 'FacturaScripts\\Core\\Lib\\Dashboard\\'
+        $component = 'FacturaScripts\\Dinamic\\Lib\\Dashboard\\'
             . $model->component
             . DashboardLib\BaseComponent::SUFIX_COMPONENTS;
 
@@ -90,72 +154,5 @@ class EditDashboardData extends ExtendedController\EditController
                 $model->properties[$key] = $value;
             }
         }
-    }
-
-    /**
-     * Run the data edits
-     *
-     * @param BaseView $view
-     *
-     * @return bool
-     */
-    protected function editAction($view)
-    {
-        $model = $view->getModel();
-        $properties = array_keys($this->getPropertiesFields());
-        $fields = array_keys($model->properties);
-        foreach ($fields as $key) {
-            if (!in_array($key, $properties, false)) {
-                unset($model->properties[$key]);
-            }
-        }
-
-        return parent::editAction($view);
-    }
-
-    /**
-     * Returns the model name
-     */
-    public function getModelClassName()
-    {
-        return 'DashboardData';
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'dashboard-card';
-        $pagedata['menu'] = 'reports';
-        $pagedata['icon'] = 'fa-dashboard';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
-    }
-
-    /**
-     * Returns the configuration property value for a specified $field
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        $value = parent::getFieldValue($model, $field);
-        if (isset($value)) {
-            return $value;
-        }
-
-        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
-            return $model->properties[$field];
-        }
-
-        return null;
     }
 }

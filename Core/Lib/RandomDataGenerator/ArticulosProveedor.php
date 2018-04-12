@@ -47,8 +47,11 @@ class ArticulosProveedor extends AbstractRandom
     {
         $this->shuffle($articulos, new Model\Articulo());
         $this->shuffle($proveedores, new Model\Proveedor());
+        if(empty($proveedores)) {
+            return 0;
+        }
+        
         $art = $this->model;
-
         for ($generated = 0; $generated < $num; ++$generated) {
             if (!isset($articulos[$generated])) {
                 break;

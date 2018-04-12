@@ -27,13 +27,13 @@
         <column name="id" display="none" order="90">
             <widget type="text" fieldname="idasiento" onclick="EditAsiento" />
         </column>
-        <column name="number" display="left" order="90">
+        <column name="number" order="90">
             <widget type="text" fieldname="numero" />
         </column>
-        <column name="fiscal-exercise" display="left" order="100">
+        <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column name="accounting-concept" display="left" order="100">
+        <column name="accounting-concept" order="100">
             <widget type="text" fieldname="concepto" />
         </column>
         <column name="amount" display="right" order="100">

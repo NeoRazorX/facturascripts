@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,39 +32,6 @@ class EditSubcuenta extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('Subcuenta', 'EditSubcuenta', 'subaccount');
-        $this->addListView('Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
-        $this->setTabsPosition('bottom');
-    }
-
-    /**
-     * Load view data procedure
-     *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        switch ($keyView) {
-            case 'EditSubcuenta':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'ListAsiento':
-                $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
-                $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
-                $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
-                $view->loadData(false, $where);
-                break;
-        }
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -78,5 +45,38 @@ class EditSubcuenta extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('EditSubcuenta', 'Subcuenta', 'subaccount');
+        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fa-balance-scale');
+        $this->setTabsPosition('bottom');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditSubcuenta':
+                $code = $this->request->get('code');
+                $view->loadData($code);
+                break;
+
+            case 'ListAsiento':
+                $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
+                $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
+                $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
+                $view->loadData('', $where);
+                break;
+        }
     }
 }

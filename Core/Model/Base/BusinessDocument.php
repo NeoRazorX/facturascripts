@@ -145,19 +145,19 @@ abstract class BusinessDocument extends ModelClass
     public $irpf;
 
     /**
+     * Sum of the pvptotal of lines. Total of the document before taxes.
+     *
+     * @var float|int
+     */
+    public $neto;
+
+    /**
      * Number of the document.
      * Unique within the series + exercise.
      *
      * @var string
      */
     public $numero;
-
-    /**
-     * Sum of the pvptotal of lines. Total of the document before taxes.
-     *
-     * @var float|int
-     */
-    public $neto;
 
     /**
      * Notes of the document.
@@ -238,7 +238,11 @@ abstract class BusinessDocument extends ModelClass
      */
     abstract public function setSubject($subjects);
 
-    public function __construct($data = [])
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->idestadoAnt = $this->idestado;
@@ -327,7 +331,7 @@ abstract class BusinessDocument extends ModelClass
         return '';
     }
 
-    public function loadFromCode($cod, $where = null, $orderby = [])
+    public function loadFromCode($cod, $where = null, array $orderby = [])
     {
         if (parent::loadFromCode($cod, $where, $orderby)) {
             $this->idestadoAnt = $this->idestado;
@@ -335,25 +339,6 @@ abstract class BusinessDocument extends ModelClass
         }
 
         return false;
-    }
-
-    /**
-     * Generates a new code.
-     */
-    private function newCodigo()
-    {
-        $this->numero = '1';
-
-        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
-            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
-            . " AND codserie = " . self::$dataBase->var2str($this->codserie) . ";";
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            $this->numero = (string) (1 + (int) $data[0]['num']);
-        }
-
-        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
     }
 
     /**
@@ -390,8 +375,10 @@ abstract class BusinessDocument extends ModelClass
      * 
      * @param string $date
      * @param string $hour
+     * 
+     * @return bool
      */
-    public function setDate(string $date, string $hour)
+    public function setDate(string $date, string $hour): bool
     {
         $ejercicioModel = new Ejercicio();
         $ejercicio = $ejercicioModel->getByFecha($date);
@@ -399,7 +386,10 @@ abstract class BusinessDocument extends ModelClass
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             $this->hora = $hour;
+            return true;
         }
+        
+        return false;
     }
 
     /**
@@ -452,5 +442,24 @@ abstract class BusinessDocument extends ModelClass
 
         $this->idestadoAnt = $this->idestado;
         return true;
+    }
+
+    /**
+     * Generates a new code.
+     */
+    private function newCodigo()
+    {
+        $this->numero = '1';
+
+        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
+            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
+            . " AND codserie = " . self::$dataBase->var2str($this->codserie) . ";";
+
+        $data = self::$dataBase->select($sql);
+        if (!empty($data)) {
+            $this->numero = (string) (1 + (int) $data[0]['num']);
+        }
+
+        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
     }
 }

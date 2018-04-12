@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,12 +49,11 @@ class ListDivisa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('Divisa', $className);
-        $this->addSearchFields($className, ['descripcion', 'coddivisa']);
+        $this->addView('ListDivisa', 'Divisa');
+        $this->addSearchFields('ListDivisa', ['descripcion', 'coddivisa']);
 
-        $this->addOrderBy($className, 'coddivisa', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description', 1);
-        $this->addOrderBy($className, 'codiso', 'codiso');
+        $this->addOrderBy('ListDivisa', 'coddivisa', 'code');
+        $this->addOrderBy('ListDivisa', 'descripcion', 'description', 1);
+        $this->addOrderBy('ListDivisa', 'codiso', 'codiso');
     }
 }
