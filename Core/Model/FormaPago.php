@@ -112,7 +112,7 @@ class FormaPago extends Base\ModelClass
         $this->codcuenta = '';
         $this->domiciliado = false;
         $this->imprimir = true;
-        $this->vencimiento = '+1day';
+        $this->vencimiento = '+1 day';
     }
 
     /**
