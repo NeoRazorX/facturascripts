@@ -178,7 +178,6 @@ class GridView extends BaseView
 
     /**
      * Load the data in the cursor property, according to the where filter specified.
-     * Adds an empty row/model at the end of the loaded data.
      *
      * @param DataBaseWhere[] $where
      * @param array           $order
@@ -201,14 +200,14 @@ class GridView extends BaseView
     /**
      * Load data of master document and set data from array
      *
-     * @param ModelClass $model
+     * @param string $fieldPK
      * @param array $data
      * @return bool
      */
     private function loadDocumentDataFromArray($fieldPK, &$data): bool
     {
         if ($this->parentModel->loadFromCode($data[$fieldPK])) {    // old data
-            $this->parentModel->loadFromData($data);                // new data (the web form may not have all the fields)
+            $this->parentModel->loadFromData($data, ['action', 'active']);  // new data (the web form may not have all the fields)
             return $this->parentModel->test();
         }
         return false;
@@ -238,7 +237,7 @@ class GridView extends BaseView
         return true;
     }
 
-    public function saveData($data):array
+    public function saveData($data): array
     {
         $result = [
             'error' => false,
@@ -296,5 +295,25 @@ class GridView extends BaseView
             }
             return $result;
         }
+    }
+
+    public function processFormLines(&$lines): array
+    {
+        $result = [];
+        $primaryKey = $this->model->primaryColumn();
+        foreach ($lines as $data) {
+            if (!isset($data[$primaryKey])) {
+                foreach ($this->pageOption->columns as $group) {
+                    foreach ($group->columns as $col) {
+                        if (!isset($data[$col->widget->fieldName])) {
+                            $data[$col->widget->fieldName] = null;   // TODO: maybe the widget can have a default value method instead of null
+                        }
+                    }
+                }
+            }
+            $result[] = $data;
+        }
+
+        return $result;
     }
 }
