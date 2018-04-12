@@ -85,9 +85,6 @@ class EditAsiento extends ExtendedController\PanelController
                 $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                 return false;
 
-            case 'delete-document':
-                return true; // TODO: Uncomplete
-
             case 'clone':
                 return true; // TODO: Uncomplete
 

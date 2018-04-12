@@ -404,6 +404,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'delete':
+            case 'delete-document':
                 $this->deleteAction();
                 break;
 
