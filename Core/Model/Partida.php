@@ -449,7 +449,6 @@ class Partida extends Base\ModelClass
             if (!parent::delete()) {
                 return false;
             }
-
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
             self::$dataBase->rollback();
