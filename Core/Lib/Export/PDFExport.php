@@ -307,7 +307,7 @@ class PDFExport implements ExportInterface
      *
      * @param string $orientation
      */
-    private function newPage($orientation = 'portrait')
+    protected function newPage($orientation = 'portrait')
     {
         if ($this->pdf === null) {
             $this->pdf = new \Cezpdf('a4', $orientation);

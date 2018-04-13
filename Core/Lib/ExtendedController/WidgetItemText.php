@@ -50,12 +50,12 @@ class WidgetItemText extends WidgetItem
 
         switch ($this->type) {
             case 'bbcode':
-                $html = '<textarea name="' . $this->fieldName . '" class="form-control bbcode" rows="10" '
+                $html = '<textarea name="' . $this->fieldName . '" class="bbcode" rows="10" '
                     . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 
             case 'html':
-                $html = '<textarea name="' . $this->fieldName . '" class="form-control htmleditor" rows="10" '
+                $html = '<textarea name="' . $this->fieldName . '" class="htmleditor" rows="10" '
                     . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 
