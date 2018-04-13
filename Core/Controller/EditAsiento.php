@@ -74,7 +74,7 @@ class EditAsiento extends ExtendedController\PanelController
                 $this->setTemplate(false);
                 $data = $this->request->request->all();
                 $result = $this->recalculateDocument($data);
-                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                $this->response->setContent(json_encode($result));
                 return false;
 
             case 'account-data':
@@ -82,7 +82,7 @@ class EditAsiento extends ExtendedController\PanelController
                 $subaccount = $this->request->get('codsubcuenta', '');
                 $exercise = $this->request->get('codejercicio', '');
                 $result = $this->getAccountData($exercise, $subaccount);
-                $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
+                $this->response->setContent(json_encode($result));
                 return false;
 
             case 'clone':

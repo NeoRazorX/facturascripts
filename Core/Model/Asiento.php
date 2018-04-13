@@ -161,9 +161,10 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
         }
         unset($regularization);
 
-        /// We keep the list of accounting items for subsequent operations
+        /// We keep the list of accounting items and date for subsequent operations
         $linesModel = new Partida();
         $lines = $linesModel->all([new DataBase\DataBaseWhere('idasiento', $this->idasiento)]);
+        $date = $this->fecha;
 
         /// Run main delete action
         $inTransaction = self::$dataBase->inTransaction();
@@ -172,7 +173,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
                 self::$dataBase->beginTransaction();
             }
 
-            /// delete accounting entry and detail entries
+            /// delete accounting entry and detail entries via FK
             if (!parent::delete()) {
                 return false;
             }
@@ -181,7 +182,9 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
             $account = new Subcuenta();
             foreach ($lines as $row) {
                 $account->idsubcuenta = $row->idsubcuenta;
-                $account->updateBalance($this->fecha, ($row->debe * -1), ($row->haber * -1));
+                if (!$account->updateBalance($date, ($row->debe * -1), ($row->haber * -1))) {
+                    return false;
+                }
             }
 
             /// save transaction
