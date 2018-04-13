@@ -330,16 +330,119 @@ class Partida extends Base\ModelClass
     }
 
     /**
+     * Get accounting date
+     *
+     * @return string
+     */
+    private function getAccountingDate(): string
+    {
+        $accounting = new Asiento();
+        $accounting->loadFromCode($this->idasiento);
+        return $accounting->fecha;
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $date = $this->getAccountingDate();
+        $account = new Subcuenta();
+        $account->idsubcuenta = $this->idsubcuenta;
+
+        $inTransaction = self::$dataBase->inTransaction();
+        try {
+            if ($inTransaction === false) {
+                self::$dataBase->beginTransaction();
+            }
+
+            /// main insert
+            if (!parent::saveInsert($values)) {
+                return false;
+            }
+
+            /// update account balance
+            if (!$account->updateBalance($date, $this->debe, $this->haber)) {
+                return false;
+            }
+        } catch (\Exception $e) {
+            self::$miniLog->error($e->getMessage());
+            self::$dataBase->rollback();
+            return false;
+        } finally {
+            if (!$inTransaction && self::$dataBase->inTransaction()) {
+                self::$dataBase->rollback();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected function saveUpdate(array $values = array())
+    {
+        // Search for the difference in the amounts
+        $entry = new Partida();
+        $entry->loadFromCode($this->idpartida);
+        $debit = (isset($values['debe']) ? $values['debe'] : $this->debe) - $entry->debe;
+        $credit = (isset($values['haber']) ? $values['haber'] : $this->haber) - $entry->haber;
+
+        // Get data to update balance
+        $date = $this->getAccountingDate();
+        $account = new Subcuenta();
+        $account->idsubcuenta = $this->idsubcuenta;
+
+        $inTransaction = self::$dataBase->inTransaction();
+        try {
+            if ($inTransaction === false) {
+                self::$dataBase->beginTransaction();
+            }
+
+            /// main update
+            if (!parent::saveUpdate($values)) {
+                return false;
+            }
+
+            /// update account balance
+            if (!$account->updateBalance($date, $debit, $credit)) {
+                return false;
+            }
+        } catch (\Exception $e) {
+            self::$miniLog->error($e->getMessage());
+            self::$dataBase->rollback();
+            return false;
+        } finally {
+            if (!$inTransaction && self::$dataBase->inTransaction()) {
+                self::$dataBase->rollback();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Deletes the data from the database record.
      *
      * @return bool
      */
     public function delete()
     {
+        $date = $this->getAccountingDate();
+        $account = new Subcuenta();
+        $account->idsubcuenta = $this->idsubcuenta;
+
         $inTransaction = self::$dataBase->inTransaction();
         try {
             if ($inTransaction === false) {
                 self::$dataBase->beginTransaction();
+            }
+
+            /// update account balance
+            if (!$account->updateBalance($date, ($this->debe * -1), ($this->haber * -1))) {
+                return false;
             }
 
             /// main delete
@@ -347,15 +450,6 @@ class Partida extends Base\ModelClass
                 return false;
             }
 
-            /// update account balance
-            if (!empty($this->idasiento)) {
-                $accounting = new Asiento();
-                $accounting->loadFromCode($this->idasiento);
-
-                $account = new Subcuenta();
-                $account->idsubcuenta = $this->idsubcuenta;
-                $account->updateBalance($accounting->fecha, ($this->debe * -1), ($this->haber * -1));
-            }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
             self::$dataBase->rollback();

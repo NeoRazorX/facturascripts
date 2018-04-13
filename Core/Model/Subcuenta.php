@@ -243,7 +243,7 @@ class Subcuenta extends Base\ModelClass
      * @param float $credit
      * @return bool
      */
-    public function updateBalance($date, $debit, $credit): bool
+    public function updateBalance(string $date, float $debit, float $credit): bool
     {
         $balance = $debit - $credit;
         $month = (int) date("n", strtotime($date));
