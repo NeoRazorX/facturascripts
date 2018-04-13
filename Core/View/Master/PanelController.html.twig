@@ -60,7 +60,7 @@
                 }
             });
         }
-        function execActionForm(formName, actionValue) {
+        function execActionForm(actionValue, formName) {
             var form = document.forms[formName];
             form.action.value = actionValue;
             form.submit();
