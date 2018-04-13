@@ -1268,5 +1268,14 @@
     "pct-vat": "% Impuesto",
     "pct-surcharge": "% Recargo",
     "report-non-grouping-account": "No agrupar por cuentas",
-    "report-grouping-account": "Agrupar por cuentas"
+    "report-grouping-account": "Agrupar por cuentas",
+    "controller-error": "Error de Controlador",
+    "generated-supplier-estimations": "%quantity% estimaciones de proveedores generados.",
+    "supplier-estimations": "Estimaciones de proveedores",
+    "api-keys": "API Keys",
+    "api-key": "API key",
+    "created": "Creado",
+    "parent-group": "Grupo Padre",
+    "parent-group-cant-be-the-same-group": "El Grupo Padre no puede ser el mismo grupo",
+    "parent-group-loop": "El Grupo Padre %parentGroup% está causando una relación circular."
 }

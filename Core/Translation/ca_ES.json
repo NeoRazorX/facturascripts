@@ -1176,5 +1176,16 @@
     "desc-vat-id": "Identificador fiscal",
     "tax-base": "Base imposable",
     "pct-vat": "% Impost",
-    "pct-surcharge": "% Recàrrec"
+    "pct-surcharge": "% Recàrrec",
+    "controller-error": "Error de controlador",
+    "generated-supplier-estimations": "%quantity% estimacions de proveïdors generats.",
+    "supplier-estimations": "Estimacions del proveïdor",
+    "api-keys": "API Keys",
+    "api-key": "API key",
+    "created": "Creat",
+    "parent-group": "Grup Pare",
+    "parent-group-cant-be-the-same-group": "El Grup Pare no pot ser el mateix grup",
+    "parent-group-loop": "Grup pare %parentGroup% està causant relació circular.",
+    "report-non-grouping-account": "No agrupar per comptes",
+    "report-grouping-account": "Agrupa per comptes"
 }
