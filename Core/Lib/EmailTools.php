@@ -49,80 +49,6 @@ class EmailTools
     }
 
     /**
-     * Reload all email settings properties.
-     */
-    public function reloadConfig()
-    {
-        $settingsModel = new Settings();
-        $emailSettings = $settingsModel->get('email');
-        if ($emailSettings) {
-            self::$settings = $emailSettings->properties;
-        }
-    }
-
-    /**
-     * Create new PHPMailer connection with stored settings.
-     *
-     * @return PHPMailer
-     */
-    public function newMail()
-    {
-        $mail = new PHPMailer();
-        $mail->CharSet = 'UTF-8';
-        $mail->WordWrap = 50;
-        $mail->Mailer = self::$settings['mailer'];
-        $mail->SMTPAuth = true;
-        $mail->SMTPSecure = self::$settings['enc'];
-        $mail->Host = self::$settings['host'];
-        $mail->Port = self::$settings['port'];
-
-        $mail->Username = self::$settings['email'];
-        if (self::$settings['user']) {
-            $mail->Username = self::$settings['user'];
-        }
-
-        $mail->Password = self::$settings['password'];
-
-        return $mail;
-    }
-
-    /**
-     * Send an email, returns True on success, False on failure.
-     *
-     * @param PHPMailer $mail
-     *
-     * @return bool
-     */
-    public function send($mail)
-    {
-        if ($mail->smtpConnect($this->smtpOptions()) && $mail->send()) {
-            return true;
-        }
-
-        $i18n = new i18n();
-        $miniLog = new MiniLog();
-        $miniLog->alert($i18n->trans('email-error', ['%errorInfo%' => $mail->ErrorInfo]));
-
-        return false;
-    }
-
-    /**
-     * Test the PHPMailer connection. Return the result of the connection.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (self::$settings['mailer'] === 'smtp') {
-            $mail = $this->newMail();
-
-            return $mail->smtpConnect($this->smtpOptions());
-        }
-
-        return true;
-    }
-
-    /**
      * Returns the HTML code for the email.
      *
      * @param string $companyName
@@ -149,6 +75,85 @@ class EmailTools
         ];
 
         return str_replace($search, $replace, $html);
+    }
+
+    /**
+     * Create new PHPMailer connection with stored settings.
+     *
+     * @return PHPMailer
+     */
+    public function newMail()
+    {
+        $mail = new PHPMailer();
+        $mail->CharSet = 'UTF-8';
+        $mail->WordWrap = 50;
+        $mail->Mailer = $this->getSetting('mailer');
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = $this->getSetting('enc');
+        $mail->Host = $this->getSetting('host');
+        $mail->Port = $this->getSetting('port');
+        $mail->Username = $this->getSetting('user') ? $this->getSetting('user') : $this->getSetting('email');
+        $mail->Password = $this->getSetting('password');
+        $mail->setFrom($this->getSetting('email'));
+
+        return $mail;
+    }
+
+    /**
+     * Reload all email settings properties.
+     */
+    public function reloadConfig()
+    {
+        $settingsModel = new Settings();
+        $emailSettings = $settingsModel->get('email');
+        if ($emailSettings) {
+            self::$settings = $emailSettings->properties;
+        }
+    }
+
+    /**
+     * Send an email, returns True on success, False on failure.
+     *
+     * @param PHPMailer $mail
+     *
+     * @return bool
+     */
+    public function send($mail)
+    {
+        if (null === $this->getSetting('host')) {
+            return false;
+        }
+
+        if ($mail->smtpConnect($this->smtpOptions()) && $mail->send()) {
+            return true;
+        }
+
+        $i18n = new i18n();
+        $miniLog = new MiniLog();
+        $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+
+        return false;
+    }
+
+    /**
+     * Test the PHPMailer connection. Return the result of the connection.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if (self::$settings['mailer'] === 'smtp') {
+            $mail = $this->newMail();
+
+            return $mail->smtpConnect($this->smtpOptions());
+        }
+
+        return true;
+    }
+
+    private function getSetting(string $key)
+    {
+        return isset(self::$settings[$key]) ? self::$settings[$key] : null;
     }
 
     /**

@@ -53,6 +53,7 @@ class ExportManager
                 'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
                 'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o'],
+                'MAIL' => ['description' => 'email', 'icon' => 'fa-envelope'],
             ];
         }
     }
@@ -97,7 +98,7 @@ class ExportManager
      *
      * @param Response $response
      */
-    public function show(&$response)
+    public function show(Response &$response)
     {
         self::$engine->show($response);
     }

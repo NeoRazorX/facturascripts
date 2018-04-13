@@ -1,0 +1,67 @@
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('node_modules/sceditor/minified/themes/default.min.css') }}" />
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('node_modules/sceditor/minified/sceditor.min.js') }}"></script>
+    <script src="{{ asset('node_modules/sceditor/minified/formats/xhtml.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // html widgets
+            $('.htmleditor').each(function (i, textarea) {
+                sceditor.create(textarea, {
+                    format: 'xhtml',
+                    width: '100%'
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>
+                    <i class="fa fa-envelope" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
+                </h1>
+                <hr/>
+            </div>
+        </div>
+        <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="send"/>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">email</span>
+                            </div>
+                            <input type="text" name="email" class="form-control" required="" placeholder="email"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">subject</span>
+                            </div>
+                            <input type="text" name="subject" class="form-control" required="" placeholder="email"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="body" rows="10" class="form-control htmleditor"></textarea>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-envelope" aria-hidden="true"></i> {{ i18n.trans('send') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

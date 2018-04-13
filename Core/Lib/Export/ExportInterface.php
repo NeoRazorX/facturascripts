@@ -46,7 +46,7 @@ interface ExportInterface
      *
      * @param Response $response
      */
-    public function show(&$response);
+    public function show(Response &$response);
 
     /**
      * Adds a new page with the model data.
