@@ -191,23 +191,15 @@ abstract class ModelClass extends ModelCore
      */
     public function newCode(string $field = '', array $where = [])
     {
-        $isInteger = false;
-
         /// if not field value take PK Field
         if (empty($field)) {
             $field = $this->primaryColumn();
         }
-
-        /// Check if field is integer
-        foreach ($this->getModelFields() as $tableField => $fieldData) {
-            if ($tableField === $field && in_array($fieldData['type'], ['integer', 'int', 'serial'])) {
-                $isInteger = true;
-                break;
-            }
-        }
+        /// get fields list
+        $modelFields = $this->getModelFields();
 
         /// Set Cast to Integer if field it's not
-        if (!$isInteger) {
+        if (!in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
             /// Set Where to Integers values only
             $where[] = new DataBase\DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
             $field = self::$dataBase->sql2Int($field);

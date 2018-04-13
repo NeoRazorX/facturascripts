@@ -1105,5 +1105,14 @@
     "pct-vat": "VAT rate",
     "pct-surcharge": "Surcharge rate",
     "report-non-grouping-account": "Non group by account",
-    "report-grouping-account": "Group by account"
+    "report-grouping-account": "Group by account",
+    "controller-error": "Controller error",
+    "generated-supplier-estimations": "%quantity% generated supplier estimations.",
+    "supplier-estimations": "Supplier estimations",
+    "api-keys": "API Keys",
+    "api-key": "API key",
+    "created": "Created",
+    "parent-group": "Parent group",
+    "parent-group-cant-be-the-same-group": "Parent group can't be the same group",
+    "parent-group-loop": "Parent group %parentGroup% causing circular relation."
 }
