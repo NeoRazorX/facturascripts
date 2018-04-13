@@ -236,6 +236,92 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = array())
+    {
+        $accountDetail = new SubcuentaSaldo();
+        $inTransaction = self::$dataBase->inTransaction();
+        try {
+            if ($inTransaction === false) {
+                self::$dataBase->beginTransaction();
+            }
+
+            /// main insert
+            if (!parent::saveInsert($values)) {
+                return false;
+            }
+
+            /// add account detail balance
+            $accountDetail->idcuenta = $this->idcuenta;
+            $accountDetail->idsubcuenta = $this->idsubcuenta;
+            for ($index = 1; $index < 13; $index++) {
+                $accountDetail->mes = $index;
+                $accountDetail->id = null;
+                if (!$accountDetail->save()) {
+                    return false;
+                }
+            }
+        } catch (\Exception $e) {
+            self::$miniLog->error($e->getMessage());
+            self::$dataBase->rollback();
+            return false;
+        } finally {
+            if (!$inTransaction && self::$dataBase->inTransaction()) {
+                self::$dataBase->rollback();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Remove the model data from the database.
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        // Search for detail balance
+        $where = [new DataBaseWhere('idsubcuenta', $this->idsubcuenta)];
+        $accountDetail = new SubcuentaSaldo();
+        $detail = $accountDetail->all($where);
+
+        $inTransaction = self::$dataBase->inTransaction();
+        try {
+            if ($inTransaction === false) {
+                self::$dataBase->beginTransaction();
+            }
+
+            /// main delete
+            if (!parent::delete()) {
+                return false;
+            }
+
+            /// delete account balance
+            foreach ($detail as $account) {
+                if (!$account->delete()) {
+                    return false;
+                }
+            }
+        } catch (\Exception $e) {
+            self::$miniLog->error($e->getMessage());
+            self::$dataBase->rollback();
+            return false;
+        } finally {
+            if (!$inTransaction && self::$dataBase->inTransaction()) {
+                self::$dataBase->rollback();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Update account balance
      *
      * @param string $date
