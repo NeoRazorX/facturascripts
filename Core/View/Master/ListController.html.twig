@@ -57,7 +57,7 @@
 
             return false;
         }
-        function execActionForm(actionValue) {
+        function execActionForm(actionValue, formName = '') {
             var form = document.getElementById('form' + tabActive);
             $('<input>').attr({type: 'hidden', name: 'action'}).appendTo(form);
             $('<input>').attr({type: 'hidden', name: 'code'}).appendTo(form);

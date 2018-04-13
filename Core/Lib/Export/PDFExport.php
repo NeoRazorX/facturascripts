@@ -58,7 +58,7 @@ class PDFExport implements ExportInterface
      *
      * @var \Cezpdf
      */
-    private $pdf;
+    protected $pdf;
 
     /**
      * PDF table width.
@@ -106,7 +106,7 @@ class PDFExport implements ExportInterface
      *
      * @param Response $response
      */
-    public function show(&$response)
+    public function show(Response &$response)
     {
         $response->headers->set('Content-type', 'application/pdf');
         $response->setContent($this->getDoc());
@@ -307,7 +307,7 @@ class PDFExport implements ExportInterface
      *
      * @param string $orientation
      */
-    private function newPage($orientation = 'portrait')
+    protected function newPage($orientation = 'portrait')
     {
         if ($this->pdf === null) {
             $this->pdf = new \Cezpdf('a4', $orientation);

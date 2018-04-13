@@ -62,7 +62,7 @@ class XLSExport implements ExportInterface
      *
      * @param Response $response
      */
-    public function show(&$response)
+    public function show(Response &$response)
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
         $response->headers->set('Content-Disposition', 'attachment;filename=doc.xlsx');

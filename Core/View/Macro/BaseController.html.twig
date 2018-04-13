@@ -310,7 +310,6 @@
      */
 #}
 {% macro rowActionsForEditView(context, view, formName) %}
-
     {% set actions = view.getRow('actions') %}
     {% if actions is not empty %}
         {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}

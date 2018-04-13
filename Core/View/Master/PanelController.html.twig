@@ -55,12 +55,12 @@
                 },
                 callback: function (result) {
                     if (result) {
-                        execActionForm(formName, action);
+                        execActionForm(action, formName);
                     }
                 }
             });
         }
-        function execActionForm(formName, actionValue) {
+        function execActionForm(actionValue, formName) {
             var form = document.forms[formName];
             form.action.value = actionValue;
             form.submit();
