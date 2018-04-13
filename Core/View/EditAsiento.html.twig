@@ -26,7 +26,7 @@
 
 {% extends "Master/GridController.html.twig" %}
 
-{% block javascript %}
+{% block javascripts %}
 {{ parent() }}
 {% set masterView = fsc.views|keys|first %}
 {% if fsc.views[masterView].count > 0 %}
