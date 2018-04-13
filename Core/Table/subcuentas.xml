@@ -80,7 +80,7 @@
         <type>FOREIGN KEY (idcuenta) REFERENCES cuentas (idcuenta) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_cuentas_cuentasesp</name>
+        <name>ca_subcuentas_cuentasesp</name>
         <type>FOREIGN KEY (codcuentaesp) REFERENCES cuentasesp (codcuentaesp) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
