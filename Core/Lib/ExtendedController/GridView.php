@@ -247,7 +247,8 @@ class GridView extends BaseView
     {
         $result = [
             'error' => false,
-            'message' => ''
+            'message' => '',
+            'url' => ''
         ];
 
         try {
@@ -290,6 +291,9 @@ class GridView extends BaseView
 
             // confirm save data into database
             $dataBase->commit();
+
+            // URL for refresh data
+            $result['url'] = $this->parentView->getURL('edit');
         } catch (Exception $e) {
             $result['error'] = true;
             $result['message'] = $e->getMessage();

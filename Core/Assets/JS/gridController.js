@@ -244,7 +244,8 @@ function saveDocument(mainFormName) {
                     alert(results.message);
                     return false;
                 }
-                location.reload();
+                selectCell(0,0);
+                location.href = result.url;
             },
             error: function (xhr, status, error) {
                 alert(xhr.responseText);
