@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use Exception;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Base\ModelClass;
@@ -293,7 +294,7 @@ class GridView extends BaseView
             $dataBase->commit();
 
             // URL for refresh data
-            $result['url'] = $this->parentView->getURL('edit');
+            $result['url'] = $this->parentView->getURL('edit') . '&action=save-ok';
         } catch (Exception $e) {
             $result['error'] = true;
             $result['message'] = $e->getMessage();
