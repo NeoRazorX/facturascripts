@@ -236,7 +236,7 @@ class WidgetButton implements VisualItemInterface
         $onclick = empty($this->onClick) ? 'execActionForm()' : $this->onClick;
         $param = '\'' . $this->action . '\',\'' . $formName . '\'';
 
-        return '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
+        return '<button type="button" name="' . $this->action . '" class="' . $class . ' btn btn-' . $this->color . '"'
             . $this->getIdHTML()
             . $this->getOnClickHTML($onclick, $param) . $hint . '>'
             . $this->getIconHTML()
@@ -333,7 +333,7 @@ class WidgetButton implements VisualItemInterface
      *
      * @param string $field
      * @param mixed  $atributes
-     * 
+     *
      * @return string
      */
     private function getOptionalAtribute($field, &$atributes): string
