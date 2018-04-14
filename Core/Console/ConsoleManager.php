@@ -75,7 +75,7 @@ class ConsoleManager extends ConsoleAbstract
         $cmd = $this->argv[1];
 
         if (class_exists(__NAMESPACE__ . '\\' . $cmd)) {
-            return $this->execute();
+            exit($this->execute());
         }
 
         echo \PHP_EOL . 'ERROR: Command "' . $cmd . '" not found.' . \PHP_EOL . \PHP_EOL;
@@ -174,7 +174,7 @@ class ConsoleManager extends ConsoleAbstract
                             . \PHP_EOL
                             . '#######################################################################################'
                             . \PHP_EOL;
-
+                        echo $msg;
                     }
                     break;
                 }
@@ -186,9 +186,8 @@ class ConsoleManager extends ConsoleAbstract
                         . \PHP_EOL . '#    Maybe you are missing to put it in to getUserMethods?' . \PHP_EOL
                         . '#######################################################################################'
                         . \PHP_EOL;
+                    echo $msg;
                 }
-
-                echo $msg;
 
                 $this->optionNotAvailable($cmd, $alias);
                 $this->getAvailableOptions($cmd);
