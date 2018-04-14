@@ -274,14 +274,14 @@ class OrderXmlTables extends ConsoleAbstract
     /**
      * Custom function to re-order with usort.
      *
-     * @param SimpleXMLElement $a
-     * @param SimpleXMLElement $b
+     * @param SimpleXMLElement $xmlA
+     * @param SimpleXMLElement $xmlB
      *
      * @return int
      */
-    private function sortName($a, $b): int
+    private function sortName($xmlA, $xmlB): int
     {
-        return strcasecmp($a->{$this->tagName}, $b->{$this->tagName});
+        return strcasecmp($xmlA->{$this->tagName}, $xmlB->{$this->tagName});
     }
 
     /**
@@ -303,7 +303,8 @@ class OrderXmlTables extends ConsoleAbstract
                 }
                 $str .= '    </' . $tagName . '>' . PHP_EOL;
             }
-        } else {
+        }
+        if (\is_object($data)) {
             $str .= '    <' . $tagName . '>' . PHP_EOL;
             foreach ((array) $data as $key => $value) {
                 $str .= '        <' . $key . '>' . $value . '</' . $key . '>' . PHP_EOL;

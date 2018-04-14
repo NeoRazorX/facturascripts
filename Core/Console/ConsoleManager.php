@@ -57,7 +57,6 @@ class ConsoleManager extends ConsoleAbstract
                     break;
                 default:
                     $this->run();
-                    die();
             }
         }
 
@@ -136,6 +135,7 @@ class ConsoleManager extends ConsoleAbstract
      */
     public function execute()
     {
+        $status = -1;
         $params = $this->argv;
         \array_shift($params); // Extract console.php
         // command class
@@ -163,7 +163,8 @@ class ConsoleManager extends ConsoleAbstract
                     if (\in_array($method, \get_class_methods($className), false) ||
                         \in_array($method, \get_class_methods(\get_parent_class($className)), false)
                     ) {
-                        exit(\call_user_func_array([new $className(), 'run'], $params));
+                        $status = \call_user_func_array([new $className(), 'run'], $params);
+                        break;
                     }
                     // Can be deleted, but starting with this can be helpful
                     if (FS_DEBUG) {
@@ -173,24 +174,26 @@ class ConsoleManager extends ConsoleAbstract
                             . \PHP_EOL
                             . '#######################################################################################'
                             . \PHP_EOL;
-                        echo $msg;
+
                     }
-                } else {
-                    // Can be deleted, but starting with this can be helpful
-                    if (FS_DEBUG) {
-                        $msg = '#######################################################################################'
-                            . \PHP_EOL . '# ERROR: "' . $alias . '" not in "getUserMethods" for "' . $className . '"'
-                            . \PHP_EOL . '#    Maybe you are missing to put it in to getUserMethods?' . \PHP_EOL
-                            . '#######################################################################################'
-                            . \PHP_EOL;
-                        echo $msg;
-                    }
+                    break;
                 }
+
+                // Can be deleted, but starting with this can be helpful
+                if (FS_DEBUG) {
+                    $msg = '#######################################################################################'
+                        . \PHP_EOL . '# ERROR: "' . $alias . '" not in "getUserMethods" for "' . $className . '"'
+                        . \PHP_EOL . '#    Maybe you are missing to put it in to getUserMethods?' . \PHP_EOL
+                        . '#######################################################################################'
+                        . \PHP_EOL;
+                }
+
+                echo $msg;
 
                 $this->optionNotAvailable($cmd, $alias);
                 $this->getAvailableOptions($cmd);
         }
-        return -1;
+        return $status;
     }
 
     /**
@@ -323,9 +326,9 @@ class ConsoleManager extends ConsoleAbstract
      */
     private function getClassName($fileName)
     {
-        $directoriesAndFilename = explode(DIRECTORY_SEPARATOR, $fileName);
-        $fileName = array_pop($directoriesAndFilename);
-        $nameAndExtension = explode('.', $fileName);
-        return array_shift($nameAndExtension);
+        $dirsAndFile = explode(DIRECTORY_SEPARATOR, $fileName);
+        $fileName = array_pop($dirsAndFile);
+        $nameAndExt = explode('.', $fileName);
+        return array_shift($nameAndExt);
     }
 }
