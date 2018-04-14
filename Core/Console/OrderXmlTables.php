@@ -128,6 +128,18 @@ class OrderXmlTables extends ConsoleAbstract
             return self::RETURN_NO_FILES;
         }
 
+        return $this->orderXml($files);
+    }
+
+    /**
+     * Order Xml files
+     *
+     * @param array $files
+     *
+     * @return int
+     */
+    private function orderXml($files)
+    {
         foreach ($files as $fileName) {
             $xml = simplexml_load_string(file_get_contents($this->folderSrcPath . $fileName));
             // Get all children of table into an array
@@ -137,19 +149,17 @@ class OrderXmlTables extends ConsoleAbstract
                 break;
             }
             $columns = $table['column'];
-            if (isset($table['constraint'])) {
-                $constraints = $table['constraint'];
-            }
 
             // Call usort on the array
             if (!\is_object($columns)) {
                 usort($columns, [$this, 'sortName']);
             }
 
-            /** @noinspection NotOptimalIfConditionsInspection */
-            /** @noinspection PhpUndefinedVariableInspection */
-            if (isset($table['constraint']) && !\is_object($constraints)) {
-                usort($constraints, [$this, 'sortName']);
+            if (isset($table['constraint'])) {
+                $constraints = $table['constraint'];
+                if (!\is_object($constraints)) {
+                    usort($constraints, [$this, 'sortName']);
+                }
             }
 
             // Generate string XML result
