@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Model;
@@ -70,6 +72,10 @@ class EditAsiento extends ExtendedController\PanelController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'save-ok':
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                return true;
+
             case 'recalculate-document':
                 $this->setTemplate(false);
                 $data = $this->request->request->all();
@@ -86,7 +92,14 @@ class EditAsiento extends ExtendedController\PanelController
                 return false;
 
             case 'clone':
-                return true; // TODO: Uncomplete
+                $data = $this->request->request->all();
+                $result = $this->cloneDocument($data);
+                if (!empty($result)) {
+                    $this->setTemplate(false);
+                    $this->response->headers->set('Refresh', '0;' . $result);
+                    return false;
+                }
+                return true;
 
             case 'lock':
                 return true; // TODO: Uncomplete
@@ -332,20 +345,45 @@ class EditAsiento extends ExtendedController\PanelController
         return $result;
     }
 
-    /**
-     * Returns VAT data for an id VAT
-     *
-     * @param string $idVAT
-     * @return array
-     */
-    private function getVATDetaill($idVAT): array
+    private function cloneDocument(&$data): string
     {
-        $result = [];
-        if (!empty($idVAT)) {
-            $vat = new Model\Impuesto();
-            if ($vat->loadFromCode($idVAT)) {
-                $result['vat'] = $vat->iva;
-                $result['surcharge'] = $vat->recargo;
+        // init document
+        $accounting = new Model\Asiento();
+        $accounting->loadFromData($data, ['action', 'active']);
+
+        // init line document
+        $entryModel = new Model\Partida();
+        $entries = $entryModel->all([new DataBaseWhere('idasiento', $data['idasiento'])]);
+
+        // start transaction
+        $dataBase = new DataBase();
+        $dataBase->beginTransaction();
+
+        // main save process
+        try {
+            $accounting->idasiento = null;
+            $accounting->fecha = date('d-m-Y');
+            $accounting->numero = $accounting->newCode('numero');
+            if (!$accounting->save()) {
+                throw new Exception(self::$i18n->trans('clone-document-error'));
+            }
+
+            foreach ($entries as $line) {
+                $line->idpartida = null;
+                $line->idasiento = $accounting->idasiento;
+                if (!$line->save()) {
+                    throw new Exception(self::$i18n->trans('clone-line-document-error'));
+                }
+            }
+            // confirm data
+            $dataBase->commit();
+            $result = $accounting->url('type') . '&action=save-ok';
+        } catch (Exception $e) {
+            self::$miniLog->alert($e->getMessage());
+            $result = '';
+        } finally {
+            if ($dataBase->inTransaction()) {
+                $dataBase->rollback();
             }
         }
 

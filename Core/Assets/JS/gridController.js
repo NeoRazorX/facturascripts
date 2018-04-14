@@ -244,7 +244,7 @@ function saveDocument(mainFormName) {
                     alert(results.message);
                     return false;
                 }
-                location.reload();
+                location.assign(results.url);
             },
             error: function (xhr, status, error) {
                 alert(xhr.responseText);
