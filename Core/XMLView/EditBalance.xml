@@ -20,20 +20,21 @@
  * Initial description for the controller EditBalance
  *
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
     <columns>
-        <group name="data" numcolumns="12">    
+        <group name="data" numcolumns="12">
             <column name="code" order="100" numcolumns="2">
                 <widget type="text" fieldname="codbalance" />
-            </column>           
+            </column>
             <column name="nature" numcolumns="2" order="110">
                 <widget type="select" fieldname="naturaleza">
-                    <values title="A = Activo">A</values>
-                    <values title="P = Pasivo">P</values>
-                    <values title="PG = Pérdidas y ganancias">PG</values>
-                    <values title="IG = Ingresos y gastos">IG</values>
+                    <values title="asset">A</values>
+                    <values title="liabilities">P</values>
+                    <values title="profit-and-loss">PG</values>
+                    <values title="income-and-expenses">IG</values>
                 </widget>
             </column>
             <column name="description-1" order="120" numcolumns="4">
