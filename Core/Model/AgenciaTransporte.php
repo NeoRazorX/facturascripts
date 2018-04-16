@@ -1,7 +1,6 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015         Pablo Peralta
  * Copyright (C) 2015-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +30,13 @@ class AgenciaTransporte extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     * Contains True if is enabled.
+     *
+     * @var bool
+     */
+    public $activo;
+
+    /**
      * Primary key. Varchar(8).
      *
      * @var string
@@ -45,20 +51,12 @@ class AgenciaTransporte extends Base\ModelClass
     public $nombre;
 
     /**
-     * Contains True if is enabled.
-     *
-     * @var bool
+     * Reset the values of all model properties.
      */
-    public $activo;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function clear()
     {
-        return 'agenciastrans';
+        parent::clear();
+        $this->activo = true;
     }
 
     /**
@@ -72,11 +70,12 @@ class AgenciaTransporte extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-        $this->activo = true;
+        return 'agenciastrans';
     }
 }
