@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\EmailTools;
  * Description of SendMail
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Javier García Iceta <javigarciaiceta@gmail.com>
  */
 class SendMail extends Controller
 {
@@ -74,7 +75,15 @@ class SendMail extends Controller
 
     private function removeOld()
     {
-        /// TODO: remove MAIL_XXX files whith XXX minor than time() - 3600
+        $fileTime = array();
+        $regex = '/Mail_([0-9]+).pdf/';
+
+        foreach (glob(FS_FOLDER . "/MyFiles/Mail_*.pdf") as $fileName) {
+            preg_match($regex, $fileName, $fileTime);
+            if ($fileTime[1] < (time() - 3600)) {
+                unlink($fileName);
+            }
+        }
     }
 
     protected function send()
