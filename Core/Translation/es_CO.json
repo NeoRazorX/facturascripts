@@ -1270,5 +1270,14 @@
     "created": "Creado",
     "parent-group": "Grupo Padre",
     "parent-group-cant-be-the-same-group": "El Grupo Padre no puede ser el mismo grupo",
-    "parent-group-loop": "El Grupo Padre %parentGroup% está causando una relación circular."
+    "parent-group-loop": "El Grupo Padre %parentGroup% está causando una relación circular.",
+    "VAT-register": "Libro de Impuestos",
+    "level1": "Nivel 1",
+    "level2": "Nivel 2",
+    "level3": "Nivel 3",
+    "level4": "Nivel 4",
+    "asset": "Activo",
+    "liabilities": "Pasivo",
+    "profit-and-loss": "Pérdidas y Ganancias",
+    "income-and-expenses": "Ingresos y Gastos"
 }

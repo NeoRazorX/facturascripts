@@ -637,7 +637,7 @@
     "location": "Location",
     "balance-account": "Balance account",
     "balance-account-abreviated": "Balance account abreviated",
-    "vat-register": "VAT registration",
+    "VAT-register": "VAT registration",
     "hint-vat-register": "View/Modify VAT registration",
     "clone-account-entry": "Duplicate the accounting entry",
     "lock-unlock-account-entry": "Block/Unlock the accounting entry",
