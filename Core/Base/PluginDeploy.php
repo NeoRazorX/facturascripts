@@ -25,7 +25,6 @@ namespace FacturaScripts\Core\Base;
  */
 class PluginDeploy
 {
-
     /**
      * System translator.
      *
@@ -59,7 +58,7 @@ class PluginDeploy
      */
     public function deploy($pluginPath, $enabledPlugins, $clean = true)
     {
-        $folders = ['Assets', 'Controller', 'Model', 'Lib', 'Table', 'View', 'XMLView'];
+        $folders = ['Assets', 'Controller', 'Model', 'Lib', 'Table', 'View', 'XMLView', 'APIResource'];
         foreach ($folders as $folder) {
             if ($clean) {
                 $this->cleanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
