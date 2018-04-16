@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
-    const API_FOLDERS = ['Model', 'APIResource'];
 
     /**
      * Runs the API.
@@ -97,7 +95,7 @@ class AppAPI extends App
      *
      * @param array $map
      */
-    private function exposeResources(&$map)
+    private function exposeResources(array &$map)
     {
         $json = ['resources' => []];
 
@@ -117,7 +115,7 @@ class AppAPI extends App
      *
      * @return array
      */
-    private function getRequestArray($key, $default = '')
+    private function getRequestArray(string $key, string $default = ''): array
     {
         $array = $this->request->get($key, $default);
 
@@ -125,37 +123,21 @@ class AppAPI extends App
     }
 
     /**
-     * Load resource map from a folder
-     *
-     * TODO: The conversion to plural is dependent on the language.
-     *
+     * Load resource map from a folder.
+     * 
+     * @param array  $resources
      * @param string $folder
-     *
-     * @return array
      */
-    private function getResourcesFromFolder($folder)
+    private function getResourcesFromFolder(array &$resources, string $folder)
     {
-        $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
+                $plural = $this->pluralize($modelName);
 
-                /// Conversion to plural
-                if (substr($modelName, -1) === 's') {
-                    $plural = strtolower($modelName);
-                } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {
-                    $plural = strtolower($modelName) . 's';
-                } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
-                    $plural = strtolower($modelName) . 's';
-                } else {
-                    $plural = strtolower($modelName) . 'es';
-                }
-
-                $resources[$plural] = $modelName;
+                $resources[$plural] = ['class' => $modelName, 'folder' => $folder];
             }
         }
-
-        return $resources;
     }
 
     /**
@@ -165,12 +147,10 @@ class AppAPI extends App
      */
     private function getResourcesMap()
     {
-        $resources = [[]];
-        foreach (self::API_FOLDERS as $folder) {
-            $resources[] = $this->getResourcesFromFolder($folder);
+        $resources = [];
+        foreach (['Model', 'Lib/API'] as $folder) {
+            $this->getResourcesFromFolder($resources, $folder);
         }
-
-        $resources = array_merge(...$resources);
 
         return $resources;
     }
@@ -178,8 +158,8 @@ class AppAPI extends App
     /**
      * Returns the where clauses.
      *
-     * @param array $filter
-     * @param array $operation
+     * @param array  $filter
+     * @param array  $operation
      * @param string $defaultOperation
      *
      * @return DataBaseWhere[]
@@ -214,13 +194,13 @@ class AppAPI extends App
      *
      * @return bool
      */
-    private function processModelResource($modelName)
+    private function processModelResource(string $modelName): bool
     {
         try {
             $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $modelName;
             $model = new $modelName();
-            $offset = (int)$this->request->get('offset', 0);
-            $limit = (int)$this->request->get('limit', 50);
+            $offset = (int) $this->request->get('offset', 0);
+            $limit = (int) $this->request->get('limit', 50);
             $operation = $this->getRequestArray('operation');
             $filter = $this->getRequestArray('filter');
             $order = $this->getRequestArray('sort');
@@ -232,7 +212,7 @@ class AppAPI extends App
                         $model->{$key} = $value;
                     }
                     if ($model->save()) {
-                        $data = (array)$model;
+                        $data = (array) $model;
                     } else {
                         $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
@@ -267,7 +247,7 @@ class AppAPI extends App
      *
      * @return bool
      */
-    private function processModelResourceParam($modelName, $cod)
+    private function processModelResourceParam(string $modelName, string $cod): bool
     {
         try {
             $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $modelName;
@@ -312,91 +292,71 @@ class AppAPI extends App
         }
     }
 
-    private function getResourceType($resource)
+    private function pluralize(string $name): string
     {
-        foreach (self::API_FOLDERS as $folder) {
-            if (file_exists("Dinamic/$folder/$resource.php")) {
-                return $folder;
-            }
+        if (substr($name, -1) === 's' && $name !== 'Pais') {
+            return strtolower($name);
         }
-        return false;
+
+        if (substr($name, -3) === 'ser' || substr($name, -4) === 'tion') {
+            return strtolower($name) . 's';
+        }
+
+        if (in_array(substr($name, -1), ['a', 'e', 'i', 'o', 'u', 'k', 'y'], false)) {
+            return strtolower($name) . 's';
+        }
+
+        return strtolower($name) . 'es';
     }
 
     /**
-     * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
-     *
-     * @param string $modelName
-     *
-     * @return bool
-     */
-    private function processResource($resource)
-    {
-        switch ($this->getResourceType($resource)) {
-            case 'Model':
-                return $this->processModelResource($resource);
-            case 'APIResource':
-                $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
-                $class = new $className($this->response);
-                return $class->processResource($resource);
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Process resource with parameters
-     *
-     * @param string $modelName
-     * @param string $cod
-     *
-     * @return bool
-     */
-    private function processResourceParam($resource, $params)
-    {
-        switch ($this->getResourceType($resource)) {
-            case 'Model':
-                return $this->processModelResourceParam($resource, $params[0]);
-            case 'APIResource':
-                $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
-                $class = new $className($this->response);
-                return $class->processResourceParam($resource, $params);
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Selects the resource
+     * Selects the resource.
      *
      * @return bool
      */
     private function selectResource()
     {
         $map = $this->getResourcesMap();
-
         $resourceName = $this->getUriParam(2);
         if ($resourceName === '') {
             $this->exposeResources($map);
-
             return true;
         }
 
-        $param=3;
-        $params=null;
-        while(($cad=$this->getUriParam($param)) !== '') {
-            $params[]=$cad;
-            $param++;
+        /// we separate the extra parameters
+        $params = [];
+        for ($num = 3; '' !== $this->getUriParam($num); $num++) {
+            $params[] = $this->getUriParam($num);
         }
 
-        if ($params === null) {
-            return $this->processResource($map[$resourceName]);
+        if (!isset($map[$resourceName])) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode(['error' => 'RESOURCE-NOT-FOUND']));
+            return false;
         }
 
-        return $this->processResourceParam($map[$resourceName], $params);
+        switch ($map[$resourceName]['folder']) {
+            case 'Model':
+                if (empty($params)) {
+                    return $this->processModelResource($map[$resourceName]['class']);
+                }
+                return $this->processModelResourceParam($map[$resourceName]['class'], $params[0]);
+
+            case 'Lib/API':
+                $className = 'FacturaScripts\\Dinamic\\Lib\\API\\' . $map[$resourceName]['class'];
+                $class = new $className($this->response);
+                if (empty($params)) {
+                    return $class->processResource();
+                }
+                return $class->processResourceParam($params);
+
+            default:
+                return false;
+        }
     }
 
     /**
-     * Selects the API version if it is supported
+     * Selects the API version if it is supported.
      *
      * @return bool
      */
@@ -408,7 +368,6 @@ class AppAPI extends App
 
         $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
         $this->response->setContent(json_encode(['error' => 'API-VERSION-NOT-FOUND']));
-
         return true;
     }
 }

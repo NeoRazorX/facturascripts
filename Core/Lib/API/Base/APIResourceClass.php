@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,38 +16,41 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\APIResource\Base;
+namespace FacturaScripts\Core\Lib\API\Base;
+
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * APIResource is an abstract class for any API Resource.
  *
  * @author Rafael San José Tovar (http://www.x-netdigital.com) <rsanjoseo@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class APIResourceClass
 {
+
     /**
      * HTTP response object.
      *
-     * @var \Symfony\Component\HttpFoundation\Response
+     * @var Response
      */
     protected $response;
 
-    public function __construct($response)
+    abstract public function processResource();
+
+    abstract public function processResourceParam(array $params);
+
+    public function __construct(Response $response)
     {
         $this->response = $response;
     }
 
-
-    abstract public function processResource($resource);
-
-    abstract public function processResourceParam($resource, $param);
-
-    protected function returnResult($data)
+    protected function returnResult(array $data)
     {
         $this->response->setContent(json_encode($data));
     }
 
-    protected function setError($string)
+    protected function setError(string $string)
     {
         $this->response->setContent(json_encode(['error' => $string]));
     }
