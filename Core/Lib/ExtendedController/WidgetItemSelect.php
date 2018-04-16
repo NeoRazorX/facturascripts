@@ -68,8 +68,7 @@ class WidgetItemSelect extends WidgetItem
         }
 
         $html = $this->getIconHTML()
-            . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
-            . '" class="form-control"' . $specialAttributes . '>';
+            . '<select name="' . $this->fieldName . '" class="form-control"' . $specialAttributes . '>';
 
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)

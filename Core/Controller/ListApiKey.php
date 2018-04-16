@@ -39,6 +39,7 @@ class ListApiKey extends ExtendedController\ListController
         $pageData['title'] = 'api-keys';
         $pageData['icon'] = 'fa-key';
         $pageData['menu'] = 'admin';
+        $pageData['submenu'] = 'control-panel';
 
         return $pageData;
     }

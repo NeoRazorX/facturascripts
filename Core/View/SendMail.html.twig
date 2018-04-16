@@ -2,22 +2,16 @@
 
 {% block css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('node_modules/sceditor/minified/themes/default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('node_modules/summernote/dist/summernote-bs4.css') }}"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('node_modules/sceditor/minified/sceditor.min.js') }}"></script>
-    <script src="{{ asset('node_modules/sceditor/minified/formats/xhtml.js') }}"></script>
+    <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             // html widgets
-            $('.htmleditor').each(function (i, textarea) {
-                sceditor.create(textarea, {
-                    format: 'xhtml',
-                    width: '100%'
-                });
-            });
+            $('.html-editor').summernote();
         });
     </script>
 {% endblock %}
@@ -53,7 +47,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <textarea name="body" rows="10" class="htmleditor"></textarea>
+                        <textarea name="body" rows="10" class="html-editor"></textarea>
                     </div>
                     <div class="text-right">
                         <button type="submit" class="btn btn-primary">

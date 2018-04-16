@@ -29,14 +29,12 @@
 {% block css %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/extendedcontroller.css') }}" />
-    <link rel="stylesheet" href="{{ asset('node_modules/sceditor/minified/themes/default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('node_modules/summernote/dist/summernote-bs4.css') }}"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('node_modules/sceditor/minified/sceditor.min.js') }}"></script>
-    <script src="{{ asset('node_modules/sceditor/minified/formats/bbcode.js') }}"></script>
-    <script src="{{ asset('node_modules/sceditor/minified/formats/xhtml.js') }}"></script>
+    <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
     <script type="text/javascript">
         var tabActive = '{{ fsc.active }}';
         function deleteRecord(formName, action = 'delete') {
@@ -81,19 +79,7 @@
                 });
             });
             // html widgets
-            $('.htmleditor').each(function (i, textarea) {
-                sceditor.create(textarea, {
-                    format: 'xhtml',
-                    width: '100%'
-                });
-            });
-            // bbcode widgets
-            $('.bbcode').each(function (i, textarea) {
-                sceditor.create(textarea, {
-                    format: 'bbcode',
-                    width: '100%'
-                });
-            });
+            $('.html-editor').summernote();
         });
     </script>
 {% endblock %}
