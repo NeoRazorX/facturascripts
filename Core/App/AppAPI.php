@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,9 +27,11 @@ use Symfony\Component\HttpFoundation\Response;
  * AppAPI is the class used for API.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José Tovar (http://www.x-netdigital.com) <info@rsanjoseo.com>
  */
 class AppAPI extends App
 {
+    const API_FOLDERS = ['Model', 'APIResource'];
 
     /**
      * Runs the API.
@@ -122,14 +125,18 @@ class AppAPI extends App
     }
 
     /**
-     * Load resource map
+     * Load resource map from a folder
+     *
+     * TODO: The conversion to plural is dependent on the language.
+     *
+     * @param string $folder
      *
      * @return array
      */
-    private function getResourcesMap()
+    private function getResourcesFromFolder($folder)
     {
         $resources = [];
-        foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
+        foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
 
@@ -152,10 +159,27 @@ class AppAPI extends App
     }
 
     /**
+     * Load resource map
+     *
+     * @return array
+     */
+    private function getResourcesMap()
+    {
+        $resources = [[]];
+        foreach (self::API_FOLDERS as $folder) {
+            $resources[] = $this->getResourcesFromFolder($folder);
+        }
+
+        $resources = array_merge(...$resources);
+
+        return $resources;
+    }
+
+    /**
      * Returns the where clauses.
      *
-     * @param array  $filter
-     * @param array  $operation
+     * @param array $filter
+     * @param array $operation
      * @param string $defaultOperation
      *
      * @return DataBaseWhere[]
@@ -184,18 +208,19 @@ class AppAPI extends App
     }
 
     /**
-     * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
+     * Process the model resource, allowing POST/PUT/DELETE/GET ALL actions
      *
      * @param string $modelName
      *
      * @return bool
      */
-    private function processResource($modelName)
+    private function processModelResource($modelName)
     {
         try {
+            $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $modelName;
             $model = new $modelName();
-            $offset = (int) $this->request->get('offset', 0);
-            $limit = (int) $this->request->get('limit', 50);
+            $offset = (int)$this->request->get('offset', 0);
+            $limit = (int)$this->request->get('limit', 50);
             $operation = $this->getRequestArray('operation');
             $filter = $this->getRequestArray('filter');
             $order = $this->getRequestArray('sort');
@@ -207,7 +232,7 @@ class AppAPI extends App
                         $model->{$key} = $value;
                     }
                     if ($model->save()) {
-                        $data = (array) $model;
+                        $data = (array)$model;
                     } else {
                         $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
 
@@ -235,16 +260,17 @@ class AppAPI extends App
     }
 
     /**
-     * Process resource with parameters
+     * Process model resource with parameters
      *
      * @param string $modelName
      * @param string $cod
      *
      * @return bool
      */
-    private function processResourceParam($modelName, $cod)
+    private function processModelResourceParam($modelName, $cod)
     {
         try {
+            $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $modelName;
             $model = new $modelName();
 
             switch ($this->request->getMethod()) {
@@ -286,6 +312,59 @@ class AppAPI extends App
         }
     }
 
+    private function getResourceType($resource)
+    {
+        foreach (self::API_FOLDERS as $folder) {
+            if (file_exists("Dinamic/$folder/$resource.php")) {
+                return $folder;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
+     *
+     * @param string $modelName
+     *
+     * @return bool
+     */
+    private function processResource($resource)
+    {
+        switch ($this->getResourceType($resource)) {
+            case 'Model':
+                return $this->processModelResource($resource);
+            case 'APIResource':
+                $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
+                $class = new $className($this->response);
+                return $class->processResource($resource);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Process resource with parameters
+     *
+     * @param string $modelName
+     * @param string $cod
+     *
+     * @return bool
+     */
+    private function processResourceParam($resource, $params)
+    {
+        switch ($this->getResourceType($resource)) {
+            case 'Model':
+                return $this->processModelResourceParam($resource, $params[0]);
+            case 'APIResource':
+                $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
+                $class = new $className($this->response);
+                return $class->processResourceParam($resource, $params);
+            default:
+                return false;
+        }
+    }
+
     /**
      * Selects the resource
      *
@@ -302,14 +381,18 @@ class AppAPI extends App
             return true;
         }
 
-        $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $map[$resourceName];
-        $cod = $this->getUriParam(3);
-
-        if ($cod === '') {
-            return $this->processResource($modelName);
+        $param=3;
+        $params=null;
+        while(($cad=$this->getUriParam($param)) !== '') {
+            $params[]=$cad;
+            $param++;
         }
 
-        return $this->processResourceParam($modelName, $cod);
+        if ($params === null) {
+            return $this->processResource($map[$resourceName]);
+        }
+
+        return $this->processResourceParam($map[$resourceName], $params);
     }
 
     /**
