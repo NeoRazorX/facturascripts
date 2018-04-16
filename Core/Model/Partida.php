@@ -382,7 +382,7 @@ class Partida extends Base\ModelClass
         return true;
     }
 
-    protected function saveUpdate(array $values = array())
+    protected function saveUpdate(array $values = [])
     {
         // Search for the difference in the amounts
         $entry = new Partida();

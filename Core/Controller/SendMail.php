@@ -75,10 +75,9 @@ class SendMail extends Controller
 
     private function removeOld()
     {
-        $fileTime = array();
         $regex = '/Mail_([0-9]+).pdf/';
-
         foreach (glob(FS_FOLDER . "/MyFiles/Mail_*.pdf") as $fileName) {
+            $fileTime = [];
             preg_match($regex, $fileName, $fileTime);
             if ($fileTime[1] < (time() - 3600)) {
                 unlink($fileName);

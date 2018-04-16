@@ -242,7 +242,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = array())
+    protected function saveInsert(array $values = [])
     {
         $accountDetail = new SubcuentaSaldo();
         $inTransaction = self::$dataBase->inTransaction();
