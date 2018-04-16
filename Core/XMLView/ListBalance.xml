@@ -19,7 +19,8 @@
  *
  * Initial description for the controller ListBalance
  *
- * @ author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -33,9 +34,17 @@
         <column name="description" order="120">
             <widget type="text" fieldname="descripcion1" />
         </column>
+        <column name="level1" order="130">
+            <widget type="text" fieldname="nivel1" />
+        </column>
+        <column name="level2" order="140">
+            <widget type="text" fieldname="nivel2" />
+        </column>
+        <column name="level3" order="150">
+            <widget type="text" fieldname="nivel3" />
+        </column>
+        <column name="level4" order="160">
+            <widget type="text" fieldname="nivel4" />
+        </column>
     </columns>
-    <rows>
-    </rows>
-    <filters>
-    </filters>
 </view>

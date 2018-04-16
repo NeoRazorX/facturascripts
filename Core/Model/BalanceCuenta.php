@@ -63,7 +63,7 @@ class BalanceCuenta extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_cuentascb';
+        return 'balancescuentas';
     }
 
     /**
