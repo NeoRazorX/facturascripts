@@ -98,6 +98,11 @@
         <name>telefono2</name>
         <type>character varying(30)</type>
     </column>
+    <column>
+        <name>verificado</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
     <constraint>
         <name>contactos_pkey</name>
         <type>PRIMARY KEY (idcontacto)</type>

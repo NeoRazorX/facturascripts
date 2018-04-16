@@ -130,6 +130,13 @@ class Contacto extends Base\Contact
     public $provincia;
 
     /**
+     * TRUE if contact is verified.
+     *
+     * @var bool
+     */
+    public $verificado;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -137,6 +144,7 @@ class Contacto extends Base\Contact
         parent::clear();
         $this->admitemarketing = true;
         $this->codpais = AppSettings::get('default', 'codpais');
+        $this->verificado = false;
     }
 
     /**
