@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : balances.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the balances table.
+-->
+<table>
+    <column>
+        <name>codbalance</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion1</name>
+        <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>descripcion2</name>
+        <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>descripcion3</name>
+        <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>descripcion4</name>
+        <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>descripcion4ba</name>
+        <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>naturaleza</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nivel1</name>
+        <type>character varying(5)</type>
+    </column>
+    <column>
+        <name>nivel2</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>nivel3</name>
+        <type>character varying(5)</type>
+    </column>
+    <column>
+        <name>nivel4</name>
+        <type>character varying(5)</type>
+    </column>
+    <column>
+        <name>orden3</name>
+        <type>character varying(5)</type>
+    </column>
+    <constraint>
+        <name>balances_pkey</name>
+        <type>PRIMARY KEY (codbalance)</type>
+    </constraint>
+</table>

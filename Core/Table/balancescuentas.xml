@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : balancescuentas.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the balancescuentas table.
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('balancescuentas_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>codbalance</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codcuenta</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>desccuenta</name>
+        <type>character varying(255)</type>
+    </column>
+    <constraint>
+        <name>balancescuentas_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_balances_cuentas</name>
+        <type>FOREIGN KEY (codbalance) REFERENCES balances (codbalance) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

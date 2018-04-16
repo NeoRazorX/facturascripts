@@ -241,6 +241,11 @@ $(document).ready(function () {
         vatRegister = document.getElementById('vat-register-btn');
         vatRegister.disabled = true;
 
+        // Set initial clone state
+        if (getGridFieldData(0, 'idpartida') === undefined) {
+            document.getElementById('clone-btn').disabled = true;
+        }
+
         // Calculate initial unbalance
         calculateEntryUnbalance();
 

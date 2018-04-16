@@ -19,12 +19,14 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to list the items in the Balance model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListBalance extends ExtendedController\ListController
 {
@@ -45,21 +47,70 @@ class ListBalance extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Create and add view
+     *
+     * @param string $viewName
+     * @param string $viewTitle
+     */
+    private function addViewBalance($viewName, $viewTitle)
+    {
+        $this->addView($viewName, 'Balance', $viewTitle);
+        $fields = [
+            'codbalance',
+            'naturaleza',
+            'descripcion1',
+            'descripcion2',
+            'descripcion3',
+            'descripcion4',
+            'descripcion4ba'
+        ];
+        $this->addSearchFields($viewName, $fields);
+
+        $this->addOrderBy($viewName, 'codbalance', 'code');
+        $this->addOrderBy($viewName, 'descripcion1', 'description-1');
+        $this->addOrderBy($viewName, 'descripcion2', 'description-2');
+        $this->addOrderBy($viewName, 'descripcion3', 'description-3');
+        $this->addOrderBy($viewName, 'descripcion4', 'description-4');
+        $this->addOrderBy($viewName, 'descripcion4ba', 'description-4ba');
+    }
+
+    /**
+     * Create views
      */
     protected function createViews()
     {
-        $this->addView('ListBalance', 'Balance');
-        $fields = [
-            'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba',
-        ];
-        $this->addSearchFields('ListBalance', $fields);
+        $this->addViewBalance('ListBalance-1', 'asset');
+        $this->addViewBalance('ListBalance-2', 'liabilities');
+        $this->addViewBalance('ListBalance-3', 'profit-and-loss');
+        $this->addViewBalance('ListBalance-4', 'income-and-expenses');
+    }
 
-        $this->addOrderBy('ListBalance', 'codbalance', 'code');
-        $this->addOrderBy('ListBalance', 'descripcion1', 'description-1', 2);
-        $this->addOrderBy('ListBalance', 'descripcion2', 'description-2');
-        $this->addOrderBy('ListBalance', 'descripcion3', 'description-3');
-        $this->addOrderBy('ListBalance', 'descripcion4', 'description-4');
-        $this->addOrderBy('ListBalance', 'descripcion4ba', 'description-4ba');
+    /**
+     * Load data for view
+     *
+     * @param string $viewName
+     * @param array $where
+     * @param int $offset
+     */
+    protected function loadData($viewName, $where, $offset)
+    {
+        switch ($viewName) {
+            case 'ListBalance-1':
+                $where[] = new DataBaseWhere('naturaleza', 'A');
+                break;
+
+            case 'ListBalance-2':
+                $where[] = new DataBaseWhere('naturaleza', 'P');
+                break;
+
+            case 'ListBalance-3':
+                $where[] = new DataBaseWhere('naturaleza', 'PG');
+                break;
+
+            case 'ListBalance-4':
+                $where[] = new DataBaseWhere('naturaleza', 'IG');
+                break;
+        }
+        parent::loadData($viewName, $where, $offset);
     }
 }

@@ -102,15 +102,16 @@ class PageOption extends Base\ModelClass
      */
     public function getForUser(string $name, string $nick)
     {
-        $where = $this->getPageFilter($name, $nick);
+        $viewName = explode('-', $name)[0];
+        $where = $this->getPageFilter($viewName, $nick);
         $orderby = ['nick' => 'ASC'];
 
         // Load data from database, if not exist install xmlview
         if (!$this->loadFromCode('', $where, $orderby)) {
-            $this->name = $name;
+            $this->name = $viewName;
 
-            if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
-                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $name]));
+            if (!ExtendedController\VisualItemLoadEngine::installXML($viewName, $this)) {
+                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $viewName]));
 
                 return;
             }

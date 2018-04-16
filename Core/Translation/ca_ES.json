@@ -1187,5 +1187,14 @@
     "parent-group-cant-be-the-same-group": "El Grup Pare no pot ser el mateix grup",
     "parent-group-loop": "Grup pare %parentGroup% està causant relació circular.",
     "report-non-grouping-account": "No agrupar per comptes",
-    "report-grouping-account": "Agrupa per comptes"
+    "report-grouping-account": "Agrupa per comptes",
+    "VAT-register": "Llibre d'Impostos",
+    "level1": "Nivell 1",
+    "level2": "Nivell 2",
+    "level3": "Nivell 3",
+    "level4": "Nivell 4",
+    "asset": "Actiu",
+    "liabilities": "Passiu",
+    "profit-and-loss": "Pèrdues i Guanys",
+    "income-and-expenses": "Ingressos i Despeses"
 }
