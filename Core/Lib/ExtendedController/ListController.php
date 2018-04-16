@@ -140,7 +140,7 @@ abstract class ListController extends BaseController
         }
 
         // Load data for every view
-        foreach ($this->views as $viewName => $listView) {
+        foreach (array_keys($this->views) as $viewName) {
             $where = [];
             $orderKey = '';
 
@@ -154,7 +154,7 @@ abstract class ListController extends BaseController
             $this->views[$viewName]->setSelectedOrderBy($orderKey);
 
             // Load data using filter and order
-            $listView->loadData(false, $where, [], $this->getOffSet($viewName), Base\Pagination::FS_ITEM_LIMIT);
+            $this->loadData($viewName, $where, $this->getOffSet($viewName));
         }
 
         // Operations with data, after execute action
@@ -162,8 +162,20 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Load data of list view
+     *
+     * @param string $viewName
+     * @param array $where
+     * @param int $offset
+     */
+    protected function loadData($viewName, $where, $offset)
+    {
+        $this->views[$viewName]->loadData(false, $where, [], $offset, Base\Pagination::FS_ITEM_LIMIT);
+    }
+
+    /**
      * Add an autocomplete type filter to the ListView.
-     * 
+     *
      * @param string $viewName
      * @param string $key        (Filter identifier)
      * @param string $label      (Human reader description)
@@ -246,7 +258,7 @@ abstract class ListController extends BaseController
 
     /**
      * Add a select type filter to a ListView.
-     * 
+     *
      * @param string $viewName
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
