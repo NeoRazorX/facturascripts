@@ -121,7 +121,7 @@ class Balance extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_codbalances08';
+        return 'balances';
     }
 
     /**

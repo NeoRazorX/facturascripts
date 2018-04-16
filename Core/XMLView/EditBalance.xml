@@ -29,7 +29,7 @@
             <column name="code" order="100" numcolumns="2">
                 <widget type="text" fieldname="codbalance" />
             </column>
-            <column name="nature" numcolumns="2" order="110">
+            <column name="nature" numcolumns="3" order="110">
                 <widget type="select" fieldname="naturaleza">
                     <values title="asset">A</values>
                     <values title="liabilities">P</values>
@@ -37,19 +37,21 @@
                     <values title="income-and-expenses">IG</values>
                 </widget>
             </column>
-            <column name="description-1" order="120" numcolumns="4">
+        </group>
+        <group name="descriptions" numcolumns="12">
+            <column name="description-1" order="120" numcolumns="6">
                 <widget type="text" fieldname="descripcion1" />
             </column>
-            <column name="description-2" order="130" numcolumns="4">
+            <column name="description-2" order="130" numcolumns="6">
                 <widget type="text" fieldname="descripcion2" />
             </column>
-            <column name="description-3" order="140" numcolumns="4">
+            <column name="description-3" order="140" numcolumns="6">
                 <widget type="text" fieldname="descripcion3" />
             </column>
-            <column name="description-4" order="150" numcolumns="4">
+            <column name="description-4" order="150" numcolumns="6">
                 <widget type="text" fieldname="descripcion4" />
             </column>
-            <column name="description-4ba" order="160" numcolumns="4">
+            <column name="description-4ba" order="160" numcolumns="6">
                 <widget type="text" fieldname="descripcion4ba" />
             </column>
         </group>

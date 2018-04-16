@@ -46,11 +46,11 @@ class ProfitAndLoss extends AccountingBase
 
     /**
      * Generate the data results.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
      * @param array $params
-     * 
+     *
      * @return array
      */
     public function generate(string $dateFrom, string $dateTo, array $params = [])
@@ -110,8 +110,8 @@ class ProfitAndLoss extends AccountingBase
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
-            . ' FROM co_cuentascbba ccb '
-            . ' INNER JOIN co_codbalances08 cb ON ccb.codbalance = cb.codbalance '
+            . ' FROM balancescuentasabreviadas ccb '
+            . ' INNER JOIN balances cb ON ccb.codbalance = cb.codbalance '
             . ' INNER JOIN partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN \'6\' AND \'7\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
             . ' INNER JOIN asientos asto on asto.idasiento = pa.idasiento and asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
             . ' WHERE cb.naturaleza = \'PG\''
