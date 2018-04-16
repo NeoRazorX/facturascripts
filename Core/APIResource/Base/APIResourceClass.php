@@ -30,7 +30,7 @@ abstract class APIResourceClass
     /**
      * HTTP response object.
      *
-     * @var Response
+     * @var \Symfony\Component\HttpFoundation\Response
      */
     protected $response;
 

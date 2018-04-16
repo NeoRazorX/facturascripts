@@ -334,12 +334,10 @@ class AppAPI extends App
         switch ($this->getResourceType($resource)) {
             case 'Model':
                 return $this->processModelResource($resource);
-                break;
             case 'APIResource':
                 $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
                 $class = new $className($this->response);
                 return $class->processResource($resource);
-                break;
             default:
                 return false;
         }
@@ -358,12 +356,10 @@ class AppAPI extends App
         switch ($this->getResourceType($resource)) {
             case 'Model':
                 return $this->processModelResourceParam($resource, $params[0]);
-                break;
             case 'APIResource':
                 $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
                 $class = new $className($this->response);
                 return $class->processResourceParam($resource, $params);
-                break;
             default:
                 return false;
         }
