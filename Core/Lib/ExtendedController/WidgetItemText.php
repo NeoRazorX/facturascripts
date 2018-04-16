@@ -76,7 +76,7 @@ class WidgetItemText extends WidgetItem
     public function getListHTML($value)
     {
         if ($value === null || $value === '') {
-            return '';
+            return '-';
         }
 
         $txt = $this->getTextResume($value);

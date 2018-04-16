@@ -104,7 +104,7 @@ class WidgetItemNumber extends WidgetItem
     public function getListHTML($value)
     {
         if ($value === null || $value === '') {
-            return '';
+            return '-';
         }
 
         $style = $this->getTextOptionsHTML($value);

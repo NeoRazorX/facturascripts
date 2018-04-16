@@ -258,7 +258,7 @@ abstract class ModelCore
      */
     private function getIntergerValueForField($field, $value)
     {
-        if (!empty($value)) {
+        if (is_numeric($value)) {
             return (int) $value;
         }
 

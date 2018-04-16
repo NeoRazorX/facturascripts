@@ -68,7 +68,7 @@ class WidgetItemCheckBox extends WidgetItem
     public function getListHTML($value)
     {
         if ($value === null || $value === '') {
-            return '';
+            return '-';
         }
 
         $checked = in_array($value, ['t', '1'], false);

@@ -95,7 +95,7 @@ class WidgetItemSelect extends WidgetItem
     public function getListHTML($value)
     {
         if ($value === null || $value === '') {
-            return '';
+            return '-';
         }
 
         $txt = $value;
