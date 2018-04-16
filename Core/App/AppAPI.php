@@ -332,10 +332,10 @@ class AppAPI extends App
     private function processResource($resource)
     {
         switch ($this->getResourceType($resource)) {
-            case 'Model' :
+            case 'Model':
                 return $this->processModelResource($resource);
                 break;
-            case 'APIResource' :
+            case 'APIResource':
                 $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
                 $class = new $className($this->response);
                 return $class->processResource($resource);
@@ -356,10 +356,10 @@ class AppAPI extends App
     private function processResourceParam($resource, $params)
     {
         switch ($this->getResourceType($resource)) {
-            case 'Model' :
+            case 'Model':
                 return $this->processModelResourceParam($resource, $params[0]);
                 break;
-            case 'APIResource' :
+            case 'APIResource':
                 $className = 'FacturaScripts\\Dinamic\\APIResource\\' . $resource;
                 $class = new $className($this->response);
                 return $class->processResourceParam($resource, $params);

@@ -53,5 +53,4 @@ abstract class APIResourceClass
     {
         $this->response->setContent(json_encode(['error' => $string]));
     }
-
 }

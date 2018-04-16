@@ -49,7 +49,7 @@ class Calculate extends Base\APIResourceClass
         foreach ($param as $_value) {
             $value = (float)$_value;
             switch ($operator) {
-                case 'sum' :
+                case 'sum':
                     $result += (float)$value;
                     break;
                 case 'subtraction':
