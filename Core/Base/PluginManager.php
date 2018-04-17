@@ -85,7 +85,7 @@ class PluginManager
      *
      * @param bool $clean
      */
-    public function deploy($clean = true)
+    public function deploy(bool $clean = true)
     {
         $pluginDeploy = new PluginDeploy();
         $pluginDeploy->deploy(self::PLUGIN_PATH, $this->enabledPlugins(), $clean);
@@ -96,7 +96,7 @@ class PluginManager
      *
      * @param string $pluginName
      */
-    public function disable($pluginName)
+    public function disable(string $pluginName)
     {
         foreach (self::$enabledPlugins as $i => $value) {
             if ($value['name'] === $pluginName) {
@@ -115,7 +115,7 @@ class PluginManager
      *
      * @param string $pluginName
      */
-    public function enable($pluginName)
+    public function enable(string $pluginName)
     {
         /// is pluginName enabled?
         foreach (self::$enabledPlugins as $i => $value) {
@@ -125,14 +125,18 @@ class PluginManager
         }
 
         foreach ($this->installedPlugins() as $plugin) {
-            if ($plugin['name'] === $pluginName) {
+            if ($plugin['name'] !== $pluginName) {
+                continue;
+            }
+
+            if ($this->checkRequire($plugin['require'])) {
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
                 $this->deploy(false);
                 $this->initControllers();
                 self::$minilog->info(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
-                break;
             }
+            break;
         }
     }
 
@@ -141,7 +145,7 @@ class PluginManager
      *
      * @return array
      */
-    public function enabledPlugins()
+    public function enabledPlugins(): array
     {
         $enabled = [];
         foreach (self::$enabledPlugins as $value) {
@@ -196,7 +200,7 @@ class PluginManager
      *
      * @return bool
      */
-    public function install($zipPath, $zipName = 'plugin.zip')
+    public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
     {
         $zipFile = new ZipArchive();
         $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
@@ -245,7 +249,7 @@ class PluginManager
      *
      * @return array
      */
-    public function installedPlugins()
+    public function installedPlugins(): array
     {
         $plugins = [];
         foreach ($this->scanFolder(self::PLUGIN_PATH) as $folder) {
@@ -264,7 +268,7 @@ class PluginManager
      *
      * @return bool
      */
-    public function remove($pluginName)
+    public function remove(string $pluginName): bool
     {
         /// can't remove enabled plugins
         if (in_array($pluginName, self::$enabledPlugins)) {
@@ -284,13 +288,44 @@ class PluginManager
     }
 
     /**
+     * Check for plugins needed.
+     * 
+     * @param array $require
+     * 
+     * @return bool
+     */
+    private function checkRequire(array $require): bool
+    {
+        if (empty($require)) {
+            return true;
+        }
+
+        foreach ($require as $req) {
+            $found = false;
+            foreach ($this->enabledPlugins() as $pluginName) {
+                if ($pluginName === $req) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                self::$minilog->warning(self::$i18n->trans('plugin-needed', ['%pluginName%' => $req]));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Recursive delete directory.
      *
      * @param string $dir
      *
      * @return bool
      */
-    private function delTree($dir)
+    private function delTree(string $dir): bool
     {
         $files = is_dir($dir) ? $this->scanFolder($dir) : [];
         foreach ($files as $file) {
@@ -302,12 +337,12 @@ class PluginManager
     /**
      * Return plugin information.
      *
-     * @param $pluginName
-     * @param $iniContent
+     * @param string $pluginName
+     * @param string $iniContent
      *
      * @return array
      */
-    private function getPluginInfo($pluginName, $iniContent)
+    private function getPluginInfo(string $pluginName, string $iniContent): array
     {
         $info = [
             'compatible' => false,
@@ -347,7 +382,7 @@ class PluginManager
      *
      * @return array
      */
-    private function loadFromFile()
+    private function loadFromFile(): array
     {
         if (file_exists(self::PLUGIN_LIST_FILE)) {
             $content = file_get_contents(self::PLUGIN_LIST_FILE);
@@ -364,7 +399,7 @@ class PluginManager
      *
      * @return bool
      */
-    private function save()
+    private function save(): bool
     {
         $content = json_encode(self::$enabledPlugins);
         return file_put_contents(self::PLUGIN_LIST_FILE, $content) !== false;
@@ -377,7 +412,7 @@ class PluginManager
      *
      * @return array
      */
-    private function scanFolder($folderPath)
+    private function scanFolder(string $folderPath): array
     {
         return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..']);
     }

@@ -381,6 +381,7 @@
     "plugin-deleted": "Plugin %pluginName% successfully deleted.",
     "plugin-disabled": "Plugin %pluginName% disabled successfully.",
     "plugin-enabled": "Plugin %pluginName% activated successfully.",
+    "plugin-needed": "Plugin %pluginName% needed.",
     "plugin-not-compatible": "Plugin %pluginName% not compatible with FacturaScripts 2018.",
     "port": "Port",
     "position": "Position",
