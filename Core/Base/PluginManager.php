@@ -98,15 +98,18 @@ class PluginManager
      */
     public function disable(string $pluginName)
     {
-        foreach (self::$enabledPlugins as $i => $value) {
-            if ($value['name'] === $pluginName) {
-                unset(self::$enabledPlugins[$i]);
-                $this->save();
-                $this->deploy();
-                $this->initControllers();
-                self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
-                break;
+        foreach (self::$enabledPlugins as $key => $value) {
+            if ($value['name'] !== $pluginName) {
+                continue;
             }
+
+            unset(self::$enabledPlugins[$key]);
+            $this->disableByDependecy($pluginName);
+            $this->save();
+            $this->deploy();
+            $this->initControllers();
+            self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
+            break;
         }
     }
 
@@ -118,7 +121,7 @@ class PluginManager
     public function enable(string $pluginName)
     {
         /// is pluginName enabled?
-        foreach (self::$enabledPlugins as $i => $value) {
+        foreach (self::$enabledPlugins as $value) {
             if ($value['name'] === $pluginName) {
                 return;
             }
@@ -332,6 +335,21 @@ class PluginManager
             is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
         }
         return is_dir($dir) ? rmdir($dir) : unlink($dir);
+    }
+
+    /**
+     * Disables plugins that depends on $pluginDisabled
+     * 
+     * @param string $pluginDisabled
+     */
+    private function disableByDependecy(string $pluginDisabled)
+    {
+        foreach (self::$enabledPlugins as $key => $value) {
+            if (in_array($pluginDisabled, $value['require'])) {
+                unset(self::$enabledPlugins[$key]);
+                self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $value['name']]));
+            }
+        }
     }
 
     /**
