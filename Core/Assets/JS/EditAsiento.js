@@ -105,8 +105,23 @@ function setAccountData(data) {
  * @returns {Boolean}
  */
 function saveVatRegister() {
-    // cancel eventManager for submit form
-    preventDefault();
+    // cancel eventManager for submit form and hide form
+    event.preventDefault();
+    vatModal.modal('hide');
+
+    // save form data into grid data
+    var selectedRow = getRowSelected();
+    if (selectedRow !== null) {
+        var values = [
+            {'field': 'documento', 'value': vatForm.find('.modal-body [name="documento"]').val()},
+            {'field': 'cifnif', 'value': vatForm.find('.modal-body [name="cifnif"]').val()},
+            {'field': 'baseimponible', 'value': vatForm.find('.modal-body [name="baseimponible"]').val()},
+            {'field': 'iva', 'value': vatForm.find('.modal-body [name="iva"]').val()},
+            {'field': 'recargo', 'value': vatForm.find('.modal-body [name="recargo"]').val()}
+        ];
+        setGridRowValues(selectedRow, values);
+    }
+
     return false;
 }
 
@@ -116,7 +131,7 @@ function saveVatRegister() {
  * @param {string} mainForm
  * @param {string} action
  */
-function showVatRegister(mainForm, action) {
+function showVatRegister(action, mainForm) {
     var selectedRow = getRowSelected();
     if (selectedRow !== null) {
         // Set form object, first time
@@ -215,7 +230,7 @@ function customAfterChange(changes) {
 
             // show VAT Register, if needed
             if (Object.keys(results.vat).length > 0) {
-                showVatRegister(null, 'VAT-Register');
+                showVatRegister('VAT-Register', 'EditAsiento');
             }
         },
         error: function (xhr, status, error) {
