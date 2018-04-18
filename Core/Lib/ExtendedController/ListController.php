@@ -298,13 +298,13 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Adds a list of fields (separated by "|") to the search field of the ListView..
+     * Adds a list of fields to the search in the ListView.
      * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
-     * @param string   $viewName
-     * @param string[] $fields
+     * @param string $viewName
+     * @param array  $fields
      */
-    protected function addSearchFields($viewName, $fields)
+    protected function addSearchFields(string $viewName, array $fields)
     {
         $this->views[$viewName]->addSearchIn($fields);
     }
