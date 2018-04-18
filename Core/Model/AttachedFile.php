@@ -190,9 +190,9 @@ class AttachedFile extends Base\ModelClass
     {
         $bytes = $this->size;
         $decimals = 2;
-        $sz = 'BKMGTP';
+        $size = 'BKMGTP';
         $factor = (int) floor((\strlen($bytes) - 1) / 3);
-        return sprintf("%.{$decimals}f", $bytes / (1024 ** $factor)) . ' ' . @$sz[$factor];
+        return sprintf("%.{$decimals}f", $bytes / (1024 ** $factor)) . ' ' . @$size[$factor];
     }
 
     /**
