@@ -176,7 +176,7 @@ class RegularizacionImpuestos extends Base\ModelClass
     public function delete()
     {
         $sql = 'DELETE FROM ' . static::tableName()
-            . ' WHERE idregiva = ' . self::$dataBase->var2str($this->idregiva) . ';';
+            . ' WHERE idregularizacion = ' . self::$dataBase->var2str($this->idregularizacion) . ';';
         if (self::$dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {
