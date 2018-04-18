@@ -20,22 +20,22 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model\RegularizacionIva;
+use FacturaScripts\Core\Model\RegularizacionImpuestos;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \RegularizacionIva
+ * @covers \RegularizacionImpuestos
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class RegularizacionIvaTest extends TestCase
+final class RegularizacionImpuestosTest extends TestCase
 {
-    public function testNewRegularizacionIva()
+    public function testNewRegularizacionImpuestos()
     {
-        $model = new RegularizacionIva();
+        $model = new RegularizacionImpuestos();
 
         $now = new \DateTime();
-        $this->assertInstanceOf(RegularizacionIva::class, $model);
+        $this->assertInstanceOf(RegularizacionImpuestos::class, $model);
         $this->assertEquals('', $model->codejercicio);
         $this->assertTrue($model->test());
 
@@ -49,21 +49,21 @@ final class RegularizacionIvaTest extends TestCase
 
     public function testTable()
     {
-        $model = new RegularizacionIva();
+        $model = new RegularizacionImpuestos();
 
         $this->assertInternalType('string', $model::tableName());
     }
 
     public function testPrimaryColumn()
     {
-        $model = new RegularizacionIva();
+        $model = new RegularizacionImpuestos();
 
         $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()
     {
-        $model = new RegularizacionIva();
+        $model = new RegularizacionImpuestos();
 
         $this->assertInternalType('string', $model->install());
     }
@@ -74,7 +74,7 @@ final class RegularizacionIvaTest extends TestCase
 
         $this->assertEquals(true, $dataBase->connect());
 
-        $model = new RegularizacionIva();
+        $model = new RegularizacionImpuestos();
         $sql = $model->install();
 
         if ($sql !== '') {
@@ -85,7 +85,7 @@ final class RegularizacionIvaTest extends TestCase
 
     public function testAll()
     {
-        $model = new RegularizacionIva();
+        $model = new RegularizacionImpuestos();
         $list = $model->all();
 
         if (!empty($list)) {
