@@ -26,30 +26,30 @@
     <columns>
         <group name="data" title="warehouse" numcolumns="12">
             <column name="code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codalmacen" onclick="" required="true" />
+                <widget type="text" fieldname="codalmacen" required="true" />
             </column>
             <column name="name" numcolumns="6" order="110">
-                <widget type="text" fieldname="nombre" onclick="" required="true" />
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="phone" numcolumns="3" order="120">
-                <widget type="text" fieldname="telefono" onclick="" />
+                <widget type="text" fieldname="telefono" />
             </column>
         </group>
         <group name="contact-data" title="contact-data" numcolumns="12">
             <column name="address" numcolumns="6" order="100">
-                <widget type="text" fieldname="direccion" onclick="" />
+                <widget type="text" fieldname="direccion" />
             </column>
             <column name="postalcode" numcolumns="3" order="110">
-                <widget type="text" fieldname="codpostal" onclick="" />
+                <widget type="text" fieldname="codpostal" />
             </column>
             <column name="postalmail" numcolumns="3" order="120">
-                <widget type="text" fieldname="apartado" onclick="" />
+                <widget type="text" fieldname="apartado" />
             </column>
             <column name="city" numcolumns="4" order="130">
-                <widget type="text" fieldname="ciudad" onclick="" />
+                <widget type="text" fieldname="ciudad" />
             </column>
             <column name="province" numcolumns="4" order="140">
-                <widget type="text" fieldname="provincia" onclick="" />
+                <widget type="text" fieldname="provincia" />
             </column>
             <column name="country" numcolumns="4" order="150">
                 <widget type="select" fieldname="codpais" required="true">
