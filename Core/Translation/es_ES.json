@@ -1289,5 +1289,6 @@
     "income-and-expenses": "Ingresos y Gastos",
     "percentage-vat": "% IVA",
     "percentage-surcharge": "% R.E.",
-    "percentage-commission": "% Comisión"
+    "percentage-commission": "% Comisión",
+    "plugin-needed": "Se necesita el plugin %pluginName%."
 }
