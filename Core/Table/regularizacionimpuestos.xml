@@ -76,4 +76,8 @@
         <name>ca_regularizacionimpuestos_subcuentas2</name>
         <type>FOREIGN KEY (idsubcuentadeudora) REFERENCES subcuentas (idsubcuenta) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
+    <constraint>
+        <name>ca_regularizacionimpuestos_asientos</name>
+        <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
 </table>
