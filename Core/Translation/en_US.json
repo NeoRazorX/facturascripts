@@ -1126,5 +1126,6 @@
     "income-and-expenses": "Income and Expenses",
     "percentage-vat": "% VAT",
     "percentage-surcharge": "% Surcharge",
-    "percentage-commission": "% Commission"
+    "percentage-commission": "% Commission",
+    "plugin-needed": "Plugin %pluginName% needed."
 }
