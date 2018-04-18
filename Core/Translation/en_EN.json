@@ -663,5 +663,13 @@
     "income-and-expenses": "Income and Expenses",
     "percentage-vat": "% VAT",
     "percentage-surcharge": "% Surcharge",
-    "percentage-commission": "% Commission"
+    "percentage-commission": "% Commission",
+    "file-not-exists": "File not exists: %fileName%",
+    "file-yet-exists": "File yet exists: %filePath%",
+    "attached-files": "Attached files",
+    "attached-file": "Attached file",
+    "file-name": "File name",
+    "full-path": "Full path",
+    "uploaded-at" : "Uploaded at",
+    "hash": "Hash"
 }
