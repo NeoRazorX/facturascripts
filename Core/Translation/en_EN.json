@@ -1,7 +1,4 @@
 {
-    "%-surcharge": "% Surcharge",
-    "%-vat": "% VAT",
-    "%-commission": "% Commission",
     "about": "About",
     "accept": "Accept",
     "account": "Account",
@@ -663,5 +660,8 @@
     "asset": "Asset",
     "liabilities": "Liabilities",
     "profit-and-loss": "Profit and Loss",
-    "income-and-expenses": "Income and Expenses"
+    "income-and-expenses": "Income and Expenses",
+    "percentage-vat": "% VAT",
+    "percentage-surcharge": "% Surcharge",
+    "percentage-commission": "% Commission"
 }

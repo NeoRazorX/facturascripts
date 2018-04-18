@@ -1196,5 +1196,8 @@
     "asset": "Actiu",
     "liabilities": "Passiu",
     "profit-and-loss": "Pèrdues i Guanys",
-    "income-and-expenses": "Ingressos i Despeses"
+    "income-and-expenses": "Ingressos i Despeses",
+    "percentage-vat": "% IVA",
+    "percentage-surcharge": "% R.E.",
+    "percentage-commission": "% Comissió"
 }

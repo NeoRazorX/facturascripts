@@ -1286,5 +1286,8 @@
     "asset": "Activo",
     "liabilities": "Pasivo",
     "profit-and-loss": "Pérdidas y Ganancias",
-    "income-and-expenses": "Ingresos y Gastos"
+    "income-and-expenses": "Ingresos y Gastos",
+    "percentage-vat": "% IVA",
+    "percentage-surcharge": "% R.E.",
+    "percentage-commission": "% Comisión"
 }
