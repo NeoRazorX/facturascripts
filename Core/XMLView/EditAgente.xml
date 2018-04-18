@@ -40,7 +40,7 @@
             <column name="position" numcolumns="4" order="140">
                 <widget type="text" fieldname="cargo" />
             </column>
-            <column name="commission" title="%-commission" numcolumns="4" order="150">
+            <column name="commission" title="percentage-commission" numcolumns="4" order="150">
                 <widget type="number" fieldname="porcomision" />
             </column>
             <column name="phone" numcolumns="4" order="160">

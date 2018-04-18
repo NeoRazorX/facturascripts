@@ -25,8 +25,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * A VAT regularization.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class RegularizacionIva extends Base\ModelClass
+class RegularizacionImpuestos extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -35,14 +36,7 @@ class RegularizacionIva extends Base\ModelClass
      *
      * @var int
      */
-    public $idregiva;
-
-    /**
-     * ID of the generated accounting entry.
-     *
-     * @var int
-     */
-    public $idasiento;
+    public $idregularizacion;
 
     /**
      * Exercise code.
@@ -52,18 +46,11 @@ class RegularizacionIva extends Base\ModelClass
     public $codejercicio;
 
     /**
-     * Date of entry.
+     * Period of regularization.
      *
-     * @var string
+     * @var
      */
-    public $fechaasiento;
-
-    /**
-     * End date.
-     *
-     * @var string
-     */
-    public $fechafin;
+    public $periodo;
 
     /**
      * Start date.
@@ -73,11 +60,53 @@ class RegularizacionIva extends Base\ModelClass
     public $fechainicio;
 
     /**
-     * Period of regularization.
+     * End date.
      *
-     * @var
+     * @var string
      */
-    public $periodo;
+    public $fechafin;
+
+    /**
+     * Related sub-account ID.
+     *
+     * @var int
+     */
+    public $idsubcuentaacreedora;
+
+    /**
+     * Code, not ID, of the related sub-account.
+     *
+     * @var string
+     */
+    public $codsubcuentaacreedora;
+
+    /**
+     * Related sub-account ID.
+     *
+     * @var int
+     */
+    public $idsubcuentadeudora;
+
+    /**
+     * Code, not ID, of the related sub-account.
+     *
+     * @var string
+     */
+    public $codsubcuentadeudora;
+
+    /**
+     * ID of the generated accounting entry.
+     *
+     * @var int
+     */
+    public $idasiento;
+
+    /**
+     * Date of entry.
+     *
+     * @var string
+     */
+    public $fechaasiento;
 
     /**
      * Returns the name of the table that uses this model.
@@ -86,7 +115,7 @@ class RegularizacionIva extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'co_regiva';
+        return 'regularizacionimpuestos';
     }
 
     /**
@@ -96,7 +125,7 @@ class RegularizacionIva extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idregiva';
+        return 'idregularizacion';
     }
 
     /**
@@ -124,7 +153,7 @@ class RegularizacionIva extends Base\ModelClass
      *
      * @param string $fecha
      *
-     * @return bool|RegularizacionIva
+     * @return bool|RegularizacionImpuestos
      */
     public function getFechaInside($fecha)
     {
@@ -147,7 +176,7 @@ class RegularizacionIva extends Base\ModelClass
     public function delete()
     {
         $sql = 'DELETE FROM ' . static::tableName()
-            . ' WHERE idregiva = ' . self::$dataBase->var2str($this->idregiva) . ';';
+            . ' WHERE idregularizacion = ' . self::$dataBase->var2str($this->idregularizacion) . ';';
         if (self::$dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {
