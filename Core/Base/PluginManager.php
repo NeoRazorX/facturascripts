@@ -346,8 +346,9 @@ class PluginManager
     {
         foreach (self::$enabledPlugins as $key => $value) {
             if (in_array($pluginDisabled, $value['require'])) {
-                unset(self::$enabledPlugins[$key]);
                 self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $value['name']]));
+                unset(self::$enabledPlugins[$key]);
+                $this->disableByDependecy($value['name']);
             }
         }
     }
