@@ -111,8 +111,7 @@ class PageOption extends Base\ModelClass
             $this->name = $viewName;
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($viewName, $this)) {
-                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $viewName]));
-
+                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $viewName . '.xml']));
                 return;
             }
         }
