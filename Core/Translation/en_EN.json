@@ -667,5 +667,6 @@
     "macro-document": "Type %document% in the description field to add the document's name.",
     "macro-date": "Type %date% in the description field to add today's date.",
     "macro-date-entry": "Type %date-entry% in the description field to add the accounting entry's date.",
-    "macro-month": "Type %month% in the description field to add the name of the month in which the accounting entry was made."
+    "macro-month": "Type %month% in the description field to add the name of the month in which the accounting entry was made.",
+    "description-macro": "Description macro"
 }

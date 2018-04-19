@@ -37,10 +37,10 @@
     </columns>
     <rows>
         <row type="footer">
-            <group name="card1" footer="%document%" label="macro-document"/>
-            <group name="card2" footer="%date%" label="macro-date"/>
-            <group name="card3" footer="%date-entry%" label="macro-date-entry"/>
-            <group name="card4" footer="%month%" label="macro-month"/>
+            <group name="card1" footer="%document%" title="description-macro" label="macro-document"/>
+            <group name="card2" footer="%date%" title="description-macro" label="macro-date"/>
+            <group name="card3" footer="%date-entry%" title="description-macro" label="macro-date-entry"/>
+            <group name="card4" footer="%month%" title="description-macro" label="macro-month"/>
         </row>
     </rows>
 </view>
