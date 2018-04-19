@@ -20,6 +20,7 @@
  * Initial description for the controller EditConceptoPartida
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Javier García Iceta <javigarciaiceta@gmail.com>
 -->
 
 <view>
@@ -34,5 +35,13 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="card1" footer="macro-document" label="macro-document-usage"/>
+            <group name="card2" footer="macro-date" label="macro-date-usage"/>
+            <group name="card3" footer="macro-date-entry" label="macro-date-entry-usage"/>
+            <group name="card4" footer="macro-month" label="macro-month-usage"/>
+        </row>
+    </rows>
 </view>
 
