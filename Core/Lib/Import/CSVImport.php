@@ -36,7 +36,7 @@ class CSVImport
      *
      * @return string
      */
-    public static function importTableSQL($table)
+    public static function importTableSQL(string $table): string
     {
         $filePath = static::getTableFilePath($table);
         if ($filePath === '') {
@@ -49,7 +49,7 @@ class CSVImport
 
         $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $csv->titles) . ') VALUES ';
         $sep = '';
-        foreach ($csv->data as $key => $row) {
+        foreach ($csv->data as $row) {
             $sql .= $sep . '(';
             $sep2 = '';
             foreach ($row as $value) {
@@ -60,9 +60,8 @@ class CSVImport
             $sql .= ')';
             $sep = ', ';
         }
-        $sql .= ';';
 
-        return $sql;
+        return $sql . ';';
     }
 
     /**
@@ -89,25 +88,25 @@ class CSVImport
      *
      * @return string
      */
-    protected static function getTableFilePath($table)
+    protected static function getTableFilePath(string $table): string
     {
         if (!defined('FS_CODPAIS')) {
             define('FS_CODPAIS', 'ES');
         }
 
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';
+        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }
 
         $lang = strtoupper(substr(FS_LANG, 0, 2));
-        $filePath = FS_FOLDER . '/Core/Data/Lang/' . $lang . '/' . $table . '.csv';
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }
 
         /// If everything else fails
-        $filePath = FS_FOLDER . '/Core/Data/Lang/ES/' . $table . '.csv';
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }

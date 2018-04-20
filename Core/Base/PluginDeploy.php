@@ -66,7 +66,7 @@ class PluginDeploy
      */
     public function deploy(string $pluginPath, array $enabledPlugins, bool $clean = true)
     {
-        $folders = ['Assets', 'Controller', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
+        $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
                 $this->cleanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
