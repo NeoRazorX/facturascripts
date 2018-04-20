@@ -71,13 +71,12 @@ class Ledger extends AccountingBase
     protected function processLedgerPages($results, &$ledger, &$ledgerAccount, $grouping)
     {
         foreach ($results as $line) {
+            $account = ($grouping) ? $line['codcuenta'] : 0;
             if ($grouping) {
-                $this->processHeader($ledgerAccount[$line['codcuenta']], $line);
-                $ledger[$line['codcuenta']][0] = $this->processLine($ledgerAccount[$line['codcuenta']], $grouping);
-                $ledger[$line['codcuenta']][] = $this->processLine($line, $grouping);
-            } else {
-                $ledger[0][] = $this->processLine($line, $grouping);
+                $this->processHeader($ledgerAccount[$account], $line);
+                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouping);
             }
+            $ledger[$account][] = $this->processLine($line, $grouping);
         }
     }
 
