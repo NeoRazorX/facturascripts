@@ -664,9 +664,6 @@
     "percentage-vat": "% VAT",
     "percentage-surcharge": "% Surcharge",
     "percentage-commission": "% Commission",
-    "macro-document": "Type %document% in the description field to add the document's name.",
-    "macro-date": "Type %date% in the description field to add today's date.",
-    "macro-date-entry": "Type %date-entry% in the description field to add the accounting entry's date.",
-    "macro-month": "Type %month% in the description field to add the name of the month in which the accounting entry was made.",
-    "macros-title": "Usage of macros in the description field"
+    "macros-title": "Usage of macros in the description field",
+    "macro-text": "<p>You can use special keywords (macros) to autocomplete some information on the description field:</p><dl><dt>Document name</dt><dd>Type <strong>%document%</strong> to add the document's name.</dd><dt>Current date</dt><dd>Type <strong>%date%</strong> to add the current date.</dd><dt>Entry date</dt><dd>Type <strong>%date-entry%</strong> to add the accounting entry's date.</dd><dt>Month</dt><dd>Type <strong>%month%</strong> to add the name of the month of the accounting entry's date.</dd></dl>"
 }

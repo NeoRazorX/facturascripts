@@ -23,11 +23,6 @@
  * @author Javier García Iceta <javigarciaiceta@gmail.com>
 -->
 
-<!DOCTYPE resources [
-  <!ENTITY macro-date-entry "texto de prueba">
-  <!ENTITY macro-document "macro-document">
-]>
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -42,18 +37,7 @@
     </columns>
     <rows>
         <row type="footer">
-            <group name="card" title="macros-title" label=
-                "&lt;dl&gt;
-                &lt;dt&gt;Document&lt;/dt&gt;
-                &lt;dd&gt;Type %document% to get the document name.&lt;/dd&gt;
-                &lt;dt&gt;Current date&lt;/dt&gt;
-                &lt;dd&gt;Type %date% to get the current date&lt;/dd&gt;
-                &lt;dt&gt;Entry date&lt;/dt&gt;
-                &lt;dd&gt;Type %date-entry% to get the accounting entry's date&lt;/dd&gt;
-                &lt;dt&gt;Month&lt;/dt&gt;
-                &lt;dd&gt;Type %month% to get the name of the month of the accounting entry's date&lt;/dd&gt;
-                &lt;/dl&gt;">
-            </group>
+            <group name="card" title="macros-title" label="macro-text"></group>
         </row>
     </rows>
 </view>
