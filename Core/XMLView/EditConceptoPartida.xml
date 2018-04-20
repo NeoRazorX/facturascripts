@@ -42,7 +42,7 @@
     </columns>
     <rows>
         <row type="footer">
-            <group name="card" title="description-macro" label=
+            <group name="card" title="macros-title" label=
                 "&lt;dl&gt;
                 &lt;dt&gt;Document&lt;/dt&gt;
                 &lt;dd&gt;Type %document% to get the document name.&lt;/dd&gt;
