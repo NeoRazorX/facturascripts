@@ -209,7 +209,7 @@ class APIModel extends APIResourceClass
 
         $this->fixTypes();
         if ($this->model->save()) {
-            $this->data = $values;
+            $data = $values;
             $this->setOk('data-saved', (array) $this->model);
         } else {
             foreach ($this->miniLog->read() as $message) {

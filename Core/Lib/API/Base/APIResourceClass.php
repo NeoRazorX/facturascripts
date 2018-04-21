@@ -77,7 +77,7 @@ abstract class APIResourceClass
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param MiniLog $miniLog
      * @param Translator $i18n
-     * @param params is an array with URI parameters
+     * @param array params is an array with URI parameters
      */
     public function __construct($response, $request, MiniLog $miniLog, Translator $i18n, array $params)
     {
@@ -200,6 +200,7 @@ abstract class APIResourceClass
     protected function setOk(string $string, array $data = null)
     {
         $this->response->setStatusCode(Response::HTTP_OK);
+        $res = array();
         $res['ok'] = $string;
         if ($data !== null) {
             $res['data'] = $data;
@@ -219,6 +220,7 @@ abstract class APIResourceClass
     protected function setError(string $message, array $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
         $this->response->setStatusCode($status);
+        $res = array();
         $res['error'] = $message;
         if ($data !== null) {
             $res['data'] = $data;

@@ -51,6 +51,7 @@ class Calculate extends APIResourceClass
      */
     public function getResources(): array
     {
+        $ret = array();
         $ret['calculates'] = $this->setResource('Calculadora');
         return $ret;
     }
@@ -65,7 +66,7 @@ class Calculate extends APIResourceClass
     public function processResource(string $name): bool
     {
         $params = $this->params;
-        if ($params === null) {
+        if (count($params) === 0) {
             $this->help();
             return true;
         }
