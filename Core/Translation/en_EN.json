@@ -680,6 +680,7 @@
     "type-critical": "Type critical",
     "type-alert": "Type alert",
     "type-emergency": "Type emergency",
+    "type-debug": "Type debug",
     "log": "Log",
     "logs": "Logs",
     "time": "Time",
