@@ -167,11 +167,11 @@ class APIModel extends APIResourceClass
             }
             $this->returnResult($data);
         } else {
-            $this->data = (array) $this->model->get($this->params[0]);
-            if (isset($this->data)) {
+            $data = (array) $this->model->get($this->params[0]);
+            if (isset($data)) {
                 // Return "array(1) { [0]=> bool(false) }" if not found???
-                if (count($this->data) > 1 || !isset($this->data[0])) {
-                    $this->returnResult($this->data);
+                if (count($data) > 1 || !isset($data[0])) {
+                    $this->returnResult($data);
                 } else {
                     $this->setError($this->params[0] . ' not found');
                     return false;
@@ -237,7 +237,7 @@ class APIModel extends APIResourceClass
             return true;
         }
 
-        $this->setError('data-not-found', $this->params[0] . ' not found');
+        $this->setError($this->params[0] . ' not found');
         return false;
     }
 
@@ -260,7 +260,7 @@ class APIModel extends APIResourceClass
 
             return parent::processResource($name);
         } catch (\Exception $ex) {
-            setError(API_ERROR, null, Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->setError(API_ERROR, null, Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
     }
