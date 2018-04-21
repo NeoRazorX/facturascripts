@@ -266,28 +266,9 @@ abstract class ModelClass extends ModelCore
         $status = true;
 
         foreach ($this->getModelFields() as $key => $value) {
-            $fieldType = $value['type'];
-            $fieldNullable = $value['is_nullable'];
-
-            if (empty($value['default']) && $fieldNullable === 'NO' && $this->{$key} === null && $this->{$key} !== $this->primaryColumnValue()) {
+            if (empty($value['default']) && $value['is_nullable'] === 'NO' && $this->{$key} === null && $this->{$key} !== $this->primaryColumnValue()) {
                 self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key]));
                 $status = false;
-            }
-
-            // Force to match type from supported types, because from API we receive always a string
-            if (\is_numeric($this->{$key}) && \is_string($this->{$key})) {
-                if (\strpos($fieldType, 'double') === 0) {
-                    $this->{$key} = (double) $this->{$key};
-                } elseif (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
-                    $this->{$key} = (bool) $this->{$key};
-                } else {
-                    $this->{$key} = (int) $this->{$key};
-                }
-            }
-            if (\is_bool($this->{$key}) && \is_string($this->{$key})) {
-                if (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
-                    $this->{$key} = (bool) $this->{$key};
-                }
             }
         }
 
