@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
@@ -15,26 +15,40 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Initial description for the controller ListLog
+ */
+namespace FacturaScripts\Core\Controller;
+
+use FacturaScripts\Core\Lib\ExtendedController;
+
+/**
+ * Controller to edit a single item from the LogMessage model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
--->
+ */
+class EditLogMessage extends ExtendedController\EditController
+{
 
-<view>
-    <columns>
-        <column name="code" order="100">
-            <widget type="text" fieldname="id" onclick="EditLog" />
-        </column>
-        <column name="time" order="110">
-            <widget type="text" fieldname="time" />
-        </column>
-        <column name="level" display="center" order="120">
-            <widget type="text" fieldname="level" />
-        </column>
-        <column name="message" order="130">
-            <widget type="text" fieldname="message" />
-        </column>
-    </columns>
-</view>
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'LogMessage';
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'log';
+        $pagedata['menu'] = 'admin';
+        $pagedata['icon'] = 'fa-file-text-o';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+}

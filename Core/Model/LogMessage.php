@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class Log extends Base\ModelClass
+class LogMessage extends Base\ModelClass
 {
 
     use Base\ModelTrait;

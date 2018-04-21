@@ -21,11 +21,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to list the items in the Log model
+ * Controller to list the items in the LogMessage model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class ListLog extends ExtendedController\ListController
+class ListLogMessage extends ExtendedController\ListController
 {
 
     /**
@@ -48,11 +48,11 @@ class ListLog extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListLog', 'Log');
-        $this->addSearchFields('ListLog', ['time', 'level', 'message']);
+        $this->addView('ListLogMessage', 'LogMessage');
+        $this->addSearchFields('ListLogMessage', ['time', 'level', 'message']);
 
-        $this->addOrderBy('ListLog', 'time', 'time');
-        $this->addOrderBy('ListLog', 'level', 'level');
+        $this->addOrderBy('ListLogMessage', 'time', 'time');
+        $this->addOrderBy('ListLogMessage', 'level', 'level');
 
         $values = [
             ['code' => 'info', 'description' => $this->i18n->trans('type-info')],
@@ -64,6 +64,6 @@ class ListLog extends ExtendedController\ListController
             ['code' => 'emergency', 'description' => $this->i18n->trans('type-emergency')]
         ];
         $selectValues = $this->codeModel::fromArray($values);
-        $this->addFilterSelect('ListLog', 'level', 'type', 'level', $selectValues);
+        $this->addFilterSelect('ListLogMessage', 'level', 'type', 'level', $selectValues);
     }
 }

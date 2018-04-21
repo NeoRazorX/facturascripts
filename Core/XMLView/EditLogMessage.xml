@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditLog
+ * Initial description for the controller EditLogMessage
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
 -->
@@ -29,13 +29,13 @@
                 <widget type="text" fieldname="id" icon="fa-file-text-o" required="true" />
             </column>
             <column name="time" numcolumns="5" order="110">
-                <widget type="text" fieldname="time" required="true" />
+                <widget type="text" fieldname="time" required="true" readonly="true" />
             </column>
             <column name="level" numcolumns="5" order="120">
-                <widget type="level" fieldname="level" required="true" />
+                <widget type="level" fieldname="level" required="true" readonly="true" />
             </column>
             <column name="message" numcolumns="12" order="130">
-                <widget type="text" fieldname="message" required="true" />
+                <widget type="text" fieldname="message" required="true" readonly="true" />
             </column>
         </group>
     </columns>
