@@ -16,16 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\APIResource;
+
+namespace FacturaScripts\Core\Lib\API;
+
+use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 
 /**
  * TestAPI to test API functionality
  *
  * @author Rafael San José Tovar (http://www.x-netdigital.com) <rsanjoseo@gmail.com>
  */
-class Calculate extends Base\APIResourceClass
+class Calculate extends APIResourceClass
 {
-    public function processResource($resource)
+    public function help()
     {
         $data = array();
         $data['name'] = 'Perform simple arithmetic operations';
@@ -40,31 +43,55 @@ class Calculate extends Base\APIResourceClass
         $this->returnResult($data);
     }
 
-    public function processResourceParam($resource, $param)
+    /**
+     * Returns an associative array with the resources, where the index is
+     * the public name of the resource.
+     *
+     * @return array
+     */
+    public function getResources(): array
     {
-        $operator = array_shift($param);
-        $result = (float)array_shift($param);
-        foreach ($param as $_value) {
+        $ret['calculates'] = $this->setResource('Calculadora');
+        return $ret;
+    }
+
+    /**
+     * Overwrite and IGNORE the original method of the ancestor.
+     *
+     * @param string $name
+     * @param array $params
+     * @return bool
+     */
+    public function processResource(string $name, array $params): bool
+    {
+        if ($params === null) {
+            $this->help();
+            return true;
+        }
+
+        $operator = array_shift($params);
+        $result = (float)array_shift($params);
+        foreach ($params as $_value) {
             $value = (float)$_value;
             switch ($operator) {
                 case 'sum':
-                    $result += (float)$value;
+                    $result += $value;
                     break;
                 case 'subtraction':
-                    $result -= (float)$value;
+                    $result -= $value;
                     break;
                 case 'multiplication':
-                    $result *= (float)$value;
+                    $result *= $value;
                     break;
                 case 'division':
-                    if ($value == 0) {
+                    if ($value === 0) {
                         $this->setError('No se puede dividir entre 0');
                         return false;
                     }
-                    $result /= (float)$value;
+                    $result /= $value;
                     break;
                 default:
-                    $this->setError("Bad Operator" . $operator);
+                    $this->setError("Bad Operator: $operator");
                     return false;
             }
         }
