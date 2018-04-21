@@ -930,7 +930,7 @@
     "invoice-new-assigned-date": "Ya hay facturas posteriores a la fecha seleccionada (%oldDate%). Nueva fecha asignada: %newDate%",
     "supplier-delivery-note-deleted-successfully": "Albarán de compra %docCode% ha sido eliminado correctamente.",
     "date-out-of-exercise-range": "La fecha está fuera del rango del ejercicio %exerciseName%",
-    "family-code-valid-length": "Código de familia no válido. Deben ser entre 1 y 8 caracteres.",
+    "family-code-valid-length": "Código de familia no válido. Debe tener entre 1 y 8 caracteres.",
     "family-desc-not-valid": "Descripción de familia no válida.",
     "parent-family-cant-be-child": "La familia padre no puede ser la misma que la hija.",
     "missing-data-epigraph-group": "Faltan datos en el grupo de epígrafes.",
