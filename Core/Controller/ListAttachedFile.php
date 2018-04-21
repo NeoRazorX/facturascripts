@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@ class ListAttachedFile extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attached-files';
-        $pagedata['menu'] = 'files';
+        $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-paperclip';
 
         return $pagedata;
@@ -49,9 +49,9 @@ class ListAttachedFile extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListAttachedFile', 'AttachedFile');
-        $this->addSearchFields('ListAttachedFile', ['filename', 'size', 'mimetype']);
+        $this->addSearchFields('ListAttachedFile', ['filename', 'mimetype']);
 
-        $this->addOrderBy('ListAttachedFile', 'id', 'code');
+        $this->addOrderBy('ListAttachedFile', 'idfile', 'code');
         $this->addOrderBy('ListAttachedFile', 'filename', 'file-name');
         $this->addOrderBy('ListAttachedFile', 'size', 'size');
         $this->addOrderBy('ListAttachedFile', 'mimetype', 'type');
