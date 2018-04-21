@@ -62,17 +62,18 @@ class Calculate extends APIResourceClass
      * @param array $params
      * @return bool
      */
-    public function processResource(string $name, array $params): bool
+    public function processResource(string $name): bool
     {
+        $params = $this->params;
         if ($params === null) {
             $this->help();
             return true;
         }
 
         $operator = array_shift($params);
-        $result = (float) array_shift($params);
+        $result = (float)array_shift($params);
         foreach ($params as $_value) {
-            $value = (float)$_value;
+            $value = (float) $_value;
             switch ($operator) {
                 case 'sum':
                     $result += $value;

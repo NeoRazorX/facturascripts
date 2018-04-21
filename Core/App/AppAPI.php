@@ -90,7 +90,7 @@ class AppAPI extends App
     }
 
     /**
-     * Expose resource
+     * Expose resource.
      *
      * @param array $map
      * @throws \UnexpectedValueException
@@ -118,8 +118,9 @@ class AppAPI extends App
         foreach (scandir(API_FOLDER, SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) === '.php') {
                 $class = substr('FacturaScripts\\' . API_FOLDER . $resource, 0, -4);
-                $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n);
+                $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
                 $resources[] = $APIClass->getResources();
+                unset($APIClass);
             }
         }
         $resources = array_merge(...$resources);
@@ -162,7 +163,7 @@ class AppAPI extends App
             $param++;
         }
 
-        $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n);
+        $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n, $params);
         if (isset($APIClass)) {
             return $APIClass->processResource($map[$resourceName]['Name'], $params);
         }
