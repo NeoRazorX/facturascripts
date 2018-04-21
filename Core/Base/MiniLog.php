@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Model\Log;
+
 /**
  * Manage all log message information types.
  *
@@ -27,11 +30,23 @@ namespace FacturaScripts\Core\Base;
 class MiniLog
 {
     /**
+     * All available log types
+     */
+    const ALL_TYPES = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+
+    /**
      * Contains the log data.
      *
      * @var array
      */
     private static $dataLog;
+
+    /**
+     * Contains allowed types to store.
+     *
+     * @var array
+     */
+    private static $allowed;
 
     /**
      * MiniLog constructor.
@@ -40,9 +55,31 @@ class MiniLog
     {
         if (self::$dataLog === null) {
             self::$dataLog = [];
+            self::$allowed = [];
+
+            $this->loadAllowed();
         }
     }
 
+    /**
+     * Load allowed types.
+     */
+    private function loadAllowed()
+    {
+        $dataBase = new DataBase();
+        if ($dataBase->connect()) {
+            $settings = new AppSettings();
+            $settings->load();
+            $dataBase->close();
+        }
+        foreach (self::ALL_TYPES as $type) {
+            if (!\in_array($type, self::$allowed)) {
+                if (AppSettings::get('log', $type, false)) {
+                    self::$allowed[] = $type;
+                }
+            }
+        }
+    }
     /**
      * System is unusable.
      *
@@ -162,12 +199,30 @@ class MiniLog
      */
     public function log($level, $message, array $context = [])
     {
-        self::$dataLog[] = [
+        $data = [
             'time' => time(),
             'level' => $level,
             'message' => $message,
             'context' => $context,
         ];
+        self::$dataLog[] = $data;
+        $this->persist($data);
+    }
+
+    /**
+     * Save data to permanent log.
+     *
+     * @param array $data
+     */
+    private function persist(array $data)
+    {
+        if (\in_array($data['level'], self::$allowed, false)) {
+            $log = new Log();
+            $log->time = $data['time'];
+            $log->level = $data['level'];
+            $log->message = $data['message'];
+            $log->save();
+        }
     }
 
     /**
@@ -177,12 +232,12 @@ class MiniLog
      *
      * @return array
      */
-    public function read(array $levels = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'])
+    public function read(array $levels = self::ALL_TYPES)
     {
         $messages = [];
 
         foreach (self::$dataLog as $data) {
-            if (in_array($data['level'], $levels, false)) {
+            if (\in_array($data['level'], $levels, false)) {
                 if ($data['message'] !== '') {
                     $messages[] = $data;
                 }
