@@ -1199,5 +1199,6 @@
     "income-and-expenses": "Ingressos i Despeses",
     "percentage-vat": "% IVA",
     "percentage-surcharge": "% R.E.",
-    "percentage-commission": "% Comissió"
+    "percentage-commission": "% Comissió",
+    "plugin-needed": "Es necessita el plugin %pluginName%."
 }
