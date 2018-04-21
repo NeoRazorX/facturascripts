@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -172,7 +172,6 @@ abstract class ComercialContact extends Contact
      */
     public function test()
     {
-        parent::test();
         $this->razonsocial = Utils::noHtml($this->razonsocial);
         $this->web = Utils::noHtml($this->web);
 
@@ -186,6 +185,6 @@ abstract class ComercialContact extends Contact
             $this->fechabaja = date('d-m-Y');
         }
 
-        return true;
+        return parent::test();
     }
 }

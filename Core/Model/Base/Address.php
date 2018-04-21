@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
- * Description of Address
+ * Description of Address abstract class.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -92,6 +92,6 @@ abstract class Address extends ModelClass
         $this->direccion = Utils::noHtml($this->direccion);
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return true;
+        return parent::test();
     }
 }

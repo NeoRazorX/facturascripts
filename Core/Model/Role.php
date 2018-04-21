@@ -76,7 +76,7 @@ class Role extends Base\ModelClass
     {
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        return true;
+        return parent::test();
     }
 
     /**

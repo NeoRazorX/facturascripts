@@ -83,7 +83,7 @@ class ConceptoPartida extends Base\ModelClass
     {
         $this->concepto = Utils::noHtml($this->concepto);
 
-        return true;
+        return parent::test();
     }
 
     /**

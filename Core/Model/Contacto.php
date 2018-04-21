@@ -201,7 +201,6 @@ class Contacto extends Base\Contact
      */
     public function test()
     {
-        parent::test();
         $this->apellidos = Utils::noHtml($this->apellidos);
         $this->cargo = Utils::noHtml($this->cargo);
         $this->ciudad = Utils::noHtml($this->ciudad);
@@ -209,7 +208,7 @@ class Contacto extends Base\Contact
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return true;
+        return parent::test();
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,16 +46,6 @@ class Fabricante extends Base\ModelClass
     public $nombre;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'fabricantes';
-    }
-
-    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -66,14 +56,22 @@ class Fabricante extends Base\ModelClass
     }
 
     /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'fabricantes';
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        $status = false;
-
         $this->codfabricante = Utils::noHtml($this->codfabricante);
         $this->nombre = Utils::noHtml($this->nombre);
 
@@ -82,9 +80,9 @@ class Fabricante extends Base\ModelClass
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
             self::$miniLog->alert(self::$i18n->trans('manufacturer-description-not-valid'));
         } else {
-            $status = true;
+            return parent::test();
         }
 
-        return $status;
+        return false;
     }
 }

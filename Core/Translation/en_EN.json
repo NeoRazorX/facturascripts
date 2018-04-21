@@ -671,5 +671,6 @@
     "file-name": "File name",
     "full-path": "Full path",
     "uploaded-at" : "Uploaded at",
-    "hash": "Hash"
+    "hash": "Hash",
+    "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null"
 }

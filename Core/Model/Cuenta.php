@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -159,7 +159,7 @@ class Cuenta extends Base\ModelClass
         $this->codcuenta = trim($this->codcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if ($this->testErrorInAccount())  {
+        if ($this->testErrorInAccount()) {
             self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
             return false;
         }
@@ -171,6 +171,6 @@ class Cuenta extends Base\ModelClass
             return false;
         }
 
-        return true;
+        return parent::test();
     }
 }

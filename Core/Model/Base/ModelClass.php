@@ -261,8 +261,8 @@ abstract class ModelClass extends ModelCore
     public function test()
     {
         foreach ($this->getModelFields() as $key => $value) {
-            if (empty($value['default']) && $value['is_nullable'] === 'NO' && $this->{$key} === null && $this->{$key} !== $this->primaryColumnValue()) {
-                self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key]));
+            if (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null && $this->{$key} !== $this->primaryColumnValue()) {
+                self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
                 return false;
             }
         }

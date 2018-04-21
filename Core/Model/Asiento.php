@@ -343,7 +343,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
             return false;
         }
 
-        return true;
+        return parent::test();
     }
 
     /**

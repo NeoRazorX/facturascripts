@@ -113,7 +113,7 @@ class Provincia extends Base\ModelClass
     {
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return true;
+        return parent::test();
     }
 
     /**

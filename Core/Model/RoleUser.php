@@ -33,13 +33,6 @@ class RoleUser extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Identifier.
-     *
-     * @var int
-     */
-    public $id;
-
-    /**
      * Role code.
      *
      * @var string
@@ -47,67 +40,18 @@ class RoleUser extends Base\ModelClass
     public $codrole;
 
     /**
+     * Identifier.
+     *
+     * @var int
+     */
+    public $id;
+
+    /**
      * Nick.
      *
      * @var string
      */
     public $nick;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'roles_users';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'id';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Role();
-
-        return '';
-    }
-
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (empty($this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('nick-is-empty'));
-
-            return false;
-        }
-
-        if (empty($this->codrole)) {
-            self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
-
-            return false;
-        }
-
-        return true;
-    }
 
     /**
      * Return the user role access.
@@ -137,5 +81,59 @@ class RoleUser extends Base\ModelClass
         }
 
         return $accesses;
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Role();
+
+        return '';
+    }
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'id';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'roles_users';
+    }
+
+    /**
+     * Returns True if there is no erros on properties values.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if (empty($this->nick)) {
+            self::$miniLog->alert(self::$i18n->trans('nick-is-empty'));
+            return false;
+        }
+
+        if (empty($this->codrole)) {
+            self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
+            return false;
+        }
+
+        return parent::test();
     }
 }

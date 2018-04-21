@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -331,7 +331,15 @@ abstract class BusinessDocument extends ModelClass
         return '';
     }
 
-    public function loadFromCode($cod, $where = null, array $orderby = [])
+    /**
+     * 
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
+     * 
+     * @return boolean
+     */
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
         if (parent::loadFromCode($cod, $where, $orderby)) {
             $this->idestadoAnt = $this->idestado;
@@ -417,7 +425,7 @@ abstract class BusinessDocument extends ModelClass
             $this->editable = $estadoDoc->editable;
         }
 
-        return true;
+        return parent::test();
     }
 
     private function checkState()

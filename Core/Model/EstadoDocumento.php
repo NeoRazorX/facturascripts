@@ -173,6 +173,6 @@ class EstadoDocumento extends Base\ModelClass
             return false;
         }
 
-        return true;
+        return parent::test();
     }
 }
