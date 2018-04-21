@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\App;
 
+use FacturaScripts\Core\Model\ApiKey;
+use Symfony\Component\HttpFoundation\Response;
+
 \define('API_FOLDER', 'Dinamic\\Lib\\API\\');
 \define('API_ERROR', 'API-ERROR');
 \define('API_DISABLED', 'API-DISABLED');
@@ -26,9 +29,6 @@ namespace FacturaScripts\Core\App;
 \define('IP_BANNED', 'IP-BANNED');
 \define('INVALID_TOKEN', 'AUTH-TOKEN-INVALID');
 \define('VERSION_NOT_FOUND', 'API-VERSION-NOT-FOUND');
-
-use FacturaScripts\Core\Model\ApiKey;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AppAPI is the class used for API.

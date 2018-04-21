@@ -72,7 +72,7 @@ class Calculate extends APIResourceClass
         }
 
         $operator = array_shift($params);
-        $result = (float)array_shift($params);
+        $result = (float) array_shift($params);
         foreach ($params as $_value) {
             $value = (float) $_value;
             switch ($operator) {

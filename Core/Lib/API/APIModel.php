@@ -167,20 +167,21 @@ class APIModel extends APIResourceClass
                 ];
             }
             $this->returnResult($data);
-        } else {
-            $data = (array) $this->model->get($this->params[0]);
-            if (isset($data)) {
-                // Return "array(1) { [0]=> bool(false) }" if not found???
-                if (count($data) > 1 || !isset($data[0])) {
-                    $this->returnResult($data);
-                } else {
-                    $this->setError($this->params[0] . ' not found');
-                    return false;
-                }
+            return true;
+        }
+
+        $data = (array) $this->model->get($this->params[0]);
+        if (isset($data)) {
+            // Return "array(1) { [0]=> bool(false) }" if not found???
+            if (count($data) > 1 || !isset($data[0])) {
+                $this->returnResult($data);
             } else {
-                $this->setError('Error getting data');
+                $this->setError($this->params[0] . ' not found');
                 return false;
             }
+        } else {
+            $this->setError('Error getting data');
+            return false;
         }
         return true;
     }
@@ -281,7 +282,7 @@ class APIModel extends APIResourceClass
                 } elseif (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
                     $this->model->{$key} = (bool) $this->model->{$key};
                 } else {
-                    $this->model->{$key} = (int )$this->model->{$key};
+                    $this->model->{$key} = (int) $this->model->{$key};
                 }
             }
             if (\is_bool($this->model->{$key})) {
