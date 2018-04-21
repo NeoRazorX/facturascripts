@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\API;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.
@@ -177,7 +178,7 @@ class APIModel extends APIResourceClass
                     return false;
                 }
             } else {
-                $this->setError("Error getting data");
+                $this->setError('Error getting data');
                 return false;
             }
         }
@@ -199,7 +200,7 @@ class APIModel extends APIResourceClass
 
         // Retrieve the past data, and replace the changes
         $values = $this->request->request->all();
-        if (isset($values[$cod]) && $values[$cod] != $this->params[0]) {
+        if (isset($values[$cod]) && $values[$cod] !== $this->params[0]) {
             $this->setError("Can't change the key. Key '$cod'' changed from {$this->params[0]} to {$values[$cod]}.", $values);
             return false;
         }
@@ -209,7 +210,6 @@ class APIModel extends APIResourceClass
 
         $this->fixTypes();
         if ($this->model->save()) {
-            $data = $values;
             $this->setOk('data-saved', (array) $this->model);
         } else {
             foreach ($this->miniLog->read() as $message) {

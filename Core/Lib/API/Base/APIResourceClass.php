@@ -77,7 +77,7 @@ abstract class APIResourceClass
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param MiniLog $miniLog
      * @param Translator $i18n
-     * @param array params is an array with URI parameters
+     * @param array $params is an array with URI parameters
      */
     public function __construct($response, $request, MiniLog $miniLog, Translator $i18n, array $params)
     {
