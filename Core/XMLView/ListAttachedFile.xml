@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller ListAttachedFile
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+-->
+
+<view>
+    <columns>
+        <column name="code" order="100">
+            <widget type="text" fieldname="idfile" onclick="EditAttachedFile" />
+        </column>
+        <column name="file-name" order="110">
+            <widget type="text" fieldname="filename" />
+        </column>
+        <column name="full-path" order="120">
+            <widget type="text" fieldname="path" />
+        </column>
+        <column name="type" order="130">
+            <widget type="text" fieldname="mimetype" />
+        </column>
+        <column name="size" order="140">
+            <widget type="number" fieldname="size" />
+        </column>
+        <column name="date" order="150">
+            <widget type="date" fieldname="date" />
+        </column>
+        <column name="hour" order="150">
+            <widget type="text" fieldname="hour" />
+        </column>
+    </columns>
+</view>

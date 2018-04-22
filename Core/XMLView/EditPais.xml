@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * Initial description for the controller EditPais
@@ -28,7 +28,7 @@
             <column name="code" title="alfa-code-3" numcolumns="6" order="100"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1"
                     description="desc-alfa-code-3">
-                <widget type="text" fieldname="codpais" onclick="" icon="fa-globe" required="true" />
+                <widget type="text" fieldname="codpais" icon="fa-globe" required="true" />
             </column>
             <column name="codeiso" title="alfa-code-2" numcolumns="6" order="110"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"

@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\App;
 
@@ -51,9 +51,17 @@ class AppRouter
     }
 
     /**
+     * Clear the App routes.
+     */
+    public function clear()
+    {
+        $this->routes = [];
+    }
+
+    /**
      * Return the especific App controller for any kind of petition.
      *
-     * @return AppAPI|AppController|AppCron
+     * @return App
      */
     public function getApp()
     {
@@ -70,6 +78,14 @@ class AppRouter
             if ($uri === $key) {
                 return new AppController($uri, $data['controller']);
             }
+
+            if ('*' !== substr($key, -1)) {
+                continue;
+            }
+
+            if (0 === strncmp($uri, $key, strlen($key) - 1)) {
+                return new AppController($uri, $data['controller']);
+            }
         }
 
         return new AppController($uri);
@@ -80,7 +96,7 @@ class AppRouter
      *
      * @return bool
      */
-    public function getFile()
+    public function getFile(): bool
     {
         $uri = $this->getUri();
         $filePath = FS_FOLDER . $uri;
@@ -104,13 +120,13 @@ class AppRouter
     }
 
     /**
-     * TODO: Uncomplete documentation
+     * Adds this route to the ap routes.
      *
-     * @param $newRoute
-     * @param $controllerName
+     * @param string $newRoute
+     * @param string $controllerName
      * @param string $optionalId
      */
-    public function setRoute($newRoute, $controllerName, $optionalId = '')
+    public function setRoute(string $newRoute, string $controllerName, string $optionalId = '')
     {
         if (!empty($optionalId)) {
             /// if optionaId, then remove previous items with that data
@@ -132,11 +148,11 @@ class AppRouter
     /**
      * Return the mime type from given file.
      *
-     * @param $filePath
+     * @param string $filePath
      *
      * @return string
      */
-    private function getMime($filePath)
+    private function getMime(string $filePath)
     {
         if (substr($filePath, -4) === '.css') {
             return 'text/css';
@@ -168,7 +184,7 @@ class AppRouter
      *
      * @return array
      */
-    private function loadFromFile()
+    private function loadFromFile(): array
     {
         if (file_exists(self::ROUTE_LIST_FILE)) {
             $content = file_get_contents(self::ROUTE_LIST_FILE);
@@ -185,7 +201,7 @@ class AppRouter
      *
      * @return bool
      */
-    private function save()
+    private function save(): bool
     {
         $content = json_encode($this->routes);
         return file_put_contents(self::ROUTE_LIST_FILE, $content) !== false;

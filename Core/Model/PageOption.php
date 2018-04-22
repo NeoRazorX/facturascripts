@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -111,8 +111,7 @@ class PageOption extends Base\ModelClass
             $this->name = $viewName;
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($viewName, $this)) {
-                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $viewName]));
-
+                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $viewName . '.xml']));
                 return;
             }
         }

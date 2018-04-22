@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018   Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018   Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Test\Core\Model;
@@ -40,9 +41,11 @@ final class ClienteTest extends TestCase
         $this->assertFalse($model->recargo);
         $this->assertNull($model->diaspago);
         $this->assertEquals('', $model->nombre);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->nombre = 'Client name';
+        $model->razonsocial = 'Client name';
+        $model->cifnif = '1234';
 
         $this->assertTrue($model->test());
     }

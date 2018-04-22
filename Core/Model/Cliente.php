@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -45,13 +45,6 @@ class Cliente extends Base\ComercialContact
     public $codgrupo;
 
     /**
-     * True -> equivalence surcharge is applied to the client.
-     *
-     * @var boolean
-     */
-    public $recargo;
-
-    /**
      * Preferred payment days when calculating the due date of invoices.
      * Days separated by commas: 1,15,31
      *
@@ -60,49 +53,11 @@ class Cliente extends Base\ComercialContact
     public $diaspago;
 
     /**
-     * Returns the name of the table that uses this model.
+     * True -> equivalence surcharge is applied to the client.
      *
-     * @return string
+     * @var boolean
      */
-    public static function tableName()
-    {
-        return 'clientes';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'codcliente';
-    }
-
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
-    {
-        return 'nombre';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// we need to check model GrupoClientes before
-        new GrupoClientes();
-
-        return '';
-    }
+    public $recargo;
 
     /**
      * Reset the values of all model properties.
@@ -126,27 +81,68 @@ class Cliente extends Base\ComercialContact
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// we need to check model GrupoClientes before
+        new GrupoClientes();
+
+        return '';
+    }
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codcliente';
+    }
+
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'nombre';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'clientes';
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        parent::test();
         $this->codcliente = empty($this->codcliente) ? (string) $this->newCode() : trim($this->codcliente);
 
         /// we validate the days of payment
         $arrayDias = [];
-        foreach (str_getcsv($this->diaspago) as $d) {
-            if ((int) $d >= 1 && (int) $d <= 31) {
-                $arrayDias[] = (int) $d;
+        foreach (str_getcsv($this->diaspago) as $day) {
+            if ((int) $day >= 1 && (int) $day <= 31) {
+                $arrayDias[] = (int) $day;
             }
         }
-        $this->diaspago = null;
-        if (!empty($arrayDias)) {
-            $this->diaspago = implode(',', $arrayDias);
-        }
+        $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
 
-        return true;
+        return parent::test();
     }
 }

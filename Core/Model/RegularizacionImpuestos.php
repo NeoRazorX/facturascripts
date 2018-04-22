@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
@@ -176,7 +176,7 @@ class RegularizacionImpuestos extends Base\ModelClass
     public function delete()
     {
         $sql = 'DELETE FROM ' . static::tableName()
-            . ' WHERE idregiva = ' . self::$dataBase->var2str($this->idregiva) . ';';
+            . ' WHERE idregularizacion = ' . self::$dataBase->var2str($this->idregularizacion) . ';';
         if (self::$dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {

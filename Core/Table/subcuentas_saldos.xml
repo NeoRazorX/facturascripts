@@ -52,15 +52,11 @@
     </constraint>
     <constraint>
         <name>ca_subcuentas_saldos_subcuentas</name>
-        <type>FOREIGN KEY (idsubcuenta)
-            REFERENCES subcuentas (idsubcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idsubcuenta) REFERENCES subcuentas (idsubcuenta) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_subcuentas_saldos_cuentas</name>
-        <type>FOREIGN KEY (idcuenta)
-            REFERENCES cuentas (idcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idcuenta) REFERENCES cuentas (idcuenta) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_subcuenta_saldos</name>
