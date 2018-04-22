@@ -535,7 +535,7 @@ class PDFExport implements ExportInterface
      */
     private function getCompanyName($idEmpresa = null)
     {
-        $idEmpresa = $idEmpresa ?? AppSettings::get('default', 'idempresa');
+        $idEmpresa = $idEmpresa ?? AppSettings::get('default', 'idempresa', '');
         $empresa = new Empresa();
         $empresa->loadFromCode($idEmpresa);
         return $empresa->nombre ?? '';
