@@ -14,9 +14,8 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,14 +28,8 @@ use FacturaScripts\Core\Base\Utils;
  */
 class AtributoValor extends Base\ModelClass
 {
-    use Base\ModelTrait;
 
-    /**
-     * Primary key
-     *
-     * @var int
-     */
-    public $id;
+    use Base\ModelTrait;
 
     /**
      * Code of the related attribute.
@@ -46,6 +39,13 @@ class AtributoValor extends Base\ModelClass
     public $codatributo;
 
     /**
+     * Primary key
+     *
+     * @var int
+     */
+    public $id;
+
+    /**
      * Value of the attribute
      *
      * @var string
@@ -53,23 +53,18 @@ class AtributoValor extends Base\ModelClass
     public $valor;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Select all attributes of an attribute code
      *
-     * @return string
+     * @param string $cod
+     *
+     * @return self[]
      */
-    public static function tableName()
+    public function allFromAtributo($cod)
     {
-        return 'atributos_valores';
-    }
+        $where = [new DataBaseWhere('codatributo', $cod)];
+        $order = ['valor' => 'ASC'];
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'id';
+        return $this->all($where, $order);
     }
 
     /**
@@ -87,6 +82,26 @@ class AtributoValor extends Base\ModelClass
     }
 
     /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'id';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'atributos_valores';
+    }
+
+    /**
      * Check the delivery note data, return True if it is correct.
      *
      * @return bool
@@ -95,21 +110,6 @@ class AtributoValor extends Base\ModelClass
     {
         $this->valor = Utils::noHtml($this->valor);
 
-        return true;
-    }
-
-    /**
-     * Select all attributes of an attribute code
-     *
-     * @param string $cod
-     *
-     * @return self[]
-     */
-    public function allFromAtributo($cod)
-    {
-        $where = [new DataBaseWhere('codatributo', $cod)];
-        $order = ['valor' => 'ASC'];
-
-        return $this->all($where, $order);
+        return parent::test();
     }
 }
