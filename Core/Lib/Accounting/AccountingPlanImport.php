@@ -108,7 +108,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlEpigrafeGroup) {
             $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
-            $this->createAccount($epigrafeGroupElement['codgrupo'], \base64_decode($epigrafeGroupElement['descripcion']), NULL);
+            $this->createAccount($epigrafeGroupElement['codgrupo'], \base64_decode($epigrafeGroupElement['descripcion']), null);
         }
     }
 
@@ -162,7 +162,7 @@ class AccountingPlanImport
     {
         $this->ejercicio = new Model\Ejercicio();
         $this->ejercicio->loadFromCode($codejercicio);
-        $data = $this->getCsvData($filePath, $codejercicio);
+        $this->getCsvData($filePath);
     }
 
     /**
@@ -170,12 +170,13 @@ class AccountingPlanImport
      * @param file $filePath
      * @param integer $exerciseCode
      */
-    private function getCsvData($filePath, $exerciseCode)
+    private function getCsvData($filePath)
     {
         if (file_exists($filePath)) {
             $csv = new Csv();
             $csv->auto($filePath);
-
+            $accountPlan=[];
+            $length=[];
             foreach ($csv->data as $key => $value) {
                 $length[] = strlen($value[$csv->titles[0]]);
                 $accountPlan[$value[$csv->titles[0]]] = utf8_encode($value[$csv->titles[1]]);
@@ -190,7 +191,7 @@ class AccountingPlanImport
             foreach ($accountPlan as $key => $value) {
                 switch (strlen($key)) {
                     case $minLength:
-                        $this->createAccount($key, $value, NULL);
+                        $this->createAccount($key, $value, null);
                         break;
                     case $maxLength:
                         $parentCode = $this->searchParent($keys, $length, $key);
@@ -217,24 +218,18 @@ class AccountingPlanImport
      */
     private function searchParent($accountCodes, $length, $account)
     {
-        $parentCode = NULL;
+        $parentCode = null;
         $parents = array();
-
-
+        $accountLength=strlen($account);
         for ($i = 0; $i < count($length); $i++) {
-            if ($length[$i] < strlen($account)) {
-
+            if ($length[$i] < $accountLength) {
                 $pattern = '/^' . substr($account, 0, $length[$i]) . '{0,' . ($length[$i]) . '}$/';
-
                 $parents = array_merge($parents, preg_grep($pattern, $accountCodes));
-
                 if (count($parents) > 0) {
-
                     return $parents[0];
                 }
             }
         }
-
         return $parentCode;
     }
 
@@ -254,7 +249,7 @@ class AccountingPlanImport
             new DataBaseWhere('codcuenta', $code)
         ];
         $account->loadFromCode('', $where);
-        if ($parentCode !== NULL) {
+        if ($parentCode !== null) {
             $whereParent = [
                 new DatabaseWhere('codejercicio', $this->ejercicio->codejercicio),
                 new DataBaseWhere('codcuenta', $parentCode)
@@ -264,8 +259,7 @@ class AccountingPlanImport
                 self::$miniLog->alert(self::$i18n->trans('parent-error'));
             } else {
                 $account->parent_codcuenta = $parent->codcuenta;
-                $account->parent_idcuenta = $parent->idcuenta;
-               
+                $account->parent_idcuenta = $parent->idcuenta;     
             }
         }
         $account->codejercicio = $this->ejercicio->codejercicio;
@@ -273,7 +267,6 @@ class AccountingPlanImport
         $account->descripcion = $definition;
         $account->save();
     }
-
     /**
      * 
      * Insert or update an account in accounting Plan
