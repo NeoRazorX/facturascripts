@@ -7,30 +7,25 @@
 -->
 <table>
     <column>
-        <name>id</name>
-        <type>serial</type>
+        <name>date</name>
+        <type>date</type>
         <null>NO</null>
-        <default>nextval('attached_files_id_seq'::regclass)</default>
     </column>
     <column>
         <name>filename</name>
-        <type>character varying(64)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>path</name>
         <type>character varying(100)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>size</name>
-        <type>integer</type>
+        <name>hour</name>
+        <type>string</type>
         <null>NO</null>
     </column>
     <column>
-        <name>uploadedat</name>
-        <type>timestamp</type>
+        <name>idfile</name>
+        <type>serial</type>
         <null>NO</null>
+        <default>nextval('attached_files_idfile_seq'::regclass)</default>
     </column>
     <column>
         <name>mimetype</name>
@@ -38,16 +33,17 @@
         <null>NO</null>
     </column>
     <column>
-        <name>hash</name>
-        <type>character varying(40)</type>
+        <name>path</name>
+        <type>character varying(200)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>size</name>
+        <type>integer</type>
         <null>NO</null>
     </column>
     <constraint>
         <name>attached_files_pkey</name>
-        <type>PRIMARY KEY (id)</type>
-    </constraint>
-    <constraint>
-        <name>uniq_path_attachedfiles</name>
-        <type>UNIQUE (path)</type>
+        <type>PRIMARY KEY (idfile)</type>
     </constraint>
 </table>

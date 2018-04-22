@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * Initial description for the controller ListAttachedFile
@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="id" onclick="EditAttachedFile" />
+            <widget type="text" fieldname="idfile" onclick="EditAttachedFile" />
         </column>
         <column name="file-name" order="110">
             <widget type="text" fieldname="filename" />
@@ -33,17 +33,17 @@
         <column name="full-path" order="120">
             <widget type="text" fieldname="path" />
         </column>
-        <column name="size" order="130">
-            <widget type="number" fieldname="size" />
-        </column>
-        <column name="uploaded-at" order="140">
-            <widget type="text" fieldname="uploadedat" />
-        </column>
-        <column name="type" order="150">
+        <column name="type" order="130">
             <widget type="text" fieldname="mimetype" />
         </column>
-        <column name="hash" order="160">
-            <widget type="text" fieldname="hash" />
+        <column name="size" order="140">
+            <widget type="number" fieldname="size" />
+        </column>
+        <column name="date" order="150">
+            <widget type="date" fieldname="date" />
+        </column>
+        <column name="hour" order="150">
+            <widget type="text" fieldname="hour" />
         </column>
     </columns>
 </view>

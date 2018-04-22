@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,9 +14,8 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,14 +25,8 @@ namespace FacturaScripts\Core\Model;
  */
 class TransferenciaStock extends Base\ModelClass
 {
-    use Base\ModelTrait;
 
-    /**
-     * Primary key. integer
-     *
-     * @var int
-     */
-    public $idtrans;
+    use Base\ModelTrait;
 
     /**
      * Código de almacén de destino
@@ -64,6 +57,13 @@ class TransferenciaStock extends Base\ModelClass
     public $hora;
 
     /**
+     * Primary key. integer
+     *
+     * @var int
+     */
+    public $idtrans;
+
+    /**
      * Usuario que realiza la transferencia
      *
      * @var string
@@ -71,13 +71,13 @@ class TransferenciaStock extends Base\ModelClass
     public $usuario;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
+     * Reset the values of all model properties.
      */
-    public static function tableName()
+    public function clear()
     {
-        return 'transstock';
+        parent::clear();
+        $this->fecha = date('d-m-Y');
+        $this->hora = date('H:i:s');
     }
 
     /**
@@ -91,13 +91,13 @@ class TransferenciaStock extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-        $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
+        return 'transstock';
     }
 
     /**
@@ -109,10 +109,9 @@ class TransferenciaStock extends Base\ModelClass
     {
         if ($this->codalmadestino === $this->codalmaorigen) {
             self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
-
             return false;
         }
 
-        return true;
+        return parent::test();
     }
 }
