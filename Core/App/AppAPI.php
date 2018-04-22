@@ -159,7 +159,7 @@ class AppAPI extends App
         if (isset($APIClass)) {
             return $APIClass->processResource($map[$resourceName]['Name'], $params);
         }
-        $this->fatalError(DATABASE_ERROR, Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->fatalError('database-error', Response::HTTP_INTERNAL_SERVER_ERROR);
         return false;
     }
 
