@@ -22,14 +22,6 @@ namespace FacturaScripts\Core\App;
 use FacturaScripts\Core\Model\ApiKey;
 use Symfony\Component\HttpFoundation\Response;
 
-\define('API_FOLDER', 'Dinamic\\Lib\\API\\');
-\define('API_ERROR', 'API-ERROR');
-\define('API_DISABLED', 'API-DISABLED');
-\define('DATABASE_ERROR', 'DB-ERROR');
-\define('IP_BANNED', 'IP-BANNED');
-\define('INVALID_TOKEN', 'AUTH-TOKEN-INVALID');
-\define('VERSION_NOT_FOUND', 'API-VERSION-NOT-FOUND');
-
 /**
  * AppAPI is the class used for API.
  *
@@ -50,22 +42,22 @@ class AppAPI extends App
         $this->response->headers->set('Content-Type', 'application/json');
 
         if ($this->isDisabled()) {
-            $this->fatalError(API_DISABLED, Response::HTTP_NOT_FOUND);
+            $this->fatalError('API-DISABLED', Response::HTTP_NOT_FOUND);
             return false;
         }
 
         if (!$this->dataBase->connected()) {
-            $this->fatalError(DATABASE_ERROR, Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->fatalError('DB-ERROR', Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
 
         if ($this->isIPBanned()) {
-            $this->fatalError(IP_BANNED, Response::HTTP_FORBIDDEN);
+            $this->fatalError('IP-BANNED', Response::HTTP_FORBIDDEN);
             return false;
         }
 
         if (!$this->checkAuthToken()) {
-            $this->fatalError(INVALID_TOKEN, Response::HTTP_FORBIDDEN);
+            $this->fatalError('AUTH-TOKEN-INVALID', Response::HTTP_FORBIDDEN);
             return false;
         }
 
@@ -115,9 +107,9 @@ class AppAPI extends App
     private function getResourcesMap(): array
     {
         $resources = [[]];
-        foreach (scandir(API_FOLDER, SCANDIR_SORT_NONE) as $resource) {
+        foreach (scandir('Dinamic\\Lib\\API\\', SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) === '.php') {
-                $class = substr('FacturaScripts\\' . API_FOLDER . $resource, 0, -4);
+                $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
                 $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
                 $resources[] = $APIClass->getResources();
                 unset($APIClass);
@@ -182,7 +174,7 @@ class AppAPI extends App
             return $this->selectResource();
         }
 
-        $this->fatalError(VERSION_NOT_FOUND, Response::HTTP_NOT_FOUND);
+        $this->fatalError('API-VERSION-NOT-FOUND', Response::HTTP_NOT_FOUND);
         return true;
     }
 

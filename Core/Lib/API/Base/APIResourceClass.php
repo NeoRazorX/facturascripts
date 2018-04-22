@@ -152,7 +152,7 @@ abstract class APIResourceClass
             $this->setError("Unknown method {$this->method} in {$name}");
             return false;
         } catch (\Exception $ex) {
-            $this->setError(API_ERROR, null, Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->setError('API-ERROR', null, Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
     }
