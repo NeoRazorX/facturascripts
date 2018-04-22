@@ -671,5 +671,6 @@
     "file-name": "File name",
     "full-path": "Full path",
     "uploaded-at" : "Uploaded at",
-    "hash": "Hash"
+    "hash": "Hash",
+    "generated-at": "Generated at %when%"
 }
