@@ -50,6 +50,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
+        // Delivery notes
         $this->addView('ListAlbaranCliente', 'AlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
 
@@ -74,5 +75,27 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
+
+        // Delivery notes lines
+        $this->addView('ListLineaAlbaranCliente', 'LineaAlbaranCliente', 'delivery-notes-lines', 'fa-list');
+        $this->addSearchFields('ListLineaAlbaranCliente', ['referencia', 'descripcion']);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaAlbaranCliente', 'codimpuesto', 'taxes', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'pvpsindto', 'pvp-without-discount', 'pvpsindto');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'pvptotal', 'total-price', 'pvptotal');
+
+        $this->addFilterCheckbox('ListLineaAlbaranCliente', 'mostrar_cantidad', 'show-quantity', 'mostrar_cantidad');
+        $this->addFilterCheckbox('ListLineaAlbaranCliente', 'mostrar_precio', 'show-price', 'mostrar_precio');
+
+        $this->addOrderBy('ListLineaAlbaranCliente', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'pvptotal', 'total-price');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'idpedido', 'order-code');
     }
 }
