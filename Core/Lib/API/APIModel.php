@@ -178,9 +178,9 @@ class APIModel extends APIResourceClass
                 return true;
             }
             $this->setError($this->params[0] . ' not found');
-        } else {
-            $this->setError('Error getting data');
+            return false;
         }
+        $this->setError('Error getting data');
         return false;
     }
 
