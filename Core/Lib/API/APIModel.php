@@ -273,19 +273,18 @@ class APIModel extends APIResourceClass
         foreach ($this->model->getModelFields() as $key => $value) {
             $fieldType = $value['type'];
             // Force to match type from supported types in XML table definitions
-            if (\is_numeric($this->model->{$key})) {
-                if (\strpos($fieldType, 'double') === 0) {
-                    $this->model->{$key} = (double) $this->model->{$key};
-                } elseif (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
-                    $this->model->{$key} = (bool) $this->model->{$key};
-                } else {
-                    $this->model->{$key} = (int) $this->model->{$key};
-                }
-            }
             if (\is_bool($this->model->{$key})) {
                 if (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
                     $this->model->{$key} = (bool) $this->model->{$key};
+                    continue;
                 }
+            }
+            if (\is_numeric($this->model->{$key})) {
+                if (\strpos($fieldType, 'double') === 0) {
+                    $this->model->{$key} = (double) $this->model->{$key};
+                    continue;
+                }
+                $this->model->{$key} = (int) $this->model->{$key};
             }
         }
     }
