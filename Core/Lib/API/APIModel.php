@@ -175,15 +175,13 @@ class APIModel extends APIResourceClass
             // Return "array(1) { [0]=> bool(false) }" if not found???
             if (count($data) > 1 || !isset($data[0])) {
                 $this->returnResult($data);
-            } else {
-                $this->setError($this->params[0] . ' not found');
-                return false;
+                return true;
             }
+            $this->setError($this->params[0] . ' not found');
         } else {
             $this->setError('Error getting data');
-            return false;
         }
-        return true;
+        return false;
     }
 
     /**
