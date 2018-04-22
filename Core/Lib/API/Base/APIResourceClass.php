@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  * APIResource is an abstract class for any API Resource.
  *
  * @author Rafael San José Tovar (http://www.x-netdigital.com) <rsanjoseo@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class APIResourceClass
 {
@@ -147,10 +148,9 @@ abstract class APIResourceClass
                     return $this->doPOST();
                 case 'DELETE':
                     return $this->doDELETE();
-                default:
-                    $this->setError("Unknown method {$this->method} in {$name}");
-                    return false;
             }
+            $this->setError("Unknown method {$this->method} in {$name}");
+            return false;
         } catch (\Exception $ex) {
             $this->setError(API_ERROR, null, Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;

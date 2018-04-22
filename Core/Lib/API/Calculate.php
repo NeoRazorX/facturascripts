@@ -25,9 +25,17 @@ use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
  * TestAPI to test API functionality
  *
  * @author Rafael San José Tovar (http://www.x-netdigital.com) <rsanjoseo@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Calculate extends APIResourceClass
 {
+    /**
+     * true if error
+     *
+     * @var bool $error
+     */
+    private $error;
+
     public function help()
     {
         $data = array();
@@ -57,6 +65,41 @@ class Calculate extends APIResourceClass
     }
 
     /**
+     * Obtains the result or failure of the arithmetic operation
+     *
+     * @param string $operator
+     * @param float $result
+     * @param float $value
+     * @return float
+     */
+    private function getOperation(string $operator, float $result, float $value) : float
+    {
+        switch ($operator) {
+            case 'sum':
+                $result += $value;
+                break;
+            case 'subtraction':
+                $result -= $value;
+                break;
+            case 'multiplication':
+                $result *= $value;
+                break;
+            case 'division':
+                if ($value === 0.0) {
+                    $this->setError('No se puede dividir entre 0');
+                    $this->error = true;
+                    return 0;
+                }
+                $result /= $value;
+                break;
+            default:
+                $this->setError("Bad Operator: $operator");
+                $this->error = true;
+        }
+        return $result;
+    }
+
+    /**
      * Overwrite and IGNORE the original method of the ancestor.
      *
      * @param string $name
@@ -65,6 +108,7 @@ class Calculate extends APIResourceClass
      */
     public function processResource(string $name): bool
     {
+        $this->error = false;
         $params = $this->params;
         if (count($params) === 0) {
             $this->help();
@@ -73,31 +117,13 @@ class Calculate extends APIResourceClass
 
         $operator = array_shift($params);
         $result = (float) array_shift($params);
-        foreach ($params as $_value) {
-            $value = (float) $_value;
-            switch ($operator) {
-                case 'sum':
-                    $result += $value;
-                    break;
-                case 'subtraction':
-                    $result -= $value;
-                    break;
-                case 'multiplication':
-                    $result *= $value;
-                    break;
-                case 'division':
-                    if ($value === 0) {
-                        $this->setError('No se puede dividir entre 0');
-                        return false;
-                    }
-                    $result /= $value;
-                    break;
-                default:
-                    $this->setError("Bad Operator: $operator");
-                    return false;
-            }
+        foreach ($params as $value) {
+            $result = $this->getOperation($operator, $result, (float) $value);
         }
-        $this->returnResult(array($operator => $result));
-        return true;
+        if (!$this->error) {
+            $this->returnResult(array($operator => $result));
+        }
+
+        return !$this->error;
     }
 }
