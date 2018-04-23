@@ -675,5 +675,15 @@
     "uploaded-at" : "Uploaded at",
     "hash": "Hash",
     "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
+    "accounting-date": "Accounting date",
+    "vat-regularization": "VAT Regularization",
+    "period": "period",
+    "accounting-date": "Accounting date",
+    "first-trimester": "First trimester",
+    "second-trimester": "Second trimester",
+    "third-trimester": "Third trimester",
+    "fourth-trimester": "Fourth trimester",
+    "tax-credit-account": "Credit account for taxes",
+    "tax-debit-account": "Debit account for taxes"
     "generated-at": "Generated at %when%"
 }
