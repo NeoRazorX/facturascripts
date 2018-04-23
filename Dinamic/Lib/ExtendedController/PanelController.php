@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\ExtendedController
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class PanelController extends \FacturaScripts\Core\Lib\ExtendedController\PanelController
+class PanelController extends \FacturaScripts\Core\Lib\ExtendedController\PanelController
 {
 }

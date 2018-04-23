@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\ExtendedController
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class RowItem extends \FacturaScripts\Core\Lib\ExtendedController\RowItem
+class RowItem extends \FacturaScripts\Core\Lib\ExtendedController\RowItem
 {
 }

@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\ExtendedController
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class VisualItem extends \FacturaScripts\Core\Lib\ExtendedController\VisualItem
+class VisualItem extends \FacturaScripts\Core\Lib\ExtendedController\VisualItem
 {
 }

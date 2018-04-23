@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\Accounting
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class AccountingBase extends \FacturaScripts\Core\Lib\Accounting\AccountingBase
+class AccountingBase extends \FacturaScripts\Core\Lib\Accounting\AccountingBase
 {
 }
