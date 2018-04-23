@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\RandomDataGenerator
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AbstractRandomAccounting extends \FacturaScripts\Core\Lib\RandomDataGenerator\AbstractRandomAccounting
+abstract class AbstractRandomAccounting extends \FacturaScripts\Core\Lib\RandomDataGenerator\AbstractRandomAccounting
 {
 }
