@@ -20,6 +20,7 @@
  * Initial description for the controller EditConceptoPartida
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Javier García Iceta <javigarciaiceta@gmail.com>
 -->
 
 <view>
@@ -34,5 +35,9 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="card" title="macros-title" label="macro-text"></group>
+        </row>
+    </rows>
 </view>
-

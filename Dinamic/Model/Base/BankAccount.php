@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model\Base
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class BankAccount extends \FacturaScripts\Core\Model\Base\BankAccount
+abstract class BankAccount extends \FacturaScripts\Core\Model\Base\BankAccount
 {
 }
