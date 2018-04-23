@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : attached_files.xml
+    Author     : Francesc Pineda Segarra
+    Description:
+        Structure for the attached_files table.
+-->
+<table>
+    <column>
+        <name>date</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>filename</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>hour</name>
+        <type>time without time zone</type>
+    </column>
+    <column>
+        <name>idfile</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('attached_files_idfile_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>mimetype</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>path</name>
+        <type>character varying(200)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>size</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>attached_files_pkey</name>
+        <type>PRIMARY KEY (idfile)</type>
+    </constraint>
+</table>

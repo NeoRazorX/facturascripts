@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model\Base;
 
@@ -46,10 +46,10 @@ abstract class ModelClass extends ModelCore
     /**
      * Returns all models that correspond to the selected filters.
      *
-     * @param DataBase\DataBaseWhere[] $where  filters to apply to model records.
-     * @param array                    $order  fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int                      $offset
-     * @param int                      $limit
+     * @param array $where filters to apply to model records.
+     * @param array $order fields to use in the sorting. For example ['code' => 'ASC']
+     * @param int   $offset
+     * @param int   $limit
      *
      * @return array
      */
@@ -146,7 +146,6 @@ abstract class ModelClass extends ModelCore
         $data = $this->getRecord($cod);
         if (!empty($data)) {
             $class = $this->modelName();
-
             return new $class($data[0]);
         }
 
@@ -161,23 +160,21 @@ abstract class ModelClass extends ModelCore
      * meet the above conditions.
      * Returns True if the record exists and False otherwise.
      *
-     * @param string                   $cod
-     * @param DataBase\DataBaseWhere[] $where
-     * @param array                    $orderby
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
      *
      * @return bool
      */
-    public function loadFromCode($cod, $where = null, array $orderby = [])
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
         $data = $this->getRecord($cod, $where, $orderby);
         if (empty($data)) {
             $this->clear();
-
             return false;
         }
 
         $this->loadFromData($data[0]);
-
         return true;
     }
 
@@ -263,6 +260,13 @@ abstract class ModelClass extends ModelCore
      */
     public function test()
     {
+        foreach ($this->getModelFields() as $key => $value) {
+            if (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null && $this->{$key} !== $this->primaryColumnValue()) {
+                self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -298,46 +302,6 @@ abstract class ModelClass extends ModelCore
         }
 
         return $result;
-    }
-
-    /**
-     * Convert an array of filters order by in string.
-     *
-     * @param array $order
-     *
-     * @return string
-     */
-    private function getOrderBy(array $order)
-    {
-        $result = '';
-        $coma = ' ORDER BY ';
-        foreach ($order as $key => $value) {
-            $result .= $coma . $key . ' ' . $value;
-            if ($coma === ' ORDER BY ') {
-                $coma = ', ';
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Read the record whose primary column corresponds to the value $cod
-     * or the first that meets the indicated condition
-     *
-     * @param string     $cod
-     * @param array|null $where
-     * @param array      $orderby
-     *
-     * @return array
-     */
-    private function getRecord($cod, $where = null, array $orderby = [])
-    {
-        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
-
-        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
-
-        return self::$dataBase->selectLimit($sql, 1);
     }
 
     /**
@@ -400,5 +364,45 @@ abstract class ModelClass extends ModelCore
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         return self::$dataBase->exec($sql);
+    }
+
+    /**
+     * Convert an array of filters order by in string.
+     *
+     * @param array $order
+     *
+     * @return string
+     */
+    private function getOrderBy(array $order)
+    {
+        $result = '';
+        $coma = ' ORDER BY ';
+        foreach ($order as $key => $value) {
+            $result .= $coma . $key . ' ' . $value;
+            if ($coma === ' ORDER BY ') {
+                $coma = ', ';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Read the record whose primary column corresponds to the value $cod
+     * or the first that meets the indicated condition.
+     *
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
+     *
+     * @return array
+     */
+    private function getRecord($cod, array $where = [], array $orderby = [])
+    {
+        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
+
+        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
+
+        return self::$dataBase->selectLimit($sql, 1);
     }
 }
