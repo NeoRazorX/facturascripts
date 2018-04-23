@@ -674,5 +674,6 @@
     "full-path": "Full path",
     "uploaded-at" : "Uploaded at",
     "hash": "Hash",
-    "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null"
+    "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
+    "generated-at": "Generated at %when%"
 }
