@@ -369,9 +369,13 @@ class Partida extends Base\ModelClass
             if (!$account->updateBalance($date, $this->debe, $this->haber)) {
                 return false;
             }
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
@@ -410,9 +414,13 @@ class Partida extends Base\ModelClass
             if (!$account->updateBalance($date, $debit, $credit)) {
                 return false;
             }
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
@@ -449,9 +457,13 @@ class Partida extends Base\ModelClass
             if (!parent::delete()) {
                 return false;
             }
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {

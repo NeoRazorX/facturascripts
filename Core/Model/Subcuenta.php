@@ -266,9 +266,13 @@ class Subcuenta extends Base\ModelClass
                     return false;
                 }
             }
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
@@ -297,20 +301,17 @@ class Subcuenta extends Base\ModelClass
                 self::$dataBase->beginTransaction();
             }
 
-            /// main delete
+            /// delete subaccount and detail via FK
             if (!parent::delete()) {
                 return false;
             }
 
-            /// delete account balance
-            foreach ($detail as $account) {
-                if (!$account->delete()) {
-                    return false;
-                }
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
             }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
@@ -352,11 +353,13 @@ class Subcuenta extends Base\ModelClass
                 . ',saldo = saldo + ' . $balance
                 . ' WHERE idsubcuenta = ' . $this->idsubcuenta;
             self::$dataBase->exec($sql);
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
         } catch (Exception $e) {
             self::$miniLog->error($e->getMessage());
-            if (!$inTransaction) {
-                self::$dataBase->rollback();
-            }
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
