@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model\Base
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class ModelClass extends \FacturaScripts\Core\Model\Base\ModelClass
+class ModelClass extends \FacturaScripts\Core\Model\Base\ModelClass
 {
 }

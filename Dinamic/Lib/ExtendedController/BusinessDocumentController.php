@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\ExtendedController
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocumentController extends \FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentController
+class BusinessDocumentController extends \FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentController
 {
 }
