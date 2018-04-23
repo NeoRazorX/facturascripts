@@ -18,8 +18,7 @@
     </column>
     <column>
         <name>hour</name>
-        <type>string</type>
-        <null>NO</null>
+        <type>time without time zone</type>
     </column>
     <column>
         <name>idfile</name>
