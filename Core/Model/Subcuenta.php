@@ -293,8 +293,6 @@ class Subcuenta extends Base\ModelClass
         // Search for detail balance
         $where = [new DataBaseWhere('idsubcuenta', $this->idsubcuenta)];
         $accountDetail = new SubcuentaSaldo();
-        $detail = $accountDetail->all($where);
-
         $inTransaction = self::$dataBase->inTransaction();
         try {
             if ($inTransaction === false) {
