@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -113,7 +113,7 @@ class Provincia extends Base\ModelClass
     {
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return true;
+        return parent::test();
     }
 
     /**

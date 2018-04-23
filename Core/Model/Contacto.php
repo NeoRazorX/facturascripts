@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -201,7 +201,6 @@ class Contacto extends Base\Contact
      */
     public function test()
     {
-        parent::test();
         $this->apellidos = Utils::noHtml($this->apellidos);
         $this->cargo = Utils::noHtml($this->cargo);
         $this->ciudad = Utils::noHtml($this->ciudad);
@@ -209,7 +208,7 @@ class Contacto extends Base\Contact
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return true;
+        return parent::test();
     }
 
     /**

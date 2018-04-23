@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -28,6 +28,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\ComercialContact
 {
+
     use Base\ModelTrait;
 
     /**
@@ -37,43 +38,13 @@ class Proveedor extends Base\ComercialContact
      * @var bool
      */
     public $acreedor;
-    
+
     /**
      * Transport tax.
      *
      * @var string
      */
     public $codimpuestoportes;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'proveedores';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'codproveedor';
-    }
-
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
-    {
-        return 'nombre';
-    }
 
     /**
      * Reset the values of all model properties.
@@ -98,15 +69,44 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codproveedor';
+    }
+
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'nombre';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'proveedores';
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        parent::test();
         $this->codproveedor = empty($this->codproveedor) ? (string) $this->newCode() : trim($this->codproveedor);
 
-        return true;
+        return parent::test();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -54,26 +54,6 @@ class Serie extends Base\ModelClass
     public $siniva;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'series';
-    }
-
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'codserie';
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -90,6 +70,26 @@ class Serie extends Base\ModelClass
     public function isDefault()
     {
         return $this->codserie === AppSettings::get('default', 'codserie');
+    }
+
+    /**
+     * Returns the name of the column that is the primary key of the model.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codserie';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'series';
     }
 
     /**
@@ -112,6 +112,6 @@ class Serie extends Base\ModelClass
             return false;
         }
 
-        return true;
+        return parent::test();
     }
 }

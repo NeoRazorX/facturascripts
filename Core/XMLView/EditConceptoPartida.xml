@@ -14,12 +14,13 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * Initial description for the controller EditConceptoPartida
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Javier García Iceta <javigarciaiceta@gmail.com>
 -->
 
 <view>
@@ -34,5 +35,9 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="card" title="accounting-entry-macros-title" label="accounting-entry-macros-text"></group>
+        </row>
+    </rows>
 </view>
-

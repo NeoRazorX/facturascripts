@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * Initial description for the controller EditAttachedFile
@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="id" icon="fa-file-text" required="true" />
+                <widget type="text" fieldname="idfile" icon="fa-file-text" required="true" />
             </column>
             <column name="file-name" numcolumns="10" order="110">
                 <widget type="text" fieldname="filename" required="true" />
@@ -34,17 +34,17 @@
             <column name="full-path" numcolumns="8" order="120">
                 <widget type="text" fieldname="path" required="true" />
             </column>
-            <column name="size" numcolumns="2" order="130">
-                <widget type="number" fieldname="size" required="true" />
-            </column>
-            <column name="uploaded-at" numcolumns="2" order="140">
-                <widget type="text" fieldname="uploadedat" required="true" />
-            </column>
-            <column name="type" numcolumns="4" order="150">
+            <column name="type" numcolumns="4" order="130">
                 <widget type="text" fieldname="mimetype" required="true" />
             </column>
-            <column name="hash" numcolumns="8" order="160">
-                <widget type="text" fieldname="hash" required="true" />
+            <column name="size" numcolumns="2" order="140">
+                <widget type="number" fieldname="size" required="true" />
+            </column>
+            <column name="date" numcolumns="2" order="150">
+                <widget type="date" fieldname="date" required="true" />
+            </column>
+            <column name="hour" numcolumns="2" order="160">
+                <widget type="text" fieldname="hour" required="true" />
             </column>
         </group>
     </columns>
