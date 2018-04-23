@@ -154,6 +154,18 @@ class Subcuenta extends Base\ModelClass
         $this->saldo = 0.0;
     }
 
+    /**
+     * Set default values
+     */
+    public function setDefaultValues()
+    {
+        // Search open exercise for current date
+        $exerciseModel = new Ejercicio();
+        if ($exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false)) {
+            $this->codejercicio = $exercise->codejercicio;
+        }
+    }
+
     public function getSpecialAccountCode()
     {
         $result = $this->codcuentaesp;

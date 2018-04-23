@@ -69,6 +69,9 @@ class EditSubcuenta extends ExtendedController\PanelController
             case 'EditSubcuenta':
                 $code = $this->request->get('code');
                 $view->loadData($code);
+                if ($view->count === 0) {
+                    $view->model->setDefaultValues();
+                }
                 break;
 
             case 'ListAsiento':
