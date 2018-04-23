@@ -684,6 +684,6 @@
     "third-trimester": "Third trimester",
     "fourth-trimester": "Fourth trimester",
     "tax-credit-account": "Credit account for taxes",
-    "tax-debit-account": "Debit account for taxes"
+    "tax-debit-account": "Debit account for taxes",
     "generated-at": "Generated at %when%"
 }
