@@ -34,5 +34,10 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="card" title="accounting-entry-macros-title" label="accounting-entry-macros-text"></group>
+        </row>
+    </rows>
 </view>
 
