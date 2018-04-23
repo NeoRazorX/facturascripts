@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * Initial description for the controller ListSubcuenta
@@ -36,11 +36,15 @@
         <column name="description" order="130">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="id-account-special" order="140">
-            <widget type="text" fieldname="codcuentaesp" />
+        <column name="special-account" order="140">
+            <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
+                <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="taxes" order="150">
-            <widget type="text" fieldname="codimpuesto" />
+            <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
+                <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="balance" order="160" display="right">
             <widget type="money" fieldname="saldo" />
