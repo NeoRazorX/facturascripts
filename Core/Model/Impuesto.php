@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -61,26 +61,6 @@ class Impuesto extends Base\ModelClass
     public $recargo;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'impuestos';
-    }
-
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'codimpuesto';
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -98,6 +78,26 @@ class Impuesto extends Base\ModelClass
     public function isDefault()
     {
         return $this->codimpuesto === AppSettings::get('default', 'codimpuesto');
+    }
+
+    /**
+     * Returns the name of the column that is the primary key of the model.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codimpuesto';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'impuestos';
     }
 
     /**
@@ -119,6 +119,6 @@ class Impuesto extends Base\ModelClass
             return false;
         }
 
-        return true;
+        return parent::test();
     }
 }

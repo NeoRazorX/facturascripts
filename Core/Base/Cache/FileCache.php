@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Base\Cache;
@@ -74,8 +74,8 @@ class FileCache implements AdaptorInterface
         if (!file_exists($dir) && !@mkdir($dir, 0775, true) && !is_dir($dir)) {
             $this->minilog->critical($this->i18n->trans('cant-create-folder', ['%folderName%' => $dir]));
         }
-        $this->minilog->debug('using-filecache');
-        $this->minilog->debug('cache-dir', ['%folderName%' => $dir]);
+        $this->minilog->debug($this->i18n->trans('using-filecache'));
+        $this->minilog->debug($this->i18n->trans('cache-dir', ['%folderName%' => $dir]));
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -79,7 +79,6 @@ class SubcuentaSaldo extends Base\ModelClass
      */
     public $saldo;
 
-
     /**
      * Returns the name of the table that uses this model.
      *
@@ -97,7 +96,7 @@ class SubcuentaSaldo extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idsubcuenta';
+        return 'id';
     }
 
     /**
@@ -141,15 +140,17 @@ class SubcuentaSaldo extends Base\ModelClass
 
         $this->idcuenta = $account->idcuenta;
         $this->saldo = $this->debe - $this->haber;
-        return true;
+
+        return parent::test();
     }
 
     /**
-     * Update account balance for a month
+     * Update account balance for a month.
      *
      * @param int   $month
      * @param float $debit
      * @param float $credit
+     * 
      * @return bool
      */
     public function updateBalance($month, $debit, $credit): bool

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -39,6 +39,13 @@ class Divisa extends Base\ModelClass
     public $coddivisa;
 
     /**
+     * ISO 4217 code in number: http://en.wikipedia.org/wiki/ISO_4217
+     *
+     * @var string
+     */
+    public $codiso;
+
+    /**
      * Currency description.
      *
      * @var string
@@ -60,38 +67,11 @@ class Divisa extends Base\ModelClass
     public $tasaconvcompra;
 
     /**
-     * ISO 4217 code in number: http://en.wikipedia.org/wiki/ISO_4217
-     *
-     * @var string
-     */
-    public $codiso;
-
-    /**
      * Symbol representing the currency.
      *
      * @var string
      */
     public $simbolo;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'divisas';
-    }
-
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'coddivisa';
-    }
 
     /**
      * Reset the values of all model properties.
@@ -116,6 +96,26 @@ class Divisa extends Base\ModelClass
     }
 
     /**
+     * Returns the name of the column that is the primary key of the model.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'coddivisa';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'divisas';
+    }
+
+    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
@@ -132,7 +132,7 @@ class Divisa extends Base\ModelClass
         } elseif ($this->tasaconv === 0.0 || $this->tasaconvcompra === 0.0) {
             self::$miniLog->alert(self::$i18n->trans('conversion-rate-not-0'));
         } else {
-            return true;
+            return parent::test();
         }
 
         return false;
