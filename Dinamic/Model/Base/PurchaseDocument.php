@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model\Base
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PurchaseDocument extends \FacturaScripts\Core\Model\Base\PurchaseDocument
+abstract class PurchaseDocument extends \FacturaScripts\Core\Model\Base\PurchaseDocument
 {
 }

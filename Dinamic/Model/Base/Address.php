@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model\Base
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Address extends \FacturaScripts\Core\Model\Base\Address
+abstract class Address extends \FacturaScripts\Core\Model\Base\Address
 {
 }
