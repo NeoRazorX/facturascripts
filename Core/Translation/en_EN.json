@@ -676,13 +676,10 @@
     "delete-data": "Delete data",
     "order-code": "Order code",
     "combination-code": "Combination code",
-    "lineal-discount": "Lineal discount",
     "pvp-unit": "Unit retail price",
     "pvp-without-discount": "Retail price without discount",
     "pvp-total": "Total retail price",
-    "delivery-notes-lines": "Delivery notes lines",
     "total-price": "Total price",
     "show-quantity": "Show quantity on print",
-    "show-price": "Show price on print",
-    "line-order": "Line order"
+    "show-price": "Show price on print"
 }

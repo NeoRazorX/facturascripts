@@ -37,7 +37,7 @@
                 <values source="pedidoscli" fieldcode="idpedido" fieldtitle="codigo"></values>
             </widget>
         </column>
-        <column name="line-order" order="120">
+        <column name="sort" order="120">
             <widget type="number" fieldname="orden" />
         </column>
         <column name="quantity" order="130" display="right">
@@ -52,39 +52,36 @@
         <column name="description" order="160">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="lineal-discount" order="170" display="right">
-            <widget type="number" fieldname="dtolineal" />
-        </column>
-        <column name="discount" order="180" display="right">
+        <column name="discount" order="170" display="right">
             <widget type="number" fieldname="dtopor" />
         </column>
-        <column name="irpf" order="190" display="right">
+        <column name="irpf" order="180" display="right">
             <widget type="number" fieldname="irpf" />
         </column>
-        <column name="%-surcharge" order="200" display="right">
+        <column name="%-surcharge" order="190" display="right">
             <widget type="number" fieldname="recargo" />
         </column>
-        <column name="%-commission" order="210" display="right">
+        <column name="%-commission" order="200" display="right">
             <widget type="number" fieldname="porcomision" />
         </column>
-        <column name="pvp" order="220" display="right">
+        <column name="pvp" order="210" display="right">
             <widget type="money" fieldname="pvpunitario" />
         </column>
-        <column name="pvp-without-discount" order="230" display="right">
+        <column name="pvp-without-discount" order="220" display="right">
             <widget type="money" fieldname="pvpsindto" />
         </column>
-        <column name="pvp-total" order="240" display="right">
+        <column name="pvp-total" order="230" display="right">
             <widget type="money" fieldname="pvptotal" />
         </column>
-        <column name="tax" order="250">
+        <column name="tax" order="240">
             <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="show-quantity" order="260">
+        <column name="show-quantity" order="250">
             <widget type="checkbox" fieldname="mostrar_cantidad" />
         </column>
-        <column name="show-price" order="270">
+        <column name="show-price" order="260">
             <widget type="checkbox" fieldname="mostrar_precio" />
         </column>
     </columns>

@@ -77,7 +77,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
 
         // Delivery notes lines
-        $this->addView('ListLineaAlbaranCliente', 'LineaAlbaranCliente', 'delivery-notes-lines', 'fa-list');
+        $this->addView('ListLineaAlbaranCliente', 'LineaAlbaranCliente', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaAlbaranCliente', ['referencia', 'descripcion']);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
