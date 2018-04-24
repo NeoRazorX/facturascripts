@@ -1308,5 +1308,8 @@
     "third-trimester": "Tercer trimestre",
     "fourth-trimester": "Cuarto trimestre",
     "tax-credit-account": "Cuenta acreedora por IVA",
-    "tax-debit-account": "Cuenta deudora por IVA"
+    "tax-debit-account": "Cuenta deudora por IVA",
+    "accounting-entry-macros-title": "Uso de macros en el campo descripción",
+    "accounting-entry-macros-text": "<p>Puede utilizar palabras clave (macros) para autocompletar información en el campo descripción:</p><dl><dt>Nombre del documento</dt><dd>Escriba <strong>%document%</strong> para añadir el nombre del documento.</dd><dt>Fecha actual</dt><dd>Escriba <strong>%date%</strong> para añadir la fecha actual.</dd><dt>Fecha de entrada</dt><dd>Escriba <strong>%date-entry%</strong> para añadir la fecha del asiento contable.</dd><dt>Mes</dt><dd>Escriba <strong>%month%</strong> para añadir el nombre del mes de la fecha del asiento contable.</dd></dl>",
+    "generated-at": "Generado en %when%"
 }
