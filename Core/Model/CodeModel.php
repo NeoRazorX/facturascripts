@@ -104,24 +104,6 @@ class CodeModel
     }
 
     /**
-     * Load a CodeModel list (code and description) for the indicated array.
-     *
-     * @param array $array
-     *
-     * @return self[]
-     */
-    public static function fromArray($array = [])
-    {
-        $result = [];
-
-        foreach ($array as $d) {
-            $result[] = new self($d);
-        }
-
-        return $result;
-    }
-
-    /**
      * Load a CodeModel list (code and description) for the indicated table and search.
      *
      * @param string $tableName

@@ -63,7 +63,6 @@ class ListLogMessage extends ExtendedController\ListController
             ['code' => 'alert', 'description' => $this->i18n->trans('type-alert')],
             ['code' => 'emergency', 'description' => $this->i18n->trans('type-emergency')]
         ];
-        $selectValues = $this->codeModel::fromArray($values);
-        $this->addFilterSelect('ListLogMessage', 'level', 'type', 'level', $selectValues);
+        $this->addFilterSelect('ListLogMessage', 'level', 'type', 'level', $values);
     }
 }
