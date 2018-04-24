@@ -66,6 +66,20 @@
             form.code.value = lineCodes.join();
             form.submit();
         }
+        function getAutocompleteData(formName, source, field, title, term) {
+            var formData = {};
+            var rawForm = $('form[name="' + formName + '"]').serializeArray();
+            $.each(rawForm, function (i, input) {
+                formData[input.name] = input.value;
+            });
+            formData['action'] = 'autocomplete';
+            formData['source'] = source;
+            formData['field'] = field;
+            formData['title'] = title;
+            formData['term'] = term;
+            console.log(formData);
+            return formData;
+        }
         function getLineCodes() {
             var lineCodes = [];
             $('.tab' + tabActive + ' .listAction').each(function () {
@@ -113,12 +127,32 @@
             });
             // autocomplete filters
             $('.autocomplete').each(function () {
+                var source = $(this).attr('data-source');
                 var field = $(this).attr('data-field');
+                var title = $(this).attr('data-title');
+                var formName = $(this).closest('form').attr('name');
                 $(this).autocomplete({
-                    source: '{{ fsc.url() }}?action=autocomplete&source=' + $(this).attr('data-source')
-                            + '&field=' + field + '&title=' + $(this).attr('data-title'),
+                    source: function (request, response) {
+                        $.ajax({
+                            method: 'POST',
+                            url: '{{ fsc.url() }}',
+                            data: getAutocompleteData(formName, source, field, title, request.term),
+                            dataType: 'json',
+                            success: function (results) {
+                                var values = [];
+                                results.forEach(function (element) {
+                                    values.push({key: element.key, value: element.key + " | " + element.value});
+                                });
+                                response(values);
+                            },
+                            error: function (msg) {
+                                alert(msg.status + ' ' + msg.statusText);
+                            }
+                        });
+                    },
                     select: function (event, ui) {
                         $('#' + field + 'Autocomplete').val(ui.item.key);
+                        ui.item.value = ui.item.value.split(' | ')[1];
                         $(this).form().submit();
                     }
                 });
