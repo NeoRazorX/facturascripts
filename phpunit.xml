@@ -29,6 +29,12 @@
                     phpVersionOperator=">=">
                 Test/Core/Model/
             </directory>
+            <directory
+                    suffix="Test.php"
+                    phpVersion="7.0"
+                    phpVersionOperator=">=">
+                Test/Core/Translation/
+            </directory>
         </testsuite>
     </testsuites>
 </phpunit>
