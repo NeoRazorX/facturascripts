@@ -13,7 +13,7 @@
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 var autocompleteColumns = [];
@@ -28,7 +28,7 @@ function beforeChange(changes, source) {
             if (changes[0][1] === autocompleteColumns[i]) {
                 // aply for autocomplete columns
                 if (typeof changes[0][3] === 'string') {
-                    changes[0][3] = changes[0][3].split(' - ', 1)[0];
+                    changes[0][3] = changes[0][3].split(' | ', 1)[0];
                 }
             }
         }
@@ -131,7 +131,7 @@ function setAutocompletes(columns) {
                     success: function (response) {
                         var values = [];
                         response.forEach(function (element) {
-                            values.push(element.key + " - " + element.value);
+                            values.push(element.key + " | " + element.value);
                         });
                         process(values);
                     }

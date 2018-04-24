@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Controller;
 
@@ -58,6 +58,7 @@ class ListCuenta extends ExtendedController\ListController
 
         $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
         $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
+        $this->addOrderBy('ListSubcuenta', 'saldo', 'balance');
 
         /* Accounts */
         $this->addView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');

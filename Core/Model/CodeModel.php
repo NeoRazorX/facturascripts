@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -30,7 +30,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class CodeModel
 {
 
-    const ALL_LIMIT = 1000;
+    const ALL_LIMIT = 500;
     const SEARCH_LIMIT = 50;
 
     /**
