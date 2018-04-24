@@ -121,7 +121,6 @@ class EditEjercicio extends ExtendedController\PanelController
 
             return false;
         }
-
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
@@ -129,6 +128,7 @@ class EditEjercicio extends ExtendedController\PanelController
                 break;
 
             case 'text/csv':
+            case 'text/plain':
                 $accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio);
                 break;
 
