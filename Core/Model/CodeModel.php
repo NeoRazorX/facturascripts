@@ -30,7 +30,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class CodeModel
 {
 
-    const ALL_LIMIT = 1000;
+    const ALL_LIMIT = 500;
     const SEARCH_LIMIT = 50;
 
     /**
