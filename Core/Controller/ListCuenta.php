@@ -58,6 +58,7 @@ class ListCuenta extends ExtendedController\ListController
 
         $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
         $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
+        $this->addOrderBy('ListSubcuenta', 'saldo', 'balance');
 
         /* Accounts */
         $this->addView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');
