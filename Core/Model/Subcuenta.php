@@ -152,13 +152,7 @@ class Subcuenta extends Base\ModelClass
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
-    }
 
-    /**
-     * Set default values
-     */
-    public function setDefaultValues()
-    {
         // Search open exercise for current date
         $exerciseModel = new Ejercicio();
         if ($exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false)) {
@@ -278,51 +272,13 @@ class Subcuenta extends Base\ModelClass
                     return false;
                 }
             }
-        } catch (\Exception $e) {
-            self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
-            return false;
-        } finally {
-            if (!$inTransaction && self::$dataBase->inTransaction()) {
-                self::$dataBase->rollback();
-                return false;
-            }
-        }
-        return true;
-    }
 
-    /**
-     * Remove the model data from the database.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        // Search for detail balance
-        $where = [new DataBaseWhere('idsubcuenta', $this->idsubcuenta)];
-        $accountDetail = new SubcuentaSaldo();
-        $detail = $accountDetail->all($where);
-
-        $inTransaction = self::$dataBase->inTransaction();
-        try {
+            /// save transaction
             if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
-
-            /// main delete
-            if (!parent::delete()) {
-                return false;
-            }
-
-            /// delete account balance
-            foreach ($detail as $account) {
-                if (!$account->delete()) {
-                    return false;
-                }
+                self::$dataBase->commit();
             }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
@@ -364,11 +320,13 @@ class Subcuenta extends Base\ModelClass
                 . ',saldo = saldo + ' . $balance
                 . ' WHERE idsubcuenta = ' . $this->idsubcuenta;
             self::$dataBase->exec($sql);
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
         } catch (Exception $e) {
             self::$miniLog->error($e->getMessage());
-            if (!$inTransaction) {
-                self::$dataBase->rollback();
-            }
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
