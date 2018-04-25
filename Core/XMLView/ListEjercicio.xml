@@ -42,9 +42,6 @@
                 <option color="blue">CERRADO</option>
             </widget>
         </column>
-        <column name="plan" display="center" order="150">
-            <widget type="text" fieldname="plancontable" />
-        </column>
         <column name="account-length" display="center" order="160">
             <widget type="text" fieldname="longsubcuenta" />
         </column>

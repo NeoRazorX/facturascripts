@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Lib\ExportManager;
+
 /**
  * View definition for its use in ExtendedControllers
  *
@@ -45,5 +47,15 @@ class HtmlView extends BaseView
     {
         parent::__construct($title, $modelName);
         $this->fileName = $fileName;
+    }
+
+    /**
+     * Method to export the view data.
+     *
+     * @param ExportManager $exportManager
+     */
+    public function export(&$exportManager)
+    {
+        /// TODO: complete this method
     }
 }

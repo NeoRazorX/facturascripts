@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use Exception;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Base\ModelClass;
 
 /**
@@ -71,6 +72,16 @@ class GridView extends BaseView
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
+    }
+
+    /**
+     * Method to export the view data.
+     *
+     * @param ExportManager $exportManager
+     */
+    public function export(&$exportManager)
+    {
+        /// TODO: complete this method
     }
 
     /**

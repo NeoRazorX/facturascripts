@@ -697,5 +697,12 @@
     "log": "Log",
     "logs": "Logs",
     "time": "Time",
-    "message": "Message"
+    "message": "Message",
+    "delete-data": "Delete data",
+    "combination-code": "Combination code",
+    "pvp-unit": "Unit retail price",
+    "ammount-without-discount": "Ammount without discount",
+    "pvp-total": "Total retail price",
+    "show-quantity": "Show quantity on print",
+    "show-price": "Show price on print"
 }
