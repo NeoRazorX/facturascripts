@@ -136,7 +136,7 @@ class Updater extends Controller
             case 'update':
                 $this->update();
                 $pluginManager = new PluginManager();
-                $pluginManager->initControllers();
+                $pluginManager->deploy();
                 break;
         }
     }

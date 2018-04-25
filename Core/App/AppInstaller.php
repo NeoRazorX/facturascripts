@@ -136,7 +136,7 @@ class AppInstaller
 
         chmod('Plugins', octdec(777));
         $pluginManager = new PluginManager();
-        $pluginManager->deploy();
+        $pluginManager->deploy(true, false);
         return true;
     }
 
