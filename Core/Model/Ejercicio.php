@@ -194,7 +194,7 @@ class Ejercicio extends Base\ModelClass
         return 'INSERT INTO ' . static::tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
-            . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
+            . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,null,null,null);";
     }
 
     /**
