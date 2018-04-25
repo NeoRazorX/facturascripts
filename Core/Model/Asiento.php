@@ -193,7 +193,6 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
             }
         } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
-            self::$dataBase->rollback();
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
