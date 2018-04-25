@@ -686,12 +686,10 @@
     "tax-debit-account": "Debit account for taxes",
     "generated-at": "Generated at %when%",
     "delete-data": "Delete data",
-    "order-code": "Order code",
     "combination-code": "Combination code",
     "pvp-unit": "Unit retail price",
-    "pvp-without-discount": "Retail price without discount",
+    "ammount-without-discount": "Ammount without discount",
     "pvp-total": "Total retail price",
-    "total-price": "Total price",
     "show-quantity": "Show quantity on print",
     "show-price": "Show price on print"
 }
