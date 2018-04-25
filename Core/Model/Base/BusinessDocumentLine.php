@@ -149,7 +149,8 @@ abstract class BusinessDocumentLine extends ModelClass
     public $referencia;
 
     /**
-     * 
+     * Class constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
@@ -178,6 +179,11 @@ abstract class BusinessDocumentLine extends ModelClass
         $this->recargo = 0.0;
     }
 
+    /**
+     * Removed this row from the database table.
+     *
+     * @return boolean
+     */
     public function delete()
     {
         if (parent::delete()) {
@@ -212,6 +218,13 @@ abstract class BusinessDocumentLine extends ModelClass
         return parent::test();
     }
 
+    /**
+     * Updates stock according to line data and $codalmacen warehouse.
+     *
+     * @param string $codalmacen
+     * 
+     * @return boolean
+     */
     public function updateStock(string $codalmacen)
     {
         if ($this->actualizastock === $this->actualizastockAnt && $this->cantidad === $this->cantidadAnt) {
@@ -240,6 +253,27 @@ abstract class BusinessDocumentLine extends ModelClass
         return true;
     }
 
+    /**
+     * Custom url method.
+     *
+     * @param string $type
+     * @param string $list
+     * 
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        $name = str_replace('Linea', '', $this->modelClassName());
+        return parent::url($type, 'List' . $name . '?active=List');
+    }
+
+    /**
+     * Apply stock modifications according to $mode.
+     *
+     * @param int   $mode
+     * @param float $quantity
+     * @param Stock $stock
+     */
     private function applyStockChanges(int $mode, float $quantity, Stock $stock)
     {
         switch ($mode) {
