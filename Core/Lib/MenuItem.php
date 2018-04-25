@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,7 +94,7 @@ class MenuItem
      */
     protected function getHTMLIcon()
     {
-        return empty($this->icon) ? '<i class="fa fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon
+        return empty($this->icon) ? '<i class="fa fa-page fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon
             . ' fa-fw" aria-hidden="true"></i> ';
     }
 

@@ -38,7 +38,7 @@ class ListEmpresa extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'companies';
-        $pagedata['icon'] = 'fa fa-building-o';
+        $pagedata['icon'] = 'fa-building-o';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
