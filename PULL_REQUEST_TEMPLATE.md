@@ -40,8 +40,7 @@ Your PR description goes here.
 <!---Replace `[ ]` with `[X]` to mark what you do in the next list.--->
 <!---Please add additional points if needed.--->
 
-- [ ] My code follows the [style guidelines](https://github.com/NeoRazorX/facturascripts/blob/master/CONTRIBUTING.md#pull-requests-peticiones-para-incorporar-cambios) of this project. At least [PSR-1](http://www.php-fig.org/psr/psr-1/) and
-[PSR-2](http://www.php-fig.org/psr/psr-2/)
+- [ ] My code follows the [style guidelines](https://github.com/NeoRazorX/facturascripts/blob/master/CONTRIBUTING.md#pull-requests-peticiones-para-incorporar-cambios) of this project. At least [PSR-1](http://www.php-fig.org/psr/psr-1/) and [PSR-2](http://www.php-fig.org/psr/psr-2/)
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
