@@ -51,25 +51,7 @@ class Ledger extends AccountingBase
 
         $ledger = [];
         $ledgerAccount = [];
-
-        $this->processLedgerPages($results, $ledger, $ledgerAccount, $grouping);
-
-        /// every page is a table
-        $pages = $ledger;
-        return $pages;
-    }
-
-    /**
-     * Function to process the results of Ledger Accounting Data
-     * This will return the data grouped or not
-     *
-     * @param array $results
-     * @param array $ledger
-     * @param array $ledgerAccount
-     * @param boolean $grouping
-     */
-    protected function processLedgerPages($results, &$ledger, &$ledgerAccount, $grouping)
-    {
+        //Process each line of the results
         foreach ($results as $line) {
             $account = ($grouping) ? $line['codcuenta'] : 0;
             if ($grouping) {
@@ -78,6 +60,10 @@ class Ledger extends AccountingBase
             }
             $ledger[$account][] = $this->processLine($line, $grouping);
         }
+
+        /// every page is a table
+        $pages = $ledger;
+        return $pages;
     }
 
     /**
