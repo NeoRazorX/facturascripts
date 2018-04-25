@@ -94,14 +94,6 @@ class Ejercicio extends Base\ModelClass
     public $nombre;
 
     /**
-     * Identify the accounting plan used. This is only necessary
-     * to support Eneboo. In FacturaScripts it is not used.
-     *
-     * @var string
-     */
-    public $plancontable;
-
-    /**
      * Returns the state of the exercise ABIERTO -> true | CLOSED -> false
      *
      * @return bool
