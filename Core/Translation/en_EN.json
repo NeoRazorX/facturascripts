@@ -675,7 +675,6 @@
     "uploaded-at" : "Uploaded at",
     "hash": "Hash",
     "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
-    "accounting-date": "Accounting date",
     "vat-regularization": "VAT Regularization",
     "period": "period",
     "accounting-date": "Accounting date",
@@ -685,5 +684,14 @@
     "fourth-trimester": "Fourth trimester",
     "tax-credit-account": "Credit account for taxes",
     "tax-debit-account": "Debit account for taxes",
-    "generated-at": "Generated at %when%"
+    "generated-at": "Generated at %when%",
+    "delete-data": "Delete data",
+    "order-code": "Order code",
+    "combination-code": "Combination code",
+    "pvp-unit": "Unit retail price",
+    "pvp-without-discount": "Retail price without discount",
+    "pvp-total": "Total retail price",
+    "total-price": "Total price",
+    "show-quantity": "Show quantity on print",
+    "show-price": "Show price on print"
 }
