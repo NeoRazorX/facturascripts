@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Lib\EmailTools;
+use FacturaScripts\Core\Model\CodeModel;
 
 /**
  * Description of SendMail
@@ -30,6 +31,18 @@ use FacturaScripts\Core\Lib\EmailTools;
 class SendMail extends Controller
 {
 
+    /**
+     * Model to use with select and autocomplete filters.
+     *
+     * @var CodeModel
+     */
+    public $codeModel;
+
+    /**
+     * Return the basic data for this page.
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();
@@ -41,9 +54,25 @@ class SendMail extends Controller
         return $pageData;
     }
 
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response      $response
+     * @param \FacturaScripts\Core\Model\User                 $user
+     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
+
+        // Get any operations that have to be performed
+        $action = $this->request->get('action', '');
+
+        // Run operations on the data before reading it
+        if (!$this->execPreviousAction($action)) {
+            return;
+        }
 
         $action = $this->request->get('action', '');
         if (!empty($action)) {
@@ -51,6 +80,11 @@ class SendMail extends Controller
         }
     }
 
+    /**
+     * Return the URL of the actual controller.
+     *
+     * @return string
+     */
     public function url()
     {
         $fileName = $this->request->get('fileName', '');
@@ -61,6 +95,13 @@ class SendMail extends Controller
         return parent::url() . '?fileName=' . $fileName;
     }
 
+    /**
+     * Execute main actions.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
     protected function execAction(string $action)
     {
         switch ($action) {
@@ -73,10 +114,13 @@ class SendMail extends Controller
         }
     }
 
+    /**
+     * Remove old files.
+     */
     private function removeOld()
     {
         $regex = '/Mail_([0-9]+).pdf/';
-        foreach (glob(FS_FOLDER . "/MyFiles/Mail_*.pdf") as $fileName) {
+        foreach (glob(FS_FOLDER . '/MyFiles/Mail_*.pdf') as $fileName) {
             $fileTime = [];
             preg_match($regex, $fileName, $fileTime);
             if ($fileTime[1] < (time() - 3600)) {
@@ -85,16 +129,35 @@ class SendMail extends Controller
         }
     }
 
+    /**
+     * Send and email with data posted from form.
+     */
     protected function send()
     {
-        $sendTo = $this->request->request->get('email', '');
+        $fieldsEmail = ['email', 'email-cc', 'email-bcc'];
+        $sendTo = [];
+        foreach ($fieldsEmail as $field) {
+            // Remove unneeded spaces
+            $emails = trim($this->request->request->get($field, ''));
+            // Autocomplete adds a comma at the end, remove it if exists (maybe user remove it)
+            $emails = $emails[\strlen($emails)-1] === ',' ? substr($emails, 0, -1) : $emails;
+            $sendTo[$field] = \explode(',', $emails);
+        }
         $subject = $this->request->request->get('subject', '');
         $body = $this->request->request->get('body', '');
         $fileName = $this->request->get('fileName', '');
 
         $emailTools = new EmailTools();
         $mail = $emailTools->newMail();
-        $mail->addAddress($sendTo);
+        foreach ($sendTo['email'] as $email) {
+            $mail->addAddress($email);
+        }
+        foreach ($sendTo['email-cc'] as $email) {
+            $mail->addCC($email);
+        }
+        foreach ($sendTo['email-bcc'] as $email) {
+            $mail->addBCC($email);
+        }
         $mail->Subject = $subject;
         $mail->msgHTML($body);
         $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
@@ -105,5 +168,59 @@ class SendMail extends Controller
         } else {
             $this->miniLog->error('send-mail-error');
         }
+    }
+
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'autocomplete':
+                $this->setTemplate(false);
+                $this->codeModel = new CodeModel();
+                $results = $this->autocompleteAction();
+                $this->response->setContent(json_encode($results));
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function autocompleteAction(): array
+    {
+        $results = [];
+        $data = $this->requestGet(['source', 'field', 'title', 'term']);
+        foreach ($this->codeModel::search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        return $results;
+    }
+
+    /**
+     * Return array with parameters values
+     *
+     * @param array $keys
+     *
+     * @return array
+     */
+    protected function requestGet($keys): array
+    {
+        $result = [];
+        foreach ($keys as $value) {
+            $result[$value] = $this->request->get($value);
+        }
+        return $result;
     }
 }
