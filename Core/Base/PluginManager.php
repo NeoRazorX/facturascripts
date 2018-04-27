@@ -84,7 +84,7 @@ class PluginManager
      *
      * @param bool $clean
      */
-    public function deploy(bool $clean = true, bool $initControllers = true)
+    public function deploy(bool $clean = true, bool $initControllers = false)
     {
         $pluginDeploy = new PluginDeploy();
         $pluginDeploy->deploy(self::PLUGIN_PATH, $this->enabledPlugins(), $clean);
@@ -109,7 +109,7 @@ class PluginManager
             unset(self::$enabledPlugins[$key]);
             $this->disableByDependecy($pluginName);
             $this->save();
-            $this->deploy();
+            $this->deploy(true, true);
             self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
             break;
         }
@@ -137,7 +137,7 @@ class PluginManager
             if ($this->checkRequire($plugin['require'])) {
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
-                $this->deploy(false);
+                $this->deploy(false, true);
                 self::$minilog->info(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
             }
             break;
@@ -397,6 +397,7 @@ class PluginManager
      */
     private function scanFolder(string $folderPath): array
     {
-        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        $scan = scandir($folderPath, SCANDIR_SORT_ASCENDING);
+        return is_array($scan) ? array_diff($scan, ['.', '..']) : [];
     }
 }

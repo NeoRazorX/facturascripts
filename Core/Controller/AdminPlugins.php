@@ -99,7 +99,7 @@ class AdminPlugins extends Base\Controller
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
         $this->pluginManager = new Base\PluginManager();
-        $this->pluginManager->deploy();
+        $this->pluginManager->deploy(true, true);
         $this->cache->clear();
 
         $action = $this->request->get('action', '');

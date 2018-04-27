@@ -285,7 +285,12 @@ class PluginDeploy
      */
     private function scanFolders(string $folder, bool $recursive = true): array
     {
-        $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
+        if (!is_array($scan)) {
+            return [];
+        }
+
+        $rootFolder = array_diff($scan, ['.', '..']);
         if (!$recursive) {
             return $rootFolder;
         }
