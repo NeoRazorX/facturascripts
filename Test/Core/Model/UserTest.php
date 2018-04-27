@@ -37,7 +37,6 @@ final class UserTest extends TestCase
 
         $this->assertInstanceOf(User::class, $model);
         $this->assertEquals(\FS_LANG, $model->langcode);
-        $this->assertEquals('Dashboard', $model->homepage);
         $this->assertEquals(AppSettings::get('default', 'idempresa', 1), $model->idempresa);
         $this->assertTrue($model->enabled);
         $this->assertEquals(1, $model->level);
