@@ -186,4 +186,21 @@ class AdminPlugins extends Base\Controller
             unlink($uploadFile->getPathname());
         }
     }
+
+    /**
+     * Return installed plugins without hidden ones.
+     *
+     * @return array
+     */
+    public function getPlugins()
+    {
+        $installedPlugins = $this->pluginManager->installedPlugins();
+        $hiddenPlugins = \explode('|', FS_HIDDEN_PLUGINS);
+        foreach ($installedPlugins as $key => $plugin) {
+            if (\in_array($plugin['name'], $hiddenPlugins, false)) {
+                unset($installedPlugins[$key]);
+            }
+        }
+        return $installedPlugins;
+    }
 }

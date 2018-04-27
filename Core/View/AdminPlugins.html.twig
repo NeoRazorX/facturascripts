@@ -80,7 +80,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for plugin in fsc.pluginManager.installedPlugins() %}
+                {% for plugin in fsc.getPlugins() %}
                     {% set trClass = ' class="table-danger"' %}
                     {% if plugin.enabled %}
                         {% set trClass = ' class="table-success"' %}
