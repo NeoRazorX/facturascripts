@@ -138,7 +138,7 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-type') }}:
-                                    <select id="db_type" name="db_type" class="form-control">
+                                    <select id="db_type" name="fs_db_type" class="form-control">
                                         <option value="mysql">MySQL</option>
                                         <option value="postgresql">PostgreSQL</option>
                                     </select>
@@ -147,13 +147,13 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-host') }}:
-                                    <input type="text" name="db_host" value="localhost" class="form-control" required=""/>
+                                    <input type="text" name="fs_db_host" value="localhost" class="form-control" required=""/>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-port') }}:
-                                    <input type="number" id="db_port" name="db_port" value="3306" class="form-control" required=""/>
+                                    <input type="number" id="db_port" name="fs_db_port" value="3306" class="form-control" required=""/>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -165,14 +165,14 @@
                                                 <i class="fa fa-database"></i>
                                             </span>
                                         </span>
-                                        <input type="text" name="db_name" value="facturascripts" class="form-control" required=""/>
+                                        <input type="text" name="fs_db_name" value="facturascripts" class="form-control" required=""/>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-user') }}:
-                                    <input type="text" id="db_user" name="db_user" value="root" class="form-control" required=""/>
+                                    <input type="text" id="db_user" name="fs_db_user" value="root" class="form-control" required=""/>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -184,7 +184,7 @@
                                                 <i class="fa fa-key"></i>
                                             </span>
                                         </span>
-                                        <input type="password" name="db_pass" class="form-control"/>
+                                        <input type="password" name="fs_db_pass" class="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -202,19 +202,19 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('memcache-host') }}:
-                                    <input type="text" name="memcache_host" class="form-control" placeholder="{{ i18n.trans('optional') }}"/>
+                                    <input type="text" name="fs_cache_host" class="form-control" placeholder="{{ i18n.trans('optional') }}"/>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('memcache-port') }}:
-                                    <input type="number" name="memcache_port" class="form-control"/>
+                                    <input type="number" name="fs_cache_port" class="form-control"/>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('memcache-prefix') }}:
-                                    <input type="text" name="memcache_prefix" value="{{ memcache_prefix }}" class="form-control"/>
+                                    <input type="text" name="fs_cache_prefix" value="{{ memcache_prefix }}" class="form-control"/>
                                 </div>
                             </div>
                         </div>

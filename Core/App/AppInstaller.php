@@ -90,14 +90,14 @@ class AppInstaller
     private function createDataBase()
     {
         $dbData = [
-            'host' => $this->request->request->get('db_host'),
-            'port' => $this->request->request->get('db_port'),
-            'user' => $this->request->request->get('db_user'),
-            'pass' => $this->request->request->get('db_pass'),
-            'name' => $this->request->request->get('db_name'),
+            'host' => $this->request->request->get('fs_db_host'),
+            'port' => $this->request->request->get('fs_db_port'),
+            'user' => $this->request->request->get('fs_db_user'),
+            'pass' => $this->request->request->get('fs_db_pass'),
+            'name' => $this->request->request->get('fs_db_name'),
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
-        switch ($this->request->request->get('db_type')) {
+        switch ($this->request->request->get('fs_db_type')) {
             case 'mysql':
                 if (class_exists('mysqli')) {
                     return $this->testMysql($dbData);
@@ -251,22 +251,16 @@ class AppInstaller
             fwrite($file, "<?php\n");
             fwrite($file, "define('FS_COOKIES_EXPIRE', 604800);\n");
             fwrite($file, "define('FS_DEBUG', true);\n");
-            fwrite($file, "define('FS_LANG', '" . $this->request->request->get('fs_lang') . "');\n");
             fwrite($file, "define('FS_ROUTE', '" . $this->getUri() . "');\n");
-            fwrite($file, "define('FS_TIMEZONE', '" . $this->request->request->get('fs_timezone') . "');\n");
-            fwrite($file, "define('FS_DB_TYPE', '" . $this->request->request->get('db_type') . "');\n");
-            fwrite($file, "define('FS_DB_HOST', '" . $this->request->request->get('db_host') . "');\n");
-            fwrite($file, "define('FS_DB_PORT', '" . $this->request->request->get('db_port') . "');\n");
-            fwrite($file, "define('FS_DB_NAME', '" . $this->request->request->get('db_name') . "');\n");
-            fwrite($file, "define('FS_DB_USER', '" . $this->request->request->get('db_user') . "');\n");
-            fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('db_pass') . "');\n");
             fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
             fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
             fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
-            fwrite($file, "define('FS_CACHE_HOST', '" . $this->request->request->get('memcache_host') . "');\n");
-            fwrite($file, "define('FS_CACHE_PORT', '" . $this->request->request->get('memcache_port') . "');\n");
-            fwrite($file, "define('FS_CACHE_PREFIX', '" . $this->request->request->get('memcache_prefix') . "');\n");
-            fwrite($file, "define('FS_HIDDEN_PLUGINS', '" . \implode('|', $this->request->request->get('hidden_plugins', [])) . "');\n");
+
+            foreach (['lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'cache_host', 'cache_port', 'cache_prefix'] as $field) {
+                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field) . "');\n");
+            }
+
+            fwrite($file, "define('FS_HIDDEN_PLUGINS', '" . \implode(',', $this->request->request->get('hidden_plugins', [])) . "');\n");
             if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
                 fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
             }

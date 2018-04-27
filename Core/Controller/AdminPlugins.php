@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,6 +62,28 @@ class AdminPlugins extends Base\Controller
         $pageData['icon'] = 'fa-plug';
 
         return $pageData;
+    }
+
+    /**
+     * Return installed plugins without hidden ones.
+     *
+     * @return array
+     */
+    public function getPlugins()
+    {
+        $installedPlugins = $this->pluginManager->installedPlugins();
+        if (!defined('FS_HIDDEN_PLUGINS')) {
+            return $installedPlugins;
+        }
+
+        /// exclude hidden plugins
+        $hiddenPlugins = \explode(',', FS_HIDDEN_PLUGINS);
+        foreach ($installedPlugins as $key => $plugin) {
+            if (\in_array($plugin['name'], $hiddenPlugins, false)) {
+                unset($installedPlugins[$key]);
+            }
+        }
+        return $installedPlugins;
     }
 
     /**
@@ -185,22 +207,5 @@ class AdminPlugins extends Base\Controller
             $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
             unlink($uploadFile->getPathname());
         }
-    }
-
-    /**
-     * Return installed plugins without hidden ones.
-     *
-     * @return array
-     */
-    public function getPlugins()
-    {
-        $installedPlugins = $this->pluginManager->installedPlugins();
-        $hiddenPlugins = \explode('|', FS_HIDDEN_PLUGINS);
-        foreach ($installedPlugins as $key => $plugin) {
-            if (\in_array($plugin['name'], $hiddenPlugins, false)) {
-                unset($installedPlugins[$key]);
-            }
-        }
-        return $installedPlugins;
     }
 }
