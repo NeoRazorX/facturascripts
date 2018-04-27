@@ -691,5 +691,12 @@
     "ammount-without-discount": "Ammount without discount",
     "pvp-total": "Total retail price",
     "show-quantity": "Show quantity on print",
-    "show-price": "Show price on print"
+    "show-price": "Show price on print",
+    "send-mail": "Send mail",
+    "to": "To",
+    "cc": "CC",
+    "bcc": "BCC",
+    "email-to": "Email To",
+    "email-cc": "Email Carbon Copy",
+    "email-bcc": "Email Blind Carbon Copy"
 }
