@@ -107,7 +107,7 @@ class AppAPI extends App
     private function getResourcesMap(): array
     {
         $resources = [[]];
-        foreach (scandir('Dinamic\\Lib\\API\\', SCANDIR_SORT_NONE) as $resource) {
+        foreach (scandir(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API', SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) === '.php') {
                 $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
                 $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
