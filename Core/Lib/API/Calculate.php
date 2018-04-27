@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\API;
+
+use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 
 /**
  * TestAPI to test API functionality
@@ -24,60 +27,103 @@ namespace FacturaScripts\Core\Lib\API;
  * @author Rafael San José Tovar (http://www.x-netdigital.com) <rsanjoseo@gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Calculate extends Base\APIResourceClass
+class Calculate extends APIResourceClass
 {
+    /**
+     * true if error
+     *
+     * @var bool $error
+     */
+    private $error;
 
-    public function processResource()
+    public function help()
     {
-        $data = [
-            'name' => 'Perform simple arithmetic operations',
-            'subname' => 'Indicate operator and two or more operands',
-            'options' => 'Available operators:',
-            'sum' => 'sum',
-            'subtraction' => 'subtraction',
-            'multiplication' => 'multiplication',
-            'division' => 'division',
-            'sample' => 'facturascripts.com/api/3/calculates/subtraction/10/2/1',
-            'result' => 'Proccess 10-2-1 and return 7',
-        ];
-
+        $data = array();
+        $data['name'] = 'Perform simple arithmetic operations';
+        $data['subname'] = 'Indicate operator and two or more operands';
+        $data['options'] = 'Available operators:';
+        $data['sum'] = 'sum';
+        $data['subtraction'] = 'subtraction';
+        $data['multiplication'] = 'multiplication';
+        $data['division'] = 'division';
+        $data['sample'] = 'facturascripts.com/api/3/calculates/subtraction/10/2/1';
+        $data['result'] = 'Proccess 10-2-1 and return 7';
         $this->returnResult($data);
     }
 
-    public function processResourceParam(array $param)
+    /**
+     * Returns an associative array with the resources, where the index is
+     * the public name of the resource.
+     *
+     * @return array
+     */
+    public function getResources(): array
     {
-        $operator = array_shift($param);
-        $result = (float) array_shift($param);
-        foreach ($param as $_value) {
-            $value = (float) $_value;
-            switch ($operator) {
-                case 'sum':
-                    $result += (float) $value;
-                    break;
+        $ret = array();
+        $ret['calculates'] = $this->setResource('Calculadora');
+        return $ret;
+    }
 
-                case 'subtraction':
-                    $result -= (float) $value;
-                    break;
+    /**
+     * Obtains the result or failure of the arithmetic operation
+     *
+     * @param string $operator
+     * @param float $result
+     * @param float $value
+     * @return float
+     */
+    private function getOperation(string $operator, float $result, float $value) : float
+    {
+        switch ($operator) {
+            case 'sum':
+                $result += $value;
+                break;
+            case 'subtraction':
+                $result -= $value;
+                break;
+            case 'multiplication':
+                $result *= $value;
+                break;
+            case 'division':
+                if ($value === 0.0) {
+                    $this->setError('No se puede dividir entre 0');
+                    $this->error = true;
+                    return 0;
+                }
+                $result /= $value;
+                break;
+            default:
+                $this->setError("Bad Operator: $operator");
+                $this->error = true;
+        }
+        return $result;
+    }
 
-                case 'multiplication':
-                    $result *= (float) $value;
-                    break;
-
-                case 'division':
-                    if ($value == 0) {
-                        $this->setError('No se puede dividir entre 0');
-                        return false;
-                    }
-                    $result /= (float) $value;
-                    break;
-
-                default:
-                    $this->setError("Bad Operator" . $operator);
-                    return false;
-            }
+    /**
+     * Overwrite and IGNORE the original method of the ancestor.
+     *
+     * @param string $name
+     * @param array $params
+     * @return bool
+     */
+    public function processResource(string $name): bool
+    {
+        $this->error = false;
+        $params = $this->params;
+        if (count($params) === 0) {
+            $this->help();
+            return true;
         }
 
-        $this->returnResult(array($operator => $result));
-        return true;
+        $operator = array_shift($params);
+        $result = (float) array_shift($params);
+        foreach ($params as $value) {
+            $result = $this->getOperation($operator, $result, (float) $value);
+        }
+        if (!$this->error) {
+            $this->returnResult(array($operator => $result));
+        }
+
+        return !$this->error;
     }
 }
