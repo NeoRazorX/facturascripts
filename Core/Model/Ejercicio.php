@@ -94,14 +94,6 @@ class Ejercicio extends Base\ModelClass
     public $nombre;
 
     /**
-     * Identify the accounting plan used. This is only necessary
-     * to support Eneboo. In FacturaScripts it is not used.
-     *
-     * @var string
-     */
-    public $plancontable;
-
-    /**
      * Returns the state of the exercise ABIERTO -> true | CLOSED -> false
      *
      * @return bool
@@ -121,7 +113,6 @@ class Ejercicio extends Base\ModelClass
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
         $this->estado = 'ABIERTO';
-        $this->plancontable = '08';
         $this->longsubcuenta = 10;
     }
 
@@ -201,9 +192,9 @@ class Ejercicio extends Base\ModelClass
     public function install()
     {
         return 'INSERT INTO ' . static::tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
-            . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
+            . 'estado,longsubcuenta,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
-            . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
+            . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,null,null,null);";
     }
 
     /**

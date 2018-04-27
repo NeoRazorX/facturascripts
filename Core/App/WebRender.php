@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,6 +43,13 @@ class WebRender
     private $i18n;
 
     /**
+     * FALSE if FacturaScripts is not installed already.
+     *
+     * @var bool
+     */
+    private $installed;
+
+    /**
      * Loads template from the filesystem.
      *
      * @var Twig_Loader_Filesystem
@@ -68,8 +75,10 @@ class WebRender
      */
     public function __construct()
     {
+        $this->installed = true;
         if (!defined('FS_DEBUG')) {
             define('FS_DEBUG', true);
+            $this->installed = false;
         }
 
         $this->i18n = new Translator();
@@ -157,6 +166,14 @@ class WebRender
      */
     private function getOptions()
     {
-        return FS_DEBUG ? ['debug' => true] : ['cache' => FS_FOLDER . '/MyFiles/Cache/Twig'];
+        if ($this->installed) {
+            return [
+                'debug' => FS_DEBUG,
+                'cache' => FS_FOLDER . '/MyFiles/Cache/Twig',
+                'auto_reload' => true
+            ];
+        }
+
+        return ['debug' => FS_DEBUG,];
     }
 }

@@ -14,35 +14,29 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditAgenciaTransporte
+ * Initial description for the controller EditLogMessage
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
 -->
 
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codtrans" icon="fa-truck" required="true" />
+                <widget type="text" fieldname="id" icon="fa-file-text-o" required="true" />
             </column>
-            <column name="name" numcolumns="7" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+            <column name="time" numcolumns="5" order="110">
+                <widget type="text" fieldname="time" required="true" readonly="true" />
             </column>
-            <column name="phone" numcolumns="3" order="120">
-                <widget type="tel" fieldname="telefono" />
+            <column name="level" numcolumns="5" order="120">
+                <widget type="level" fieldname="level" required="true" readonly="true" />
             </column>
-        </group>
-        <group name="data2" numcolumns="12">
-            <column name="WWW" numcolumns="10" order="130">
-                <widget type="text" fieldname="web" />
+            <column name="message" numcolumns="12" order="130">
+                <widget type="text" fieldname="message" required="true" readonly="true" />
             </column>
-            <column name="active" numcolumns="2" order="140">
-                <widget type="checkbox" fieldname="activo" />
-            </column>            
         </group>
     </columns>
 </view>
-

@@ -173,4 +173,9 @@ class Cuenta extends Base\ModelClass
 
         return parent::test();
     }
+    
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListCuenta?active=List');
+    }
 }

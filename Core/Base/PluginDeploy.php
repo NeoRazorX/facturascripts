@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Base;
+
+use Exception;
+use FacturaScripts\Core\App\AppSettings;
 
 /**
  * Description of PluginDeploy
@@ -85,6 +88,50 @@ class PluginDeploy
             if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . $folder)) {
                 $this->linkFiles($folder);
             }
+        }
+    }
+
+    /**
+     * Initialize the controllers dynamically.
+     */
+    public function initControllers()
+    {
+        $cache = new Cache();
+        $menuManager = new MenuManager();
+        $menuManager->init();
+        $pageNames = [];
+
+        $files = $this->scanFolders(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
+        foreach ($files as $fileName) {
+            if (substr($fileName, -4) !== '.php') {
+                continue;
+            }
+
+            $controllerName = substr($fileName, 0, -4);
+            $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
+
+            if (!class_exists($controllerNamespace)) {
+                /// we force the loading of the file because at this point the autoloader will not find it
+                require FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $controllerName . '.php';
+            }
+
+            try {
+                $controller = new $controllerNamespace($cache, $this->i18n, $this->minilog, $controllerName);
+                $menuManager->selectPage($controller->getPageData());
+                $pageNames[] = $controllerName;
+            } catch (Exception $exc) {
+                $this->minilog->critical($this->i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));
+            }
+        }
+
+        $menuManager->removeOld($pageNames);
+        $menuManager->reload();
+
+        /// checks app homepage
+        if (!in_array(AppSettings::get('default', 'homepage', ''), $pageNames)) {
+            $appSettings = new AppSettings();
+            $appSettings->set('default', 'homepage', 'AdminPlugins');
+            $appSettings->save();
         }
     }
 
@@ -230,15 +277,25 @@ class PluginDeploy
     /**
      * Makes a recursive scan in folders inside a root folder and extracts the list of files
      * and pass its to an array as result.
-     *
+     * 
      * @param string $folder
+     * @param bool   $recursive
      *
-     * @return array $result
+     * @return array
      */
-    private function scanFolders(string $folder): array
+    private function scanFolders(string $folder, bool $recursive = true): array
     {
+        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
+        if (!is_array($scan)) {
+            return [];
+        }
+
+        $rootFolder = array_diff($scan, ['.', '..']);
+        if (!$recursive) {
+            return $rootFolder;
+        }
+
         $result = [];
-        $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
         foreach ($rootFolder as $item) {
             $newItem = $folder . DIRECTORY_SEPARATOR . $item;
             if (is_file($newItem)) {

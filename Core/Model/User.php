@@ -136,7 +136,6 @@ class User extends Base\ModelClass
     {
         parent::clear();
         $this->enabled = true;
-        $this->homepage = 'Dashboard';
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
         $this->level = 1;

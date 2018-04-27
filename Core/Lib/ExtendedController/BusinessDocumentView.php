@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
@@ -83,6 +83,16 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
+     * Method to export the view data.
+     *
+     * @param ExportManager $exportManager
+     */
+    public function export(&$exportManager)
+    {
+        $exportManager->generateDocumentPage($this->model);
+    }
+
+    /**
      * Returns the data of lines to the view.
      *
      * @return string
@@ -127,16 +137,6 @@ class BusinessDocumentView extends BaseView
         }
 
         return json_encode($data);
-    }
-
-    /**
-     * Method to export the view data
-     *
-     * @param ExportManager $exportManager
-     */
-    public function export(ExportManager &$exportManager)
-    {
-        $exportManager->generateDocumentPage($this->model);
     }
 
     /**

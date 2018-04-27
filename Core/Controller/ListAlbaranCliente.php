@@ -50,29 +50,51 @@ class ListAlbaranCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
+        // Delivery notes
         $this->addView('ListAlbaranCliente', 'AlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
-
-        $this->addFilterDatePicker('ListAlbaranCliente', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListAlbaranCliente', 'total', 'total', 'total');
-        
-        $where = [new DataBaseWhere('tipodoc', 'AlbaranCliente')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListAlbaranCliente', 'idestado', 'state', 'idestado', $stateValues);
-        
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-        
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', 'codserie', $serieValues);
-        
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
-        
-        $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
-
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
+
+        $this->addFilterDatePicker('ListAlbaranCliente', 'fecha', 'date', 'fecha');
+        $this->addFilterNumber('ListAlbaranCliente', 'total', 'total', 'total');
+
+        $where = [new DataBaseWhere('tipodoc', 'AlbaranCliente')];
+        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListAlbaranCliente', 'idestado', 'state', 'idestado', $stateValues);
+
+        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+
+        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', 'codserie', $serieValues);
+
+        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
+
+        // Delivery notes lines
+        $this->createViewLines();
+    }
+
+    protected function createViewLines()
+    {
+        $this->addView('ListLineaAlbaranCliente', 'LineaAlbaranCliente', 'lines', 'fa-list');
+        $this->addSearchFields('ListLineaAlbaranCliente', ['referencia', 'descripcion']);
+        $this->addOrderBy('ListLineaAlbaranCliente', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'pvptotal', 'ammount');
+        $this->addOrderBy('ListLineaAlbaranCliente', 'idalbaran', 'delivery-note', 2);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaAlbaranCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaAlbaranCliente', 'pvptotal', 'ammount', 'pvptotal');
     }
 }
