@@ -289,6 +289,7 @@ class Subcuenta extends Base\ModelClass
         return true;
     }
 
+    /*
      * Update account balance
      *
      * @param string $date
