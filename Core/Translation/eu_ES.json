@@ -1790,5 +1790,12 @@
     "accounting-possible-duplicated": "Kontabilitate idazpena beste honekin bikoiztua dago seguru aski. Horrela ez bada, mezu hau saihesteko,  kontzeptua zerbait aldatu.",
     "accounting-within-regularization": "Idazpena %tax% zergaren erregularizazioa da. Ezin da ezabatu.",
     "supplier-estimations": "Hornitzaileen aurreikuspenak",
-    "choose-source": "Aukeratu jatorria"
+    "choose-source": "Aukeratu jatorria",
+    "balance-sheets": "Balantzeak",
+    "enable-api": "APIa gaitu",
+    "default-tax": "Zerga lehenetsia",
+    "renumber-accounting-ok": "Idazpenen zenbaki berri ematea amaitua",
+    "renumber-accounting-error": "%exerciseCode% ekitaldiko idazpenei zenbaki berriak ematean errore bat eman da",
+    "record-save-error": "Datuak gordetzean errore bat eman da",
+    "generate-title": "Sortu txostena"
 }
