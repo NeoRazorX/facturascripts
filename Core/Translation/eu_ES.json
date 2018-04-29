@@ -1797,5 +1797,6 @@
     "renumber-accounting-ok": "Idazpenen zenbaki berri ematea amaitua",
     "renumber-accounting-error": "%exerciseCode% ekitaldiko idazpenei zenbaki berriak ematean errore bat eman da",
     "record-save-error": "Datuak gordetzean errore bat eman da",
-    "generate-title": "Sortu txostena"
+    "generate-title": "Sortu txostena",
+    "tasaconv": "Bihurketa-tasa"
 }
