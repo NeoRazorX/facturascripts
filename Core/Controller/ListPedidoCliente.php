@@ -52,7 +52,7 @@ class ListPedidoCliente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPedidoCliente', 'PedidoCliente');
-        $this->addView("ListLineaPedidoCliente",'LineaPedidoCliente');
+        $this->addView("ListLineaPedidoCliente", 'LineaPedidoCliente');
         $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListPedidoCliente', 'fecha', 'date', 'fecha');
@@ -76,10 +76,11 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
         $this->addOrderBy('ListPedidoCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
-        
+
         // Delivery notes lines
         $this->createViewLines();
     }
+
     protected function createViewLines()
     {
         $this->addView('ListLineaPedidoCliente', 'LineaPedidoCliente', 'lines', 'fa-list');

@@ -51,9 +51,9 @@ class ListAlbaranProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListAlbaranProveedor', 'AlbaranProveedor');
-        $this->addView("ListLineaAlbaranProveedor",'LineaAlbaranProveedor');
-       
-        
+        $this->addView("ListLineaAlbaranProveedor", 'LineaAlbaranProveedor');
+
+
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListAlbaranProveedor', 'fecha', 'date', 'fecha');
@@ -77,10 +77,11 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
-        
-         // Delivery notes lines
+
+        // Delivery notes lines
         $this->createViewLines();
     }
+
     protected function createViewLines()
     {
         $this->addView('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'lines', 'fa-list');

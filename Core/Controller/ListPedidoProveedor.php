@@ -52,7 +52,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPedidoProveedor', 'PedidoProveedor');
-        $this->addView("ListLineaPedidoProveedor",'LineaPedidoProveedor');
+        $this->addView("ListLineaPedidoProveedor", 'LineaPedidoProveedor');
         $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListPedidoProveedor', 'fecha', 'date', 'fecha');
@@ -76,11 +76,12 @@ class ListPedidoProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
         $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
-        
+
         // Delivery notes lines
         $this->createViewLines();
     }
-     protected function createViewLines()
+
+    protected function createViewLines()
     {
         $this->addView('ListLineaPedidoProveedor', 'LineaPedidoProveedor', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaPedidoProveedor', ['referencia', 'descripcion']);

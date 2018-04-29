@@ -52,7 +52,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListFacturaProveedor', 'FacturaProveedor');
-        $this->addView("ListLineaFacturaProveedor",'LineaFacturaProveedor');
+        $this->addView("ListLineaFacturaProveedor", 'LineaFacturaProveedor');
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListFacturaProveedor', 'fecha', 'date', 'fecha');
@@ -80,6 +80,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
         // Delivery notes lines
         $this->createViewLines();
     }
+
     protected function createViewLines()
     {
         $this->addView('ListLineaFacturaProveedor', 'LineaFacturaProveedor', 'lines', 'fa-list');

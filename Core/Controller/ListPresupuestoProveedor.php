@@ -52,7 +52,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor');
-        $this->addView("ListLineaPresupuestoProveedor",'LineaPresupuestoProveedor');
+        $this->addView("ListLineaPresupuestoProveedor", 'LineaPresupuestoProveedor');
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListPresupuestoProveedor', 'fecha', 'date', 'fecha');
@@ -64,22 +64,23 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListPresupuestoProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-        
+
         $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
         $this->addFilterSelect('ListPresupuestoProveedor', 'codserie', 'series', 'codserie', $serieValues);
-        
+
         $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect('ListPresupuestoProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
-        
+
         $this->addFilterAutocomplete('ListPresupuestoProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
         $this->addOrderBy('ListPresupuestoProveedor', 'codigo', 'code');
         $this->addOrderBy('ListPresupuestoProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListPresupuestoProveedor', 'total', 'amount');
-        
+
         // Delivery notes lines
         $this->createViewLines();
     }
+
     protected function createViewLines()
     {
         $this->addView('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor', 'lines', 'fa-list');

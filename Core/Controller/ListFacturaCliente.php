@@ -52,7 +52,7 @@ class ListFacturaCliente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListFacturaCliente', 'FacturaCliente');
-        $this->addView("ListLineaFacturaCliente",'LineaFacturaCliente');
+        $this->addView("ListLineaFacturaCliente", 'LineaFacturaCliente');
         $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListFacturaCliente', 'fecha', 'date', 'fecha');
@@ -77,10 +77,11 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
         $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
-        
+
         // Delivery notes lines
         $this->createViewLines();
     }
+
     protected function createViewLines()
     {
         $this->addView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'lines', 'fa-list');
