@@ -1335,7 +1335,7 @@
     "send-mail": "Enviar correo",
     "to": "Para",
     "cc": "CC",
-    "bcc": "BCC",
+    "bcc": "CCO",
     "email-to": "Email para",
     "email-cc": "Email Con Copia",
     "email-bcc": "Email Con Copia Oculta"
