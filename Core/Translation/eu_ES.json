@@ -1471,7 +1471,7 @@
     "login-cookie-fail": "Saio cookieak huts egin du",
     "login-ok": "Saioa ondo hasi da (cookie). Erabiltzailea:  '%nick%'",
     "login-password-fail": "Errorea saioa hastean",
-    "login-text": "Saioa hasi",
+    "login-text": "Sartu zure erabiltzaile izena eta pasahitza saioa hasteko",
     "login-user-not-found": "Ez da aurkitu erabiltzailea",
     "logo": "Logotipo",
     "logout": "Saioa amaitu",
