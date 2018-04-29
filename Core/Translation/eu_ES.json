@@ -1771,5 +1771,6 @@
     "encrypt": "Zifratzea",
     "level": "Maila",
     "api": "API",
-    "disable-api": "Ezgaitu APIa"
+    "disable-api": "Ezgaitu APIa",
+    "concept-too-large": "Kontzeptua luzeegia."
 }
