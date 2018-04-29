@@ -1243,7 +1243,7 @@
     "concept-seat-too-large": "Idazpenaren kontzeptua luzeegia da.",
     "concepto": "Kontzeptua",
     "configuration": "konfigurazioa",
-    "confirm": "berretsi",
+    "confirm": "Berretsi",
     "confirm-delete": "Berretsi ezabatzea?",
     "contact": "Harremanetarako",
     "contact-data": "Kontaktuen datuak",
@@ -1772,5 +1772,6 @@
     "level": "Maila",
     "api": "API",
     "disable-api": "Ezgaitu APIa",
-    "concept-too-large": "Kontzeptua luzeegia."
+    "concept-too-large": "Kontzeptua luzeegia.",
+    "controller-error": "Kontrolatzaile errorea"
 }
