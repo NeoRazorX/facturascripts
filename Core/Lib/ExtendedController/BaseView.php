@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\PageOption;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model\PageOption;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class BaseView
+abstract class BaseView
 {
 
     /**
@@ -71,6 +72,11 @@ class BaseView
      * @var string
      */
     public $title;
+    
+    /**
+     * Method to export the view data.
+     */
+    abstract public function export(&$exportManager);
 
     /**
      * Construct and initialize the class

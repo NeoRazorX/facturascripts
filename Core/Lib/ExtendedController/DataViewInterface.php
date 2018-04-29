@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * TODO: Uncomplete documentation
@@ -30,20 +29,20 @@ interface DataViewInterface
 {
 
     /**
-     * Column list and its configuration
-     * (Array of ColumnItem)
-     *
-     * @return GroupItem[]
-     */
-    public function getColumns();
-
-    /**
      * Establishes de view/edit state of a column
      *
      * @param string $columnName
      * @param bool   $disabled
      */
     public function disableColumn($columnName, $disabled);
+
+    /**
+     * Column list and its configuration
+     * (Array of ColumnItem)
+     *
+     * @return GroupItem[]
+     */
+    public function getColumns();
 
     /**
      * Load the data in the cursor property, according to the where filter specified.
@@ -56,13 +55,4 @@ interface DataViewInterface
      * @param int             $limit
      */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
-
-    /**
-     * Method to export the view data
-     *
-     * @param ExportManager $exportManager
-     *
-     * @return null
-     */
-    public function export(&$exportManager);
 }

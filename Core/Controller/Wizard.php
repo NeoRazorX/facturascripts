@@ -112,7 +112,7 @@ class Wizard extends Controller
         new Model\Serie();
 
         $pluginManager = new PluginManager();
-        $pluginManager->initControllers();
+        $pluginManager->deploy(true, true);
     }
 
     /**

@@ -197,7 +197,7 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Method to export the view data
+     * Method to export the view data.
      *
      * @param ExportManager $exportManager
      */

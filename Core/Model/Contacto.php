@@ -142,7 +142,7 @@ class Contacto extends Base\Contact
     public function clear()
     {
         parent::clear();
-        $this->admitemarketing = true;
+        $this->admitemarketing = false;
         $this->codpais = AppSettings::get('default', 'codpais');
         $this->verificado = false;
     }

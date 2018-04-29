@@ -31,11 +31,11 @@ class Ledger extends AccountingBase
 
     /**
      * Generate the ledger between two dates.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
      * @param array  $params
-     * 
+     *
      * @return array
      */
     public function generate(string $dateFrom, string $dateTo, array $params = [])
@@ -51,10 +51,14 @@ class Ledger extends AccountingBase
 
         $ledger = [];
         $ledgerAccount = [];
+        //Process each line of the results
         foreach ($results as $line) {
-            $this->processHeader($ledgerAccount[$line['codcuenta']], $line);
-            $ledger[$line['codcuenta']][0] = $this->processLine($ledgerAccount[$line['codcuenta']], $grouping);
-            $ledger[$line['codcuenta']][] = $this->processLine($line, $grouping);
+            $account = ($grouping) ? $line['codcuenta'] : 0;
+            if ($grouping) {
+                $this->processHeader($ledgerAccount[$account], $line);
+                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouping);
+            }
+            $ledger[$account][] = $this->processLine($line, $grouping);
         }
 
         /// every page is a table
@@ -110,7 +114,7 @@ class Ledger extends AccountingBase
             . ' AND cuentas.codejercicio = asto.codejercicio '
             . ' AND subc.codsubcuenta = part.codsubcuenta '
             . ' AND subc.idcuenta = cuentas.idcuenta '
-            . ' ORDER BY asto.fecha, subc.codcuenta, part.codsubcuenta, asto.numero ASC';
+            . ' ORDER BY asto.fecha, asto.numero ASC';
         return $this->dataBase->select($sql);
     }
 
@@ -139,7 +143,7 @@ class Ledger extends AccountingBase
      * Process the line data to use the appropiate formats.
      * If the $grouping variable is not equal to non-group
      * then we dont return the 'fecha' and 'numero' fields
-     * 
+     *
      * @param array $line
      * @param bool  $grouping
      *

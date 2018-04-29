@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use Exception;
 use ZipArchive;
 
 /**
@@ -85,10 +84,14 @@ class PluginManager
      *
      * @param bool $clean
      */
-    public function deploy(bool $clean = true)
+    public function deploy(bool $clean = true, bool $initControllers = false)
     {
         $pluginDeploy = new PluginDeploy();
         $pluginDeploy->deploy(self::PLUGIN_PATH, $this->enabledPlugins(), $clean);
+
+        if ($initControllers) {
+            $pluginDeploy->initControllers();
+        }
     }
 
     /**
@@ -106,8 +109,7 @@ class PluginManager
             unset(self::$enabledPlugins[$key]);
             $this->disableByDependecy($pluginName);
             $this->save();
-            $this->deploy();
-            $this->initControllers();
+            $this->deploy(true, true);
             self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
             break;
         }
@@ -135,8 +137,7 @@ class PluginManager
             if ($this->checkRequire($plugin['require'])) {
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
-                $this->deploy(false);
-                $this->initControllers();
+                $this->deploy(false, true);
                 self::$minilog->info(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
             }
             break;
@@ -156,43 +157,6 @@ class PluginManager
         }
 
         return $enabled;
-    }
-
-    /**
-     * Initialize the controllers dynamically.
-     */
-    public function initControllers()
-    {
-        $cache = new Cache();
-        $menuManager = new MenuManager();
-        $menuManager->init();
-        $pageNames = [];
-
-        $files = $this->scanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller');
-        foreach ($files as $fileName) {
-            if (substr($fileName, -4) !== '.php') {
-                continue;
-            }
-
-            $controllerName = substr($fileName, 0, -4);
-            $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
-
-            if (!class_exists($controllerNamespace)) {
-                /// we force the loading of the file because at this point the autoloader will not find it
-                require FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $controllerName . '.php';
-            }
-
-            try {
-                $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
-                $menuManager->selectPage($controller->getPageData());
-                $pageNames[] = $controllerName;
-            } catch (Exception $exc) {
-                self::$minilog->critical(self::$i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));
-            }
-        }
-
-        $menuManager->removeOld($pageNames);
-        $menuManager->reload();
     }
 
     /**
@@ -433,6 +397,7 @@ class PluginManager
      */
     private function scanFolder(string $folderPath): array
     {
-        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        $scan = scandir($folderPath, SCANDIR_SORT_ASCENDING);
+        return is_array($scan) ? array_diff($scan, ['.', '..']) : [];
     }
 }

@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -61,7 +61,7 @@ class EditView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Method to export the view data
+     * Method to export the view data.
      *
      * @param ExportManager $exportManager
      */
