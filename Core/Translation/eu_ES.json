@@ -1775,5 +1775,6 @@
     "concept-too-large": "Kontzeptua luzeegia.",
     "controller-error": "Kontrolatzaile errorea",
     "desc-customer-name": "Bezeroa izendatzeko erabiltzen duzun izena. Barne erabilerarako.",
-    "desc-customer-name-2": "Bezeroaren izen komertziala"
+    "desc-customer-name-2": "Bezeroaren izen komertziala",
+    "document-states": "Dokumentu egoerak"
 }
