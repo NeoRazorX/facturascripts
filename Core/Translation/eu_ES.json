@@ -1776,5 +1776,6 @@
     "controller-error": "Kontrolatzaile errorea",
     "desc-customer-name": "Bezeroa izendatzeko erabiltzen duzun izena. Barne erabilerarako.",
     "desc-customer-name-2": "Bezeroaren izen komertziala",
-    "document-states": "Dokumentu egoerak"
+    "document-states": "Dokumentu egoerak",
+    "error-no-name-in-settings": "Errorea %viewName% ikuspegian. Xml-en zutabe baten 'izena' jakinaraztea falta da"
 }
