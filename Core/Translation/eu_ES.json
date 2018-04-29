@@ -1789,5 +1789,6 @@
     "exercise-date-out-range": "Data ez da ekitaldikoa.",
     "accounting-possible-duplicated": "Kontabilitate idazpena beste honekin bikoiztua dago seguru aski. Horrela ez bada, mezu hau saihesteko,  kontzeptua zerbait aldatu.",
     "accounting-within-regularization": "Idazpena %tax% zergaren erregularizazioa da. Ezin da ezabatu.",
-    "supplier-estimations": "Hornitzaileen aurreikuspenak"
+    "supplier-estimations": "Hornitzaileen aurreikuspenak",
+    "choose-source": "Aukeratu jatorria"
 }
