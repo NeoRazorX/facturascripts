@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class ListPresupuestoCliente extends ExtendedController\ListController
 {
@@ -51,6 +52,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPresupuestoCliente', 'PresupuestoCliente');
+        $this->addView("ListLineaPresupuestoCliente",'LineaPresupuestoCliente');
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListPresupuestoCliente', 'fecha', 'date', 'fecha');
@@ -74,5 +76,26 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
         $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
+        
+         // Delivery notes lines
+        $this->createViewLines();
+    }
+     protected function createViewLines()
+    {
+        $this->addView('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente', 'lines', 'fa-list');
+        $this->addSearchFields('ListLineaPresupuestoCliente', ['referencia', 'descripcion']);
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'pvptotal', 'ammount');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'idpresupuesto', 'code', 2);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaPresupuestoCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvptotal', 'ammount', 'pvptotal');
     }
 }
