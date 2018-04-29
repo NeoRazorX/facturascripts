@@ -1777,5 +1777,9 @@
     "desc-customer-name": "Bezeroa izendatzeko erabiltzen duzun izena. Barne erabilerarako.",
     "desc-customer-name-2": "Bezeroaren izen komertziala",
     "document-states": "Dokumentu egoerak",
-    "error-no-name-in-settings": "Errorea %viewName% ikuspegian. Xml-en zutabe baten 'izena' jakinaraztea falta da"
+    "error-no-name-in-settings": "Errorea %viewName% ikuspegian. Xml-an zutabe baten 'izena' jakinaraztea falta da",
+    "generated-supplier-estimations": "%quantity% hornitzaile aurrekontu sortuak.",
+    "incorrect-accounting-amount": "Idazpenaren kopurua ez da zuzena.",
+    "incompatible-with-facturascripts": "FacturaScripts %version% bertsioaz ez da bateragarria",
+    "invalid-column-lenght": "%column%  %min% eta %max% karaktere artean egon behar du."
 }
