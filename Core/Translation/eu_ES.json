@@ -588,8 +588,8 @@
     "license": "Lizentzia",
     "mysql-socket": "Socket MySQL",
     "mysql-socket-p": "Eremu hau MySQL hosting batzuk bakarrik eskatzen dute.",
-    "plugin-enabled": "Plugina zuzen gaitu da.",
-    "plugin-disabled": "Plugina zuzen desgaitu da.",
+    "plugin-enabled": "%pluginName% plugina zuzen gaitu da.",
+    "plugin-disabled": "%pluginName% plugina zuzen desgaitu da.",
     "preferences": "Hobespenak",
     "select-language": "Aukeratu hizkuntza",
     "template-not-found": "Ez da txantiloia aurkitu",
@@ -1781,5 +1781,13 @@
     "generated-supplier-estimations": "%quantity% hornitzaile aurrekontu sortuak.",
     "incorrect-accounting-amount": "Idazpenaren kopurua ez da zuzena.",
     "incompatible-with-facturascripts": "FacturaScripts %version% bertsioaz ez da bateragarria",
-    "invalid-column-lenght": "%column%  %min% eta %max% karaktere artean egon behar du."
+    "invalid-column-lenght": "%column%  %min% eta %max% karaktere artean egon behar du.",
+    "php-extension-not-found": "%extension% PHP gehigarria instalatu gabe duzu.",
+    "plugin-needed": "%pluginName% plugina behar da..",
+    "plugin-not-compatible": "%pluginName% plugina ez da bateragarria FacturaScripts 2018rekin.",
+    "renumber-accounting": "Idazpenei zenbaki berriak eman",
+    "exercise-date-out-range": "Data ez da ekitaldikoa.",
+    "accounting-possible-duplicated": "Kontabilitate idazpena beste honekin bikoiztua dago seguru aski. Horrela ez bada, mezu hau saihesteko,  kontzeptua zerbait aldatu.",
+    "accounting-within-regularization": "Idazpena %tax% zergaren erregularizazioa da. Ezin da ezabatu.",
+    "supplier-estimations": "Hornitzaileen aurreikuspenak"
 }
