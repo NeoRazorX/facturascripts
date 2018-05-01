@@ -163,6 +163,7 @@ class FileManager
             }
             return rmdir($dir);
         }
+        return false;
     }
 
     /**
@@ -265,7 +266,7 @@ class FileManager
 
         if ($this->isOctal($fileMode)) {
             if (!is_dir($path)) {
-                return @chmod($path, $fileMode);
+                return @chmod($path, (int) $fileMode);
             }
 
             foreach ($this->getAllFrom([$path]) as $file) {
@@ -273,7 +274,7 @@ class FileManager
                 if (is_link($fullPath)) {
                     return false;
                 }
-                if (!is_dir($fullPath) && !@chmod($fullPath, $fileMode)) {
+                if (!is_dir($fullPath) && !@chmod($fullPath, (int) $fileMode)) {
                     return false;
                 }
                 if (!$this->chModR($fullPath, $fileMode)) {
@@ -281,7 +282,7 @@ class FileManager
                 }
             }
 
-            return @chmod($path, $fileMode);
+            return @chmod($path, (int) $fileMode);
         }
 
         $miniLog->critical(
@@ -300,7 +301,7 @@ class FileManager
     private function isOctal($fileMode): bool
     {
         $formatted = \str_pad(
-            decoct(octdec($fileMode)),
+            decoct((int) octdec($fileMode)),
             4,
             0,
             \STR_PAD_LEFT

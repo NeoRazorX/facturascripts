@@ -124,12 +124,16 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
 
         // Must be different, because were adding a dummy file
         touch(\FS_FOLDER . '/DummyFile');
-        @unlink(\FS_FOLDER . '/MyFiles/integrity-validation.json');
+        if (\file_exists(\FS_FOLDER . '/MyFiles/integrity-validation.json')) {
+            unlink(\FS_FOLDER . '/MyFiles/integrity-validation.json');
+        }
         $this->assertNotEmpty(
             $this->object::compareIntegrity(),
             'Integrity check test not passed: "' . print_r($this->object::compareIntegrity(), true) . '"'
         );
-        @unlink(\FS_FOLDER . '/DummyFile');
+        if (\file_exists(\FS_FOLDER . '/DummyFile')) {
+            unlink(\FS_FOLDER . '/DummyFile');
+        }
     }
 
     /**
@@ -141,6 +145,8 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
         $this->object = new IntegrityCheck();
 
         // Remove it because if asserts fails don't unlink it
-        @unlink(\FS_FOLDER . '/DummyFile');
+        if (\file_exists(\FS_FOLDER . '/DummyFile')) {
+            unlink(\FS_FOLDER . '/DummyFile');
+        }
     }
 }
