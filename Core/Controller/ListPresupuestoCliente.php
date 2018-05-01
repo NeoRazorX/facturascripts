@@ -52,7 +52,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPresupuestoCliente', 'PresupuestoCliente');
-        $this->addView("ListLineaPresupuestoCliente", 'LineaPresupuestoCliente');
+        
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListPresupuestoCliente', 'fecha', 'date', 'fecha');

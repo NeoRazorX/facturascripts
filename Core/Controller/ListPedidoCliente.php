@@ -52,7 +52,7 @@ class ListPedidoCliente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPedidoCliente', 'PedidoCliente');
-        $this->addView("ListLineaPedidoCliente", 'LineaPedidoCliente');
+        
         $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListPedidoCliente', 'fecha', 'date', 'fecha');

@@ -52,7 +52,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor');
-        $this->addView("ListLineaPresupuestoProveedor", 'LineaPresupuestoProveedor');
+        
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListPresupuestoProveedor', 'fecha', 'date', 'fecha');
