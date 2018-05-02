@@ -18,23 +18,15 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core;
 
 /**
  * Auxiliary model to load a list of accounting entries with VAT
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class PartidaImpuesto
+class PartidaImpuesto extends Base\ModelView
 {
-    /**
-     * It provides direct access to the database.
-     *
-     * @var Base\DataBase
-     */
-    private static $dataBase;
-
     /**
      * Exercise code of the accounting entry.
      *
@@ -168,7 +160,48 @@ class PartidaImpuesto
      */
     public $codimpuesto;
 
-    private function tableName()
+    /**
+     * List of tables required for the execution of the view.
+     */
+    protected function getTables(): array
+    {
+        return [
+            'asientos',
+            'partidas',
+            'subcuentas'
+        ];
+    }
+
+    /**
+     * List of fields or columns to select clausule
+     */
+    protected function getFields(): array
+    {
+        return [
+            'codejercicio' => 'asientos.codejercicio',
+            'idasiento' => 'asientos.idasiento',
+            'numero' => 'asientos.numero',
+            'fecha' => 'asientos.fecha',
+            'idpartida' => 'partidas.idpartida',
+            'idcontrapartida' => 'partidas.idcontrapartida',
+            'codcontrapartida' => 'partidas.codcontrapartida',
+            'concepto' => 'partidas.concepto',
+            'documento' => 'partidas.documento',
+            'cifnif' => 'partidas.cifnif',
+            'codserie' => 'partidas.codserie',
+            'factura' => 'partidas.factura',
+            'baseimponible' => 'partidas.baseimponible',
+            'iva' => 'partidas.iva',
+            'recargo' => 'partidas.recargo',
+            'codcuentaesp' => 'subcuentas.codcuentaesp',
+            'codimpuesto' => 'subcuentas.codimpuesto'
+        ];
+    }
+
+    /**
+     * List of tables related to from clausule
+     */
+    protected function getSQLFrom(): string
     {
         return 'asientos '
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
@@ -177,22 +210,19 @@ class PartidaImpuesto
             .                       'AND subcuentas.codcuentaesp IS NOT NULL';
     }
 
-    private function fieldsList()
+    /**
+     * Return default order by
+     */
+    protected function getDefaultOrderBy(): string
     {
-        return 'asientos.codejercicio codejercicio, asientos.idasiento idasiento,'
-            .  'asientos.numero numero, asientos.fecha fecha,'
-            .  'partidas.idpartida idpartida, partidas.idcontrapartida idcontrapartida,'
-            .  'partidas.codcontrapartida codcontrapartida, partidas.concepto concepto,'
-            .  'partidas.documento documento, partidas.cifnif cifnif,'
-            .  'partidas.codserie codserie, partidas.factura factura,'
-            .  'partidas.baseimponible baseimponible, partidas.iva iva, partidas.recargo recargo,'
-            .  'subcuentas.codcuentaesp codcuentaesp, subcuentas.codimpuesto codimpuesto';
+        return ' ORDER BY asientos.codejercicio ASC, partidas.codserie ASC, '
+                       . 'asientos.fecha ASC, partidas.factura ASC, partidas.documento ASC';
     }
 
     /**
-     * Set initial values
+     * Reset the values of all model view properties.
      */
-    private function clear()
+    protected function clear()
     {
         $this->codejercicio = null;
         $this->idasiento = null;
@@ -216,11 +246,11 @@ class PartidaImpuesto
     }
 
     /**
-     * Set data from array
+     * Assign the values of the $data array to the model view properties.
      *
      * @param array $data
      */
-    private function loadFromData($data)
+    protected function loadFromData($data)
     {
         $this->codejercicio = $data['codejercicio'];
         $this->idasiento = $data['idasiento'];
@@ -229,107 +259,17 @@ class PartidaImpuesto
         $this->idpartida = $data['idpartida'];
         $this->idcontrapartida = $data['idcontrapartida'];
         $this->codcontrapartida = $data['codcontrapartida'];
-        $this->concepto = Base\Utils::fixHtml($data['concepto']);
+        $this->concepto = Core\Base\Utils::fixHtml($data['concepto']);
         $this->documento = $data['documento'];
         $this->cifnif = $data['cifnif'];
         $this->codserie = $data['codserie'];
         $this->factura = $data['factura'];
-        $this->baseimponible = $data['baseimponible'];
-        $this->iva = $data['iva'];
-        $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
-        $this->recargo = $data['recargo'];
-        $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
         $this->codcuentaesp = $data['codcuentaesp'];
         $this->codimpuesto = $data['codimpuesto'];
-    }
-
-    /**
-     * Constructor and class initializer.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
-    {
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
-    }
-
-    /**
-     * Convert an array of filters order by in string.
-     *
-     * @param array $order
-     *
-     * @return string
-     */
-    private function getOrderBy(array $order)
-    {
-        if (empty($order)) {
-            return ' ORDER BY asientos.codejercicio ASC, partidas.codserie ASC, '
-                           . 'asientos.fecha ASC, partidas.factura ASC, partidas.documento ASC';
-        }
-
-        $result = '';
-        $coma = ' ORDER BY ';
-        foreach ($order as $key => $value) {
-            $result .= $coma . $key . ' ' . $value;
-            if ($coma === ' ORDER BY ') {
-                $coma = ', ';
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns the number of records that meet the condition.
-     *
-     * @param DataBase\DataBaseWhere[] $where filters to apply to records.
-     *
-     * @return int
-     */
-    public function count(array $where = [])
-    {
-        if (self::$dataBase === null) {
-            self::$dataBase = new Base\DataBase();
-        }
-
-        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBaseWhere::getSQLWhere($where);
-        $data = self::$dataBase->select($sql);
-        return empty($data) ? 0 : $data[0]['total'];
-    }
-
-    /**
-     * Load a Partida Impuesto list for the indicated where.
-     *
-     * @param DataBase\DataBaseWhere[] $where  filters to apply to model records.
-     * @param array                    $order  fields to use in the sorting. For example ['code' => 'ASC']
-     *
-     * @return self[]
-     */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
-    {
-        if (self::$dataBase === null) {
-            self::$dataBase = new Base\DataBase();
-        }
-
-        if (!self::$dataBase->tableExists('asientos') ||
-            !self::$dataBase->tableExists('partidas') ||
-            !self::$dataBase->tableExists('subcuentas'))
-        {
-            return [];
-        }
-
-        $result = [];
-        $sqlWhere = DataBaseWhere::getSQLWhere($where);
-        $sqlOrderBy = $this->getOrderBy($order);
-        $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->tableName() . $sqlWhere . ' ' . $sqlOrderBy;
-        foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
-            $result[] = new self($d);
-        }
-
-        return $result;
+        $this->baseimponible = $data['baseimponible'];
+        $this->iva = $data['iva'];
+        $this->recargo = $data['recargo'];
+        $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
+        $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
     }
 }
