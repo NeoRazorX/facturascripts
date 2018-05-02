@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,6 +53,9 @@ class ListFacturaCliente extends ExtendedController\ListController
     {
         $this->addView('ListFacturaCliente', 'FacturaCliente');
         $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
+        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
+        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
 
         $this->addFilterDatePicker('ListFacturaCliente', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListFacturaCliente', 'total', 'total', 'total');
@@ -72,10 +75,6 @@ class ListFacturaCliente extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
         $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
-
-        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
 
         // Delivery notes lines
         $this->createViewLines();

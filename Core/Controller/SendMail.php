@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,19 +65,18 @@ class SendMail extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
+        if (empty($action)) {
+            return;
+        }
 
         // Run operations on the data before reading it
         if (!$this->execPreviousAction($action)) {
             return;
         }
 
-        $action = $this->request->get('action', '');
-        if (!empty($action)) {
-            $this->execAction($action);
-        }
+        $this->execAction($action);
     }
 
     /**
@@ -140,7 +139,7 @@ class SendMail extends Controller
             // Remove unneeded spaces
             $emails = trim($this->request->request->get($field, ''));
             // Autocomplete adds a comma at the end, remove it if exists (maybe user remove it)
-            $emails = $emails[\strlen($emails)-1] === ',' ? substr($emails, 0, -1) : $emails;
+            $emails = $emails[\strlen($emails) - 1] === ',' ? substr($emails, 0, -1) : $emails;
             $sendTo[$field] = \explode(',', $emails);
         }
         $subject = $this->request->request->get('subject', '');
@@ -169,7 +168,6 @@ class SendMail extends Controller
             $this->miniLog->error('send-mail-error');
         }
     }
-
 
     /**
      * Run the actions that alter data before reading it.
