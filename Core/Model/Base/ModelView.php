@@ -89,6 +89,16 @@ abstract class ModelView
     }
 
     /**
+     * Return Group By clausule
+     *
+     * @return string
+     */
+    protected function getGroupBy(): string
+    {
+        return '';
+    }
+
+    /**
      * Convert an array of filters order by in string.
      *
      * @param array $order
@@ -176,7 +186,13 @@ abstract class ModelView
             $class = get_class($this);
             $sqlWhere = DataBaseWhere::getSQLWhere($where);
             $sqlOrderBy = $this->getOrderBy($order);
-            $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->getSQLFrom() . $sqlWhere . ' ' . $sqlOrderBy;
+            $sql = 'SELECT ' . $this->fieldsList()
+                . ' FROM ' . $this->getSQLFrom()
+                . $sqlWhere
+                . ' '
+                . $this->getGroupBy()
+                . ' '
+                . $sqlOrderBy;
             foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
                 $result[] = new $class($d);
             }
