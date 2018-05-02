@@ -220,7 +220,7 @@ class PartidaImpuesto
      *
      * @param array $data
      */
-    private function setData($data)
+    private function loadFromData($data)
     {
         $this->codejercicio = $data['codejercicio'];
         $this->idasiento = $data['idasiento'];
@@ -253,7 +253,7 @@ class PartidaImpuesto
         if (empty($data)) {
             $this->clear();
         } else {
-            $this->setData($data);
+            $this->loadFromData($data);
         }
     }
 
@@ -309,7 +309,7 @@ class PartidaImpuesto
      *
      * @return self[]
      */
-    public function all(array $where, array $order = [])
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
     {
         if (self::$dataBase === null) {
             self::$dataBase = new Base\DataBase();
@@ -326,7 +326,7 @@ class PartidaImpuesto
         $sqlWhere = DataBaseWhere::getSQLWhere($where);
         $sqlOrderBy = $this->getOrderBy($order);
         $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->tableName() . $sqlWhere . ' ' . $sqlOrderBy;
-        foreach (self::$dataBase->selectLimit($sql, 0, 0) as $d) {
+        foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
             $result[] = new self($d);
         }
 

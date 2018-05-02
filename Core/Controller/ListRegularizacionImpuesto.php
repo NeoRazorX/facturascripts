@@ -37,9 +37,10 @@ class ListRegularizacionImpuesto extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
+        $pagedata['menu'] = 'accounting';
+        $pagedata['submenu'] = 'taxes';
         $pagedata['title'] = 'vat-regularization';
         $pagedata['icon'] = 'fa-map-signs';
-        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
