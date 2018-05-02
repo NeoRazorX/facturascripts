@@ -6,7 +6,7 @@
      * in rows and columns format.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@
 
             return false;
         }
-        function execActionForm(actionValue, formName = '') {
+        function execActionForm(actionValue) {
             var form = document.getElementById('form' + tabActive);
             $('<input>').attr({type: 'hidden', name: 'action'}).appendTo(form);
             $('<input>').attr({type: 'hidden', name: 'code'}).appendTo(form);
@@ -207,11 +207,11 @@
                     {% endif %}
                 </div>
                 <div class="btn-group">
-                    <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
+                    <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
                         <i class="fa fa-plus" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
-                    <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}')" {{ popoverTitle(options_title, 'bottom') }}>
+                    <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}');" {{ popoverTitle(options_title, 'bottom') }}>
                         <i class="fa fa-wrench" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                     </a>

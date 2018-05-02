@@ -95,6 +95,15 @@ abstract class BaseView
     }
 
     /**
+     * Clears the model and set new code for the PK.
+     */
+    public function clear()
+    {
+        $this->model->clear();
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+    }
+
+    /**
      * Gets the column by the given field name
      *
      * @param string $fieldName
@@ -213,13 +222,5 @@ abstract class BaseView
 
         $this->model->checkArrayData($data);
         $this->model->loadFromData($data, ['action', 'active']);
-    }
-
-    /**
-     * Calculate and set new code for PK of the model
-     */
-    public function setNewCode()
-    {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 }
