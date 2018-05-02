@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class ListFacturaCliente extends ExtendedController\ListController
 {
@@ -75,5 +76,27 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
         $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
+
+        // Delivery notes lines
+        $this->createViewLines();
+    }
+
+    protected function createViewLines()
+    {
+        $this->addView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'lines', 'fa-list');
+        $this->addSearchFields('ListLineaFacturaCliente', ['referencia', 'descripcion']);
+        $this->addOrderBy('ListLineaFacturaCliente', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaFacturaCliente', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaFacturaCliente', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaFacturaCliente', 'pvptotal', 'ammount');
+        $this->addOrderBy('ListLineaFacturaCliente', 'idfactura', 'code', 2);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaFacturaCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaFacturaCliente', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaFacturaCliente', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaFacturaCliente', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaFacturaCliente', 'pvptotal', 'ammount', 'pvptotal');
     }
 }
