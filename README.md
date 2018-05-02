@@ -25,4 +25,4 @@ npm install
 
 ## Feedback
 Tienes las instrucciones para colaborar en desarrollo o traducciones aquí:
-https://www.facturascripts.com/documentacion/como-contribuir/hemos-abierto-un-para-todo-el-que-este-interesado-252.html
+https://beta.facturascripts.com/colabora
