@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class ListPedidoProveedor extends ExtendedController\ListController
 {
@@ -51,6 +52,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPedidoProveedor', 'PedidoProveedor');
+        
         $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListPedidoProveedor', 'fecha', 'date', 'fecha');
@@ -74,5 +76,27 @@ class ListPedidoProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
         $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
+
+        // Delivery notes lines
+        $this->createViewLines();
+    }
+
+    protected function createViewLines()
+    {
+        $this->addView('ListLineaPedidoProveedor', 'LineaPedidoProveedor', 'lines', 'fa-list');
+        $this->addSearchFields('ListLineaPedidoProveedor', ['referencia', 'descripcion']);
+        $this->addOrderBy('ListLineaPedidoProveedor', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaPedidoProveedor', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaPedidoProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaPedidoProveedor', 'pvptotal', 'ammount');
+        $this->addOrderBy('ListLineaPedidoProveedor', 'idpedido', 'code', 2);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaPedidoProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaPedidoProveedor', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaPedidoProveedor', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaPedidoProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaPedidoProveedor', 'pvptotal', 'ammount', 'pvptotal');
     }
 }

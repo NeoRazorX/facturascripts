@@ -51,6 +51,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListAlbaranProveedor', 'AlbaranProveedor');
+ 
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListAlbaranProveedor', 'fecha', 'date', 'fecha');
@@ -74,5 +75,27 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
+
+        // Delivery notes lines
+        $this->createViewLines();
+    }
+
+    protected function createViewLines()
+    {
+        $this->addView('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'lines', 'fa-list');
+        $this->addSearchFields('ListLineaAlbaranProveedor', ['referencia', 'descripcion']);
+        $this->addOrderBy('ListLineaAlbaranProveedor', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaAlbaranProveedor', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaAlbaranProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaAlbaranProveedor', 'pvptotal', 'ammount');
+        $this->addOrderBy('ListLineaAlbaranProveedor', 'idalbaran', 'delivery-note', 2);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaAlbaranProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaAlbaranProveedor', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaAlbaranProveedor', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaAlbaranProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaAlbaranProveedor', 'pvptotal', 'ammount', 'pvptotal');
     }
 }
