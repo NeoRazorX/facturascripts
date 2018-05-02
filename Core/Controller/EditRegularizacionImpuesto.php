@@ -94,7 +94,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
                         new DataBaseWhere('asientos.codejercicio', $exercise),
                         new DataBaseWhere('asientos.fecha', $startDate, '>='),
                         new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                        new DataBaseWhere('codcuentaesp', 'IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
+                        new DataBaseWhere('subcuentas.codcuentaesp', 'IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
                     ];
                     $view->loadData(false, $where, ['codserie' => 'ASC', 'factura' => 'ASC']);
                 }
