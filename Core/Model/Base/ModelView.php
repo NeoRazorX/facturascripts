@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -34,7 +34,7 @@ abstract class ModelView
     /**
      * It provides direct access to the database.
      *
-     * @var Base\DataBase
+     * @var DataBase
      */
     private static $dataBase;
 
@@ -78,7 +78,7 @@ abstract class ModelView
     public function __construct($data = [])
     {
         if (self::$dataBase === null) {
-            self::$dataBase = new Base\DataBase();
+            self::$dataBase = new DataBase();
         }
 
         if (empty($data)) {
@@ -132,13 +132,13 @@ abstract class ModelView
     /**
      * Returns the number of records that meet the condition.
      *
-     * @param DataBase\DataBaseWhere[] $where filters to apply to records.
+     * @param DataBaseWhere[] $where filters to apply to records.
      *
      * @return int
      */
     public function count(array $where = [])
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBaseWhere::getSQLWhere($where);
+        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
         $data = self::$dataBase->select($sql);
         return empty($data) ? 0 : $data[0]['total'];
     }
@@ -153,7 +153,7 @@ abstract class ModelView
         $result = '';
         $comma = '';
         foreach ($this->getFields() as $key => $value) {
-            $result += $comma . $value . ' ' . $key;
+            $result = $result . $comma . $value . ' ' . $key;
             $comma = ',';
         }
         return $result;
@@ -162,26 +162,23 @@ abstract class ModelView
     /**
      * Load data for the indicated where.
      *
-     * @param DataBase\DataBaseWhere[] $where  filters to apply to model records.
-     * @param array                    $order  fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int   $offset
-     * @param int   $limit
+     * @param DataBaseWhere[] $where  filters to apply to model records.
+     * @param array           $order  fields to use in the sorting. For example ['code' => 'ASC']
+     * @param int             $offset
+     * @param int             $limit
      *
      * @return self[]
      */
     public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
     {
-        if (self::$dataBase === null) {
-            self::$dataBase = new Base\DataBase();
-        }
-
         $result = [];
         if ($this->checkTables()) {
+            $class = get_class($this);
             $sqlWhere = DataBaseWhere::getSQLWhere($where);
             $sqlOrderBy = $this->getOrderBy($order);
             $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->getSQLFrom() . $sqlWhere . ' ' . $sqlOrderBy;
             foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
-                $result[] = new self($d);
+                $result[] = new $class($d);
             }
         }
         return $result;
