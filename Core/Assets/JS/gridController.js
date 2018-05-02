@@ -38,7 +38,7 @@ function assignSource(data) {
     var title = data.title.slice(0);
 
     return function (query, process) {
-        query = query.split(' -- ', 1)[0];
+        query = query.split(' | ', 1)[0];
         var ajaxData = {
             term: query,
             action: 'autocomplete',
@@ -54,7 +54,7 @@ function assignSource(data) {
             success: function (response) {
                 var values = [];
                 response.forEach(function (element) {
-                    values.push(element.key + " -- " + element.value);
+                    values.push(element.key + " | " + element.value);
                 });
                 process(values);
             }
@@ -197,7 +197,7 @@ function eventBeforeChange(changes, source) {
     if (autocompleteColumns.length > 0) {
         for (var i = 0, max = changes.length; i < max; i++) {
             if (autocompleteColumns.includes(changes[i][1])) {
-                var values = changes[i][3].split(' -- ');
+                var values = changes[i][3].split(' | ');
                 changes[i][3] = values[0];
                 isAutoComplete = (values.length > 1);
             }
