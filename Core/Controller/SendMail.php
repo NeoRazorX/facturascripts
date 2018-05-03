@@ -65,7 +65,6 @@ class SendMail extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
 
@@ -138,10 +137,9 @@ class SendMail extends Controller
         $sendTo = [];
         foreach ($fieldsEmail as $field) {
             // Remove unneeded spaces
-            $emails = trim($this->request->request->get($field, ''));
-            // Autocomplete adds a comma at the end, remove it if exists (maybe user remove it)
-            $emails = $emails[\strlen($emails)-1] === ',' ? substr($emails, 0, -1) : $emails;
-            $sendTo[$field] = \explode(',', $emails);
+            $emails = \trim($this->request->request->get($field, ''));
+            $emails = \rtrim($emails, ',');
+            $sendTo[$field] = !empty($emails) ? \explode(',', $emails) : [];
         }
         $subject = $this->request->request->get('subject', '');
         $body = $this->request->request->get('body', '');
@@ -160,16 +158,19 @@ class SendMail extends Controller
         }
         $mail->Subject = $subject;
         $mail->msgHTML($body);
-        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
+        if (!empty($fileName)) {
+            $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
+        }
 
         if ($emailTools->send($mail)) {
-            unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+            if (!empty($fileName)) {
+                unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+            }
             $this->miniLog->info('send-mail-ok');
-        } else {
-            $this->miniLog->error('send-mail-error');
         }
-    }
 
+        $this->miniLog->error('send-mail-error');
+    }
 
     /**
      * Run the actions that alter data before reading it.
