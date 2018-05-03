@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use finfo;
+
 /**
  * Class to manage attached files.
  *
@@ -64,7 +66,7 @@ class AttachedFile extends Base\ModelClass
     public $mimetype;
 
     /**
-     * Contains the relative path to file, from FS_MYFILES.
+     * Contains the relative path to file.
      *
      * @var string
      */
@@ -89,6 +91,21 @@ class AttachedFile extends Base\ModelClass
     }
 
     /**
+     * Remove the model data from the database.
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        if (parent::delete()) {
+            @unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -108,18 +125,36 @@ class AttachedFile extends Base\ModelClass
         return 'attached_files';
     }
 
-    /**
-     * Remove the model data from the database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function test()
     {
-        if (parent::delete()) {
-            @\unlink(\FS_FOLDER . $this->path);
-            return true;
+        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path)) {
+            self::$miniLog->alert(self::$i18n->trans('file-not-found'));
+            return false;
         }
 
-        return false;
+        if (empty($this->filename)) {
+            $this->move();
+        }
+
+        return parent::test();
+    }
+
+    protected function move()
+    {
+        $this->filename = $this->path;
+
+        $path = 'MyFiles' . DIRECTORY_SEPARATOR . date('Y' . DIRECTORY_SEPARATOR . 'm', strtotime($this->date));
+        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $path)) {
+            mkdir(FS_FOLDER . DIRECTORY_SEPARATOR . $path, 0777, true);
+        }
+
+        $basePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
+        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->filename)) {
+            $this->path = $path . DIRECTORY_SEPARATOR . $this->filename;
+            $this->size = filesize(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+
+            $finfo = new finfo();
+            $this->mimetype = $finfo->file(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path, FILEINFO_MIME_TYPE);
+        }
     }
 }

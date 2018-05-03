@@ -133,7 +133,6 @@ abstract class PanelController extends BaseController
     public function getViewModelValue($viewName, $fieldName)
     {
         $model = $this->views[$viewName]->getModel();
-
         return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
     }
 
@@ -392,7 +391,7 @@ abstract class PanelController extends BaseController
                 return false;
 
             case 'save':
-                $data = $this->request->request->all();
+                $data = $this->getFormData();
                 $this->views[$this->active]->loadFromData($data);
                 $this->editAction();
                 break;
@@ -406,7 +405,7 @@ abstract class PanelController extends BaseController
                 $viewName = $this->searchGridView();
                 if (!empty($viewName)) {
                     $this->setTemplate(false);
-                    $data = $this->request->request->all();
+                    $data = $this->getFormData();
                     $result = $this->views[$viewName]->saveData($data);
                     $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                     return false;
