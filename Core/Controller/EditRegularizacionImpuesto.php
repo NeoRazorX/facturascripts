@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
@@ -30,6 +31,34 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 class EditRegularizacionImpuesto extends ExtendedController\PanelController
 {
+    /**
+     * Amount to be offset from previous regularization
+     *
+     * @var float
+     */
+    public $previousBalance;
+
+    /**
+     * Sum of all sales
+     *
+     * @var float
+     */
+    public $sales;
+
+    /**
+     * Sum of all purchases
+     *
+     * @var float
+     */
+    public $purchases;
+
+    /**
+     * total amount of regularization: (sales - purchases - previousBalance)
+     *
+     * @var float
+     */
+    public $total;
+
     /**
      * Returns basic page attributes
      *
@@ -52,9 +81,10 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditRegularizacionImpuesto', 'RegularizacionImpuesto', 'vat-regularization', 'fa-map-signs');
-        $this->addListView('ListPartida', 'Partida', 'accounting-entry');
+        $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fa-list-alt');
         $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fa-sign-in');
         $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fa-sign-out');
+        $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
 
@@ -79,8 +109,30 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
                 $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $orderby = ['orden' => 'ASC'];
-                    $view->loadData($where, $orderby);
+                    $view->loadData($where, ['orden' => 'ASC']);
+                }
+                break;
+
+            case 'ListPartidaImpuestoResumen':
+                $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+                if (!empty($id)) {
+                    $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
+                    $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
+                    $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
+                    $where = [
+                        new DataBaseWhere('asientos.codejercicio', $exercise),
+                        new DataBaseWhere('asientos.fecha', $startDate, '>='),
+                        new DataBaseWhere('asientos.fecha', $endDate, '<='),
+                        new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE,IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
+                    ];
+                    $orderby = [
+                        'cuentasesp.descripcion' => 'ASC',
+                        'subcuentas.codimpuesto' => 'ASC',
+                        'partidas.iva' => 'ASC',
+                        'partidas.recargo' => 'ASC'
+                    ];
+                    $view->loadData(false, $where, $orderby);
+                    $this->calculateAmounts($view->getCursor());
                 }
                 break;
 
@@ -96,7 +148,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
                         new DataBaseWhere('asientos.fecha', $endDate, '<='),
                         new DataBaseWhere('subcuentas.codcuentaesp', 'IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
                     ];
-                    $view->loadData(false, $where, ['codserie' => 'ASC', 'factura' => 'ASC']);
+                    $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
                 }
                 break;
 
@@ -110,11 +162,30 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
                         new DataBaseWhere('asientos.codejercicio', $exercise),
                         new DataBaseWhere('asientos.fecha', $startDate, '>='),
                         new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                        new DataBaseWhere('codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE', 'IN')
+                        new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE', 'IN')
                     ];
-                    $view->loadData(false, $where, ['codserie' => 'ASC', 'factura' => 'ASC']);
+                    $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
                 }
                 break;
+        }
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'create-accounting-entry':
+                /// TODO: Create accounting entry
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
         }
     }
 
@@ -138,5 +209,43 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             $results[] = ['key' => $row->code, 'value' => $row->description];
         }
         return $results;
+    }
+
+    /**
+     * Calculates the amounts for the different sections of the regularization
+     *
+     * @param PartidaImpuestoResumen[] $data
+     */
+    private function calculateAmounts($data)
+    {
+        /// Init totals values
+        $this->previousBalance = 0.00;    /// TODO: Calculate previous balance from special account
+        $this->sales = 0.00;
+        $this->purchases = 0.00;
+
+        foreach ($data as $row) {
+            if (in_array($row->codcuentaesp, ['IVAREX','IVAREP','IVARUE','IVARRE'])) {
+                $this->sales += $row->cuotaiva + $row->cuotarecargo;
+                continue;
+            }
+
+            if (in_array($row->codcuentaesp, ['IVASEX','IVASIM','IVASOP','IVASUE'])) {
+                $this->purchases += $row->cuotaiva + $row->cuotarecargo;
+            }
+        }
+
+        $this->total = $this->sales - $this->purchases - $this->previousBalance;
+    }
+
+    /**
+     * Formats the amount of the indicated field to currency
+     *
+     * @param string $field
+     * @return string
+     */
+    public function getAmount($field)
+    {
+        $divisaTools = new DivisaTools();
+        return $divisaTools->format($this->{$field}, 2);
     }
 }

@@ -348,6 +348,8 @@
                         <div class="card-body">
                             {% if panel.label is not empty %}
                                 <p><i>{{ context.i18n.trans(panel.label)|raw }}</i></p>
+                            {% elseif panel.html is not empty %}
+                                {% include panel.html ignore missing %}
                             {% endif %}
                             {% set buttons = cards.getButtons(panel.name) %}
                             {% if buttons|length > 0 %}
