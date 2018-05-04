@@ -141,7 +141,7 @@
     {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
     {# -- Header Row -- #}
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-bottom: 10px;">
         <div class="row">
             <div class="col-6 d-print-none">
                 <div class="btn-group">
@@ -187,17 +187,15 @@
             </div>
         </div>
     </div>
-    <br/>
-{% endblock %}
-
-{% block body %}
-    {{ parent() }}
     <div class="d-none">
         <form action="#" method="post" name="insertForm">
             <input type="hidden" name="action" value="insert"/>
         </form>
     </div>
+{% endblock %}
 
+{% block body %}
+    {{ parent() }}
     {# -- Visual macros -- #}
     {% import 'Macro/BaseController.html.twig' as BaseController %}
 
