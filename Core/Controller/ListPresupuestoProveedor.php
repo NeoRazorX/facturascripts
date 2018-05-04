@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,8 +52,10 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor');
-        
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        $this->addOrderBy('ListPresupuestoProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListPresupuestoProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListPresupuestoProveedor', 'total', 'amount');
 
         $this->addFilterDatePicker('ListPresupuestoProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListPresupuestoProveedor', 'total', 'total', 'total');
@@ -72,10 +74,6 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
         $this->addFilterSelect('ListPresupuestoProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListPresupuestoProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListPresupuestoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoProveedor', 'total', 'amount');
 
         // Delivery notes lines
         $this->createViewLines();

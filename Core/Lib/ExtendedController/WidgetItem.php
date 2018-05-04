@@ -411,6 +411,7 @@ abstract class WidgetItem implements VisualItemInterface
             case 'datepicker':
                 return new WidgetItemDateTime();
 
+            case 'file':
             case 'filechooser':
                 return new WidgetItemFileChooser();
 

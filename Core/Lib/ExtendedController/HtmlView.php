@@ -46,7 +46,7 @@ class HtmlView extends BaseView
     public function __construct($title, $modelName, $fileName)
     {
         parent::__construct($title, $modelName);
-        $this->fileName = $fileName;
+        $this->fileName = $fileName . '.html.twig';
     }
 
     /**

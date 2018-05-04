@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,8 +51,10 @@ class ListAlbaranProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListAlbaranProveedor', 'AlbaranProveedor');
- 
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
 
         $this->addFilterDatePicker('ListAlbaranProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total', 'total');
@@ -71,10 +73,6 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
 
         // Delivery notes lines
         $this->createViewLines();

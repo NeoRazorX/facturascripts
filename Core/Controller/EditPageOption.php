@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,6 +34,13 @@ class EditPageOption extends Base\Controller
 {
 
     /**
+     * Contains the url to go back.
+     *
+     * @var string
+     */
+    public $backPage;
+
+    /**
      * Details of the view configuration
      *
      * @var Model\PageOption
@@ -53,115 +60,6 @@ class EditPageOption extends Base\Controller
      * @var string
      */
     public $selectedViewName;
-
-    /**
-     * Contains the url to go back.
-     *
-     * @var string
-     */
-    public $backPage;
-
-    /**
-     * Load and initialize the parameters sent by the form
-     */
-    private function getParams()
-    {
-        $this->selectedViewName = $this->request->get('code', '');
-        $this->backPage = $this->request->get('url') ? : $this->selectedViewName;
-
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
-    }
-
-    /**
-     * Runs the controller's private logic.
-     *
-     * @param Response                   $response
-     * @param Model\User                 $user
-     * @param Base\ControllerPermissions $permissions
-     */
-    public function privateCore(&$response, $user, $permissions)
-    {
-        parent::privateCore($response, $user, $permissions);
-
-        $this->getParams();
-        $this->model = new Model\PageOption();
-        $this->model->getForUser($this->selectedViewName, $this->selectedUser);
-
-        $action = $this->request->get('action', '');
-        switch ($action) {
-            case 'save':
-                $this->saveData();
-                break;
-
-            case 'delete':
-                $this->deleteData();
-                break;
-        }
-    }
-
-    /**
-     * Checking the value of the nick field.
-     * It determines if we edit a configuration for all the users or one,
-     * and if there is already configuration for the nick
-     */
-    private function checkNickAndID()
-    {
-        if ($this->model->nick != $this->selectedUser) {
-            $this->model->id = null;
-            $this->model->nick = empty($this->selectedUser) ? null : $this->selectedUser;
-        }
-
-        if ($this->model->nick === '') {
-            $this->model->nick = null;
-        }
-    }
-
-    /**
-     * Save new configuration for view
-     */
-    private function saveData()
-    {
-        $this->checkNickAndID();
-        $data = $this->request->request->all();
-        foreach ($data as $key => $value) {
-            if (strpos($key, '+')) {
-                $path = explode('+', $key);
-                $this->model->columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
-            }
-        }
-
-        if ($this->model->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-
-            return;
-        }
-        $this->miniLog->alert($this->i18n->trans('data-save-error'));
-    }
-
-    /**
-     * Delete configuration for view
-     */
-    private function deleteData()
-    {
-        $nick = $this->request->get('nick');
-        $where = [
-            new DataBaseWhere('name', $this->selectedViewName)
-        ];
-
-        if (empty($nick)) {
-            $where[] = new DataBaseWhere('nick', 'null', 'IS');
-        } else {
-            $where[] = new DataBaseWhere('nick', $nick);
-        }
-
-        $rows = $this->model->all($where, [], 0, 1);
-        if ($rows[0] && $rows[0]->delete()) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            $this->model->getForUser($this->selectedViewName, $this->selectedUser);
-        } else {
-            $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
-        }
-    }
 
     /**
      * Returns basic page attributes
@@ -218,5 +116,107 @@ class EditPageOption extends Base\Controller
         }
 
         return $result;
+    }
+
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param Response                   $response
+     * @param Model\User                 $user
+     * @param Base\ControllerPermissions $permissions
+     */
+    public function privateCore(&$response, $user, $permissions)
+    {
+        parent::privateCore($response, $user, $permissions);
+
+        $this->getParams();
+        $this->model = new Model\PageOption();
+        $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+
+        $action = $this->request->get('action', '');
+        switch ($action) {
+            case 'save':
+                $this->saveData();
+                break;
+
+            case 'delete':
+                $this->deleteData();
+                break;
+        }
+    }
+
+    /**
+     * Checking the value of the nick field.
+     * It determines if we edit a configuration for all the users or one,
+     * and if there is already configuration for the nick
+     */
+    private function checkNickAndID()
+    {
+        if ($this->model->nick != $this->selectedUser) {
+            $this->model->id = null;
+            $this->model->nick = empty($this->selectedUser) ? null : $this->selectedUser;
+        }
+
+        if ($this->model->nick === '') {
+            $this->model->nick = null;
+        }
+    }
+
+    /**
+     * Delete configuration for view
+     */
+    private function deleteData()
+    {
+        $nick = $this->request->get('nick');
+        $where = [
+            new DataBaseWhere('name', $this->selectedViewName)
+        ];
+
+        if (empty($nick)) {
+            $where[] = new DataBaseWhere('nick', 'null', 'IS');
+        } else {
+            $where[] = new DataBaseWhere('nick', $nick);
+        }
+
+        $rows = $this->model->all($where, [], 0, 1);
+        if ($rows[0] && $rows[0]->delete()) {
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+        } else {
+            $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
+        }
+    }
+
+    /**
+     * Load and initialize the parameters sent by the form
+     */
+    private function getParams()
+    {
+        $this->selectedViewName = $this->request->get('code', '');
+        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
+
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
+    }
+
+    /**
+     * Save new configuration for view
+     */
+    private function saveData()
+    {
+        $this->checkNickAndID();
+        $data = $this->request->request->all();
+        foreach ($data as $key => $value) {
+            if (strpos($key, '+')) {
+                $path = explode('+', $key);
+                $this->model->columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
+            }
+        }
+
+        if ($this->model->save()) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return;
+        }
+
+        $this->miniLog->alert($this->i18n->trans('data-save-error'));
     }
 }

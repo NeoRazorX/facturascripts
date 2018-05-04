@@ -6,7 +6,7 @@
      * in different formats.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -77,6 +77,10 @@
             console.log(formData);
             return formData;
         }
+        function insertRecord() {
+            document.insertForm.action = '{{ fsc.getURL('edit') }}';
+            document.insertForm.submit();
+        }
         $(document).ready(function () {
             $('#mainTabs').on('shown.bs.tab', function (e) {
                 tabActive = e.target.hash.substring(1);
@@ -126,6 +130,7 @@
     {% set refresh_title = i18n.trans('refresh') %}
     {% set options = i18n.trans('options') %}
     {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+    {% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
 
     {# -- Calculate common values -- #}
     {% set list_url = fsc.getURL('list') %}
@@ -136,7 +141,7 @@
     {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
     {# -- Header Row -- #}
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-bottom: 10px;">
         <div class="row">
             <div class="col-6 d-print-none">
                 <div class="btn-group">
@@ -148,6 +153,10 @@
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
                 </div>
+                <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                </a>
                 <div class="btn-group">
                     <div class="dropdown">
                         <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -178,12 +187,15 @@
             </div>
         </div>
     </div>
-    <br/>
+    <div class="d-none">
+        <form action="#" method="post" name="insertForm">
+            <input type="hidden" name="action" value="insert"/>
+        </form>
+    </div>
 {% endblock %}
 
 {% block body %}
     {{ parent() }}
-
     {# -- Visual macros -- #}
     {% import 'Macro/BaseController.html.twig' as BaseController %}
 

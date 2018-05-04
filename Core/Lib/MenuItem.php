@@ -94,7 +94,7 @@ class MenuItem
      */
     protected function getHTMLIcon()
     {
-        return empty($this->icon) ? '<i class="fa fa-page fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon
+        return empty($this->icon) ? '<i class="fa fa-file-o fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon
             . ' fa-fw" aria-hidden="true"></i> ';
     }
 

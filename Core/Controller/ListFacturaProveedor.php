@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @authos Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class ListFacturaProveedor extends ExtendedController\ListController
 {
@@ -52,8 +52,10 @@ class ListFacturaProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListFacturaProveedor', 'FacturaProveedor');
-        
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);
+        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
 
         $this->addFilterDatePicker('ListFacturaProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListFacturaProveedor', 'total', 'total', 'total');
@@ -74,9 +76,6 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
         $this->addFilterCheckbox('ListFacturaProveedor', 'paid', 'paid', 'pagada');
 
-        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
         // Delivery notes lines
         $this->createViewLines();
     }

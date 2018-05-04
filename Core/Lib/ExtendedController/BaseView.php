@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\PageOption;
 
 /**
@@ -92,6 +91,15 @@ abstract class BaseView
         $this->title = static::$i18n->trans($title);
         $this->model = class_exists($modelName) ? new $modelName() : null;
         $this->pageOption = new PageOption();
+    }
+
+    /**
+     * Clears the model and set new code for the PK.
+     */
+    public function clear()
+    {
+        $this->model->clear();
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
     /**
@@ -213,13 +221,5 @@ abstract class BaseView
 
         $this->model->checkArrayData($data);
         $this->model->loadFromData($data, ['action', 'active']);
-    }
-
-    /**
-     * Calculate and set new code for PK of the model
-     */
-    public function setNewCode()
-    {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 }
