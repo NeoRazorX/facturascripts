@@ -39,6 +39,13 @@ abstract class ModelView
     private static $dataBase;
 
     /**
+     * List of values for record view
+     *
+     * @var array
+     */
+    private $values;
+
+    /**
      * List of tables required for the execution of the view.
      */
     abstract protected function getTables(): array;
@@ -54,23 +61,6 @@ abstract class ModelView
     abstract protected function getSQLFrom(): string;
 
     /**
-     * Return default order by
-     */
-    abstract protected function getDefaultOrderBy(): string;
-
-    /**
-     * Reset the values of all model view properties.
-     */
-    abstract protected function clear();
-
-    /**
-     * Assign the values of the $data array to the model view properties.
-     *
-     * @param array $data
-     */
-    abstract protected function loadFromData($data);
-
-    /**
      * Constructor and class initializer.
      *
      * @param array $data
@@ -81,10 +71,70 @@ abstract class ModelView
             self::$dataBase = new DataBase();
         }
 
+        $this->values = [];
+
         if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
+        }
+    }
+
+    /**
+     * Check if exits value to property
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name) {
+        return array_key_exists($name, $this->values);
+    }
+
+    /**
+     * Set value to modal view field
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $this->values[$name] = $value;
+    }
+
+    /**
+     * Return modal view field value
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (!isset($this->values[$name])) {
+            $this->values[$name] = null;
+        }
+
+        return $this->values[$name];
+    }
+
+    /**
+     * Reset the values of all model properties.
+     */
+    protected function clear()
+    {
+        foreach (array_keys($this->getFields()) as $field) {
+            $this->values[$field] = null;
+        }
+    }
+
+    /**
+     * Assign the values of the $data array to the model view properties.
+     *
+     * @param array $data
+     */
+    protected function loadFromData($data)
+    {
+        foreach ($data as $field => $value) {
+            $this->values[$field] = $value;
         }
     }
 
@@ -107,17 +157,11 @@ abstract class ModelView
      */
     private function getOrderBy(array $order): string
     {
-        if (empty($order)) {
-            return $this->getDefaultOrderBy();
-        }
-
         $result = '';
         $coma = ' ORDER BY ';
         foreach ($order as $key => $value) {
             $result .= $coma . $key . ' ' . $value;
-            if ($coma === ' ORDER BY ') {
-                $coma = ', ';
-            }
+            $coma = ', ';
         }
         return $result;
     }
