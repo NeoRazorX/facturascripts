@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -31,6 +31,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 abstract class ModelView
 {
+
     /**
      * It provides direct access to the database.
      *
@@ -86,7 +87,8 @@ abstract class ModelView
      * @param string $name
      * @return bool
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         return array_key_exists($name, $this->values);
     }
 

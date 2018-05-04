@@ -10,13 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class RegularizacionImpuesto extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -190,10 +190,10 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     /**
      * Returns the VAT regularization corresponding to that date,
-          * that is, the regularization whose start date is earlier
-          * to the date provided and its end date is after the date
-          * provided. So you can know if the period is still open to be able
-          * check in.
+           * that is, the regularization whose start date is earlier
+           * to the date provided and its end date is after the date
+           * provided. So you can know if the period is still open to be able
+           * check in.
      *
      * @param string $fecha
      *

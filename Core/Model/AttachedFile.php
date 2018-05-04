@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -196,8 +196,8 @@ class AttachedFile extends Base\ModelClass
         }
 
         $basePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
-        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->filename)) {
-            $this->path = $path . DIRECTORY_SEPARATOR . $this->filename;
+        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->idfile)) {
+            $this->path = $path . DIRECTORY_SEPARATOR . $this->idfile;
             $this->size = filesize(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
 
             $finfo = new finfo();
