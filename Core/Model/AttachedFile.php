@@ -196,8 +196,8 @@ class AttachedFile extends Base\ModelClass
         }
 
         $basePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
-        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->filename)) {
-            $this->path = $path . DIRECTORY_SEPARATOR . $this->filename;
+        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->idfile)) {
+            $this->path = $path . DIRECTORY_SEPARATOR . $this->idfile;
             $this->size = filesize(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
 
             $finfo = new finfo();

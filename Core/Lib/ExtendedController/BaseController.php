@@ -124,6 +124,12 @@ abstract class BaseController extends Base\Controller
                 continue;
             }
 
+            /// exclude php files
+            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+                $this->miniLog->error($this->i18n->trans('php-files-blocked'));
+                continue;
+            }
+
             if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
                 $data[$key] = $uploadFile->getClientOriginalName();
             }
