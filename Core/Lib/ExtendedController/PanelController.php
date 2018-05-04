@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -133,7 +133,6 @@ abstract class PanelController extends BaseController
     public function getViewModelValue($viewName, $fieldName)
     {
         $model = $this->views[$viewName]->getModel();
-
         return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
     }
 
@@ -213,7 +212,6 @@ abstract class PanelController extends BaseController
     public function viewClass($view)
     {
         $result = explode('\\', get_class($view));
-
         return end($result);
     }
 
@@ -318,7 +316,6 @@ abstract class PanelController extends BaseController
     {
         if (!$this->permissions->allowDelete) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
-
             return false;
         }
 
@@ -326,7 +323,6 @@ abstract class PanelController extends BaseController
         $code = $this->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-
             return true;
         }
 
@@ -342,19 +338,16 @@ abstract class PanelController extends BaseController
     {
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
-
             return false;
         }
 
         if ($this->views[$this->active]->model->save()) {
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-
             return true;
         }
 
         $this->miniLog->error($this->i18n->trans('record-save-error'));
-
         return false;
     }
 
@@ -376,6 +369,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'insert':
+                $this->views[$this->active]->clear();
                 break;
         }
     }
@@ -397,7 +391,7 @@ abstract class PanelController extends BaseController
                 return false;
 
             case 'save':
-                $data = $this->request->request->all();
+                $data = $this->getFormData();
                 $this->views[$this->active]->loadFromData($data);
                 $this->editAction();
                 break;
@@ -411,7 +405,7 @@ abstract class PanelController extends BaseController
                 $viewName = $this->searchGridView();
                 if (!empty($viewName)) {
                     $this->setTemplate(false);
-                    $data = $this->request->request->all();
+                    $data = $this->getFormData();
                     $result = $this->views[$viewName]->saveData($data);
                     $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                     return false;

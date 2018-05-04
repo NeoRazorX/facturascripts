@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -111,6 +111,25 @@ abstract class BaseController extends Base\Controller
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
+    }
+
+    protected function getFormData(): array
+    {
+        $data = $this->request->request->all();
+
+        /// get file uploads
+        foreach ($this->request->files->all() as $key => $uploadFile) {
+            if (!$uploadFile->isValid()) {
+                $this->miniLog->error($uploadFile->getErrorMessage());
+                continue;
+            }
+
+            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+                $data[$key] = $uploadFile->getClientOriginalName();
+            }
+        }
+
+        return $data;
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use finfo;
+
 /**
  * Class to manage attached files.
  *
@@ -64,11 +66,17 @@ class AttachedFile extends Base\ModelClass
     public $mimetype;
 
     /**
-     * Contains the relative path to file, from FS_MYFILES.
+     * Contains the relative path to file.
      *
      * @var string
      */
     public $path;
+
+    /**
+     *
+     * @var string
+     */
+    private $previousPath;
 
     /**
      * The size of the file in bytes.
@@ -76,6 +84,17 @@ class AttachedFile extends Base\ModelClass
      * @var int
      */
     public $size;
+
+    /**
+     * Class constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->previousPath = $this->path;
+    }
 
     /**
      * Reset the values of all model properties.
@@ -86,6 +105,39 @@ class AttachedFile extends Base\ModelClass
         $this->date = date('d-m-Y');
         $this->hour = date('H:i:s');
         $this->size = 0;
+    }
+
+    /**
+     * Remove the model data from the database.
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        if (parent::delete()) {
+            unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
+     * 
+     * @return boolean
+     */
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    {
+        if (parent::loadFromCode($cod, $where, $orderby)) {
+            $this->previousPath = $this->path;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -109,17 +161,49 @@ class AttachedFile extends Base\ModelClass
     }
 
     /**
-     * Remove the model data from the database.
+     * Test model data.
      *
-     * @return bool
+     * @return boolean
      */
-    public function delete()
+    public function test()
     {
-        if (parent::delete()) {
-            @\unlink(\FS_FOLDER . $this->path);
-            return true;
+        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path)) {
+            self::$miniLog->alert(self::$i18n->trans('file-not-found'));
+            return false;
         }
 
-        return false;
+        if ($this->path != $this->previousPath) {
+            $this->setFile();
+        }
+
+        return parent::test();
+    }
+
+    /**
+     * Examine and move new file setted.
+     */
+    protected function setFile()
+    {
+        /// remove old file
+        if (!empty($this->previousPath)) {
+            unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->previousPath);
+        }
+
+        $this->filename = $this->path;
+        $path = 'MyFiles' . DIRECTORY_SEPARATOR . date('Y' . DIRECTORY_SEPARATOR . 'm', strtotime($this->date));
+        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $path)) {
+            mkdir(FS_FOLDER . DIRECTORY_SEPARATOR . $path, 0777, true);
+        }
+
+        $basePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
+        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->filename)) {
+            $this->path = $path . DIRECTORY_SEPARATOR . $this->filename;
+            $this->size = filesize(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+
+            $finfo = new finfo();
+            $this->mimetype = $finfo->file(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path, FILEINFO_MIME_TYPE);
+        }
+
+        $this->previousPath = $this->path;
     }
 }

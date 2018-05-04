@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,17 +28,17 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="idfile" icon="fa-file-text" required="true" />
             </column>
-            <column name="file-name" numcolumns="10" order="110">
-                <widget type="text" fieldname="filename" required="true" />
+            <column name="full-path" numcolumns="10" order="110">
+                <widget type="file" fieldname="path" required="true" />
             </column>
-            <column name="full-path" numcolumns="8" order="120">
-                <widget type="text" fieldname="path" required="true" />
+            <column name="file-name" numcolumns="4" order="120">
+                <widget type="text" fieldname="filename" readonly="true" />
             </column>
-            <column name="type" numcolumns="4" order="130">
-                <widget type="text" fieldname="mimetype" required="true" />
+            <column name="type" numcolumns="2" order="130">
+                <widget type="text" fieldname="mimetype" readonly="true" />
             </column>
             <column name="size" numcolumns="2" order="140">
-                <widget type="number" fieldname="size" required="true" />
+                <widget type="number" fieldname="size" readonly="true" />
             </column>
             <column name="date" numcolumns="2" order="150">
                 <widget type="date" fieldname="date" required="true" />

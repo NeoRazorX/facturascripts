@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,6 @@ class ListCliente extends ExtendedController\ListController
         /* Customers */
         $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
-
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
         $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
         $this->addOrderBy('ListCliente', 'fecha', 'date');
@@ -64,10 +63,9 @@ class ListCliente extends ExtendedController\ListController
         /* Groups */
         $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
-
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
         $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
-        
+
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
     }
 }
