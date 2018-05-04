@@ -29,7 +29,6 @@
     <column>
         <name>mimetype</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>path</name>
