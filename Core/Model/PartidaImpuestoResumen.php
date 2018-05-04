@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -27,6 +27,7 @@ use FacturaScripts\Core;
  */
 class PartidaImpuestoResumen extends Base\ModelView
 {
+
     /**
      * Exercise code of the accounting entry.
      *
@@ -104,7 +105,7 @@ class PartidaImpuestoResumen extends Base\ModelView
     protected function getGroupBy(): string
     {
         return 'GROUP BY subcuentas.codcuentaesp, cuentasesp.descripcion,'
-                      . 'subcuentas.codimpuesto, partidas.iva, partidas.recargo';
+            . 'subcuentas.codimpuesto, partidas.iva, partidas.recargo';
     }
 
     /**
@@ -131,8 +132,8 @@ class PartidaImpuestoResumen extends Base\ModelView
         return 'asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-                        . ' AND subcuentas.codimpuesto IS NOT NULL'
-                        . ' AND subcuentas.codcuentaesp IS NOT NULL'
+            . ' AND subcuentas.codimpuesto IS NOT NULL'
+            . ' AND subcuentas.codcuentaesp IS NOT NULL'
             . ' LEFT JOIN cuentasesp ON cuentasesp.codcuentaesp = subcuentas.codcuentaesp';
     }
 

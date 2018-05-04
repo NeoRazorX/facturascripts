@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -27,6 +27,7 @@ use FacturaScripts\Core;
  */
 class PartidaImpuesto extends Base\ModelView
 {
+
     /**
      * Exercise code of the accounting entry.
      *
@@ -83,7 +84,7 @@ class PartidaImpuesto extends Base\ModelView
      */
     public $concepto;
 
-   /**
+    /**
      * Document of departure.
      *
      * @var string
@@ -206,8 +207,8 @@ class PartidaImpuesto extends Base\ModelView
         return 'asientos '
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta '
-            .                       'AND subcuentas.codimpuesto IS NOT NULL '
-            .                       'AND subcuentas.codcuentaesp IS NOT NULL';
+            . 'AND subcuentas.codimpuesto IS NOT NULL '
+            . 'AND subcuentas.codcuentaesp IS NOT NULL';
     }
 
     /**
@@ -216,7 +217,7 @@ class PartidaImpuesto extends Base\ModelView
     protected function getDefaultOrderBy(): string
     {
         return ' ORDER BY asientos.codejercicio ASC, partidas.codserie ASC, '
-                       . 'asientos.fecha ASC, partidas.factura ASC, partidas.documento ASC';
+            . 'asientos.fecha ASC, partidas.factura ASC, partidas.documento ASC';
     }
 
     /**
