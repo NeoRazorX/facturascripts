@@ -73,11 +73,28 @@ class AttachedFile extends Base\ModelClass
     public $path;
 
     /**
+     *
+     * @var string
+     */
+    private $previousPath;
+
+    /**
      * The size of the file in bytes.
      *
      * @var int
      */
     public $size;
+
+    /**
+     * Class constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->previousPath = $this->path;
+    }
 
     /**
      * Reset the values of all model properties.
@@ -98,7 +115,25 @@ class AttachedFile extends Base\ModelClass
     public function delete()
     {
         if (parent::delete()) {
-            @unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+            unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
+     * 
+     * @return boolean
+     */
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    {
+        if (parent::loadFromCode($cod, $where, $orderby)) {
+            $this->previousPath = $this->path;
             return true;
         }
 
@@ -125,6 +160,11 @@ class AttachedFile extends Base\ModelClass
         return 'attached_files';
     }
 
+    /**
+     * Test model data.
+     *
+     * @return boolean
+     */
     public function test()
     {
         if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path)) {
@@ -132,17 +172,24 @@ class AttachedFile extends Base\ModelClass
             return false;
         }
 
-        if (empty($this->filename)) {
-            $this->move();
+        if ($this->path != $this->previousPath) {
+            $this->setFile();
         }
 
         return parent::test();
     }
 
-    protected function move()
+    /**
+     * Examine and move new file setted.
+     */
+    protected function setFile()
     {
-        $this->filename = $this->path;
+        /// remove old file
+        if (!empty($this->previousPath)) {
+            unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->previousPath);
+        }
 
+        $this->filename = $this->path;
         $path = 'MyFiles' . DIRECTORY_SEPARATOR . date('Y' . DIRECTORY_SEPARATOR . 'm', strtotime($this->date));
         if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $path)) {
             mkdir(FS_FOLDER . DIRECTORY_SEPARATOR . $path, 0777, true);
@@ -156,5 +203,7 @@ class AttachedFile extends Base\ModelClass
             $finfo = new finfo();
             $this->mimetype = $finfo->file(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path, FILEINFO_MIME_TYPE);
         }
+
+        $this->previousPath = $this->path;
     }
 }
