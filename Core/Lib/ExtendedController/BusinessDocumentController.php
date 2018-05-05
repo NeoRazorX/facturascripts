@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -171,7 +171,7 @@ abstract class BusinessDocumentController extends PanelController
         $view = $this->views[$this->active];
 
         /// gets data form and separate lines data
-        $data = $this->request->request->all();
+        $data = $this->getFormData();
         $newLines = isset($data['lines']) ? $view->processFormLines($data['lines']) : [];
         unset($data['lines']);
 
@@ -190,7 +190,7 @@ abstract class BusinessDocumentController extends PanelController
         $view = $this->views[$this->active];
 
         /// gets data form and separate date, hour, codcliente, codproveedor and lines data
-        $data = $this->request->request->all();
+        $data = $this->getFormData();
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
         $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
         $fecha = isset($data['fecha']) ? $data['fecha'] : $view->model->fecha;

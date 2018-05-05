@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -46,7 +46,7 @@ class HtmlView extends BaseView
     public function __construct($title, $modelName, $fileName)
     {
         parent::__construct($title, $modelName);
-        $this->fileName = $fileName;
+        $this->fileName = $fileName . '.html.twig';
     }
 
     /**

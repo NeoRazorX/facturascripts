@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -34,7 +34,6 @@ class WidgetItemFileChooser extends WidgetItem
     public function __construct()
     {
         parent::__construct();
-
         $this->type = 'filechooser';
     }
 
@@ -48,10 +47,14 @@ class WidgetItemFileChooser extends WidgetItem
     public function getEditHTML($value)
     {
         $html = $this->getIconHTML() . "<input type='file' name='" . $this->fieldName
-            . "' value='" . $value . "' class='form-control-file' />";
+            . "' class='form-control-file' " . $this->specialAttributes() . " />";
 
         if (!empty($this->icon)) {
             $html .= '</div>';
+        }
+
+        if (!empty($value)) {
+            $html = ' <label>' . $value . '</label>' . $html;
         }
 
         return $html;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class ListPresupuestoCliente extends ExtendedController\ListController
 {
@@ -52,6 +53,9 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     {
         $this->addView('ListPresupuestoCliente', 'PresupuestoCliente');
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
+        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
+        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
 
         $this->addFilterDatePicker('ListPresupuestoCliente', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total', 'total');
@@ -71,8 +75,26 @@ class ListPresupuestoCliente extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
 
-        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
+        // Delivery notes lines
+        $this->createViewLines();
+    }
+
+    protected function createViewLines()
+    {
+        $this->addView('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente', 'lines', 'fa-list');
+        $this->addSearchFields('ListLineaPresupuestoCliente', ['referencia', 'descripcion']);
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'referencia', 'reference');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'cantidad', 'quantity');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'descripcion', 'description');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'pvptotal', 'ammount');
+        $this->addOrderBy('ListLineaPresupuestoCliente', 'idpresupuesto', 'code', 2);
+
+        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListLineaPresupuestoCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
+
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'cantidad', 'quantity', 'cantidad');
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'dtopor', 'discount', 'dtopor');
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvpunitario', 'pvp', 'pvpunitario');
+        $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvptotal', 'ammount', 'pvptotal');
     }
 }

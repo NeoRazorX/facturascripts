@@ -17,7 +17,7 @@
      *
      * This program is distributed in the hope that it will be useful,
      * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
@@ -348,6 +348,8 @@
                         <div class="card-body">
                             {% if panel.label is not empty %}
                                 <p><i>{{ context.i18n.trans(panel.label)|raw }}</i></p>
+                            {% elseif panel.html is not empty %}
+                                {% include panel.html ignore missing %}
                             {% endif %}
                             {% set buttons = cards.getButtons(panel.name) %}
                             {% if buttons|length > 0 %}

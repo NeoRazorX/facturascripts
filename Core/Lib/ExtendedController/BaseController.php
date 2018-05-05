@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -111,6 +111,31 @@ abstract class BaseController extends Base\Controller
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
+    }
+
+    protected function getFormData(): array
+    {
+        $data = $this->request->request->all();
+
+        /// get file uploads
+        foreach ($this->request->files->all() as $key => $uploadFile) {
+            if (!$uploadFile->isValid()) {
+                $this->miniLog->error($uploadFile->getErrorMessage());
+                continue;
+            }
+
+            /// exclude php files
+            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+                $this->miniLog->error($this->i18n->trans('php-files-blocked'));
+                continue;
+            }
+
+            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+                $data[$key] = $uploadFile->getClientOriginalName();
+            }
+        }
+
+        return $data;
     }
 
     /**
