@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\Utils;
+namespace FacturaScripts\Core\Base;
 
 /**
  * Class to check integrity system

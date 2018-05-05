@@ -17,9 +17,7 @@
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\Utils;
-
-use FacturaScripts\Core\Base\MiniLog;
+namespace FacturaScripts\Core\Base;
 
 /**
  * Manage some basic and common actions with files.

@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Base\Utils;
 
-use FacturaScripts\Core\Base\Utils\IntegrityCheck;
+use FacturaScripts\Core\Base\IntegrityCheck;
 
 /**
  * Class to test integrity files of FacturaScripts Core
@@ -36,7 +36,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * Generate the integrity.json.
      *
-     * @covers \FacturaScripts\Core\Base\Utils\IntegrityCheck::saveIntegrity()
+     * @covers \FacturaScripts\Core\Base\IntegrityCheck::saveIntegrity()
      */
     public function testSaveIntegrity()
     {
@@ -47,7 +47,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * Generate the integrity.json.
      *
-     * @covers \FacturaScripts\Core\Base\Utils\IntegrityCheck::saveIntegrity()
+     * @covers \FacturaScripts\Core\Base\IntegrityCheck::saveIntegrity()
      */
     public function testSaveUserIntegrity()
     {
@@ -58,7 +58,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * Read the integrity.json.
      *
-     * @covers \FacturaScripts\Core\Base\Utils\IntegrityCheck::getIntegrityFiles()
+     * @covers \FacturaScripts\Core\Base\IntegrityCheck::getIntegrityFiles()
      */
     public function testGetIntegrityFiles()
     {
@@ -68,7 +68,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * Load the integrity.json file.
      *
-     * @covers \FacturaScripts\Core\Base\Utils\IntegrityCheck::loadIntegrity()
+     * @covers \FacturaScripts\Core\Base\IntegrityCheck::loadIntegrity()
      */
     public function testLoadIntegrityFiles()
     {
@@ -86,7 +86,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * Test that hash file are the same, without reading the content.
      *
-     * @covers \FacturaScripts\Core\Base\Utils\IntegrityCheck::getFileHash()
+     * @covers \FacturaScripts\Core\Base\IntegrityCheck::getFileHash()
      */
     public function testGetFileHash()
     {
@@ -103,7 +103,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     /**
      * Compare the diff between integrity files.
      *
-     * @covers \FacturaScripts\Core\Base\Utils\IntegrityCheck::compareIntegrity()
+     * @covers \FacturaScripts\Core\Base\IntegrityCheck::compareIntegrity()
      */
     public function testCompareIntegrity()
     {

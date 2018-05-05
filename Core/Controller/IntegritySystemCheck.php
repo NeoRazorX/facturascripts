@@ -73,7 +73,7 @@ class IntegritySystemCheck extends Base\Controller
         if (!$this->execPreviousAction($action)) {
             return;
         }
-        $this->integrity = Base\Utils\IntegrityCheck::compareIntegrity();
+        $this->integrity = Base\IntegrityCheck::compareIntegrity();
 
         // This check must be do it to have more real time notification if it's failling
         if ($this->user->admin && !empty($this->integrity)) {
@@ -95,11 +95,11 @@ class IntegritySystemCheck extends Base\Controller
     {
         switch ($action) {
             case 'system':
-                Base\Utils\IntegrityCheck::saveIntegrity();
+                Base\IntegrityCheck::saveIntegrity();
                 return false;
 
             default:
-                Base\Utils\IntegrityCheck::saveIntegrity(Base\Utils\IntegrityCheck::INTEGRITY_USER_FILE);
+                Base\IntegrityCheck::saveIntegrity(Base\IntegrityCheck::INTEGRITY_USER_FILE);
                 break;
         }
 

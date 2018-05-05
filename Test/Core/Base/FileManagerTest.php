@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Base\Utils;
 
-use FacturaScripts\Core\Base\Utils\FileManager;
+use FacturaScripts\Core\Base\FileManager;
 
 /**
  * Class to test common methods to manipulate files and folders.
@@ -34,7 +34,7 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     /**
-     * @covers \FacturaScripts\Core\Base\Utils\FileManager::getFrom
+     * @covers \FacturaScripts\Core\Base\FileManager::getFrom
      */
     public function testGetFrom()
     {
@@ -42,7 +42,7 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\Utils\FileManager::getFilesFrom
+     * @covers \FacturaScripts\Core\Base\FileManager::getFilesFrom
      */
     public function testGetFilesFrom()
     {
@@ -50,7 +50,7 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\Utils\FileManager::getAllFrom
+     * @covers \FacturaScripts\Core\Base\FileManager::getAllFrom
      */
     public function testGetAllFrom()
     {
@@ -58,7 +58,7 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\Utils\FileManager::createFolder
+     * @covers \FacturaScripts\Core\Base\FileManager::createFolder
      */
     public function testCreateFolder()
     {
@@ -66,7 +66,7 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\Utils\FileManager::deleteDirectory
+     * @covers \FacturaScripts\Core\Base\FileManager::deleteDirectory
      */
     public function testDeleteDirectory()
     {
