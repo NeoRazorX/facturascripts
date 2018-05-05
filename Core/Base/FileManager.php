@@ -111,7 +111,7 @@ class FileManager
             $items = $this->getFrom($directory, $order, $exclude);
 
             $moreItems = [];
-            foreach ($items as $pos => $item) {
+            foreach ($items as $item) {
                 if ($recursive && is_dir($item)) {
                     $moreItems[] = $item;
                     foreach ($this->getAllFrom([$item], $order, $exclude, $recursive) as $file) {

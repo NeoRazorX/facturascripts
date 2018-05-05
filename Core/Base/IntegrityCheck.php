@@ -41,12 +41,12 @@ class IntegrityCheck
     public static function getIntegrityFiles(): array
     {
         $resources = [];
-        $fm = new FileManager();
+        $fileManager = new FileManager();
         // Ignore the minimum files/folders possible.
         $excluded = ['.', '..', 'Dinamic', 'Documentation', 'MyFiles', 'node_modules', 'Plugins', 'Test', 'vendor'];
         $excluded[] = '.htaccess';
         $excluded[] = 'config.php';
-        $files = $fm->getAllFrom([FS_FOLDER], SCANDIR_SORT_ASCENDING, $excluded);
+        $files = $fileManager->getAllFrom([FS_FOLDER], SCANDIR_SORT_ASCENDING, $excluded);
         foreach ($files as $fileName) {
             $resources[$fileName] = self::getFileHash($fileName);
         }
