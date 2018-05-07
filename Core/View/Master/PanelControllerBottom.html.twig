@@ -86,35 +86,39 @@
                     <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
                         {% set viewType = fsc.viewClass(view) %}
                         {% if viewType == 'ListView' %}
-                        {{ BaseController.columnsForListView(_context, view) }}
+                            {{ BaseController.columnsForListView(_context, view) }}
                         {% else %}
                         <br/>
                         {% endif %}
 
                         {% if viewType == 'EditView' %}
-                        {# Information Cards Header #}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+                            {# Information Cards Header #}
+                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
 
-                        {# Statistical buttons bar #}
-                        {{ BaseController.rowStatisticsForEditView(_context, view) }}
+                            {# Statistical buttons bar #}
+                            {{ BaseController.rowStatisticsForEditView(_context, view) }}
 
-                        {# Main Form #}
-                        {% set model = view.getModel() %}
-                        {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
+                            {# Main Form #}
+                            {% set model = view.getModel() %}
+                            {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
                         {% endif %}
 
                         {% if viewType == 'EditListView' %}
-                        {# Information Cards Header #}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+                            {# Information Cards Header #}
+                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
 
-                        {# Main Form #}
-                        {{ BaseController.columnsForEditListView(_context, view) }}
+                            {# Main Form #}
+                            {{ BaseController.columnsForEditListView(_context, view) }}
                         {% endif %}
 
                         {% if viewType == 'HtmlView' %}
                         <div>{% include view.fileName ignore missing %}</div>
-                        {% elseif viewType in ['EditView','EditListView'] %}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                        {% endif %}
+
+                        {# Information Cards Footer and actions #}
+                        {% if viewType in ['ListView','EditView','EditListView'] %}
+                            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                            {{ BaseController.modalFormFromColumns(_context, view) }}
                         {% endif %}
                     </div>
                 {% endfor %}
