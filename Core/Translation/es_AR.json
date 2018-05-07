@@ -1242,5 +1242,6 @@
     "report-grouping-account": "Agrupar por cuentas",
     "controller-error": "Controlador con error",
     "invalid-column-lenght": "%column% debe contener entre %min% y %max% caracteres.",
-    "plugin-needed": "El Plugin %pluginName% es necesario."
+    "plugin-needed": "El Plugin %pluginName% es necesario.",
+    "document-states": "Estados del documento"
 }
