@@ -261,7 +261,7 @@ abstract class ModelClass extends ModelCore
     public function test()
     {
         foreach ($this->getModelFields() as $key => $value) {
-            if (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null && $this->{$key} !== $this->primaryColumnValue()) {
+            if (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null && $key !== $this->primaryColumn()) {
                 self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
                 return false;
             }
@@ -282,26 +282,19 @@ abstract class ModelClass extends ModelCore
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
-        $result = '';
         switch ($type) {
-            case 'list':
-                $result .= $list . $model;
-                break;
-
             case 'edit':
-                $result .= is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . $value;
-                break;
+                return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . $value;
+
+            case 'list':
+                return $list . $model;
 
             case 'new':
-                $result .= 'Edit' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? $list . $model : 'Edit' . $model . '?code=' . $value;
-                break;
+                return 'Edit' . $model;
         }
 
-        return $result;
+        /// default
+        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . $value;
     }
 
     /**
