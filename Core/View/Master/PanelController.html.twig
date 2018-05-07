@@ -78,7 +78,7 @@
             return formData;
         }
         function insertRecord() {
-            document.insertForm.action = '{{ fsc.getURL('edit') }}';
+            document.insertForm.action = '{{ fsc.getURL('new') }}';
             document.insertForm.submit();
         }
         $(document).ready(function () {
