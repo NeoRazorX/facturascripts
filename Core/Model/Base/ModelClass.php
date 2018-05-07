@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -260,8 +260,15 @@ abstract class ModelClass extends ModelCore
      */
     public function test()
     {
-        foreach ($this->getModelFields() as $key => $value) {
-            if (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null && $key !== $this->primaryColumn()) {
+        $fields = $this->getModelFields();
+        if (empty($fields)) {
+            return false;
+        }
+
+        foreach ($fields as $key => $value) {
+            if ($key == $this->primaryColumn()) {
+                continue;
+            } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
                 self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
                 return false;
             }
@@ -355,7 +362,6 @@ abstract class ModelClass extends ModelCore
         }
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
-
         return self::$dataBase->exec($sql);
     }
 
@@ -393,7 +399,6 @@ abstract class ModelClass extends ModelCore
     private function getRecord($cod, array $where = [], array $orderby = [])
     {
         $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
-
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
 
         return self::$dataBase->selectLimit($sql, 1);

@@ -28,10 +28,11 @@
         "psr-4": {
             "FacturaScripts\\Core\\": "Core/",
             "FacturaScripts\\Dinamic\\": "Dinamic/",
-            "FacturaScripts\\Plugins\\": "Plugins/"
+            "FacturaScripts\\Plugins\\": "Plugins/",
+            "FacturaScripts\\Test\\": "Test/"
         }
     },
-    "keywords" : [
+    "keywords": [
         "facturascripts",
         "php",
         "invoice",
