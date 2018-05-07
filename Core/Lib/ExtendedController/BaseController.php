@@ -10,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -121,6 +121,12 @@ abstract class BaseController extends Base\Controller
         foreach ($this->request->files->all() as $key => $uploadFile) {
             if (!$uploadFile->isValid()) {
                 $this->miniLog->error($uploadFile->getErrorMessage());
+                continue;
+            }
+
+            /// exclude php files
+            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+                $this->miniLog->error($this->i18n->trans('php-files-blocked'));
                 continue;
             }
 
