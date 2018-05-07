@@ -714,5 +714,6 @@
     "email-bcc": "Email Blind Carbon Copy",
     "delete-plugin": "Delete plugins",
     "you-will-remove-this-plugin": "You will remove this plugin",
-    "are-you-sure?": "Are you sure?"
+    "are-you-sure?": "Are you sure?",
+    "are-you-sure-plugin": "You will delete %pluginName% plugin. Are you sure?"
 }
