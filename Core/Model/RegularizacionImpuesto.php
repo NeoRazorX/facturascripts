@@ -48,7 +48,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     /**
      * Period of regularization.
      *
-     * @var
+     * @var string
      */
     public $periodo;
 
@@ -303,5 +303,22 @@ class RegularizacionImpuesto extends Base\ModelClass
         $this->codsubcuentaacreedora = $regularization->codsubcuentaacreedora;
         $this->idsubcuentadeudora = $regularization->idsubcuentadeudora;
         $this->codsubcuentadeudora = $regularization->codsubcuentadeudora;
+    }
+
+    public function test()
+    {
+        if (!parent::test()) {
+            return false;
+        }
+
+        /// Calculate dates to selected period
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($this->codejercicio);
+        $period = $this->getPeriod($this->periodo, $exercise->fechainicio, false);
+
+        $this->fechainicio = $period['start'];
+        $this->fechafin = $period['end'];
+
+        return true;
     }
 }
