@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="idfile" icon="fa-file-text" required="true" />
             </column>
             <column name="full-path" numcolumns="10" order="110">
-                <widget type="file" fieldname="path" required="true" />
+                <widget type="file" fieldname="path" required="true" readonly="true" />
             </column>
             <column name="file-name" numcolumns="4" order="120">
                 <widget type="text" fieldname="filename" readonly="true" />
@@ -41,10 +41,10 @@
                 <widget type="number" fieldname="size" readonly="true" />
             </column>
             <column name="date" numcolumns="2" order="150">
-                <widget type="date" fieldname="date" required="true" />
+                <widget type="date" fieldname="date" readonly="true" />
             </column>
             <column name="hour" numcolumns="2" order="160">
-                <widget type="text" fieldname="hour" required="true" />
+                <widget type="text" fieldname="hour" readonly="true" />
             </column>
         </group>
     </columns>

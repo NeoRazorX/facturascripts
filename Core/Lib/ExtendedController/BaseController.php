@@ -119,7 +119,9 @@ abstract class BaseController extends Base\Controller
 
         /// get file uploads
         foreach ($this->request->files->all() as $key => $uploadFile) {
-            if (!$uploadFile->isValid()) {
+            if (is_null($uploadFile)) {
+                continue;
+            } elseif (!$uploadFile->isValid()) {
                 $this->miniLog->error($uploadFile->getErrorMessage());
                 continue;
             }

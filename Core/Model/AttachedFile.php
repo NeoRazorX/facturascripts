@@ -114,12 +114,12 @@ class AttachedFile extends Base\ModelClass
      */
     public function delete()
     {
-        if (parent::delete()) {
-            unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
-            return true;
+        if (!unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path)) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-file', ['%fileName%' => $this->path]));
+            return false;
         }
 
-        return false;
+        return parent::delete();
     }
 
     /**
@@ -172,8 +172,12 @@ class AttachedFile extends Base\ModelClass
             return false;
         }
 
+        if (null === $this->idfile) {
+            $this->idfile = $this->newCode();
+        }
+
         if ($this->path != $this->previousPath) {
-            $this->setFile();
+            return $this->setFile();
         }
 
         return parent::test();
@@ -181,6 +185,8 @@ class AttachedFile extends Base\ModelClass
 
     /**
      * Examine and move new file setted.
+     * 
+     * @return boolean
      */
     protected function setFile()
     {
@@ -196,14 +202,15 @@ class AttachedFile extends Base\ModelClass
         }
 
         $basePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
-        if (rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->idfile)) {
-            $this->path = $path . DIRECTORY_SEPARATOR . $this->idfile;
-            $this->size = filesize(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
-
-            $finfo = new finfo();
-            $this->mimetype = $finfo->file(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path, FILEINFO_MIME_TYPE);
+        if (!rename($basePath . DIRECTORY_SEPARATOR . $this->path, FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->idfile)) {
+            return false;
         }
 
+        $this->path = $path . DIRECTORY_SEPARATOR . $this->idfile;
         $this->previousPath = $this->path;
+        $this->size = filesize(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
+        $finfo = new finfo();
+        $this->mimetype = $finfo->file(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path, FILEINFO_MIME_TYPE);
+        return true;
     }
 }
