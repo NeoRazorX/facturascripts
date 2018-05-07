@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class DireccionClienteTest extends TestCase
 {
+
     public function testNewDireccionCliente()
     {
         $model = new DireccionCliente();
@@ -40,14 +40,7 @@ final class DireccionClienteTest extends TestCase
         $this->assertTrue($model->domenvio);
         $this->assertTrue($model->domfacturacion);
         $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertTrue($model->test());
-
-        $model->descripcion = 'Alternative';
-        $model->domenvio = false;
-        $model->domfacturacion = false;
-        $model->fecha = $now->add(new \DateInterval('P10D'))->format('d-m-Y');
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

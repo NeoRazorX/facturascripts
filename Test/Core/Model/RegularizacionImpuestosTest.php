@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class RegularizacionImpuestosTest extends TestCase
 {
+
     public function testNewRegularizacionImpuestos()
     {
         $model = new RegularizacionImpuestos();
@@ -37,12 +37,14 @@ final class RegularizacionImpuestosTest extends TestCase
         $now = new \DateTime();
         $this->assertInstanceOf(RegularizacionImpuestos::class, $model);
         $this->assertEquals('', $model->codejercicio);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->codejercicio = 'CODE1';
+        $model->idasiento = 1;
         $model->fechaasiento = $now->format('d-m-Y');
         $model->fechafin = $now->format('d-m-Y');
         $model->fechainicio = $now->format('d-m-Y');
+        $model->periodo = 'T1';
 
         $this->assertTrue($model->test());
     }

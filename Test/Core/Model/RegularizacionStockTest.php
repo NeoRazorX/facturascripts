@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class RegularizacionStockTest extends TestCase
 {
+
     public function testNewRegularizacionStock()
     {
         $model = new RegularizacionStock();
@@ -40,8 +40,9 @@ final class RegularizacionStockTest extends TestCase
         $this->assertEquals(0, $model->cantidadfin);
         $this->assertEquals($now->format('d-m-Y'), $model->fecha);
         $this->assertEquals('', $model->motivo);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->idstock = 1;
         $model->motivo = 'Test reason';
 
         $this->assertTrue($model->test());

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class DashboardTest extends TestCase
 {
+
     public function testNewDashboard()
     {
         $model = new Dashboard();
@@ -37,12 +37,7 @@ final class DashboardTest extends TestCase
         $this->assertInstanceOf(Dashboard::class, $model);
         $this->assertEquals('', $model->component);
         $this->assertEquals('', $model->version);
-        $this->assertTrue($model->test());
-
-        $model->component = 'Test component';
-        $model->version = '1';
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

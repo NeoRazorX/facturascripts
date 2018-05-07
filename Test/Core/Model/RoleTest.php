@@ -36,8 +36,9 @@ final class RoleTest extends TestCase
 
         $this->assertInstanceOf(Role::class, $model);
         $this->assertEquals('', $model->descripcion);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->codrole = $model->newCode();
         $model->descripcion = 'Test description';
 
         $this->assertTrue($model->test());

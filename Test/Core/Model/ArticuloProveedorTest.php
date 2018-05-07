@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class ArticuloProveedorTest extends TestCase
 {
+
     public function testNewArticuloProveedor()
     {
         $model = new ArticuloProveedor();
@@ -37,10 +37,11 @@ final class ArticuloProveedorTest extends TestCase
         $this->assertInstanceOf(ArticuloProveedor::class, $model);
         $this->assertEquals(0.0, $model->precio);
         $this->assertEquals(0.0, $model->dto);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->codproveedor = 'PROV1';
         $model->referencia = 'REF1PROV1';
+        $model->refproveedor = 'REF1PROV1';
         $model->precio = 123.45;
         $model->dto = 12.34;
 

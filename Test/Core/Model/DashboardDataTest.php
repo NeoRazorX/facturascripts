@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class DashboardDataTest extends TestCase
 {
+
     public function testNewDashboardData()
     {
         $model = new DashboardData();
@@ -41,14 +41,7 @@ final class DashboardDataTest extends TestCase
         $this->assertEquals($now->format('d-m-Y'), $model->creationdate);
         $this->assertEquals($now->format('d-m-Y'), $model->displaydate);
         $this->assertEquals([], $model->properties);
-        $this->assertTrue($model->test());
-
-        $model->component = 'Test name';
-        $model->creationdate = $now->format('d-m-Y');
-        $model->displaydate = $now->add(new \DateInterval('P10D'))->format('d-m-Y H:i:s');
-        $model->properties = [];
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

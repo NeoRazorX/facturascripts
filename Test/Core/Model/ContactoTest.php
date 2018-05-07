@@ -41,6 +41,8 @@ final class ContactoTest extends TestCase
 
         $model->nombre = 'Contact name';
         $model->apellidos = 'Contact surname';
+        $model->email = 'pepe@gmail.com';
+
         $this->assertTrue($model->test());
     }
 

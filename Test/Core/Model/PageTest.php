@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class PageTest extends TestCase
 {
+
     public function testNewPage()
     {
         $model = new Page();
@@ -37,8 +37,10 @@ final class PageTest extends TestCase
         $this->assertInstanceOf(Page::class, $model);
         $this->assertTrue($model->showonmenu);
         $this->assertEquals(100, $model->ordernum);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->name = $model->newCode();
+        $model->title = $model->name;
         $model->showonmenu = false;
         $model->ordernum = 0;
 

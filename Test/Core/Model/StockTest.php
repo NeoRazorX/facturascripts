@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class StockTest extends TestCase
 {
+
     public function testNewStock()
     {
         $model = new Stock();
@@ -41,11 +41,13 @@ final class StockTest extends TestCase
         $this->assertEquals(0, $model->pterecibir);
         $this->assertEquals(0, $model->stockmin);
         $this->assertEquals(0, $model->stockmax);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->cantidad = 2;
-        $model->reservada = 1;
+        $model->codalmacen = 'ALG';
         $model->disponible = 1;
+        $model->reservada = 1;
+        $model->referencia = '1';
         $model->stockmin = 1;
         $model->stockmax = 5;
 

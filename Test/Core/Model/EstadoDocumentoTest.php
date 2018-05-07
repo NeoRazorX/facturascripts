@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class EstadoDocumentoTest extends TestCase
 {
+
     public function testNewEstadoDocumento()
     {
         $model = new EstadoDocumento();
@@ -42,16 +42,17 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertFalse($model->test());
 
         $model->nombre = 'Test name';
-        $model->editable = false;
+        $model->tipodoc = 'PedidoProveedor';
+
         $this->assertTrue($model->test());
     }
-    
+
     public function testBloquear()
     {
         $model = new EstadoDocumento();
         $model->nombre = '1234';
         $model->bloquear = true;
-        
+
         $this->assertTrue($model->test());
         $this->assertFalse($model->save());
         $this->assertFalse($model->delete());

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class RoleAccessTest extends TestCase
 {
+
     public function testNewRoleAccess()
     {
         $model = new RoleAccess();
@@ -39,8 +39,9 @@ final class RoleAccessTest extends TestCase
         $this->assertEquals('', $model->pagename);
         $this->assertNull($model->allowdelete);
         $this->assertNull($model->allowupdate);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->codrole = 'test';
         $model->pagename = 'AdminPlugins';
 
         $this->assertTrue($model->test());

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,14 +29,16 @@ use PHPUnit\Framework\TestCase;
  */
 final class ProvinciaTest extends TestCase
 {
+
     public function testNewProvincia()
     {
         $model = new Provincia();
 
         $this->assertInstanceOf(Provincia::class, $model);
         $this->assertEquals('', $model->provincia);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->codpais = 'ESP';
         $model->provincia = 'Test name';
 
         $this->assertTrue($model->test());

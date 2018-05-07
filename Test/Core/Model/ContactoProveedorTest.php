@@ -37,7 +37,7 @@ final class ContactoProveedorTest extends TestCase
         $this->assertInstanceOf(ContactoProveedor::class, $model);
         $this->assertNull($model->codproveedor);
         $this->assertNull($model->idcontacto);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

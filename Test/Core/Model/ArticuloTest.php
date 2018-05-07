@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class ArticuloTest extends TestCase
 {
+
     public function testNewArticulo()
     {
         $model = new Articulo();
@@ -40,7 +40,7 @@ final class ArticuloTest extends TestCase
         $this->assertEquals(0.0, $model->pvp);
         $this->assertTrue($model->secompra);
         $this->assertTrue($model->sevende);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->descripcion = 'Test name';
 

@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -30,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class AlbaranClienteTest extends TestCase
 {
+
     public function testNewAlbaranCliente()
     {
         $model = new AlbaranCliente();
@@ -75,7 +75,7 @@ final class AlbaranClienteTest extends TestCase
         $this->assertEquals(0.0, $model->totalirpf);
         $this->assertEquals(0.0, $model->totalrecargo);
         $this->assertEquals(null, $model->observaciones);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

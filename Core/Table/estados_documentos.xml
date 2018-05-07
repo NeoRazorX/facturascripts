@@ -9,22 +9,18 @@
     <column>
         <name>actualizastock</name>
         <type>integer</type>
-        <null>NO</null>
     </column>
     <column>
         <name>bloquear</name>
         <type>boolean</type>
-        <null>NO</null>
     </column>
     <column>
         <name>editable</name>
         <type>boolean</type>
-        <null>NO</null>
     </column>
     <column>
         <name>generadoc</name>
         <type>character varying(30)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>idestado</name>
@@ -40,7 +36,6 @@
     <column>
         <name>predeterminado</name>
         <type>boolean</type>
-        <null>NO</null>
     </column>
     <column>
         <name>tipodoc</name>
