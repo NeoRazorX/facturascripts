@@ -20,23 +20,23 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model\RegularizacionImpuestos;
+use FacturaScripts\Core\Model\RegularizacionImpuesto;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RegularizacionImpuestos
+ * @covers \RegularizacionImpuesto
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class RegularizacionImpuestosTest extends CustomTest
+final class RegularizacionImpuestoTest extends CustomTest
 {
 
-    public function testNewRegularizacionImpuestos()
+    public function testNewRegularizacionImpuesto()
     {
-        $model = new RegularizacionImpuestos();
+        $model = new RegularizacionImpuesto();
 
         $now = new \DateTime();
-        $this->assertInstanceOf(RegularizacionImpuestos::class, $model);
+        $this->assertInstanceOf(RegularizacionImpuesto::class, $model);
         $this->assertEquals('', $model->codejercicio);
         $this->assertFalse($model->test());
 
@@ -52,21 +52,21 @@ final class RegularizacionImpuestosTest extends CustomTest
 
     public function testTable()
     {
-        $model = new RegularizacionImpuestos();
+        $model = new RegularizacionImpuesto();
 
         $this->assertInternalType('string', $model::tableName());
     }
 
     public function testPrimaryColumn()
     {
-        $model = new RegularizacionImpuestos();
+        $model = new RegularizacionImpuesto();
 
         $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()
     {
-        $model = new RegularizacionImpuestos();
+        $model = new RegularizacionImpuesto();
 
         $this->assertInternalType('string', $model->install());
     }
@@ -77,7 +77,7 @@ final class RegularizacionImpuestosTest extends CustomTest
 
         $this->assertEquals(true, $dataBase->connect());
 
-        $model = new RegularizacionImpuestos();
+        $model = new RegularizacionImpuesto();
         $sql = $model->install();
 
         if ($sql !== '') {
@@ -88,7 +88,7 @@ final class RegularizacionImpuestosTest extends CustomTest
 
     public function testAll()
     {
-        $model = new RegularizacionImpuestos();
+        $model = new RegularizacionImpuesto();
         $list = $model->all();
 
         if (!empty($list)) {

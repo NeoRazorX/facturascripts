@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
- * Controller to list the items in the RegularizacionImpuestos model
+ * Controller to list the items in the RegularizacionImpuesto model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>

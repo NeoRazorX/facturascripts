@@ -197,7 +197,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @param string $fecha
      *
-     * @return bool|RegularizacionImpuestos
+     * @return bool|RegularizacionImpuesto
      */
     public function getFechaInside($fecha)
     {
