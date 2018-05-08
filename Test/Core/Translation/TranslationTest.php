@@ -18,10 +18,12 @@
  */
 namespace FacturaScripts\Test\Core\Translation;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class to verify that all JSON files from translation are correct
  */
-class TranslationTest extends \PHPUnit_Framework_TestCase
+class TranslationTest extends TestCase
 {
 
     /**

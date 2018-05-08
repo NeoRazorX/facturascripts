@@ -17,10 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\RoleUser;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,66 +29,9 @@ use FacturaScripts\Test\Core\CustomTest;
  */
 final class RoleUserTest extends CustomTest
 {
-    public function testNewRoleUser()
+
+    protected function setUp()
     {
-        $model = new RoleUser();
-
-        $this->assertInstanceOf(RoleUser::class, $model);
-        $this->assertEquals('', $model->nick);
-        $this->assertEquals('', $model->codrole);
-        $this->assertFalse($model->test());
-
-        $model->nick = 'Test nick';
-        $model->codrole = 'CODR1';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new RoleUser();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new RoleUser();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new RoleUser();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new RoleUser();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new RoleUser();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new RoleUser();
     }
 }

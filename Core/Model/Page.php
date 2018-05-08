@@ -131,6 +131,6 @@ class Page extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return $this->name;
+        return (string) $this->name;
     }
 }

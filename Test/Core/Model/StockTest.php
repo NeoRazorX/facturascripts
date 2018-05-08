@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,75 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class StockTest extends CustomTest
 {
 
-    public function testNewStock()
+    protected function setUp()
     {
-        $model = new Stock();
-
-        $this->assertInstanceOf(Stock::class, $model);
-        $this->assertEquals(0, $model->cantidad);
-        $this->assertEquals(0, $model->reservada);
-        $this->assertEquals(0, $model->disponible);
-        $this->assertEquals(0, $model->pterecibir);
-        $this->assertEquals(0, $model->stockmin);
-        $this->assertEquals(0, $model->stockmax);
-        $this->assertFalse($model->test());
-
-        $model->cantidad = 2;
-        $model->codalmacen = 'ALG';
-        $model->disponible = 1;
-        $model->reservada = 1;
-        $model->referencia = '1';
-        $model->stockmin = 1;
-        $model->stockmax = 5;
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new Stock();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Stock();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Stock();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Stock();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Stock();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Stock();
     }
 }

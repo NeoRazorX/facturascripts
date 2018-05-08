@@ -29,6 +29,32 @@ use PHPUnit\Framework\TestCase;
 class CustomTest extends TestCase
 {
 
+    public $model;
+
+    public function testInit()
+    {
+        $this->assertNotNull($this->model);
+    }
+
+    public function testFields()
+    {
+        $this->assertNotEmpty($this->model->getModelFields());
+    }
+
+    public function testInstall()
+    {
+        $this->assertInternalType(
+            'string', $this->model->install()
+        );
+    }
+
+    public function testUrl()
+    {
+        $this->assertInternalType(
+            'string', $this->model->url()
+        );
+    }
+
     protected function tearDown()
     {
         $minilog = new MiniLog();

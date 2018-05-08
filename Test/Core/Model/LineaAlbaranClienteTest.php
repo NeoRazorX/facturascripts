@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\LineaAlbaranCliente;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,62 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class LineaAlbaranClienteTest extends CustomTest
 {
 
-    public function testNewLineaAlbaranCliente()
+    protected function setUp()
     {
-        $model = new LineaAlbaranCliente();
-
-        $this->assertInstanceOf(LineaAlbaranCliente::class, $model);
-        $this->assertTrue($model->mostrar_cantidad);
-        $this->assertTrue($model->mostrar_precio);
-        $this->assertEquals(0, $model->orden);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new LineaAlbaranCliente();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new LineaAlbaranCliente();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new LineaAlbaranCliente();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new LineaAlbaranCliente();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new LineaAlbaranCliente();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new LineaAlbaranCliente();
     }
 }

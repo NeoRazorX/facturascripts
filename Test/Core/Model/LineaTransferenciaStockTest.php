@@ -17,10 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\LineaTransferenciaStock;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,62 +29,9 @@ use FacturaScripts\Test\Core\CustomTest;
  */
 final class LineaTransferenciaStockTest extends CustomTest
 {
-    public function testNewLineaTransferenciaStock()
+
+    protected function setUp()
     {
-        $model = new LineaTransferenciaStock();
-
-        $this->assertInstanceOf(LineaTransferenciaStock::class, $model);
-        $this->assertEquals('', $model->referencia);
-        $this->assertEquals(0, $model->cantidad);
-        $this->assertEquals('', $model->descripcion);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new LineaTransferenciaStock();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new LineaTransferenciaStock();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new LineaTransferenciaStock();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new LineaTransferenciaStock();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new LineaTransferenciaStock();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new LineaTransferenciaStock();
     }
 }

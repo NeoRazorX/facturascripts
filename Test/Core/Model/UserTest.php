@@ -17,11 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -32,48 +29,9 @@ use FacturaScripts\Test\Core\CustomTest;
  */
 final class UserTest extends CustomTest
 {
-    public function testNewUser()
+
+    protected function setUp()
     {
-        $model = new User();
-
-        $this->assertInstanceOf(User::class, $model);
-        $this->assertEquals(\FS_LANG, $model->langcode);
-        $this->assertEquals(AppSettings::get('default', 'idempresa', 1), $model->idempresa);
-        $this->assertTrue($model->enabled);
-        $this->assertEquals(1, $model->level);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new User();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new User();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new User();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testAll()
-    {
-        $model = new User();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new User();
     }
 }

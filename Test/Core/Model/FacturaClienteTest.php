@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,60 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class FacturaClienteTest extends CustomTest
 {
 
-    public function testNewFacturaCliente()
+    protected function setUp()
     {
-        $model = new FacturaCliente();
-
-        $this->assertInstanceOf(FacturaCliente::class, $model);
-        $this->assertEquals('', $model->nombrecliente);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new FacturaCliente();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new FacturaCliente();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new FacturaCliente();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new FacturaCliente();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new FacturaCliente();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new FacturaCliente();
     }
 }

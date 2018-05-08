@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,62 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class ProveedorTest extends CustomTest
 {
 
-    public function testNewProveedor()
+    protected function setUp()
     {
-        $model = new Proveedor();
-
-        $this->assertInstanceOf(Proveedor::class, $model);
-        $this->assertFalse($model->acreedor);
-        $this->assertFalse($model->test());
-
-        $model->acreedor = true;
-    }
-
-    public function testTable()
-    {
-        $model = new Proveedor();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Proveedor();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Proveedor();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Proveedor();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Proveedor();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Proveedor();
     }
 }
