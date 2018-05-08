@@ -51,7 +51,7 @@ class FileManager
      *
      * @return array
      */
-    private function scanFolder(string $folderPath): array
+    public function scanFolder(string $folderPath): array
     {
         $scan = scandir($folderPath, SCANDIR_SORT_ASCENDING);
         return is_array($scan) ? array_diff($scan, ['.', '..']) : [];
