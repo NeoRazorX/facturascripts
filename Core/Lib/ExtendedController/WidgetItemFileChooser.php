@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,8 +46,13 @@ class WidgetItemFileChooser extends WidgetItem
      */
     public function getEditHTML($value)
     {
+        if (!empty($this->readOnly) && !empty($value)) {
+            return $this->getReadOnlyHTML($value);
+        }
+
+        $attributes = (!empty($this->required) && empty($value)) ? ' required=""' : '';
         $html = $this->getIconHTML() . "<input type='file' name='" . $this->fieldName
-            . "' class='form-control-file' " . $this->specialAttributes() . " />";
+            . "' class='form-control-file' " . $attributes . " />";
 
         if (!empty($this->icon)) {
             $html .= '</div>';
@@ -80,5 +85,11 @@ class WidgetItemFileChooser extends WidgetItem
     public function getMaxFileUpload()
     {
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
+    }
+
+    public function getReadOnlyHTML($value)
+    {
+        $specialAttributes = $this->specialAttributes();
+        return $this->standardEditHTMLWidget($value, $specialAttributes);
     }
 }

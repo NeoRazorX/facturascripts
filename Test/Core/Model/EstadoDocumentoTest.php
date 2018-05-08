@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +17,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\EstadoDocumento;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \EstadoDocumento
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class EstadoDocumentoTest extends TestCase
+final class EstadoDocumentoTest extends CustomTest
 {
+
     public function testNewEstadoDocumento()
     {
         $model = new EstadoDocumento();
@@ -42,16 +43,17 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertFalse($model->test());
 
         $model->nombre = 'Test name';
-        $model->editable = false;
+        $model->tipodoc = 'PedidoProveedor';
+
         $this->assertTrue($model->test());
     }
-    
+
     public function testBloquear()
     {
         $model = new EstadoDocumento();
         $model->nombre = '1234';
         $model->bloquear = true;
-        
+
         $this->assertTrue($model->test());
         $this->assertFalse($model->save());
         $this->assertFalse($model->delete());

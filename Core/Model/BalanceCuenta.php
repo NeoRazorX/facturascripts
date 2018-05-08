@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,13 +29,6 @@ class BalanceCuenta extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $id;
-
-    /**
      * Balance code.
      *
      * @var string
@@ -57,13 +50,17 @@ class BalanceCuenta extends Base\ModelClass
     public $desccuenta;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Primary key.
      *
-     * @return string
+     * @var int
      */
-    public static function tableName()
+    public $id;
+
+    public function install()
     {
-        return 'balancescuentas';
+        new Balance();
+
+        return parent::install();
     }
 
     /**
@@ -74,5 +71,15 @@ class BalanceCuenta extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'id';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'balancescuentas';
     }
 }

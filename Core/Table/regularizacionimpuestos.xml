@@ -35,7 +35,6 @@
     <column>
         <name>idsubcuentaacreedora</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentaacreedora</name>
@@ -44,7 +43,6 @@
     <column>
         <name>idsubcuentadeudora</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codsubcuentadeudora</name>

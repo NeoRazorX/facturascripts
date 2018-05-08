@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Translation;
 
 /**
@@ -24,6 +23,7 @@ namespace FacturaScripts\Test\Core\Translation;
  */
 class TranslationTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var string
      */
@@ -42,14 +42,6 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
     {
         $this->basePath = FS_FOLDER . '/Core/Translation/';
         $this->mainLang = 'en_EN.json';
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
     }
 
     /**

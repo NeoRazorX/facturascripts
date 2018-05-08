@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +17,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\DireccionCliente;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \DireccionCliente
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class DireccionClienteTest extends TestCase
+final class DireccionClienteTest extends CustomTest
 {
+
     public function testNewDireccionCliente()
     {
         $model = new DireccionCliente();
@@ -40,14 +41,7 @@ final class DireccionClienteTest extends TestCase
         $this->assertTrue($model->domenvio);
         $this->assertTrue($model->domfacturacion);
         $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertTrue($model->test());
-
-        $model->descripcion = 'Alternative';
-        $model->domenvio = false;
-        $model->domfacturacion = false;
-        $model->fecha = $now->add(new \DateInterval('P10D'))->format('d-m-Y');
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

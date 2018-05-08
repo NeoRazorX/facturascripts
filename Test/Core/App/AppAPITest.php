@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\App;
 
 use FacturaScripts\Core\App\AppAPI;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\App\AppSettings;
  */
 class AppAPITest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var AppAPI
      */
@@ -39,14 +39,6 @@ class AppAPITest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new AppAPI();
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
     }
 
     public function testConnect()

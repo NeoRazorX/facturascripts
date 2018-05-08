@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +17,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\ArticuloProveedor;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \ArticuloProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class ArticuloProveedorTest extends TestCase
+final class ArticuloProveedorTest extends CustomTest
 {
+
     public function testNewArticuloProveedor()
     {
         $model = new ArticuloProveedor();
@@ -37,10 +38,11 @@ final class ArticuloProveedorTest extends TestCase
         $this->assertInstanceOf(ArticuloProveedor::class, $model);
         $this->assertEquals(0.0, $model->precio);
         $this->assertEquals(0.0, $model->dto);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->codproveedor = 'PROV1';
         $model->referencia = 'REF1PROV1';
+        $model->refproveedor = 'REF1PROV1';
         $model->precio = 123.45;
         $model->dto = 12.34;
 
