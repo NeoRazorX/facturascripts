@@ -77,7 +77,7 @@ class Updater extends Controller
         parent::privateCore($response, $user, $permissions);
 
         /// Folders writables?
-        $folders = $this->notWritablefolders();
+        $folders = FileManager::notWritablefolders();
         if (!empty($folders)) {
             $this->miniLog->alert($this->i18n->trans('folder-not-writable'));
             foreach ($folders as $folder) {
@@ -90,23 +90,6 @@ class Updater extends Controller
 
         $action = $this->request->get('action', '');
         $this->execAction($action);
-    }
-
-    /**
-     * Erase $dir folder and all its subfolders.
-     * 
-     * @param string $dir
-     * 
-     * @return bool
-     */
-    private function delTree(string $dir): bool
-    {
-        $files = array_diff(scandir($dir), ['.', '..']);
-        foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-        }
-
-        return rmdir($dir);
     }
 
     /**
@@ -153,30 +136,6 @@ class Updater extends Controller
         }
     }
 
-    /**
-     * Returns an array with all subforder of $baseDir folder.
-     * 
-     * @param string $baseDir
-     * 
-     * @return array
-     */
-    private function foldersFrom(string $baseDir): array
-    {
-        $directories = [];
-        foreach (scandir($baseDir) as $file) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-            $dir = $baseDir . DIRECTORY_SEPARATOR . $file;
-            if (is_dir($dir)) {
-                $directories[] = $dir;
-                $directories = array_merge($directories, $this->foldersFrom($dir));
-            }
-        }
-
-        return $directories;
-    }
-
     private function getUpdateItems(): array
     {
         $cacheData = $this->cache->get('UPDATE_ITEMS');
@@ -218,47 +177,6 @@ class Updater extends Controller
     }
 
     /**
-     * Returns an array with all not writable folders.
-     * 
-     * @return array
-     */
-    private function notWritablefolders(): array
-    {
-        $notwritable = [];
-        foreach ($this->foldersFrom(FS_FOLDER) as $dir) {
-            if (!is_writable($dir)) {
-                $notwritable[] = $dir;
-            }
-        }
-
-        return $notwritable;
-    }
-
-    /**
-     * Copy all files and folders from $src to $dst
-     * 
-     * @param string $src
-     * @param string $dst
-     */
-    private function recurseCopy(string $src, string $dst)
-    {
-        $dir = opendir($src);
-        @mkdir($dst);
-        while (false !== ( $file = readdir($dir))) {
-            if ($file === '.' || $file === '..') {
-                continue;
-            }
-
-            if (is_dir($src . '/' . $file)) {
-                $this->recurseCopy($src . '/' . $file, $dst . '/' . $file);
-            } else {
-                copy($src . '/' . $file, $dst . '/' . $file);
-            }
-        }
-        closedir($dir);
-    }
-
-    /**
      * Extract zip file and update all files.
      * 
      * @return bool
@@ -284,11 +202,11 @@ class Updater extends Controller
                 break;
             }
 
-            $this->delTree($dest);
-            $this->recurseCopy($origin, $dest);
+            FileManager::delTree($dest);
+            FileManager::recurseCopy($origin, $dest);
         }
 
-        $this->delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
+        FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
         return true;
     }
 }

@@ -37,9 +37,9 @@ class FileManager
      */
     public static function delTree(string $dir): bool
     {
-        $files = is_dir($dir) ? $this->scanFolder($dir) : [];
+        $files = is_dir($dir) ? self::scanFolder($dir) : [];
         foreach ($files as $file) {
-            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+            is_dir($dir . '/' . $file) ? self::delTree("$dir/$file") : unlink("$dir/$file");
         }
         return is_dir($dir) ? rmdir($dir) : unlink($dir);
     }
@@ -84,7 +84,7 @@ class FileManager
                 continue;
             }
             $result[] = $item;
-            foreach ($this->scanFolders($newItem) as $item2) {
+            foreach (self::scanFolders($newItem) as $item2) {
                 $result[] = $item . DIRECTORY_SEPARATOR . $item2;
             }
         }
@@ -99,7 +99,7 @@ class FileManager
     public static function notWritablefolders(): array
     {
         $notwritable = [];
-        foreach ($this->foldersFrom(FS_FOLDER) as $dir) {
+        foreach (self::foldersFrom(FS_FOLDER) as $dir) {
             if (!is_writable($dir)) {
                 $notwritable[] = $dir;
             }
@@ -124,7 +124,7 @@ class FileManager
             $dir = $baseDir . DIRECTORY_SEPARATOR . $file;
             if (is_dir($dir)) {
                 $directories[] = $dir;
-                $directories = array_merge($directories, $this->foldersFrom($dir));
+                $directories = array_merge($directories, self::foldersFrom($dir));
             }
         }
         return $directories;
