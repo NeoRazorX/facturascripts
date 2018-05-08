@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Lib\FileManager;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
 

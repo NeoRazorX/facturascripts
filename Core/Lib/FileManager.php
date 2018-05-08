@@ -35,7 +35,7 @@ class FileManager
      *
      * @return bool
      */
-    public function delTree(string $dir): bool
+    public static function delTree(string $dir): bool
     {
         $files = is_dir($dir) ? $this->scanFolder($dir) : [];
         foreach ($files as $file) {
@@ -51,7 +51,7 @@ class FileManager
      *
      * @return array
      */
-    public function scanFolder(string $folderPath): array
+    public static function scanFolder(string $folderPath): array
     {
         $scan = scandir($folderPath, SCANDIR_SORT_ASCENDING);
         return is_array($scan) ? array_diff($scan, ['.', '..']) : [];
@@ -66,7 +66,7 @@ class FileManager
      *
      * @return array
      */
-    public function scanFolders(string $folder, bool $recursive = true): array
+    public static function scanFolders(string $folder, bool $recursive = true): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (!is_array($scan)) {
@@ -96,7 +96,7 @@ class FileManager
      * 
      * @return array
      */
-    public function notWritablefolders(): array
+    public static function notWritablefolders(): array
     {
         $notwritable = [];
         foreach ($this->foldersFrom(FS_FOLDER) as $dir) {
@@ -114,7 +114,7 @@ class FileManager
      * 
      * @return array
      */
-    private function foldersFrom(string $baseDir): array
+    private static function foldersFrom(string $baseDir): array
     {
         $directories = [];
         foreach (scandir($baseDir) as $file) {
@@ -136,7 +136,7 @@ class FileManager
      * @param string $src
      * @param string $dst
      */
-    public function recurseCopy(string $src, string $dst)
+    public static function recurseCopy(string $src, string $dst)
     {
         $dir = opendir($src);
         @mkdir($dst);

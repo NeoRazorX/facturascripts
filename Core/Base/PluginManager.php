@@ -68,19 +68,10 @@ class PluginManager
     private static $minilog;
 
     /**
-     * Object to manage files and directory actions
-     * 
-     * @var FileManager
-     */
-    private $fileManager;
-
-    /**
      * PluginManager constructor.
      */
     public function __construct()
     {
-        $this->fileManager = new FileManager();
-
         if (self::$enabledPlugins === null) {
             self::$enabledPlugins = $this->loadFromFile();
             self::$i18n = new Translator();
@@ -205,7 +196,7 @@ class PluginManager
 
         /// Removing previous version
         if (is_dir(self::PLUGIN_PATH . $info['name'])) {
-            $this->fileManager->delTree(self::PLUGIN_PATH . $info['name']);
+            FileManager::delTree(self::PLUGIN_PATH . $info['name']);
         }
 
         /// Extract new version
@@ -230,7 +221,7 @@ class PluginManager
     {
         $plugins = [];
         
-        foreach ($this->fileManager->scanFolder(self::PLUGIN_PATH) as $folder) {
+        foreach (FileManager::scanFolder(self::PLUGIN_PATH) as $folder) {
             $iniPath = self::PLUGIN_PATH . $folder . '/facturascripts.ini';
             $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);
@@ -256,7 +247,7 @@ class PluginManager
 
         $pluginPath = self::PLUGIN_PATH . $pluginName;
         if (is_dir($pluginPath) || is_file($pluginPath)) {
-            $this->fileManager->delTree($pluginPath);
+            FileManager::delTree($pluginPath);
             self::$minilog->info(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
             return true;
         }
