@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +17,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\LineaAlbaranProveedor;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \LineaAlbaranProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class LineaAlbaranProveedorTest extends TestCase
+final class LineaAlbaranProveedorTest extends CustomTest
 {
+
     public function testNewLineaAlbaranProveedor()
     {
         $model = new LineaAlbaranProveedor();
@@ -44,7 +45,7 @@ final class LineaAlbaranProveedorTest extends TestCase
         $this->assertEquals(0.0, $model->pvptotal);
         $this->assertEquals(0.0, $model->pvpunitario);
         $this->assertEquals(0.0, $model->recargo);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

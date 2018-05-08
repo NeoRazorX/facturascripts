@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2018  Carlos García Gómez      <carlos@facturascripts.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,14 +21,14 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Empresa;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \Empresa
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class EmpresaTest extends TestCase
+final class EmpresaTest extends CustomTest
 {
     public function testNewEmpresa()
     {

@@ -118,6 +118,7 @@ class EditCliente extends ExtendedController\PanelController
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
         $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'lines', 'fa-files-o');
 
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);
@@ -159,6 +160,12 @@ class EditCliente extends ExtendedController\PanelController
             case 'ListPresupuestoCliente':
                 $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
+                $view->loadData('', $where, [], 0, $limit);
+                break;
+            case 'ListLineaFacturaCliente':
+                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+                $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
+                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where, [], 0, $limit);
                 break;
         }

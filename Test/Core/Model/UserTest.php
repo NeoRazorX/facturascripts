@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,14 +23,14 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\User;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \User
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class UserTest extends TestCase
+final class UserTest extends CustomTest
 {
     public function testNewUser()
     {
@@ -62,21 +63,6 @@ final class UserTest extends TestCase
         $model = new User();
 
         $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new User();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
     }
 
     public function testAll()

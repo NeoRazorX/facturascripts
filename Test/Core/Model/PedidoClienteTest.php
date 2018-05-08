@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,31 +17,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\PedidoCliente;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \PedidoCliente
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class PedidoClienteTest extends TestCase
+final class PedidoClienteTest extends CustomTest
 {
+
     public function testNewPedidoCliente()
     {
         $model = new PedidoCliente();
 
         $this->assertInstanceOf(PedidoCliente::class, $model);
         $this->assertEquals('', $model->nombrecliente);
-        $this->assertTrue($model->test());
-
-        $model->nombrecliente = 'Test name';
-
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
     }
 
     public function testTable()

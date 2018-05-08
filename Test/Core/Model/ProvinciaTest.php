@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,28 +17,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Provincia;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \Provincia
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class ProvinciaTest extends TestCase
+final class ProvinciaTest extends CustomTest
 {
+
     public function testNewProvincia()
     {
         $model = new Provincia();
 
         $this->assertInstanceOf(Provincia::class, $model);
         $this->assertEquals('', $model->provincia);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->codpais = 'ESP';
         $model->provincia = 'Test name';
 
         $this->assertTrue($model->test());
@@ -62,21 +64,6 @@ final class ProvinciaTest extends TestCase
         $model = new Provincia();
 
         $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Provincia();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
     }
 
     public function testAll()

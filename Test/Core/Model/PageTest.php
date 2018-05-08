@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +17,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Page;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \Page
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class PageTest extends TestCase
+final class PageTest extends CustomTest
 {
+
     public function testNewPage()
     {
         $model = new Page();
@@ -37,8 +38,10 @@ final class PageTest extends TestCase
         $this->assertInstanceOf(Page::class, $model);
         $this->assertTrue($model->showonmenu);
         $this->assertEquals(100, $model->ordernum);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
+        $model->name = $model->newCode();
+        $model->title = $model->name;
         $model->showonmenu = false;
         $model->ordernum = 0;
 

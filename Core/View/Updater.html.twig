@@ -17,6 +17,7 @@
             <div class="col-sm-10 text-right">
                 <h1 style="margin-top: 0px; margin-bottom: 0px;">
                     <i class="fa fa-cloud-download" aria-hidden="true"></i> {{ i18n.trans('updater') }}
+                    <small class="text-info">{{ fsc.getVersion() }}</small>
                 </h1>
             </div>
         </div>
@@ -33,19 +34,23 @@
                     <tbody>
                         {% for item in fsc.updaterItems %}
                             <tr>
-                                <th scope="row">{{ item.id }}</th>
+                                <td>{{ item.id }}</td>
                                 <td>{{ item.description }}</td>
                                 <td class="text-right">
                                     {% if item.downloaded %}
-                                        <a href="{{ fsc.url() }}?action=update" class="btn btn-sm btn-success">
+                                        <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
                                             <i class="fa fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
                                         </a>
                                     {% else %}
-                                        <a href="{{ fsc.url() }}?action=download" class="btn btn-sm btn-secondary">
+                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}" class="btn btn-sm btn-secondary">
                                             <i class="fa fa-cloud-download fa-fw" aria-hidden="true"></i> {{ i18n.trans('download') }}
                                         </a>
                                     {% endif %}
                                 </td>
+                            </tr>
+                        {% else %}
+                            <tr class="table-warning">
+                                <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +17,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Stock;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \Stock
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class StockTest extends TestCase
+final class StockTest extends CustomTest
 {
+
     public function testNewStock()
     {
         $model = new Stock();
@@ -41,11 +42,13 @@ final class StockTest extends TestCase
         $this->assertEquals(0, $model->pterecibir);
         $this->assertEquals(0, $model->stockmin);
         $this->assertEquals(0, $model->stockmax);
-        $this->assertTrue($model->test());
+        $this->assertFalse($model->test());
 
         $model->cantidad = 2;
-        $model->reservada = 1;
+        $model->codalmacen = 'ALG';
         $model->disponible = 1;
+        $model->reservada = 1;
+        $model->referencia = '1';
         $model->stockmin = 1;
         $model->stockmax = 5;
 
