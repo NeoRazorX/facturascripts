@@ -17,10 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\TransferenciaStock;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,61 +29,9 @@ use FacturaScripts\Test\Core\CustomTest;
  */
 final class TransferenciaStockTest extends CustomTest
 {
-    public function testNewTransferenciaStock()
+
+    protected function setUp()
     {
-        $model = new TransferenciaStock();
-
-        $now = new \DateTime();
-        $this->assertInstanceOf(TransferenciaStock::class, $model);
-        $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new TransferenciaStock();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new TransferenciaStock();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new TransferenciaStock();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new TransferenciaStock();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new TransferenciaStock();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new TransferenciaStock();
     }
 }

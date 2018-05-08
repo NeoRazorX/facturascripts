@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Model\Settings;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Model\Settings;
  */
 class AppSettings
 {
+
     /**
      * Array of data settings.
      *
@@ -121,6 +121,7 @@ class AppSettings
     {
         foreach (self::$data as $key => $value) {
             $settings = new Settings();
+            $settings->description = 'default';
             $settings->name = (string) $key;
             $settings->properties = $value;
             $settings->save();

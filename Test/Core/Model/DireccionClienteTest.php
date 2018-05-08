@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\DireccionCliente;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,64 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class DireccionClienteTest extends CustomTest
 {
 
-    public function testNewDireccionCliente()
+    protected function setUp()
     {
-        $model = new DireccionCliente();
-
-        $this->assertInstanceOf(DireccionCliente::class, $model);
-        $now = new \DateTime();
-        $this->assertEquals('Principal', $model->descripcion);
-        $this->assertTrue($model->domenvio);
-        $this->assertTrue($model->domfacturacion);
-        $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new DireccionCliente();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new DireccionCliente();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new DireccionCliente();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new DireccionCliente();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new DireccionCliente();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new DireccionCliente();
     }
 }

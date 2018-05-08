@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Dashboard;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,61 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class DashboardTest extends CustomTest
 {
 
-    public function testNewDashboard()
+    protected function setUp()
     {
-        $model = new Dashboard();
-
-        $this->assertInstanceOf(Dashboard::class, $model);
-        $this->assertEquals('', $model->component);
-        $this->assertEquals('', $model->version);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new Dashboard();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Dashboard();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Dashboard();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Dashboard();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Dashboard();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Dashboard();
     }
 }

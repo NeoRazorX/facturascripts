@@ -14,6 +14,7 @@
     <column>
         <name>descripcion</name>
         <type>character varying(255)</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>cuentasesp_pkey</name>

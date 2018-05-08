@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\CuentaBancoProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,61 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class CuentaBancoProveedorTest extends CustomTest
 {
 
-    public function testNewCuentaBancoProveedor()
+    protected function setUp()
     {
-        $model = new CuentaBancoProveedor();
-
-        $this->assertInstanceOf(CuentaBancoProveedor::class, $model);
-        $this->assertEquals('', $model->codproveedor);
-        $this->assertTrue($model->principal);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new CuentaBancoProveedor();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new CuentaBancoProveedor();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new CuentaBancoProveedor();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new CuentaBancoProveedor();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new CuentaBancoProveedor();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new CuentaBancoProveedor();
     }
 }

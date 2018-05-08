@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\AtributoValor;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,66 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class AtributoValorTest extends CustomTest
 {
 
-    public function testNewAtributoValor()
+    protected function setUp()
     {
-        $model = new AtributoValor();
-
-        $this->assertInstanceOf(AtributoValor::class, $model);
-        $this->assertNull($model->codatributo);
-        $this->assertNull($model->valor);
-        $this->assertFalse($model->test());
-
-        $model->codatributo = 'Test name';
-        $model->valor = 'ALG';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new AtributoValor();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new AtributoValor();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new AtributoValor();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new AtributoValor();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new AtributoValor();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new AtributoValor();
     }
 }

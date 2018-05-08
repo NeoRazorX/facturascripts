@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,50 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class ProvinciaTest extends CustomTest
 {
 
-    public function testNewProvincia()
+    protected function setUp()
     {
-        $model = new Provincia();
-
-        $this->assertInstanceOf(Provincia::class, $model);
-        $this->assertEquals('', $model->provincia);
-        $this->assertFalse($model->test());
-
-        $model->codpais = 'ESP';
-        $model->provincia = 'Test name';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new Provincia();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Provincia();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Provincia();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testAll()
-    {
-        $model = new Provincia();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Provincia();
     }
 }

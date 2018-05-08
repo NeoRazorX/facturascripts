@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\ArticuloProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,69 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class ArticuloProveedorTest extends CustomTest
 {
 
-    public function testNewArticuloProveedor()
+    protected function setUp()
     {
-        $model = new ArticuloProveedor();
-
-        $this->assertInstanceOf(ArticuloProveedor::class, $model);
-        $this->assertEquals(0.0, $model->precio);
-        $this->assertEquals(0.0, $model->dto);
-        $this->assertFalse($model->test());
-
-        $model->codproveedor = 'PROV1';
-        $model->referencia = 'REF1PROV1';
-        $model->refproveedor = 'REF1PROV1';
-        $model->precio = 123.45;
-        $model->dto = 12.34;
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new ArticuloProveedor();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new ArticuloProveedor();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new ArticuloProveedor();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new ArticuloProveedor();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new ArticuloProveedor();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new ArticuloProveedor();
     }
 }
