@@ -96,6 +96,7 @@ final class RegularizacionImpuestoTest extends CustomTest
         } else {
             $this->assertSame([], $list);
         }
+    }
 
     protected function setUp()
     {
