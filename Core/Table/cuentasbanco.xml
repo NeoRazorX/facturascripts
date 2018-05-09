@@ -13,6 +13,7 @@
     <column>
         <name>descripcion</name>
         <type>character varying(100)</type>
+        <null>NO</null>
     </column>
     <column>
         <name>iban</name>

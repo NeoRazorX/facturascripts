@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,66 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class ContactoTest extends CustomTest
 {
 
-    public function testNewContacto()
+    protected function setUp()
     {
-        $model = new Contacto();
-
-        $this->assertInstanceOf(Contacto::class, $model);
-        $this->assertFalse($model->admitemarketing);
-        $this->assertFalse($model->test());
-
-        $model->nombre = 'Contact name';
-        $model->apellidos = 'Contact surname';
-        $model->email = 'pepe@gmail.com';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new Contacto();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Contacto();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Contacto();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Contacto();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Contacto();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Contacto();
     }
 }

@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\LineaFacturaProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,68 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class LineaFacturaProveedorTest extends CustomTest
 {
 
-    public function testNewLineaFacturaProveedor()
+    protected function setUp()
     {
-        $model = new LineaFacturaProveedor();
-
-        $this->assertInstanceOf(LineaFacturaProveedor::class, $model);
-        $this->assertEquals(0.0, $model->cantidad);
-        $this->assertEquals('', $model->descripcion);
-        $this->assertEquals(0.0, $model->dtopor);
-        $this->assertEquals(0.0, $model->irpf);
-        $this->assertEquals(0.0, $model->iva);
-        $this->assertEquals(0.0, $model->pvpsindto);
-        $this->assertEquals(0.0, $model->pvptotal);
-        $this->assertEquals(0.0, $model->pvpunitario);
-        $this->assertEquals(0.0, $model->recargo);
-        $this->assertFalse($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new LineaFacturaProveedor();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new LineaFacturaProveedor();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new LineaFacturaProveedor();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new LineaFacturaProveedor();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new LineaFacturaProveedor();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new LineaFacturaProveedor();
     }
 }

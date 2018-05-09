@@ -19,7 +19,6 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\RegularizacionStock;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,69 +30,8 @@ use FacturaScripts\Test\Core\CustomTest;
 final class RegularizacionStockTest extends CustomTest
 {
 
-    public function testNewRegularizacionStock()
+    protected function setUp()
     {
-        $model = new RegularizacionStock();
-
-        $now = new \DateTime();
-        $this->assertInstanceOf(RegularizacionStock::class, $model);
-        $this->assertEquals(0, $model->cantidadini);
-        $this->assertEquals(0, $model->cantidadfin);
-        $this->assertEquals($now->format('d-m-Y'), $model->fecha);
-        $this->assertEquals('', $model->motivo);
-        $this->assertFalse($model->test());
-
-        $model->idstock = 1;
-        $model->motivo = 'Test reason';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new RegularizacionStock();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new RegularizacionStock();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new RegularizacionStock();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new RegularizacionStock();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new RegularizacionStock();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new RegularizacionStock();
     }
 }

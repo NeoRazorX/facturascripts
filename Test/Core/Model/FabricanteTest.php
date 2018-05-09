@@ -17,10 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Fabricante;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -31,65 +29,9 @@ use FacturaScripts\Test\Core\CustomTest;
  */
 final class FabricanteTest extends CustomTest
 {
-    public function testNewFabricante()
+
+    protected function setUp()
     {
-        $model = new Fabricante();
-
-        $this->assertInstanceOf(Fabricante::class, $model);
-        $this->assertEquals('', $model->nombre);
-        $this->assertFalse($model->test());
-
-        $model->nombre = 'Test name';
-        $model->codfabricante = 'COD1';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new Fabricante();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Fabricante();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Fabricante();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Fabricante();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Fabricante();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Fabricante();
     }
 }
