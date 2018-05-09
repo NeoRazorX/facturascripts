@@ -49,13 +49,10 @@
                 },
                 callback: function (result) {
                     if (result) {
-                       execActionForm(pluginName);
+                       window.location = "{{fsc.url()}}?action=remove"+"\u0026"+"plugin=" + pluginName;
                     }
                 }
             });
-        }
-        function execActionForm(pluginName) {
-            window.location = "{{fsc.url()}}?action=remove"+"\u0026"+"plugin=" + pluginName;
         }
     </script>
 {% endblock %}
