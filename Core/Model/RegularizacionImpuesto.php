@@ -138,40 +138,6 @@ class RegularizacionImpuesto extends Base\ModelClass
         return $this->codejercicio . ' - ' . $this->periodo;
     }
 
-    public function clear()
-    {
-        parent::clear();
-
-        // Search open exercise for current date
-        $exerciseModel = new Ejercicio();
-        $exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false);
-        $this->codejercicio = $exercise->codejercicio;
-        $this->periodo = 'T1';
-
-        $period = $this->getPeriod($this->periodo, $exercise->fechainicio, false);
-        $this->fechainicio = $period['start'];
-        $this->fechafin = $period['end'];
-
-        $account = new Subcuenta();
-        $where1 = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuentaesp', 'IVAACR')
-        ];
-        if ($account->loadFromCode(null, $where1)) {
-            $this->idsubcuentaacreedora = $account->idsubcuenta;
-            $this->codsubcuentaacreedora = $account->codsubcuenta;
-        }
-
-        $where2 = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuentaesp', 'IVADEU')
-        ];
-        if ($account->loadFromCode(null, $where2)) {
-            $this->idsubcuentadeudora = $account->idsubcuenta;
-            $this->codsubcuentadeudora = $account->codsubcuenta;
-        }
-    }
-
     /**
      * Returns the items per accounting entry.
      *
@@ -238,6 +204,14 @@ class RegularizacionImpuesto extends Base\ModelClass
         return false;
     }
 
+    /**
+     * Calculate Period data
+     *
+     * @param string $period
+     * @param date|null $date
+     * @param bool $add
+     * @return array
+     */
     private function getPeriod($period, $date = null, $add = false): array
     {
         /// Calculate next period
@@ -281,44 +255,92 @@ class RegularizacionImpuesto extends Base\ModelClass
         return $result;
     }
 
+    /**
+     * Load data from previous regularization for period
+     */
     public function loadNextPeriod()
     {
+        /// Search for current exercise
+        $exercise = Ejercicio::getByFecha(date('d-m-Y'), true, false);
+
+        /// If we do not have the exercise we take from the current date
+        if (empty($this->codejercicio)) {
+            $this->codejercicio = $exercise->codejercicio;
+        }
+
+        /// Look for the data of the last regularization
         $where = [ new DataBaseWhere('codejercicio', $this->codejercicio) ];
         $regularization = new self();
-        $regularization->loadFromCode(null, $where, [ 'periodo' => 'DESC' ]);
-        if (empty($regularization->codejercicio)) {
+        if ($regularization->loadFromCode(null, $where, [ 'periodo' => 'DESC' ])) {
+            /// Load next period regularization values
+            $period = $this->getPeriod($regularization->periodo, $regularization->fechainicio, true);
+            $this->periodo = $period['period'];
+            $this->fechainicio = $period['start'];
+            $this->fechafin = $period['end'];
+            $this->idsubcuentaacreedora = $regularization->idsubcuentaacreedora;
+            $this->codsubcuentaacreedora = $regularization->codsubcuentaacreedora;
+            $this->idsubcuentadeudora = $regularization->idsubcuentadeudora;
+            $this->codsubcuentadeudora = $regularization->codsubcuentadeudora;
             return;
         }
 
-        /// Load next period regularization values
-        $exercise = new Ejercicio();
-        $exercise->loadFromCode($regularization->codejercicio);
-        $period = $this->getPeriod($regularization->periodo, $exercise->fechainicio, true);
-
-        $this->codejercicio = $exercise->codejercicio;
+        /// Load data from current exercise
+        $period = $this->getPeriod('T1', $exercise->fechainicio, false);
         $this->periodo = $period['period'];
         $this->fechainicio = $period['start'];
         $this->fechafin = $period['end'];
-        $this->idsubcuentaacreedora = $regularization->idsubcuentaacreedora;
-        $this->codsubcuentaacreedora = $regularization->codsubcuentaacreedora;
-        $this->idsubcuentadeudora = $regularization->idsubcuentadeudora;
-        $this->codsubcuentadeudora = $regularization->codsubcuentadeudora;
+
+        $account = new Subcuenta();
+        $where1 = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codcuentaesp', 'IVAACR')
+        ];
+        if ($account->loadFromCode(null, $where1)) {
+            $this->idsubcuentaacreedora = $account->idsubcuenta;
+            $this->codsubcuentaacreedora = $account->codsubcuenta;
+        }
+
+        $where2 = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codcuentaesp', 'IVADEU')
+        ];
+        if ($account->loadFromCode(null, $where2)) {
+            $this->idsubcuentadeudora = $account->idsubcuenta;
+            $this->codsubcuentadeudora = $account->codsubcuenta;
+        }
+        return;
     }
 
+    /**
+     * Returns true if there are no errors in the values of the model properties.
+     * It runs inside the save method.
+     *
+     * @return bool
+     */
     public function test()
     {
         if (!parent::test()) {
             return false;
         }
 
-        /// Calculate dates to selected period
-        $exercise = new Ejercicio();
-        $exercise->loadFromCode($this->codejercicio);
-        $period = $this->getPeriod($this->periodo, $exercise->fechainicio, false);
+        if (!empty($this->codejercicio)) {
+            /// Calculate dates to selected period
+            $exercise = new Ejercicio();
+            $exercise->loadFromCode($this->codejercicio);
+            $period = $this->getPeriod($this->periodo, $exercise->fechainicio, false);
 
-        $this->fechainicio = $period['start'];
-        $this->fechafin = $period['end'];
+            $this->fechainicio = $period['start'];
+            $this->fechafin = $period['end'];
 
+            /// Calculate Id Accounts
+            $account = new Subcuenta();
+            $account->codejercicio = $this->codejercicio;
+            $account->codsubcuenta = $this->codsubcuentaacreedora;
+            $this->idsubcuentaacreedora = $account->getIdAccount();
+
+            $account->codsubcuenta = $this->codsubcuentadeudora;
+            $this->idsubcuentadeudora = $account->getIdAccount();
+        }
         return true;
     }
 }

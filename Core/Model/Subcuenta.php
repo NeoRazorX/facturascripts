@@ -177,7 +177,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return int
      */
-    private function getIdAccount(): int
+    public function getIdAccount(): int
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),

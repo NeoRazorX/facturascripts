@@ -157,7 +157,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool|Ejercicio
      */
-    public function getByFecha($fecha, $soloAbierto = true, $crear = true)
+    public static function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
         $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE ' . self::$dataBase->var2str($fecha) . ' BETWEEN fechainicio AND fechafin;';

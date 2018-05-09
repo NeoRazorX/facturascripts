@@ -100,9 +100,6 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             case 'EditRegularizacionImpuesto':
                 $code = $this->request->get('code');
                 $view->loadData($code);
-                if ($view->count === 0) {
-                    $view->model->loadNextPeriod();
-                }
                 break;
 
             case 'ListPartida':
@@ -186,6 +183,24 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
 
             default:
                 return parent::execPreviousAction($action);
+        }
+    }
+
+    /**
+     * Run the controller after actions.
+     *
+     * @param string $action
+     */
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'insert':
+                /// Load default values for new record
+                $this->views['EditRegularizacionImpuesto']->model->loadNextPeriod();
+                break;
+
+            default:
+                parent::execAfterAction($action);
         }
     }
 
