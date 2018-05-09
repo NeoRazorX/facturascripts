@@ -672,7 +672,7 @@
     "attached-file": "Attached file",
     "file-name": "File name",
     "full-path": "Full path",
-    "uploaded-at" : "Uploaded at",
+    "uploaded-at": "Uploaded at",
     "hash": "Hash",
     "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
     "vat-regularization": "VAT Regularization",
