@@ -19,19 +19,19 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\RegularizacionImpuestos;
+use FacturaScripts\Core\Model\RegularizacionImpuesto;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RegularizacionImpuestos
+ * @covers \RegularizacionImpuesto
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class RegularizacionImpuestosTest extends CustomTest
+final class RegularizacionImpuestoTest extends CustomTest
 {
 
     protected function setUp()
     {
-        $this->model = new RegularizacionImpuestos();
+        $this->model = new RegularizacionImpuesto();
     }
 }

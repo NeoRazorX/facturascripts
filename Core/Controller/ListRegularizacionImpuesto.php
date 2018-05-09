@@ -10,23 +10,23 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to list the items in the Impuesto model
+ * Controller to list the items in the RegularizacionImpuesto model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListImpuesto extends ExtendedController\ListController
+class ListRegularizacionImpuesto extends ExtendedController\ListController
 {
 
     /**
@@ -39,8 +39,8 @@ class ListImpuesto extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['menu'] = 'accounting';
         $pagedata['submenu'] = 'taxes';
-        $pagedata['title'] = 'taxes';
-        $pagedata['icon'] = 'fa-plus-square-o';
+        $pagedata['title'] = 'vat-regularization';
+        $pagedata['icon'] = 'fa-map-signs';
 
         return $pagedata;
     }
@@ -50,10 +50,10 @@ class ListImpuesto extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListImpuesto', 'Impuesto');
-        $this->addSearchFields('ListImpuesto', ['descripcion', 'codimpuesto']);
+        $this->addView('ListRegularizacionImpuesto', 'RegularizacionImpuesto');
+        $this->addSearchFields('ListRegularizacionImpuesto', ['periodo', 'fechainicio']);
 
-        $this->addOrderBy('ListImpuesto', 'codimpuesto', 'code');
-        $this->addOrderBy('ListImpuesto', 'descripcion', 'description');
+        $this->addOrderBy('ListRegularizacionImpuesto', 'codejercicio||periodo', 'period');
+        $this->addOrderBy('ListRegularizacionImpuesto', 'fechainicio', 'start-date');
     }
 }

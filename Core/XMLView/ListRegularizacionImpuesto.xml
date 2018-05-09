@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller ListRegularizacionImpuesto
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <column name="id" order="100" display="none">
+            <widget type="text" fieldname="idregularizacion" onclick="EditRegularizacionImpuesto" />
+        </column>
+        <column name="fiscal-exercise" order="100">
+            <widget type="text" fieldname="codejercicio" />
+        </column>
+        <column name="period" order="110">
+            <widget type="select" fieldname="periodo">
+                <values title="first-trimester">T1</values>
+                <values title="second-trimester">T2</values>
+                <values title="third-trimester">T3</values>
+                <values title="fourth-trimester">T4</values>
+            </widget>
+        </column>
+        <column name="start-date" order="120">
+            <widget type="text" fieldname="fechainicio" />
+        </column>
+        <column name="end-date" order="130">
+            <widget type="text" fieldname="fechafin" />
+        </column>
+        <column name="id-accounting" title="accounting-entry" order="140">
+            <widget type="select" fieldname="idasiento" onclick="EditAsiento">
+                <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
+            </widget>
+        </column>
+        <column name="accounting-date" order="150">
+            <widget type="text" fieldname="fechaasiento" />
+        </column>
+    </columns>
+</view>

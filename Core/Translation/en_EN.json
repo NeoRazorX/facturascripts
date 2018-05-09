@@ -672,7 +672,7 @@
     "attached-file": "Attached file",
     "file-name": "File name",
     "full-path": "Full path",
-    "uploaded-at" : "Uploaded at",
+    "uploaded-at": "Uploaded at",
     "hash": "Hash",
     "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
     "vat-regularization": "VAT Regularization",
@@ -711,5 +711,10 @@
     "bcc": "BCC",
     "email-to": "Email To",
     "email-cc": "Email Carbon Copy",
-    "email-bcc": "Email Blind Carbon Copy"
+    "email-bcc": "Email Blind Carbon Copy",
+    "summary": "Summary",
+    "create-accounting-entry": "Create Accounting Entry",
+    "hint-create-accounting-entry": "Create the accounting entry for the regularization of the taxes of the period",
+    "previous-balance": "Previous Balance",
+    "result": "Result"
 }
