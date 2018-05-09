@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Lib\FileManager;
+use FacturaScripts\Core\Base\FileManager;
 use ZipArchive;
 
 /**
@@ -220,8 +220,8 @@ class PluginManager
     public function installedPlugins(): array
     {
         $plugins = [];
-        
-        foreach (FileManager::scanFolders(self::PLUGIN_PATH, false) as $folder) {
+
+        foreach (FileManager::scanFolder(self::PLUGIN_PATH, false) as $folder) {
             $iniPath = self::PLUGIN_PATH . $folder . '/facturascripts.ini';
             $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);

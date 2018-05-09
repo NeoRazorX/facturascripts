@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
+use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Lib\FileManager;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
 
@@ -77,7 +77,7 @@ class Updater extends Controller
         parent::privateCore($response, $user, $permissions);
 
         /// Folders writables?
-        $folders = FileManager::notWritablefolders();
+        $folders = FileManager::notWritableFolders();
         if (!empty($folders)) {
             $this->miniLog->alert($this->i18n->trans('folder-not-writable'));
             foreach ($folders as $folder) {
@@ -99,10 +99,10 @@ class Updater extends Controller
     {
         $idItem = $this->request->get('item', '');
         foreach ($this->updaterItems as $key => $item) {
-            if($item['id'] != $idItem) {
+            if ($item['id'] != $idItem) {
                 continue;
             }
-            
+
             if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
                 unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename']);
             }
