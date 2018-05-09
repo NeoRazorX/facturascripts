@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,8 @@ if (__DIR__ === '/home/scrutinizer/build/Test') {
 } elseif (strpos(__DIR__, '/home/travis/build/') !== false) {
     echo 'Executing on travis ...' . "\n\n";
     $config = FS_FOLDER . '/Test/config-travis.php';
+} elseif (!file_exists($config)) {
+    die($config . " not found!\n");
 }
 
 echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.' . "\n";
@@ -43,3 +45,7 @@ echo "\n" . 'Host: ' . FS_DB_HOST;
 echo "\n" . 'Database: ' . FS_DB_NAME;
 echo "\n" . 'User: ' . FS_DB_USER;
 echo "\n" . 'Pass: ' . FS_DB_PASS . "\n\n";
+
+/// clean cache
+$cache = new FacturaScripts\Core\Base\Cache();
+$cache->clear();

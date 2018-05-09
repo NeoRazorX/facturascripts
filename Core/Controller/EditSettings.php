@@ -201,7 +201,7 @@ class EditSettings extends ExtendedController\PanelController
 
         $model = $view->getModel();
         if ($model->name === null) {
-            $model->name = strtolower(substr($viewName, 8));
+            $model->description = $model->name = strtolower(substr($viewName, 8));
             $model->save();
         }
     }

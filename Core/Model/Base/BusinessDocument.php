@@ -366,6 +366,10 @@ abstract class BusinessDocument extends ModelClass
      */
     public function save()
     {
+        if (is_null($this->codigo)) {
+            $this->newCodigo();
+        }
+
         if ($this->test()) {
             if ($this->exists()) {
                 return $this->checkState() ? $this->saveUpdate() : false;
@@ -422,10 +426,6 @@ abstract class BusinessDocument extends ModelClass
         $estadoDoc = new EstadoDocumento();
         if ($estadoDoc->loadFromCode($this->idestado)) {
             $this->editable = $estadoDoc->editable;
-        }
-
-        if (is_null($this->codigo)) {
-            $this->newCodigo();
         }
 
         return parent::test();
