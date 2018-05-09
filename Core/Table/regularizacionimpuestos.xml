@@ -51,12 +51,12 @@
     <column>
         <name>idasiento</name>
         <type>integer</type>
-        <null>NO</null>
+        <null>YES</null>
     </column>
     <column>
         <name>fechaasiento</name>
         <type>date</type>
-        <null>NO</null>
+        <null>YES</null>
     </column>
     <constraint>
         <name>regularizacionimpuestos_pkey</name>

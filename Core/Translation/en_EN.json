@@ -712,8 +712,9 @@
     "email-to": "Email To",
     "email-cc": "Email Carbon Copy",
     "email-bcc": "Email Blind Carbon Copy",
-    "delete-plugin": "Delete plugins",
-    "you-will-remove-this-plugin": "You will remove this plugin",
-    "are-you-sure?": "Are you sure?",
-    "are-you-sure-plugin": "You will delete %pluginName% plugin. Are you sure?"
+    "summary": "Summary",
+    "create-accounting-entry": "Create Accounting Entry",
+    "hint-create-accounting-entry": "Create the accounting entry for the regularization of the taxes of the period",
+    "previous-balance": "Previous Balance",
+    "result": "Result"
 }

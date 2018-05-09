@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller EditRegularizacionImpuesto
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <group name="period" title="period" numcolumns="8" icon="fa-calendar">
+            <column name="id" order="100" display="none">
+                <widget type="text" fieldname="idregularizacion" />
+            </column>
+            <column name="fiscal-exercise" order="100">
+                <widget type="select" fieldname="codejercicio" required="true">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="period" order="110">
+                <widget type="select" fieldname="periodo" required="true">
+                    <values title="first-trimester">T1</values>
+                    <values title="second-trimester">T2</values>
+                    <values title="third-trimester">T3</values>
+                    <values title="fourth-trimester">T4</values>
+                </widget>
+            </column>
+            <column name="start-date" order="120">
+                <widget type="datepicker" fieldname="fechainicio" readonly="true" />
+            </column>
+            <column name="end-date" order="130">
+                <widget type="datepicker" fieldname="fechafin" readonly="true" />
+            </column>
+        </group>
+
+        <group name="space" numcolumns="1"></group>
+
+        <group name="accounting" title="accounting-entry" icon="fa-book">
+            <column name="accounting-date" order="200">
+                <widget type="text" fieldname="fechaasiento" readonly="true" />
+            </column>
+        </group>
+        <group name="accounts" title="accounts" numcolumns="8" icon="fa-th-list">
+            <column name="tax-credit-account" order="300">
+                <widget type="autocomplete" fieldname="codsubcuentaacreedora" required="true">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="tax-debit-account" order="310">
+                <widget type="autocomplete" fieldname="codsubcuentadeudora" required="true">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
+    </columns>
+</view>

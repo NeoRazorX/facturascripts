@@ -119,7 +119,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
          * We block closed exercise accounting entry or within regularizations.
          */
         $eje0 = new Ejercicio();
-        $regiva0 = new RegularizacionImpuestos();
+        $regiva0 = new RegularizacionImpuesto();
         foreach ($eje0->all() as $ej) {
             if ($ej instanceof Ejercicio && $ej->abierto()) {
                 foreach ($regiva0->all([new DataBase\DataBaseWhere('codejercicio', $ej->codejercicio)]) as $reg) {
@@ -154,7 +154,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
         }
 
         /// TODO: Check if accounting entry have VAT Accounts
-        $regularization = new RegularizacionImpuestos();
+        $regularization = new RegularizacionImpuesto();
         if ($regularization->getFechaInside($this->fecha)) {
             self::$miniLog->alert(self::$i18n->trans('acounting-within-regularization', ['%tax%' => FS_IVA]));
             return false;
