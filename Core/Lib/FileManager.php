@@ -45,19 +45,6 @@ class FileManager
     }
 
     /**
-     * Returns an array with all files and folders.
-     *
-     * @param string $folderPath
-     *
-     * @return array
-     */
-    public static function scanFolder(string $folderPath): array
-    {
-        $scan = scandir($folderPath, SCANDIR_SORT_ASCENDING);
-        return is_array($scan) ? array_diff($scan, ['.', '..']) : [];
-    }
-
-    /**
      * Makes a recursive scan in folders inside a root folder and extracts the list of files
      * and pass its to an array as result.
      * 

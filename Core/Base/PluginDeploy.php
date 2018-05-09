@@ -73,7 +73,7 @@ class PluginDeploy
         $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
-                FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
+                $this->cleanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
             }
 
             $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
@@ -134,6 +134,31 @@ class PluginDeploy
             $appSettings->set('default', 'homepage', 'AdminPlugins');
             $appSettings->save();
         }
+    }
+
+    /**
+     * Delete the $folder and its files.
+     *
+     * @param string $folder
+     *
+     * @return bool
+     */
+    private function cleanFolder(string $folder): bool
+    {
+        $done = true;
+        if (file_exists($folder)) {
+            /// Comprobamos los archivos que no son '.' ni '..'
+            $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
+            /// Ahora recorremos y eliminamos lo que encontramos
+            foreach ($items as $item) {
+                if (is_dir($folder . DIRECTORY_SEPARATOR . $item)) {
+                    $done = $this->cleanFolder($folder . DIRECTORY_SEPARATOR . $item . DIRECTORY_SEPARATOR);
+                } else {
+                    $done = unlink($folder . DIRECTORY_SEPARATOR . $item);
+                }
+            }
+        }
+        return $done;
     }
 
     /**
@@ -247,5 +272,4 @@ class PluginDeploy
         copy($filePath, $path);
         $this->fileList[$folder][$fileName] = $fileName;
     }
-
 }
