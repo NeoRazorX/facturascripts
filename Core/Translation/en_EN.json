@@ -672,7 +672,7 @@
     "attached-file": "Attached file",
     "file-name": "File name",
     "full-path": "Full path",
-    "uploaded-at" : "Uploaded at",
+    "uploaded-at": "Uploaded at",
     "hash": "Hash",
     "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
     "vat-regularization": "VAT Regularization",
@@ -711,5 +711,9 @@
     "bcc": "BCC",
     "email-to": "Email To",
     "email-cc": "Email Carbon Copy",
-    "email-bcc": "Email Blind Carbon Copy"
+    "email-bcc": "Email Blind Carbon Copy",
+    "delete-plugin": "Delete plugins",
+    "you-will-remove-this-plugin": "You will remove this plugin",
+    "are-you-sure?": "Are you sure?",
+    "are-you-sure-plugin": "You will delete %pluginName% plugin. Are you sure?"
 }

@@ -1338,5 +1338,7 @@
     "bcc": "CCO",
     "email-to": "Email para",
     "email-cc": "Email Con Copia",
-    "email-bcc": "Email Con Copia Oculta"
+    "email-bcc": "Email Con Copia Oculta",
+    "you-will-remove-this-plugin": "Usted eliminará el plugin seleccionado",
+    "are-you-sure?": "¿Estás seguro?"
 }
