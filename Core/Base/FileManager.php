@@ -38,6 +38,10 @@ class FileManager
      */
     public static function delTree(string $folder): bool
     {
+        if (!file_exists($folder)) {
+            return true;
+        }
+
         $files = is_dir($folder) ? static::scanFolder($folder) : [];
         foreach ($files as $file) {
             $path = $folder . DIRECTORY_SEPARATOR . $file;
@@ -114,7 +118,7 @@ class FileManager
                 continue;
             }
             $result[] = $item;
-            foreach (static::scanFolder($newItem, false) as $item2) {
+            foreach (static::scanFolder($newItem, true) as $item2) {
                 $result[] = $item . DIRECTORY_SEPARATOR . $item2;
             }
         }
