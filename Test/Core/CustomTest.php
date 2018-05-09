@@ -64,9 +64,12 @@ class CustomTest extends TestCase
 
     public function testInstall()
     {
-        $this->assertInternalType(
-            'string', $this->model->install()
-        );
+        $install = $this->model->install();
+        $this->assertInternalType('string', $install);
+
+        if (strlen($install) > 0) {
+            $this->assertNotEmpty($this->model->all());
+        }
     }
 
     public function testUrl()
