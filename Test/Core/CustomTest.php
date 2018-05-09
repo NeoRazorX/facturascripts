@@ -79,12 +79,6 @@ class CustomTest extends TestCase
         );
     }
 
-    public function testClear()
-    {
-        $this->model->clear();
-        $this->assertFalse($this->model->test());
-    }
-
     public function testExists()
     {
         $this->model->clear();

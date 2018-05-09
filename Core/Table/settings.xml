@@ -21,7 +21,6 @@
     <column>
         <name>description</name>
         <type>text</type>
-        <null>NO</null>
     </column>
     <column>
         <name>properties</name>
