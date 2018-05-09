@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Base;
 
 use Exception;
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\FileManager;
 
 /**
  * Description of PluginDeploy
@@ -101,7 +102,7 @@ class PluginDeploy
         $menuManager->init();
         $pageNames = [];
 
-        $files = $this->scanFolders(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
+        $files = FileManager::scanFolders(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
         foreach ($files as $fileName) {
             if (substr($fileName, -4) !== '.php') {
                 continue;
@@ -148,7 +149,6 @@ class PluginDeploy
         if (file_exists($folder)) {
             /// Comprobamos los archivos que no son '.' ni '..'
             $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
-
             /// Ahora recorremos y eliminamos lo que encontramos
             foreach ($items as $item) {
                 if (is_dir($folder . DIRECTORY_SEPARATOR . $item)) {
@@ -158,7 +158,6 @@ class PluginDeploy
                 }
             }
         }
-
         return $done;
     }
 
@@ -203,8 +202,8 @@ class PluginDeploy
     {
         $path = FS_FOLDER . DIRECTORY_SEPARATOR . $place;
         $path .= empty($pluginName) ? DIRECTORY_SEPARATOR . $folder : DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . $folder;
-
-        foreach ($this->scanFolders($path) as $fileName) {
+        
+        foreach (FileManager::scanFolders($path) as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
                 $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
@@ -272,42 +271,5 @@ class PluginDeploy
         $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName;
         copy($filePath, $path);
         $this->fileList[$folder][$fileName] = $fileName;
-    }
-
-    /**
-     * Makes a recursive scan in folders inside a root folder and extracts the list of files
-     * and pass its to an array as result.
-     * 
-     * @param string $folder
-     * @param bool   $recursive
-     *
-     * @return array
-     */
-    private function scanFolders(string $folder, bool $recursive = true): array
-    {
-        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
-        if (!is_array($scan)) {
-            return [];
-        }
-
-        $rootFolder = array_diff($scan, ['.', '..']);
-        if (!$recursive) {
-            return $rootFolder;
-        }
-
-        $result = [];
-        foreach ($rootFolder as $item) {
-            $newItem = $folder . DIRECTORY_SEPARATOR . $item;
-            if (is_file($newItem)) {
-                $result[] = $item;
-                continue;
-            }
-            $result[] = $item;
-            foreach ($this->scanFolders($newItem) as $item2) {
-                $result[] = $item . DIRECTORY_SEPARATOR . $item2;
-            }
-        }
-
-        return $result;
     }
 }
