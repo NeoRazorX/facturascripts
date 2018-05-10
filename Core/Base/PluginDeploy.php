@@ -79,7 +79,7 @@ class PluginDeploy
             $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
 
             /// examine the plugins
-            foreach ($enabledPlugins as $pluginName) {
+            foreach (array_reverse($enabledPlugins) as $pluginName) {
                 if (file_exists($pluginPath . $pluginName . DIRECTORY_SEPARATOR . $folder)) {
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
