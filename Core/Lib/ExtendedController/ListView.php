@@ -306,6 +306,31 @@ class ListView extends BaseView implements DataViewInterface
         return [$orderby[0] => $orderby[1]];
     }
 
+    public function getURL(string $type)
+    {
+        if (empty($this->where)) {
+            return parent::getURL($type);
+        }
+
+        $extra = '';
+        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+            $extra .= ('' === $extra) ? '?' : '&';
+            $extra .= $field . '=' . $value;
+        }
+
+        switch ($type) {
+            case 'list':
+                return parent::getURL($type) . $extra;
+
+            case 'new':
+                $extra .= ('' === $extra) ? '?action=insert' : '&action=insert';
+                return parent::getURL($type) . $extra;
+
+            default:
+                return parent::getURL($type);
+        }
+    }
+
     /**
      * Load the data in the cursor property, according to the where filter specified.
      *

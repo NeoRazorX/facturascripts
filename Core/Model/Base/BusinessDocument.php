@@ -239,6 +239,11 @@ abstract class BusinessDocument extends ModelClass
     abstract public function setSubject($subjects);
 
     /**
+     * Updates subjects data in this document.
+     */
+    abstract public function updateSubject();
+
+    /**
      * 
      * @param array $data
      */
