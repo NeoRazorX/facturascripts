@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Base;
 
 /**
  * Class to manage the actions with folders and files
- * 
+ *
  * @package FacturaScripts\Core\Base
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -53,7 +53,7 @@ class FileManager
 
     /**
      * Returns an array with all not writable folders.
-     * 
+     *
      * @return array
      */
     public static function notWritableFolders(): array
@@ -70,7 +70,7 @@ class FileManager
 
     /**
      * Copy all files and folders from $src to $dst
-     * 
+     *
      * @param string $src
      * @param string $dst
      */
@@ -92,7 +92,7 @@ class FileManager
 
     /**
      * Returns an array with files and folders inside given $folder
-     * 
+     *
      * @param string $folder
      * @param bool   $recursive
      *
