@@ -1340,5 +1340,10 @@
     "email-cc": "Email Con Copia",
     "email-bcc": "Email Con Copia Oculta",
     "you-will-remove-this-plugin": "Usted eliminará el plugin seleccionado",
-    "are-you-sure?": "¿Estás seguro?"
+    "are-you-sure?": "¿Estás seguro?",
+    "summary": "Resumen",
+    "create-accounting-entry": "Crear Asiento Contable",
+    "hint-create-accounting-entry": "Crear el asiento contable para la regularización de impuestos del periodo",
+    "previous-balance": "Balance anterior",
+    "result": "Resultado"
 }
