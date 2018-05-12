@@ -716,5 +716,17 @@
     "create-accounting-entry": "Create Accounting Entry",
     "hint-create-accounting-entry": "Create the accounting entry for the regularization of the taxes of the period",
     "previous-balance": "Previous Balance",
-    "result": "Result"
+    "result": "Result",
+    "January":"January",
+    "February":"February",
+    "March":"March",
+    "April":"April",
+    "May":"May",
+    "June":"June",
+    "July":"July",
+    "August":"August",
+    "September":"September",
+    "October":"October",
+    "November":"November",
+    "December":"December"
 }
