@@ -33,44 +33,66 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $object;
 
-    /**
-     * @covers \FacturaScripts\Core\Base\FileManager::getFrom
-     */
-    public function testGetFrom()
+
+    public function testCreateWritableFolder()
     {
-        $this->assertNotEmpty($this->object->getFrom(\FS_FOLDER));
+        $this::assertTrue(
+            @mkdir(\FS_FOLDER . '/MyFiles/TestWritable/Test1/Test2/Test3', 0775, true),
+            'Recursive folder creation fails.'
+        );
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::getFilesFrom
+     * @covers \FacturaScripts\Core\Base\FileManager::recurseCopy
      */
-    public function testGetFilesFrom()
+    public function testRecurseCopy()
     {
-        $this->assertNotEmpty($this->object->getFrom(\FS_FOLDER . '/MyFiles'));
+        $this->object::recurseCopy(\FS_FOLDER . '/MyFiles/TestWritable', \FS_FOLDER . '/MyFiles/TestWritable2');
+    }
+
+    public function testCreateNonWriteableFolder()
+    {
+        $this::assertFalse(
+            @mkdir(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1/Test2/Test3', 0555, true),
+            'Recursive folder creation fails.'
+        );
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::getAllFrom
+     * @covers \FacturaScripts\Core\Base\FileManager::scanFolder
      */
-    public function testGetAllFrom()
+    public function testScanFolder()
     {
-        $this->assertNotEmpty($this->object->getFrom(\FS_FOLDER . '/MyFiles'));
+        $this::assertEquals(
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable'),
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2'),
+            'Folder not equals'
+        );
+        $this::assertNotEquals(
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestNonWritable'),
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2'),
+            'Folder not equals'
+        );
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::createFolder
+     * @covers \FacturaScripts\Core\Base\FileManager::delTree
      */
-    public function testCreateFolder()
+    public function testDelTreeWritableFolder()
     {
-        $this->assertTrue($this->object->createFolder(\FS_FOLDER . '/MyFiles/Test1/Test2/Test3'), 'Recursive folder creation fails.');
+        $this::assertTrue($this->object::delTree(\FS_FOLDER . '/MyFiles/TestWritable'), 'Recursive delete dir fails.');
+        $this::assertTrue($this->object::delTree(\FS_FOLDER . '/MyFiles/TestWritable2'), 'Recursive delete dir fails.');
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::deleteDirectory
+     * @covers \FacturaScripts\Core\Base\FileManager::delTree
      */
-    public function testDeleteDirectory()
+    public function testDelTreeNonWritableFolder()
     {
-        $this->assertTrue($this->object->deleteDirectory(\FS_FOLDER . '/MyFiles/Test1'), 'Recursive delete dir fails.');
+        $this::assertTrue(
+            $this->object::delTree(\FS_FOLDER . '/MyFiles/TestNonWritable'),
+            'Recursive delete dir fails.'
+        );
     }
 
     /**
