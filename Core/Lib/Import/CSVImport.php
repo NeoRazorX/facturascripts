@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\Import;
 
 use FacturaScripts\Core\Base\DataBase;
-use ParseCsv\Csv;
 
 /**
  * Common CSV import actions.
@@ -43,7 +42,7 @@ class CSVImport
             return '';
         }
 
-        $csv = new Csv();
+        $csv = new \parseCSV();
         $csv->auto($filePath);
         $dataBase = new DataBase();
 
