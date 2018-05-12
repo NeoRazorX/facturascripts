@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
+use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +35,9 @@ use ZipArchive;
 class Updater extends Controller
 {
 
-    const UPDATE_CORE_URL = 'https://s3.eu-west-2.amazonaws.com/facturascripts/2018.zip';
+    const CORE_PROJECT_ID = 1;
+    const CORE_VERSION = 2018.002;
+    const UPDATE_CORE_URL = 'https://beta.facturascripts.com/DownloadBuild';
 
     /**
      *
@@ -58,6 +61,11 @@ class Updater extends Controller
         return $pageData;
     }
 
+    public function getVersion()
+    {
+        return self::CORE_VERSION;
+    }
+
     /**
      * 
      * @param Response              $response
@@ -69,7 +77,7 @@ class Updater extends Controller
         parent::privateCore($response, $user, $permissions);
 
         /// Folders writables?
-        $folders = $this->notWritablefolders();
+        $folders = FileManager::notWritableFolders();
         if (!empty($folders)) {
             $this->miniLog->alert($this->i18n->trans('folder-not-writable'));
             foreach ($folders as $folder) {
@@ -78,31 +86,10 @@ class Updater extends Controller
             return;
         }
 
-        $this->updaterItems[] = [
-            'id' => 'CORE',
-            'description' => 'Core component',
-            'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')
-        ];
+        $this->updaterItems = $this->getUpdateItems();
 
         $action = $this->request->get('action', '');
         $this->execAction($action);
-    }
-
-    /**
-     * Erase $dir folder and all its subfolders.
-     * 
-     * @param string $dir
-     * 
-     * @return bool
-     */
-    private function delTree(string $dir): bool
-    {
-        $files = array_diff(scandir($dir), ['.', '..']);
-        foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-        }
-
-        return rmdir($dir);
     }
 
     /**
@@ -110,14 +97,22 @@ class Updater extends Controller
      */
     private function download()
     {
-        if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')) {
-            unlink(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip');
-        }
+        $idItem = $this->request->get('item', '');
+        foreach ($this->updaterItems as $key => $item) {
+            if ($item['id'] != $idItem) {
+                continue;
+            }
 
-        $downloader = new DownloadTools();
-        if ($downloader->download(self::UPDATE_CORE_URL, FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip')) {
-            $this->miniLog->info('download-completed');
-            $this->updaterItems[0]['downloaded'] = true;
+            if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
+                unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename']);
+            }
+
+            $downloader = new DownloadTools();
+            if ($downloader->download($item['url'], FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
+                $this->miniLog->info('download-completed');
+                $this->updaterItems[$key]['downloaded'] = true;
+                $this->cache->clear();
+            }
         }
     }
 
@@ -141,69 +136,44 @@ class Updater extends Controller
         }
     }
 
-    /**
-     * Returns an array with all subforder of $baseDir folder.
-     * 
-     * @param string $baseDir
-     * 
-     * @return array
-     */
-    private function foldersFrom(string $baseDir): array
+    private function getUpdateItems(): array
     {
-        $directories = [];
-        foreach (scandir($baseDir) as $file) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-            $dir = $baseDir . DIRECTORY_SEPARATOR . $file;
-            if (is_dir($dir)) {
-                $directories[] = $dir;
-                $directories = array_merge($directories, $this->foldersFrom($dir));
+        $cacheData = $this->cache->get('UPDATE_ITEMS');
+        if (is_array($cacheData)) {
+            return $cacheData;
+        }
+
+        $downloader = new DownloadTools();
+        $json = json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
+        if (empty($json)) {
+            return [];
+        }
+
+        $items = [];
+        foreach ($json as $projectData) {
+            if ($projectData['project'] === self::CORE_PROJECT_ID) {
+                $this->getUpdateItemsCore($items, $projectData);
             }
         }
 
-        return $directories;
+        $this->cache->set('UPDATE_ITEMS', $items);
+        return $items;
     }
 
-    /**
-     * Returns an array with all not writable folders.
-     * 
-     * @return array
-     */
-    private function notWritablefolders(): array
+    private function getUpdateItemsCore(array &$items, array $projectData)
     {
-        $notwritable = [];
-        foreach ($this->foldersFrom(FS_FOLDER) as $dir) {
-            if (!is_writable($dir)) {
-                $notwritable[] = $dir;
+        foreach ($projectData['builds'] as $build) {
+            if ($build['stable'] && $build['version'] > self::CORE_VERSION) {
+                $items[] = [
+                    'id' => 'CORE',
+                    'description' => 'Core component v' . $build['version'],
+                    'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip'),
+                    'filename' => 'update-core.zip',
+                    'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version']
+                ];
+                break;
             }
         }
-
-        return $notwritable;
-    }
-
-    /**
-     * Copy all files and folders from $src to $dst
-     * 
-     * @param string $src
-     * @param string $dst
-     */
-    private function recurseCopy(string $src, string $dst)
-    {
-        $dir = opendir($src);
-        @mkdir($dst);
-        while (false !== ( $file = readdir($dir))) {
-            if ($file === '.' || $file === '..') {
-                continue;
-            }
-
-            if (is_dir($src . '/' . $file)) {
-                $this->recurseCopy($src . '/' . $file, $dst . '/' . $file);
-            } else {
-                copy($src . '/' . $file, $dst . '/' . $file);
-            }
-        }
-        closedir($dir);
     }
 
     /**
@@ -232,11 +202,11 @@ class Updater extends Controller
                 break;
             }
 
-            $this->delTree($dest);
-            $this->recurseCopy($origin, $dest);
+            FileManager::delTree($dest);
+            FileManager::recurseCopy($origin, $dest);
         }
 
-        $this->delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
+        FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
         return true;
     }
 }

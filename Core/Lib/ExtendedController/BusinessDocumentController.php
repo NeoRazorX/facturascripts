@@ -136,6 +136,11 @@ abstract class BusinessDocumentController extends PanelController
                 $this->exportManager->show($this->response);
                 break;
 
+            case 'insert':
+                parent::execAfterAction($action);
+                $this->views['Document']->model->updateSubject();
+                break;
+
             default:
                 parent::execAfterAction($action);
         }

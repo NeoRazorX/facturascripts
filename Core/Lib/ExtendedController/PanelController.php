@@ -370,6 +370,11 @@ abstract class PanelController extends BaseController
 
             case 'insert':
                 $this->views[$this->active]->clear();
+                foreach ($this->request->query->all() as $field => $value) {
+                    if ($field !== 'action') {
+                        $this->views[$this->active]->model->{$field} = $value;
+                    }
+                }
                 break;
         }
     }

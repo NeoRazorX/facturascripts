@@ -239,6 +239,11 @@ abstract class BusinessDocument extends ModelClass
     abstract public function setSubject($subjects);
 
     /**
+     * Updates subjects data in this document.
+     */
+    abstract public function updateSubject();
+
+    /**
      * 
      * @param array $data
      */
@@ -366,12 +371,15 @@ abstract class BusinessDocument extends ModelClass
      */
     public function save()
     {
+        if (is_null($this->codigo)) {
+            $this->newCodigo();
+        }
+
         if ($this->test()) {
             if ($this->exists()) {
                 return $this->checkState() ? $this->saveUpdate() : false;
             }
 
-            $this->newCodigo();
             return $this->saveInsert();
         }
 

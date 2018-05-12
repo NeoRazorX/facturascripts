@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,74 +19,19 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Proveedor;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \Proveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class ProveedorTest extends TestCase
+final class ProveedorTest extends CustomTest
 {
 
-    public function testNewProveedor()
+    protected function setUp()
     {
-        $model = new Proveedor();
-
-        $this->assertInstanceOf(Proveedor::class, $model);
-        $this->assertFalse($model->acreedor);
-        $this->assertFalse($model->test());
-
-        $model->acreedor = true;
-    }
-
-    public function testTable()
-    {
-        $model = new Proveedor();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Proveedor();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Proveedor();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Proveedor();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Proveedor();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Proveedor();
     }
 }

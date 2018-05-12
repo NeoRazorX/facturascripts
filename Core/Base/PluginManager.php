@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Base\FileManager;
 use ZipArchive;
 
 /**
@@ -195,7 +196,7 @@ class PluginManager
 
         /// Removing previous version
         if (is_dir(self::PLUGIN_PATH . $info['name'])) {
-            $this->delTree(self::PLUGIN_PATH . $info['name']);
+            FileManager::delTree(self::PLUGIN_PATH . $info['name']);
         }
 
         /// Extract new version
@@ -219,7 +220,8 @@ class PluginManager
     public function installedPlugins(): array
     {
         $plugins = [];
-        foreach ($this->scanFolder(self::PLUGIN_PATH) as $folder) {
+
+        foreach (FileManager::scanFolder(self::PLUGIN_PATH, false) as $folder) {
             $iniPath = self::PLUGIN_PATH . $folder . '/facturascripts.ini';
             $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);
@@ -245,7 +247,7 @@ class PluginManager
 
         $pluginPath = self::PLUGIN_PATH . $pluginName;
         if (is_dir($pluginPath) || is_file($pluginPath)) {
-            $this->delTree($pluginPath);
+            FileManager::delTree($pluginPath);
             self::$minilog->info(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
             return true;
         }
@@ -283,22 +285,6 @@ class PluginManager
         }
 
         return true;
-    }
-
-    /**
-     * Recursive delete directory.
-     *
-     * @param string $dir
-     *
-     * @return bool
-     */
-    private function delTree(string $dir): bool
-    {
-        $files = is_dir($dir) ? $this->scanFolder($dir) : [];
-        foreach ($files as $file) {
-            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-        }
-        return is_dir($dir) ? rmdir($dir) : unlink($dir);
     }
 
     /**
@@ -386,18 +372,5 @@ class PluginManager
     {
         $content = json_encode(self::$enabledPlugins);
         return file_put_contents(self::PLUGIN_LIST_FILE, $content) !== false;
-    }
-
-    /**
-     * Returns an array with all files and folders.
-     *
-     * @param string $folderPath
-     *
-     * @return array
-     */
-    private function scanFolder(string $folderPath): array
-    {
-        $scan = scandir($folderPath, SCANDIR_SORT_ASCENDING);
-        return is_array($scan) ? array_diff($scan, ['.', '..']) : [];
     }
 }

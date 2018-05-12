@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,338 +10,119 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * long with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
- * Manage some basic and common actions with files.
+ * Class to manage the actions with folders and files
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @package FacturaScripts\Core\Base
+ *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class FileManager
 {
-    /**
-     * To use it as sorten name.
-     */
-    const DS = DIRECTORY_SEPARATOR;
-    /**
-     * Common permissions.
-     */
-    const PERMS_FOLDER = 0755;
-    const PERMS_FILE = 0644;
-    /**
-     * Common permissions for shared hostings.
-     */
-    const SHARED_PERMS_FOLDER = 0775;
-    const SHARED_PERMS_FILE = 0664;
 
     /**
-     * Return files and folders inside a path.
-     * Note: The path are relative to FS_FOLDER.
+     * Recursive delete directory.
      *
-     * @param string $dir     Folder where looking for files and folders inside.
-     * @param int    $order   Order to apply SCANDIR_SORT_ASCENDING/SCANDIR_SORT_DESCENDING,
-     *                        by default SCANDIR_SORT_ASCENDING.
-     * @param array  $exclude Array list of items to exclude, by default ['.', '..'].
+     * @param string $folder
      *
-     * @return array
+     * @return bool
      */
-    public function getFrom($dir, $order = SCANDIR_SORT_ASCENDING, array $exclude = ['.', '..']): array
+    public static function delTree(string $folder): bool
     {
-        $list = [];
-        foreach (array_diff(scandir($dir, $order), $exclude) as $file) {
-            $list[] = str_replace(\FS_FOLDER . '/', '', $dir . self::DS . $file);
+        if (!file_exists($folder)) {
+            return true;
         }
-        return $list;
+
+        $files = is_dir($folder) ? static::scanFolder($folder) : [];
+        foreach ($files as $file) {
+            $path = $folder . DIRECTORY_SEPARATOR . $file;
+            is_dir($path) ? static::delTree($path) : unlink($path);
+        }
+
+        return is_dir($folder) ? rmdir($folder) : unlink($folder);
     }
 
     /**
-     * Return a list of files (only files).
-     * Note: The path are relative to FS_FOLDER.
-     *
-     * @param string $dir       Folder to start looking for files.
-     * @param int    $order     Order to apply SCANDIR_SORT_ASCENDING/SCANDIR_SORT_DESCENDING,
-     *                          by default SCANDIR_SORT_ASCENDING.
-     * @param array  $exclude   Array list of items to exclude, by default ['.', '..'].
-     * @param bool   $recursive Look for recursively or not, by default false.
+     * Returns an array with all not writable folders.
      *
      * @return array
      */
-    public function getFilesFrom($dir, $order = SCANDIR_SORT_ASCENDING, array $exclude = ['.', '..'], $recursive = false): array
+    public static function notWritableFolders(): array
     {
-        $items = $this->getFrom($dir, $order, $exclude);
-
-        $moreItems = [];
-        foreach ($items as $pos => $item) {
-            if (is_dir($dir . self::DS . $item)) {
-                unset($items[$pos]);
-                if ($recursive) {
-                    foreach ($this->getFilesFrom($dir . self::DS . $item, $order, $exclude, $recursive) as $file) {
-                        $moreItems[] = str_replace(\FS_FOLDER . '/', '', $file);
-                    }
-                }
+        $notwritable = [];
+        foreach (static::scanFolder(FS_FOLDER) as $folder) {
+            if (!is_writable($folder)) {
+                $notwritable[] = $folder;
             }
         }
 
-
-        return array_merge($items, $moreItems);
+        return $notwritable;
     }
 
     /**
-     * Return a list of folders and files.
-     * Note: The path are relative to FS_FOLDER.
+     * Copy all files and folders from $src to $dst
      *
-     * @param array $directories Folder to start looking for files.
-     * @param int   $order       Order to apply SCANDIR_SORT_ASCENDING/SCANDIR_SORT_DESCENDING,
-     *                           by default SCANDIR_SORT_ASCENDING.
-     * @param array $exclude     Array list of items to exclude, by default ['.', '..'].
-     * @param bool  $recursive   Look for recursively or not, by default true.
-     *
-     * @return array
+     * @param string $src
+     * @param string $dst
      */
-    public function getAllFrom(array $directories, $order = SCANDIR_SORT_ASCENDING, array $exclude = ['.', '..'], $recursive = true): array
+    public static function recurseCopy(string $src, string $dst)
     {
-        foreach ($directories as $directory) {
-            $items = $this->getFrom($directory, $order, $exclude);
-
-            $moreItems = [];
-            foreach ($items as $item) {
-                if ($recursive && is_dir($item)) {
-                    $moreItems[] = $item;
-                    foreach ($this->getAllFrom([$item], $order, $exclude, $recursive) as $file) {
-                        $moreItems[] = str_replace(\FS_FOLDER . '/', '', $file);
-                    }
-                } else {
-                    $moreItems[] = str_replace(\FS_FOLDER . '/', '', $item);
-                }
+        $folder = opendir($src);
+        @mkdir($dst);
+        while (false !== ($file = readdir($folder))) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            } elseif (is_dir($src . DIRECTORY_SEPARATOR . $file)) {
+                static::recurseCopy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);
+            } else {
+                copy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);
             }
-            $result = array_unique(\array_merge($items, $moreItems));
         }
-
-        sort($result);
-        return $result;
+        closedir($folder);
     }
 
     /**
-     * Create a folder and return the result.
-     * Returns True if success or False if fails.
+     * Returns an array with files and folders inside given $folder
      *
-     * @param string $dir Folder to start looking for files.
-     * @param int    $perms
+     * @param string $folder
      * @param bool   $recursive
      *
-     * @return bool
-     */
-    public function createFolder($dir, $perms = self::PERMS_FOLDER, $recursive = true): bool
-    {
-        return !(!file_exists($dir) && !@mkdir($dir, $perms, $recursive) && !is_dir($dir));
-    }
-
-    /**
-     * Delete a directory recursively.
-     * Returns True if success or False if fails.
-     *
-     * @param string $dir Folder to remove.
-     *
-     * @return bool
-     */
-    public function deleteDirectory($dir): bool
-    {
-        if (is_dir($dir)) {
-            $files = $this->getFrom($dir);
-
-            foreach ($files as $file) {
-                is_dir($file) ? $this->deleteDirectory($file) : unlink(\FS_FOLDER . self::DS . $file);
-            }
-            return rmdir($dir);
-        }
-        return false;
-    }
-
-    /**
-     * Return a list of disabled php functions.
-     *
      * @return array
      */
-    private function getPhpDisabledFunctions(): array
+    public static function scanFolder(string $folder, bool $recursive = false): array
     {
-        return explode(',', ini_get('disable_functions'));
-    }
-
-    /**
-     * Returns default permissions for file or folder.
-     * If not correctOwner or realFileOwner received, readed from execution.
-     *
-     * @param bool   $isFile
-     * @param string $correctOwner
-     * @param string $realFileOwner
-     *
-     * @return string
-     */
-    private function getDefaultPerms($isFile, $correctOwner = '', $realFileOwner = ''): string
-    {
-        if ($correctOwner === '') {
-            $correctOwner = \posix_getpwuid(\posix_geteuid())['name'];
-        }
-        if ($realFileOwner === '') {
-            $realFileOwner = \posix_getpwuid(\fileowner(\FS_FOLDER))['name'];
+        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
+        if (!is_array($scan)) {
+            return [];
         }
 
-        /// Needed in common hostings accounts
-        $string = $isFile ? self::PERMS_FILE : self::PERMS_FOLDER;
-        if ($correctOwner !== $realFileOwner) {
-            /// Needed with Apache userdir and some virtualhost configurations
-            $string = $isFile ? self::SHARED_PERMS_FILE : self::SHARED_PERMS_FOLDER;
-        }
-        return $string;
-    }
-
-    /**
-     * Calls to chgrp recursively.
-     *
-     * @param string $path
-     * @param string $group
-     *
-     * @return bool
-     */
-    private function chGrpR(string $path, string $group): bool
-    {
-        if (\in_array('chgrp', $this->getPhpDisabledFunctions(), true)) {
-            $miniLog = new MiniLog();
-            $miniLog->critical(
-                'chgrp is a disabled function.'
-            );
-            return false;
+        $rootFolder = array_diff($scan, ['.', '..']);
+        if (!$recursive) {
+            return $rootFolder;
         }
 
-        if (!is_dir($path)) {
-            return @chgrp($path, $group);
-        }
-
-        foreach ($this->getAllFrom([$path]) as $file) {
-            $fullPath = $path . self::DS . $file;
-            if (is_link($fullPath)) {
-                return false;
+        $result = [];
+        foreach ($rootFolder as $item) {
+            $newItem = $folder . DIRECTORY_SEPARATOR . $item;
+            if (is_file($newItem)) {
+                $result[] = $item;
+                continue;
             }
-            if (!is_dir($fullPath) && !@chgrp($fullPath, $group)) {
-                return false;
-            }
-            if (!$this->chGrpR($fullPath, $group)) {
-                return false;
+            $result[] = $item;
+            foreach (static::scanFolder($newItem, true) as $item2) {
+                $result[] = $item . DIRECTORY_SEPARATOR . $item2;
             }
         }
 
-        return @chgrp($path, $group);
-    }
-
-    /**
-     * Calls to chmod recursively.
-     *
-     * @param string $path
-     * @param string $fileMode
-     *
-     * @return bool
-     */
-    private function chModR(string $path, string $fileMode = ''): bool
-    {
-        $miniLog = new MiniLog();
-        if (\in_array('chmod', $this->getPhpDisabledFunctions(), true)) {
-            $miniLog->critical(
-                'chmod is a disabled function.'
-            );
-            return false;
-        }
-
-        if ($fileMode === '') {
-            $fileMode = $this->getDefaultPerms(is_file($path));
-        }
-
-        if ($this->isOctal($fileMode)) {
-            if (!is_dir($path)) {
-                return @chmod($path, (int) $fileMode);
-            }
-
-            foreach ($this->getAllFrom([$path]) as $file) {
-                $fullPath = $path . self::DS . $file;
-                if (is_link($fullPath)) {
-                    return false;
-                }
-                if (!is_dir($fullPath) && !@chmod($fullPath, (int) $fileMode)) {
-                    return false;
-                }
-                if (!$this->chModR($fullPath, $fileMode)) {
-                    return false;
-                }
-            }
-
-            return @chmod($path, (int) $fileMode);
-        }
-
-        $miniLog->critical(
-            '"' . $fileMode . '" : Is not an octal file mode.'
-        );
-        return false;
-    }
-
-    /**
-     * Returns if is octal file mode.
-     *
-     * @param string $fileMode
-     *
-     * @return bool
-     */
-    private function isOctal($fileMode): bool
-    {
-        $formatted = \str_pad(
-            decoct((int) octdec($fileMode)),
-            4,
-            0,
-            \STR_PAD_LEFT
-        );
-        return $formatted === $fileMode;
-    }
-
-    /**
-     * Calls to chown recursively.
-     *
-     * @param string $path
-     * @param string $owner
-     *
-     * @return bool
-     */
-    private function chOwnR(string $path, string $owner): bool
-    {
-        if (\in_array('chown', $this->getPhpDisabledFunctions(), true)) {
-            $miniLog = new MiniLog();
-            $miniLog->critical(
-                'chmod is a disabled function.'
-            );
-            return false;
-        }
-
-        if (!is_dir($path)) {
-            return @chown($path, $owner);
-        }
-
-        foreach ($this->getAllFrom([$path]) as $file) {
-            $fullPath = $path . self::DS . $file;
-            if (is_link($fullPath)) {
-                return false;
-            }
-            if (!is_dir($fullPath) && !@chown($fullPath, $owner)) {
-                return false;
-            }
-            if (!$this->chOwnR($fullPath, $owner)) {
-                return false;
-            }
-        }
-
-        return @chown($path, $owner);
+        return $result;
     }
 }

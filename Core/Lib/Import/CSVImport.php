@@ -91,7 +91,7 @@ class CSVImport
     protected static function getTableFilePath(string $table): string
     {
         if (!defined('FS_CODPAIS')) {
-            define('FS_CODPAIS', 'ES');
+            define('FS_CODPAIS', 'ESP');
         }
 
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';

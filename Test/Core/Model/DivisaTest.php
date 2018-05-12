@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,86 +17,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Divisa;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Test\Core\CustomTest;
 
 /**
  * @covers \Divisa
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class DivisaTest extends TestCase
+final class DivisaTest extends CustomTest
 {
-    public function testNewDivisa()
+
+    protected function setUp()
     {
-        $model = new Divisa();
-
-        $this->assertInstanceOf(Divisa::class, $model);
-        $this->assertEquals('', $model->descripcion);
-        $this->assertEquals(1.00, $model->tasaconv);
-        $this->assertEquals(1.00, $model->tasaconvcompra);
-        $this->assertEquals('?', $model->simbolo);
-        $this->assertFalse($model->test());
-
-        $model->coddivisa = 'EUR';
-        $model->codiso = 'EUR';
-        $model->descripcion = 'Test description';
-        $model->tasaconv = 1.13;
-        $model->tasaconvcompra = 0.92;
-        $model->simbolo = '$€';
-
-        $this->assertTrue($model->test());
-    }
-
-    public function testTable()
-    {
-        $model = new Divisa();
-
-        $this->assertInternalType('string', $model::tableName());
-    }
-
-    public function testPrimaryColumn()
-    {
-        $model = new Divisa();
-
-        $this->assertInternalType('string', $model::primaryColumn());
-    }
-
-    public function testInstall()
-    {
-        $model = new Divisa();
-
-        $this->assertInternalType('string', $model->install());
-    }
-
-    public function testSave()
-    {
-        $dataBase = new DataBase();
-
-        $this->assertEquals(true, $dataBase->connect());
-
-        $model = new Divisa();
-        $sql = $model->install();
-
-        if ($sql !== '') {
-            $result = $dataBase->exec($sql);
-            $this->assertFalse($result);
-        }
-    }
-
-    public function testAll()
-    {
-        $model = new Divisa();
-        $list = $model->all();
-
-        if (!empty($list)) {
-            $this->assertInternalType('array', $list);
-        } else {
-            $this->assertSame([], $list);
-        }
+        $this->model = new Divisa();
     }
 }

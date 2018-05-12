@@ -58,18 +58,21 @@ abstract class PurchaseDocument extends BusinessDocument
 
     /**
      * Assign the supplier to the document.
-     *
+     * 
      * @param Proveedor[] $subjects
+     *
+     * @return boolean
      */
     public function setSubject($subjects)
     {
         if (!isset($subjects[0]->codproveedor)) {
-            return;
+            return false;
         }
 
         $this->codproveedor = $subjects[0]->codproveedor;
         $this->nombre = $subjects[0]->razonsocial;
         $this->cifnif = $subjects[0]->cifnif;
+        return true;
     }
 
     /**
@@ -83,5 +86,24 @@ abstract class PurchaseDocument extends BusinessDocument
         $this->numproveedor = Utils::noHtml($this->numproveedor);
 
         return parent::test();
+    }
+
+    /**
+     * Updates subjects data in this document.
+     *
+     * @return boolean
+     */
+    public function updateSubject()
+    {
+        if (empty($this->codproveedor)) {
+            return false;
+        }
+
+        $proveedor = new Proveedor();
+        if (!$proveedor->loadFromCode($this->codproveedor)) {
+            return false;
+        }
+
+        return $this->setSubject([$proveedor]);
     }
 }

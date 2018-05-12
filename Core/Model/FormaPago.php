@@ -125,7 +125,6 @@ class FormaPago extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->descripcion = '';
         $this->genrecibos = 'Emitidos';
         $this->codcuenta = '';
         $this->domiciliado = false;

@@ -200,13 +200,15 @@ abstract class SalesDocument extends BusinessDocument
 
     /**
      * Assign the customer to the document.
-     *
+     * 
      * @param Cliente[] $subjects
+     * 
+     * @return boolean
      */
     public function setSubject($subjects)
     {
         if (!isset($subjects[0]->codcliente)) {
-            return;
+            return false;
         }
 
         $this->codcliente = $subjects[0]->codcliente;
@@ -224,6 +226,8 @@ abstract class SalesDocument extends BusinessDocument
                 break;
             }
         }
+
+        return true;
     }
 
     /**
@@ -250,5 +254,24 @@ abstract class SalesDocument extends BusinessDocument
         $this->provinciaenv = Utils::noHtml($this->provinciaenv);
 
         return parent::test();
+    }
+
+    /**
+     * Updates subjects data in this document.
+     *
+     * @return boolean
+     */
+    public function updateSubject()
+    {
+        if (empty($this->codcliente)) {
+            return false;
+        }
+
+        $cliente = new Cliente();
+        if (!$cliente->loadFromCode($this->codcliente)) {
+            return false;
+        }
+
+        return $this->setSubject([$cliente]);
     }
 }

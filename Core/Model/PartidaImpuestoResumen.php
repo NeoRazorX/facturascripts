@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core;
-
 /**
  * Auxiliary model to load a resume of accounting entries with VAT
  *
@@ -27,85 +25,14 @@ use FacturaScripts\Core;
  */
 class PartidaImpuestoResumen extends Base\ModelView
 {
-
-    /**
-     * Exercise code of the accounting entry.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
-     * Identifier of the special account.
-     *
-     * @var string
-     */
-    public $codcuentaesp;
-
-    /**
-     * Description of the special account.
-     *
-     * @var string
-     */
-    public $descripcion;
-
-    /**
-     * Tax code.
-     *
-     * @var string
-     */
-    public $codimpuesto;
-
-    /**
-     * Amount of the tax base.
-     *
-     * @var float|int
-     */
-    public $baseimponible;
-
-    /**
-     * VAT percentage.
-     *
-     * @var float|int
-     */
-    public $iva;
-
-    /**
-     * VAT amount.
-     *
-     * @var float|int
-     */
-    public $cuotaiva;
-
-    /**
-     * Equivalence surcharge percentage.
-     *
-     * @var float|int
-     */
-    public $recargo;
-
-    /**
-     * Equivalence surcharge amount.
-     *
-     * @var float|int
-     */
-    public $cuotarecargo;
-
-    /**
-     * Return default order by
-     */
-    protected function getDefaultOrderBy(): string
-    {
-        return 'ORDER BY subcuentas.codcuentaesp, partidas.iva, partidas.recargo';
-    }
-
     /**
      * Return Group By clausule
      */
     protected function getGroupBy(): string
     {
-        return 'GROUP BY subcuentas.codcuentaesp, cuentasesp.descripcion,'
-            . 'subcuentas.codimpuesto, partidas.iva, partidas.recargo';
+        return 'GROUP BY asientos.codejercicio, subcuentas.codcuentaesp,'
+                      . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
+                      . 'partidas.iva, partidas.recargo';
     }
 
     /**
@@ -114,7 +41,7 @@ class PartidaImpuestoResumen extends Base\ModelView
     protected function getFields(): array
     {
         return [
-            'codejercicio' => 'asiento.codejercicio',
+            'codejercicio' => 'asientos.codejercicio',
             'codcuentaesp' => 'subcuentas.codcuentaesp',
             'descripcion' => 'cuentasesp.descripcion',
             'codimpuesto' => 'subcuentas.codimpuesto',
@@ -154,15 +81,14 @@ class PartidaImpuestoResumen extends Base\ModelView
      */
     protected function clear()
     {
-        $this->codejercicio = null;
-        $this->codcuentaesp = null;
-        $this->descripcion = null;
-        $this->codimpuesto = null;
+        parent::clear();
+
         $this->baseimponible = 0.00;
         $this->iva = 0.00;
         $this->recargo = 0.00;
         $this->cuotaiva = 0.00;
         $this->cuotarecargo = 0.00;
+        $this->total = 0.00;
     }
 
     /**
@@ -172,14 +98,10 @@ class PartidaImpuestoResumen extends Base\ModelView
      */
     protected function loadFromData($data)
     {
-        $this->codejercicio = $data['codejercicio'];
-        $this->codcuentaesp = $data['codcuentaesp'];
-        $this->descripcion = Core\Base\Utils::fixHtml($data['descripcion']);
-        $this->codimpuesto = $data['codimpuesto'];
-        $this->baseimponible = $data['baseimponible'];
-        $this->iva = $data['iva'];
-        $this->recargo = $data['recargo'];
+        parent::loadFromData($data);
+
         $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
         $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
+        $this->total = $this->baseimponible + $this->cuotaiva + $this->cuotarecargo;
     }
 }

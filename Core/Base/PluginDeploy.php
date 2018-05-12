@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Base;
 
 use Exception;
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\FileManager;
 
 /**
  * Description of PluginDeploy
@@ -72,13 +73,13 @@ class PluginDeploy
         $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
-                $this->cleanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
+                FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
             }
 
             $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
 
             /// examine the plugins
-            foreach ($enabledPlugins as $pluginName) {
+            foreach (array_reverse($enabledPlugins) as $pluginName) {
                 if (file_exists($pluginPath . $pluginName . DIRECTORY_SEPARATOR . $folder)) {
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
@@ -101,7 +102,7 @@ class PluginDeploy
         $menuManager->init();
         $pageNames = [];
 
-        $files = $this->scanFolders(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
+        $files = FileManager::scanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
         foreach ($files as $fileName) {
             if (substr($fileName, -4) !== '.php') {
                 continue;
@@ -133,33 +134,6 @@ class PluginDeploy
             $appSettings->set('default', 'homepage', 'AdminPlugins');
             $appSettings->save();
         }
-    }
-
-    /**
-     * Delete the $folder and its files.
-     *
-     * @param string $folder
-     *
-     * @return bool
-     */
-    private function cleanFolder(string $folder): bool
-    {
-        $done = true;
-        if (file_exists($folder)) {
-            /// Comprobamos los archivos que no son '.' ni '..'
-            $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
-
-            /// Ahora recorremos y eliminamos lo que encontramos
-            foreach ($items as $item) {
-                if (is_dir($folder . DIRECTORY_SEPARATOR . $item)) {
-                    $done = $this->cleanFolder($folder . DIRECTORY_SEPARATOR . $item . DIRECTORY_SEPARATOR);
-                } else {
-                    $done = unlink($folder . DIRECTORY_SEPARATOR . $item);
-                }
-            }
-        }
-
-        return $done;
     }
 
     /**
@@ -204,7 +178,7 @@ class PluginDeploy
         $path = FS_FOLDER . DIRECTORY_SEPARATOR . $place;
         $path .= empty($pluginName) ? DIRECTORY_SEPARATOR . $folder : DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . $folder;
 
-        foreach ($this->scanFolders($path) as $fileName) {
+        foreach (FileManager::scanFolder($path, true) as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
                 $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
@@ -272,42 +246,5 @@ class PluginDeploy
         $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName;
         copy($filePath, $path);
         $this->fileList[$folder][$fileName] = $fileName;
-    }
-
-    /**
-     * Makes a recursive scan in folders inside a root folder and extracts the list of files
-     * and pass its to an array as result.
-     * 
-     * @param string $folder
-     * @param bool   $recursive
-     *
-     * @return array
-     */
-    private function scanFolders(string $folder, bool $recursive = true): array
-    {
-        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
-        if (!is_array($scan)) {
-            return [];
-        }
-
-        $rootFolder = array_diff($scan, ['.', '..']);
-        if (!$recursive) {
-            return $rootFolder;
-        }
-
-        $result = [];
-        foreach ($rootFolder as $item) {
-            $newItem = $folder . DIRECTORY_SEPARATOR . $item;
-            if (is_file($newItem)) {
-                $result[] = $item;
-                continue;
-            }
-            $result[] = $item;
-            foreach ($this->scanFolders($newItem) as $item2) {
-                $result[] = $item . DIRECTORY_SEPARATOR . $item2;
-            }
-        }
-
-        return $result;
     }
 }

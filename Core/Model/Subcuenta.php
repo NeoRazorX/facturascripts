@@ -152,6 +152,12 @@ class Subcuenta extends Base\ModelClass
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
+
+        // Search open exercise for current date
+        $exerciseModel = new Ejercicio();
+        if ($exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false)) {
+            $this->codejercicio = $exercise->codejercicio;
+        }
     }
 
     public function getSpecialAccountCode()
@@ -171,7 +177,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return int
      */
-    private function getIdAccount(): int
+    public function getIdAccount(): int
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
@@ -283,44 +289,7 @@ class Subcuenta extends Base\ModelClass
         return true;
     }
 
-    /**
-     * Remove the model data from the database.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        // Search for detail balance
-        $where = [new DataBaseWhere('idsubcuenta', $this->idsubcuenta)];
-        $accountDetail = new SubcuentaSaldo();
-        $inTransaction = self::$dataBase->inTransaction();
-        try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
-
-            /// delete subaccount and detail via FK
-            if (!parent::delete()) {
-                return false;
-            }
-
-            /// save transaction
-            if ($inTransaction === false) {
-                self::$dataBase->commit();
-            }
-        } catch (\Exception $e) {
-            self::$miniLog->error($e->getMessage());
-            return false;
-        } finally {
-            if (!$inTransaction && self::$dataBase->inTransaction()) {
-                self::$dataBase->rollback();
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
+    /*
      * Update account balance
      *
      * @param string $date

@@ -78,7 +78,7 @@
             return formData;
         }
         function insertRecord() {
-            document.insertForm.action = '{{ fsc.getURL('edit') }}';
+            document.insertForm.action = '{{ fsc.getURL('new') }}';
             document.insertForm.submit();
         }
         $(document).ready(function () {
@@ -153,31 +153,34 @@
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
                 </div>
-                <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
-                </a>
                 <div class="btn-group">
-                    <div class="dropdown">
-                        <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                    </a>
+                    <div class="btn-group">
+                        <a href="EditPageOption?code={{ fsc.active }}&url={{ edit_url | url_encode }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-wrench" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                         </a>
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
                         <div class="dropdown-menu">
                             {% for view in fsc.views %}
                                 {% if fsc.viewClass(view) != 'HtmlView' %}
-                                    <a class="dropdown-item" id="b_options" href="EditPageOption?code={{ view.getViewName() }}&url={{ edit_url | url_encode }}">
+                                    <a class="dropdown-item" href="EditPageOption?code={{ view.getViewName() }}&url={{ edit_url | url_encode }}">
                                         <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
                                     </a>
                                 {% endif %}
                             {% endfor %}
                         </div>
                     </div>
+                    {% if fsc.hasData %}
+                        {# -- Adds print and export options -- #}
+                        {{ exportData(fsc, i18n, 'edit') }}
+                    {% endif %}
                 </div>
-                {% if fsc.hasData %}
-                    {# -- Adds print and export options -- #}
-                    {{ exportData(fsc, i18n, 'edit') }}
-                {% endif %}
             </div>
             <div class="col-6 text-right">
                 <h2>
@@ -210,6 +213,7 @@
                             {% set active = (indexView == fsc.active) ? ' active' : '' %}
                             {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
                             <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                                {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
                                 <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
                                 &nbsp;{{ view.title }}
                             </a>
@@ -235,6 +239,10 @@
                                         <a href="{{ view.getURL('new') | raw }}" class="btn btn-sm btn-success">
                                             <i class="fa fa-plus" aria-hidden="true"></i>
                                             <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans('new') }}</span>
+                                        </a>
+                                        <a href="{{ view.getURL('list') | raw }}" class="btn btn-sm btn-light float-right">
+                                            <span class="d-none d-sm-inline-block">{{ i18n.trans('all') }}&nbsp;</span>
+                                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                         </a>
                                         {{ BaseController.columnsForListView(_context, view) }}
                                     {% elseif viewType == 'EditView' %}
