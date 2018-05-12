@@ -716,5 +716,9 @@
     "create-accounting-entry": "Create Accounting Entry",
     "hint-create-accounting-entry": "Create the accounting entry for the regularization of the taxes of the period",
     "previous-balance": "Previous Balance",
-    "result": "Result"
+    "result": "Result",
+    "macro-account-note-info":"Keys for automatic substitution",
+    "accounting-entry-date":"Accounting entry date",
+    "month-name":"Month name"
+    
 }

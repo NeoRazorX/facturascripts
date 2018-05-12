@@ -31,4 +31,9 @@
             <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="summary" html="Block/accountNoteInfo.html.twig"></group>
+        </row>
+    </rows>
 </view>
