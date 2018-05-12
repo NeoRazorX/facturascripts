@@ -46,7 +46,7 @@ class IntegrityCheck
         $excluded = ['.', '..', 'Dinamic', 'Documentation', 'MyFiles', 'node_modules', 'Plugins', 'Test', 'vendor'];
         $excluded[] = '.htaccess';
         $excluded[] = 'config.php';
-        $files = $fileManager->getAllFrom([FS_FOLDER], SCANDIR_SORT_ASCENDING, $excluded);
+        $files = $fileManager::scanFolder(FS_FOLDER);
         foreach ($files as $fileName) {
             $resources[$fileName] = self::getFileHash($fileName);
         }
