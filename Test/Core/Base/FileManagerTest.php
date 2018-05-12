@@ -71,7 +71,7 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
         $this::assertNotEquals(
             $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestNonWritable'),
             $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2'),
-            'Folder not equals'
+            'Folder are equals'
         );
     }
 
