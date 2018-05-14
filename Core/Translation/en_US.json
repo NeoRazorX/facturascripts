@@ -1175,5 +1175,10 @@
     "bcc": "BCC",
     "email-to": "Email To",
     "email-cc": "Email Carbon Copy",
-    "email-bcc": "Email Blind Carbon Copy"
+    "email-bcc": "Email Blind Carbon Copy",
+    "summary": "Summary",
+    "create-accounting-entry": "Create Accounting Entry",
+    "hint-create-accounting-entry": "Create the accounting entry for the regularization of the taxes of the period",
+    "previous-balance": "Previous Balance",
+    "result": "Result"
 }

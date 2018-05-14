@@ -1328,5 +1328,11 @@
     "bcc": "CCO",
     "email-to": "Email para",
     "email-cc": "Email Con Copia",
-    "email-bcc": "Email Con Copia Oculta"
+    "email-bcc": "Email Con Copia Oculta",
+    "vat-regularization": "Regularización de Impuestos",
+    "summary": "Resultado",
+    "create-accounting-entry": "Crear Asiento Contable",
+    "hint-create-accounting-entry": "Crear el asiento contable para la regularización de impuestos del periodo",
+    "previous-balance": "Balance anterior",
+    "result": "Resultado"
 }
