@@ -39,6 +39,13 @@ class SendMail extends Controller
     public $codeModel;
 
     /**
+     * Array to save and get emails
+     *
+     * @var array
+     */
+    private $sendTo = [];
+
+    /**
      * Return the basic data for this page.
      *
      * @return array
@@ -134,13 +141,13 @@ class SendMail extends Controller
     protected function send()
     {
         $fieldsEmail = ['email', 'email-cc', 'email-bcc'];
-        $sendTo = [];
+        
         foreach ($fieldsEmail as $field) {
             // Remove unneeded spaces
             $emails = trim($this->request->request->get($field, ''));
             // Autocomplete adds a comma at the end, remove it if exists (maybe user remove it)
             $emails = $emails[\strlen($emails) - 1] === ',' ? substr($emails, 0, -1) : $emails;
-            $sendTo[$field] = \explode(',', $emails);
+            $this->sendTo[$field] = \explode(',', $emails);
         }
         $subject = $this->request->request->get('subject', '');
         $body = $this->request->request->get('body', '');
@@ -148,13 +155,14 @@ class SendMail extends Controller
 
         $emailTools = new EmailTools();
         $mail = $emailTools->newMail();
-        foreach ($sendTo['email'] as $email) {
+        
+        foreach ($this->getEmails('email') as $email) {
             $mail->addAddress($email);
         }
-        foreach ($sendTo['email-cc'] as $email) {
+        foreach ($this->getEmails('email-cc') as $email) {
             $mail->addCC($email);
         }
-        foreach ($sendTo['email-bcc'] as $email) {
+        foreach ($this->getEmails('email-bcc') as $email) {
             $mail->addBCC($email);
         }
         $mail->Subject = $subject;
@@ -167,6 +175,17 @@ class SendMail extends Controller
         } else {
             $this->miniLog->error('send-mail-error');
         }
+    }
+
+    /**
+     * Get emails about type specify how param
+     *
+     * @param string $typeEmail
+     * @return array
+     */
+    private function getEmails(string $typeEmail) : array
+    {
+        return $this->sendTo[$typeEmail];
     }
 
     /**
