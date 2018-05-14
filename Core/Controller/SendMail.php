@@ -140,15 +140,6 @@ class SendMail extends Controller
      */
     protected function send()
     {
-        $fieldsEmail = ['email', 'email-cc', 'email-bcc'];
-        
-        foreach ($fieldsEmail as $field) {
-            // Remove unneeded spaces
-            $emails = trim($this->request->request->get($field, ''));
-            // Autocomplete adds a comma at the end, remove it if exists (maybe user remove it)
-            $emails = $emails[\strlen($emails) - 1] === ',' ? substr($emails, 0, -1) : $emails;
-            $this->sendTo[$field] = \explode(',', $emails);
-        }
         $subject = $this->request->request->get('subject', '');
         $body = $this->request->request->get('body', '');
         $fileName = $this->request->get('fileName', '');
@@ -185,7 +176,9 @@ class SendMail extends Controller
      */
     private function getEmails(string $typeEmail) : array
     {
-        return $this->sendTo[$typeEmail];
+        // Remove unneeded spaces and posible ending comma ,
+        $emails = rtrim(trim($this->request->request->get($typeEmail, '')), ',');
+        return \explode(',', $emails);
     }
 
     /**
