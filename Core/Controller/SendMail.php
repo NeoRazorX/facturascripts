@@ -178,7 +178,7 @@ class SendMail extends Controller
     }
 
     /**
-     * Get emails about type specify how param
+     * Get emails about type specify
      *
      * @param string $typeEmail
      * @return array
