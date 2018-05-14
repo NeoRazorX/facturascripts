@@ -152,6 +152,13 @@ class Subcuenta extends Base\ModelClass
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
+
+        // Search open exercise for current date
+        $exerciseModel = new Ejercicio();
+        $exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false);
+        if ($exercise !== false ) {
+            $this->codejercicio = $exercise->codejercicio;
+        }
     }
 
     public function getSpecialAccountCode()
