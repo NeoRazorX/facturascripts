@@ -82,3 +82,7 @@
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
+
+.ui-autocomplete {
+    z-index: 500;
+}
