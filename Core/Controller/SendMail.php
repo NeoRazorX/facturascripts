@@ -39,13 +39,6 @@ class SendMail extends Controller
     public $codeModel;
 
     /**
-     * Array to save and get emails
-     *
-     * @var array
-     */
-    private $sendTo = [];
-
-    /**
      * Return the basic data for this page.
      *
      * @return array
