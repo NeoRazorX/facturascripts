@@ -103,18 +103,6 @@ class Cuenta extends Base\ModelClass
         return 'idcuenta';
     }
 
-    public function clear()
-    {
-        parent::clear();
-
-        // Search open exercise for current date
-        $exerciseModel = new Ejercicio();
-        if ($exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false)) {
-            $this->codejercicio = $exercise->codejercicio;
-        }
-    }
-
-
     /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
