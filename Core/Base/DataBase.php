@@ -188,7 +188,7 @@ class DataBase
      *
      * @return bool
      */
-    public function connected()
+    public function connected(): bool
     {
         return (bool) self::$link;
     }
@@ -198,7 +198,7 @@ class DataBase
      *
      * @return bool
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->connected()) {
             return true;
@@ -219,7 +219,7 @@ class DataBase
      *
      * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         if (!$this->connected()) {
             return true;
