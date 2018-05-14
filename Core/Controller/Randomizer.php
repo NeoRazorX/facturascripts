@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,7 +44,7 @@ class Randomizer extends Base\Controller
      *
      * @var array
      */
-    public $totalCounter;
+    public $totalCounter = [];
 
     /**
      * Runs the controller's private logic.
@@ -191,8 +191,6 @@ class Randomizer extends Base\Controller
      */
     private function getTotals()
     {
-        $this->totalCounter = [];
-
         $models = [
             'agentes' => '\FacturaScripts\Dinamic\Model\Agente',
             'albaranescli' => '\FacturaScripts\Dinamic\Model\AlbaranCliente',
