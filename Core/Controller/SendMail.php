@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Lib\EmailTools;
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\App\AppSettings;
 
 /**
  * Description of SendMail
@@ -64,6 +65,11 @@ class SendMail extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
+        //Check if the email is configurate
+        if (AppSettings::get('email','host', '') == ""){
+            $this->miniLog->alert('email-not-configure');
+        }
 
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
