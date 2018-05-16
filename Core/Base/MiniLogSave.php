@@ -49,16 +49,19 @@ class MiniLogSave
      */
     public static function saveLog() : void
     {
-        /*foreach (MiniLog::getDataLog() as $content) {
+        foreach (MiniLog::getDataLog() as $content) {
             $logMessage = new LogMessage();
             $logMessage->time = $content["time"];
             $logMessage->level = $content["level"];
             $logMessage->message = $content["message"];
             $logMessage->save();
-        }*/
+        }
 
         foreach (self::TYPESLOGS as $value) {
-            var_dump(AppSettings::get('log', $value, false));
+            $logMessage = new LogMessage();
+            $logMessage->level = $value;
+            $logMessage->message = AppSettings::get('log', $value, 'false');
+            $logMessage->save();
         }
     }
 }
