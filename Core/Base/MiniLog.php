@@ -199,4 +199,14 @@ class MiniLog
     {
         self::$dataLog = [];
     }
+
+    /**
+     * Get the array dataLog
+     *
+     * @return array
+     */
+    public static function getDataLog() : array
+    {
+        return self::$dataLog;
+    }
 }
