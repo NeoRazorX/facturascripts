@@ -67,7 +67,7 @@ class SendMail extends Controller
         parent::privateCore($response, $user, $permissions);
 
         //Check if the email is configurate
-        if (AppSettings::get('email','host', '') == ""){
+        if (AppSettings::get('email', 'host', '') == "")z{
             $this->miniLog->alert('email-not-configure');
         }
 
