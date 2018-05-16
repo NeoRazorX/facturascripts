@@ -262,7 +262,6 @@
 
     {% for group in view.getModals() %}
         {% set formName = context.indexView ~ '-' ~ group.name %}
-        {% set model = view.getModel() %}
 
         <div class="modal" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -279,7 +278,7 @@
                         <div class="modal-body">
                             <div class="row">
                                 {% for column in group.columns %}
-                                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                                    {% set value = context.fsc.getFieldValue(view.model, column.widget.fieldName) %}
                                     {% if column.display == 'none' %}
                                         <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                                     {% else %}

@@ -34,8 +34,8 @@ class EditSettings extends ExtendedController\PanelController
     /**
      * Returns the configuration property value for a specified $field
      *
-     * @param mixed  $model
-     * @param string $field
+     * @param ModelClass $model
+     * @param string     $field
      *
      * @return mixed
      */
@@ -153,14 +153,13 @@ class EditSettings extends ExtendedController\PanelController
     {
         $this->exportManager->newDoc($this->request->get('option'));
         foreach ($this->views as $view) {
-            $model = $view->getModel();
-            if ($model === null || !isset($model->properties)) {
+            if ($view->model === null || !isset($view->model->properties)) {
                 continue;
             }
 
             $headers = ['key' => 'key', 'value' => 'value'];
             $rows = [];
-            foreach ($model->properties as $key => $value) {
+            foreach ($view->model->properties as $key => $value) {
                 $rows[] = ['key' => $key, 'value' => $value];
             }
 
@@ -192,17 +191,16 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if (empty($view->getModel())) {
+        if (empty($view->model)) {
             return;
         }
 
         $code = $this->getKeyFromViewName($viewName);
         $view->loadData($code);
 
-        $model = $view->getModel();
-        if ($model->name === null) {
-            $model->description = $model->name = strtolower(substr($viewName, 8));
-            $model->save();
+        if ($view->model->name === null) {
+            $view->model->description = $view->model->name = strtolower(substr($viewName, 8));
+            $view->model->save();
         }
     }
 
@@ -212,7 +210,7 @@ class EditSettings extends ExtendedController\PanelController
     private function testViews()
     {
         foreach ($this->views as $viewName => $view) {
-            if (!$view->getModel()) {
+            if (!$view->model) {
                 continue;
             }
 

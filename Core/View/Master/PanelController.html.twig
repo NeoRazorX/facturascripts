@@ -250,8 +250,7 @@
                                         {{ BaseController.rowStatisticsForEditView(_context, view) }}
 
                                         {# Main Form #}
-                                        {% set model = view.getModel() %}
-                                        {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
+                                        {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
                                     {% elseif viewType == 'EditListView' %}
                                         {{ BaseController.columnsForEditListView(_context, view) }}
                                     {% elseif viewType == 'HtmlView' %}
