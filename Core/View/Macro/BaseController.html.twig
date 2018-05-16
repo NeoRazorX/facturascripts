@@ -212,7 +212,7 @@
                 {% set rowClass = 'table-light' %}
                 {% set rowStatus = view.getRow('status') %}
                 {% if rowStatus is not empty %}
-                    {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
+                    {% set rowClass = rowStatus.getStatus( model ) %}
                 {% endif %}
 
                 {# checks model url #}
