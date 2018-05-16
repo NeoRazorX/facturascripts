@@ -49,7 +49,7 @@ class MiniLogSave
      */
     public static function saveMiniLog() : void
     {
-        var_dump(self::getSettingsLog());
+        var_dump(self::getLogs(self::getSettingsLog()));
         /*foreach (MiniLog::getDataLog() as $value) {
             $logMessage = new LogMessage();
             $logMessage->time = $value["time"];
@@ -57,6 +57,17 @@ class MiniLogSave
             $logMessage->message = $value["message"];
             $logMessage->save();
         }*/
+    }
+
+    /**
+     * Get all log with the same types that the param
+     *
+     * @param array $types
+     * @return array
+     */
+    private static function getLogs(array $types) : void
+    {
+        var_dump(MiniLog::read($types));
     }
 
     /**
