@@ -153,6 +153,10 @@ class SendMail extends Controller
         $mail->msgHTML($body);
         $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
 
+        foreach($this->request->files->get('uploads', [ ]) as $file){
+            $mail->addAttachment($file->getPathname());
+        }
+       
         if ($emailTools->send($mail)) {
             unlink(FS_FOLDER . '/MyFiles/' . $fileName);
             $this->miniLog->info('send-mail-ok');
