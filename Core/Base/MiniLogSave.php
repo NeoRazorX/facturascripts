@@ -43,20 +43,28 @@ class MiniLogSave
                       ];
 
     /**
-     * Store the datas into db
+     * Read the data from MiniLog and storage in Log table
      *
      * @return void
      */
-    public static function saveLog() : void
+    public static function saveMiniLog() : void
     {
-        foreach (MiniLog::getDataLog() as $content) {
+        foreach (MiniLog::getDataLog() as $value) {
             $logMessage = new LogMessage();
-            $logMessage->time = $content["time"];
-            $logMessage->level = $content["level"];
-            $logMessage->message = $content["message"];
+            $logMessage->time = $value["time"];
+            $logMessage->level = $value["level"];
+            $logMessage->message = $value["message"];
             $logMessage->save();
         }
+    }
 
+    /**
+     * Read the data from AppSettings and storage in Log table
+     *
+     * @return void
+     */
+    public static function saveAppSettings() : void
+    {
         foreach (self::TYPESLOGS as $value) {
             $logMessage = new LogMessage();
             $logMessage->level = $value;
