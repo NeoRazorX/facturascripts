@@ -47,7 +47,7 @@ class MiniLogSave
      *
      * @return void
      */
-    public static function saveMiniLog() : void
+    public static function saveLog() : void
     {
         $miniLog = new MiniLog();
         foreach ($miniLog->read(self::getActiveSettingsLog()) as $value) {

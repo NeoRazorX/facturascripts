@@ -188,7 +188,7 @@ class MiniLog
                 }
             }
         }
-        var_dump($messages);
+
         return $messages;
     }
 

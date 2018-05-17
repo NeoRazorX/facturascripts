@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Base\MiniLogSave;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -97,8 +96,6 @@ class AdminPlugins extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        MiniLogSave::saveMiniLog();
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
         $this->pluginManager = new Base\PluginManager();
