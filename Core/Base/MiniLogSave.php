@@ -49,37 +49,26 @@ class MiniLogSave
      */
     public static function saveMiniLog() : void
     {
-        var_dump(self::getLogs(self::getSettingsLog()));
-        /*foreach (MiniLog::getDataLog() as $value) {
+        $miniLog = new MiniLog();
+        foreach ($miniLog->read(self::getActiveSettingsLog()) as $value) {
             $logMessage = new LogMessage();
             $logMessage->time = $value["time"];
             $logMessage->level = $value["level"];
             $logMessage->message = $value["message"];
             $logMessage->save();
-        }*/
+        }
     }
 
     /**
-     * Get all log with the same types that the param
-     *
-     * @param array $types
-     * @return array
-     */
-    private static function getLogs(array $types) : void
-    {
-        var_dump(MiniLog::read($types));
-    }
-
-    /**
-     * Get types enable (true) about settings log
+     * Get types of settings log enable (true) 
      *
      * @return array
      */
-    private static function getSettingsLog() : array
+    private static function getActiveSettingsLog() : array
     {
         $types = [];
         foreach (self::TYPESLOGS as $value) {
-            if(AppSettings::get('log', $value, 'false') == 'true'){
+            if(AppSettings::get('log', $value, 'false') == 'true') {
                 $types[] = $value;
             }
         }

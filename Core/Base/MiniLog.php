@@ -188,7 +188,7 @@ class MiniLog
                 }
             }
         }
-
+        var_dump($messages);
         return $messages;
     }
 
@@ -198,15 +198,5 @@ class MiniLog
     public function clear()
     {
         self::$dataLog = [];
-    }
-
-    /**
-     * Get the array dataLog
-     *
-     * @return array
-     */
-    public static function getDataLog() : array
-    {
-        return self::$dataLog;
     }
 }
