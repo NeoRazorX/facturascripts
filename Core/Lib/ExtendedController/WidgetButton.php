@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-/**   
+/**
  * Description of WidgetButton
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -167,10 +167,13 @@ class WidgetButton implements VisualItemInterface
         $this->type = (string) $button['type'];
         $this->label = (string) $button['label'];
         $this->icon = (string) $button['icon'];
-        $this->action = (string) $button['action'];
         $this->hint = (string) $button['hint'];
         $this->color = (string) $button['color'];
         $this->onClick = (string) $button['onClick'];
+
+        $this->action = (string) (empty($button['function'])
+            ? $button['action']
+            : $button['function']);
     }
 
     /**
@@ -184,8 +187,12 @@ class WidgetButton implements VisualItemInterface
         $this->type = (string) $widgetAtributes->type;
         $this->label = (string) $widgetAtributes->label;
         $this->icon = (string) $widgetAtributes->icon;
-        $this->action = (string) $widgetAtributes->action;
         $this->hint = (string) $widgetAtributes->hint;
+
+        $this->action = (string) (empty($widgetAtributes->function)
+            ? $widgetAtributes->action
+            : $widgetAtributes->function);
+
         $this->id = $this->getOptionalAtribute('id', $widgetAtributes);
         $this->color = $this->getOptionalAtribute('color', $widgetAtributes);
         $this->onClick = $this->getOptionalAtribute('onclick', $widgetAtributes);
