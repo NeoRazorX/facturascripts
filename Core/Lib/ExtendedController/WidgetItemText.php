@@ -93,6 +93,7 @@ class WidgetItemText extends WidgetItem
      */
     private function getTextResume($txt, $len = 60)
     {
+        $txt = strip_tags($txt);
         if (mb_strlen($txt) < $len) {
             return $txt;
         }
