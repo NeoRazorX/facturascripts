@@ -52,7 +52,7 @@ class ListLogMessage extends ExtendedController\ListController
         $this->addView('ListLogMessage', 'LogMessage');
         $this->addSearchFields('ListLogMessage', ['level', 'message']);
 
-        $this->addOrderBy('ListLogMessage', 'time', 'time');
+        $this->addOrderBy('ListLogMessage', 'time', 'time', 2);
         $this->addOrderBy('ListLogMessage', 'level', 'level');
 
         $values = [
