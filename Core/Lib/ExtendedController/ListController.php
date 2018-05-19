@@ -331,7 +331,7 @@ abstract class ListController extends BaseController
             return false;
         }
 
-        $model = $this->views[$this->active]->getModel();
+        $model = $this->views[$this->active]->model;
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {

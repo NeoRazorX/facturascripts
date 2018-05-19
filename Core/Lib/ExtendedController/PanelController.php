@@ -78,9 +78,7 @@ abstract class PanelController extends BaseController
     public function getPrimaryDescription()
     {
         $viewName = array_keys($this->views)[0];
-        $model = $this->views[$viewName]->getModel();
-
-        return $model->primaryDescription();
+        return $this->views[$viewName]->model->primaryDescription();
     }
 
     /**
@@ -106,7 +104,7 @@ abstract class PanelController extends BaseController
      */
     public function getViewModelValue($viewName, $fieldName)
     {
-        $model = $this->views[$viewName]->getModel();
+        $model = $this->views[$viewName]->model;
         return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
     }
 
@@ -294,7 +292,7 @@ abstract class PanelController extends BaseController
             return false;
         }
 
-        $model = $this->views[$this->active]->getModel();
+        $model = $this->views[$this->active]->model;
         $code = $this->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));

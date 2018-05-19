@@ -68,7 +68,7 @@ class GridView extends BaseView
 
         // Join the parent view
         $this->parentView = $parent;
-        $this->parentModel = $parent->getModel();
+        $this->parentModel = $parent->model;
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
