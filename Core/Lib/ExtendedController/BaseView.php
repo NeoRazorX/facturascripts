@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
 
 /**

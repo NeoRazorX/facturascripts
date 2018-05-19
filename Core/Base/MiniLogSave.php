@@ -48,7 +48,7 @@ class MiniLogSave
     public function __construct()
     {
         $miniLog = new MiniLog();
-        foreach ($miniLog->read(self::getActiveSettingsLog()) as $value) {
+        foreach ($miniLog->read($this->getActiveSettingsLog()) as $value) {
             $logMessage = new LogMessage();
             $logMessage->time = date('d-m-Y H:i:s', $value["time"]);
             $logMessage->level = $value["level"];

@@ -61,7 +61,7 @@ class LogMessage extends Base\ModelClass
     /**
      * When was generated the message
      *
-     * @var int
+     * @var string
      */
     public $time;
 
