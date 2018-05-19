@@ -1345,5 +1345,15 @@
     "create-accounting-entry": "Crear Asiento Contable",
     "hint-create-accounting-entry": "Crear el asiento contable para la regularización de impuestos del periodo",
     "previous-balance": "Balance anterior",
-    "result": "Resultado"
+    "result": "Resultado",
+    "integrity-check": "Verificación de integridad",
+    "integrity-check-help": "Esta es una verificación de la integridad del sistema, descrita como",
+    "missing-file": "Falta el archivo",
+    "missing-file-help": "Parece que este archivo no se encuentra en tu instalación. Quizás no lo uses, pero <em>no puedes eliminarlo</em>.",
+    "invalid-hash-file": "Archivo hash no válido",
+    "invalid-hash-file-help": "Este archivo tiene un hash de validación diferente desde el momento en que se agregaron y se generaron. Esto puede implicar que el sistema central se ha visto comprometido, que los archivos están corruptos o que <em>se modificó incorrectamente sin utilizar un complemento</em> para hacerlo.",
+    "extra-file": "Archivo extra",
+    "extra-file-help": "Este es un nuevo archivo puesto en un lugar equivocado. Esto puede implicar que el sistema central se ha visto comprometido o que <em>es una característica nueva que está en en desarrollo y aún no se acepta en FacturaScripts</em>.",
+    "not-passed-integrity-check": "Algunos archivos no han pasado la verificación de integridad ... <br/>Puedes <a class='alert-link' target='_blank' href='IntegritySystemCheck'>obtener más detalles aquí</a>.",
+    "recreate-system-integrity": "Volver a crear la integridad del sistema"
 }
