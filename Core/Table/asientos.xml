@@ -44,6 +44,11 @@
         <type>boolean</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>coddiario</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
     <constraint>
         <name>asientos_pkey</name>
         <type>PRIMARY KEY (idasiento)</type>

@@ -49,5 +49,10 @@
         <column name="ammount" numcolumns="2" display="right" order="200">
             <widget type="money" fieldname="importe" icon="fa-money" readonly="readonly" />
         </column>
+        <column name="accounting-book" numcolumns="2" display="right" order="210">
+            <widget type="select" fieldname="coddiario">
+                <values source="diarios" fieldcode="coddiario" fieldtitle="nombre"></values>
+            </widget>
+        </column>     
     </columns>
 </view>
