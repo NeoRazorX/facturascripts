@@ -326,7 +326,7 @@ abstract class ListController extends BaseController
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'), ['nick' => $this->user->nick]);
 
             return false;
         }
@@ -338,12 +338,12 @@ abstract class ListController extends BaseController
             if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {
-                $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+                $this->miniLog->warning($this->i18n->trans('record-deleted-error'), ['nick' => $this->user->nick]);
             }
         }
 
         if ($numDeletes > 0) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'), ['nick' => $this->user->nick]);
 
             return true;
         }

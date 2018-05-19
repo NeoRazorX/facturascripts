@@ -53,6 +53,10 @@ class MiniLogSave
             $logMessage->time = date('d-m-Y H:i:s', $value["time"]);
             $logMessage->level = $value["level"];
             $logMessage->message = $value["message"];
+            if (isset($value['context']['nick'])) {
+                $logMessage->nick = $value['context']['nick'];
+            }
+
             $logMessage->save();
         }
     }

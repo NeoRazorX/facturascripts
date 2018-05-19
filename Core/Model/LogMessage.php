@@ -52,6 +52,13 @@ class LogMessage extends Base\ModelClass
     public $message;
 
     /**
+     * User nick.
+     * 
+     * @var string
+     */
+    public $nick;
+
+    /**
      * When was generated the message
      *
      * @var int

@@ -33,7 +33,10 @@
         <column name="message" order="120">
             <widget type="text" fieldname="message" />
         </column>
-        <column name="time" display="right" order="130">
+        <column name="user" order="130">
+            <widget type="text" fieldname="nick" />
+        </column>
+        <column name="time" display="right" order="140">
             <widget type="text" fieldname="time" />
         </column>
     </columns>
