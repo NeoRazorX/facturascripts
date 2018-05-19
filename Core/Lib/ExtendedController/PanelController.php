@@ -288,14 +288,14 @@ abstract class PanelController extends BaseController
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'), ['nick' => $this->user->nick]);
             return false;
         }
 
         $model = $this->views[$this->active]->model;
         $code = $this->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'), ['nick' => $this->user->nick]);
             return true;
         }
 
@@ -310,17 +310,17 @@ abstract class PanelController extends BaseController
     protected function editAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'), ['nick' => $this->user->nick]);
             return false;
         }
 
         if ($this->views[$this->active]->model->save()) {
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'), ['nick' => $this->user->nick]);
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->miniLog->error($this->i18n->trans('record-save-error'), ['nick' => $this->user->nick]);
         return false;
     }
 

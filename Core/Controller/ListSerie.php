@@ -50,7 +50,7 @@ class ListSerie extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListSerie', 'Serie');
-        $this->addSearchFields('ListSerie', ['descripcion', 'codserie', 'codcuenta']);
+        $this->addSearchFields('ListSerie', ['descripcion', 'codserie']);
 
         $this->addOrderBy('ListSerie', 'codserie', 'code');
         $this->addOrderBy('ListSerie', 'descripcion', 'description');

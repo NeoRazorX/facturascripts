@@ -343,7 +343,7 @@ class ListView extends BaseView implements DataViewInterface
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $this->order = empty($order) ? $this->getSQLOrderBy($this->selectedOrderBy) : $order;
-        $this->count = $this->model->count($where);
+        $this->count = is_null($this->model) ? 0 : $this->model->count($where);
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
