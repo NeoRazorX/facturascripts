@@ -38,13 +38,6 @@ class LogMessage extends Base\ModelClass
     public $id;
 
     /**
-     * When was generated the message
-     *
-     * @var string
-     */
-    public $time;
-
-    /**
      * The type level of message.
      *
      * @var string
@@ -59,13 +52,19 @@ class LogMessage extends Base\ModelClass
     public $message;
 
     /**
-     * Returns the name of the table that uses this model.
+     * When was generated the message
      *
-     * @return string
+     * @var int
      */
-    public static function tableName()
+    public $time;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
     {
-        return 'logs';
+        parent::clear();
+        $this->time = date('d-m-Y H:i:s');
     }
 
     /**
@@ -79,14 +78,13 @@ class LogMessage extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-        $this->time = time();
-        $this->level = '';
-        $this->message = '';
+        return 'logs';
     }
 
     /**
@@ -97,11 +95,6 @@ class LogMessage extends Base\ModelClass
     public function test()
     {
         $this->message = Utils::noHtml($this->message);
-
-        if (\strlen($this->message) === 0) {
-            return false;
-        }
-
-        return true;
+        return empty($this->message) ? false : parent::test();
     }
 }

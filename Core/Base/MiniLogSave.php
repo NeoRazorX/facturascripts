@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,9 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Model\LogMessage;
 
 /**
  * Class to read the miniLog
@@ -38,21 +38,19 @@ class MiniLogSave
      *
      * @var array
      */
-    const TYPESLOGS = ['info', 'notice', 'warning', 'error', 
-                       'critical', 'alert', 'emergency'
-                      ];
+    const TYPES_LOG = ['info', 'notice', 'warning', 'error',
+        'critical', 'alert', 'emergency'
+    ];
 
     /**
-     * Read the data from MiniLog and storage in Log table
-     *
-     * @return void
+     * Read the data from MiniLog and storage in Log table.
      */
-    public static function saveLog() : void
+    public function __construct()
     {
         $miniLog = new MiniLog();
         foreach ($miniLog->read(self::getActiveSettingsLog()) as $value) {
             $logMessage = new LogMessage();
-            $logMessage->time = $value["time"];
+            $logMessage->time = date('d-m-Y H:i:s', $value["time"]);
             $logMessage->level = $value["level"];
             $logMessage->message = $value["message"];
             $logMessage->save();
@@ -64,14 +62,15 @@ class MiniLogSave
      *
      * @return array
      */
-    private static function getActiveSettingsLog() : array
+    private function getActiveSettingsLog(): array
     {
         $types = [];
-        foreach (self::TYPESLOGS as $value) {
-            if(AppSettings::get('log', $value, 'false') == 'true') {
+        foreach (self::TYPES_LOG as $value) {
+            if (AppSettings::get('log', $value, 'false') == 'true') {
                 $types[] = $value;
             }
         }
+
         return $types;
     }
 }
