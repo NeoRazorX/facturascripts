@@ -39,17 +39,6 @@ abstract class PanelController extends BaseController
     public $hasData;
 
     /**
-     * List of configuration options for each of the views.
-     * [
-     *   'keyView1' => ['icon' => 'fa-icon1', 'active' => TRUE],
-     *   'keyView2' => ['icon' => 'fa-icon2', 'active' => TRUE]
-     * ]
-     *
-     * @var array
-     */
-    public $settings;
-
-    /**
      * Tabs position in page: left, bottom.
      *
      * @var string
@@ -78,8 +67,6 @@ abstract class PanelController extends BaseController
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
 
         $this->hasData = false;
-        $this->settings = [];
-
         $this->setTabsPosition('left');
     }
 
@@ -91,22 +78,7 @@ abstract class PanelController extends BaseController
     public function getPrimaryDescription()
     {
         $viewName = array_keys($this->views)[0];
-        $model = $this->views[$viewName]->getModel();
-
-        return $model->primaryDescription();
-    }
-
-    /**
-     * Returns the configuration value for the indicated view.
-     *
-     * @param string $viewName
-     * @param string $property
-     *
-     * @return mixed
-     */
-    public function getSettings($viewName, $property)
-    {
-        return $this->settings[$viewName][$property];
+        return $this->views[$viewName]->model->primaryDescription();
     }
 
     /**
@@ -132,7 +104,7 @@ abstract class PanelController extends BaseController
      */
     public function getViewModelValue($viewName, $fieldName)
     {
-        $model = $this->views[$viewName]->getModel();
+        $model = $this->views[$viewName]->model;
         return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
     }
 
@@ -170,7 +142,7 @@ abstract class PanelController extends BaseController
             }
 
             // check if the view should be active
-            $this->settings[$viewName]['active'] = $this->hasData;
+            $this->setSettings($viewName, 'active', $this->hasData);
         }
 
         // General operations with the loaded data
@@ -300,7 +272,8 @@ abstract class PanelController extends BaseController
     protected function addView($viewName, $view, $icon)
     {
         $this->views[$viewName] = $view;
-        $this->settings[$viewName] = ['active' => true, 'icon' => $icon];
+        $this->setSettings($viewName, 'active', true);
+        $this->setSettings($viewName, 'icon', $icon);
 
         if (empty($this->active)) {
             $this->active = $viewName;
@@ -319,7 +292,7 @@ abstract class PanelController extends BaseController
             return false;
         }
 
-        $model = $this->views[$this->active]->getModel();
+        $model = $this->views[$this->active]->model;
         $code = $this->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));

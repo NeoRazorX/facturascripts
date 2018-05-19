@@ -64,8 +64,7 @@
                             {{ BaseController.rowStatisticsForEditView(_context, view) }}
 
                             {# Main Form #}
-                            {% set model = view.getModel() %}
-                            {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
+                            {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
                         {% elseif viewType == 'EditListView' %}
                             {# Information Cards Header #}
                             {{ BaseController.rowCardsForEditView(_context, view, 'header') }}

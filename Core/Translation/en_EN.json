@@ -726,5 +726,6 @@
     "extra-file": "Extra file",
     "extra-file-help": "This is a new file founded in a wrong place. This may imply that the core system has been compromised, or that <em>is a new feature that is in Work In Progress and isn't accepted yet to FacturaScripts Core</em>.",
     "not-passed-integrity-check": "Some files have not passed the integrity check...<br/>You can <a class='alert-link' target='_blank' href='IntegritySystemCheck'>get more details here</a>.",
-    "recreate-system-integrity": "Recreate system integrity"
+    "recreate-system-integrity": "Recreate system integrity",
+    "debug-mode": "Debug mode"
 }
