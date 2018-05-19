@@ -84,9 +84,9 @@ class Diario extends Base\ModelClass
     {
         return 'INSERT INTO ' . static::tableName() . ' (coddiario,nombre) '
             . " VALUES "
-            . "('1','Principal') "
-            . "('2','Diario de Facturas')"
-            . "('3','Cartera de pagos')"
+            . "('1','Principal'), "
+            . "('2','Diario de Facturas'),"
+            . "('3','Cartera de pagos'),"
             . "('4','Cartera de cbros')";
         
     }
