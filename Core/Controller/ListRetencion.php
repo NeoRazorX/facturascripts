@@ -52,7 +52,7 @@ class ListRetencion extends ExtendedController\ListController
         $this->addView('ListRetencion', 'Retencion');
         $this->addSearchFields('ListRetencion', ['descripcion', 'codretencion']);
 
-        $this->addOrderBy('ListImpuesto', 'codretencion', 'code');
-        $this->addOrderBy('ListImpuesto', 'descripcion', 'description');
+        $this->addOrderBy('ListRetencion', 'codretencion', 'code');
+        $this->addOrderBy('ListRetencion', 'descripcion', 'description');
     }
 }
