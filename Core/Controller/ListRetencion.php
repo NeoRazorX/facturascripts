@@ -25,7 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class ListImpuesto extends ExtendedController\ListController
+class ListRetencion extends ExtendedController\ListController
 {
 
     /**

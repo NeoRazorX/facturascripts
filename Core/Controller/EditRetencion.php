@@ -25,7 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class EditImpuesto extends ExtendedController\EditController
+class EditRetencion extends ExtendedController\EditController
 {
 
     /**
