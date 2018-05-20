@@ -41,7 +41,7 @@
                 </widget>
             </column>
         </group>
-        <group name="product-data" tittle="produt-data" numcolumns="12">   
+        <group name="product-data" tittle="produt-data" numcolumns="12">
             <column name="reference" numcolumns="2" order="100">
                 <widget type="text" fieldname="referencia" icon="" required="true" />
             </column>
@@ -57,7 +57,7 @@
             <column name="stock" numcolumns="2" order="140">
                 <widget type="number" fieldname="stockfis" required="" />
             </column>
-            <column name="nostock" numcolumns="1" order="150">
+            <column name="nostock" title="no-stock" numcolumns="1" order="150">
                 <widget type="checkbox" fieldname="nostock"/>
             </column>
         </group>
