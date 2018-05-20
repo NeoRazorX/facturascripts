@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class Retenciones extends Base\ModelClass
+class Retencion extends Base\ModelClass
 {
     use Base\ModelTrait;
 
