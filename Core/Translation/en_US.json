@@ -1225,5 +1225,8 @@
     "supplier-estimation": "Supplier estimation",
     "supplier-order": "Supplier order",
     "supplier-delivery-note": "Supplier delivery note",
-    "supplier-invoice": "Supplier invoice"
+    "supplier-invoice": "Supplier invoice",
+    "retentions": "Retentions",
+    "not-valid-description-retention": "Not valid description retention",
+    "not-valid-percentage-retention": "Not valid percentage retention"
 }
