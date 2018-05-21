@@ -32,7 +32,7 @@ View to edit a single item from the AtributoValor model
             </column>
         </group>
         <group name="attribute-values" numcolumns="12">
-            <column name="valor" numcolumns="5" order="130">
+            <column name="value" numcolumns="5" order="130">
                 <widget type="text" fieldname="valor" />
             </column>
         </group>
