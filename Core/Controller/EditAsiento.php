@@ -103,6 +103,9 @@ class EditAsiento extends ExtendedController\PanelController
 
             case 'lock':
                 return true; // TODO: Uncomplete
+            case 'autocomplete':
+                return $this->autocomplete();
+                break;
 
             default:
                 return parent::execPreviousAction($action);
@@ -413,5 +416,61 @@ class EditAsiento extends ExtendedController\PanelController
                 }
                 break;
         }
+    }
+
+    /**
+     * overwrite autocomplete function to macro concepts in accounting concept
+     * 
+     * @return boolean
+     */
+    protected function autocomplete()
+    {
+        $this->setTemplate(false);
+
+        $results = parent::autocompleteAction();
+        $source = $this->request->get('source');
+        if ($source == 'conceptos_partidas') {
+            $results = $this->replaceConcept($results);
+        }
+        $this->response->setContent(json_encode($results));
+        return false;
+    }
+
+    /**
+     * Replace concept in concepts array with macro values
+     * 
+     * @param type array
+     * @return array
+     */
+    private function replaceConcept($results)
+    {
+        $concepts = [];
+        $finalResults = [];
+        $idasiento = $this->request->get('code');
+        $accounting = new Model\Asiento();
+        $where = [
+            new DataBaseWhere('idasiento', $idasiento),
+        ];
+        $accounting->loadFromCode(NULL, $where);
+
+        $concepts['%document%'] = $accounting->documento;
+        $concepts['%date%'] = date('d-m-Y');
+        $concepts['%date-entry%'] = $accounting->fecha;
+        $concepts['%month%'] = date('F', strtotime($accounting->fecha));
+
+        $search[] = '%document%';
+        $replace[] = $accounting->documento;
+        $search[] = '%date%';
+        $replace[] = date('d-m-Y');
+        $search[] = '%date-entry%';
+        $replace[] = $accounting->fecha;
+        $search[] = '%month%';
+        $replace[] = $this->i18n->trans(date('F', strtotime($accounting->fecha)));
+
+        foreach ($results as $result) {
+            $finalValue = array('key' => str_replace($search, $replace, $result['key']), 'value' => $result['value']);
+            $finalResults[] = $finalValue;
+        }
+        return $finalResults;
     }
 }

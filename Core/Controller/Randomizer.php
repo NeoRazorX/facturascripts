@@ -180,7 +180,7 @@ class Randomizer extends Base\Controller
         }
 
         if (false !== $app) {
-            $this->miniLog->info($this->i18n->trans($txt, ['%quantity%' => $app->generate()]));
+            $this->miniLog->info($this->i18n->trans($txt, ['%quantity%' => $app->generate()]), ['nick' => $this->user->nick]);
         }
 
         return;

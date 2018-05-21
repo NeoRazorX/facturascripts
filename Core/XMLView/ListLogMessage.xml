@@ -27,14 +27,28 @@
         <column name="code" order="100">
             <widget type="text" fieldname="id" onclick="EditLogMessage" />
         </column>
-        <column name="time" order="110">
-            <widget type="text" fieldname="time" />
-        </column>
-        <column name="level" display="center" order="120">
+        <column name="level" display="center" order="110">
             <widget type="text" fieldname="level" />
         </column>
-        <column name="message" order="130">
+        <column name="message" order="120">
             <widget type="text" fieldname="message" />
         </column>
+        <column name="user" order="130">
+            <widget type="text" fieldname="nick" />
+        </column>
+        <column name="time" display="right" order="140">
+            <widget type="text" fieldname="time" />
+        </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="level">
+            <option color="table-info">info</option>
+            <option color="table-success">notice</option>
+            <option color="table-warning">warning</option>
+            <option color="table-danger">error</option>
+            <option color="table-danger">critical</option>
+            <option color="table-danger">alert</option>
+            <option color="table-danger">emergency</option>
+        </row>
+    </rows>
 </view>

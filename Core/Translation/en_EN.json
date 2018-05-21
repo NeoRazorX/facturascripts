@@ -729,5 +729,6 @@
     "recreate-system-integrity": "Recreate system integrity",
     "macro-account-note-info":"Keys for values replacement macro",
     "accounting-entry-date":"Accounting entry date",
-    "month-name":"Month Name"
+    "month-name":"Month Name",
+    "debug-mode": "Debug mode"
 }

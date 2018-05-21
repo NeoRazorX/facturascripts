@@ -13,16 +13,23 @@
         <default>nextval('log_id_seq'::regclass)</default>
     </column>
     <column>
-        <name>time</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
         <name>level</name>
         <type>character varying(15)</type>
+        <null>NO</null>
     </column>
     <column>
         <name>message</name>
         <type>character varying(500)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>time</name>
+        <type>timestamp</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>id_pkey</name>
