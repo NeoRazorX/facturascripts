@@ -225,7 +225,7 @@ abstract class ModelCore
         $xmlCons = [];
 
         if (!$dbTools->getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
-            self::$miniLog->critical(self::$i18n->trans('error-on-xml-file'));
+            self::$miniLog->critical(self::$i18n->trans('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']));
             return false;
         }
 
