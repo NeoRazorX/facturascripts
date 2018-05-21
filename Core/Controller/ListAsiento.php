@@ -78,8 +78,7 @@ class ListAsiento extends ExtendedController\ListController
     {
         switch ($action) {
             case 'renumber':
-                $model = $this->views['ListAsiento']->getModel();
-                if ($model->renumber()) {
+                if ($this->views['ListAsiento']->model->renumber()) {
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
                 return true;

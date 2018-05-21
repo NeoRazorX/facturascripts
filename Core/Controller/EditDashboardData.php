@@ -99,7 +99,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     protected function editAction()
     {
-        $model = $this->views[$this->active]->getModel();
+        $model = $this->views[$this->active]->model;
         $properties = array_keys($this->getPropertiesFields());
         $fields = array_keys($model->properties);
         foreach ($fields as $key) {

@@ -59,7 +59,7 @@
 {# -- Working Variables -- #}
 {% set parentIndexView = fsc.views|keys|first %}
 {% set parentView = fsc.views[parentIndexView] %}
-{% set parentModel = parentView.getModel() %}
+{% set parentModel = parentView.model %}
 {% set isNewRecord = (parentView.count == 0) %}
 
 {# -- Main Body -- #}
@@ -192,7 +192,7 @@
                         {{ BaseController.rowStatisticsForEditView(_context, view) }}
 
                         {# Main Form #}
-                        {{ BaseController.columnsForEditView(_context, view, view.getModel(), TRUE) }}
+                        {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
                     {% endif %}
 
                     {# Edit Multiple #}

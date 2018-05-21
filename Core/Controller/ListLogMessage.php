@@ -39,6 +39,7 @@ class ListLogMessage extends ExtendedController\ListController
         $pagedata['title'] = 'logs';
         $pagedata['icon'] = 'fa-file-text-o';
         $pagedata['menu'] = 'admin';
+        $pagedata['submenu'] = 'control-panel';
 
         return $pagedata;
     }
@@ -49,9 +50,9 @@ class ListLogMessage extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListLogMessage', 'LogMessage');
-        $this->addSearchFields('ListLogMessage', ['time', 'level', 'message']);
+        $this->addSearchFields('ListLogMessage', ['level', 'message']);
 
-        $this->addOrderBy('ListLogMessage', 'time', 'time');
+        $this->addOrderBy('ListLogMessage', 'time', 'time', 2);
         $this->addOrderBy('ListLogMessage', 'level', 'level');
 
         $values = [
@@ -63,6 +64,6 @@ class ListLogMessage extends ExtendedController\ListController
             ['code' => 'alert', 'description' => $this->i18n->trans('type-alert')],
             ['code' => 'emergency', 'description' => $this->i18n->trans('type-emergency')]
         ];
-        $this->addFilterSelect('ListLogMessage', 'level', 'type', 'level', $values);
+        $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
     }
 }

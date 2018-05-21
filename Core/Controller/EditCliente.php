@@ -43,9 +43,10 @@ class EditCliente extends ExtendedController\PanelController
      */
     public function calcClientDeliveryNotes($view)
     {
-        $where = [];
-        $where[] = new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
-        $where[] = new DataBaseWhere('ptefactura', true);
+        $where = [
+            new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
+            new DataBaseWhere('editable', true)
+        ];
 
         $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
 
