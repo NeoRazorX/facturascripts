@@ -154,6 +154,6 @@ class EditUser extends ExtendedController\PanelController
             return strcmp($objA['title'], $objB['title']);
         });
 
-        $columnLangCode->widget->setValuesFromArray($langs);
+        $columnLangCode->widget->setValuesFromArray($langs, false);
     }
 }
