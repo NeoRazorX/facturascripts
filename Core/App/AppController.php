@@ -201,6 +201,7 @@ class AppController extends App
 
                 $httpStatus = Response::HTTP_OK;
             } catch (Exception $exc) {
+                $this->miniLog->critical($exc->getMessage());
                 $this->debugBar['exceptions']->addException($exc);
                 $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
                 $template = 'Error/ControllerError.html.twig';
@@ -255,6 +256,7 @@ class AppController extends App
         try {
             $this->response->setContent($webRender->render($template, $templateVars));
         } catch (Exception $exc) {
+            $this->miniLog->critical($exc->getMessage());
             $this->debugBar['exceptions']->addException($exc);
             $this->response->setContent($webRender->render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
