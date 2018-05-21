@@ -184,8 +184,9 @@ class WidgetItemSelect extends WidgetItem
      * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
      * @param array $values
+     * @param bool $translate
      */
-    public function setValuesFromArray($values)
+    public function setValuesFromArray($values, $translate = true)
     {
         $this->values = [];
         foreach ($values as $value) {
@@ -199,7 +200,9 @@ class WidgetItemSelect extends WidgetItem
                 'title' => '',
             ];
         }
-        $this->applyTranslations();
+        if ($translate) {
+            $this->applyTranslations();
+        }
     }
 
     /**
