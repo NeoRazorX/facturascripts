@@ -741,8 +741,8 @@
     "role": "Role",
     "mime-type": "Mime Type",
     "states": "states",
-    "book": "book",
-    "subtract": "subtract",
+    "book": "Reserve",
+    "subtract": "Subtract",
     "do-nothing": "Do nothing",
     "foresee": "Foresee",
     "doc-type": "Document type",
@@ -753,5 +753,13 @@
     "reserved": "Reserved",
     "pending-reception": "Pending reception",
     "attribute-values": "Attribute values",
-    "value": "Value"
+    "value": "Value",
+    "customer-estimation": "Customer estimation",
+    "customer-order": "Customer order",
+    "customer-delivery-note": "Customer delivery note",
+    "customer-invoice": "Customer invoice",
+    "supplier-estimation": "Supplier estimation",
+    "supplier-order": "Supplier order",
+    "supplier-delivery-note": "Supplier delivery note",
+    "supplier-invoice": "Supplier invoice"
 }
