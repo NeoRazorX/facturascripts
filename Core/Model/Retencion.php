@@ -53,7 +53,7 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn() :string
     {
         return 'codretencion';
     }
@@ -63,20 +63,41 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName() : string
     {
         return 'retenciones';
     }
 
     /**
      * Reset the values of all model properties.
+     *
+     * @return void
      */
-    public function clear()
+    public function clear() : void
     {
         parent::clear();
         $this->descripcion = '';
         $this->porcentaje = 0;
     }
 
-    //TODO make function test 
+    /**
+     * Returns True if there is no erros on properties values.
+     *
+     * @return boolean
+     */
+    public function test() : bool
+    {
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        if (empty($this->descripcion) || strlen($this->descripcion) > 50) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-description-retention'));
+            return false;
+        }
+
+        if (empty($this->porcentaje) || intval($this->porcentaje) <= 0) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-percentage-retention'));
+            return false;
+        }
+
+        return parent::test();
+    }
 }
