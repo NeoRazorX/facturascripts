@@ -36,13 +36,13 @@
             </column>
         </group>
         <group name="seccondary" numcolumns="12">
-            <column name="iso-code-number" numcolumns="4" order="100">
+            <column name="iso" numcolumns="4" order="100">
                 <widget type="number" decimal="0" fieldname="codiso" />
             </column>
-            <column name="conversion-rate" numcolumns="4" order="100">
+            <column name="sales-rate" numcolumns="4" order="100">
                 <widget type="text" fieldname="tasaconv" />
             </column>
-            <column name="purchase-conversion-rate" numcolumns="4" order="100">
+            <column name="purchase-rate" numcolumns="4" order="100">
                 <widget type="text" fieldname="tasaconvcompra" />
             </column>
         </group>
