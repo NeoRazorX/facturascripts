@@ -728,5 +728,7 @@
     "not-passed-integrity-check": "Some files have not passed the integrity check...<br/>You can <a class='alert-link' target='_blank' href='IntegritySystemCheck'>get more details here</a>.",
     "recreate-system-integrity": "Recreate system integrity",
     "retentions": "Retentions",
-    "debug-mode": "Debug mode"
+    "debug-mode": "Debug mode",
+    "not-valid-description-retention": "Not valid description retention",
+    "not-valid-percentage-retention": "Not valid percentage retention"
 }
