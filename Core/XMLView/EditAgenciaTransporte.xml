@@ -36,12 +36,12 @@
             </column>
         </group>
         <group name="data2" numcolumns="12">
-            <column name="WWW" numcolumns="10" order="130">
+            <column name="url" numcolumns="10" order="130">
                 <widget type="text" fieldname="web" />
             </column>
             <column name="active" numcolumns="2" order="140">
                 <widget type="checkbox" fieldname="activo" />
-            </column>            
+            </column>
         </group>
     </columns>
 </view>

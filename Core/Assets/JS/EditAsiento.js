@@ -230,7 +230,7 @@ function customAfterChange(changes) {
 
             // show VAT Register, if needed
             if (Object.keys(results.vat).length > 0) {
-                showVatRegister('VAT-Register', 'EditAsiento');
+                showVatRegister('VAT-register', 'EditAsiento');
             }
         },
         error: function (xhr, status, error) {
