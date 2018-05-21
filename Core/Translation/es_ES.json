@@ -1390,5 +1390,8 @@
     "supplier-estimation": "Presupuesto de Proveedor",
     "supplier-order": "Pedido de Proveedor",
     "supplier-delivery-note": "Albarán de Proveedor",
-    "supplier-invoice": "Factura de Proveedor"
+    "supplier-invoice": "Factura de Proveedor",
+    "retentions": "Retenciones",
+    "not-valid-description-retention": "Descripción no valida para la retención",
+    "not-valid-percentage-retention": "Porcentaje no válido. Debe ser mayor de 0.00"
 }
