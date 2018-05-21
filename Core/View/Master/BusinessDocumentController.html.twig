@@ -79,8 +79,7 @@
                             {{ BaseMacros.rowStatisticsForEditView(_context, view) }}
 
                             {# Main Form #}
-                            {% set model = view.getModel() %}
-                            {{ BaseMacros.columnsForEditView(_context, view, model, TRUE) }}
+                            {{ BaseMacros.columnsForEditView(_context, view, view.model, TRUE) }}
                         {% elseif viewType == 'EditListView' %}
                             {# Information Cards Header #}
                             {{ BaseMacros.rowCardsForEditView(_context, view, 'header') }}

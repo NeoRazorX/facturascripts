@@ -50,7 +50,7 @@ class ListApiKey extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListApiKey', 'ApiKey');
-        $this->addSearchFields('ListApiKey', ['descripcion', 'apikey', 'nick']);
+        $this->addSearchFields('ListApiKey', ['description', 'apikey', 'nick']);
 
         $this->addOrderBy('ListApiKey', 'apikey', 'api-key');
         $this->addOrderBy('ListApiKey', 'descripcion', 'description');

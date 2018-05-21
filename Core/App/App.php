@@ -152,6 +152,7 @@ abstract class App
      */
     public function close()
     {
+        new Base\MiniLogSave();
         $this->dataBase->close();
     }
 

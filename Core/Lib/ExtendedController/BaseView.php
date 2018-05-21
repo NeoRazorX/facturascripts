@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
 
 /**
@@ -47,7 +48,7 @@ abstract class BaseView
     /**
      * Model to use in this view.
      *
-     * @var mixed
+     * @var ModelClass
      */
     public $model;
 
@@ -71,7 +72,7 @@ abstract class BaseView
      * @var string
      */
     public $title;
-    
+
     /**
      * Method to export the view data.
      */
@@ -160,16 +161,6 @@ abstract class BaseView
     public function getModals()
     {
         return $this->pageOption->modals;
-    }
-
-    /**
-     * Returns the pointer to the data model
-     *
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->model;
     }
 
     /**

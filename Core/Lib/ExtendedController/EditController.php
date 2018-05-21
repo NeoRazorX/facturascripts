@@ -55,7 +55,7 @@ abstract class EditController extends PanelController
     public function getModel()
     {
         $viewName = array_keys($this->views)[0];
-        return $this->views[$viewName]->getModel();
+        return $this->views[$viewName]->model;
     }
 
     /**
@@ -69,7 +69,7 @@ abstract class EditController extends PanelController
         $viewName = 'Edit' . $this->getModelClassName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];
-        
+
         $this->addEditView($viewName, $modelName, $title, $viewIcon);
     }
 
