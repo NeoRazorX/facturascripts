@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-*/
+ */
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,31 +29,36 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Diario extends Base\ModelClass
 {
+
     use Base\ModelTrait;
-    
+
     /** Primary key. varchar (4)
      * 
      * @var string
      */
     public $coddiario;
-    
+
     /** Name os accounting book
      * 
      * @var string
      */
     public $nombre;
-    
-    public function clear(){
+
+    public function clear()
+    {
         parent::clear();
     }
-    
+
     public static function primaryColumn()
     {
         return 'coddiario';
     }
-    public static function tableName(){
+
+    public static function tableName()
+    {
         return 'diarios';
     }
+
     public function test()
     {
         $this->coddiario = trim($this->coddiario);
@@ -71,7 +76,7 @@ class Diario extends Base\ModelClass
 
         return parent::test();
     }
-    
+
     /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
@@ -87,7 +92,5 @@ class Diario extends Base\ModelClass
             . "('2','Diario de Facturas'),"
             . "('3','Cartera de pagos'),"
             . "('4','Cartera de cbros')";
-        
     }
-    
 }

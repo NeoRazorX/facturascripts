@@ -26,29 +26,30 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  * 
  */
-
 class EditDiario extends ExtendedController\EditController
 {
-    /** 
+
+    /**
      * Returns the model name
      */
     public function getModelClassName()
     {
         return 'Diario';
     }
-    /** 
+
+    /**
      * Returns basic page attributes
      * 
      * @return array
      */
-    public function getPageData(){
-        $pagedata=parent::getPageData();
-        $pagedata['title']='accounting-book';
-        $pagedata['menu']='accounting';
-        $pagedata['icon']='fa fa-book';
-        $pagedata['showonmenu']=false;
-        
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounting-book';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa fa-book';
+        $pagedata['showonmenu'] = false;
+
         return $pagedata;
-        
     }
 }

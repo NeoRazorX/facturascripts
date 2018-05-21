@@ -29,29 +29,30 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListDiario extends ExtendedController\ListController
 {
-    
-    /** 
+
+    /**
      * Returns basic page attributes
      * 
      * @return array
      */
     public function getPageData()
     {
-        $pagedata=parent::getPageData();
-        $pagedata['title']='accounting-books';
-        $pagedata['icon']='fa fa-book';
-        $pagedata['menu']='accounting';
-        
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounting-books';
+        $pagedata['icon'] = 'fa fa-book';
+        $pagedata['menu'] = 'accounting';
+
         return $pagedata;
     }
+
     /**
      * load views
      */
     protected function createViews()
     {
-        $this->addView('ListDiario','Diario');
-        $this->addSearchFields('ListDiario',['nombre']);
-        $this->addOrderBy('ListDiario','coddiario','code');
-        $this->addOrderBy('ListDiario','nombre','name');
+        $this->addView('ListDiario', 'Diario');
+        $this->addSearchFields('ListDiario', ['nombre']);
+        $this->addOrderBy('ListDiario', 'coddiario', 'code');
+        $this->addOrderBy('ListDiario', 'nombre', 'name');
     }
 }
