@@ -35,9 +35,11 @@
             </column>
         </group>
     </columns>
+    
     <rows>
         <row type="footer">
-            <group name="card" title="accounting-entry-macros-title" label="accounting-entry-macros-text"></group>
+            <group name="summary" html="Block/AccountNoteInfo.html.twig"></group>
         </row>
     </rows>
+      
 </view>
