@@ -420,11 +420,8 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function autocompleteAction(): array
     {
-        if ($this->request->get('source', '') == 'conceptos_partidas') {
-            $this->setTemplate(false);
-            $results = $this->replaceConcept(parent::autocompleteAction());
-            $this->response->setContent(json_encode($results));
-            return false;
+        if ($this->request->get('source', '') === 'conceptos_partidas') {
+            return $this->replaceConcept(parent::autocompleteAction());
         }
 
         return parent::autocompleteAction();
@@ -433,10 +430,11 @@ class EditAsiento extends ExtendedController\PanelController
     /**
      * Replace concept in concepts array with macro values
      * 
-     * @param type array
+     * @param array array
+     * 
      * @return array
      */
-    private function replaceConcept($results)
+    private function replaceConcept($results): array
     {
         $finalResults = [];
         $idasiento = $this->request->get('code');
