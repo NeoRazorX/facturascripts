@@ -38,7 +38,7 @@
         </column>
         <column name="state" display="center" order="140">
             <widget type="select" fieldname="estado">
-                <values title="open">ABIERTO</values>
+                <values title="opened">ABIERTO</values>
                 <values title="closed">CERRADO</values>
 
                 <option color="red" font-weight="bold">ABIERTO</option>
