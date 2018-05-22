@@ -21,12 +21,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- *  Controller to list the items in the Almacen model
+ * Controller to list the items in the Impuesto model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class ListAlmacen extends ExtendedController\ListController
+class ListRetencion extends ExtendedController\ListController
 {
 
     /**
@@ -37,9 +36,10 @@ class ListAlmacen extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'warehouses';
-        $pagedata['icon'] = 'fa-building';
-        $pagedata['menu'] = 'warehouse';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['submenu'] = 'taxes';
+        $pagedata['title'] = 'retentions';
+        $pagedata['icon'] = 'fa-plus-square-o';
 
         return $pagedata;
     }
@@ -49,10 +49,10 @@ class ListAlmacen extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAlmacen', 'Almacen');
-        $this->addSearchFields('ListAlmacen', ['nombre', 'codalmacen']);
+        $this->addView('ListRetencion', 'Retencion');
+        $this->addSearchFields('ListRetencion', ['descripcion', 'codretencion']);
 
-        $this->addOrderBy('ListAlmacen', 'codalmacen', 'code');
-        $this->addOrderBy('ListAlmacen', 'nombre', 'name');
+        $this->addOrderBy('ListRetencion', 'codretencion', 'code');
+        $this->addOrderBy('ListRetencion', 'descripcion', 'description');
     }
 }

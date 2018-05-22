@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * This class manage all specific method for a WidgetItem of Select type.
@@ -73,8 +74,8 @@ class WidgetItemSelect extends WidgetItem
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)
             $selected = ($option['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $option['value'] . '" ' . $selected . '>' . $option['title']
-                . '</option>';
+            $title = empty($option['title']) ? $option['value'] : $option['title'];
+            $html .= '<option value="' . $option['value'] . '" ' . $selected . '>' . $title . '</option>';
         }
         $html .= '</select>';
 
@@ -102,13 +103,28 @@ class WidgetItemSelect extends WidgetItem
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)
             if ($option['value'] == $value) {
-                $txt = $option['title'];
+                $txt = empty($option['title']) ? $option['value'] : $option['title'];
                 break;
             }
         }
 
-        return empty($this->onClick) ? '<span>' . $txt . '</span>' : '<a href="' . $this->onClick
-            . '?code=' . $value . '">' . $txt . '</a>';
+        $style = $this->getTextOptionsHTML($value);
+
+        return empty($this->onClick) ? '<span' . $style . '>' . $txt . '</span>' : '<a href="' . $this->onClick
+            . '?code=' . $value . '" ' . $style . '>' . $txt . '</a>';
+    }
+
+    /**
+     *  Translate the fixed titles, if they exist
+     */
+    private function applyTranslations()
+    {
+        $i18n = new Translator();
+        for ($index = 0; $index < count($this->values); $index++) {
+            if (!empty($this->values[$index]['title'])) {
+                $this->values[$index]['title'] = $i18n->trans($this->values[$index]['title']);
+            }
+        }
     }
 
     /**
@@ -120,6 +136,7 @@ class WidgetItemSelect extends WidgetItem
     {
         parent::loadFromJSON($widget);
         $this->values = (array) $widget['values'];
+        $this->applyTranslations();
     }
 
     /**
@@ -131,6 +148,7 @@ class WidgetItemSelect extends WidgetItem
     {
         parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
+        $this->applyTranslations();
     }
 
     /**
@@ -141,9 +159,10 @@ class WidgetItemSelect extends WidgetItem
         $tableName = $this->values[0]['source'];
         $fieldCode = $this->values[0]['fieldcode'];
         $fieldDesc = $this->values[0]['fieldtitle'];
+        $translate = isset($this->values[0]['translate']);
         $allowEmpty = !$this->required;
         $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
-        $this->setValuesFromCodeModel($rows);
+        $this->setValuesFromCodeModel($rows, $translate);
     }
 
     /**
@@ -165,8 +184,9 @@ class WidgetItemSelect extends WidgetItem
      * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
      * @param array $values
+     * @param bool $translate
      */
-    public function setValuesFromArray($values)
+    public function setValuesFromArray($values, $translate = true)
     {
         $this->values = [];
         foreach ($values as $value) {
@@ -177,8 +197,11 @@ class WidgetItemSelect extends WidgetItem
 
             $this->values[] = [
                 'value' => $value,
-                'title' => $value,
+                'title' => '',
             ];
+        }
+        if ($translate) {
+            $this->applyTranslations();
         }
     }
 
@@ -186,18 +209,22 @@ class WidgetItemSelect extends WidgetItem
      * Loads the value list from an array with value and title (description)
      *
      * @param array $rows
+     * @param bool $translate
      */
-    public function setValuesFromCodeModel(&$rows)
+    public function setValuesFromCodeModel(&$rows, $translate = False)
     {
         $this->values = [];
+        $i18n = new Translator();
+
         foreach ($rows as $codeModel) {
             if ($codeModel->code === null) {
                 continue;
             }
 
+            $title = $translate ? $i18n->trans($codeModel->description) : $codeModel->description;
             $this->values[] = [
                 'value' => $codeModel->code,
-                'title' => $codeModel->description,
+                'title' => $title
             ];
         }
     }

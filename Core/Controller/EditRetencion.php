@@ -21,13 +21,20 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- *  Controller to list the items in the Almacen model
+ * Controller to edit a single item from the Retencion model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class ListAlmacen extends ExtendedController\ListController
+class EditRetencion extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'Retencion';
+    }
 
     /**
      * Returns basic page attributes
@@ -37,22 +44,11 @@ class ListAlmacen extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'warehouses';
-        $pagedata['icon'] = 'fa-building';
-        $pagedata['menu'] = 'warehouse';
+        $pagedata['title'] = 'retentions';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-plus-square-o';
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('ListAlmacen', 'Almacen');
-        $this->addSearchFields('ListAlmacen', ['nombre', 'codalmacen']);
-
-        $this->addOrderBy('ListAlmacen', 'codalmacen', 'code');
-        $this->addOrderBy('ListAlmacen', 'nombre', 'name');
     }
 }

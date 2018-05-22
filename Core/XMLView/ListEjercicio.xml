@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListEjercicio
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -37,7 +37,10 @@
             <widget type="text" fieldname="fechafin" />
         </column>
         <column name="state" display="center" order="140">
-            <widget type="text" fieldname="estado">
+            <widget type="select" fieldname="estado">
+                <values title="opened">ABIERTO</values>
+                <values title="closed">CERRADO</values>
+
                 <option color="red" font-weight="bold">ABIERTO</option>
                 <option color="blue">CERRADO</option>
             </widget>

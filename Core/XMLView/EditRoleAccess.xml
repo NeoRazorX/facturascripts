@@ -35,7 +35,7 @@
             </column>
             <column name="pagename" order="120">
                 <widget type="select" fieldname="pagename" required="true">
-                    <values source="pages" fieldcode="name" fieldtitle="name"></values>
+                    <values source="pages" fieldcode="name" fieldtitle="title" translate="true"></values>
                 </widget>
             </column>
             <column name="allow-update" order="130">
@@ -57,7 +57,7 @@
         <group name="add-rol-access" icon="fa-user-plus">
             <column name="select-menu" title="menu">
                 <widget type="select" fieldname="menu">
-                    <values source="pages" fieldcode="menu" fieldtitle="menu"></values>
+                    <values source="pages" fieldcode="menu" fieldtitle="menu" translate="true"></values>
                 </widget>
             </column>
         </group>

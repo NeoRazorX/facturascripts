@@ -33,13 +33,6 @@ abstract class ListController extends BaseController
 {
 
     /**
-     * List of icons for each of the views.
-     *
-     * @var array
-     */
-    public $icons;
-
-    /**
      * Tools to work with numbers.
      *
      * @var Base\NumberTools
@@ -75,7 +68,6 @@ abstract class ListController extends BaseController
 
         $this->setTemplate('Master/ListController');
 
-        $this->icons = [];
         $this->numberTools = new Base\NumberTools();
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
@@ -320,7 +312,7 @@ abstract class ListController extends BaseController
     protected function addView($viewName, $modelName, $viewTitle = 'search', $icon = 'fa-search')
     {
         $this->views[$viewName] = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->icons[$viewName] = $icon;
+        $this->setSettings($viewName, 'icon', $icon);
         if (empty($this->active)) {
             $this->active = $viewName;
         }
@@ -334,24 +326,24 @@ abstract class ListController extends BaseController
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'), ['nick' => $this->user->nick]);
 
             return false;
         }
 
-        $model = $this->views[$this->active]->getModel();
+        $model = $this->views[$this->active]->model;
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
             if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {
-                $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+                $this->miniLog->warning($this->i18n->trans('record-deleted-error'), ['nick' => $this->user->nick]);
             }
         }
 
         if ($numDeletes > 0) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'), ['nick' => $this->user->nick]);
 
             return true;
         }
@@ -508,7 +500,7 @@ abstract class ListController extends BaseController
             if (!isset($json[$viewName])) {
                 $json[$viewName] = [
                     'title' => $listView->title,
-                    'icon' => $this->icons[$viewName],
+                    'icon' => $this->getSettings($viewName, 'icon'),
                     'columns' => [],
                     'results' => [],
                 ];

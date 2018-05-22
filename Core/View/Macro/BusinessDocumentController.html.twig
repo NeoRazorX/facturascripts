@@ -29,7 +29,7 @@
     {% import _self as macros %}
 
     {# -- Calculate common values -- #}
-    {% set model = view.getModel() %}
+    {% set model = view.model %}
 
     <script type="text/javascript">
         documentLineData = {{ view.getLineData() | raw }};

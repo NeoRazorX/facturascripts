@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Lib\EmailTools;
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\App\AppSettings;
 
 /**
  * Description of SendMail
@@ -64,6 +65,11 @@ class SendMail extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
+        //Check if the email is configurate
+        if (AppSettings::get('email', 'host', '') == ""){
+            $this->miniLog->alert('email-not-configure');
+        }
 
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
@@ -133,40 +139,49 @@ class SendMail extends Controller
      */
     protected function send()
     {
-        $fieldsEmail = ['email', 'email-cc', 'email-bcc'];
-        $sendTo = [];
-        foreach ($fieldsEmail as $field) {
-            // Remove unneeded spaces
-            $emails = trim($this->request->request->get($field, ''));
-            // Autocomplete adds a comma at the end, remove it if exists (maybe user remove it)
-            $emails = $emails[\strlen($emails) - 1] === ',' ? substr($emails, 0, -1) : $emails;
-            $sendTo[$field] = \explode(',', $emails);
-        }
         $subject = $this->request->request->get('subject', '');
         $body = $this->request->request->get('body', '');
         $fileName = $this->request->get('fileName', '');
 
         $emailTools = new EmailTools();
         $mail = $emailTools->newMail();
-        foreach ($sendTo['email'] as $email) {
+        
+        foreach ($this->getEmails('email') as $email) {
             $mail->addAddress($email);
         }
-        foreach ($sendTo['email-cc'] as $email) {
+        foreach ($this->getEmails('email-cc') as $email) {
             $mail->addCC($email);
         }
-        foreach ($sendTo['email-bcc'] as $email) {
+        foreach ($this->getEmails('email-bcc') as $email) {
             $mail->addBCC($email);
         }
         $mail->Subject = $subject;
         $mail->msgHTML($body);
         $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
 
+        foreach($this->request->files->get('uploads', [ ]) as $file){
+            $mail->addAttachment($file->getPathname());
+        }
+       
         if ($emailTools->send($mail)) {
             unlink(FS_FOLDER . '/MyFiles/' . $fileName);
             $this->miniLog->info('send-mail-ok');
         } else {
             $this->miniLog->error('send-mail-error');
         }
+    }
+
+    /**
+     * Get emails about type specify
+     *
+     * @param string $typeEmail
+     * @return array
+     */
+    private function getEmails(string $typeEmail) : array
+    {
+        // Remove unneeded spaces and posible ending comma ,
+        $emails = rtrim(trim($this->request->request->get($typeEmail, '')), ',');
+        return \explode(',', $emails);
     }
 
     /**

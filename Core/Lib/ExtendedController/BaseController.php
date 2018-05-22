@@ -61,6 +61,17 @@ abstract class BaseController extends Base\Controller
     public $views;
 
     /**
+     * List of configuration options for each of the views.
+     * [
+     *   'keyView1' => ['icon' => 'fa-icon1', 'active' => TRUE],
+     *   'keyView2' => ['icon' => 'fa-icon2', 'active' => TRUE]
+     * ]
+     *
+     * @var array
+     */
+    private $settings;
+
+    /**
      * Inserts the views to display.
      */
     abstract protected function createViews();
@@ -82,6 +93,32 @@ abstract class BaseController extends Base\Controller
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->views = [];
+        $this->settings = [];
+    }
+
+    /**
+     * Returns the configuration value for the indicated view.
+     *
+     * @param string $viewName
+     * @param string $property
+     *
+     * @return mixed
+     */
+    public function getSettings($viewName, $property)
+    {
+        return $this->settings[$viewName][$property];
+    }
+
+    /**
+     * Set value for setting of a view
+     *
+     * @param string $viewName
+     * @param string $property
+     * @param mixed $value
+     */
+    public function setSettings($viewName, $property, $value)
+    {
+        $this->settings[$viewName][$property] = $value;
     }
 
     /**
@@ -144,7 +181,7 @@ abstract class BaseController extends Base\Controller
      * Return array with parameters values
      *
      * @param array $keys
-     * 
+     *
      * @return array
      */
     protected function requestGet($keys): array
