@@ -80,44 +80,11 @@ class Articulos extends AbstractRandom
         $art = $this->model;
         for ($generated = 0; $generated < $num; ++$generated) {
             $art->clear();
-            $art->descripcion = $this->descripcion();
-            $art->codimpuesto = $this->impuestos[0]->codimpuesto;
-            $art->setPvpIva($this->precio(1, 49, 699));
-            $art->costemedio = $art->preciocoste = $this->cantidad(0, $art->pvp, $art->pvp + 1);
+            $this->setArticuloData($art);
 
-            switch (mt_rand(0, 2)) {
-                case 0:
-                    $art->referencia = $art->newCode();
-                    break;
-
-                case 1:
-                    $aux = explode(':', $art->descripcion);
-                    if (!empty($aux)) {
-                        $art->referencia = $this->txt2codigo($aux[0], 18);
-                    } else {
-                        $art->referencia = $art->newCode();
-                    }
-                    break;
-
-                default:
-                    $art->referencia = $this->randomString(10);
-            }
-
-            if (mt_rand(0, 9) > 0) {
-                $art->codfabricante = $this->getOneItem($this->fabricantes)->codfabricante;
-                $art->codfamilia = $this->getOneItem($this->familias)->codfamilia;
-            } else {
-                $art->codfabricante = null;
-                $art->codfamilia = null;
-            }
-
-            $art->publico = (mt_rand(0, 3) == 0);
-            $art->bloqueado = (mt_rand(0, 9) == 0);
-            $art->nostock = (mt_rand(0, 9) == 0);
-            $art->secompra = (mt_rand(0, 9) != 0);
-            $art->sevende = (mt_rand(0, 9) != 0);
-
-            if (!$art->save()) {
+            if ($art->exists()) {
+                continue;
+            } elseif (!$art->save()) {
                 break;
             }
 
@@ -129,6 +96,42 @@ class Articulos extends AbstractRandom
         }
 
         return $generated;
+    }
+
+    private function setArticuloData(Model\Articulo &$art)
+    {
+        $art->descripcion = $this->descripcion();
+        $art->codimpuesto = $this->impuestos[0]->codimpuesto;
+        $art->setPvpIva($this->precio(1, 49, 699));
+        $art->costemedio = $art->preciocoste = $this->cantidad(0, $art->pvp, $art->pvp + 1);
+
+        switch (mt_rand(0, 2)) {
+            case 0:
+                $art->referencia = $art->newCode();
+                break;
+
+            case 1:
+                $aux = explode(':', $art->descripcion);
+                $art->referencia = empty($aux) ? $art->newCode() : $this->txt2codigo($aux[0], 25);
+                break;
+
+            default:
+                $art->referencia = $this->randomString(10);
+        }
+
+        if (mt_rand(0, 9) > 0) {
+            $art->codfabricante = $this->getOneItem($this->fabricantes)->codfabricante;
+            $art->codfamilia = $this->getOneItem($this->familias)->codfamilia;
+        } else {
+            $art->codfabricante = null;
+            $art->codfamilia = null;
+        }
+
+        $art->publico = (mt_rand(0, 3) == 0);
+        $art->bloqueado = (mt_rand(0, 9) == 0);
+        $art->nostock = (mt_rand(0, 9) == 0);
+        $art->secompra = (mt_rand(0, 9) != 0);
+        $art->sevende = (mt_rand(0, 9) != 0);
     }
 
     private function sumStock($art, $quantity)
