@@ -66,5 +66,6 @@ class ListLogMessage extends ExtendedController\ListController
         ];
         $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
         $this->addFilterAutocomplete('ListLogMessage', 'nick', 'user', 'nick', 'users', 'nick' , 'nick');
+        $this->addFilterDatePicker('ListLogMessage', 'time', 'time', 'time');
     }
 }
