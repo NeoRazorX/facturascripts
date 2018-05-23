@@ -65,5 +65,6 @@ class ListLogMessage extends ExtendedController\ListController
             ['code' => 'emergency', 'description' => $this->i18n->trans('type-emergency')]
         ];
         $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
+        $this->addFilterAutocomplete('ListLogMessage', 'nick', 'user', 'nick', 'users', 'nick' , 'nick');
     }
 }
