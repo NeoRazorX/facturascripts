@@ -160,7 +160,7 @@ class SendMail extends Controller
         $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
 
         foreach($this->request->files->get('uploads', [ ]) as $file){
-            $mail->addAttachment($file->getPathname());
+            $mail->addAttachment($file->getPathname(), $file->getClientOriginalName());
         }
        
         if ($emailTools->send($mail)) {
