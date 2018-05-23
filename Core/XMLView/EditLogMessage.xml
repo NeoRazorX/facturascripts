@@ -28,14 +28,20 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="id" icon="fa-file-text-o" required="true" />
             </column>
-            <column name="time" numcolumns="5" order="110">
+            <column name="time" numcolumns="4" order="110">
                 <widget type="text" fieldname="time" required="true" readonly="true" />
             </column>
-            <column name="level" numcolumns="5" order="120">
-                <widget type="level" fieldname="level" required="true" readonly="true" />
+            <column name="level" numcolumns="2" order="120">
+                <widget type="text" fieldname="level" required="true" readonly="true" />
             </column>
-            <column name="message" numcolumns="12" order="130">
-                <widget type="text" fieldname="message" required="true" readonly="true" />
+            <column name="user" numcolumns="2" order="130">
+                <widget type="text" fieldname="nick" required="true" readonly="true" />
+            </column>
+            <column name="ip" numcolumns="2" order="140">
+                <widget type="text" fieldname="ip" required="true" readonly="true" />
+            </column>
+            <column name="message" numcolumns="12" order="150">
+                <widget type="textarea" fieldname="message" required="true" readonly="true" />
             </column>
         </group>
     </columns>

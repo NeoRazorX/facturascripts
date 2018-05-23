@@ -55,15 +55,7 @@ class ListLogMessage extends ExtendedController\ListController
         $this->addOrderBy('ListLogMessage', 'time', 'time', 2);
         $this->addOrderBy('ListLogMessage', 'level', 'level');
 
-        $values = [
-            ['code' => 'info', 'description' => $this->i18n->trans('type-info')],
-            ['code' => 'notice', 'description' => $this->i18n->trans('type-notice')],
-            ['code' => 'warning', 'description' => $this->i18n->trans('type-warning')],
-            ['code' => 'error', 'description' => $this->i18n->trans('type-error')],
-            ['code' => 'critical', 'description' => $this->i18n->trans('type-critical')],
-            ['code' => 'alert', 'description' => $this->i18n->trans('type-alert')],
-            ['code' => 'emergency', 'description' => $this->i18n->trans('type-emergency')]
-        ];
+        $values = $this->codeModel->all('logs', 'level', 'level');
         $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
     }
 }
