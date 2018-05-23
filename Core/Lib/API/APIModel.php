@@ -329,5 +329,4 @@ class APIModel extends APIResourceClass
             }
         }
     }
-
 }

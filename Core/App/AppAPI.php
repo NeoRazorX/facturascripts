@@ -200,5 +200,4 @@ class AppAPI extends App
         $this->response->setStatusCode($status);
         $this->response->setContent(json_encode(['error' => $text]));
     }
-
 }
