@@ -111,7 +111,7 @@ class PluginManager
             $this->disableByDependecy($pluginName);
             $this->save();
             $this->deploy(true, true);
-            self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
+            self::$minilog->notice(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
             break;
         }
     }
@@ -139,7 +139,7 @@ class PluginManager
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
                 $this->deploy(false, true);
-                self::$minilog->info(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+                self::$minilog->notice(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
             }
             break;
         }
@@ -208,7 +208,7 @@ class PluginManager
             rename(self::PLUGIN_PATH . $folderPluginZip[0], self::PLUGIN_PATH . $info['name']);
         }
 
-        self::$minilog->info(self::$i18n->trans('plugin-installed', ['%pluginName%' => $info['name']]));
+        self::$minilog->notice(self::$i18n->trans('plugin-installed', ['%pluginName%' => $info['name']]));
         return true;
     }
 
@@ -248,11 +248,11 @@ class PluginManager
         $pluginPath = self::PLUGIN_PATH . $pluginName;
         if (is_dir($pluginPath) || is_file($pluginPath)) {
             FileManager::delTree($pluginPath);
-            self::$minilog->info(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
+            self::$minilog->notice(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
             return true;
         }
 
-        self::$minilog->info(self::$i18n->trans('plugin-delete-error', ['%pluginName%' => $pluginName]));
+        self::$minilog->notice(self::$i18n->trans('plugin-delete-error', ['%pluginName%' => $pluginName]));
         return false;
     }
 
