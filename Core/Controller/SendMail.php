@@ -143,6 +143,8 @@ class SendMail extends Controller
         $body = $this->request->request->get('body', '');
         $fileName = $this->request->get('fileName', '');
 
+        $this->updateFemail();
+
         $emailTools = new EmailTools();
         $mail = $emailTools->newMail();
         
@@ -168,6 +170,26 @@ class SendMail extends Controller
             $this->miniLog->info('send-mail-ok');
         } else {
             $this->miniLog->error('send-mail-error');
+        }
+    }
+
+    /**
+     * Update the property femail with actual date if exist param ModelClassName and ModelCode
+     *
+     * @return void
+     */
+    private function updateFemail() : void
+    {
+        var_dump($this->request->get('ModelClassName'));
+        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('ModelClassName');
+        if(class_exists($className)) {
+            $model = new $className();
+            var_dump($model);
+            if($model->loadFromCode($this->request->get('ModelCode'))) {
+                if( isset($model->femail) ) {
+                    $model->femail = date('d-m-Y');
+                }
+            }
         }
     }
 
