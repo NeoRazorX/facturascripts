@@ -74,6 +74,8 @@ class ListAlbaranProveedor extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
+        $this->addFilterCheckbox('ListAlbaranProveedor', 'fmail', 'email-send', 'fmail', false, null);
+
         // Delivery notes lines
         $this->createViewLines();
     }
