@@ -102,7 +102,19 @@ abstract class APIResourceClass
     }
 
     /**
-     * Process the POST/PUT/PATCH request. Overwrite this function to implement is functionality.
+     * Process the PUT request. Overwrite this function to implement is functionality.
+     * It is not defined as abstract because descendants may not need this method if
+     * they overwrite processResource.
+     *
+     * @return bool
+     */
+    public function doPUT(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Process the POST request. Overwrite this function to implement is functionality.
      * It is not defined as abstract because descendants may not need this method if
      * they overwrite processResource.
      *
@@ -140,12 +152,12 @@ abstract class APIResourceClass
 
             // http://www.restapitutorial.com/lessons/httpmethods.html
             switch ($this->method) {
+                case 'POST':
+                    return $this->doPOST();
                 case 'GET':
                     return $this->doGET();
                 case 'PUT':
-                case 'PATCH':
-                case 'POST':
-                    return $this->doPOST();
+                    return $this->doPUT();
                 case 'DELETE':
                     return $this->doDELETE();
             }

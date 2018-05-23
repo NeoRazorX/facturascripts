@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -30,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
     /**
      * Runs the API.
      *
@@ -65,9 +67,10 @@ class AppAPI extends App
     }
 
     /**
-     * Returns true if the client is authenticated with the header token.
-     *
-     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
+     * Check authentication using one of the supported tokens.
+     * In the header you have to pass a token using the header 'Token' or the 
+     * standard 'X-Auth-Token', returning true if the token passed by any of 
+     * those headers is valid.
      *
      * @return boolean
      */
@@ -75,9 +78,11 @@ class AppAPI extends App
     {
         $token = $this->request->headers->get('Token', '');
         if (empty($token)) {
+            $token = $this->request->headers->get('X-Auth-Token', '');
+        }
+        if (empty($token)) {
             return false;
         }
-
         return (new ApiKey())->checkAuthToken($token);
     }
 
@@ -155,6 +160,11 @@ class AppAPI extends App
             $param++;
         }
 
+        if (!isset($map[$resourceName]['API'])) {
+            $this->fatalError('invalid-resource', Response::HTTP_BAD_REQUEST);
+            return false;
+        }
+
         $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n, $params);
         if (isset($APIClass)) {
             return $APIClass->processResource($map[$resourceName]['Name'], $params);
@@ -190,4 +200,5 @@ class AppAPI extends App
         $this->response->setStatusCode($status);
         $this->response->setContent(json_encode(['error' => $text]));
     }
+
 }

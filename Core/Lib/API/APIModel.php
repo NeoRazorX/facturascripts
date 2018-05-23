@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -32,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class APIModel extends APIResourceClass
 {
+
     /**
      * ModelClass object.
      *
@@ -185,28 +187,36 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * Process the GET request. Overwrite this function to implement is functionality.
-     *
-     * @return bool
+     * Load the model and replace the past data in the loaded model.
+     * Returns true if the record already exists in the model, and false if not.
+     * If the id is passed as data and parameter, verify that both match, 
+     * returning error if there is inconsistency.
+     * 
+     * @return bool true if the resource exists in the model
      */
-    public function doPOST(): bool
+    private function getResource(): bool
     {
         $cod = $this->model->primaryColumn();
 
         // If editing, retrieve the current data
-        $this->model->loadFromCode($this->params[0]);
+        $exist = $this->model->loadFromCode($this->params[0]);
         $this->model->{$cod} = $this->params[0];
 
         // Retrieve the past data, and replace the changes
         $values = $this->request->request->all();
         if (isset($values[$cod]) && $values[$cod] !== $this->params[0]) {
             $this->setError("Can't change the key. Key '$cod'' changed from {$this->params[0]} to {$values[$cod]}.", $values);
-            return false;
+            die;
         }
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
 
+        return $exist;
+    }
+
+    private function saveResource(): bool
+    {
         $this->fixTypes();
         if ($this->model->save()) {
             $this->setOk('data-saved', (array) $this->model);
@@ -217,8 +227,38 @@ class APIModel extends APIResourceClass
             $this->params[] = $message['message'];
         }
 
-        $this->setError('bad-request', $values);
+        $this->setError('bad-request', $this->request->request->all());
         return false;
+    }
+
+    /**
+     * Process the POST (create) request. Overwrite this function to implement is functionality.
+     *
+     * @return bool
+     */
+    public function doPOST(): bool
+    {
+        if ($this->getResource()) {
+            $this->setError('existing-record', (array) $this->model);
+            return false;
+        }
+
+        return $this->saveResource();
+    }
+
+    /**
+     * Process the PUT (update) request. Overwrite this function to implement is functionality.
+     *
+     * @return bool
+     */
+    public function doPUT(): bool
+    {
+        if (!$this->getResource()) {
+            $this->setError('not-existing-record', (array) $this->model);
+            return false;
+        }
+
+        return $this->saveResource();
     }
 
     /**
@@ -253,6 +293,7 @@ class APIModel extends APIResourceClass
             $this->model = new $modelName();
 
             if (count($this->params) === 0) {
+                $this->method = $this->request->getMethod();
                 return $this->listAll();
             }
 
@@ -288,4 +329,5 @@ class APIModel extends APIResourceClass
             }
         }
     }
+
 }
