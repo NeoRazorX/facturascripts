@@ -119,7 +119,6 @@ class EditSettings extends ExtendedController\PanelController
             $this->addEditView($name, $modelName, $title, $icon);
         }
 
-        $this->addHtmlView('about', 'Block/About', null, 'about');
         $this->testViews();
     }
 
