@@ -172,6 +172,16 @@ class SendMail extends Controller
     }
 
     /**
+     * Update the property femail with actual date if exist param ModelClassName and ModelCode
+     *
+     * @return void
+     */
+    private function updateActualDate() : void 
+    {
+
+    }
+
+    /**
      * Get emails about type specify
      *
      * @param string $typeEmail
