@@ -47,8 +47,8 @@
         <column name="date" order="130" display="right">
             <widget type="text" fieldname="fecha" />
         </column>
-        <column name="fmail" order="130" display="center">
-            <widget type="checkbox" fieldname="fmail" />
+        <column name="femail" order="130" display="center">
+            <widget type="checkbox" fieldname="femail" />
         </column>
     </columns>
     <rows>

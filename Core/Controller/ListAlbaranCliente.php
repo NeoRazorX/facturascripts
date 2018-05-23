@@ -75,7 +75,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
 
-        $this->addFilterCheckbox('ListAlbaranCliente', 'fmail', 'email-send', 'fmail', false, null);
+        $this->addFilterCheckbox('ListAlbaranCliente', 'femail', 'email-send', 'femail', false, null);
 
         // Delivery notes lines
         $this->createViewLines();
