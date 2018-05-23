@@ -143,8 +143,6 @@ class SendMail extends Controller
         $body = $this->request->request->get('body', '');
         $fileName = $this->request->get('fileName', '');
 
-        $this->updateFemail();
-
         $emailTools = new EmailTools();
         $mail = $emailTools->newMail();
         
@@ -167,6 +165,7 @@ class SendMail extends Controller
        
         if ($emailTools->send($mail)) {
             unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+            $this->updateFemail();
             $this->miniLog->info('send-mail-ok');
         } else {
             $this->miniLog->error('send-mail-error');
