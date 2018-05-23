@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -106,7 +106,7 @@ abstract class App
      *
      * @param string $uri
      */
-    public function __construct($uri = '/')
+    public function __construct(string $uri = '/')
     {
         $this->request = Request::createFromGlobals();
 
@@ -140,7 +140,6 @@ abstract class App
     {
         if ($this->dataBase->connect()) {
             $this->settings->load();
-
             return true;
         }
 
@@ -148,11 +147,13 @@ abstract class App
     }
 
     /**
-     * Disconnects from the database.
+     * Save log and disconnects from the database.
+     *
+     * @param string $nick
      */
-    public function close()
+    public function close(string $nick = '')
     {
-        new Base\MiniLogSave();
+        new Base\MiniLogSave($this->request->getClientIp(), $nick);
         $this->dataBase->close();
     }
 
@@ -178,7 +179,7 @@ abstract class App
      *
      * @return string
      */
-    protected function getUriParam($num)
+    protected function getUriParam(string $num)
     {
         $params = explode('/', substr($this->uri, 1));
         return isset($params[$num]) ? $params[$num] : '';
