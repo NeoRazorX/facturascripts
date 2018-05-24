@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\FileManager;
 use ZipArchive;
 
 /**
@@ -84,6 +83,7 @@ class PluginManager
      * with the autoloader, but following the priority system of FacturaScripts.
      *
      * @param bool $clean
+     * @param bool $initControllers
      */
     public function deploy(bool $clean = true, bool $initControllers = false)
     {
@@ -170,6 +170,10 @@ class PluginManager
      */
     public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
     {
+        if (FS_DISABLE_ADD_PLUGINS) {
+            return false;
+        }
+
         $zipFile = new ZipArchive();
         $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
         if (true !== $result) {
@@ -239,6 +243,10 @@ class PluginManager
      */
     public function remove(string $pluginName): bool
     {
+        if (FS_DISABLE_RM_PLUGINS) {
+            return false;
+        }
+
         /// can't remove enabled plugins
         if (in_array($pluginName, self::$enabledPlugins)) {
             self::$minilog->error(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
@@ -258,9 +266,9 @@ class PluginManager
 
     /**
      * Check for plugins needed.
-     * 
+     *
      * @param array $require
-     * 
+     *
      * @return bool
      */
     private function checkRequire(array $require): bool
@@ -289,7 +297,7 @@ class PluginManager
 
     /**
      * Disables plugins that depends on $pluginDisabled
-     * 
+     *
      * @param string $pluginDisabled
      */
     private function disableByDependecy(string $pluginDisabled)
@@ -326,7 +334,7 @@ class PluginManager
         $ini = parse_ini_string($iniContent);
         if ($ini !== false) {
             foreach (['name', 'version', 'description', 'min_version'] as $key) {
-                $info[$key] = isset($ini[$key]) ? $ini[$key] : $info[$key];
+                $info[$key] = $ini[$key] ?? $info[$key];
             }
 
             if (isset($ini['require'])) {

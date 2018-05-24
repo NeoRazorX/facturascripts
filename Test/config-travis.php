@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,3 +37,5 @@ define('FS_ITEM_LIMIT', 50);
 define('FS_CODPAIS', 'ESP');
 define('FS_NF0', 2);
 define('FS_HIDDEN_PLUGINS', '');
+define('FS_DISABLE_ADD_PLUGINS', false);
+define('FS_DISABLE_RM_PLUGINS', false);
