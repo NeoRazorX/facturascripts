@@ -52,12 +52,13 @@ class ListLogMessage extends ExtendedController\ListController
         $this->addView('ListLogMessage', 'LogMessage');
         $this->addSearchFields('ListLogMessage', ['level', 'message']);
 
-        $this->addOrderBy('ListLogMessage', 'time', 'time', 2);
+        $this->addOrderBy('ListLogMessage', 'time', 'date', 2);
         $this->addOrderBy('ListLogMessage', 'level', 'level');
 
         $values = $this->codeModel->all('logs', 'level', 'level');
         $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
-        $this->addFilterAutocomplete('ListLogMessage', 'nick', 'user', 'nick', 'users', 'nick' , 'nick');
-        $this->addFilterDatePicker('ListLogMessage', 'time', 'time', 'time');
+        $this->addFilterAutocomplete('ListLogMessage', 'nick', 'user', 'nick', 'users', 'nick', 'nick');
+        $this->addFilterAutocomplete('ListLogMessage', 'ip', 'ip', 'ip', 'logs', 'ip', 'ip');
+        $this->addFilterDatePicker('ListLogMessage', 'time', 'date', 'time');
     }
 }
