@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -157,8 +157,8 @@ abstract class ListController extends BaseController
      * Load data of list view
      *
      * @param string $viewName
-     * @param array $where
-     * @param int $offset
+     * @param array  $where
+     * @param int    $offset
      */
     protected function loadData($viewName, $where, $offset)
     {
@@ -177,10 +177,12 @@ abstract class ListController extends BaseController
      * @param string $fieldtitle (Column to show name or description)
      * @param array  $where      (Estra where conditions)
      */
-    protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode, $fieldtitle, $where = [])
+    protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fieldcode, $fieldtitle, $value, $where));
+        $fcode = empty($fieldcode) ? $field : $fieldtitle;
+        $ftitle = empty($fieldtitle) ? $fcode : $fieldtitle;
+        $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where));
     }
 
     /**
@@ -326,8 +328,7 @@ abstract class ListController extends BaseController
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'), ['nick' => $this->user->nick]);
-
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
             return false;
         }
 
@@ -338,13 +339,12 @@ abstract class ListController extends BaseController
             if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {
-                $this->miniLog->warning($this->i18n->trans('record-deleted-error'), ['nick' => $this->user->nick]);
+                $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
             }
         }
 
         if ($numDeletes > 0) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'), ['nick' => $this->user->nick]);
-
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
         }
 

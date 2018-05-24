@@ -110,7 +110,7 @@ class EditApiKey extends ExtendedController\PanelController
 
         $this->dataBase->beginTransaction();
         try {
-            $this->addResourcesToApiKey($idApiKey, $resources, $state);
+            $this->addResourcesToApiKey((int) $idApiKey, $resources, $state);
             $this->dataBase->commit();
         } catch (\Exception $e) {
             $this->dataBase->rollback();
