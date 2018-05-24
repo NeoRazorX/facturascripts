@@ -40,7 +40,7 @@
 
                             $.getJSON("SendMail", {
                                 action: 'autocomplete',
-                                source: 'clientes',
+                                source: '{{ fsc.addressee }}',
                                 field: 'email',
                                 title: 'email',
                                 term: extractLast(request.term)
