@@ -66,8 +66,8 @@ class SendMail extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        //Check if the email is configurate
-        if (AppSettings::get('email', 'host', '') == ""){
+        // Check if the email is configurate
+        if (AppSettings::get('email', 'host', '') == "") {
             $this->miniLog->alert('email-not-configure');
         }
 
@@ -92,7 +92,9 @@ class SendMail extends Controller
      */
     public function url()
     {
-        $sendParams['fileName'] = $this->request->get('fileName', '');
+        $sendParams = [
+            'fileName' => $this->request->get('fileName', '')
+        ];
         if (empty($sendParams['fileName'])) {
             return parent::url();
         }
@@ -103,6 +105,22 @@ class SendMail extends Controller
         }
 
         return parent::url() . '?' . http_build_query($sendParams);
+    }
+
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function autocompleteAction(): array
+    {
+        $results = [];
+        $data = $this->requestGet(['source', 'field', 'title', 'term']);
+        foreach ($this->codeModel::search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        return $results;
     }
 
     /**
@@ -122,96 +140,6 @@ class SendMail extends Controller
                 $this->removeOld();
                 return false;
         }
-    }
-
-    /**
-     * Remove old files.
-     */
-    private function removeOld()
-    {
-        $regex = '/Mail_([0-9]+).pdf/';
-        foreach (glob(FS_FOLDER . '/MyFiles/Mail_*.pdf') as $fileName) {
-            $fileTime = [];
-            preg_match($regex, $fileName, $fileTime);
-            if ($fileTime[1] < (time() - 3600)) {
-                unlink($fileName);
-            }
-        }
-    }
-
-    /**
-     * Send and email with data posted from form.
-     */
-    protected function send()
-    {
-        $subject = $this->request->request->get('subject', '');
-        $body = $this->request->request->get('body', '');
-        $fileName = $this->request->get('fileName', '');
-
-        $emailTools = new EmailTools();
-        $mail = $emailTools->newMail();
-        
-        foreach ($this->getEmails('email') as $email) {
-            $mail->addAddress($email);
-        }
-        foreach ($this->getEmails('email-cc') as $email) {
-            $mail->addCC($email);
-        }
-        foreach ($this->getEmails('email-bcc') as $email) {
-            $mail->addBCC($email);
-        }
-        $mail->Subject = $subject;
-        $mail->msgHTML($body);
-        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
-
-        foreach($this->request->files->get('uploads', [ ]) as $file){
-            $mail->addAttachment($file->getPathname(), $file->getClientOriginalName());
-        }
-       
-        if ($emailTools->send($mail)) {
-            if (\file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
-                unlink(FS_FOLDER . '/MyFiles/' . $fileName);
-            }
-            $this->updateFemail();
-            $this->miniLog->info('send-mail-ok');
-        } else {
-            $this->miniLog->error('send-mail-error');
-        }
-    }
-
-    /**
-     * Update the property femail with actual date if exist param ModelClassName and ModelCode
-     *
-     * @return void
-     */
-    private function updateFemail() : void
-    {
-        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName');
-        if(class_exists($className)) {
-            $model = new $className();
-            $modelCode = $this->request->get('modelCode');
-            if($model->loadFromCode($modelCode)) {
-                if (property_exists($className, 'femail') ) {
-                    $model->femail = date('d-m-Y');
-                    if (!$model->save()) {
-                        $this->miniLog->alert('error-saving-data');
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Get emails about type specify
-     *
-     * @param string $typeEmail
-     * @return array
-     */
-    private function getEmails(string $typeEmail) : array
-    {
-        // Remove unneeded spaces and posible ending comma ,
-        $emails = rtrim(trim($this->request->request->get($typeEmail, '')), ',');
-        return \explode(',', $emails);
     }
 
     /**
@@ -236,19 +164,32 @@ class SendMail extends Controller
     }
 
     /**
-     * Run the autocomplete action.
-     * Returns a JSON string for the searched values.
+     * Get emails about type specify.
+     *
+     * @param string $typeEmail
      *
      * @return array
      */
-    protected function autocompleteAction(): array
+    protected function getEmails(string $typeEmail): array
     {
-        $results = [];
-        $data = $this->requestGet(['source', 'field', 'title', 'term']);
-        foreach ($this->codeModel::search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
-            $results[] = ['key' => $value->code, 'value' => $value->description];
+        // Remove unneeded spaces and posible ending comma ,
+        $emails = rtrim(trim($this->request->request->get($typeEmail, '')), ',');
+        return \explode(',', $emails);
+    }
+
+    /**
+     * Remove old files.
+     */
+    protected function removeOld()
+    {
+        $regex = '/Mail_([0-9]+).pdf/';
+        foreach (glob(FS_FOLDER . '/MyFiles/Mail_*.pdf') as $fileName) {
+            $fileTime = [];
+            preg_match($regex, $fileName, $fileTime);
+            if ($fileTime[1] < (time() - 3600)) {
+                unlink($fileName);
+            }
         }
-        return $results;
     }
 
     /**
@@ -265,5 +206,66 @@ class SendMail extends Controller
             $result[$value] = $this->request->get($value);
         }
         return $result;
+    }
+
+    /**
+     * Send and email with data posted from form.
+     */
+    protected function send()
+    {
+        $subject = $this->request->request->get('subject', '');
+        $body = $this->request->request->get('body', '');
+        $fileName = $this->request->get('fileName', '');
+
+        $emailTools = new EmailTools();
+        $mail = $emailTools->newMail();
+        $mail->Subject = $subject;
+        $mail->msgHTML($body);
+        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
+
+        foreach ($this->getEmails('email') as $email) {
+            $mail->addAddress($email);
+        }
+        foreach ($this->getEmails('email-cc') as $email) {
+            $mail->addCC($email);
+        }
+        foreach ($this->getEmails('email-bcc') as $email) {
+            $mail->addBCC($email);
+        }
+        foreach ($this->request->files->get('uploads', []) as $file) {
+            $mail->addAttachment($file->getPathname(), $file->getClientOriginalName());
+        }
+
+        if ($emailTools->send($mail)) {
+            if (\file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
+                unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+            }
+            $this->updateFemail();
+            $this->miniLog->notice('send-mail-ok');
+        } else {
+            $this->miniLog->error('send-mail-error');
+        }
+    }
+
+    /**
+     * Update the property femail with actual date if exist param ModelClassName and ModelCode
+     *
+     * @return void
+     */
+    protected function updateFemail(): void
+    {
+        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName');
+        if (!class_exists($className)) {
+            return;
+        }
+
+        $model = new $className();
+        $modelCode = $this->request->get('modelCode');
+        if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
+            $model->femail = date('d-m-Y');
+            if (!$model->save()) {
+                $this->miniLog->alert('error-saving-data');
+            }
+        }
     }
 }
