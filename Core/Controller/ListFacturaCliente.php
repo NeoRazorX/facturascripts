@@ -75,6 +75,7 @@ class ListFacturaCliente extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
         $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
+        $this->addFilterCheckbox('ListFacturaCliente', 'femail', 'email-send', 'femail', false, null);
 
         // Delivery notes lines
         $this->createViewLines();
