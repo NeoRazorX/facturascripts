@@ -148,6 +148,16 @@ class Contacto extends Base\Contact
     }
 
     /**
+     * Returns full name.
+     *
+     * @return string
+     */
+    public function fullName()
+    {
+        return $this->nombre . ' ' . $this->apellidos;
+    }
+
+    /**
      * Generates a new login key for the user. It also updates lastactivity
      * ans last IP.
      *
