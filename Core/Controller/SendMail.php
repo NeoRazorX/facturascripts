@@ -186,7 +186,7 @@ class SendMail extends Controller
      */
     private function updateFemail() : void
     {
-        $className = '\FacturaScripts\Core\Model\\' .  $this->request->get('modelClassName');
+        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName');
         if(class_exists($className)) {
             $model = new $className();
             $modelCode = $this->request->get('modelCode');
