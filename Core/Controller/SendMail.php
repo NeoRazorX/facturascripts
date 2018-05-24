@@ -92,12 +92,17 @@ class SendMail extends Controller
      */
     public function url()
     {
-        $fileName = $this->request->get('fileName', '');
-        if (empty($fileName)) {
+        $sendParams['fileName'] = $this->request->get('fileName', '');
+        if (empty($sendParams['fileName'])) {
             return parent::url();
         }
 
-        return parent::url() . '?fileName=' . $fileName;
+        if ($this->request->get('modelClassName') && $this->request->get('modelCode')) {
+            $sendParams['modelClassName'] = $this->request->get('modelClassName');
+            $sendParams['modelCode'] = $this->request->get('modelCode');
+        }
+
+        return parent::url() . '?' . http_build_query($sendParams);
     }
 
     /**
@@ -164,7 +169,9 @@ class SendMail extends Controller
         }
        
         if ($emailTools->send($mail)) {
-            unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+            if (\file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
+                unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+            }
             $this->updateFemail();
             $this->miniLog->info('send-mail-ok');
         } else {
@@ -179,16 +186,26 @@ class SendMail extends Controller
      */
     private function updateFemail() : void
     {
-        var_dump($this->request->get('ModelClassName'));
-        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('ModelClassName');
+        $className = '\FacturaScripts\Core\Model\\' .  $this->request->get('modelClassName');
         if(class_exists($className)) {
             $model = new $className();
-            var_dump($model);
-            if($model->loadFromCode($this->request->get('ModelCode'))) {
-                if( isset($model->femail) ) {
+            $modelCode = $this->request->get('modelCode');
+            if($model->loadFromCode($modelCode)) {
+                if (property_exists($className, 'femail') ) {
                     $model->femail = date('d-m-Y');
+                    if (!$model->save()) {
+                        $this->miniLog->alert('error-saving-data');
+                    } else {
+                        $this->miniLog->notice('data-saved');
+                    }
+                } else {
+                    $this->miniLog->alert('property-not-exist' . $className . ' ' . 'femail');
                 }
+            } else {
+                $this->miniLog->alert('modelcode-not-exists' . $modelCode);
             }
+        } else {
+            $this->miniLog->alert('class-not-exists' . $className);
         }
     }
 
