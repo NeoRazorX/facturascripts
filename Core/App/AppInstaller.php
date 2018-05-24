@@ -67,6 +67,7 @@ class AppInstaller
         $installed = false;
         if (!$this->searchErrors() && $this->request->getMethod() === 'POST') {
             if ($this->createDataBase() && $this->createFolders() && $this->saveHtaccess() && $this->saveInstall()) {
+                $this->enableHiddenPlugins();
                 $installed = true;
             }
         }
@@ -260,7 +261,7 @@ class AppInstaller
                 fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field) . "');\n");
             }
 
-            fwrite($file, "define('FS_HIDDEN_PLUGINS', '" . \implode(',', $this->request->request->get('hidden_plugins', [])) . "');\n");
+            fwrite($file, "define('FS_HIDDEN_PLUGINS', '" . $this->request->request->get('hidden_plugins', '') . "');\n");
             if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
                 fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
             }
@@ -371,5 +372,17 @@ class AppInstaller
         }
 
         return false;
+    }
+
+    /**
+     * Enable hidden plugins.
+     */
+    private function enableHiddenPlugins()
+    {
+        $hiddenPlugins =  \explode(',', $this->request->request->get('hidden_plugins', ''));
+        $pluginManager = new PluginManager();
+        foreach ($hiddenPlugins as $pluginName) {
+            $pluginManager->enable($pluginName);
+        }
     }
 }
