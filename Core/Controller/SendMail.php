@@ -195,17 +195,9 @@ class SendMail extends Controller
                     $model->femail = date('d-m-Y');
                     if (!$model->save()) {
                         $this->miniLog->alert('error-saving-data');
-                    } else {
-                        $this->miniLog->notice('data-saved');
                     }
-                } else {
-                    $this->miniLog->alert('property-not-exist' . $className . ' ' . 'femail');
                 }
-            } else {
-                $this->miniLog->alert('modelcode-not-exists' . $modelCode);
             }
-        } else {
-            $this->miniLog->alert('class-not-exists' . $className);
         }
     }
 
