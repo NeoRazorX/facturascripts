@@ -141,7 +141,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return mixed
      */
-    public function get(string $cod)
+    public function get($cod)
     {
         $data = $this->getRecord($cod);
         if (!empty($data)) {
