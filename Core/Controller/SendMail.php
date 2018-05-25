@@ -28,6 +28,7 @@ use FacturaScripts\Core\App\AppSettings;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Javier García Iceta <javigarciaiceta@gmail.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 class SendMail extends Controller
 {
@@ -38,6 +39,13 @@ class SendMail extends Controller
      * @var CodeModel
      */
     public $codeModel;
+
+    /**
+     * Table name where to look for email.
+     *
+     * @var string
+     */
+    public $addressee;
 
     /**
      * Return the basic data for this page.
@@ -70,6 +78,8 @@ class SendMail extends Controller
         if (AppSettings::get('email', 'host', '') == "") {
             $this->miniLog->alert('email-not-configure');
         }
+
+        $this->setAddressee();
 
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
@@ -266,6 +276,22 @@ class SendMail extends Controller
             if (!$model->save()) {
                 $this->miniLog->alert('error-saving-data');
             }
+        }
+    }
+
+    /**
+     * Set default table name where to look for email.
+     */
+    protected function setAddressee()
+    {
+        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName', '');
+
+        if (class_exists($className) && property_exists($className, 'codproveedor')) {
+            $this->addressee = 'proveedores';
+        }
+
+        if (!class_exists($className) || property_exists($className, 'codcliente')) {
+            $this->addressee = 'clientes';
         }
     }
 }
