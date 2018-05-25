@@ -195,14 +195,6 @@
                                     <p class="form-text">{{ i18n.trans('mysql-socket-p') }}</p>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="form-check mb-2 mb-sm-0">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
-                                        {{ i18n.trans('debug-mode') }}
-                                    </label>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="memcache">
@@ -238,7 +230,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 text-right">
+                    <div class="col-sm-6">
+                        <div class="form-check mb-2 mb-sm-0">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
+                                {{ i18n.trans('debug-mode') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 text-right">
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>

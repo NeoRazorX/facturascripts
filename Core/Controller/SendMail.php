@@ -288,9 +288,7 @@ class SendMail extends Controller
 
         if (class_exists($className) && property_exists($className, 'codproveedor')) {
             $this->addressee = 'proveedores';
-        }
-
-        if (!class_exists($className) || property_exists($className, 'codcliente')) {
+        } else {
             $this->addressee = 'clientes';
         }
     }

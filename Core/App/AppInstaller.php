@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,7 +67,6 @@ class AppInstaller
         $installed = false;
         if (!$this->searchErrors() && $this->request->getMethod() === 'POST') {
             if ($this->createDataBase() && $this->createFolders() && $this->saveHtaccess() && $this->saveInstall()) {
-                $this->enableHiddenPlugins();
                 $installed = true;
             }
         }
@@ -140,6 +139,10 @@ class AppInstaller
 
         chmod('Plugins', (int) octdec(777));
         $pluginManager = new PluginManager();
+        $hiddenPlugins = \explode(',', $this->request->request->get('hidden_plugins', ''));
+        foreach ($hiddenPlugins as $pluginName) {
+            $pluginManager->enable($pluginName);
+        }
         $pluginManager->deploy();
         return true;
     }
@@ -152,11 +155,7 @@ class AppInstaller
     private function getUri()
     {
         $uri = $this->request->getBasePath();
-        if ('/' === substr($uri, -1)) {
-            return substr($uri, 0, -1);
-        }
-
-        return $uri;
+        return ('/' === substr($uri, -1)) ? substr($uri, 0, -1) : $uri;
     }
 
     /**
@@ -169,9 +168,7 @@ class AppInstaller
     {
         $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
         $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
-        $translationExists = file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json');
-
-        return ($translationExists) ? $userLanguage : 'en_EN';
+        return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
 
     /**
@@ -252,24 +249,28 @@ class AppInstaller
         if (\is_resource($file)) {
             fwrite($file, "<?php\n");
             fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 604800) . ");\n");
-            fwrite($file, "define('FS_DEBUG', " . $this->request->request->get('fs_debug', 'false') . ");\n");
             fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
             fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
             fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
             fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
-            foreach (['lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'cache_host', 'cache_port', 'cache_prefix'] as $field) {
-                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field) . "');\n");
+            $fields = [
+                'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user',
+                'db_pass', 'cache_host', 'cache_port', 'cache_prefix', 'hidden_plugins'
+            ];
+            foreach ($fields as $field) {
+                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
             }
 
-            fwrite($file, "define('FS_HIDDEN_PLUGINS', '" . $this->request->request->get('hidden_plugins', '') . "');\n");
+            $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
+            foreach ($booleanFields as $field) {
+                fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
+            }
+
             if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
                 fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
             }
 
-            foreach (['disable_add_plugins', 'disable_rm_plugins'] as $field) {
-                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, 'false') . "');\n");
-            }
             fwrite($file, "\n");
             fclose($file);
             return true;
@@ -377,17 +378,5 @@ class AppInstaller
         }
 
         return false;
-    }
-
-    /**
-     * Enable hidden plugins.
-     */
-    private function enableHiddenPlugins()
-    {
-        $hiddenPlugins =  \explode(',', $this->request->request->get('hidden_plugins', ''));
-        $pluginManager = new PluginManager();
-        foreach ($hiddenPlugins as $pluginName) {
-            $pluginManager->enable($pluginName);
-        }
     }
 }
