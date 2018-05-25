@@ -74,7 +74,7 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListPedidoCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListPedidoCliente', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
-        $this->addFilterCheckbox('ListPedidoCliente', 'femail', 'email-send', 'femail', false, null);
+        $this->addFilterCheckbox('ListPedidoCliente', 'femail', 'email-not-sent', 'femail', false, null);
 
         // Delivery notes lines
         $this->createViewLines();

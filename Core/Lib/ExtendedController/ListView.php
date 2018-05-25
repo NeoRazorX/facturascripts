@@ -302,8 +302,11 @@ class ListView extends BaseView implements DataViewInterface
             $orderKey = array_keys($this->orderby)[0];
         }
 
-        $orderby = explode('_', $orderKey);
-        return [$orderby[0] => $orderby[1]];
+        if (substr($orderKey, -4) == '_asc') {
+            return [substr($orderKey, 0, -4) => 'ASC'];
+        }
+
+        return [substr($orderKey, 0, -5) => 'DESC'];
     }
 
     public function getURL(string $type)
