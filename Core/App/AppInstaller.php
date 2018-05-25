@@ -77,6 +77,7 @@ class AppInstaller
         } elseif ($installed) {
             header('Location: ' . $this->getUri());
         } elseif ('TRUE' === $this->request->get('phpinfo', '')) {
+            /** @noinspection ForgottenDebugOutputInspection */
             phpinfo();
         } else {
             $this->render();
@@ -137,7 +138,7 @@ class AppInstaller
             }
         }
 
-        chmod('Plugins', octdec(777));
+        chmod('Plugins', (int) octdec(777));
         $pluginManager = new PluginManager();
         $pluginManager->deploy();
         return true;
@@ -264,6 +265,10 @@ class AppInstaller
             fwrite($file, "define('FS_HIDDEN_PLUGINS', '" . $this->request->request->get('hidden_plugins', '') . "');\n");
             if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
                 fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+            }
+
+            foreach (['disable_add_plugins', 'disable_rm_plugins'] as $field) {
+                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, 'false') . "');\n");
             }
             fwrite($file, "\n");
             fclose($file);
