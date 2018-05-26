@@ -31,7 +31,9 @@
             <widget type="text" fieldname="referencia" icon="fa-barcode" required="true" />
         </column>
         <column name="supplier" order="100">
-            <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
+            <widget type="select" fieldname="codproveedor" onclick="EditProveedor">
+                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="supplier-reference" order="110">
             <widget type="text" fieldname="refproveedor" icon="fa-barcode" required="true" />
