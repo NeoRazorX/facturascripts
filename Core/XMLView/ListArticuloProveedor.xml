@@ -54,7 +54,7 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="stock">
+        <row type="status" fieldname="stockfis">
             <option color="table-danger">&lt;0</option>
             <option color="table-success">&gt;1</option>
             <option color="table-warning">&lt;1</option>
