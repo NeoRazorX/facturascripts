@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Ejercicio
+ * @covers \FacturaScripts\Core\Model\Ejercicio
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,53 @@ final class EjercicioTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Ejercicio();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Ejercicio::abierto()
+     */
+    public function testAbierto()
+    {
+        $this->model->abierto();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Ejercicio::getBestFecha()
+     */
+    public function testGetBestFecha()
+    {
+        $this->model->getBestFecha(\date('d-m-Y'));
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Ejercicio::getByFecha()
+     */
+    public function testGetByFecha()
+    {
+        $this->model::getByFecha(\date('d-m-Y'));
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Ejercicio::inRange()
+     */
+    public function testInRange()
+    {
+        $this->model->inRange(\date('d-m-Y'));
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Ejercicio::newCodigo()
+     */
+    public function testNewCodigo()
+    {
+        $this->model->newCodigo();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Ejercicio::year()
+     */
+    public function testYear()
+    {
+        $this->model->year();
     }
 }

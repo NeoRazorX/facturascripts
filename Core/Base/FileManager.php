@@ -48,7 +48,7 @@ class FileManager
             is_dir($path) ? static::delTree($path) : unlink($path);
         }
 
-        return is_dir($folder) ? rmdir($folder) : unlink($folder);
+        return is_dir($folder) ? @rmdir($folder) : unlink($folder);
     }
 
     /**
@@ -59,7 +59,7 @@ class FileManager
     public static function notWritableFolders(): array
     {
         $notwritable = [];
-        foreach (static::scanFolder(FS_FOLDER) as $folder) {
+        foreach (static::scanFolder(FS_FOLDER, true) as $folder) {
             if (!is_writable($folder)) {
                 $notwritable[] = $folder;
             }
@@ -81,7 +81,8 @@ class FileManager
         while (false !== ($file = readdir($folder))) {
             if ($file === '.' || $file === '..') {
                 continue;
-            } elseif (is_dir($src . DIRECTORY_SEPARATOR . $file)) {
+            }
+            if (is_dir($src . DIRECTORY_SEPARATOR . $file)) {
                 static::recurseCopy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);
             } else {
                 copy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);

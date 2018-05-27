@@ -20,10 +20,11 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\BalanceCuentaA;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \BalanceCuentaA
+ * @covers \FacturaScripts\Core\Model\BalanceCuentaA
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +34,30 @@ final class BalanceCuentaATest extends CustomTest
     protected function setUp()
     {
         $this->model = new BalanceCuentaA();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\BalanceCuentaA::allFromCodbalance()
+     */
+    public function testAllFromCodbalance()
+    {
+        $this->model->allFromCodbalance('a');
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\BalanceCuentaA::searchByCodbalance()
+     */
+    public function testSearchByCodbalance()
+    {
+        $this->model->searchByCodbalance('a');
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\BalanceCuentaA::saldo()
+     */
+    public function testSaldo()
+    {
+        $ejercicio = new Ejercicio();
+        $this->model->saldo($ejercicio);
     }
 }

@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Provincia
+ * @covers \FacturaScripts\Core\Model\Provincia
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

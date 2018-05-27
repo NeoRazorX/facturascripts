@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \User
+ * @covers \FacturaScripts\Core\Model\User
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,25 @@ final class UserTest extends CustomTest
     protected function setUp()
     {
         $this->model = new User();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\User::newLogkey()
+     * @covers \FacturaScripts\Core\Model\User::verifyLogkey()
+     */
+    public function testNewLogkey()
+    {
+        $logKey = $this->model->newLogkey('192.168.1.1');
+        self::assertNotEmpty($logKey);
+        self::assertTrue($this->model->verifyLogkey($logKey));
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\User::setPassword()
+     */
+    public function testSetPassword()
+    {
+        $this->model = $this->model->get('admin');
+        $this->model->setPassword('admin');
     }
 }

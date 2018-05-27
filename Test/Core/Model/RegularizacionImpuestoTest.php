@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\RegularizacionImpuesto;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RegularizacionImpuesto
+ * @covers \FacturaScripts\Core\Model\RegularizacionImpuesto
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,29 @@ final class RegularizacionImpuestoTest extends CustomTest
     protected function setUp()
     {
         $this->model = new RegularizacionImpuesto();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\RegularizacionImpuesto::getPartidas()
+     */
+    public function testGetPartidas()
+    {
+        $this->model->getPartidas();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\RegularizacionImpuesto::getFechaInside()
+     */
+    public function testGetFechaInside()
+    {
+        $this->model->getFechaInside(\date('d-m-Y'));
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\RegularizacionImpuesto::loadNextPeriod()
+     */
+    public function testLoadNextPeriod()
+    {
+        $this->model->loadNextPeriod();
     }
 }

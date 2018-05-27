@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Settings
+ * @covers \FacturaScripts\Core\Model\Settings
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,29 @@ final class SettingsTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Settings();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Settings::checkArrayData()
+     */
+    public function testCheckArrayData()
+    {
+        $data = [
+            'name' => '',
+            'action' => 'add',
+            'active' => true,
+        ];
+        $this->model->checkArrayData($data);
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Settings::loadFromData()
+     */
+    public function testLoadFromData()
+    {
+        $data = [
+            'properties' => 'test',
+        ];
+        $this->model->loadFromData($data);
     }
 }

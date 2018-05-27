@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Atributo
+ * @covers \FacturaScripts\Core\Model\Atributo
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class AtributoTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Atributo();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Atributo::getByNombre()
+     */
+    public function testGetByNombre()
+    {
+        $this->model->getByNombre('a');
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Atributo::valores()
+     */
+    public function testValores()
+    {
+        $this->model->valores();
     }
 }

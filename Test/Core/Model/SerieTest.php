@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Serie
+ * @covers \FacturaScripts\Core\Model\Serie
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class SerieTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Serie();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Serie::isDefault()
+     */
+    public function testIsDefault()
+    {
+        $this->model->isDefault();
     }
 }

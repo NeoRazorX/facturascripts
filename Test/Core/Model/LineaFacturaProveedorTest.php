@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\LineaFacturaProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \LineaFacturaProveedor
+ * @covers \FacturaScripts\Core\Model\LineaFacturaProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Familia;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Familia
+ * @covers \FacturaScripts\Core\Model\Familia
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class FamiliaTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Familia();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Familia::hijas()
+     */
+    public function testHijas()
+    {
+        self::assertEmpty($this->model->hijas());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Familia::madres()
+     */
+    public function testMadres()
+    {
+        self::assertNotEmpty($this->model->madres());
     }
 }

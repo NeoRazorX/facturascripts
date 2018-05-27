@@ -19,11 +19,12 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Model\Articulo;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Stock
+ * @covers \FacturaScripts\Core\Model\Stock
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +34,31 @@ final class StockTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Stock();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Stock::totalFromArticulo()
+     */
+    public function testLoadFromData()
+    {
+        $ref = 'test';
+
+        $art = new Articulo();
+        $art->referencia = $ref;
+        $art->save();
+
+        $this->model->referencia = $ref;
+        $this->model->cantidad = 10;
+        $this->model->save();
+
+        $this->model->totalFromArticulo($ref);
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Stock::url()
+     */
+    public function testUrl()
+    {
+        self::assertNotEmpty($this->model->url());
     }
 }

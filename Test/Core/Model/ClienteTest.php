@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Cliente
+ * @covers \FacturaScripts\Core\Model\Cliente
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class ClienteTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Cliente();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Cliente::primaryDescriptionColumn()
+     */
+    public function getPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Cliente::getDirecciones()
+     */
+    public function testGetDirecciones()
+    {
+        $this->model->getDirecciones();
     }
 }

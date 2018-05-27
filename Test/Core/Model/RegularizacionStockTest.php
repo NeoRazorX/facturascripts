@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\RegularizacionStock;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RegularizacionStock
+ * @covers \FacturaScripts\Core\Model\RegularizacionStock
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

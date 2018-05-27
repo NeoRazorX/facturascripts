@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\LineaTransferenciaStock;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \LineaTransferenciaStock
+ * @covers \FacturaScripts\Core\Model\LineaTransferenciaStock
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

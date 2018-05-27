@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\AtributoValor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \AtributoValor
+ * @covers \FacturaScripts\Core\Model\AtributoValor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class AtributoValorTest extends CustomTest
     protected function setUp()
     {
         $this->model = new AtributoValor();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\AtributoValor::allFromAtributo()
+     */
+    public function testAllFromAtributo()
+    {
+        $this->model->allFromAtributo('a');
     }
 }

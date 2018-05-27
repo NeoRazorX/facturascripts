@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\GrupoClientes;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \GrupoClientes
+ * @covers \FacturaScripts\Core\Model\GrupoClientes
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class GrupoClientesTest extends CustomTest
     protected function setUp()
     {
         $this->model = new GrupoClientes();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\GrupoClientes::primaryDescriptionColumn()
+     */
+    public function getPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\GrupoClientes::url()
+     */
+    public function testUrl()
+    {
+        self::assertNotEmpty($this->model->url());
     }
 }

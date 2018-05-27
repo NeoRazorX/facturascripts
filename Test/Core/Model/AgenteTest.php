@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Agente
+ * @covers \FacturaScripts\Core\Model\Agente
  */
 final class AgenteTest extends CustomTest
 {
@@ -31,5 +31,13 @@ final class AgenteTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Agente();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Agente::primaryDescriptionColumn()
+     */
+    public function getPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
     }
 }

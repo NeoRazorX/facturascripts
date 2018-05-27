@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Asiento
+ * @covers \FacturaScripts\Core\Model\Asiento
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,56 @@ final class AsientoTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Asiento();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Base\ModelClass::primaryDescriptionColumn()
+     */
+    public function testPrimaryDescriptionColumn()
+    {
+        self::assertInternalType(
+            'string', $this->model->primaryDescriptionColumn()
+        );
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Asiento::accumulateAmounts()
+     */
+    public function testAccumulateAmounts()
+    {
+        $detail = ['haber' => 100];
+        $this->model->accumulateAmounts($detail);
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Asiento::cronJob()
+     */
+    public function testCronJob()
+    {
+        $this->model->cronJob();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Asiento::initTotals()
+     */
+    public function testInitTotals()
+    {
+        $this->model->initTotals();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Asiento::renumber()
+     */
+    public function testRenumber()
+    {
+        $this->model->renumber();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Asiento::delete()
+     */
+    public function testDelete()
+    {
+        $this->model->delete();
     }
 }

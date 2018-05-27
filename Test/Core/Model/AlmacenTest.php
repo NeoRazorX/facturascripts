@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Almacen
+ * @covers \FacturaScripts\Core\Model\Almacen
  */
 final class AlmacenTest extends CustomTest
 {
@@ -31,5 +31,23 @@ final class AlmacenTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Almacen();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Almacen::isDefault()
+     */
+    public function testIsDefault()
+    {
+        $this->model->isDefault();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Almacen::primaryDescriptionColumn()
+     */
+    public function testprimaryDescriptionColumn()
+    {
+        self::assertInternalType(
+            'string', $this->model->primaryDescriptionColumn()
+        );
     }
 }

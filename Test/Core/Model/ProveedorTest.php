@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Proveedor
+ * @covers \FacturaScripts\Core\Model\Proveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class ProveedorTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Proveedor();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Proveedor::primaryDescriptionColumn()
+     */
+    public function getPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Proveedor::getDirecciones()
+     */
+    public function testGetDirecciones()
+    {
+        $this->model->getDirecciones();
     }
 }

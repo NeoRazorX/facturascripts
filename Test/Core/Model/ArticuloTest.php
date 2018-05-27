@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Articulo;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Articulo
+ * @covers \FacturaScripts\Core\Model\Articulo
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class ArticuloTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Articulo();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Articulo::setPvp()
+     */
+    public function testSetPhp()
+    {
+        $this->model->setPvp(100);
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Articulo::setPvpIva()
+     */
+    public function testSetPhpIva()
+    {
+        $this->model->setPvpIva(121);
     }
 }

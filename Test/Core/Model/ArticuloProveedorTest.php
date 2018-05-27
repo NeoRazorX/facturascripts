@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\ArticuloProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \ArticuloProveedor
+ * @covers \FacturaScripts\Core\Model\ArticuloProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
