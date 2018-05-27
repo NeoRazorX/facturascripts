@@ -84,6 +84,7 @@ class TranslationTest extends TestCase
             $orderedString = json_encode($orderedArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
             $msg = 'File ' . $fileName . ' have no ordered keys.';
+            // FIXME: Uncomment this when JSON files content was ordered by key
             //self::assertEquals($fileString, $orderedString, $msg);
         }
     }
