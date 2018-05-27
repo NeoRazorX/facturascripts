@@ -61,7 +61,7 @@ final class SubcuentaTest extends CustomTest
     public function testUpdateBalance()
     {
         foreach ($this->model->all() as $subcuenta) {
-            $this->model->updateBalance(\date('d-m-Y'), 0, 0);
+            $subcuenta->updateBalance(\date('d-m-Y'), 0, 0);
         }
     }
 
