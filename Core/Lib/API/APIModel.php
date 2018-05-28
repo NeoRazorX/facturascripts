@@ -204,10 +204,7 @@ class APIModel extends APIResourceClass
 
         // Retrieve the past data, and replace the changes
         $values = $this->request->request->all();
-        if (isset($values[$cod]) && $values[$cod] !== $this->params[0]) {
-            $this->setError("Can't change the key. Key '$cod'' changed from {$this->params[0]} to {$values[$cod]}.", $values);
-            die;
-        }
+        $values[$cod] = $this->params[0];
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
