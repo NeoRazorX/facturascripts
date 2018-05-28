@@ -45,7 +45,7 @@ class EditProveedor extends ExtendedController\PanelController
     public function calcSupplierDeliveryNotes($view)
     {
         $where = [
-            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
+            new DataBaseWhere('codproveedor', $view->model->codproveedor),
             new DataBaseWhere('editable', true)
         ];
 
@@ -65,7 +65,7 @@ class EditProveedor extends ExtendedController\PanelController
     public function calcSupplierInvoicePending($view)
     {
         $where = [];
-        $where[] = new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'));
+        $where[] = new DataBaseWhere('codproveedor', $view->model->codproveedor);
         $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('recibosprov', $where, ['total' => 'SUM(importe)'], '')[0];

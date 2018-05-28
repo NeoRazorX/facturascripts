@@ -74,6 +74,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
         $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
+        $this->addFilterCheckbox('ListPedidoProveedor', 'femail', 'email-not-sent', 'femail', false, null);
 
         // Delivery notes lines
         $this->createViewLines();

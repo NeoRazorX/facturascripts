@@ -32,7 +32,6 @@ class WidgetItemCheckBox extends WidgetItem
     public function __construct()
     {
         parent::__construct();
-
         $this->type = 'checkbox';
     }
 
@@ -67,15 +66,12 @@ class WidgetItemCheckBox extends WidgetItem
      */
     public function getListHTML($value)
     {
-        if ($value === null || $value === '') {
-            return '-';
+        $checked = is_bool($value) ? $value : !is_null($value);
+        if ($checked) {
+            return '<i class="fa fa-check" aria-hidden="true" ' . $this->getTextOptionsHTML($checked) . '></i>';
         }
 
-        $checked = in_array($value, ['t', '1'], false);
-        $icon = $checked ? 'fa-check' : 'fa-minus';
-        $style = $this->getTextOptionsHTML($checked);
-
-        return '<i class="fa ' . $icon . '" aria-hidden="true" ' . $style . '></i>';
+        return '-';
     }
 
     /**

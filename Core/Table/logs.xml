@@ -13,6 +13,10 @@
         <default>nextval('log_id_seq'::regclass)</default>
     </column>
     <column>
+        <name>ip</name>
+        <type>character varying(40)</type>
+    </column>
+    <column>
         <name>level</name>
         <type>character varying(15)</type>
         <null>NO</null>

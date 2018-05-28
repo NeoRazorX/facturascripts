@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : api_access.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the api_access table.
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('api_access_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>allowdelete</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>allowget</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>allowpost</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>allowput</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>idapikey</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>resource</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>api_access_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>api_access_api</name>
+        <type>FOREIGN KEY (idapikey) REFERENCES api_keys (id) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>unique_api_access</name>
+        <type>UNIQUE (idapikey,resource)</type>
+    </constraint>
+</table>

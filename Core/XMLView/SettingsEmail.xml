@@ -46,14 +46,14 @@
                 <widget type="number" fieldname="port" />
             </column>
             <column name="enc" title="encrypt" numcolumns="3" order="110">
-                <widget type="select" fieldname="enc">
+                <widget type="select" fieldname="enc" required="true">
                     <values title="SSL">ssl</values>
                     <values title="TLS">tls</values>
                     <values title=""></values>
                 </widget>
             </column>
             <column name="mailer" title="mailer" numcolumns="3" order="110">
-                <widget type="select" fieldname="mailer">
+                <widget type="select" fieldname="mailer" required="true">
                     <values title="Mail">mail</values>
                     <values title="SendMail">sendmail</values>
                     <values title="SMTP">smtp</values>

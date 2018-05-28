@@ -47,6 +47,9 @@
         <column name="date" order="130" display="right">
             <widget type="text" fieldname="fecha" />
         </column>
+        <column name="email-sent" order="140" display="center">
+            <widget type="checkbox" fieldname="femail" />
+        </column>
     </columns>
     <rows>
         <row type="status" fieldname="pagada">

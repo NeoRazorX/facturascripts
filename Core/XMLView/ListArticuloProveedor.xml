@@ -31,7 +31,9 @@
             <widget type="text" fieldname="referencia" icon="fa-barcode" required="true" />
         </column>
         <column name="supplier" order="100">
-            <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
+            <widget type="select" fieldname="codproveedor" onclick="EditProveedor">
+                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="supplier-reference" order="110">
             <widget type="text" fieldname="refproveedor" icon="fa-barcode" required="true" />
@@ -54,7 +56,7 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="stock">
+        <row type="status" fieldname="stockfis">
             <option color="table-danger">&lt;0</option>
             <option color="table-success">&gt;1</option>
             <option color="table-warning">&lt;1</option>

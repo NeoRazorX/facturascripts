@@ -27,29 +27,31 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">
-        function deletePlugin(pluginName) {
-            bootbox.confirm({
-                title: "{{ i18n.trans('confirm-delete')|raw }}",
-                message: "{{ i18n.trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
+    {% if not constant('FS_DISABLE_RM_PLUGINS') %}
+        <script type="text/javascript">
+            function deletePlugin(pluginName) {
+                bootbox.confirm({
+                    title: "{{ i18n.trans('confirm-delete')|raw }}",
+                    message: "{{ i18n.trans('are-you-sure') }}",
+                    closeButton: false,
+                    buttons: {
+                        cancel: {
+                            label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
+                        },
+                        confirm: {
+                            label: "<i class='fa fa-check'></i> {{ i18n.trans('delete') }}",
+                            className: 'btn-danger'
+                        }
                     },
-                    confirm: {
-                        label: "<i class='fa fa-check'></i> {{ i18n.trans('delete') }}",
-                        className: 'btn-danger'
+                    callback: function (result) {
+                        if (result) {
+                            window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
+                        }
                     }
-                },
-                callback: function (result) {
-                    if (result) {
-                        window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
-                    }
-                }
-            });
-        }
-    </script>
+                });
+            }
+        </script>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -81,15 +83,17 @@
                         </a>
                     {% endif %}
                 </div>
-                <div class="btn-group d-xs-none">
-                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
-                    </button>
-                </div>
+                {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
+                    <div class="btn-group d-xs-none">
+                        <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
+                        </button>
+                    </div>
+                {% endif %}
             </div>
             <div class="col-sm-5 col-6 text-right">
-                <h1 style="margin-top: 0px; margin-bottom: 0px;">
+                <h1 style="margin-top: 0; margin-bottom: 0;">
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
             </div>
@@ -129,10 +133,12 @@
                                         <i class="fa fa-check" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
                                     </a>
-                                    <a class="btn btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                        <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
-                                    </a>
+                                    {% if not constant('FS_DISABLE_RM_PLUGINS') %}
+                                        <a class="btn btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                            <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
                             </span>
                         </td>
@@ -146,31 +152,33 @@
         </table>
     </div>
 
-    {# Modal for add new plugins #}
-    <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="upload" />
-        <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
-                            <input type="file" name="plugin[]" multiple="" accept="application/zip"/>
-                            <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
+    {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
+        {# Modal for add new plugins #}
+        <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="upload" />
+            <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
-                        <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
+                                <input type="file" name="plugin[]" multiple="" accept="application/zip"/>
+                                <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    {% endif %}
 {% endblock %}

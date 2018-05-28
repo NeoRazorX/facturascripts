@@ -44,8 +44,11 @@ class MiniLogSave
 
     /**
      * Read the data from MiniLog and storage in Log table.
+     * 
+     * @param string $ip
+     * @param string $nick
      */
-    public function __construct()
+    public function __construct(string $ip = '', string $nick = '')
     {
         $miniLog = new MiniLog();
         foreach ($miniLog->read($this->getActiveSettingsLog()) as $value) {
@@ -53,10 +56,8 @@ class MiniLogSave
             $logMessage->time = date('d-m-Y H:i:s', $value["time"]);
             $logMessage->level = $value["level"];
             $logMessage->message = $value["message"];
-            if (isset($value['context']['nick'])) {
-                $logMessage->nick = $value['context']['nick'];
-            }
-
+            $logMessage->ip = empty($ip) ? null : $ip;
+            $logMessage->nick = empty($nick) ? null : $nick;
             $logMessage->save();
         }
     }

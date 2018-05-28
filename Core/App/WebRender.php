@@ -99,7 +99,11 @@ class WebRender
 
         /// asset functions
         $assetFunction = new Twig_Function('asset', function ($string) {
-            return FS_ROUTE . '/' . $string;
+            $path = FS_ROUTE . '/';
+            if (substr($string, 0, strlen($path)) == $path) {
+                return $string;
+            }
+            return $path . $string;
         });
         $twig->addFunction($assetFunction);
 
