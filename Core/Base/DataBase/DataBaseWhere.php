@@ -99,49 +99,67 @@ class DataBaseWhere
     }
 
     /**
+     * Return list values for IN operator
+     * 
+     * @return string
+     */
+    private function getValueFromOperatorIn(): string
+    {
+        if (0 === stripos($this->value, 'select ')) {
+            return $this->value;
+        }
+        
+        $result = '';
+        $comma = '';
+        foreach (explode(',', $this->value) as $value) {
+            $result .= $comma . "'" . $this->dataBase->escapeString($value) . "'";
+            $comma = ',';
+        }
+       return $result;
+    }
+
+    /**
+     * Return value for LIKE operator
+     * 
+     * @return string
+     */
+    private function getValueFromOperatorLike(): string
+    {
+        if (is_bool($this->value)) {
+            return $this->value ? 'TRUE' : 'FALSE';
+        }
+            
+        if (strpos($this->value, '%')) {
+            return "LOWER('" . $this->dataBase->escapeString($this->value) . "')";
+        }
+        
+        return "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
+    }
+
+    /**
      * Returns the value for the operator
      *
      * @return string
      */
-    private function getValueFromOperator()
+    private function getValueFromOperator(): string
     {
         switch ($this->operator) {
             case 'LIKE':
-                if (is_bool($this->value)) {
-                    $result = $this->value ? 'TRUE' : 'FALSE';
-                } else {
-                    $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
-                }
-                break;
+                return $this->getValueFromOperatorLike();
 
             case 'IS':
             case 'IS NOT':
-                $result = (string) $this->value;
-                break;
+                return (string) $this->value;
 
             case 'IN':
-                $result = '(';
-                if (0 === stripos($this->value, 'select ')) {
-                    $result .= $this->value;
-                } else {
-                    $comma = '';
-                    foreach (explode(',', $this->value) as $value) {
-                        $result .= $comma . "'" . $this->dataBase->escapeString($value) . "'";
-                        $comma = ',';
-                    }
-                }
-                $result .= ')';
-                break;
+                return '(' . $this->getValueFromOperatorIn() . ')';
 
             case 'REGEXP':
-                $result = "'" . $this->dataBase->escapeString((string) $this->value) . "'";
-                break;
+                return "'" . $this->dataBase->escapeString((string) $this->value) . "'";
 
             default:
-                $result = '';
+                return '';
         }
-
-        return $result;
     }
 
     /**
