@@ -129,11 +129,10 @@ class DataBaseWhere
             return $this->value ? 'TRUE' : 'FALSE';
         }
             
-        if (strpos($this->value, '%')) {
-            return "LOWER('" . $this->dataBase->escapeString($this->value) . "')";
+        if (strpos($this->value, '%') === false) {
+            return "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
         }
-        
-        return "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
+        return "LOWER('" . $this->dataBase->escapeString($this->value) . "')";        
     }
 
     /**
