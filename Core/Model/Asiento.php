@@ -136,7 +136,6 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
             }
         }
 
-        echo self::$i18n->trans('renumber-accounting');
         $this->renumber();
     }
 

@@ -76,6 +76,14 @@ class PluginManager
             self::$i18n = new Translator();
             self::$minilog = new MiniLog();
         }
+
+        if (!defined('FS_DISABLE_ADD_PLUGINS')) {
+            define('FS_DISABLE_ADD_PLUGINS', false);
+        }
+
+        if (!defined('FS_DISABLE_RM_PLUGINS')) {
+            define('FS_DISABLE_RM_PLUGINS', false);
+        }
     }
 
     /**
