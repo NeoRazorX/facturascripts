@@ -88,7 +88,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
      * @var string
      */
     public $numero;
-
+    
     /**
      * Accumulate the amounts of the detail in the document
      *
@@ -108,6 +108,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
         $this->fecha = date('d-m-Y');
         $this->editable = true;
         $this->importe = 0.0;
+        $this->numero = '';
     }
 
     /**
@@ -236,7 +237,9 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
      */
     public function newCode(string $field = '', array $where = [])
     {
-        $where[] = new DataBase\DataBaseWhere('codejercicio', $this->codejercicio);
+        if (!empty($field) && $field !== $this->primaryColumn()) {
+            $where[] = new DataBase\DataBaseWhere('codejercicio', $this->codejercicio);
+        }
         return parent::newCode($field, $where);
     }
 
