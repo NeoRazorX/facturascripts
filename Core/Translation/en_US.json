@@ -1228,5 +1228,12 @@
     "supplier-invoice": "Supplier invoice",
     "retentions": "Retentions",
     "not-valid-description-retention": "Not valid description retention",
-    "not-valid-percentage-retention": "Not valid percentage retention"
+    "not-valid-percentage-retention": "Not valid percentage retention",
+    "resource": "Resource",
+    "allow-delete-data": "Allow DELETE",
+    "allow-get-data": "Allow GET",
+    "allow-post-data": "Allow POST",
+    "allow-put-data": "Allow ADD",
+    "add-all-enabled": "Add all enabled",
+    "add-all-disabled": "Add all disabled"
 }
