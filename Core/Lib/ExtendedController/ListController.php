@@ -315,6 +315,7 @@ abstract class ListController extends BaseController
     {
         $this->views[$viewName] = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
         $this->setSettings($viewName, 'icon', $icon);
+        $this->setSettings($viewName, 'insert', true);
         if (empty($this->active)) {
             $this->active = $viewName;
         }
