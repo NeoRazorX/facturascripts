@@ -180,7 +180,7 @@ abstract class ListController extends BaseController
     protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $fcode = empty($fieldcode) ? $field : $fieldtitle;
+        $fcode = empty($fieldcode) ? $field : $fieldcode;
         $ftitle = empty($fieldtitle) ? $fcode : $fieldtitle;
         $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where));
     }
