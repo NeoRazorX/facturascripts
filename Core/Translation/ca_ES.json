@@ -1301,5 +1301,12 @@
     "supplier-invoice": "Factura de Proveïdor",
     "retentions": "Retencions",
     "not-valid-description-retention": "Descripció no valida per a la retenció",
-    "not-valid-percentage-retention": "Percentatge no vàlid. Ha de ser major de 0.00"
+    "not-valid-percentage-retention": "Percentatge no vàlid. Ha de ser major de 0.00",
+    "resource": "Recurs",
+    "allow-delete-data": "Permetre ESBORRAT",
+    "allow-get-data": "Permetre ACCÉS",
+    "allow-post-data": "Permetre MODIFICAR",
+    "allow-put-data": "Permetre AFEGIR",
+    "add-all-enabled": "Afegir tot habilitat",
+    "add-all-disabled": "Afegir tot Desactivat"
 }
