@@ -54,8 +54,6 @@ class EditCliente extends ExtendedController\PanelController
         return $divisaTools->format($totalModel->totals['total']);
     }
 
-   
-
     /**
      * Returns basic page attributes
      *
