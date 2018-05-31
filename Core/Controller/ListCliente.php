@@ -54,7 +54,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
         $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
-        $this->addOrderBy('ListCliente', 'fecha', 'date');
+        $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');
 
         $selectValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $selectValues);
