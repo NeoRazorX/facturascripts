@@ -54,24 +54,7 @@ class EditCliente extends ExtendedController\PanelController
         return $divisaTools->format($totalModel->totals['total']);
     }
 
-    /**
-     * Returns the sum of the client's total outstanding invoices.
-     *
-     * @param ExtendedController\EditView $view
-     *
-     * @return string
-     */
-    public function calcClientInvoicePending($view)
-    {
-        $where = [];
-        $where[] = new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
-        $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
-
-        $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
-
-        $divisaTools = new DivisaTools();
-        return $divisaTools->format($totalModel->totals['total'], 2);
-    }
+   
 
     /**
      * Returns basic page attributes
