@@ -1393,5 +1393,12 @@
     "supplier-invoice": "Factura de Proveedor",
     "retentions": "Retenciones",
     "not-valid-description-retention": "Descripción no valida para la retención",
-    "not-valid-percentage-retention": "Porcentaje no válido. Debe ser mayor de 0.00"
+    "not-valid-percentage-retention": "Porcentaje no válido. Debe ser mayor de 0.00",
+    "resource": "Recurso",
+    "allow-delete-data": "Permitir BORRADO",
+    "allow-get-data": "Permitir ACCESO",
+    "allow-post-data": "Permitir MODIFICAR",
+    "allow-put-data": "Permitir AÑADIR",
+    "add-all-enabled": "Añadir todo habilitado",
+    "add-all-disabled": "Añadir todo Deshabilitado"
 }
