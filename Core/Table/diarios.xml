@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : diarios.xml
+    Author     : Raul Jimenez (raul.jimenez@nazcanetworks.com)
+    Description:
+        Structure for the diarios table.
+-->
+<table>
+    <column>
+        <name>iddiario</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+
+    <constraint>
+        <name>diarios_pkey</name>
+        <type>PRIMARY KEY (iddiario)</type>
+    </constraint>
+</table>
