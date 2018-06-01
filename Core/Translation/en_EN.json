@@ -772,6 +772,8 @@
     "allow-put-data": "Allow PUT",
     "add-all-enabled": "Add all enabled",
     "add-all-disabled": "Add all disabled",
+    "shipping": "Shipping",
+    "billing": "Billing",
     "journals": "Journals",
     "journal": "Journal"
 }
