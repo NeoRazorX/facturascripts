@@ -36,65 +36,30 @@ class Utils
      */
     public static function bin2str($val)
     {
-        if ($val === null) {
-            return 'NULL';
-        }
-
-        return "'" . base64_encode($val) . "'";
+        return ($val === null) ? 'NULL' : "'" . base64_encode($val) . "'";
     }
 
     /**
-     * Convert a text to binary.
-     * It does with base64.
+     * Convert a boolean to text.
      *
-     * @param string $val
+     * @param bool $val
      *
-     * @return null|string
+     * @return string
      */
-    public static function str2bin($val)
+    public static function bool2str($val)
     {
-        if ($val === null) {
-            return null;
+        switch ($val) {
+            case true:
+                return 't';
+
+            case 1:
+                return '1';
+
+            case 0:
+                return '0';
         }
 
-        return base64_decode($val);
-    }
-
-    /**
-     * Returns the integer value of the variable $ s,
-     * or null if it is null. The intval() function of the php returns 0 if it is null.
-     *
-     * @param string $str
-     *
-     * @return integer
-     */
-    public static function intval($str)
-    {
-        if ($str === null) {
-            return null;
-        }
-
-        return (int) $str;
-    }
-
-    /**
-     * Compare two floating point numbers with an accuracy of $precision,
-     * returns True if they are equal, False otherwise.
-     *
-     * @param double $f1
-     * @param double $f2
-     * @param int    $precision
-     * @param bool   $round
-     *
-     * @return bool
-     */
-    public static function floatcmp($f1, $f2, $precision = 10, $round = false)
-    {
-        if ($round || !function_exists('bccomp')) {
-            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
-        }
-
-        return bccomp((string) $f1, (string) $f2, $precision) === 0;
+        return 'f';
     }
 
     /**
@@ -122,15 +87,51 @@ class Utils
     }
 
     /**
-     * Returns a random text string of length $length.
+     * Make corrections in the HTML code
      *
-     * @param int $length
+     * @param string $txt
      *
      * @return string
      */
-    public static function randomString($length = 10)
+    public static function fixHtml($txt)
     {
-        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+        $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
+        $final = ['<', '>', "'", "'"];
+
+        return ($txt === null) ? null : trim(str_replace($original, $final, $txt));
+    }
+
+    /**
+     * Compare two floating point numbers with an accuracy of $precision,
+     * returns True if they are equal, False otherwise.
+     *
+     * @param double $f1
+     * @param double $f2
+     * @param int    $precision
+     * @param bool   $round
+     *
+     * @return bool
+     */
+    public static function floatcmp($f1, $f2, $precision = 10, $round = false)
+    {
+        if ($round || !function_exists('bccomp')) {
+            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
+        }
+
+        return bccomp((string) $f1, (string) $f2, $precision) === 0;
+    }
+
+    /**
+     * Returns the integer value of the variable $ s,
+     * or null if it is null. The intval() function of the php returns 0 if it is null.
+     *
+     * @param string $str
+     *
+     * @return integer
+     */
+    public static function intval($str)
+    {
+        return ($str === null) ? null : (int) $str;
     }
 
     /**
@@ -157,18 +158,28 @@ class Utils
     }
 
     /**
-     * Make corrections in the HTML code
+     * Returns a random text string of length $length.
      *
-     * @param string $txt
+     * @param int $length
      *
      * @return string
      */
-    public static function fixHtml($txt)
+    public static function randomString($length = 10)
     {
-        $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
-        $final = ['<', '>', "'", "'"];
+        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+    }
 
-        return ($txt === null) ? null : trim(str_replace($original, $final, $txt));
+    /**
+     * Convert a text to binary.
+     * It does with base64.
+     *
+     * @param string $val
+     *
+     * @return null|string
+     */
+    public static function str2bin($val)
+    {
+        return ($val === null) ? null : base64_decode($val);
     }
 
     /**
@@ -184,27 +195,32 @@ class Utils
     {
         return in_array(strtolower($val), ['true', 't', '1'], false);
     }
-
+    
     /**
-     * Convert a boolean to text.
+     * Breaks text at maximum width, without break words.
      *
-     * @param bool $val
-     *
+     * @param string $desc
+     * @param int    $maxWidth
+     * 
      * @return string
      */
-    public static function bool2str($val)
+    public static function trueTextBreak($desc, $maxWidth = 500)
     {
-        switch ($val) {
-            case true:
-                return 't';
-            case false:
-                return 'f';
-            case 1:
-                return '1';
-            case 0:
-                return '0';
-            default:
-                return 'f';
+        if (mb_strlen($desc) <= $maxWidth) {
+            return $desc;
         }
+
+        $description = '';
+        foreach (explode(' ', $desc) as $aux) {
+            if (mb_strlen($description . ' ' . $aux) >= $maxWidth - 3) {
+                break;
+            } elseif ($description == '') {
+                $description = $aux;
+            } else {
+                $description .= ' ' . $aux;
+            }
+        }
+
+        return $description . '...';
     }
 }

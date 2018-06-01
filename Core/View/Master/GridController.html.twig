@@ -44,7 +44,7 @@
 {% set masterView = fsc.views|keys|first %}
 {% if fsc.views[masterView].count > 0 %}
 <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
-<script src="Core/Assets/JS/gridController.js"></script>
+<script src="Core/Assets/JS/GridController.js"></script>
 <script type="text/javascript">
     documentUrl = '{{ fsc.views[masterView].getURL('edit') | raw }}';
 </script>

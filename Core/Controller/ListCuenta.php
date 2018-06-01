@@ -71,6 +71,7 @@ class ListCuenta extends ExtendedController\ListController
 
         /* Special account */
         $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fa-newspaper-o');
+        $this->setSettings('ListCuentaEspecial', 'insert', false);
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuentaesp']);
 
         $this->addOrderBy('ListCuentaEspecial', 'descripcion', 'description');

@@ -180,7 +180,7 @@ abstract class ListController extends BaseController
     protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $fcode = empty($fieldcode) ? $field : $fieldtitle;
+        $fcode = empty($fieldcode) ? $field : $fieldcode;
         $ftitle = empty($fieldtitle) ? $fcode : $fieldtitle;
         $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where));
     }
@@ -282,13 +282,13 @@ abstract class ListController extends BaseController
      * Adds an order field to the ListView.
      *
      * @param string $viewName
-     * @param string $field
+     * @param string|[] $fields
      * @param string $label
      * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
      */
-    protected function addOrderBy($viewName, $field, $label = '', $default = 0)
+    protected function addOrderBy($viewName, $fields, $label = '', $default = 0)
     {
-        $this->views[$viewName]->addOrderBy($field, $label, $default);
+        $this->views[$viewName]->addOrderBy($fields, $label, $default);
     }
 
     /**
@@ -315,6 +315,7 @@ abstract class ListController extends BaseController
     {
         $this->views[$viewName] = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
         $this->setSettings($viewName, 'icon', $icon);
+        $this->setSettings($viewName, 'insert', true);
         if (empty($this->active)) {
             $this->active = $viewName;
         }
