@@ -1288,5 +1288,6 @@
     "accounting-entry-macros-title": "Utilisation des macros dans le champ de description",
     "file-not-exists": "Le fichier n'existe pas : %fileName%",
     "attached-files": "Fichiers joints",
-    "file-name": "Nom du fichier"
+    "file-name": "Nom du fichier",
+    "billing": "Facturation"
 }
