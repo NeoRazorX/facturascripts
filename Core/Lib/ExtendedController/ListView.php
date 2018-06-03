@@ -182,7 +182,7 @@ class ListView extends BaseView implements DataViewInterface
      * @param string $columnName
      * @param bool   $disabled
      */
-    public function disableColumn($columnName, $disabled)
+    public function disableColumn($columnName, $disabled = true)
     {
         $column = $this->columnForName($columnName);
         if (!empty($column)) {
