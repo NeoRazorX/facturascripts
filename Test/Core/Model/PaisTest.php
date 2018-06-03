@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Pais
+ * @covers \FacturaScripts\Core\Model\Pais
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class PaisTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Pais();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Pais::isDefault()
+     */
+    public function testIsDefault()
+    {
+        $this->model->isDefault();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Pais::primaryDescriptionColumn()
+     */
+    public function getPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
     }
 }

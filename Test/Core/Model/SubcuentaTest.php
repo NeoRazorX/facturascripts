@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Subcuenta
+ * @covers \FacturaScripts\Core\Model\Subcuenta
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,43 @@ final class SubcuentaTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Subcuenta();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Subcuenta::getSpecialAccountCode()
+     */
+    public function testGetSpecialAccountCode()
+    {
+        foreach ($this->model->all() as $subcuenta) {
+            $subcuenta->getSpecialAccountCode();
+        }
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Subcuenta::getIdAccount()
+     */
+    public function testGetIdAccount()
+    {
+        foreach ($this->model->all() as $subcuenta) {
+            $subcuenta->getIdAccount();
+        }
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Subcuenta::updateBalance()
+     */
+    public function testUpdateBalance()
+    {
+        foreach ($this->model->all() as $subcuenta) {
+            $subcuenta->updateBalance(\date('d-m-Y'), 0, 0);
+        }
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Subcuenta::url()
+     */
+    public function testUrl()
+    {
+        self::assertNotEmpty($this->model->url());
     }
 }

@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \FormaPago
+ * @covers \FacturaScripts\Core\Model\FormaPago
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,23 @@ final class FormaPagoTest extends CustomTest
     protected function setUp()
     {
         $this->model = new FormaPago();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\FormaPago::isDefault()
+     */
+    public function testIsDefault()
+    {
+        $this->model->isDefault();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\FormaPago::calcularVencimiento()
+     */
+    public function testCalcularVencimiento()
+    {
+        self::assertNotEmpty($this->model->calcularVencimiento(date('d-m-Y')));
+        self::assertNotEmpty($this->model->calcularVencimiento(date('d-m-Y'), '5'));
+        self::assertNotEmpty($this->model->calcularVencimiento(date('d-m-Y'), '5,10'));
     }
 }

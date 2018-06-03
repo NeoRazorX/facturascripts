@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \AgenciaTransporte
+ * @covers \FacturaScripts\Core\Model\AgenciaTransporte
  */
 final class AgenciaTransporteTest extends CustomTest
 {

@@ -54,7 +54,7 @@ class TranslationTest extends TestCase
         foreach ($this->scanFolder($this->basePath) as $fileName) {
             $fileArray = $this->readJSON($this->basePath . $fileName);
             $msg = 'File ' . $fileName . ' is wrong';
-            $this->assertNotNull($fileArray, $msg);
+            self::assertNotNull($fileArray, $msg);
         }
     }
 
@@ -84,7 +84,8 @@ class TranslationTest extends TestCase
             $orderedString = json_encode($orderedArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
             $msg = 'File ' . $fileName . ' have no ordered keys.';
-            //$this->assertEquals($fileString, $orderedString, $msg);
+            // FIXME: Uncomment this when JSON files content was ordered by key
+            //self::assertEquals($fileString, $orderedString, $msg);
         }
     }
 
@@ -99,9 +100,9 @@ class TranslationTest extends TestCase
     {
         foreach ($secondaryArray as $key => $value) {
             $exists = array_key_exists($key, $primaryArray);
-            $msg = 'Key \'' . $key . '\' not exists on ' . $this->mainLang . '.';
+            $msg = "Key '" . $key . "' not exists on " . $this->mainLang . '.';
             // Require remove unneeded translations
-            //$this->assertTrue($exists, $msg);
+            //self::assertTrue($exists, $msg);
         }
     }
 

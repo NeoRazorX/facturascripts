@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \PedidoProveedor
+ * @covers \FacturaScripts\Core\Model\PedidoProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class PedidoProveedorTest extends CustomTest
     protected function setUp()
     {
         $this->model = new PedidoProveedor();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\PedidoProveedor::getLines()
+     */
+    public function testGetLines()
+    {
+        self::assertEmpty($this->model->getLines());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\PedidoProveedor::getNewLine()
+     */
+    public function testGetNewLine()
+    {
+        self::assertNotEmpty($this->model->getNewLine());
     }
 }

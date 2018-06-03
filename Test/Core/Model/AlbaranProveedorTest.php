@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \AlbaranProveedor
+ * @covers \FacturaScripts\Core\Model\AlbaranProveedor
  */
 final class AlbaranProveedorTest extends CustomTest
 {
@@ -31,5 +31,21 @@ final class AlbaranProveedorTest extends CustomTest
     protected function setUp()
     {
         $this->model = new AlbaranProveedor();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\AlbaranProveedor::getLines()
+     */
+    public function testGetLines()
+    {
+        self::assertEmpty($this->model->getLines());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\AlbaranProveedor::getNewLine()
+     */
+    public function testGetNewLine()
+    {
+        self::assertNotEmpty($this->model->getNewLine());
     }
 }

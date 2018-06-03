@@ -25,9 +25,11 @@ before_script:
 
 script:
 # Run PHP-CS Beautifier and Fixer: to format some common non PSR code that can be auto-fixed.
-  - vendor/bin/phpcbf --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
+  - vendor/bin/phpcbf --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s || echo 'REQUIRE CODE RE-FORMAT'
 # Run PHP-CS.
   - vendor/bin/phpcs --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
+# Run PHPUnit test.
+  - vendor/bin/phpunit --configuration phpunit.xml --coverage-text || echo 'IGNORE ON FAIL, THIS ARE COVERAGE TEST DETAILS'
 # Run PHPUnit test.
   - vendor/bin/phpunit --configuration phpunit.xml
 matrix:

@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\ConceptoPartida;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \ConceptoPartida
+ * @covers \FacturaScripts\Core\Model\ConceptoPartida
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class ConceptoPartidaTest extends CustomTest
     protected function setUp()
     {
         $this->model = new ConceptoPartida();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\ConceptoPartida::primaryDescriptionColumn()
+     */
+    public function testPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\ConceptoPartida::url()
+     */
+    public function testUrl()
+    {
+        self::assertNotEmpty($this->model->url());
     }
 }

@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Tarifa;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Tarifa
+ * @covers \FacturaScripts\Core\Model\Tarifa
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

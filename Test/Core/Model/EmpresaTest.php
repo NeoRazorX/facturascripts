@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Empresa
+ * @covers \FacturaScripts\Core\Model\Empresa
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class EmpresaTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Empresa();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Empresa::primaryDescriptionColumn()
+     */
+    public function getPrimaryDescriptionColumn()
+    {
+        self::assertNotEmpty($this->model->primaryDescriptionColumn());
     }
 }

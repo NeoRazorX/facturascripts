@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Divisa
+ * @covers \FacturaScripts\Core\Model\Divisa
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class DivisaTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Divisa();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Divisa::isDefault()
+     */
+    public function testIsDefault()
+    {
+        $this->model->isDefault();
     }
 }

@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \FacturaCliente
+ * @covers \FacturaScripts\Core\Model\FacturaCliente
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,21 @@ final class FacturaClienteTest extends CustomTest
     protected function setUp()
     {
         $this->model = new FacturaCliente();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\FacturaCliente::getLines()
+     */
+    public function testGetLines()
+    {
+        self::assertEmpty($this->model->getLines());
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\FacturaCliente::getNewLine()
+     */
+    public function testGetNewLine()
+    {
+        self::assertNotEmpty($this->model->getNewLine());
     }
 }

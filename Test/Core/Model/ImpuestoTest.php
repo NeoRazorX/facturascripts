@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Impuesto
+ * @covers \FacturaScripts\Core\Model\Impuesto
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class ImpuestoTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Impuesto();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Impuesto::isDefault()
+     */
+    public function testIsDefault()
+    {
+        $this->model->isDefault();
     }
 }

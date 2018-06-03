@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Role;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Role
+ * @covers \FacturaScripts\Core\Model\Role
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class RoleTest extends CustomTest
     protected function setUp()
     {
         $this->model = new Role();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\Role::url()
+     */
+    public function testUrl()
+    {
+        self::assertNotEmpty($this->model->url());
     }
 }

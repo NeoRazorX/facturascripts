@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\CuentaBanco;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \CuentaBanco
+ * @covers \FacturaScripts\Core\Model\CuentaBanco
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

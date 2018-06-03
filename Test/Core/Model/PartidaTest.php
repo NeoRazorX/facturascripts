@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Partida;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Partida
+ * @covers \FacturaScripts\Core\Model\Partida
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

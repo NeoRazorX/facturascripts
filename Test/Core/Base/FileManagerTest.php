@@ -36,60 +36,79 @@ class FileManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateWritableFolder()
     {
-        $this::assertTrue(
-            @mkdir(\FS_FOLDER . '/MyFiles/TestWritable/Test1/Test2/Test3', 0775, true),
+        self::assertTrue(
+            @\mkdir(\FS_FOLDER . '/MyFiles/TestWritable/Test1/Test2/Test3', 0775, true),
             'Recursive folder creation fails.'
         );
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::recurseCopy
+     * @covers \FacturaScripts\Core\Base\FileManager::recurseCopy()
      */
     public function testRecurseCopy()
     {
         $this->object::recurseCopy(\FS_FOLDER . '/MyFiles/TestWritable', \FS_FOLDER . '/MyFiles/TestWritable2');
     }
 
+    /**
+     * @covers \FacturaScripts\Core\Base\FileManager::notWritableFolders()
+     */
     public function testCreateNonWriteableFolder()
     {
-        $this::assertFalse(
+        self::assertFalse(
             @mkdir(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1/Test2/Test3', 0555, true),
+            'Recursive folder creation success.'
+        );
+        @\rmdir(\FS_FOLDER . '/MyFiles/TestNonWritable');
+        self::assertTrue(
+            @mkdir(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1/Test2', 0777, true),
             'Recursive folder creation fails.'
         );
+        \chmod(\FS_FOLDER . '/MyFiles/TestNonWritable', 0555);
+        \chmod(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1', 0555);
+        \chmod(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1/Test2', 0555);
+        self::assertNotEmpty($this->object::notWritableFolders());
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::scanFolder
+     * @covers \FacturaScripts\Core\Base\FileManager::scanFolder()
      */
     public function testScanFolder()
     {
-        $this::assertEquals(
-            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable'),
-            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2'),
+        self::assertEquals(
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable', true),
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2', true),
             'Folder not equals'
         );
-        $this::assertNotEquals(
-            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestNonWritable'),
-            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2'),
+        self::assertNotEquals(
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestNonWritable', true),
+            $this->object::scanFolder(\FS_FOLDER . '/MyFiles/TestWritable2', true),
             'Folder are equals'
         );
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::delTree
+     * @covers \FacturaScripts\Core\Base\FileManager::delTree()
      */
     public function testDelTreeWritableFolder()
     {
-        $this::assertTrue($this->object::delTree(\FS_FOLDER . '/MyFiles/TestWritable'), 'Recursive delete dir fails.');
-        $this::assertTrue($this->object::delTree(\FS_FOLDER . '/MyFiles/TestWritable2'), 'Recursive delete dir fails.');
+        self::assertTrue($this->object::delTree(\FS_FOLDER . '/MyFiles/TestWritable'), 'Recursive delete dir fails.');
+        self::assertTrue($this->object::delTree(\FS_FOLDER . '/MyFiles/TestWritable2'), 'Recursive delete dir fails.');
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\FileManager::delTree
+     * @covers \FacturaScripts\Core\Base\FileManager::delTree()
      */
     public function testDelTreeNonWritableFolder()
     {
-        $this::assertTrue(
+        self::assertFalse(
+            $this->object::delTree(\FS_FOLDER . '/MyFiles/TestNonWritable'),
+            'Recursive delete dir success.'
+        );
+        \chmod(\FS_FOLDER . '/MyFiles/TestNonWritable', 0777);
+        \chmod(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1', 0777);
+        \chmod(\FS_FOLDER . '/MyFiles/TestNonWritable/Test1/Test2', 0777);
+        self::assertTrue(
             $this->object::delTree(\FS_FOLDER . '/MyFiles/TestNonWritable'),
             'Recursive delete dir fails.'
         );

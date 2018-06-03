@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\LineaAlbaranCliente;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \LineaAlbaranCliente
+ * @covers \FacturaScripts\Core\Model\LineaAlbaranCliente
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */

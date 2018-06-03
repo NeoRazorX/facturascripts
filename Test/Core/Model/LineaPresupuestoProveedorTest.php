@@ -17,42 +17,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\PageOption;
+use FacturaScripts\Core\Model\LineaPresupuestoProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \FacturaScripts\Core\Model\PageOption
+ * @covers \FacturaScripts\Core\Model\LineaPresupuestoProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class PageOptionTest extends CustomTest
+final class LineaPresupuestoProveedorTest extends CustomTest
 {
 
     protected function setUp()
     {
-        $this->model = new PageOption();
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Model\PageOption::getForUser()
-     */
-    public function testGetForUser()
-    {
-        $this->model->getForUser('ListAlmacen', 'admin');
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Model\PageOption::loadFromData()
-     */
-    public function testLoadFromData()
-    {
-        $data = [
-            'columns' => \json_encode([]),
-            'modals' => \json_encode([]),
-            'rows' => \json_encode([]),
-        ];
-        $this->model->loadFromData($data);
+        $this->model = new LineaPresupuestoProveedor();
     }
 }

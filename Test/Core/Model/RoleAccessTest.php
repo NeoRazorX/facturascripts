@@ -19,11 +19,12 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Model\Page;
 use FacturaScripts\Core\Model\RoleAccess;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RoleAccess
+ * @covers \FacturaScripts\Core\Model\RoleAccess
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +34,14 @@ final class RoleAccessTest extends CustomTest
     protected function setUp()
     {
         $this->model = new RoleAccess();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\RoleAccess::addPagesToRole()
+     */
+    public function testAddPagesToRole()
+    {
+        $pages = new Page();
+        self::assertEmpty($this->model::addPagesToRole('admin', $pages->all()));
     }
 }

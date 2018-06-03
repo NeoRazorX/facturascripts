@@ -8,6 +8,11 @@
         stopOnFailure="false"
         stopOnIncomplete="false"
         stopOnSkipped="false">
+    <filter>
+        <whitelist>
+            <directory>Core</directory>
+        </whitelist>
+    </filter>
     <testsuites>
         <testsuite name="FacturaScripts Test Suite">
             <directory

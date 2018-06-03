@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\RoleUser;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RoleUser
+ * @covers \FacturaScripts\Core\Model\RoleUser
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,13 @@ final class RoleUserTest extends CustomTest
     protected function setUp()
     {
         $this->model = new RoleUser();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\RoleUser::getRoleAccess()
+     */
+    public function testGetRoleAccess()
+    {
+        self::assertEmpty($this->model->getRoleAccess('AdminPlugins'));
     }
 }

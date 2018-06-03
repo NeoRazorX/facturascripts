@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\DashboardData;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \DashboardData
+ * @covers \FacturaScripts\Core\Model\DashboardData
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -33,5 +33,31 @@ final class DashboardDataTest extends CustomTest
     protected function setUp()
     {
         $this->model = new DashboardData();
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\DashboardData::checkArrayData()
+     */
+    public function testCheckArrayData()
+    {
+        $data = [
+            'id' => 10,
+            'nick' => 'admin',
+            'creationdate' => date('d-m-Y'),
+            'displaydate' => date('d-m-Y'),
+            'action' => ''
+        ];
+        $this->model->checkArrayData($data);
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Model\DashboardData::loadFromData()
+     */
+    public function testLoadFromData()
+    {
+        $data = [
+            'properties' => 'test',
+        ];
+        $this->model->loadFromData($data);
     }
 }
