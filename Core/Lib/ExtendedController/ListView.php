@@ -138,20 +138,21 @@ class ListView extends BaseView implements DataViewInterface
     /**
      * Adds a field to the Order By list
      *
-     * @param string $field
+     * @param string|[] $fields
      * @param string $label
      * @param int    $default (0 = None, 1 = ASC, 2 = DESC)
      */
-    public function addOrderBy($field, $label = '', $default = 0)
+    public function addOrderBy($fields, $label, $default = 0)
     {
-        $key1 = strtolower($field) . '_asc';
-        $key2 = strtolower($field) . '_desc';
-        if (empty($label)) {
-            $label = $field;
+        if (!is_array($fields)) {
+            $fields = [$fields];
         }
 
-        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
-        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'label' => static::$i18n->trans($label)];
+        $key1 = strtolower($label) . '_asc';
+        $key2 = strtolower($label) . '_desc';
+
+        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
+        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
 
         switch ($default) {
             case 1:
@@ -294,19 +295,18 @@ class ListView extends BaseView implements DataViewInterface
      */
     public function getSQLOrderBy($orderKey = '')
     {
-        if (empty($this->orderby)) {
-            return [];
-        }
+        $result = [];
+        if (!empty($this->orderby)) {
+            if ($orderKey === '') {
+                $orderKey = array_keys($this->orderby)[0];
+            }
 
-        if ($orderKey === '') {
-            $orderKey = array_keys($this->orderby)[0];
+            $direction = (substr($orderKey, -5) == '_desc') ? 'DESC' : 'ASC';
+            foreach ($this->orderby[$orderKey]['fields'] as $field) {
+                $result[$field] = $direction;
+            }
         }
-
-        if (substr($orderKey, -4) == '_asc') {
-            return [substr($orderKey, 0, -4) => 'ASC'];
-        }
-
-        return [substr($orderKey, 0, -5) => 'DESC'];
+        return $result;
     }
 
     public function getURL(string $type)

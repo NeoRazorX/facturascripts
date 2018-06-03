@@ -771,5 +771,7 @@
     "allow-post-data": "Allow POST",
     "allow-put-data": "Allow PUT",
     "add-all-enabled": "Add all enabled",
-    "add-all-disabled": "Add all disabled"
+    "add-all-disabled": "Add all disabled",
+    "shipping": "Shipping",
+    "billing": "Billing"
 }
