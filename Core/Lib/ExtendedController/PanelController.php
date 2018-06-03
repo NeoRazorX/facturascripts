@@ -274,6 +274,7 @@ abstract class PanelController extends BaseController
         $this->views[$viewName] = $view;
         $this->setSettings($viewName, 'active', true);
         $this->setSettings($viewName, 'icon', $icon);
+        $this->setSettings($viewName, 'insert', true);
 
         if (empty($this->active)) {
             $this->active = $viewName;
