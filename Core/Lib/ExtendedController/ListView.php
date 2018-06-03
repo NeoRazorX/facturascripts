@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -138,18 +138,14 @@ class ListView extends BaseView implements DataViewInterface
     /**
      * Adds a field to the Order By list
      *
-     * @param string|[] $fields
+     * @param array  $fields
      * @param string $label
      * @param int    $default (0 = None, 1 = ASC, 2 = DESC)
      */
     public function addOrderBy($fields, $label, $default = 0)
     {
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
-
-        $key1 = strtolower($label) . '_asc';
-        $key2 = strtolower($label) . '_desc';
+        $key1 = strtolower(implode('|', $fields)) . '_asc';
+        $key2 = strtolower(implode('|', $fields)) . '_desc';
 
         $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
         $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
@@ -161,9 +157,6 @@ class ListView extends BaseView implements DataViewInterface
 
             case 2:
                 $this->setSelectedOrderBy($key2);
-                break;
-
-            default:
                 break;
         }
     }
