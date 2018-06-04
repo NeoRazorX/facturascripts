@@ -27,75 +27,75 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block javascripts %}
-{{ parent() }}
+    {{ parent() }}
 
-<script src="Core/Assets/JS/ListController.js"></script>
-<script type="text/javascript">
-    tabActive = '{{ fsc.active }}';
-    settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-    urls = { {{ fsc.getStringURLs('new') | raw }} };
+    <script src="{{ asset('Dinamic/Assets/JS/ListController.js') }}"></script>
+    <script type="text/javascript">
+        tabActive = '{{ fsc.active }}';
+        settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
+        urls = { {{ fsc.getStringURLs('new') | raw }} };
 
-    function deleteFromList() {
-        var deleteCodes = getLineCodes();
-        if (deleteCodes.length) {
-            bootbox.confirm({
-                title: "{{ i18n.trans('confirm-delete')|raw }}",
-                message: "{{ i18n.trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
-                    },
-                    confirm: {
-                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        execActionForm('delete');
-                    }
-                }
-            });
-        }
-
-        return false;
-    }
-    $(document).ready(function () {
-        // autocomplete filters
-        $('.autocomplete').each(function () {
-            var source = $(this).attr('data-source');
-            var field = $(this).attr('data-field');
-            var title = $(this).attr('data-title');
-            var formName = $(this).closest('form').attr('name');
-            $(this).autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        method: 'POST',
-                        url: '{{ fsc.url() }}',
-                        data: getAutocompleteData(formName, source, field, title, request.term),
-                        dataType: 'json',
-                        success: function (results) {
-                            var values = [];
-                            results.forEach(function (element) {
-                                values.push({key: element.key, value: element.key + " | " + element.value});
-                            });
-                            response(values);
+        function deleteFromList() {
+            var deleteCodes = getLineCodes();
+            if (deleteCodes.length) {
+                bootbox.confirm({
+                    title: "{{ i18n.trans('confirm-delete')|raw }}",
+                    message: "{{ i18n.trans('are-you-sure') }}",
+                    closeButton: false,
+                    buttons: {
+                        cancel: {
+                            label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
                         },
-                        error: function (msg) {
-                            alert(msg.status + ' ' + msg.statusText);
+                        confirm: {
+                            label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
+                            className: 'btn-danger'
                         }
-                    });
-                },
-                select: function (event, ui) {
-                    $('#' + field + 'Autocomplete').val(ui.item.key);
-                    ui.item.value = ui.item.value.split(' | ')[1];
-                    $(this).form().submit();
-                }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            execActionForm('delete');
+                        }
+                    }
+                });
+            }
+
+            return false;
+        }
+        $(document).ready(function () {
+            // autocomplete filters
+            $('.autocomplete').each(function () {
+                var source = $(this).attr('data-source');
+                var field = $(this).attr('data-field');
+                var title = $(this).attr('data-title');
+                var formName = $(this).closest('form').attr('name');
+                $(this).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            method: 'POST',
+                            url: '{{ fsc.url() }}',
+                            data: getAutocompleteData(formName, source, field, title, request.term),
+                            dataType: 'json',
+                            success: function (results) {
+                                var values = [];
+                                results.forEach(function (element) {
+                                    values.push({key: element.key, value: element.key + " | " + element.value});
+                                });
+                                response(values);
+                            },
+                            error: function (msg) {
+                                alert(msg.status + ' ' + msg.statusText);
+                            }
+                        });
+                    },
+                    select: function (event, ui) {
+                        $('#' + field + 'Autocomplete').val(ui.item.key);
+                        ui.item.value = ui.item.value.split(' | ')[1];
+                        $(this).form().submit();
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 {% endblock %}
 
 {% block body %}

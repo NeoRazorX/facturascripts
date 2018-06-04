@@ -33,36 +33,36 @@
 {% endblock %}
 
 {% block javascripts %}
-{{ parent() }}
+    {{ parent() }}
 
-<script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
-<script src="Core/Assets/JS/PanelController.js"></script>
-<script type="text/javascript">
-    tabActive = '{{ fsc.active }}';
-    settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-    url = '{{ fsc.getURL('new') }}';
+    <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
+    <script src="{{ asset('Dinamic/Assets/JS/PanelController.js') }}"></script>
+    <script type="text/javascript">
+        tabActive = '{{ fsc.active }}';
+        settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
+        url = '{{ fsc.getURL('new') }}';
 
-    function deleteRecord(formName, action = 'delete') {
-        bootbox.confirm({
-            title: "{{ i18n.trans('confirm-delete')|raw }}",
-            message: "{{ i18n.trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-                cancel: {
-                    label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
+        function deleteRecord(formName, action = 'delete') {
+            bootbox.confirm({
+                title: "{{ i18n.trans('confirm-delete')|raw }}",
+                message: "{{ i18n.trans('are-you-sure') }}",
+                closeButton: false,
+                buttons: {
+                    cancel: {
+                        label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
+                    },
+                    confirm: {
+                        label: "<i class='fa fa-check'></i> {{ i18n.trans('confirm') }}",
+                        className: 'btn-danger'
+                    }
                 },
-                confirm: {
-                    label: "<i class='fa fa-check'></i> {{ i18n.trans('confirm') }}",
-                    className: 'btn-danger'
+                callback: function (result) {
+                    if (result) {
+                        execActionForm(action, formName);
+                    }
                 }
-            },
-            callback: function (result) {
-                if (result) {
-                    execActionForm(action, formName);
-                }
-            }
-        });
-    }
+            });
+        }
         $(document).ready(function () {
             // autocomplete filters
             $('.autocomplete').each(function () {
