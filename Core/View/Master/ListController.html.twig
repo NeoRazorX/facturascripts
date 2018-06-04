@@ -29,8 +29,12 @@
 {% block javascripts %}
     {{ parent() }}
 
+    <script src="{{ asset('Dinamic/Assets/JS/ListController.js') }}"></script>
     <script type="text/javascript">
-        var tabActive = '{{ fsc.active }}';
+        tabActive = '{{ fsc.active }}';
+        settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
+        urls = { {{ fsc.getStringURLs('new') | raw }} };
+
         function deleteFromList() {
             var deleteCodes = getLineCodes();
             if (deleteCodes.length) {
@@ -57,74 +61,7 @@
 
             return false;
         }
-        function execActionForm(actionValue) {
-            var form = document.getElementById('form' + tabActive);
-            $('<input>').attr({type: 'hidden', name: 'action'}).appendTo(form);
-            $('<input>').attr({type: 'hidden', name: 'code'}).appendTo(form);
-            var lineCodes = getLineCodes();
-            form.action.value = actionValue;
-            form.code.value = lineCodes.join();
-            form.submit();
-        }
-        function getAutocompleteData(formName, source, field, title, term) {
-            var formData = {};
-            var rawForm = $('form[name="' + formName + '"]').serializeArray();
-            $.each(rawForm, function (i, input) {
-                formData[input.name] = input.value;
-            });
-            formData['action'] = 'autocomplete';
-            formData['source'] = source;
-            formData['field'] = field;
-            formData['title'] = title;
-            formData['term'] = term;
-            console.log(formData);
-            return formData;
-        }
-        function getLineCodes() {
-            var lineCodes = [];
-            $('.tab' + tabActive + ' .listAction').each(function () {
-                if ($(this).prop('checked')) {
-                    lineCodes.push($(this).val());
-                }
-            });
-            return lineCodes;
-        }
-        function goToExport(option) {
-            $('#form' + tabActive).append('<input type="hidden" name="option" value="' + option + '"/>');
-            execActionForm('export');
-        }
-        function goToOptions(url) {
-            var previous = '';
-            if (typeof url !== 'undefined') {
-                previous = '&url=' + encodeURIComponent(url + '?active=' + tabActive);
-            }
-            window.location.href = 'EditPageOption?code=' + tabActive + previous;
-        }
-        function insertRecord() {
-            var urls = { {{ fsc.getStringURLs('new') | raw }} };
-            document.insertForm.action = urls[tabActive];
-            document.insertForm.submit();
-        }
-        function setOperator(buttonID, operator) {
-            document.getElementById(buttonID + '-operator').value = operator;
-            document.getElementById(buttonID + '-btn').value = operator;
-            $('#form' + tabActive).submit();
-        }
-        function setOrder(value) {
-            $("#form" + tabActive + " :input[name='order']").val(value);
-            $('#form' + tabActive).submit();
-        }
         $(document).ready(function () {
-            // set focus on tab change
-            $('#mainTabs').on('shown.bs.tab', function (e) {
-                tabActive = e.target.hash.substring(1);
-                $('#form' + tabActive + ' :text:first').focus().select();
-            });
-            // set/unset all delete checkbox
-            $('.listActionCB').click(function () {
-                var checked = $(this).prop('checked');
-                $('.listAction').prop('checked', checked);
-            });
             // autocomplete filters
             $('.autocomplete').each(function () {
                 var source = $(this).attr('data-source');

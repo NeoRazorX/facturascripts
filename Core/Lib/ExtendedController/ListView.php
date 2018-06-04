@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -138,20 +138,17 @@ class ListView extends BaseView implements DataViewInterface
     /**
      * Adds a field to the Order By list
      *
-     * @param string $field
+     * @param array  $fields
      * @param string $label
      * @param int    $default (0 = None, 1 = ASC, 2 = DESC)
      */
-    public function addOrderBy($field, $label = '', $default = 0)
+    public function addOrderBy($fields, $label, $default = 0)
     {
-        $key1 = strtolower($field) . '_asc';
-        $key2 = strtolower($field) . '_desc';
-        if (empty($label)) {
-            $label = $field;
-        }
+        $key1 = strtolower(implode('|', $fields)) . '_asc';
+        $key2 = strtolower(implode('|', $fields)) . '_desc';
 
-        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
-        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'label' => static::$i18n->trans($label)];
+        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
+        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
 
         switch ($default) {
             case 1:
@@ -160,9 +157,6 @@ class ListView extends BaseView implements DataViewInterface
 
             case 2:
                 $this->setSelectedOrderBy($key2);
-                break;
-
-            default:
                 break;
         }
     }
@@ -188,7 +182,7 @@ class ListView extends BaseView implements DataViewInterface
      * @param string $columnName
      * @param bool   $disabled
      */
-    public function disableColumn($columnName, $disabled)
+    public function disableColumn($columnName, $disabled = true)
     {
         $column = $this->columnForName($columnName);
         if (!empty($column)) {
@@ -294,19 +288,18 @@ class ListView extends BaseView implements DataViewInterface
      */
     public function getSQLOrderBy($orderKey = '')
     {
-        if (empty($this->orderby)) {
-            return [];
-        }
+        $result = [];
+        if (!empty($this->orderby)) {
+            if ($orderKey === '') {
+                $orderKey = array_keys($this->orderby)[0];
+            }
 
-        if ($orderKey === '') {
-            $orderKey = array_keys($this->orderby)[0];
+            $direction = (substr($orderKey, -5) == '_desc') ? 'DESC' : 'ASC';
+            foreach ($this->orderby[$orderKey]['fields'] as $field) {
+                $result[$field] = $direction;
+            }
         }
-
-        if (substr($orderKey, -4) == '_asc') {
-            return [substr($orderKey, 0, -4) => 'ASC'];
-        }
-
-        return [substr($orderKey, 0, -5) => 'DESC'];
+        return $result;
     }
 
     public function getURL(string $type)

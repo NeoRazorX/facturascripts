@@ -1,10 +1,10 @@
 codcuentaesp;descripcion
 "IVAACR";"Cuentas acreedoras de IVA en la regularización"
 "IVAREP";"Cuentas de IVA repercutido"
+"IVARUE";"Cuentas de IVA repercutido UE"
 "IVARXP";"Cuentas de IVA repercutido en exportaciones"
 "IVAREX";"Cuentas de IVA repercutido para clientes exentos de IVA"
 "IVASOP";"Cuentas de IVA soportado"
-"IVARUE";"Cuentas de IVA soportado UE"
 "IVASUE";"Cuentas de IVA soportado UE"
 "IVASIM";"Cuentas de IVA soportado en importaciones"
 "ACREED";"Cuentas de acreedores"

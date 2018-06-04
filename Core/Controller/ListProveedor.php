@@ -48,7 +48,8 @@ class ListProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListProveedor', 'Proveedor');
+        /* Supplier */
+        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fa-users');
         $this->addSearchFields('ListProveedor', ['nombre', 'razonsocial', 'codproveedor', 'email']);
 
         $this->addOrderBy('ListProveedor', 'codproveedor', 'code');
@@ -56,5 +57,12 @@ class ListProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListProveedor', 'fecha', 'date');
 
         $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
+
+        /* addresses */
+        $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
+        $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
+        $this->addOrderBy('ListDireccionProveedor', 'codproveedor', 'supplier');
+        $this->addOrderBy('ListDireccionProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListDireccionProveedor', 'codpostal', 'postalcode');
     }
 }

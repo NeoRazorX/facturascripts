@@ -99,13 +99,21 @@ abstract class BaseController extends Base\Controller
     /**
      * Returns the configuration value for the indicated view.
      *
-     * @param string $viewName
-     * @param string $property
+     * @param string|null $viewName
+     * @param string|null $property
      *
      * @return mixed
      */
     public function getSettings($viewName, $property)
     {
+        if (empty($viewName)) {
+            return $this->settings;
+        }
+
+        if (empty($property)) {
+            return $this->settings[$viewName];
+        }
+
         return $this->settings[$viewName][$property];
     }
 

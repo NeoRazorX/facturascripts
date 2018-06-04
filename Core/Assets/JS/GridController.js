@@ -62,7 +62,11 @@ function assignSource(data) {
     };
 }
 
-/* Configure source data for autocomplete columns */
+/**
+ * Configure source data for autocomplete columns
+ * 
+ * @param {Object} columns
+ */
 function configureAutocompleteColumns(columns) {
     var column = null;
     var keys = Object.keys(columns);
