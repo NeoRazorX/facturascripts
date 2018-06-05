@@ -43,7 +43,7 @@ trait ModelTrait
      */
     public function getModelFields()
     {
-        return static::$fields;
+        return self::$fields;
     }
 
     /**
