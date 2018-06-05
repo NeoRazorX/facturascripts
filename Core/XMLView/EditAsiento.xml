@@ -46,6 +46,11 @@
         <column name="document" numcolumns="2" order="130">
             <widget type="text" fieldname="documento" />
         </column>
+        <column name="journals" numcolumns="2" order="140">
+            <widget type="select" fieldname="iddiario">
+                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
         <column name="ammount" numcolumns="2" display="right" order="200">
             <widget type="money" fieldname="importe" icon="fa-money" readonly="readonly" />
         </column>

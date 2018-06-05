@@ -319,6 +319,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      */
     public function test()
     {
+        return true;
         if (!parent::test()) {
             return false;
         }

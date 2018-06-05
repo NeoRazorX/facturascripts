@@ -41,8 +41,11 @@ trait ModelTrait
      *
      * @return array
      */
-    public function getModelFields()
+    public function getModelFields(): array
     {
+        if (!isset(static::$fields)) {
+            static::$fields = [];
+        }
         return static::$fields;
     }
 
@@ -75,6 +78,7 @@ trait ModelTrait
      */
     protected function loadModelFields(DataBase &$dataBase, string $tableName)
     {
+        return;
         if (empty(self::$fields)) {
             self::$fields = $dataBase->tableExists($tableName) ? $dataBase->getColumns($tableName) : [];
         }

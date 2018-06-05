@@ -18,6 +18,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>iddiario</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
         <name>fecha</name>
         <type>date</type>
         <null>NO</null>
@@ -53,5 +58,11 @@
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
             ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_asientos_diarios</name>
+        <type>FOREIGN KEY (iddiario)
+            REFERENCES diarios (iddiario)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

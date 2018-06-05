@@ -59,7 +59,13 @@ class CustomTest extends TestCase
 
     public function testFields()
     {
-        $this->assertNotEmpty($this->model->getModelFields());
+        $fields = $this->model->getModelFields();
+        if (!empty($fields)) {
+            echo $this->model->modelClassName();
+            print_r($fields);
+        }
+
+        $this->assertNotEmpty($fields);
     }
 
     public function testInstall()

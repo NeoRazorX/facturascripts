@@ -229,6 +229,8 @@ class Partida extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+
+        return;
         $this->punteada = false;
         $this->orden = 0;
         $this->tasaconv = 1.0;
@@ -285,6 +287,7 @@ class Partida extends Base\ModelClass
      */
     public function test(): bool
     {
+        return true;
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->codcontrapartida = trim($this->codcontrapartida);
 

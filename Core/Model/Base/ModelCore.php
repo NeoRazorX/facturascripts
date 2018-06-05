@@ -75,7 +75,7 @@ abstract class ModelCore
      *
      * @return array
      */
-    abstract protected function getModelFields();
+    abstract protected function getModelFields(): array;
 
     /**
      * Loads table fields if is necessary.

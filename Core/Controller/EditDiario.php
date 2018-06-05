@@ -21,11 +21,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the Concepto Partida model
+ * Controller to edit a single item from the Diario model
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ *
  */
-class EditConceptoPartida extends ExtendedController\EditController
+class EditDiario extends ExtendedController\EditController
 {
 
     /**
@@ -33,7 +34,7 @@ class EditConceptoPartida extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return 'ConceptoPartida';
+        return 'Diario';
     }
 
     /**
@@ -44,11 +45,10 @@ class EditConceptoPartida extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'predefined-concepts';
+        $pagedata['title'] = 'journal';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-indent';
+        $pagedata['icon'] = 'fa fa-book';
         $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

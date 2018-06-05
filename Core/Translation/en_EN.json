@@ -773,5 +773,7 @@
     "add-all-enabled": "Add all enabled",
     "add-all-disabled": "Add all disabled",
     "shipping": "Shipping",
-    "billing": "Billing"
+    "billing": "Billing",
+    "journals": "Journals",
+    "journal": "Journal"
 }
