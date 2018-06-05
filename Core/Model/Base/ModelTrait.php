@@ -43,10 +43,10 @@ trait ModelTrait
      */
     public function getModelFields(): array
     {
-        if (!isset(self::$fields) || !is_array(self::$fields)) {
-            self::$fields = [];
+        if (!isset(static::$fields)) {
+            static::$fields = [];
         }
-        return self::$fields;
+        return static::$fields;
     }
 
     /**
