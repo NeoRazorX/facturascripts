@@ -41,9 +41,9 @@ trait ModelTrait
      *
      * @return array
      */
-    public function getModelFields()
+    public function getModelFields(): array
     {
-        if (!isset(self::$fields)) {
+        if (!isset(self::$fields) || !is_array(self::$fields)) {
             self::$fields = [];
         }
         return self::$fields;
