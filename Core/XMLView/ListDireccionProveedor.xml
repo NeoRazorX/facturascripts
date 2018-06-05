@@ -27,37 +27,44 @@
         <column name="id" display="none" order="100">
             <widget type="number" decimal="0" fieldname="id" />
         </column>
-        <column name="supplier" display="left" order="110">
-            <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
+        <column name="supplier" order="110">
+            <widget type="select" fieldname="codproveedor" onclick="EditProveedor">
+                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+            </widget>
         </column>
-        <column name="description" order="120">
+        <column name="description" display="none" order="120">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="main-address" display="center" order="130">
+        <column name="main-address" display="none" order="130">
             <widget type="checkbox" fieldname="direccionppal" />
         </column>
-        <column name="address" order="150">
+        <column name="address" order="140">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column name="postalmail" display="none" order="160">
+        <column name="postalmail" display="none" order="150">
             <widget type="text" fieldname="apartado" />
+        </column>
+        <column name="zip-code" order="160">
+            <widget type="text" fieldname="codpostal" />
         </column>
         <column name="city" order="170">
             <widget type="text" fieldname="ciudad" />
         </column>
-        <column name="zip-code" order="180">
-            <widget type="text" fieldname="codpostal" />
-        </column>
-        <column name="province" order="195">
+        <column name="province" order="180">
             <widget type="text" fieldname="provincia" />
         </column>
-        <column name="country" order="200">
+        <column name="country" display="right" order="190">
             <widget type="select" fieldname="codpais">
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="date" display="none" order="210">
+        <column name="date" display="none" order="200">
             <widget type="datepicker" fieldname="fecha" />
         </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="direccionppal">
+            <option color="table-success">1</option>
+        </row>
+    </rows>
 </view>
