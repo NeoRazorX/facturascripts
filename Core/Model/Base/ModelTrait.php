@@ -43,6 +43,9 @@ trait ModelTrait
      */
     public function getModelFields()
     {
+        if (!isset(self::$fields)) {
+            self::$fields = [];
+        }
         return self::$fields;
     }
 
