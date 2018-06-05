@@ -34,9 +34,14 @@
 
 {% block javascripts %}
     {{ parent() }}
+
     <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
+    <script src="{{ asset('Dinamic/Assets/JS/PanelController.js') }}"></script>
     <script type="text/javascript">
-        var tabActive = '{{ fsc.active }}';
+        tabActive = '{{ fsc.active }}';
+        settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
+        url = '{{ fsc.getURL('new') }}';
+
         function deleteRecord(formName, action = 'delete') {
             bootbox.confirm({
                 title: "{{ i18n.trans('confirm-delete')|raw }}",
@@ -58,33 +63,7 @@
                 }
             });
         }
-        function execActionForm(actionValue, formName) {
-            var form = document.forms[formName];
-            form.action.value = actionValue;
-            form.submit();
-        }
-        function getAutocompleteData(formName, source, field, title, term) {
-            var formData = {};
-            var rawForm = $('form[name="' + formName + '"]').serializeArray();
-            $.each(rawForm, function (i, input) {
-                formData[input.name] = input.value;
-            });
-            formData['action'] = 'autocomplete';
-            formData['source'] = source;
-            formData['field'] = field;
-            formData['title'] = title;
-            formData['term'] = term;
-            console.log(formData);
-            return formData;
-        }
-        function insertRecord() {
-            document.insertForm.action = '{{ fsc.getURL('new') }}';
-            document.insertForm.submit();
-        }
         $(document).ready(function () {
-            $('#mainTabs').on('shown.bs.tab', function (e) {
-                tabActive = e.target.hash.substring(1);
-            });
             // autocomplete filters
             $('.autocomplete').each(function () {
                 var source = $(this).attr('data-source');

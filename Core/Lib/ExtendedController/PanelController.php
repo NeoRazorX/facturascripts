@@ -274,6 +274,7 @@ abstract class PanelController extends BaseController
         $this->views[$viewName] = $view;
         $this->setSettings($viewName, 'active', true);
         $this->setSettings($viewName, 'icon', $icon);
+        $this->setSettings($viewName, 'insert', true);
 
         if (empty($this->active)) {
             $this->active = $viewName;
@@ -309,6 +310,9 @@ abstract class PanelController extends BaseController
      */
     protected function editAction()
     {
+        $data = $this->getFormData();
+        $this->views[$this->active]->loadFromData($data);
+
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
             return false;
@@ -342,12 +346,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'insert':
-                $this->views[$this->active]->clear();
-                foreach ($this->request->query->all() as $field => $value) {
-                    if ($field !== 'action') {
-                        $this->views[$this->active]->model->{$field} = $value;
-                    }
-                }
+                $this->insertAction();
                 break;
         }
     }
@@ -369,8 +368,6 @@ abstract class PanelController extends BaseController
                 return false;
 
             case 'save':
-                $data = $this->getFormData();
-                $this->views[$this->active]->loadFromData($data);
                 $this->editAction();
                 break;
 
@@ -392,6 +389,16 @@ abstract class PanelController extends BaseController
         }
 
         return true;
+    }
+
+    protected function insertAction()
+    {
+        $this->views[$this->active]->clear();
+        foreach ($this->request->query->all() as $field => $value) {
+            if ($field !== 'action') {
+                $this->views[$this->active]->model->{$field} = $value;
+            }
+        }
     }
 
     /**
