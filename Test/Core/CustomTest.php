@@ -61,6 +61,7 @@ class CustomTest extends TestCase
     {
         $fields = $this->model->getModelFields();
         if (!empty($fields)) {
+            echo $this->model->modelClassName();
             foreach ($fields as $key => $value) {
                 echo "Key: " . $key;
                 echo "Value: " . $value;
