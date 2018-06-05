@@ -122,7 +122,7 @@
     {# -- Header Row -- #}
     <div class="container-fluid" style="margin-bottom: 10px;">
         <div class="row">
-            <div class="col-6 d-print-none">
+            <div class="col-sm-7 d-print-none">
                 <div class="btn-group">
                     <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -135,12 +135,12 @@
                 <div class="btn-group">
                     <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
                         <i class="fa fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
                     <div class="btn-group">
                         <a href="EditPageOption?code={{ fsc.active }}&url={{ edit_url | url_encode }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-wrench" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                            <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                         </a>
                         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="sr-only">Toggle Dropdown</span>
@@ -161,11 +161,11 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-6 text-right">
-                <h2>
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
+            <div class="col-sm-5 text-right">
+                <h1 class="h3">
+                    <i class="fa {{ fsc.getPageData()['icon'] }} d-none d-sm-inline-block" aria-hidden="true"></i>
                     {{ title }} <small class="text-info">{{ fsc.getPrimaryDescription() | raw }}</small>
-                </h2>
+                </h1>
             </div>
         </div>
     </div>

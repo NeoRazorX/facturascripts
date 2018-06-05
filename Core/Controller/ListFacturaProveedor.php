@@ -98,5 +98,8 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaFacturaProveedor', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaFacturaProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaFacturaProveedor', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaFacturaProveedor', 'megasearch', false);
     }
 }

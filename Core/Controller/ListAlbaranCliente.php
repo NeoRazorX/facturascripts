@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -98,5 +98,8 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaAlbaranCliente', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaAlbaranCliente', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaAlbaranCliente', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaAlbaranCliente', 'megasearch', false);
     }
 }

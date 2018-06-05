@@ -128,7 +128,7 @@
         </div>
         {# Header Row #}
         <div class="row">
-            <div class="col-sm-7 col-6">
+            <div class="col-sm-7">
                 <div class="btn-group d-xs-none">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
                         <i class="fa fa-refresh" aria-hidden="true"></i>
@@ -146,20 +146,20 @@
                 <div class="btn-group">
                     <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
                         <i class="fa fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
                     <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}');" {{ popoverTitle(options_title, 'bottom') }}>
                         <i class="fa fa-wrench" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                     </a>
                     {# Adds print and export options #}
                     {{ exportData(fsc, i18n) }}
                 </div>
             </div>
-            <div class="col-sm-5 col-6 text-right">
-                <h2 style="margin-top: 0px;">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-                </h2>
+            <div class="col-sm-5 text-right">
+                <h1 class="h3">
+                    <i class="fa {{ fsc.getPageData()['icon'] }} d-none d-sm-inline-block" aria-hidden="true"></i> {{ title }}
+                </h1>
             </div>
         </div>
     </div>
@@ -235,11 +235,8 @@
                         </div>
                     </form>
 
-                    {# Data Row #}
-                    <div class="table-responsive">
-                        {# Data Table #}
-                        {{ BaseController.columnsForListView(_context, view, true) }}
-                    </div>
+                    {# Data Table #}
+                    {{ BaseController.columnsForListView(_context, view, true) }}
 
                     {# Footer Navigation #}
                     <div class="container-fluid">

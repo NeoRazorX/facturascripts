@@ -97,5 +97,8 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaPedidoCliente', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaPedidoCliente', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaPedidoCliente', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaPedidoCliente', 'megasearch', false);
     }
 }

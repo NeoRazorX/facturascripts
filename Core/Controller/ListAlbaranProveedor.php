@@ -97,5 +97,8 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaAlbaranProveedor', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaAlbaranProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaAlbaranProveedor', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaAlbaranProveedor', 'megasearch', false);
     }
 }
