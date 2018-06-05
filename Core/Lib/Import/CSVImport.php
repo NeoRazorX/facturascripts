@@ -74,7 +74,7 @@ class CSVImport
      */
     private static function valueToSql(DataBase &$dataBase, string $value): string
     {
-        if ($value === 'false' || $value === 'true') {
+        if ($value === 'false' || $value === 'true' || $value === 'NULL') {
             return $value;
         }
 
