@@ -33,7 +33,7 @@
     <script type="text/javascript">
         tabActive = '{{ fsc.active }}';
         settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-        urls = { {{ fsc.getStringURLs('new') | raw }} };
+                urls = { {{ fsc.getStringURLs('new') | raw }} };
 
         function deleteFromList() {
             var deleteCodes = getLineCodes();
@@ -189,25 +189,25 @@
                     <form name="form{{ indexView }}" id="form{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
                         <input type="hidden" name="active" value="{{ indexView }}"/>
                         <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
-                        <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
+                        <div class="container-fluid d-print-none" style="margin-top: 15px;">
                             <div class="row align-items-center">
                                 {# Main filter #}
-                                <div class="col-md-2">
-                                    <div class="input-group">
-                                        {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
-                                        <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
-                                        <span class="input-group-append">
-                                            <button class="btn btn-primary" type="submit">
-                                                <i class="fa fa-search" aria-hidden="true"></i>
-                                            </button>
-                                        </span>
+                                <div class="col-md-3 col-lg-2">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
+                                            <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
+                                            <span class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {# Aditionals filters #}
-                                {% set columnsUsed = 2 %}
                                 {% for key1, filter in view.getFilters() %}
-                                    {# Add new column filter #}
                                     {% if filter.type == 'autocomplete' %}
                                         {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
                                     {% elseif filter.type == 'select' %}
@@ -216,16 +216,6 @@
                                         {{ ListFilter.filterCheckbox(_context, key1, filter) }}
                                     {% else %}
                                         {{ ListFilter.filterText(_context, key1, filter) }}
-                                        {% set columnsUsed = columnsUsed + 2 %}
-                                    {% endif %}
-
-                                    {# subtract the available space #}
-                                    {% set columnsUsed = columnsUsed + 2 %}
-                                    {# check if there is space available for columns #}
-                                    {% if (columnsUsed % 12) == 0 %}
-                                    </div>
-                                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">
-                                        {% set columnsUsed = 0 %}
                                     {% endif %}
                                 {% endfor %}
 
