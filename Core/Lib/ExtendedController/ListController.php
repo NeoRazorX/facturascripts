@@ -154,18 +154,6 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Load data of list view
-     *
-     * @param string $viewName
-     * @param array  $where
-     * @param int    $offset
-     */
-    protected function loadData($viewName, $where, $offset)
-    {
-        $this->views[$viewName]->loadData(false, $where, [], $offset, Base\Pagination::FS_ITEM_LIMIT);
-    }
-
-    /**
      * Add an autocomplete type filter to the ListView.
      *
      * @param string $viewName
@@ -281,14 +269,16 @@ abstract class ListController extends BaseController
     /**
      * Adds an order field to the ListView.
      *
-     * @param string $viewName
-     * @param string|[] $fields
-     * @param string $label
-     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
+     * @param string       $viewName
+     * @param string|array $fields
+     * @param string       $label
+     * @param int          $default   (0 = None, 1 = ASC, 2 = DESC)
      */
     protected function addOrderBy($viewName, $fields, $label = '', $default = 0)
     {
-        $this->views[$viewName]->addOrderBy($fields, $label, $default);
+        $orderFields = is_array($fields) ? $fields : [$fields];
+        $orderLabel = empty($label) ? $orderFields[0] : $label;
+        $this->views[$viewName]->addOrderBy($orderFields, $orderLabel, $default);
     }
 
     /**
@@ -479,6 +469,18 @@ abstract class ListController extends BaseController
         }
 
         return $result;
+    }
+
+    /**
+     * Load data of list view
+     *
+     * @param string $viewName
+     * @param array  $where
+     * @param int    $offset
+     */
+    protected function loadData($viewName, $where, $offset)
+    {
+        $this->views[$viewName]->loadData(false, $where, [], $offset, Base\Pagination::FS_ITEM_LIMIT);
     }
 
     /**
