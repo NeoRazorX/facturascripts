@@ -188,7 +188,6 @@ abstract class ModelClass extends ModelCore
      */
     public function newCode(string $field = '', array $where = [])
     {
-        return 1;
         /// if not field value take PK Field
         if (empty($field)) {
             $field = $this->primaryColumn();
@@ -263,7 +262,6 @@ abstract class ModelClass extends ModelCore
     {
         $fields = $this->getModelFields();
         if (empty($fields)) {
-            print "TEST FUNCTION (FAIL)";
             return false;
         }
 
