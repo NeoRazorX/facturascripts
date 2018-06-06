@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,18 +61,17 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $selectValues);
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
 
+        $this->createViewAddresses();
+
         /* Groups */
         $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         $this->addOrderBy('ListGrupoClientes', ['codgrupo'], 'code');
         $this->addOrderBy('ListGrupoClientes', ['nombre'], 'name', 1);
-
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
-
-        $this->createViewAddresses();
     }
 
-    private function createViewAddresses() : void 
+    private function createViewAddresses(): void
     {
         $this->addView('ListDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionCliente', ['codcliente', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);

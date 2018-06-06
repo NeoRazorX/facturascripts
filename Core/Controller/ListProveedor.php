@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -53,17 +52,15 @@ class ListProveedor extends ExtendedController\ListController
         /* Supplier */
         $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fa-users');
         $this->addSearchFields('ListProveedor', ['nombre', 'razonsocial', 'codproveedor', 'email']);
-
         $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
         $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
         $this->addOrderBy('ListProveedor', ['fecha'], 'date');
-
         $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
 
         $this->createViewAdresses();
     }
 
-    private function createViewAdresses() : void 
+    private function createViewAdresses(): void
     {
         $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
