@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * Controller to list the items in the Proveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListProveedor extends ExtendedController\ListController
 {
@@ -60,7 +61,6 @@ class ListProveedor extends ExtendedController\ListController
         $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
 
         $this->createViewAdresses();
-        
     }
 
     private function createViewAdresses() : void 
@@ -72,10 +72,10 @@ class ListProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListDireccionProveedor', 'codpostal', 'postalcode');
 
         $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
-        $this->addFilterSelect('ListDireccionProveedor', 'ciudad' , 'city', 'ciudad', $cities);
+        $this->addFilterSelect('ListDireccionProveedor', 'ciudad', 'city', 'ciudad', $cities);
 
         $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
-        $this->addFilterSelect('ListDireccionProveedor', 'provincia' , 'province', 'provincia', $provinces);
+        $this->addFilterSelect('ListDireccionProveedor', 'provincia', 'province', 'provincia', $provinces);
 
         $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
         $this->addFilterSelect('ListDireccionProveedor', 'codpais', 'country', 'codpais', $countries);

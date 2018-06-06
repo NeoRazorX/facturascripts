@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListCliente extends ExtendedController\ListController
 {
@@ -80,10 +81,10 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListDireccionCliente', 'codpostal', 'postalcode');
 
         $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
-        $this->addFilterSelect('ListDireccionCliente', 'ciudad' , 'city', 'ciudad', $cities);
+        $this->addFilterSelect('ListDireccionCliente', 'ciudad', 'city', 'ciudad', $cities);
 
         $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
-        $this->addFilterSelect('ListDireccionCliente', 'provincia' , 'province', 'provincia', $provinces);
+        $this->addFilterSelect('ListDireccionCliente', 'provincia', 'province', 'provincia', $provinces);
 
         $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
         $this->addFilterSelect('ListDireccionCliente', 'codpais', 'country', 'codpais', $countries);
