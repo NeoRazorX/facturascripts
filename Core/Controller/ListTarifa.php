@@ -52,7 +52,7 @@ class ListTarifa extends ExtendedController\ListController
         $this->addView('ListTarifa', 'Tarifa');
         $this->addSearchFields('ListTarifa', ['nombre', 'codtarifa']);
 
-        $this->addOrderBy('ListTarifa', 'codtarifa', 'code');
-        $this->addOrderBy('ListTarifa', 'nombre', 'name', 1);
+        $this->addOrderBy('ListTarifa', ['codtarifa'], 'code');
+        $this->addOrderBy('ListTarifa', ['nombre'], 'name', 1);
     }
 }

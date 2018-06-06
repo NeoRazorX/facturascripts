@@ -53,8 +53,8 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addView('ListFormaPago', 'FormaPago', 'payment-methods', 'fa-credit-card');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
-        $this->addOrderBy('ListFormaPago', 'codpago', 'code');
-        $this->addOrderBy('ListFormaPago', 'descripcion', 'description');
+        $this->addOrderBy('ListFormaPago', ['codpago'], 'code');
+        $this->addOrderBy('ListFormaPago', ['descripcion'], 'description');
 
         $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied', 'domiciliado');
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print', 'imprimir');
@@ -63,7 +63,7 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fa-university');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
 
-        $this->addOrderBy('ListCuentaBanco', 'codcuenta', 'code');
-        $this->addOrderBy('ListCuentaBanco', 'descripcion', 'description');
+        $this->addOrderBy('ListCuentaBanco', ['codcuenta'], 'code');
+        $this->addOrderBy('ListCuentaBanco', ['descripcion'], 'description');
     }
 }

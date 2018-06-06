@@ -53,9 +53,9 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     {
         $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor');
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListPresupuestoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoProveedor', 'total', 'amount');
+        $this->addOrderBy('ListPresupuestoProveedor', ['codigo'], 'code');
+        $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListPresupuestoProveedor', ['total'], 'amount');
 
         $this->addFilterDatePicker('ListPresupuestoProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListPresupuestoProveedor', 'total', 'total', 'total');
@@ -84,11 +84,11 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     {
         $this->addView('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaPresupuestoProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'cantidad', 'quantity');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'pvptotal', 'ammount');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'idpresupuesto', 'code', 2);
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['referencia'], 'reference');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['pvptotal'], 'ammount');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['idpresupuesto'], 'code', 2);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListLineaPresupuestoProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);

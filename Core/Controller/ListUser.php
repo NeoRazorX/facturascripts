@@ -51,15 +51,15 @@ class ListUser extends ExtendedController\ListController
         $this->addView('ListUser', 'User', 'users', 'fa-users');
         $this->addSearchFields('ListUser', ['nick', 'email']);
 
-        $this->addOrderBy('ListUser', 'nick');
-        $this->addOrderBy('ListUser', 'email');
-        $this->addOrderBy('ListUser', 'lastactivity', 'last-activity');
+        $this->addOrderBy('ListUser', ['nick']);
+        $this->addOrderBy('ListUser', ['email']);
+        $this->addOrderBy('ListUser', ['lastactivity'], 'last-activity');
 
         /* Roles */
         $this->addView('ListRole', 'Role', 'roles', 'fa-address-card-o');
         $this->addSearchFields('ListRole', ['codrole', 'descripcion']);
 
-        $this->addOrderBy('ListRole', 'descripcion', 'description');
-        $this->addOrderBy('ListRole', 'codrole', 'code');
+        $this->addOrderBy('ListRole', ['descripcion'], 'description');
+        $this->addOrderBy('ListRole', ['codrole'], 'code');
     }
 }

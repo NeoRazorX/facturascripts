@@ -53,8 +53,8 @@ class ListCliente extends ExtendedController\ListController
         /* Customers */
         $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
-        $this->addOrderBy('ListCliente', 'codcliente', 'code');
-        $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
+        $this->addOrderBy('ListCliente', ['codcliente'], 'code');
+        $this->addOrderBy('ListCliente', ['nombre'], 'name', 1);
         $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');
 
         $selectValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
@@ -64,8 +64,8 @@ class ListCliente extends ExtendedController\ListController
         /* Groups */
         $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
-        $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
-        $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
+        $this->addOrderBy('ListGrupoClientes', ['codgrupo'], 'code');
+        $this->addOrderBy('ListGrupoClientes', ['nombre'], 'name', 1);
 
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
 
@@ -76,9 +76,9 @@ class ListCliente extends ExtendedController\ListController
     {
         $this->addView('ListDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionCliente', ['codcliente', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
-        $this->addOrderBy('ListDireccionCliente', 'codcliente', 'customer');
-        $this->addOrderBy('ListDireccionCliente', 'descripcion', 'description');
-        $this->addOrderBy('ListDireccionCliente', 'codpostal', 'postalcode');
+        $this->addOrderBy('ListDireccionCliente', ['codcliente'], 'customer');
+        $this->addOrderBy('ListDireccionCliente', ['descripcion'], 'description');
+        $this->addOrderBy('ListDireccionCliente', ['codpostal'], 'postalcode');
 
         $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
         $this->addFilterSelect('ListDireccionCliente', 'ciudad', 'city', 'ciudad', $cities);

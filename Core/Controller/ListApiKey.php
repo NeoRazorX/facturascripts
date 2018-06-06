@@ -52,9 +52,9 @@ class ListApiKey extends ExtendedController\ListController
         $this->addView('ListApiKey', 'ApiKey');
         $this->addSearchFields('ListApiKey', ['description', 'apikey', 'nick']);
 
-        $this->addOrderBy('ListApiKey', 'apikey', 'api-key');
-        $this->addOrderBy('ListApiKey', 'descripcion', 'description');
-        $this->addOrderBy('ListApiKey', 'nick', 'nick');
+        $this->addOrderBy('ListApiKey', ['apikey'], 'api-key');
+        $this->addOrderBy('ListApiKey', ['descripcion'], 'description');
+        $this->addOrderBy('ListApiKey', ['nick'], 'nick');
 
         $this->addFilterCheckbox('ListApiKey', 'enabled', 'enabled', 'enabled');
     }

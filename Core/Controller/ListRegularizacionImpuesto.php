@@ -53,7 +53,7 @@ class ListRegularizacionImpuesto extends ExtendedController\ListController
         $this->addView('ListRegularizacionImpuesto', 'RegularizacionImpuesto');
         $this->addSearchFields('ListRegularizacionImpuesto', ['periodo', 'fechainicio']);
 
-        $this->addOrderBy('ListRegularizacionImpuesto', 'codejercicio||periodo', 'period');
-        $this->addOrderBy('ListRegularizacionImpuesto', 'fechainicio', 'start-date');
+        $this->addOrderBy('ListRegularizacionImpuesto', ['codejercicio||periodo'], 'period');
+        $this->addOrderBy('ListRegularizacionImpuesto', ['fechainicio'], 'start-date');
     }
 }
