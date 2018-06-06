@@ -68,11 +68,24 @@ class ListCliente extends ExtendedController\ListController
 
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
 
-        /* addresses */
+        $this->createViewAddresses();
+    }
+
+    private function createViewAddresses() : void 
+    {
         $this->addView('ListDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionCliente', ['codcliente', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
         $this->addOrderBy('ListDireccionCliente', 'codcliente', 'customer');
         $this->addOrderBy('ListDireccionCliente', 'descripcion', 'description');
         $this->addOrderBy('ListDireccionCliente', 'codpostal', 'postalcode');
+
+        $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListDireccionCliente', 'ciudad' , 'city', 'ciudad', $cities);
+
+        $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
+        $this->addFilterSelect('ListDireccionCliente', 'provincia' , 'province', 'provincia', $provinces);
+
+        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect('ListDireccionCliente', 'codpais', 'country', 'codpais', $countries);
     }
 }

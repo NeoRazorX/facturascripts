@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -58,11 +59,25 @@ class ListProveedor extends ExtendedController\ListController
 
         $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
 
-        /* addresses */
+        $this->createViewAdresses();
+        
+    }
+
+    private function createViewAdresses() : void 
+    {
         $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
         $this->addOrderBy('ListDireccionProveedor', 'codproveedor', 'supplier');
         $this->addOrderBy('ListDireccionProveedor', 'descripcion', 'description');
         $this->addOrderBy('ListDireccionProveedor', 'codpostal', 'postalcode');
+
+        $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListDireccionProveedor', 'ciudad' , 'city', 'ciudad', $cities);
+
+        $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
+        $this->addFilterSelect('ListDireccionProveedor', 'provincia' , 'province', 'provincia', $provinces);
+
+        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect('ListDireccionProveedor', 'codpais', 'country', 'codpais', $countries);
     }
 }
