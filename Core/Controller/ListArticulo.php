@@ -67,10 +67,10 @@ class ListArticulo extends ExtendedController\ListController
         $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
         $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
 
-        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
-        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
-        $this->addOrderBy('ListArticulo', 'pvp', 'price');
-        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
+        $this->addOrderBy('ListArticulo', ['referencia'], 'reference');
+        $this->addOrderBy('ListArticulo', ['descripcion'], 'description');
+        $this->addOrderBy('ListArticulo', ['pvp'], 'price');
+        $this->addOrderBy('ListArticulo', ['stockfis'], 'stock');
     }
 
     private function createViewArticuloProveedor()
@@ -80,10 +80,10 @@ class ListArticulo extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListArticuloProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
 
-        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
-        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
+        $this->addOrderBy('ListArticuloProveedor', ['referencia'], 'reference');
+        $this->addOrderBy('ListArticuloProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListArticuloProveedor', ['pvp'], 'price');
+        $this->addOrderBy('ListArticuloProveedor', ['stockfis'], 'stock');
     }
 
     private function createViewStock()
@@ -94,8 +94,8 @@ class ListArticulo extends ExtendedController\ListController
         $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListStock', 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
 
-        $this->addOrderBy('ListStock', 'referencia', 'reference');
-        $this->addOrderBy('ListStock', 'cantidad', 'quantity');
-        $this->addOrderBy('ListStock', 'disponible', 'available');
+        $this->addOrderBy('ListStock', ['referencia'], 'reference');
+        $this->addOrderBy('ListStock', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListStock', ['disponible'], 'available');
     }
 }

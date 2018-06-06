@@ -56,9 +56,9 @@ class ListCuenta extends ExtendedController\ListController
         $exerciseValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'exercise', 'codejercicio', $exerciseValues);
 
-        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
-        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
-        $this->addOrderBy('ListSubcuenta', 'saldo', 'balance');
+        $this->addOrderBy('ListSubcuenta', ['codejercicio desc, codsubcuenta'], 'code');
+        $this->addOrderBy('ListSubcuenta', ['codejercicio desc, descripcion'], 'description');
+        $this->addOrderBy('ListSubcuenta', ['saldo'], 'balance');
 
         /* Accounts */
         $this->addView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');
@@ -66,15 +66,15 @@ class ListCuenta extends ExtendedController\ListController
 
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'exercise', 'codejercicio', $exerciseValues);
 
-        $this->addOrderBy('ListCuenta', 'codejercicio desc, codcuenta', 'code');
-        $this->addOrderBy('ListCuenta', 'codejercicio desc, descripcion', 'description');
+        $this->addOrderBy('ListCuenta', ['codejercicio desc, codcuenta'], 'code');
+        $this->addOrderBy('ListCuenta', ['codejercicio desc, descripcion'], 'description');
 
         /* Special account */
         $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fa-newspaper-o');
         $this->setSettings('ListCuentaEspecial', 'insert', false);
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuentaesp']);
 
-        $this->addOrderBy('ListCuentaEspecial', 'descripcion', 'description');
-        $this->addOrderBy('ListCuentaEspecial', 'codcuentaesp', 'code');
+        $this->addOrderBy('ListCuentaEspecial', ['descripcion'], 'description');
+        $this->addOrderBy('ListCuentaEspecial', ['codcuentaesp'], 'code');
     }
 }

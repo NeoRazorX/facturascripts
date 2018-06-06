@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListCliente extends ExtendedController\ListController
 {
@@ -52,27 +53,39 @@ class ListCliente extends ExtendedController\ListController
         /* Customers */
         $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
-        $this->addOrderBy('ListCliente', 'codcliente', 'code');
-        $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
+        $this->addOrderBy('ListCliente', ['codcliente'], 'code');
+        $this->addOrderBy('ListCliente', ['nombre'], 'name', 1);
         $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');
 
         $selectValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $selectValues);
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
 
+        $this->createViewAddresses();
+
         /* Groups */
         $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
-        $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
-        $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
-
+        $this->addOrderBy('ListGrupoClientes', ['codgrupo'], 'code');
+        $this->addOrderBy('ListGrupoClientes', ['nombre'], 'name', 1);
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
+    }
 
-        /* addresses */
+    private function createViewAddresses(): void
+    {
         $this->addView('ListDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionCliente', ['codcliente', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
-        $this->addOrderBy('ListDireccionCliente', 'codcliente', 'customer');
-        $this->addOrderBy('ListDireccionCliente', 'descripcion', 'description');
-        $this->addOrderBy('ListDireccionCliente', 'codpostal', 'postalcode');
+        $this->addOrderBy('ListDireccionCliente', ['codcliente'], 'customer');
+        $this->addOrderBy('ListDireccionCliente', ['descripcion'], 'description');
+        $this->addOrderBy('ListDireccionCliente', ['codpostal'], 'postalcode');
+
+        $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListDireccionCliente', 'ciudad', 'city', 'ciudad', $cities);
+
+        $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
+        $this->addFilterSelect('ListDireccionCliente', 'provincia', 'province', 'provincia', $provinces);
+
+        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect('ListDireccionCliente', 'codpais', 'country', 'codpais', $countries);
     }
 }

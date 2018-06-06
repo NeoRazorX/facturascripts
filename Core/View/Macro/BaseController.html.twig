@@ -189,64 +189,66 @@
 #}
 {% macro columnsForListView(context, view, actionCheckboxes = false) %}
     {% set cols = (view.getColumns()|length)+1 %}
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                {% for column in view.getColumns() %}
-                    {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
-                        <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
-                    {% endif %}
-                {% endfor %}
-                {% if actionCheckboxes and view.getCursor() is not empty %}
-                    <th class="text-right">
-                        <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                            <input class="form-check-input listActionCB" type="checkbox" />
-                        </div>
-                    </th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody class="tab{{ context.indexView }}">
-            {% for model in view.getCursor() %}
-                {# Set background status #}
-                {% set rowClass = 'table-light' %}
-                {% set rowStatus = view.getRow('status') %}
-                {% if rowStatus is not empty %}
-                    {% set rowClass = rowStatus.getStatus( model ) %}
-                {% endif %}
-
-                {# checks model url #}
-                {% set rowDataHref = view.getClickEvent(model) %}
-                {% if rowDataHref is not empty %}
-                    {% set rowClass = rowClass ~ ' clickableRow' %}
-                {% endif %}
-
-                {# checks model currency #}
-                {{ view.divisaTools.findDivisa(model) }}
-
-                <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
-                    {# Print data columns for row #}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
                     {% for column in view.getColumns() %}
                         {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
-                            {% set value = attribute(model, column.widget.fieldName) %}
-                            <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
-                        {% endif %}
-                    {% endfor %}
-                    {% if actionCheckboxes %}
-                        <td class="text-right cancelClickable">
+                            <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
+                            {% endif %}
+                        {% endfor %}
+                        {% if actionCheckboxes and view.getCursor() is not empty %}
+                        <th class="text-right">
                             <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                                <input class="form-check-input listActionCB" type="checkbox" />
                             </div>
-                        </td>
+                        </th>
                     {% endif %}
                 </tr>
-            {% else %}
-                <tr class="table-warning">
-                    <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="tab{{ context.indexView }}">
+                {% for model in view.getCursor() %}
+                    {# Set background status #}
+                    {% set rowClass = 'table-light' %}
+                    {% set rowStatus = view.getRow('status') %}
+                    {% if rowStatus is not empty %}
+                        {% set rowClass = rowStatus.getStatus( model ) %}
+                    {% endif %}
+
+                    {# checks model url #}
+                    {% set rowDataHref = view.getClickEvent(model) %}
+                    {% if rowDataHref is not empty %}
+                        {% set rowClass = rowClass ~ ' clickableRow' %}
+                    {% endif %}
+
+                    {# checks model currency #}
+                    {{ view.divisaTools.findDivisa(model) }}
+
+                    <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
+                        {# Print data columns for row #}
+                        {% for column in view.getColumns() %}
+                            {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
+                                {% set value = attribute(model, column.widget.fieldName) %}
+                                <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        {% if actionCheckboxes %}
+                            <td class="text-right cancelClickable">
+                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                    <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                                </div>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endmacro %}
 
 

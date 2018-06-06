@@ -21,12 +21,21 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to list the items in the User model
+ * Controller to edit a single item from the Diario model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ *
  */
-class ListUser extends ExtendedController\ListController
+class EditDiario extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'Diario';
+    }
 
     /**
      * Returns basic page attributes
@@ -36,30 +45,10 @@ class ListUser extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fa-users';
-        $pagedata['menu'] = 'admin';
-
+        $pagedata['title'] = 'journal';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa fa-book';
+        $pagedata['showonmenu'] = false;
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('ListUser', 'User', 'users', 'fa-users');
-        $this->addSearchFields('ListUser', ['nick', 'email']);
-
-        $this->addOrderBy('ListUser', ['nick']);
-        $this->addOrderBy('ListUser', ['email']);
-        $this->addOrderBy('ListUser', ['lastactivity'], 'last-activity');
-
-        /* Roles */
-        $this->addView('ListRole', 'Role', 'roles', 'fa-address-card-o');
-        $this->addSearchFields('ListRole', ['codrole', 'descripcion']);
-
-        $this->addOrderBy('ListRole', ['descripcion'], 'description');
-        $this->addOrderBy('ListRole', ['codrole'], 'code');
     }
 }

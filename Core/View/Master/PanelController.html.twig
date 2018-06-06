@@ -40,7 +40,7 @@
     <script type="text/javascript">
         tabActive = '{{ fsc.active }}';
         settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-        url = '{{ fsc.getURL('new') }}';
+                url = '{{ fsc.getURL('new') }}';
 
         function deleteRecord(formName, action = 'delete') {
             bootbox.confirm({
@@ -122,7 +122,18 @@
     {# -- Header Row -- #}
     <div class="container-fluid" style="margin-bottom: 10px;">
         <div class="row">
-            <div class="col-6 d-print-none">
+            <div class="col-md-7">
+                <nav aria-label="breadcrumb">
+                    {% set pageData = fsc.getPageData() %}
+                    <ol class="breadcrumb d-md-none">
+                        <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.menu) }}</a></li>
+                            {% if pageData.submenu %}
+                            <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.submenu) }}</a></li>
+                            {% endif %}
+                        <li class="breadcrumb-item"><a href="#">{{ title }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ fsc.getPrimaryDescription() | raw }}</li>
+                    </ol>
+                </nav>
                 <div class="btn-group">
                     <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -135,12 +146,12 @@
                 <div class="btn-group">
                     <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
                         <i class="fa fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
                     <div class="btn-group">
                         <a href="EditPageOption?code={{ fsc.active }}&url={{ edit_url | url_encode }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-wrench" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                            <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                         </a>
                         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="sr-only">Toggle Dropdown</span>
@@ -161,11 +172,11 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-6 text-right">
-                <h2>
+            <div class="col-md-5 text-right">
+                <h1 class="h3 d-none d-md-inline-block">
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
-                    {{ title }} <small class="text-info">{{ fsc.getPrimaryDescription() | raw }}</small>
-                </h2>
+                    {{ title }} <small class="text-info d-none d-lg-inline-block">{{ fsc.getPrimaryDescription() | raw }}</small>
+                </h1>
             </div>
         </div>
     </div>
@@ -186,14 +197,14 @@
         <div class="row">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
-                <div class="col-sm-2">
+                <div class="col-sm-2 d-none d-lg-inline-block">
                     <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
                         {% for indexView, view in fsc.views %}
                             {% set active = (indexView == fsc.active) ? ' active' : '' %}
                             {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
                             <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
                                 {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
-                                <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
+                                <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i>
                                 &nbsp;{{ view.title }}
                             </a>
                         {% endfor %}
@@ -203,6 +214,16 @@
 
             {# -- Right Panel -- #}
             <div class="col">
+                <div class="nav nav-tabs d-lg-none" role="tablist">
+                    {% for indexView, view in fsc.views %}
+                        {% set active = (indexView == fsc.active) ? ' active' : '' %}
+                        {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
+                        <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab2" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                            {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
+                            <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
+                        </a>
+                    {% endfor %}
+                </div>
                 <div class="tab-content" id="mainTabsContent">
                     {% for indexView, view in fsc.views %}
                         {% set active = (indexView == fsc.active) ? ' show active' : '' %}

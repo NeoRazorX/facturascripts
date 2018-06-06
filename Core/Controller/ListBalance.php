@@ -66,12 +66,12 @@ class ListBalance extends ExtendedController\ListController
         ];
         $this->addSearchFields($viewName, $fields);
 
-        $this->addOrderBy($viewName, 'codbalance', 'code');
-        $this->addOrderBy($viewName, 'descripcion1', 'description-1');
-        $this->addOrderBy($viewName, 'descripcion2', 'description-2');
-        $this->addOrderBy($viewName, 'descripcion3', 'description-3');
-        $this->addOrderBy($viewName, 'descripcion4', 'description-4');
-        $this->addOrderBy($viewName, 'descripcion4ba', 'description-4ba');
+        $this->addOrderBy($viewName, ['codbalance'], 'code');
+        $this->addOrderBy($viewName, ['descripcion1'], 'description-1');
+        $this->addOrderBy($viewName, ['descripcion2'], 'description-2');
+        $this->addOrderBy($viewName, ['descripcion3'], 'description-3');
+        $this->addOrderBy($viewName, ['descripcion4'], 'description-4');
+        $this->addOrderBy($viewName, ['descripcion4ba'], 'description-4ba');
     }
 
     /**

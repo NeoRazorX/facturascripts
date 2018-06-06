@@ -52,9 +52,9 @@ class ListAgente extends ExtendedController\ListController
         $this->addView('ListAgente', 'Agente');
         $this->addSearchFields('ListAgente', ['nombre', 'apellidos', 'codagente', 'email']);
 
-        $this->addOrderBy('ListAgente', 'codagente', 'code');
-        $this->addOrderBy('ListAgente', 'concat(nombre,apellidos)', 'name', 1);
-        $this->addOrderBy('ListAgente', 'provincia', 'province');
+        $this->addOrderBy('ListAgente', ['codagente'], 'code');
+        $this->addOrderBy('ListAgente', ['concat(nombre,apellidos)'], 'name', 1);
+        $this->addOrderBy('ListAgente', ['provincia'], 'province');
 
         $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
         $this->addFilterSelect('ListAgente', 'cargo', 'position', 'cargo', $selectValues);

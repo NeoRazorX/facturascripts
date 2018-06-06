@@ -53,9 +53,9 @@ class ListFacturaCliente extends ExtendedController\ListController
     {
         $this->addView('ListFacturaCliente', 'FacturaCliente');
         $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
-        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
+        $this->addOrderBy('ListFacturaCliente', ['codigo'], 'code');
+        $this->addOrderBy('ListFacturaCliente', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListFacturaCliente', ['total'], 'amount');
 
         $this->addFilterDatePicker('ListFacturaCliente', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListFacturaCliente', 'total', 'total', 'total');
@@ -85,11 +85,11 @@ class ListFacturaCliente extends ExtendedController\ListController
     {
         $this->addView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaFacturaCliente', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaFacturaCliente', 'referencia', 'reference');
-        $this->addOrderBy('ListLineaFacturaCliente', 'cantidad', 'quantity');
-        $this->addOrderBy('ListLineaFacturaCliente', 'descripcion', 'description');
-        $this->addOrderBy('ListLineaFacturaCliente', 'pvptotal', 'ammount');
-        $this->addOrderBy('ListLineaFacturaCliente', 'idfactura', 'code', 2);
+        $this->addOrderBy('ListLineaFacturaCliente', ['referencia'], 'reference');
+        $this->addOrderBy('ListLineaFacturaCliente', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListLineaFacturaCliente', ['descripcion'], 'description');
+        $this->addOrderBy('ListLineaFacturaCliente', ['pvptotal'], 'ammount');
+        $this->addOrderBy('ListLineaFacturaCliente', ['idfactura'], 'code', 2);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListLineaFacturaCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
@@ -98,5 +98,8 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaFacturaCliente', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaFacturaCliente', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaFacturaCliente', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaFacturaCliente', 'megasearch', false);
     }
 }

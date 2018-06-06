@@ -52,8 +52,8 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addView('ListAgenciaTransporte', 'AgenciaTransporte');
         $this->addSearchFields('ListAgenciaTransporte', ['nombre', 'codtrans']);
 
-        $this->addOrderBy('ListAgenciaTransporte', 'codtrans', 'code');
-        $this->addOrderBy('ListAgenciaTransporte', 'nombre', 'name');
+        $this->addOrderBy('ListAgenciaTransporte', ['codtrans'], 'code');
+        $this->addOrderBy('ListAgenciaTransporte', ['nombre'], 'name');
 
         $this->addFilterCheckbox('ListAgenciaTransporte', 'activo', 'active', 'activo');
     }
