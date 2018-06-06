@@ -61,22 +61,22 @@ class ListAsiento extends ExtendedController\ListController
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $this->addOrderBy('ListAsiento', 'numero', 'number');
-        $this->addOrderBy('ListAsiento', 'fecha', 'date', 2);
+        $this->addOrderBy('ListAsiento', ['numero'], 'number');
+        $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
 
         /// concepts
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
 
-        $this->addOrderBy('ListConceptoPartida', 'codconcepto', 'code');
-        $this->addOrderBy('ListConceptoPartida', 'descripcion', 'description');
+        $this->addOrderBy('ListConceptoPartida', ['codconcepto'], 'code');
+        $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
 
         /// journals
         $this->addView('ListDiario', 'Diario', 'journals', 'fa fa-book');
         $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
 
-        $this->addOrderBy('ListDiario', 'iddiario', 'code');
-        $this->addOrderBy('ListDiario', 'descripcion', 'description');
+        $this->addOrderBy('ListDiario', ['iddiario'], 'code');
+        $this->addOrderBy('ListDiario', ['descripcion'], 'description');
     }
 
     /**

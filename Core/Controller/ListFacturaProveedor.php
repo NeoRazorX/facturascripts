@@ -53,9 +53,9 @@ class ListFacturaProveedor extends ExtendedController\ListController
     {
         $this->addView('ListFacturaProveedor', 'FacturaProveedor');
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
+        $this->addOrderBy('ListFacturaProveedor', ['codigo'], 'code');
+        $this->addOrderBy('ListFacturaProveedor', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListFacturaProveedor', ['total'], 'amount');
 
         $this->addFilterDatePicker('ListFacturaProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListFacturaProveedor', 'total', 'total', 'total');
@@ -85,11 +85,11 @@ class ListFacturaProveedor extends ExtendedController\ListController
     {
         $this->addView('ListLineaFacturaProveedor', 'LineaFacturaProveedor', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaFacturaProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaFacturaProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListLineaFacturaProveedor', 'cantidad', 'quantity');
-        $this->addOrderBy('ListLineaFacturaProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListLineaFacturaProveedor', 'pvptotal', 'ammount');
-        $this->addOrderBy('ListLineaFacturaProveedor', 'idfactura', 'code', 2);
+        $this->addOrderBy('ListLineaFacturaProveedor', ['referencia'], 'reference');
+        $this->addOrderBy('ListLineaFacturaProveedor', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListLineaFacturaProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListLineaFacturaProveedor', ['pvptotal'], 'ammount');
+        $this->addOrderBy('ListLineaFacturaProveedor', ['idfactura'], 'code', 2);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListLineaFacturaProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);

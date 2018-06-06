@@ -53,7 +53,7 @@ class ListImpuesto extends ExtendedController\ListController
         $this->addView('ListImpuesto', 'Impuesto');
         $this->addSearchFields('ListImpuesto', ['descripcion', 'codimpuesto']);
 
-        $this->addOrderBy('ListImpuesto', 'codimpuesto', 'code');
-        $this->addOrderBy('ListImpuesto', 'descripcion', 'description');
+        $this->addOrderBy('ListImpuesto', ['codimpuesto'], 'code');
+        $this->addOrderBy('ListImpuesto', ['descripcion'], 'description');
     }
 }

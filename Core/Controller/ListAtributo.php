@@ -53,7 +53,7 @@ class ListAtributo extends ExtendedController\ListController
         $this->addView('ListAtributo', 'Atributo');
         $this->addSearchFields('ListAtributo', ['nombre', 'codatributo']);
 
-        $this->addOrderBy('ListAtributo', 'codatributo', 'code');
-        $this->addOrderBy('ListAtributo', 'nombre', 'name');
+        $this->addOrderBy('ListAtributo', ['codatributo'], 'code');
+        $this->addOrderBy('ListAtributo', ['nombre'], 'name');
     }
 }

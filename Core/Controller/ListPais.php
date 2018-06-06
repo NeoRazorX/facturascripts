@@ -54,16 +54,16 @@ class ListPais extends ExtendedController\ListController
         $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
         $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states', 'validarprov');
-        $this->addOrderBy('ListPais', 'codpais', 'code');
-        $this->addOrderBy('ListPais', 'nombre', 'name');
-        $this->addOrderBy('ListPais', 'codiso', 'codiso');
+        $this->addOrderBy('ListPais', ['codpais'], 'code');
+        $this->addOrderBy('ListPais', ['nombre'], 'name');
+        $this->addOrderBy('ListPais', ['codiso'], 'codiso');
 
         /// States
         $this->addView('ListProvincia', 'Provincia', 'province', 'fa-map-signs');
         $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
 
-        $this->addOrderBy('ListProvincia', 'provincia', 'province');
-        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
-        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
+        $this->addOrderBy('ListProvincia', ['provincia'], 'province');
+        $this->addOrderBy('ListProvincia', ['codpais'], 'alfa-code-3', 1);
+        $this->addOrderBy('ListProvincia', ['codpostal2d'], 'postalcode');
     }
 }

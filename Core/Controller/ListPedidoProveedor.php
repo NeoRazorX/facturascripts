@@ -53,9 +53,9 @@ class ListPedidoProveedor extends ExtendedController\ListController
     {
         $this->addView('ListPedidoProveedor', 'PedidoProveedor');
         $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
+        $this->addOrderBy('ListPedidoProveedor', ['codigo'], 'code');
+        $this->addOrderBy('ListPedidoProveedor', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListPedidoProveedor', ['total'], 'amount');
 
         $this->addFilterDatePicker('ListPedidoProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListPedidoProveedor', 'total', 'total', 'total');
@@ -84,11 +84,11 @@ class ListPedidoProveedor extends ExtendedController\ListController
     {
         $this->addView('ListLineaPedidoProveedor', 'LineaPedidoProveedor', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaPedidoProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaPedidoProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListLineaPedidoProveedor', 'cantidad', 'quantity');
-        $this->addOrderBy('ListLineaPedidoProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListLineaPedidoProveedor', 'pvptotal', 'ammount');
-        $this->addOrderBy('ListLineaPedidoProveedor', 'idpedido', 'code', 2);
+        $this->addOrderBy('ListLineaPedidoProveedor', ['referencia'], 'reference');
+        $this->addOrderBy('ListLineaPedidoProveedor', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListLineaPedidoProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListLineaPedidoProveedor', ['pvptotal'], 'ammount');
+        $this->addOrderBy('ListLineaPedidoProveedor', ['idpedido'], 'code', 2);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListLineaPedidoProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);

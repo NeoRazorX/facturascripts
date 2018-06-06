@@ -52,8 +52,8 @@ class ListLogMessage extends ExtendedController\ListController
         $this->addView('ListLogMessage', 'LogMessage');
         $this->addSearchFields('ListLogMessage', ['level', 'message']);
 
-        $this->addOrderBy('ListLogMessage', 'time', 'date', 2);
-        $this->addOrderBy('ListLogMessage', 'level', 'level');
+        $this->addOrderBy('ListLogMessage', ['time'], 'date', 2);
+        $this->addOrderBy('ListLogMessage', ['level'], 'level');
 
         $values = $this->codeModel->all('logs', 'level', 'level');
         $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
