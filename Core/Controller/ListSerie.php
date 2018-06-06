@@ -52,8 +52,8 @@ class ListSerie extends ExtendedController\ListController
         $this->addView('ListSerie', 'Serie');
         $this->addSearchFields('ListSerie', ['descripcion', 'codserie']);
 
-        $this->addOrderBy('ListSerie', 'codserie', 'code');
-        $this->addOrderBy('ListSerie', 'descripcion', 'description');
+        $this->addOrderBy('ListSerie', ['codserie'], 'code');
+        $this->addOrderBy('ListSerie', ['descripcion'], 'description');
 
         $this->addFilterCheckbox('ListSerie', 'siniva', 'without-tax', 'siniva');
     }

@@ -52,8 +52,8 @@ class ListDivisa extends ExtendedController\ListController
         $this->addView('ListDivisa', 'Divisa');
         $this->addSearchFields('ListDivisa', ['descripcion', 'coddivisa']);
 
-        $this->addOrderBy('ListDivisa', 'coddivisa', 'code');
-        $this->addOrderBy('ListDivisa', 'descripcion', 'description', 1);
-        $this->addOrderBy('ListDivisa', 'codiso', 'codiso');
+        $this->addOrderBy('ListDivisa', ['coddivisa'], 'code');
+        $this->addOrderBy('ListDivisa', ['descripcion'], 'description', 1);
+        $this->addOrderBy('ListDivisa', ['codiso'], 'codiso');
     }
 }
