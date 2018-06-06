@@ -122,14 +122,24 @@
     <div class="container-fluid d-print-none">
         {{ parent() }}
         <div class="d-none">
-            <form action="#" method="post" name="insertForm">
+            <form action="#" method="post" name="insertForm">')
                 <input type="hidden" name="action" value="insert"/>
             </form>
         </div>
         {# Header Row #}
         <div class="row">
-            <div class="col-sm-7">
-                <div class="btn-group d-xs-none">
+            <div class="col-md-7">
+                <nav aria-label="breadcrumb">
+                    {% set pageData = fsc.getPageData() %}
+                    <ol class="breadcrumb d-md-none">
+                        <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.menu) }}</a></li>
+                            {% if pageData.submenu %}
+                            <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.submenu) }}</a></li>
+                            {% endif %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                    </ol>
+                </nav>
+                <div class="btn-group">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
@@ -156,10 +166,11 @@
                     {{ exportData(fsc, i18n) }}
                 </div>
             </div>
-            <div class="col-sm-5 text-right">
-                <h1 class="h3">
-                    <i class="fa {{ fsc.getPageData()['icon'] }} d-none d-sm-inline-block" aria-hidden="true"></i> {{ title }}
+            <div class="col-md-5 text-right">
+                <h1 class="h3 d-none d-md-inline-block">
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
+                <br class="d-md-none"/>
             </div>
         </div>
     </div>
