@@ -31,6 +31,7 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 class EditRegularizacionImpuesto extends ExtendedController\PanelController
 {
+
     /**
      * Amount to be offset from previous regularization
      *
@@ -239,12 +240,12 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         $this->purchases = 0.00;
 
         foreach ($data as $row) {
-            if (in_array($row->codcuentaesp, ['IVAREX','IVAREP','IVARUE','IVARRE'])) {
+            if (in_array($row->codcuentaesp, ['IVAREX', 'IVAREP', 'IVARUE', 'IVARRE'])) {
                 $this->sales += $row->cuotaiva + $row->cuotarecargo;
                 continue;
             }
 
-            if (in_array($row->codcuentaesp, ['IVASEX','IVASIM','IVASOP','IVASUE'])) {
+            if (in_array($row->codcuentaesp, ['IVASEX', 'IVASIM', 'IVASOP', 'IVASUE'])) {
                 $this->purchases += $row->cuotaiva + $row->cuotarecargo;
             }
         }
