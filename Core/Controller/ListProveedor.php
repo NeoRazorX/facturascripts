@@ -60,7 +60,7 @@ class ListProveedor extends ExtendedController\ListController
         $this->createViewAdresses();
     }
 
-    private function createViewAdresses(): void
+    private function createViewAdresses()
     {
         $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);

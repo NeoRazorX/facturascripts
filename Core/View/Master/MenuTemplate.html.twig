@@ -67,25 +67,22 @@
     {% block fullBody %}
         <body>
             {% block navbar %}
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top d-print-none">
+                <nav class="navbar navbar-expand navbar-dark bg-dark sticky-top d-print-none">
                     {% block navbarContent %}
-                        <a class="navbar-brand" href="index.php">
+                        <a class="navbar-brand d-none d-sm-inline" href="index.php">
                             <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
                             <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto }}</span>
                         </a>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="nav navbar-nav mr-auto">
+                        <div class="navbar-collapse collapse">
+                            <ul class="navbar-nav pt-1">
                                 {% for menuItem in menuManager.getMenu() %}
                                     {{ menuItem.getHTML()|raw }}
                                 {% endfor %}
                             </ul>
-                            <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+                            <ul class="navbar-nav flex-row ml-auto">
                                 <li class="nav-item dropdown">
-                                    <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="user-list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-user-circle d-xs-none" aria-hidden="true"></i>
+                                    <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
                                         <span class="d-none d-xl-inline">&nbsp;{{ fsc.user.nick }}</span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
@@ -100,13 +97,18 @@
                                 </li>
                             </ul>
                             {% if template != 'MegaSearch.html.twig' %}
-                                <form action="MegaSearch" method="post" class="form-inline my-2 my-lg-0">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="query" placeholder="{{ i18n.trans('search') }}"/>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-info" type="button">
-                                                <i class="fa fa-search" aria-hidden="true"></i>
-                                            </button>
+                                <form action="MegaSearch" method="post" class="form-inline">
+                                    <button class="btn btn-info d-xl-none" type="submit">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                    <div class="d-none d-xl-inline">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="query" placeholder="{{ i18n.trans('search') }}"/>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-info" type="button">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
