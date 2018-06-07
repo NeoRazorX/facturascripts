@@ -114,7 +114,8 @@ class AppController extends App
             $this->response->setContent('IP-BANNED');
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
-            $this->renderHtml('Login/Login.html.twig');
+            $homeUrl = AppSettings::get('webportal', 'url', \FS_FOLDER);
+            $this->response->headers->set('Refresh', '0; ' . $homeUrl);
         } else {
             $this->user = $this->userAuth();
 
