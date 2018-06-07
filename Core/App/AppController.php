@@ -114,8 +114,7 @@ class AppController extends App
             $this->response->setContent('IP-BANNED');
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
-            $homeUrl = AppSettings::get('webportal', 'url', \FS_FOLDER);
-            $this->response->headers->set('Refresh', '0; ' . $homeUrl);
+            $this->response->headers->set('Refresh', '0; ' . \FS_ROUTE);
         } else {
             $this->user = $this->userAuth();
 
