@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListFormaPago
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -31,13 +31,25 @@
             <widget type="text" fieldname="descripcion" />
         </column>
         <column name="expiration" display="center" order="120">
-            <widget type="text" fieldname="vencimiento" />
+            <widget type="select" fieldname="vencimiento">
+                <values title="0-day">+0day</values>
+                <values title="1-day">+1day</values>
+                <values title="1-week">+1week</values>
+                <values title="2-weeks">+2weeks</values>
+                <values title="1-month">+1month</values>
+                <values title="2-months">+2months</values>
+                <values title="3-months">+3months</values>
+                <values title="6-months">+6months</values>
+                <values title="1-year">+1year</values>
+            </widget>
         </column>
         <column name="account-code" titleurl="ListEmpresa" order="125">
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column name="generate-receipt" display="center" order="130">
-            <widget type="text" fieldname="genrecibos">
+            <widget type="select" fieldname="genrecibos">
+                <values title="paid">Pagados</values>
+                <values title="issued">Emitidos</values>
                 <option color="green">Pagados</option>
                 <option color="brown">Emitidos</option>
             </widget>
