@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\App\AppRouter;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
@@ -96,6 +97,10 @@ class Wizard extends Controller
             /// change user homepage
             $this->user->homepage = 'AdminPlugins';
             $this->user->save();
+
+            /// clear routes
+            $appRouter = new AppRouter();
+            $appRouter->clear();
 
             /// redir to EditSettings
             $this->response->headers->set('Refresh', '0; EditSettings');
