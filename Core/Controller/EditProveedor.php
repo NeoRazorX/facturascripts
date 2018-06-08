@@ -64,11 +64,11 @@ class EditProveedor extends ExtendedController\PanelController
      */
     public function calcSupplierInvoicePending($view)
     {
-        $where = [];
-        $where[] = new DataBaseWhere('codproveedor', $view->model->codproveedor);
-        $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
+        $where =[ new DataBaseWhere('codproveedor', $view->model->codproveedor),
+                  new DataBaseWhere('pagada', '0') 
+                ];
 
-        $totalModel = Model\TotalModel::all('recibosprov', $where, ['total' => 'SUM(importe)'], '')[0];
+        $totalModel = Model\TotalModel::all('facturasprov', $where, ['total' => 'SUM(importe)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);
