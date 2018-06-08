@@ -50,9 +50,9 @@ class ListAttachedFile extends ExtendedController\ListController
     {
         $this->addView('ListAttachedFile', 'AttachedFile');
         $this->addSearchFields('ListAttachedFile', ['filename', 'mimetype']);
-        $this->addOrderBy('ListAttachedFile', 'idfile', 'code');
-        $this->addOrderBy('ListAttachedFile', 'filename', 'file-name');
-        $this->addOrderBy('ListAttachedFile', 'size', 'size');
+        $this->addOrderBy('ListAttachedFile', ['idfile'], 'code');
+        $this->addOrderBy('ListAttachedFile', ['filename'], 'file-name');
+        $this->addOrderBy('ListAttachedFile', ['size'], 'size');
 
         $types = $this->codeModel->all('attached_files', 'mimetype', 'mimetype');
         $this->addFilterSelect('ListAttachedFile', 'mimetype', 'mime-type', 'mimetype', $types);

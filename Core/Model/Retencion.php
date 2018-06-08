@@ -75,7 +75,7 @@ class Retencion extends Base\ModelClass
      *
      * @return void
      */
-    public function clear() : void
+    public function clear()
     {
         parent::clear();
         $this->descripcion = '';

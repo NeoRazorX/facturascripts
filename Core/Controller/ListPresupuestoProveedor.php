@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,9 +53,9 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     {
         $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor');
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListPresupuestoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoProveedor', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoProveedor', 'total', 'amount');
+        $this->addOrderBy('ListPresupuestoProveedor', ['codigo'], 'code');
+        $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListPresupuestoProveedor', ['total'], 'amount');
 
         $this->addFilterDatePicker('ListPresupuestoProveedor', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListPresupuestoProveedor', 'total', 'total', 'total');
@@ -84,11 +84,11 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     {
         $this->addView('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaPresupuestoProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'cantidad', 'quantity');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'pvptotal', 'ammount');
-        $this->addOrderBy('ListLineaPresupuestoProveedor', 'idpresupuesto', 'code', 2);
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['referencia'], 'reference');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['pvptotal'], 'ammount');
+        $this->addOrderBy('ListLineaPresupuestoProveedor', ['idpresupuesto'], 'code', 2);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListLineaPresupuestoProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
@@ -97,5 +97,8 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaPresupuestoProveedor', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaPresupuestoProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaPresupuestoProveedor', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaPresupuestoProveedor', 'megasearch', false);
     }
 }

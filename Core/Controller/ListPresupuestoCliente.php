@@ -53,9 +53,9 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     {
         $this->addView('ListPresupuestoCliente', 'PresupuestoCliente');
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
-        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date', 2);
-        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
+        $this->addOrderBy('ListPresupuestoCliente', ['codigo'], 'code');
+        $this->addOrderBy('ListPresupuestoCliente', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListPresupuestoCliente', ['total'], 'amount');
 
         $this->addFilterDatePicker('ListPresupuestoCliente', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total', 'total');
@@ -84,11 +84,11 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     {
         $this->addView('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente', 'lines', 'fa-list');
         $this->addSearchFields('ListLineaPresupuestoCliente', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaPresupuestoCliente', 'referencia', 'reference');
-        $this->addOrderBy('ListLineaPresupuestoCliente', 'cantidad', 'quantity');
-        $this->addOrderBy('ListLineaPresupuestoCliente', 'descripcion', 'description');
-        $this->addOrderBy('ListLineaPresupuestoCliente', 'pvptotal', 'ammount');
-        $this->addOrderBy('ListLineaPresupuestoCliente', 'idpresupuesto', 'code', 2);
+        $this->addOrderBy('ListLineaPresupuestoCliente', ['referencia'], 'reference');
+        $this->addOrderBy('ListLineaPresupuestoCliente', ['cantidad'], 'quantity');
+        $this->addOrderBy('ListLineaPresupuestoCliente', ['descripcion'], 'description');
+        $this->addOrderBy('ListLineaPresupuestoCliente', ['pvptotal'], 'ammount');
+        $this->addOrderBy('ListLineaPresupuestoCliente', ['idpresupuesto'], 'code', 2);
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListLineaPresupuestoCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
@@ -97,5 +97,8 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListLineaPresupuestoCliente', 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvptotal', 'ammount', 'pvptotal');
+
+        /// disable megasearch for this view
+        $this->setSettings('ListLineaPresupuestoCliente', 'megasearch', false);
     }
 }

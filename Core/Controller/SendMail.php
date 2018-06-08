@@ -262,7 +262,7 @@ class SendMail extends Controller
      *
      * @return void
      */
-    protected function updateFemail(): void
+    protected function updateFemail()
     {
         $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName');
         if (!class_exists($className)) {

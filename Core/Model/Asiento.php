@@ -88,7 +88,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
      * @var string
      */
     public $numero;
-    
+
     /**
      * Accumulate the amounts of the detail in the document
      *
@@ -222,6 +222,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
     public function install()
     {
         new Ejercicio();
+        new Diario();
         new SubcuentaSaldo();
 
         return '';

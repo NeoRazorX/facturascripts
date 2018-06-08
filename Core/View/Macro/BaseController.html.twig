@@ -155,7 +155,7 @@
                     <div class="col">&nbsp;</div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-3">
                         {% if view.count > 0 %}
                             {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
                             <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
@@ -169,7 +169,8 @@
 
                     <div class="col text-right">
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                            <i class="fa fa-undo" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ undo }}</span>
                         </button>
                         <button class="btn btn-sm btn-primary" id="submit-{{ formName }}" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
@@ -189,64 +190,66 @@
 #}
 {% macro columnsForListView(context, view, actionCheckboxes = false) %}
     {% set cols = (view.getColumns()|length)+1 %}
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                {% for column in view.getColumns() %}
-                    {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
-                        <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
-                    {% endif %}
-                {% endfor %}
-                {% if actionCheckboxes and view.getCursor() is not empty %}
-                    <th class="text-right">
-                        <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                            <input class="form-check-input listActionCB" type="checkbox" />
-                        </div>
-                    </th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody class="tab{{ context.indexView }}">
-            {% for model in view.getCursor() %}
-                {# Set background status #}
-                {% set rowClass = 'table-light' %}
-                {% set rowStatus = view.getRow('status') %}
-                {% if rowStatus is not empty %}
-                    {% set rowClass = rowStatus.getStatus( model ) %}
-                {% endif %}
-
-                {# checks model url #}
-                {% set rowDataHref = view.getClickEvent(model) %}
-                {% if rowDataHref is not empty %}
-                    {% set rowClass = rowClass ~ ' clickableRow' %}
-                {% endif %}
-
-                {# checks model currency #}
-                {{ view.divisaTools.findDivisa(model) }}
-
-                <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
-                    {# Print data columns for row #}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
                     {% for column in view.getColumns() %}
                         {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
-                            {% set value = attribute(model, column.widget.fieldName) %}
-                            <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
-                        {% endif %}
-                    {% endfor %}
-                    {% if actionCheckboxes %}
-                        <td class="text-right cancelClickable">
+                            <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
+                            {% endif %}
+                        {% endfor %}
+                        {% if actionCheckboxes and view.getCursor() is not empty %}
+                        <th class="text-right">
                             <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                                <input class="form-check-input listActionCB" type="checkbox" />
                             </div>
-                        </td>
+                        </th>
                     {% endif %}
                 </tr>
-            {% else %}
-                <tr class="table-warning">
-                    <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="tab{{ context.indexView }}">
+                {% for model in view.getCursor() %}
+                    {# Set background status #}
+                    {% set rowClass = 'table-light' %}
+                    {% set rowStatus = view.getRow('status') %}
+                    {% if rowStatus is not empty %}
+                        {% set rowClass = rowStatus.getStatus( model ) %}
+                    {% endif %}
+
+                    {# checks model url #}
+                    {% set rowDataHref = view.getClickEvent(model) %}
+                    {% if rowDataHref is not empty %}
+                        {% set rowClass = rowClass ~ ' clickableRow' %}
+                    {% endif %}
+
+                    {# checks model currency #}
+                    {{ view.divisaTools.findDivisa(model) }}
+
+                    <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
+                        {# Print data columns for row #}
+                        {% for column in view.getColumns() %}
+                            {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
+                                {% set value = attribute(model, column.widget.fieldName) %}
+                                <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        {% if actionCheckboxes %}
+                            <td class="text-right cancelClickable">
+                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                    <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                                </div>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endmacro %}
 
 
@@ -391,18 +394,16 @@
     {% set header = view.getRow('statistics') %}
     {% if header is not empty %}
         {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-        <div class="row" style="margin-top: -.5rem">
-            <div class="col-12">
-                <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
-                    <div class="btn-group btn-group-lg" role="group">
-                        {% for button in header.buttons %}
-                            {% set value = attribute(context.fsc, button.action, [view]) %}
-                            {% set label = context.i18n.trans(button.label) %}
-                            {% set hint = context.i18n.trans(button.hint) %}
-                            {% set hint = popoverTitle(hint, 'bottom') %}
-                            {{ button.getHTML(label, value, hint)|raw }}
-                        {% endfor %}
-                    </div>
+        <div class="row" style="margin-top: 0px; margin-bottom: 10px; overflow-x: auto;">
+            <div class="col-12 text-right">
+                <div class="btn-group" role="group">
+                    {% for button in header.buttons %}
+                        {% set value = attribute(context.fsc, button.action, [view]) %}
+                        {% set label = context.i18n.trans(button.label) %}
+                        {% set hint = context.i18n.trans(button.hint) %}
+                        {% set hint = popoverTitle(hint, 'bottom') %}
+                        {{ button.getHTML(label, value, hint)|raw }}
+                    {% endfor %}
                 </div>
             </div>
         </div>

@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the Serie model
+ * Controller to edit a single item from the Concepto Partida model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */

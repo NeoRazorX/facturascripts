@@ -52,7 +52,7 @@ class ListFabricante extends ExtendedController\ListController
         $this->addView('ListFabricante', 'Fabricante');
         $this->addSearchFields('ListFabricante', ['nombre', 'codfabricante']);
 
-        $this->addOrderBy('ListFabricante', 'codfabricante', 'code');
-        $this->addOrderBy('ListFabricante', 'nombre', 'name');
+        $this->addOrderBy('ListFabricante', ['codfabricante'], 'code');
+        $this->addOrderBy('ListFabricante', ['nombre'], 'name');
     }
 }

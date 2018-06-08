@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * Controller to list the items in the Proveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListProveedor extends ExtendedController\ListController
 {
@@ -51,18 +52,29 @@ class ListProveedor extends ExtendedController\ListController
         /* Supplier */
         $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fa-users');
         $this->addSearchFields('ListProveedor', ['nombre', 'razonsocial', 'codproveedor', 'email']);
-
-        $this->addOrderBy('ListProveedor', 'codproveedor', 'code');
-        $this->addOrderBy('ListProveedor', 'nombre', 'name', 1);
-        $this->addOrderBy('ListProveedor', 'fecha', 'date');
-
+        $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
+        $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
+        $this->addOrderBy('ListProveedor', ['fecha'], 'date');
         $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
 
-        /* addresses */
+        $this->createViewAdresses();
+    }
+
+    private function createViewAdresses()
+    {
         $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
-        $this->addOrderBy('ListDireccionProveedor', 'codproveedor', 'supplier');
-        $this->addOrderBy('ListDireccionProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListDireccionProveedor', 'codpostal', 'postalcode');
+        $this->addOrderBy('ListDireccionProveedor', ['codproveedor'], 'supplier');
+        $this->addOrderBy('ListDireccionProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListDireccionProveedor', ['codpostal'], 'postalcode');
+
+        $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListDireccionProveedor', 'ciudad', 'city', 'ciudad', $cities);
+
+        $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
+        $this->addFilterSelect('ListDireccionProveedor', 'provincia', 'province', 'provincia', $provinces);
+
+        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect('ListDireccionProveedor', 'codpais', 'country', 'codpais', $countries);
     }
 }

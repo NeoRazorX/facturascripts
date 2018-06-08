@@ -33,7 +33,7 @@
     <script type="text/javascript">
         tabActive = '{{ fsc.active }}';
         settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-        urls = { {{ fsc.getStringURLs('new') | raw }} };
+                urls = { {{ fsc.getStringURLs('new') | raw }} };
 
         function deleteFromList() {
             var deleteCodes = getLineCodes();
@@ -122,14 +122,24 @@
     <div class="container-fluid d-print-none">
         {{ parent() }}
         <div class="d-none">
-            <form action="#" method="post" name="insertForm">
+            <form action="#" method="post" name="insertForm">')
                 <input type="hidden" name="action" value="insert"/>
             </form>
         </div>
         {# Header Row #}
         <div class="row">
-            <div class="col-sm-7 col-6">
-                <div class="btn-group d-xs-none">
+            <div class="col-md-7">
+                <nav aria-label="breadcrumb">
+                    {% set pageData = fsc.getPageData() %}
+                    <ol class="breadcrumb d-md-none">
+                        <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.menu) }}</a></li>
+                            {% if pageData.submenu %}
+                            <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.submenu) }}</a></li>
+                            {% endif %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                    </ol>
+                </nav>
+                <div class="btn-group">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
@@ -146,20 +156,21 @@
                 <div class="btn-group">
                     <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
                         <i class="fa fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
                     <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}');" {{ popoverTitle(options_title, 'bottom') }}>
                         <i class="fa fa-wrench" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                     </a>
                     {# Adds print and export options #}
                     {{ exportData(fsc, i18n) }}
                 </div>
             </div>
-            <div class="col-sm-5 col-6 text-right">
-                <h2 style="margin-top: 0px;">
+            <div class="col-md-5 text-right">
+                <h1 class="h3 d-none d-md-inline-block">
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-                </h2>
+                </h1>
+                <br class="d-md-none"/>
             </div>
         </div>
     </div>
@@ -189,25 +200,25 @@
                     <form name="form{{ indexView }}" id="form{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
                         <input type="hidden" name="active" value="{{ indexView }}"/>
                         <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
-                        <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
+                        <div class="container-fluid d-print-none" style="margin-top: 15px;">
                             <div class="row align-items-center">
                                 {# Main filter #}
-                                <div class="col-md-2">
-                                    <div class="input-group">
-                                        {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
-                                        <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
-                                        <span class="input-group-append">
-                                            <button class="btn btn-primary" type="submit">
-                                                <i class="fa fa-search" aria-hidden="true"></i>
-                                            </button>
-                                        </span>
+                                <div class="col-md-3 col-lg-2">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
+                                            <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
+                                            <span class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {# Aditionals filters #}
-                                {% set columnsUsed = 2 %}
                                 {% for key1, filter in view.getFilters() %}
-                                    {# Add new column filter #}
                                     {% if filter.type == 'autocomplete' %}
                                         {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
                                     {% elseif filter.type == 'select' %}
@@ -216,16 +227,6 @@
                                         {{ ListFilter.filterCheckbox(_context, key1, filter) }}
                                     {% else %}
                                         {{ ListFilter.filterText(_context, key1, filter) }}
-                                        {% set columnsUsed = columnsUsed + 2 %}
-                                    {% endif %}
-
-                                    {# subtract the available space #}
-                                    {% set columnsUsed = columnsUsed + 2 %}
-                                    {# check if there is space available for columns #}
-                                    {% if (columnsUsed % 12) == 0 %}
-                                    </div>
-                                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">
-                                        {% set columnsUsed = 0 %}
                                     {% endif %}
                                 {% endfor %}
 
@@ -235,11 +236,8 @@
                         </div>
                     </form>
 
-                    {# Data Row #}
-                    <div class="table-responsive">
-                        {# Data Table #}
-                        {{ BaseController.columnsForListView(_context, view, true) }}
-                    </div>
+                    {# Data Table #}
+                    {{ BaseController.columnsForListView(_context, view, true) }}
 
                     {# Footer Navigation #}
                     <div class="container-fluid">

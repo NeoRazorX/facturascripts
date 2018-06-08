@@ -52,7 +52,7 @@ class ListAlmacen extends ExtendedController\ListController
         $this->addView('ListAlmacen', 'Almacen');
         $this->addSearchFields('ListAlmacen', ['nombre', 'codalmacen']);
 
-        $this->addOrderBy('ListAlmacen', 'codalmacen', 'code');
-        $this->addOrderBy('ListAlmacen', 'nombre', 'name');
+        $this->addOrderBy('ListAlmacen', ['codalmacen'], 'code');
+        $this->addOrderBy('ListAlmacen', ['nombre'], 'name');
     }
 }

@@ -306,6 +306,7 @@ abstract class ListController extends BaseController
         $this->views[$viewName] = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
         $this->setSettings($viewName, 'icon', $icon);
         $this->setSettings($viewName, 'insert', true);
+        $this->setSettings($viewName, 'megasearch', true);
         if (empty($this->active)) {
             $this->active = $viewName;
         }
@@ -500,6 +501,10 @@ abstract class ListController extends BaseController
 
         /// we search in all listviews
         foreach ($this->views as $viewName => $listView) {
+            if (!$this->getSettings($viewName, 'megasearch')) {
+                continue;
+            }
+
             if (!isset($json[$viewName])) {
                 $json[$viewName] = [
                     'title' => $listView->title,
