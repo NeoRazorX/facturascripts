@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,11 +64,12 @@ class EditProveedor extends ExtendedController\PanelController
      */
     public function calcSupplierInvoicePending($view)
     {
-        $where =[ new DataBaseWhere('codproveedor', $view->model->codproveedor),
-                  new DataBaseWhere('pagada', '0') 
-                ];
+        $where = [
+            new DataBaseWhere('codproveedor', $view->model->codproveedor),
+            new DataBaseWhere('pagada', false)
+        ];
 
-        $totalModel = Model\TotalModel::all('facturasprov', $where, ['total' => 'SUM(importe)'], '')[0];
+        $totalModel = Model\TotalModel::all('facturasprov', $where, ['total' => 'SUM(total)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);

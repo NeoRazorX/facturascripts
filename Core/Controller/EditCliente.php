@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,7 +41,7 @@ class EditCliente extends ExtendedController\PanelController
      *
      * @return string
      */
-    public function calcClientDeliveryNotes($view)
+    public function calcCustomerDeliveryNotes($view)
     {
         $where = [
             new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
@@ -54,20 +54,21 @@ class EditCliente extends ExtendedController\PanelController
         return $divisaTools->format($totalModel->totals['total']);
     }
 
-     /**
+    /**
      * Returns the sum of the client's total outstanding invoices.
      *
      * @param ExtendedController\EditView $view
      *
      * @return string
      */
-    public function calcSupplierInvoicePending($view)
+    public function calcCustomerInvoicePending($view)
     {
-        $where =[ new DataBaseWhere('codcliente', $view->model->codcliente),
-                  new DataBaseWhere('pagada', '0') 
-                ];
+        $where = [
+            new DataBaseWhere('codcliente', $view->model->codcliente),
+            new DataBaseWhere('pagada', false)
+        ];
 
-        $totalModel = Model\TotalModel::all('facturascli', $where, ['total' => 'SUM(importe)'], '')[0];
+        $totalModel = Model\TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);
