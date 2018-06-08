@@ -220,6 +220,7 @@ class Contacto extends Base\Contact
 
         return parent::test();
     }
+
     /**
      * Verifies the login key.
      *

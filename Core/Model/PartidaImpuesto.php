@@ -25,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class PartidaImpuesto extends Base\ModelView
 {
+
     /**
      * List of tables required for the execution of the view.
      */
