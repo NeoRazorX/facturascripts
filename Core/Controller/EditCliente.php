@@ -63,7 +63,7 @@ class EditCliente extends ExtendedController\PanelController
      */
     public function calcSupplierInvoicePending($view)
     {
-        $where =[ new DataBaseWhere('codcliente', $view->model->codproveedor),
+        $where =[ new DataBaseWhere('codcliente', $view->model->codcliente),
                   new DataBaseWhere('pagada', '0') 
                 ];
 
