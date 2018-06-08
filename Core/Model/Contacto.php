@@ -218,9 +218,15 @@ class Contacto extends Base\Contact
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return parent::test();
-    }
+        $status = parent::test();
 
+        if (!isset($this->email) || !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-email', ['%email%' => $this->email]));
+            $status = false;
+        }
+
+        return $status;
+    }
     /**
      * Verifies the login key.
      *
