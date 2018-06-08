@@ -54,8 +54,8 @@
             </column>
             <column name="genreceipts" title="generate-receipt" numcolumns="4" order="140">
                 <widget type="select" fieldname="genrecibos">
-                    <values title="Pagados">Pagados</values>
-                    <values title="Emitidos">Emitidos</values>
+                    <values title="paid">Pagados</values>
+                    <values title="issued">Emitidos</values>
                 </widget>
             </column>
         </group>
