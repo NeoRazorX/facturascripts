@@ -790,5 +790,6 @@
     "add-all-enabled": "Add all enabled",
     "add-all-disabled": "Add all disabled",
     "shipping": "Shipping",
-    "billing": "Billing"
+    "billing": "Billing",
+    "not-valid-email": "Invalid email %email%"
 }
