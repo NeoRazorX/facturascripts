@@ -45,4 +45,8 @@ $(document).ready(function () {
         event.preventDefault();
         event.stopPropagation();
     });
+
+    $(document).on('click', 'nav .dropdown-submenu', function (e) {
+        e.stopPropagation();
+    });
 });
