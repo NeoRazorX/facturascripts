@@ -69,6 +69,7 @@
                 var source = $(this).attr('data-source');
                 var field = $(this).attr('data-field');
                 var title = $(this).attr('data-title');
+                var inputName = $(this).attr('id');
                 var formName = $(this).closest('form').attr('name');
                 $(this).autocomplete({
                     source: function (request, response) {
@@ -90,7 +91,8 @@
                         });
                     },
                     select: function (event, ui) {
-                        $('#' + field + 'Autocomplete').val(ui.item.key);
+                        inputName = inputName.substring(0, inputName.length - 1);
+                        $('#' + inputName).val(ui.item.key);
                         ui.item.value = ui.item.value.split(' | ')[1];
                     }
                 });
