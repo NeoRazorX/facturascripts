@@ -56,6 +56,7 @@ class AppRouter
     public function clear()
     {
         $this->routes = [];
+        $this->save();
     }
 
     /**

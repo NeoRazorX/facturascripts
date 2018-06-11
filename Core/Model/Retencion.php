@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Retencion extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -55,7 +56,7 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn() :string
+    public static function primaryColumn(): string
     {
         return 'codretencion';
     }
@@ -65,7 +66,7 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName() : string
+    public static function tableName(): string
     {
         return 'retenciones';
     }
@@ -87,7 +88,7 @@ class Retencion extends Base\ModelClass
      *
      * @return boolean
      */
-    public function test() : bool
+    public function test(): bool
     {
         $this->descripcion = Utils::noHtml($this->descripcion);
         if (empty($this->descripcion) || strlen($this->descripcion) > 50) {

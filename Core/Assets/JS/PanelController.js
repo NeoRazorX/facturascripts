@@ -44,11 +44,11 @@ function execActionForm(actionValue, formName) {
  */
 function showInfoCard(actionValue)
 {
-    var card = $('#' + actionValue);
-    if (card.hasClass('show')) {
-        card.removeClass('show');
+    var card = $("#" + actionValue);
+    if (card.hasClass("show")) {
+        card.removeClass("show");
     } else {
-        card.addClass('show');
+        card.addClass("show");
     }
 }
 
