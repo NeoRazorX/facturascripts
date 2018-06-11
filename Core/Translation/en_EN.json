@@ -791,5 +791,6 @@
     "add-all-disabled": "Add all disabled",
     "shipping": "Shipping",
     "billing": "Billing",
-    "not-valid-email": "Invalid email %email%"
+    "not-valid-email": "Invalid email %email%",
+    "reference+description": "Reference + Description"
 }

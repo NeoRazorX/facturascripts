@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Empresa;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -228,48 +229,13 @@ class PDFExport implements ExportInterface
      */
     public function generateDocumentPage($model)
     {
-        $columns = [];
+        $columnsHeaderDoc = [];
         foreach (array_keys((array) $model) as $key) {
-            $columns[$key] = $key;
+            $columnsHeaderDoc[$key] = $key;
         }
-        $this->generateModelPage($model, $columns, $model->primaryDescription());
-
-        $this->pdf->ezText("\n");
-
-        $headers = [
-            'reference' => $this->i18n->trans('reference+description'),
-            'quantity' => $this->i18n->trans('quantity'),
-            'price' => $this->i18n->trans('price'),
-            'discount' => $this->i18n->trans('discount'),
-            'tax' => $this->i18n->trans('tax'),
-            'total' => $this->i18n->trans('total'),
-        ];
-        $tableData = [];
-        foreach ($model->getlines() as $line) {
-            $tableData[] = [
-                'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $this->numberTools->format($line->cantidad),
-                'price' => $this->numberTools->format($line->pvpunitario),
-                'discount' => $this->numberTools->format($line->dtopor),
-                'tax' => $this->numberTools->format($line->iva),
-                'total' => $this->numberTools->format($line->pvptotal),
-            ];
-        }
-
-        $tableOptions = [
-            'cols' => [
-                'quantity' => ['justification' => 'right'],
-                'price' => ['justification' => 'right'],
-                'discount' => ['justification' => 'right'],
-                'tax' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
-        $this->removeEmptyCols($tableData, $headers);
-        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+        $this->generateBusinessDocHeader($model, $columnsHeaderDoc);
+        $this->generateBusinessDocBody($model);
+        $this->generateBusinessDocFooter($model, $columnsHeaderDoc);
     }
 
     /**
@@ -537,8 +503,379 @@ class PDFExport implements ExportInterface
     private function getCompanyName($idEmpresa = null)
     {
         $idEmpresa = $idEmpresa ?? AppSettings::get('default', 'idempresa', '');
-        $empresa = new Empresa();
+        $empresa = new Model\Empresa();
         $empresa->loadFromCode($idEmpresa);
         return $empresa->nombre ?? '';
+    }
+
+    /**
+     * Generate the header of the page with the model data.
+     *
+     * @param mixed $model
+     * @param array $columns
+     */
+    protected function generateBusinessDocHeader($model, $columns)
+    {
+        $this->newPage();
+        $tableCols = [];
+        $tableColsTitle = [];
+
+        /// Get the columns
+        $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
+        $this->setCompanyHeader($tableColsTitle, $model);
+        $this->setDocumentHeader($tableColsTitle, $model);
+    }
+
+    /**
+     * Set company header details.
+     *
+     * @param array $tableColsTitle
+     * @param mixed $model
+     */
+    protected function setCompanyHeader($tableColsTitle, $model)
+    {
+        $tableOptions = [
+            'cols' => [
+                'rowData' => ['justification' => 'center']
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth,
+            'lineCol' => [1, 1, 1],
+            'showHeadings' => 0,
+            'shaded' => 0,
+        ];
+
+        $tableDataAux = [];
+        $this->setTablaData($tableColsTitle, $tableDataAux, $model);
+
+        $company = new Model\Empresa();
+        $company->loadFromCode($this->getValueByKey($tableDataAux, 'idempresa'));
+
+        $this->pdf->ezText($company->nombre . "\n", 20, ['justification' => 'center']);
+
+        $zipCodeData = empty($company->codpostal) ? '' : ' - CP: ' . $company->codpostal;
+        $countryData = '';
+        if (AppSettings::get('default', 'codpais') !== $company->codpais) {
+            $country = new Model\Pais();
+            if ($country->loadFromCode($company->codpais)) {
+                $countryData = ' - ' . $country->nombre;
+            }
+        }
+        $townData = empty($company->provincia) ? '' : ' (' . $company->provincia . ')';
+        $contactData = empty($company->telefono1) ? '' : $company->telefono1;
+        $contactData .= (empty($contactData) ? '' : ' ') . (empty($company->telefono2) ? '' : $company->telefono2);
+        $contactData .= (empty($contactData) ? '' : ' ') . (empty($company->email) ? '' : $company->email);
+        $contactData .= (empty($contactData) ? '' : ' ') . (empty($company->web) ? '' : $company->web);
+
+        $companyData = [
+            ['rowData' => $company->cifnif],
+            ['rowData' => $company->direccion . $zipCodeData . $countryData . $townData],
+            ['rowData' => $contactData],
+        ];
+
+        $tableColsTitle = ['rowData' => ''];
+        $this->pdf->ezTable($companyData, $tableColsTitle, '', $tableOptions);
+    }
+
+    /**
+     * Set table data as key => value.
+     *
+     * @param array $tableColsTitle
+     * @param array $tableDataAux
+     * @param mixed $model
+     */
+    private function setTablaData(&$tableColsTitle, &$tableDataAux, $model)
+    {
+        foreach ($tableColsTitle as $key => $colTitle) {
+            $value = null;
+            if (isset($model->{$key})) {
+                $value = $model->{$key};
+            }
+
+            if (\is_bool($value)) {
+                $txt = $this->i18n->trans($value ? 'yes' : 'no');
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
+            } elseif ($value !== null && $value !== '') {
+                $value = \is_string($value) ? Base\Utils::fixHtml($value) : $value;
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
+            }
+        }
+    }
+
+    /**
+     * Return the data founded by key.
+     *
+     * @param array  $arrayData
+     * @param string $key
+     *
+     * @return string|int|float
+     */
+    private function getValueByKey($arrayData, $key)
+    {
+        foreach ($arrayData as $pos => $itemData) {
+            if (isset($itemData['key']) && $itemData['key'] === $key) {
+                return $itemData['value'];
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Set company header details.
+     *
+     * @param array $tableColsTitle
+     * @param mixed $model
+     */
+    protected function setDocumentHeader($tableColsTitle, $model)
+    {
+        $tableOptions = [
+            'cols' => [
+                'rowData' => ['justification' => 'center']
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth,
+            'lineCol' => [1, 1, 1],
+            'showHeadings' => 0,
+            'shaded' => 0,
+        ];
+
+        $tableDataAux = [];
+        $this->setTablaData($tableColsTitle, $tableDataAux, $model);
+
+        $docType = '';
+        $cliProvType = '';
+        $cliProvField = '';
+
+        $this->setHeaderFields($docType, $cliProvType, $cliProvField, $model);
+
+        $address = $this->getValueByKey($tableDataAux, 'direccion');
+        $zipCode = $this->getValueByKey($tableDataAux, 'codpostal');
+        $address .= empty($zipCode) ? '' : ' - CP: ' . $zipCode;
+        $countryCode = $this->getValueByKey($tableDataAux, 'codpais');
+        if (AppSettings::get('default', 'codpais') !== $countryCode) {
+            $country = new Model\Pais();
+            if ($country->loadFromCode($countryCode)) {
+                $address .= ' - ' . $country->nombre;
+            }
+        }
+        $city = $this->getValueByKey($tableDataAux, 'ciudad');
+        $address .= empty($city) ? '' : ' - ' . $city;
+        $town = $this->getValueByKey($tableDataAux, 'provincia');
+        $address .= empty($town) ? '' : ' (' . $town . ')';
+
+        $cliProvClass = 'FacturaScripts\\Core\\Model\\' . $cliProvType;
+        $who = new $cliProvClass();
+        $phones = '';
+        if ($who->loadFromCode($this->getValueByKey($tableDataAux, $cliProvField))) {
+            $phones = $who->telefono1;
+            $phones .= (empty($phones) ? '' : ' ') . $who->telefono2;
+        }
+
+        $pago = new Model\FormaPago();
+        $pago->loadFromCode($this->getValueByKey($tableDataAux, 'codpago'));
+
+        $documentData = [
+            [
+                'key' => $docType,
+                'value' => $this->getValueByKey($tableDataAux, 'codigo')
+            ],
+            [
+                'key' => $this->i18n->trans('date'),
+                'value' => $this->getValueByKey($tableDataAux, 'fecha')
+            ],
+            [
+                'key' => $cliProvType,
+                'value' => $this->getValueByKey($tableDataAux, $cliProvField)
+            ],
+            [
+                'key' => $this->i18n->trans('cifnif'),
+                'value' => $this->getValueByKey($tableDataAux, 'cifnif')
+            ],
+            [
+                'key' => $this->i18n->trans('address'),
+                'value' => $address
+            ],
+            [
+                'key' => $this->i18n->trans('phones'),
+                'value' => $phones
+            ],
+            [
+                'key' => $this->i18n->trans('payment-method'),
+                'value' => $pago->primaryDescription()
+            ]
+        ];
+
+        $tableData = $this->paralellTableData($documentData, 'key', 'value', 'data1', 'data2');
+        $this->pdf->ezTable($tableData, ['data1' => 'data1', 'data2' => 'data2'], '', $tableOptions);
+        $this->pdf->ezText("\n");
+    }
+
+    /**
+     * From BusinessDocument extract variable details and set to respective parameters.
+     *
+     * @param string $docType
+     * @param string $cliProvType
+     * @param string $cliProvField
+     * @param mixed  $model
+     */
+    protected function setHeaderFields(&$docType, &$cliProvType, &$cliProvField, $model)
+    {
+        switch ($model->modelClassName()) {
+            case 'PresupuestoCliente':
+                $docType = $this->i18n->trans('estimation');
+                $cliProvType = 'Cliente';
+                $cliProvField = 'nombrecliente';
+                break;
+            case 'PedidoCliente':
+                $docType = $this->i18n->trans('order');
+                $cliProvType = 'Cliente';
+                $cliProvField = 'nombrecliente';
+                break;
+            case 'AlbaranCliente':
+                $docType = $this->i18n->trans('delivery-note');
+                $cliProvType = 'Cliente';
+                $cliProvField = 'nombrecliente';
+                break;
+            case 'FacturaCliente':
+                $docType = $this->i18n->trans('invoice');
+                $cliProvType = 'Cliente';
+                $cliProvField = 'nombrecliente';
+                break;
+            case 'PresupuestoProveedor':
+                $docType = $this->i18n->trans('estimation');
+                $cliProvType = 'Proveedor';
+                $cliProvField = 'nombre';
+                break;
+            case 'PedidoProveedor':
+                $docType = $this->i18n->trans('order');
+                $cliProvType = 'Proveedor';
+                $cliProvField = 'nombre';
+                break;
+            case 'AlbaranProveedor':
+                $docType = $this->i18n->trans('delivery-note');
+                $cliProvType = 'Proveedor';
+                $cliProvField = 'nombre';
+                break;
+            case 'FacturaProveedor':
+                $docType = $this->i18n->trans('invoice');
+                $cliProvType = 'Proveedor';
+                $cliProvField = 'nombre';
+                break;
+        }
+    }
+
+    /**
+     * Generate the body of the page with the model data.
+     *
+     * @param mixed $model
+     */
+    protected function generateBusinessDocBody($model)
+    {
+
+        $headers = [
+            'reference' => $this->i18n->trans('reference+description'),
+            'quantity' => $this->i18n->trans('quantity'),
+            'price' => $this->i18n->trans('price'),
+            'discount' => $this->i18n->trans('discount'),
+            'tax' => $this->i18n->trans('tax'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $tableData = [];
+        foreach ($model->getlines() as $line) {
+            $tableData[] = [
+                'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
+                'quantity' => $this->numberTools::format($line->cantidad),
+                'price' => $this->numberTools::format($line->pvpunitario),
+                'discount' => $this->numberTools::format($line->dtopor),
+                'tax' => $this->numberTools::format($line->iva),
+                'total' => $this->numberTools::format($line->pvptotal),
+            ];
+        }
+
+        $tableOptions = [
+            'cols' => [
+                'quantity' => ['justification' => 'right'],
+                'price' => ['justification' => 'right'],
+                'discount' => ['justification' => 'right'],
+                'tax' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        $this->removeEmptyCols($tableData, $headers);
+        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+    }
+
+    /**
+     * Generate the footer of the page with the model data.
+     *
+     *
+     * @param mixed $model
+     * @param array $columns
+     */
+    protected function generateBusinessDocFooter($model, $columns)
+    {
+        $this->newPage();
+        $tableCols = [];
+        $tableColsTitle = [];
+        $tableOptions = [];
+
+        /// Get the columns
+        $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
+        $this->setDocumentFooter($tableColsTitle, $model);
+    }
+
+    /**
+     * Set company header details.
+     *
+     * @param array $tableColsTitle
+     * @param mixed $model
+     */
+    protected function setDocumentFooter($tableColsTitle, $model)
+    {
+        $tableOptions = [
+            'cols' => [
+                'observations' => ['justification' => 'left'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+
+        $tableDataAux = [];
+        $this->setTablaData($tableColsTitle, $tableDataAux, $model);
+
+        $headersMore = ['observations' => $this->i18n->trans('observations')];
+        $tableDataMore = [
+            ['observations' => $this->getValueByKey($tableDataAux, 'observaciones')],
+        ];
+
+        $this->pdf->ezTable($tableDataMore, $headersMore, '', $tableOptions);
+        $this->pdf->ezText("\n");
+
+        $tableOptions['cols'] = [
+            'net' => ['justification' => 'right'],
+            'taxes' => ['justification' => 'right'],
+            'total' => ['justification' => 'right'],
+        ];
+
+        $headersFooter = [
+            'net' => $this->i18n->trans('net'),
+            'taxes' => $this->i18n->trans('taxes'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $tableDataFooter = [
+            [
+                'net' => $this->divisaTools::format($this->getValueByKey($tableDataAux, 'neto'), FS_NF0),
+                'taxes' => $this->divisaTools::format($this->getValueByKey($tableDataAux, 'tax'), FS_NF0),
+                'total' => $this->divisaTools::format($this->getValueByKey($tableDataAux, 'total'), FS_NF0),
+            ]
+        ];
+
+        $this->pdf->ezTable($tableDataFooter, $headersFooter, '', $tableOptions);
     }
 }
