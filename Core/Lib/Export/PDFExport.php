@@ -194,4 +194,159 @@ class PDFExport extends PDFCore implements ExportInterface
         $response->headers->set('Content-type', 'application/pdf');
         $response->setContent($this->getDoc());
     }
+
+    /**
+     * Generate the body of the page with the model data.
+     *
+     * @param mixed $model
+     */
+    protected function insertBusinessDocBody($model)
+    {
+        $headers = [
+            'reference' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description'),
+            'quantity' => $this->i18n->trans('quantity'),
+            'price' => $this->i18n->trans('price'),
+            'discount' => $this->i18n->trans('discount'),
+            'tax' => $this->i18n->trans('tax'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $tableData = [];
+        foreach ($model->getlines() as $line) {
+            $tableData[] = [
+                'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
+                'quantity' => $line->cantidad,
+                'price' => $line->pvpunitario,
+                'discount' => $line->dtopor,
+                'tax' => $line->iva,
+                'total' => $line->pvptotal,
+            ];
+        }
+
+        $this->removeEmptyCols($tableData, $headers);
+        foreach ($tableData as $key => $value) {
+            $tableData[$key]['price'] = $this->numberTools->format($value['price']);
+            $tableData[$key]['discount'] = $this->numberTools->format($value['discount']);
+            $tableData[$key]['tax'] = $this->numberTools->format($value['tax']);
+            $tableData[$key]['total'] = $this->numberTools->format($value['total']);
+        }
+
+        $tableOptions = [
+            'cols' => [
+                'quantity' => ['justification' => 'right'],
+                'price' => ['justification' => 'right'],
+                'discount' => ['justification' => 'right'],
+                'tax' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+    }
+
+    /**
+     * Inserts the footer of the page with the model data.
+     *
+     * @param BusinessDocument $model
+     */
+    protected function insertBusinessDocFooter($model)
+    {
+        if (!empty($model->observaciones)) {
+            $this->newPage();
+            $this->pdf->ezText($this->i18n->trans('notes') . "\n", self::FONT_SIZE);
+            $this->newLine();
+            $this->pdf->ezText(Base\Utils::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
+        }
+
+        $this->newPage();
+        $headers = [
+            'currency' => $this->i18n->trans('currency'),
+            'net' => $this->i18n->trans('net'),
+            'taxes' => $this->i18n->trans('taxes'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $rows = [
+            [
+                'currency' => $model->coddivisa,
+                'net' => $this->numberTools::format($model->neto, FS_NF0),
+                'taxes' => $this->numberTools::format($model->totaliva, FS_NF0),
+                'total' => $this->numberTools::format($model->total, FS_NF0),
+            ]
+        ];
+        $tableOptions = [
+            'cols' => [
+                'net' => ['justification' => 'right'],
+                'taxes' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+    }
+
+    /**
+     * Inserts the header of the page with the model data.
+     *
+     * @param BusinessDocument $model
+     */
+    protected function insertBusinessDocHeader($model)
+    {
+        $headerData = [
+            'title' => $this->i18n->trans('delivery-note'),
+            'subject' => $this->i18n->trans('customer'),
+            'fieldName' => 'nombrecliente',
+        ];
+
+        if (isset($model->codproveedor)) {
+            $headerData['subject'] = $this->i18n->trans('supplier');
+            $headerData['fieldName'] = 'nombre';
+        }
+
+        switch ($model->modelClassName()) {
+            case 'FacturaProveedor':
+            case 'FacturaCliente':
+                $headerData['title'] = $this->i18n->trans('invoice');
+                break;
+
+            case 'PedidoProveedor':
+            case 'PedidoCliente':
+                $headerData['title'] = $this->i18n->trans('order');
+                break;
+
+            case 'PresupuestoProveedor':
+            case 'PresupuestoCliente':
+                $headerData['title'] = $this->i18n->trans('estimation');
+                break;
+        }
+
+        $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
+        $this->newLine();
+
+        $tableData = [
+            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha,],
+            ['key' => $headerData['subject'], 'value' => $model->{$headerData['fieldName']},],
+            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif,],
+        ];
+
+        if (isset($model->direccion)) {
+            $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccion)];
+            $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
+            $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
+            $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
+            $tableData[] = ['key' => $this->i18n->trans('country'), 'value' => $this->getCountryName($model->codpais)];
+        }
+
+        $tableOptions = [
+            'width' => $this->tableWidth,
+            'showHeadings' => 0,
+            'shaded' => 0,
+            'lineCol' => [1, 1, 1],
+            'cols' => [],
+        ];
+        $this->insertParalellTable($tableData, '', $tableOptions);
+        $this->pdf->ezText('');
+    }
 }
