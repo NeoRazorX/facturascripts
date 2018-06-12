@@ -83,7 +83,7 @@
                 <widget type="number" decimal="2" fieldname="iva" />
             </column>
 
-            <column name="pct-surcharge" numcolumns="3">
+            <column name="surcharge" numcolumns="3">
                 <widget type="number" decimal="2" fieldname="recargo" />
             </column>
         </group>

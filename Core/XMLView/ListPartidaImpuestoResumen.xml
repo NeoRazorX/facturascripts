@@ -49,7 +49,7 @@
                 <option color="red">&lt;0</option>
             </widget>
         </column>
-        <column name="pct-surcharge" display="right" order="160">
+        <column name="surcharge" display="right" order="160">
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
         <column name="surcharge" display="right" order="160">
