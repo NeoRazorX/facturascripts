@@ -183,6 +183,14 @@ class Translator
     }
 
     /**
+     * Sets the language code in use.
+     */
+    public function setLangCode($lang)
+    {
+        self::$defaultLang = $this->firstMatch($lang);
+    }
+
+    /**
      * Returns the missing strings.
      *
      * @return array
@@ -200,5 +208,32 @@ class Translator
     public function getUsedStrings()
     {
         return self::$usedStrings;
+    }
+
+    /**
+     * Return first exact match, or first partial match with language key identifier,
+     * or it not match founded, return default language.
+     *
+     * @param string $langCode
+     *
+     * @return string
+     */
+    private function firstMatch(string $langCode): string
+    {
+        $finalKey = null;
+        // First match is with default lang? (Avoid match with variants)
+        if (0 === strpos(\FS_LANG, $langCode)) {
+            return \FS_LANG;
+        }
+        // If not, check with all available languages
+        foreach ($this->getAvailableLanguages() as $key => $language) {
+            if ($key === $langCode) {
+                return $key;
+            }
+            if ($finalKey === null && 0 === strpos($key, $langCode)) {
+                $finalKey = $key;
+            }
+        }
+        return $finalKey ?? \FS_LANG;
     }
 }
