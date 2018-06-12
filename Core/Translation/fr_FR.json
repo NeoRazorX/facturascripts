@@ -1284,5 +1284,10 @@
     "income-and-expenses": "Recettes et dépenses",
     "percentage-vat": "% TVA",
     "percentage-surcharge": "% Supplément",
-    "percentage-commission": "% Commission"
+    "percentage-commission": "% Commission",
+    "accounting-entry-macros-title": "Utilisation des macros dans le champ de description",
+    "file-not-exists": "Le fichier n'existe pas : %fileName%",
+    "attached-files": "Fichiers joints",
+    "file-name": "Nom du fichier",
+    "billing": "Facturation"
 }

@@ -121,6 +121,11 @@ abstract class Contact extends ModelClass
             return false;
         }
 
+        if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-email', ['%email%' => $this->email]));
+            return false;
+        }
+
         return parent::test();
     }
 }

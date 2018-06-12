@@ -48,7 +48,7 @@ class ContactoProveedor extends Base\ModelClass
      * @var int
      */
     public $idcontacto;
-    
+
     public function install()
     {
         new Contacto();

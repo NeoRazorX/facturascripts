@@ -71,7 +71,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
     }
 
-    private function createViewAddresses(): void
+    private function createViewAddresses()
     {
         $this->addView('ListDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addSearchFields('ListDireccionCliente', ['codcliente', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);

@@ -38,6 +38,21 @@ function execActionForm(actionValue, formName) {
 }
 
 /**
+ * Show/Hide footer/header Info Card
+ *
+ * @param {string} actionValue
+ */
+function showInfoCard(actionValue)
+{
+    var card = $("#" + actionValue);
+    if (card.hasClass("show")) {
+        card.removeClass("show");
+    } else {
+        card.addClass("show");
+    }
+}
+
+/**
  * Get data to configure autocomplete widget
  *
  * @param {string} formName

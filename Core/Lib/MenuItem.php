@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,8 +94,8 @@ class MenuItem
      */
     protected function getHTMLIcon()
     {
-        return empty($this->icon) ? '<i class="fa fa-file-o fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon
-            . ' fa-fw" aria-hidden="true"></i> ';
+        return empty($this->icon) ? '<i class="fa fa-file-o fa-fw" aria-hidden="true"></i> ' : '<i class="fa '
+            . $this->icon . ' fa-fw" aria-hidden="true"></i> ';
     }
 
     /**
@@ -123,10 +123,10 @@ class MenuItem
         $menuId = $this->getMenuId($parent);
 
         $html = empty($parent) ? '<li class="nav-item dropdown' . $active . '">'
-            . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown"'
-            . ' aria-haspopup="true" aria-expanded="false">' . \ucfirst($this->title) . '</a>'
+            . '<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"'
+            . ' aria-haspopup="true" aria-expanded="false">' . $this->getMenuLabel() . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">' : '<li class="dropdown-submenu">'
-            . '<a class="dropdown-item' . $active . '" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw"'
+            . '<a class="dropdown-item' . $active . '" href="#"><i class="fa fa-folder-open fa-fw"'
             . ' aria-hidden="true"></i> &nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
 
@@ -138,7 +138,13 @@ class MenuItem
         }
 
         $html .= '</ul>';
-
         return $html;
+    }
+
+    protected function getMenuLabel()
+    {
+        $title = \ucfirst($this->title);
+        return '<span class="d-md-none">' . \substr($title, 0, 2)
+            . '</span><span class="d-none d-md-inline-block">' . $title . '</span>';
     }
 }

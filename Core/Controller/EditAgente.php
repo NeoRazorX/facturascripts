@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,10 +51,11 @@ class EditAgente extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditAgente', 'Agente', 'agent');
-        $this->addListView('EditAgenteFacturas', 'FacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView('EditAgenteAlbaranes', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView('EditAgentePedidos', 'PedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView('EditAgentePresupuestos', 'PresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fa-cubes');
     }
 
     /**
@@ -71,10 +72,10 @@ class EditAgente extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
-            case 'EditAgentePresupuestos':
-            case 'EditAgentePedidos':
-            case 'EditAgenteAlbaranes':
-            case 'EditAgenteFacturas':
+            case 'ListAlbaraneCliente':
+            case 'ListFacturaCliente':
+            case 'ListPedidoCliente':
+            case 'ListPresupuestoCliente':
                 $codagente = $this->getViewModelValue('EditAgente', 'codagente');
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);

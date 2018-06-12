@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,10 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Empresa;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,70 +28,10 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  */
-class PDFExport implements ExportInterface
+class PDFExport extends PDFCore implements ExportInterface
 {
 
     const LIST_LIMIT = 500;
-
-    /**
-     * Y position to start footer
-     */
-    const FOOTER_Y = 10;
-
-    /**
-     * X position to start writting.
-     */
-    const CONTENT_X = 30;
-
-    /**
-     * Default text size for footer and header.
-     */
-    const TEXT_SIZE_FH = 9;
-
-    /**
-     *
-     * @var Base\DivisaTools
-     */
-    private $divisaTools;
-
-    /**
-     * Translator object
-     *
-     * @var Base\Translator
-     */
-    private $i18n;
-
-    /**
-     * Class with number tools (to format numbers)
-     *
-     * @var Base\NumberTools
-     */
-    private $numberTools;
-
-    /**
-     * PDF object.
-     *
-     * @var \Cezpdf
-     */
-    protected $pdf;
-
-    /**
-     * PDF table width.
-     *
-     * @var int|float
-     */
-    private $tableWidth;
-
-    /**
-     * PDFExport constructor.
-     */
-    public function __construct()
-    {
-        $this->divisaTools = new Base\DivisaTools();
-        $this->i18n = new Base\Translator();
-        $this->numberTools = new Base\NumberTools();
-        $this->tableWidth = 0.0;
-    }
 
     /**
      * Return the full document.
@@ -111,68 +49,18 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Blank document.
-     */
-    public function newDoc()
-    {
-        ;
-    }
-
-    /**
-     * Set headers and output document content to response.
+     * Adds a new page with the document data.
      *
-     * @param Response $response
+     * @param BusinessDocument $model
      */
-    public function show(Response &$response)
-    {
-        $response->headers->set('Content-type', 'application/pdf');
-        $response->setContent($this->getDoc());
-    }
-
-    /**
-     * Adds a new page with the model data.
-     *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
-     */
-    public function generateModelPage($model, $columns, $title = '')
+    public function generateDocumentPage($model)
     {
         $this->newPage();
-        $tableCols = [];
-        $tableColsTitle = [];
-        $tableOptions = [
-            'width' => $this->tableWidth,
-            'showHeadings' => 0,
-            'shaded' => 0,
-            'lineCol' => [1, 1, 1],
-            'cols' => [],
-        ];
+        $this->insertHeader($model->idempresa);
 
-        /// Get the columns
-        $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
-
-        $tableDataAux = [];
-        foreach ($tableColsTitle as $key => $colTitle) {
-            $value = null;
-            if (isset($model->{$key})) {
-                $value = $model->{$key};
-            }
-
-            if (is_bool($value)) {
-                $txt = $this->i18n->trans($value ? 'yes' : 'no');
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
-            } elseif ($value !== null && $value !== '') {
-                $value = is_string($value) ? Base\Utils::fixHtml($value) : $value;
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
-            }
-        }
-
-        $this->pdf->ezText($title . "\n", 12, ['justification' => 'center']);
-        $this->newLine();
-
-        $tableData = $this->paralellTableData($tableDataAux, 'key', 'value', 'data1', 'data2');
-        $this->pdf->ezTable($tableData, ['data1' => 'data1', 'data2' => 'data2'], '', $tableOptions);
+        $this->insertBusinessDocHeader($model);
+        $this->insertBusinessDocBody($model);
+        $this->insertBusinessDocFooter($model);
     }
 
     /**
@@ -203,6 +91,7 @@ class PDFExport implements ExportInterface
 
         $this->newPage($orientation);
         $tableOptions['width'] = $this->tableWidth;
+        $this->insertHeader();
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
@@ -219,25 +108,102 @@ class PDFExport implements ExportInterface
         }
 
         $this->newLongTitles($longTitles);
+        $this->insertFooter();
     }
 
     /**
-     * Adds a new page with the document data.
+     * Adds a new page with the model data.
      *
-     * @param BusinessDocument $model
+     * @param mixed  $model
+     * @param array  $columns
+     * @param string $title
      */
-    public function generateDocumentPage($model)
+    public function generateModelPage($model, $columns, $title = '')
     {
-        $columns = [];
-        foreach (array_keys((array) $model) as $key) {
-            $columns[$key] = $key;
+        $this->newPage();
+        $this->insertHeader();
+
+        $tableCols = [];
+        $tableColsTitle = [];
+        $tableOptions = [
+            'width' => $this->tableWidth,
+            'showHeadings' => 0,
+            'shaded' => 0,
+            'lineCol' => [1, 1, 1],
+            'cols' => [],
+        ];
+
+        /// Get the columns
+        $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
+
+        $tableDataAux = [];
+        foreach ($tableColsTitle as $key => $colTitle) {
+            $value = null;
+            if (isset($model->{$key})) {
+                $value = $model->{$key};
+            }
+
+            if (is_bool($value)) {
+                $txt = $this->i18n->trans($value ? 'yes' : 'no');
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
+            } elseif ($value !== null && $value !== '') {
+                $value = is_string($value) ? Base\Utils::fixHtml($value) : $value;
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
+            }
         }
-        $this->generateModelPage($model, $columns, $model->primaryDescription());
 
-        $this->pdf->ezText("\n");
+        $this->pdf->ezText("\n" . $title . "\n", self::FONT_SIZE + 6);
+        $this->newLine();
 
+        $this->insertParalellTable($tableDataAux, '', $tableOptions);
+        $this->insertFooter();
+    }
+
+    /**
+     * Adds a new page with the table.
+     *
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        $orientation = (count($headers) > 5) ? 'landscape' : 'portrait';
+        $tableOptions = ['width' => $this->tableWidth];
+
+        $this->newPage($orientation);
+        $this->insertHeader();
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+        $this->insertFooter();
+    }
+
+    /**
+     * Blank document.
+     */
+    public function newDoc()
+    {
+        ;
+    }
+
+    /**
+     * Set headers and output document content to response.
+     *
+     * @param Response $response
+     */
+    public function show(Response &$response)
+    {
+        $response->headers->set('Content-type', 'application/pdf');
+        $response->setContent($this->getDoc());
+    }
+
+    /**
+     * Generate the body of the page with the model data.
+     *
+     * @param mixed $model
+     */
+    protected function insertBusinessDocBody($model)
+    {
         $headers = [
-            'reference' => $this->i18n->trans('reference+description'),
+            'reference' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description'),
             'quantity' => $this->i18n->trans('quantity'),
             'price' => $this->i18n->trans('price'),
             'discount' => $this->i18n->trans('discount'),
@@ -248,12 +214,20 @@ class PDFExport implements ExportInterface
         foreach ($model->getlines() as $line) {
             $tableData[] = [
                 'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $this->numberTools->format($line->cantidad),
-                'price' => $this->numberTools->format($line->pvpunitario),
-                'discount' => $this->numberTools->format($line->dtopor),
-                'tax' => $this->numberTools->format($line->iva),
-                'total' => $this->numberTools->format($line->pvptotal),
+                'quantity' => $line->cantidad,
+                'price' => $line->pvpunitario,
+                'discount' => $line->dtopor,
+                'tax' => $line->iva,
+                'total' => $line->pvptotal,
             ];
+        }
+
+        $this->removeEmptyCols($tableData, $headers);
+        foreach ($tableData as $key => $value) {
+            $tableData[$key]['price'] = $this->numberTools->format($value['price']);
+            $tableData[$key]['discount'] = $this->numberTools->format($value['discount']);
+            $tableData[$key]['tax'] = $this->numberTools->format($value['tax']);
+            $tableData[$key]['total'] = $this->numberTools->format($value['total']);
         }
 
         $tableOptions = [
@@ -268,277 +242,111 @@ class PDFExport implements ExportInterface
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
-        $this->removeEmptyCols($tableData, $headers);
         $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
     }
 
     /**
-     * Adds a new page with the table.
+     * Inserts the footer of the page with the model data.
      *
-     * @param array $headers
-     * @param array $rows
+     * @param BusinessDocument $model
      */
-    public function generateTablePage($headers, $rows)
+    protected function insertBusinessDocFooter($model)
     {
-        $orientation = 'portrait';
-        if (count($headers) > 5) {
-            $orientation = 'landscape';
+        if (!empty($model->observaciones)) {
+            $this->newPage();
+            $this->pdf->ezText($this->i18n->trans('notes') . "\n", self::FONT_SIZE);
+            $this->newLine();
+            $this->pdf->ezText(Base\Utils::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
         }
 
-        $this->newPage($orientation);
-        $tableOptions = ['width' => $this->tableWidth];
+        $this->newPage();
+        $headers = [
+            'currency' => $this->i18n->trans('currency'),
+            'net' => $this->i18n->trans('net'),
+            'taxes' => $this->i18n->trans('taxes'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $rows = [
+            [
+                'currency' => $model->coddivisa,
+                'net' => $this->numberTools::format($model->neto, FS_NF0),
+                'taxes' => $this->numberTools::format($model->totaliva, FS_NF0),
+                'total' => $this->numberTools::format($model->total, FS_NF0),
+            ]
+        ];
+        $tableOptions = [
+            'cols' => [
+                'net' => ['justification' => 'right'],
+                'taxes' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
     }
 
     /**
-     * Adds a new line to the PDF.
-     */
-    private function newLine()
-    {
-        $posY = $this->pdf->y + 5;
-        $this->pdf->line(self::CONTENT_X, $posY, $this->tableWidth + self::CONTENT_X, $posY);
-    }
-
-    /**
-     * Adds a description of long titles to the PDF.
+     * Inserts the header of the page with the model data.
      *
-     * @param array $titles
+     * @param BusinessDocument $model
      */
-    private function newLongTitles(&$titles)
+    protected function insertBusinessDocHeader($model)
     {
-        $txt = '';
-        foreach ($titles as $key => $value) {
-            if ($txt !== '') {
-                $txt .= ', ';
-            }
+        $headerData = [
+            'title' => $this->i18n->trans('delivery-note'),
+            'subject' => $this->i18n->trans('customer'),
+            'fieldName' => 'nombrecliente',
+        ];
 
-            $txt .= '*' . $key . ' = ' . $value;
+        if (isset($model->codproveedor)) {
+            $headerData['subject'] = $this->i18n->trans('supplier');
+            $headerData['fieldName'] = 'nombre';
         }
 
-        if ($txt !== '') {
-            $this->pdf->ezText($txt);
-        }
-    }
+        switch ($model->modelClassName()) {
+            case 'FacturaProveedor':
+            case 'FacturaCliente':
+                $headerData['title'] = $this->i18n->trans('invoice');
+                break;
 
-    /**
-     * Adds a new page.
-     *
-     * @param string $orientation
-     */
-    protected function newPage($orientation = 'portrait')
-    {
-        if ($this->pdf === null) {
-            $this->pdf = new \Cezpdf('a4', $orientation);
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
+            case 'PedidoProveedor':
+            case 'PedidoCliente':
+                $headerData['title'] = $this->i18n->trans('order');
+                break;
 
-            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
-
-            $this->pdf->ezStartPageNumbers($this->pdf->ez['pageWidth'] / 2, self::FOOTER_Y, self::TEXT_SIZE_FH, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } elseif ($this->pdf->y < 200) {
-            $this->pdf->ezNewPage();
-        } else {
-            $this->pdf->ezText("\n");
+            case 'PresupuestoProveedor':
+            case 'PresupuestoCliente':
+                $headerData['title'] = $this->i18n->trans('estimation');
+                break;
         }
 
-        $this->insertHeader();
-        $this->insertFooter();
-    }
+        $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
+        $this->newLine();
 
-    /**
-     * Set the table content.
-     *
-     * @param $columns
-     * @param $tableCols
-     * @param $tableColsTitle
-     * @param $tableOptions
-     */
-    private function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
-    {
-        foreach ($columns as $col) {
-            if (is_string($col)) {
-                $tableCols[$col] = $col;
-                $tableColsTitle[$col] = $col;
-                continue;
-            }
+        $tableData = [
+            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha,],
+            ['key' => $headerData['subject'], 'value' => $model->{$headerData['fieldName']},],
+            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif,],
+        ];
 
-            if (isset($col->columns)) {
-                $this->setTableColumns($col->columns, $tableCols, $tableColsTitle, $tableOptions);
-                continue;
-            }
-
-            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
-                $tableOptions['cols'][$col->widget->fieldName] = [
-                    'justification' => $col->display,
-                    'col-type' => $col->widget->type,
-                ];
-            }
-        }
-    }
-
-    /**
-     * Returns the table data
-     *
-     * @param array $cursor
-     * @param array $tableCols
-     * @param array $tableOptions
-     *
-     * @return array
-     */
-    private function getTableData($cursor, $tableCols, $tableOptions)
-    {
-        $tableData = [];
-
-        /// Get the data
-        foreach ($cursor as $key => $row) {
-            foreach ($tableCols as $col) {
-                if (!isset($row->{$col})) {
-                    $tableData[$key][$col] = '';
-                    continue;
-                }
-
-                $value = $row->{$col};
-                if ($tableOptions['cols'][$col]['col-type'] === 'number') {
-                    $value = $this->numberTools->format($value);
-                } elseif ($tableOptions['cols'][$col]['col-type'] === 'money') {
-                    $this->divisaTools->findDivisa($row);
-                    $value = $this->divisaTools->format($value, FS_NF0, 'coddivisa');
-                } elseif (is_bool($value)) {
-                    $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
-                } elseif (null === $value) {
-                    $value = '';
-                } elseif ($tableOptions['cols'][$col]['col-type'] === 'text') {
-                    $value = Base\Utils::fixHtml($value);
-                }
-
-                $tableData[$key][$col] = $value;
-            }
+        if (isset($model->direccion)) {
+            $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccion)];
+            $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
+            $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
+            $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
+            $tableData[] = ['key' => $this->i18n->trans('country'), 'value' => $this->getCountryName($model->codpais)];
         }
 
-        return $tableData;
-    }
-
-    /**
-     * Adds to $longTitles, and replace all long titles from $titles
-     *
-     * @param array $longTitles
-     * @param array $titles
-     */
-    private function removeLongTitles(&$longTitles, &$titles)
-    {
-        $num = 1;
-        foreach ($titles as $key => $value) {
-            if (mb_strlen($value) > 12) {
-                $longTitles[$num] = $value;
-                $titles[$key] = '*' . $num;
-                ++$num;
-            }
-        }
-    }
-
-    /**
-     * Remove the empty columns to save space.
-     *
-     * @param $tableData
-     * @param $tableColsTitle
-     */
-    private function removeEmptyCols(&$tableData, &$tableColsTitle)
-    {
-        foreach (array_keys($tableColsTitle) as $key) {
-            $remove = true;
-            foreach ($tableData as $row) {
-                if (!empty($row[$key])) {
-                    $remove = false;
-                    break;
-                }
-            }
-
-            if ($remove) {
-                unset($tableColsTitle[$key]);
-            }
-        }
-    }
-
-    /**
-     * Returns a new table with 2 columns. Each column with colName1: colName2
-     *
-     * @param array  $table
-     * @param string $colName1
-     * @param string $colName2
-     * @param string $finalColName1
-     * @param string $finalColName2
-     *
-     * @return array
-     */
-    private function paralellTableData($table, $colName1, $colName2, $finalColName1, $finalColName2)
-    {
-        $tableData = [];
-        $key = 0;
-        foreach ($table as $value) {
-            $txt = '<b>' . $value[$colName1] . '</b>: ' . $value[$colName2];
-
-            if (isset($tableData[$key])) {
-                $tableData[$key][$finalColName2] = $txt;
-                ++$key;
-                continue;
-            }
-
-            $tableData[$key][$finalColName1] = $txt;
-            $tableData[$key][$finalColName2] = '';
-        }
-
-        return $tableData;
-    }
-
-    /**
-     * Insert header details.
-     */
-    protected function insertHeader()
-    {
-        $headerPos = $this->pdf->ez['pageHeight'] - 25;
-        $header = $this->pdf->openObject();
-        // Top Left
-        $this->pdf->addText(self::CONTENT_X, $headerPos, self::TEXT_SIZE_FH + 2, $this->getCompanyName());
-        // Top Center
-        //$this->pdf->addText($this->pdf->ez['pageWidth']/2, $headerPos, self::TEXT_SIZE_FH + 2, 'Top Center', 0, 'center');
-        // Top Right
-        //$this->pdf->addText($this->tableWidth + self::CONTENT_X, $headerPos, self::TEXT_SIZE_FH + 2, 'Top Right', 0, 'right');
-        $this->pdf->closeObject();
-        $this->pdf->addObject($header, 'all');
-    }
-
-    /**
-     * Insert footer details.
-     */
-    protected function insertFooter()
-    {
-        $footer = $this->pdf->openObject();
-        // Bottom Left
-        //$this->pdf->addText(self::CONTENT_X, self::FOOTER_Y, self::TEXT_SIZE_FH, 'Bottom Left');
-        // Bottom Center
-        //$this->pdf->addText($this->pdf->ez['pageWidth']/2, self::FOOTER_Y, self::TEXT_SIZE_FH, 'Bottom Center', 0, 'center');
-        // Bottom Right
-        $now = $this->i18n->trans('generated-at', ['%when%' => date('d-m-Y H:i')]);
-        $this->pdf->addText($this->tableWidth + self::CONTENT_X, self::FOOTER_Y, self::TEXT_SIZE_FH, $now, 0, 'right');
-        $this->pdf->closeObject();
-        $this->pdf->addObject($footer, 'all');
-    }
-
-    /**
-     * Returns the company from given id or the default company.
-     *
-     * @param string $idEmpresa
-     *
-     * @return string
-     */
-    private function getCompanyName($idEmpresa = null)
-    {
-        $idEmpresa = $idEmpresa ?? AppSettings::get('default', 'idempresa', '');
-        $empresa = new Empresa();
-        $empresa->loadFromCode($idEmpresa);
-        return $empresa->nombre ?? '';
+        $tableOptions = [
+            'width' => $this->tableWidth,
+            'showHeadings' => 0,
+            'shaded' => 0,
+            'lineCol' => [1, 1, 1],
+            'cols' => [],
+        ];
+        $this->insertParalellTable($tableData, '', $tableOptions);
+        $this->pdf->ezText('');
     }
 }

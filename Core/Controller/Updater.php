@@ -36,7 +36,7 @@ class Updater extends Controller
 {
 
     const CORE_PROJECT_ID = 1;
-    const CORE_VERSION = 2018.003;
+    const CORE_VERSION = 2018.004;
     const UPDATE_CORE_URL = 'https://beta.facturascripts.com/DownloadBuild';
 
     /**

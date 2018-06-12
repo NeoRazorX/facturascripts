@@ -155,7 +155,7 @@
                     <div class="col">&nbsp;</div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-3">
                         {% if view.count > 0 %}
                             {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
                             <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
@@ -169,7 +169,8 @@
 
                     <div class="col text-right">
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                            <i class="fa fa-undo" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ undo }}</span>
                         </button>
                         <button class="btn btn-sm btn-primary" id="submit-{{ formName }}" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
@@ -339,10 +340,14 @@
         <br />
         <div id="{{ type }}" class="row mb-2">
             {% for panel in cards.panels %}
+                {% set cardColor = panel.color ? ' border-' ~ panel.color : '' %}
+                {% set textColor = panel.color ? ' text-' ~ panel.color : '' %}
+                {% set customClass = panel.class ? panel.class : '' %}
+
                 <div class="col">
-                    <div class="card {% if panel.color %}border-{{ panel.color }}{% endif %}">
+                    <div id="{{ panel.name }}" name="{{ panel.name }}" class="card {{ customClass ~ cardColor }}">
                         {% if panel.title is not empty %}
-                            <div class="card-header {% if panel.color %}text-{{ panel.color }}{% endif %}">
+                            <div class="card-header {{ textColor }}">
                                 <h3 class="card-title">{{ context.i18n.trans(panel.title) }}</h3>
                             </div>
                         {% endif %}
@@ -393,18 +398,16 @@
     {% set header = view.getRow('statistics') %}
     {% if header is not empty %}
         {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-        <div class="row" style="margin-top: -.5rem">
-            <div class="col-12">
-                <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
-                    <div class="btn-group btn-group-lg" role="group">
-                        {% for button in header.buttons %}
-                            {% set value = attribute(context.fsc, button.action, [view]) %}
-                            {% set label = context.i18n.trans(button.label) %}
-                            {% set hint = context.i18n.trans(button.hint) %}
-                            {% set hint = popoverTitle(hint, 'bottom') %}
-                            {{ button.getHTML(label, value, hint)|raw }}
-                        {% endfor %}
-                    </div>
+        <div class="row" style="margin-top: 0px; margin-bottom: 10px; overflow-x: auto;">
+            <div class="col-12 text-right">
+                <div class="btn-group" role="group">
+                    {% for button in header.buttons %}
+                        {% set value = attribute(context.fsc, button.action, [view]) %}
+                        {% set label = context.i18n.trans(button.label) %}
+                        {% set hint = context.i18n.trans(button.hint) %}
+                        {% set hint = popoverTitle(hint, 'bottom') %}
+                        {{ button.getHTML(label, value, hint)|raw }}
+                    {% endfor %}
                 </div>
             </div>
         </div>

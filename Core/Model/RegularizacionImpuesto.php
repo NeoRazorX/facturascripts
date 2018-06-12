@@ -269,9 +269,9 @@ class RegularizacionImpuesto extends Base\ModelClass
         }
 
         /// Look for the data of the last regularization
-        $where = [ new DataBaseWhere('codejercicio', $this->codejercicio) ];
+        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
         $regularization = new self();
-        if ($regularization->loadFromCode(null, $where, [ 'periodo' => 'DESC' ])) {
+        if ($regularization->loadFromCode(null, $where, ['periodo' => 'DESC'])) {
             /// Load next period regularization values
             $period = $this->getPeriod($regularization->periodo, $regularization->fechainicio, true);
             $this->periodo = $period['period'];

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -192,6 +192,11 @@ abstract class BusinessDocumentController extends PanelController
     protected function saveDocumentAction(): bool
     {
         $this->setTemplate(false);
+        if (!$this->permissions->allowUpdate) {
+            $this->response->setContent($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+
         $view = $this->views[$this->active];
 
         /// gets data form and separate date, hour, codcliente, codproveedor and lines data
