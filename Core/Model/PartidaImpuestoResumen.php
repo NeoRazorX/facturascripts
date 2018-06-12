@@ -25,14 +25,15 @@ namespace FacturaScripts\Core\Model;
  */
 class PartidaImpuestoResumen extends Base\ModelView
 {
+
     /**
      * Return Group By clausule
      */
     protected function getGroupBy(): string
     {
         return 'GROUP BY asientos.codejercicio, subcuentas.codcuentaesp,'
-                      . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
-                      . 'partidas.iva, partidas.recargo';
+            . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
+            . 'partidas.iva, partidas.recargo';
     }
 
     /**

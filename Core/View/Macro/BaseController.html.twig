@@ -340,10 +340,14 @@
         <br />
         <div id="{{ type }}" class="row mb-2">
             {% for panel in cards.panels %}
+                {% set cardColor = panel.color ? ' border-' ~ panel.color : '' %}
+                {% set textColor = panel.color ? ' text-' ~ panel.color : '' %}
+                {% set customClass = panel.class ? panel.class : '' %}
+
                 <div class="col">
-                    <div class="card {% if panel.color %}border-{{ panel.color }}{% endif %}">
+                    <div id="{{ panel.name }}" name="{{ panel.name }}" class="card {{ customClass ~ cardColor }}">
                         {% if panel.title is not empty %}
-                            <div class="card-header {% if panel.color %}text-{{ panel.color }}{% endif %}">
+                            <div class="card-header {{ textColor }}">
                                 <h3 class="card-title">{{ context.i18n.trans(panel.title) }}</h3>
                             </div>
                         {% endif %}

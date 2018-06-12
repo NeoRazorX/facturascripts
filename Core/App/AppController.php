@@ -115,7 +115,8 @@ class AppController extends App
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
             $this->renderHtml('Login/Login.html.twig');
-            $this->response->headers->set('Refresh', '0; ' . \FS_ROUTE);
+            $route = empty(\FS_ROUTE) ? 'index.php' : \FS_ROUTE;
+            $this->response->headers->set('Refresh', '0; ' . $route);
         } else {
             $this->user = $this->userAuth();
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,11 +32,34 @@ class XLSExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
+     * Translator object
+     *
+     * @var Base\Translator
+     */
+    private $i18n;
+
+    /**
+     * Class with number tools (to format numbers)
+     *
+     * @var Base\NumberTools
+     */
+    private $numberTools;
+
+    /**
      * XLSX object.
      *
      * @var \XLSXWriter
      */
     private $writer;
+
+    /**
+     * PDFExport constructor.
+     */
+    public function __construct()
+    {
+        $this->i18n = new Base\Translator();
+        $this->numberTools = new Base\NumberTools();
+    }
 
     /**
      * Return the full document.
@@ -129,14 +152,29 @@ class XLSExport implements ExportInterface
      */
     public function generateDocumentPage($model)
     {
+        $headers = [
+            'reference' => $this->i18n->trans('reference'),
+            'description' => $this->i18n->trans('description'),
+            'quantity' => $this->i18n->trans('quantity'),
+            'price' => $this->i18n->trans('price'),
+            'discount' => $this->i18n->trans('discount'),
+            'tax' => $this->i18n->trans('tax'),
+            'total' => $this->i18n->trans('total'),
+        ];
         $tableData = [];
-        foreach ((array) $model as $key => $value) {
-            if (is_string($value)) {
-                $tableData[] = ['key' => $key, 'value' => $value];
-            }
+        foreach ($model->getlines() as $line) {
+            $tableData[] = [
+                'reference' => Base\Utils::fixHtml($line->referencia),
+                'description' => Base\Utils::fixHtml($line->descripcion),
+                'quantity' => $this->numberTools->format($line->cantidad),
+                'price' => $this->numberTools->format($line->pvpunitario),
+                'discount' => $this->numberTools->format($line->dtopor),
+                'tax' => $this->numberTools->format($line->iva),
+                'total' => $this->numberTools->format($line->pvptotal),
+            ];
         }
-
-        $this->writer->writeSheet($tableData, 'doc', ['key' => 'string', 'value' => 'string']);
+        $this->generateTablePage($headers, $tableData);
+        $this->generateModelPage($model, [], 'doc');
     }
 
     /**
