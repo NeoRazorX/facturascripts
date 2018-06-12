@@ -59,7 +59,7 @@ class CustomTest extends TestCase
 
     public function testFields()
     {
-        $this->assertNotEmpty($this->model->getModelFields());
+        $this->assertNotEmpty($this->model->getModelFields(), 'FAIL TO CREATE/CHECK TABLE');
     }
 
     public function testInstall()
