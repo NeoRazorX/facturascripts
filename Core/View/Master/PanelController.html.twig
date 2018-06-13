@@ -149,7 +149,8 @@
                         <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
                     <div class="btn-group">
-                        <a href="EditPageOption?code={{ fsc.active }}&url={{ edit_url | url_encode }}" class="btn btn-sm btn-secondary">
+                        {% set first_view = fsc.views | first %}
+                        <a href="EditPageOption?code={{ first_view.getViewName() }}&url={{ edit_url | url_encode }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-wrench" aria-hidden="true"></i>
                             <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                         </a>

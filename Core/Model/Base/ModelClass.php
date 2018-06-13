@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\EventManager;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -97,11 +98,7 @@ abstract class ModelClass extends ModelCore
     {
         $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
         $data = self::$dataBase->select($sql);
-        if (empty($data)) {
-            return 0;
-        }
-
-        return $data[0]['total'];
+        return empty($data) ? 0 : (int) $data[0]['total'];
     }
 
     /**
@@ -114,7 +111,12 @@ abstract class ModelClass extends ModelCore
         $sql = 'DELETE FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return self::$dataBase->exec($sql);
+        if (self::$dataBase->exec($sql)) {
+            EventManager::trigger('model::' . $this->modelClassName() . '::delete()', $this);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -332,6 +334,8 @@ abstract class ModelClass extends ModelCore
                 $this->{static::primaryColumn()} = self::$dataBase->lastval();
             }
 
+            EventManager::trigger('model::' . $this->modelClassName() . '::saveInsert()', $this);
+            EventManager::trigger('model::' . $this->modelClassName() . '::save()', $this);
             return true;
         }
 
@@ -355,14 +359,18 @@ abstract class ModelClass extends ModelCore
                 $fieldName = $field['name'];
                 $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
                 $sql .= $coma . ' ' . $fieldName . ' = ' . self::$dataBase->var2str($fieldValue);
-                if ($coma === ' SET') {
-                    $coma = ', ';
-                }
+                $coma = ', ';
             }
         }
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
-        return self::$dataBase->exec($sql);
+        if (self::$dataBase->exec($sql)) {
+            EventManager::trigger('model::' . $this->modelClassName() . '::saveUpdate()', $this);
+            EventManager::trigger('model::' . $this->modelClassName() . '::save()', $this);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -378,9 +386,7 @@ abstract class ModelClass extends ModelCore
         $coma = ' ORDER BY ';
         foreach ($order as $key => $value) {
             $result .= $coma . $key . ' ' . $value;
-            if ($coma === ' ORDER BY ') {
-                $coma = ', ';
-            }
+            $coma = ', ';
         }
 
         return $result;

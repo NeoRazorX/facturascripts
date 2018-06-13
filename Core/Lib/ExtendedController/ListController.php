@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 abstract class ListController extends BaseController
 {
@@ -270,15 +271,14 @@ abstract class ListController extends BaseController
      * Adds an order field to the ListView.
      *
      * @param string       $viewName
-     * @param string|array $fields
+     * @param array        $fields
      * @param string       $label
      * @param int          $default   (0 = None, 1 = ASC, 2 = DESC)
      */
-    protected function addOrderBy($viewName, $fields, $label = '', $default = 0)
+    protected function addOrderBy(string $viewName, array $fields, string $label = '', int $default = 0) : void
     {
-        $orderFields = is_array($fields) ? $fields : [$fields];
-        $orderLabel = empty($label) ? $orderFields[0] : $label;
-        $this->views[$viewName]->addOrderBy($orderFields, $orderLabel, $default);
+        $orderLabel = empty($label) ? $fields[0] : $label;
+        $this->views[$viewName]->addOrderBy($fields, $orderLabel, $default);
     }
 
     /**

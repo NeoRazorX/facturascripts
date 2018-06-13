@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Model\ApiKey;
@@ -27,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
  * AppAPI is the class used for API.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
  * @author Rafael San José Tovar (http://www.x-netdigital.com) <info@rsanjoseo.com>
  */
 class AppAPI extends App
@@ -76,14 +75,9 @@ class AppAPI extends App
      */
     private function checkAuthToken(): bool
     {
-        $token = $this->request->headers->get('Token', '');
-        if (empty($token)) {
-            $token = $this->request->headers->get('X-Auth-Token', '');
-        }
-        if (empty($token)) {
-            return false;
-        }
-        return (new ApiKey())->checkAuthToken($token);
+        $altToken = $this->request->headers->get('Token', '');
+        $token = $this->request->headers->get('X-Auth-Token', $altToken);
+        return empty($token) ? false : (new ApiKey())->checkAuthToken($token);
     }
 
     /**
@@ -91,12 +85,10 @@ class AppAPI extends App
      *
      * @param array $map
      * @throws \UnexpectedValueException
-     * @return void
      */
     private function exposeResources(&$map)
     {
         $json = ['resources' => []];
-
         foreach (array_keys($map) as $key) {
             $json['resources'][] = $key;
         }
@@ -129,7 +121,7 @@ class AppAPI extends App
     /**
      * Check if API is disabled
      *
-     * @return mixed
+     * @return bool
      */
     private function isDisabled(): bool
     {
@@ -149,7 +141,6 @@ class AppAPI extends App
         // If no command, expose resources and exit
         if ($resourceName === '') {
             $this->exposeResources($map);
-
             return true;
         }
 
@@ -169,6 +160,7 @@ class AppAPI extends App
         if (isset($APIClass)) {
             return $APIClass->processResource($map[$resourceName]['Name'], $params);
         }
+
         $this->fatalError('database-error', Response::HTTP_INTERNAL_SERVER_ERROR);
         return false;
     }
@@ -192,8 +184,7 @@ class AppAPI extends App
      * Return an array with the error message, and the corresponding status.
      *
      * @param string $text
-     * @param int $status
-     * @return void
+     * @param int    $status
      */
     protected function fatalError(string $text, int $status)
     {
