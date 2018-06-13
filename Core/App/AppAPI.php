@@ -97,24 +97,39 @@ class AppAPI extends App
     }
 
     /**
-     * Load resource map
+     * Go through all the files in the /Dinamic/Lib/API, collecting the name of 
+     * all available resources in each of them, and adding them to an array that 
+     * is returned.
      *
      * @return array
      */
     private function getResourcesMap(): array
     {
         $resources = [[]];
+        // Loop all controllers in /Dinamic/Lib/API
         foreach (scandir(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API', SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) === '.php') {
+                // The name of the class will be the same as that of the file
+                // without the php extension.
+                // 
+                // Classes will be descendants of Base/APIResourceClass
                 $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
                 $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
-                $resources[] = $APIClass->getResources();
+                if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
+                    // getResources obtains an associative array of arrays generated 
+                    // with setResource ('name'). These arrays keep the name of the class 
+                    // and the resource so that they can be invoked later.
+                    //
+                    // This allows using different API extensions, and not just the 
+                    // usual Lib/API/APIModel.
+                    $resources[] = $APIClass->getResources();
+                }
                 unset($APIClass);
             }
         }
         $resources = array_merge(...$resources);
         ksort($resources);
-
+        // Returns an ordered array with all available resources.
         return $resources;
     }
 
