@@ -214,10 +214,10 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     protected function autocompleteAction(): array
     {
         $results = [];
-        $data = $this->requestGet(['source', 'field', 'title', 'term']);
+        $data = $this->requestGet(['source', 'field', 'title', 'term','codejercicio']);
         $fields = $data['field'] . '|' . $data['title'];
         $where = [
-            new DataBaseWhere('codejercicio', '2018'),
+            new DataBaseWhere('codejercicio', $data['codejercicio']),
             new DataBaseWhere($fields, mb_strtolower($data['term']), 'LIKE')
         ];
 
