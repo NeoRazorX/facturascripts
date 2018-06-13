@@ -95,7 +95,7 @@ class AppAPI extends App
         }
 
         $apiKey = new ApiKey();
-        $ret = $apiKey->checkAuthToken($token);
+        $ret = $apiKey->loadFromCode('', [new DataBaseWhere('apikey', $token)]);
         // Assing to idApiKey the id of the user associated with the token
         $this->idApiKey = $apiKey->id;
         return $ret;
