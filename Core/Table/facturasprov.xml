@@ -7,6 +7,12 @@
 -->
 <table>
     <column>
+        <name>anulada</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
         <null>NO</null>
@@ -57,21 +63,17 @@
         <type>boolean</type>
     </column>
     <column>
-        <name>idestado</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>fecha</name>
         <type>date</type>
         <null>NO</null>
     </column>
     <column>
-        <name>hora</name>
-        <type>time without time zone</type>
-    </column>
-    <column>
         <name>femail</name>
         <type>date</type>
+    </column>
+    <column>
+        <name>hora</name>
+        <type>time without time zone</type>
     </column>
     <column>
         <name>idasiento</name>
@@ -79,6 +81,14 @@
     </column>
     <column>
         <name>idasientop</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idestado</name>
         <type>integer</type>
     </column>
     <column>
@@ -124,12 +134,6 @@
         <default>false</default>
     </column>
     <column>
-        <name>anulada</name>
-        <type>boolean</type>
-        <null>NO</null>
-        <default>false</default>
-    </column>
-    <column>
         <name>tasaconv</name>
         <type>double precision</type>
         <null>NO</null>
@@ -154,10 +158,10 @@
         <name>totalrecargo</name>
         <type>double precision</type>
     </column>
-    <column>
-        <name>idempresa</name>
-        <type>integer</type>
-    </column>
+    <constraint>
+        <name>facturasprov_pkey</name>
+        <type>PRIMARY KEY (idfactura)</type>
+    </constraint>
     <constraint>
         <name>ca_facturasprov_series2</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
@@ -177,9 +181,5 @@
     <constraint>
         <name>uniq_codigo_facturasprov2</name>
         <type>UNIQUE (codigo,idempresa)</type>
-    </constraint>
-    <constraint>
-        <name>facturasprov_pkey</name>
-        <type>PRIMARY KEY (idfactura)</type>
     </constraint>
 </table>

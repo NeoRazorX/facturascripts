@@ -11,12 +11,24 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>apartadoenv</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>apellidosenv</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <column>
         <name>ciudad</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>ciudadenv</name>
         <type>character varying(100)</type>
     </column>
     <column>
@@ -51,6 +63,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>codigoenv</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
         <name>codpago</name>
         <type>character varying(10)</type>
         <null>NO</null>
@@ -60,7 +76,15 @@
         <type>character varying(20)</type>
     </column>
     <column>
+        <name>codpaisenv</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>codpostal</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codpostalenv</name>
         <type>character varying(10)</type>
     </column>
     <column>
@@ -69,17 +93,21 @@
         <null>NO</null>
     </column>
     <column>
+        <name>codtrans</name>
+        <type>character varying(8)</type>
+    </column>
+    <column>
         <name>direccion</name>
         <type>character varying(100)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>editable</name>
-        <type>boolean</type>
+        <name>direccionenv</name>
+        <type>character varying(100)</type>
     </column>
     <column>
-        <name>idestado</name>
-        <type>integer</type>
+        <name>editable</name>
+        <type>boolean</type>
     </column>
     <column>
         <name>fecha</name>
@@ -87,26 +115,34 @@
         <null>NO</null>
     </column>
     <column>
-        <name>hora</name>
-        <type>time without time zone</type>
+        <name>femail</name>
+        <type>date</type>
     </column>
     <column>
         <name>finoferta</name>
         <type>date</type>
     </column>
     <column>
-        <name>femail</name>
-        <type>date</type>
+        <name>hora</name>
+        <type>time without time zone</type>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idestado</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idpedido</name>
+        <type>integer</type>
     </column>
     <column>
         <name>idpresupuesto</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('presupuestoscli_idpresupuesto_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>idpedido</name>
-        <type>integer</type>
     </column>
     <column>
         <name>irpf</name>
@@ -121,6 +157,10 @@
     <column>
         <name>nombrecliente</name>
         <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>nombreenv</name>
+        <type>character varying(200)</type>
     </column>
     <column>
         <name>numero</name>
@@ -141,6 +181,10 @@
     </column>
     <column>
         <name>provincia</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>provinciaenv</name>
         <type>character varying(100)</type>
     </column>
     <column>
@@ -171,50 +215,6 @@
     <column>
         <name>totalrecargo</name>
         <type>double precision</type>
-    </column>
-    <column>
-        <name>codtrans</name>
-        <type>character varying(8)</type>
-    </column>
-    <column>
-        <name>codigoenv</name>
-        <type>character varying(200)</type>
-    </column>
-    <column>
-        <name>nombreenv</name>
-        <type>character varying(200)</type>
-    </column>
-    <column>
-        <name>apellidosenv</name>
-        <type>character varying(200)</type>
-    </column>
-    <column>
-        <name>direccionenv</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>codpostalenv</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>ciudadenv</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>provinciaenv</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>apartadoenv</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>codpaisenv</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
-        <name>idempresa</name>
-        <type>integer</type>
     </column>
     <constraint>
         <name>presupuestoscli_pkey</name>
