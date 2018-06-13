@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,40 +41,27 @@ function execActionForm(actionValue) {
 }
 
 /**
- * Show/Hide footer/header Info Card
- *
- * @param {string} actionValue
- */
-function showInfoCard(actionValue)
-{
-    var card = $("#" + actionValue);
-    if (card.hasClass("show")) {
-        card.removeClass("show");
-    } else {
-        card.addClass("show");
-    }
-}
-
-/**
  * Get data to configure autocomplete widget
  *
  * @param {string} formName
- * @param {string} source
  * @param {string} field
- * @param {string} title
+ * @param {string} source
+ * @param {string} fieldcode
+ * @param {string} fieldtitle
  * @param {string} term
  * @returns {Object}
  */
-function getAutocompleteData(formName, source, field, title, term) {
+function getAutocompleteData(formName, field, source, fieldcode, fieldtitle, term) {
     var formData = {};
     var rawForm = $('form[name="' + formName + '"]').serializeArray();
     $.each(rawForm, function (i, input) {
         formData[input.name] = input.value;
     });
     formData['action'] = 'autocomplete';
-    formData['source'] = source;
     formData['field'] = field;
-    formData['title'] = title;
+    formData['source'] = source;
+    formData['fieldcode'] = fieldcode;
+    formData['fieldtitle'] = fieldtitle;
     formData['term'] = term;
     return formData;
 }
@@ -155,6 +142,21 @@ function setInsertStatus() {
         document.getElementById('b_new_record').classList.remove('disabled');
     } else {
         document.getElementById('b_new_record').classList.add('disabled');
+    }
+}
+
+/**
+ * Show/Hide footer/header Info Card
+ *
+ * @param {string} actionValue
+ */
+function showInfoCard(actionValue)
+{
+    var card = $("#" + actionValue);
+    if (card.hasClass("show")) {
+        card.removeClass("show");
+    } else {
+        card.addClass("show");
     }
 }
 
