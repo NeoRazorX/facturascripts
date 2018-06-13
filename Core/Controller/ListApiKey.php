@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\App\AppSettings;
 
 /**
  * Controller to list the items in the ApiKey model
@@ -27,6 +28,13 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListApiKey extends ExtendedController\ListController
 {
+
+    /**
+     * Stored defaut configuration with the application settings.
+     *
+     * @var AppSettings
+     */
+    private $settings;
 
     /**
      * Returns basic page attributes
@@ -57,5 +65,20 @@ class ListApiKey extends ExtendedController\ListController
         $this->addOrderBy('ListApiKey', ['nick'], 'nick');
 
         $this->addFilterCheckbox('ListApiKey', 'enabled', 'enabled', 'enabled');
+    }
+
+     /**
+     * Runs the controller's private logic.
+     *
+     * @param Response                   $response
+     * @param User                       $user
+     * @param Base\ControllerPermissions $permissions
+     */
+    public function privateCore(&$response, $user, $permissions)
+    {
+        parent::privateCore($response, $user, $permissions);
+
+        if(!AppSettings::get('default', 'enable_api', ''))
+            $this->miniLog->info($this->i18n->trans('api-disable'));
     }
 }
