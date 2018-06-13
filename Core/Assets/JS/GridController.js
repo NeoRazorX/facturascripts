@@ -25,7 +25,7 @@ var documentLineData = [];
 var gridObject = null;               // TODO: convert to POO
 var autocompleteColumns = [];
 var eventManager = {};
-var cellSelected = { row: null, column: null };
+var cellSelected = {row: null, column: null};
 
 /* Generate a single source function for autocomplete columns
  *
@@ -38,10 +38,10 @@ function assignSource(data) {
     var title = data.title.slice(0);
 
     return function (query, process) {
-        query = query.split(' | ', 1)[0];
+        query = query.split(" | ", 1)[0];
         var ajaxData = {
             term: query,
-            action: 'autocomplete',
+            action: "autocomplete",
             field: field,
             source: source,
             fieldcode: field,
@@ -50,7 +50,7 @@ function assignSource(data) {
         $.ajax({
             type: "POST",
             url: data.url,
-            dataType: 'json',
+            dataType: "json",
             data: ajaxData,
             success: function (response) {
                 var values = [];
@@ -73,13 +73,13 @@ function configureAutocompleteColumns(columns) {
     var keys = Object.keys(columns);
     for (var i = 0, max = keys.length; i < max; i++) {
         column = columns[keys[i]];
-        if (column['type'] === 'autocomplete') {
+        if (column["type"] === "autocomplete") {
             // Add column to list of columns to control
-            autocompleteColumns.push(column['data']);
+            autocompleteColumns.push(column["data"]);
 
             // assing calculate function to column
-            column['source'] = assignSource(column['data-source']);
-            delete column['data-source'];
+            column["source"] = assignSource(column["data-source"]);
+            delete column["data-source"];
         }
     }
 }
@@ -110,20 +110,20 @@ function getGridData(fieldOrder = null) {
 /* Return column value */
 function getGridFieldData(row, fieldName) {
     var physicalRow = gridObject.toPhysicalRow(row);
-    return documentLineData['rows'][physicalRow][fieldName];
+    return documentLineData["rows"][physicalRow][fieldName];
 }
 
 /* Return row values */
 function getGridRowValues(row) {
     var physicalRow = gridObject.toPhysicalRow(row);
-    return documentLineData['rows'][physicalRow];
+    return documentLineData["rows"][physicalRow];
 }
 
 /* Set row value */
 function setGridRowValues(row, values) {
     var physicalRow = gridObject.toPhysicalRow(row);
     for (var i = 0, max = values.length; i < max; i++) {
-        documentLineData['rows'][physicalRow][values[i].field] = values[i].value;
+        documentLineData["rows"][physicalRow][values[i].field] = values[i].value;
     }
     gridObject.render();
 }
@@ -131,7 +131,7 @@ function setGridRowValues(row, values) {
 /* Return field name for a column */
 function getGridColumnName(col) {
     var physicalColumn = gridObject.toPhysicalColumn(col);
-    return documentLineData['columns'][physicalColumn]['data'];
+    return documentLineData["columns"][physicalColumn]["data"];
 }
 
 /* Select cell range */
@@ -167,8 +167,8 @@ function getColumnSelected() {
  */
 function addEvent(name, fn) {
     switch (name) {
-        case 'afterSelection':
-        case 'beforeChange':
+        case "afterSelection":
+        case "beforeChange":
             eventManager[name] = fn;
             break;
 
@@ -191,8 +191,8 @@ function eventAfterSelection(row1, col1, row2, col2, preventScrolling) {
 
     // Call to children event
     var events = Object.keys(eventManager);
-    if (events.includes('afterSelection')) {
-        eventManager['afterSelection'](row1, col1, row2, col2, preventScrolling);
+    if (events.includes("afterSelection")) {
+        eventManager["afterSelection"](row1, col1, row2, col2, preventScrolling);
     }
 }
 
@@ -202,7 +202,7 @@ function eventBeforeChange(changes, source) {
     if (autocompleteColumns.length > 0) {
         for (var i = 0, max = changes.length; i < max; i++) {
             if (autocompleteColumns.includes(changes[i][1])) {
-                var values = changes[i][3].split(' | ');
+                var values = changes[i][3].split(" | ");
                 changes[i][3] = values[0];
                 isAutoComplete = (values.length > 1);
             }
@@ -211,8 +211,8 @@ function eventBeforeChange(changes, source) {
 
     // Call to children event
     var events = Object.keys(eventManager);
-    if (events.includes('beforeChange')) {
-        eventManager['beforeChange'](changes, source, isAutoComplete);
+    if (events.includes("beforeChange")) {
+        eventManager["beforeChange"](changes, source, isAutoComplete);
     }
 }
 
@@ -226,16 +226,16 @@ function eventBeforeChange(changes, source) {
  * @returns {Boolean}
  */
 function saveDocument(mainFormName) {
-    var submitButton = document.getElementById('save-document');
+    var submitButton = document.getElementById("save-document");
     submitButton.disabled = true;
     try {
         var data = {
             action: "save-document",
-            lines: getGridData('order'),
+            lines: getGridData("order"),
             document: {}
         };
         var mainForm = $("form[name=" + mainFormName + "]");
-        $.each(mainForm.serializeArray(), function(key, value) {
+        $.each(mainForm.serializeArray(), function (key, value) {
             data.document[value.name] = value.value;
         });
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
     var container = document.getElementById("document-lines");
     if (container) {
         // Prepare autocomplete columns
-        configureAutocompleteColumns(documentLineData['columns']);
+        configureAutocompleteColumns(documentLineData["columns"]);
 
         // Create Grid Object
         gridObject = new Handsontable(container, {
@@ -290,7 +290,7 @@ $(document).ready(function () {
             enterMoves: {row: 0, col: 1}
         });
 
-        Handsontable.hooks.add('afterSelection', eventAfterSelection);
-        Handsontable.hooks.add('beforeChange', eventBeforeChange);
+        Handsontable.hooks.add("afterSelection", eventAfterSelection);
+        Handsontable.hooks.add("beforeChange", eventBeforeChange);
     }
 });
