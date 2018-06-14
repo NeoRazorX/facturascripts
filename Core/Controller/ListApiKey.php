@@ -25,17 +25,10 @@ use FacturaScripts\Core\App\AppSettings;
  * Controller to list the items in the ApiKey model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListApiKey extends ExtendedController\ListController
 {
-
-    /**
-     * Stored defaut configuration with the application settings.
-     *
-     * @var AppSettings
-     */
-    private $settings;
-
     /**
      * Returns basic page attributes
      *
