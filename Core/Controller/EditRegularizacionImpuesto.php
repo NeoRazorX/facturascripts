@@ -62,6 +62,18 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     public $total;
 
     /**
+     * Formats the amount of the indicated field to currency
+     *
+     * @param string $field
+     * @return string
+     */
+    public function getAmount($field)
+    {
+        $divisaTools = new DivisaTools();
+        return $divisaTools->format($this->{$field}, 2);
+    }
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -78,6 +90,54 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     }
 
     /**
+     * Run the autocomplete action with exercise filter
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function autocompleteAction(): array
+    {
+        $results = [];
+        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'codejercicio']);
+        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
+        $where = [
+            new DataBaseWhere('codejercicio', $data['codejercicio']),
+            new DataBaseWhere($fields, mb_strtolower($data['term']), 'LIKE')
+        ];
+
+        foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
+            $results[] = ['key' => $row->code, 'value' => $row->description];
+        }
+        return $results;
+    }
+
+    /**
+     * Calculates the amounts for the different sections of the regularization
+     *
+     * @param PartidaImpuestoResumen[] $data
+     */
+    private function calculateAmounts($data)
+    {
+        /// Init totals values
+        $this->previousBalance = 0.00;    /// TODO: Calculate previous balance from special account
+        $this->sales = 0.00;
+        $this->purchases = 0.00;
+
+        foreach ($data as $row) {
+            if (in_array($row->codcuentaesp, ['IVAREX', 'IVAREP', 'IVARUE', 'IVARRE'])) {
+                $this->sales += $row->cuotaiva + $row->cuotarecargo;
+                continue;
+            }
+
+            if (in_array($row->codcuentaesp, ['IVASEX', 'IVASIM', 'IVASOP', 'IVASUE'])) {
+                $this->purchases += $row->cuotaiva + $row->cuotarecargo;
+            }
+        }
+
+        $this->total = $this->sales - $this->purchases - $this->previousBalance;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -88,6 +148,43 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fa-sign-out');
         $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fa-balance-scale');
         $this->setTabsPosition('bottom');
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'create-accounting-entry':
+                /// TODO: Create accounting entry
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
+    }
+
+    /**
+     * Run the controller after actions.
+     *
+     * @param string $action
+     */
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'insert':
+                /// Load default values for new record
+                $this->views['EditRegularizacionImpuesto']->model->loadNextPeriod();
+                break;
+
+            default:
+                parent::execAfterAction($action);
+        }
     }
 
     /**
@@ -157,7 +254,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
         }
     }
-    
+
     private function getListPartidaImpuesto2($view) : void
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
@@ -173,102 +270,5 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             ];
             $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
         }
-    }
-
-    /**
-     * Run the actions that alter data before reading it.
-     *
-     * @param string $action
-     *
-     * @return bool
-     */
-    protected function execPreviousAction($action)
-    {
-        switch ($action) {
-            case 'create-accounting-entry':
-                /// TODO: Create accounting entry
-                return true;
-
-            default:
-                return parent::execPreviousAction($action);
-        }
-    }
-
-    /**
-     * Run the controller after actions.
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
-    {
-        switch ($action) {
-            case 'insert':
-                /// Load default values for new record
-                $this->views['EditRegularizacionImpuesto']->model->loadNextPeriod();
-                break;
-
-            default:
-                parent::execAfterAction($action);
-        }
-    }
-
-    /**
-     * Run the autocomplete action with exercise filter
-     * Returns a JSON string for the searched values.
-     *
-     * @return array
-     */
-    protected function autocompleteAction(): array
-    {
-        $results = [];
-        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'codejercicio']);
-        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
-        $where = [
-            new DataBaseWhere('codejercicio', $data['codejercicio']),
-            new DataBaseWhere($fields, mb_strtolower($data['term']), 'LIKE')
-        ];
-
-        foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
-            $results[] = ['key' => $row->code, 'value' => $row->description];
-        }
-        return $results;
-    }
-
-    /**
-     * Calculates the amounts for the different sections of the regularization
-     *
-     * @param PartidaImpuestoResumen[] $data
-     */
-    private function calculateAmounts($data)
-    {
-        /// Init totals values
-        $this->previousBalance = 0.00;    /// TODO: Calculate previous balance from special account
-        $this->sales = 0.00;
-        $this->purchases = 0.00;
-
-        foreach ($data as $row) {
-            if (in_array($row->codcuentaesp, ['IVAREX', 'IVAREP', 'IVARUE', 'IVARRE'])) {
-                $this->sales += $row->cuotaiva + $row->cuotarecargo;
-                continue;
-            }
-
-            if (in_array($row->codcuentaesp, ['IVASEX', 'IVASIM', 'IVASOP', 'IVASUE'])) {
-                $this->purchases += $row->cuotaiva + $row->cuotarecargo;
-            }
-        }
-
-        $this->total = $this->sales - $this->purchases - $this->previousBalance;
-    }
-
-    /**
-     * Formats the amount of the indicated field to currency
-     *
-     * @param string $field
-     * @return string
-     */
-    public function getAmount($field)
-    {
-        $divisaTools = new DivisaTools();
-        return $divisaTools->format($this->{$field}, 2);
     }
 }
