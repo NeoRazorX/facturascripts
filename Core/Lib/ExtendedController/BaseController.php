@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,7 +88,6 @@ abstract class BaseController extends Base\Controller
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-
         $this->active = $this->request->get('active', '');
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
@@ -151,8 +150,8 @@ abstract class BaseController extends Base\Controller
     protected function autocompleteAction(): array
     {
         $results = [];
-        $data = $this->requestGet(['source', 'field', 'title', 'term']);
-        foreach ($this->codeModel->search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
+        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term']);
+        foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;

@@ -336,10 +336,10 @@ class RegularizacionImpuesto extends Base\ModelClass
             $account = new Subcuenta();
             $account->codejercicio = $this->codejercicio;
             $account->codsubcuenta = $this->codsubcuentaacreedora;
-            $this->idsubcuentaacreedora = $account->getIdAccount();
+            $this->idsubcuentaacreedora = $account->getIdSubaccount();
 
             $account->codsubcuenta = $this->codsubcuentadeudora;
-            $this->idsubcuentadeudora = $account->getIdAccount();
+            $this->idsubcuentadeudora = $account->getIdSubaccount();
         }
         return true;
     }

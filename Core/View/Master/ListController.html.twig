@@ -64,16 +64,17 @@
         $(document).ready(function () {
             // autocomplete filters
             $('.autocomplete').each(function () {
-                var source = $(this).attr('data-source');
                 var field = $(this).attr('data-field');
-                var title = $(this).attr('data-title');
+                var source = $(this).attr('data-source');
+                var fieldcode = $(this).attr('data-fieldcode');
+                var fieldtitle = $(this).attr('data-fieldtitle');
                 var formName = $(this).closest('form').attr('name');
                 $(this).autocomplete({
                     source: function (request, response) {
                         $.ajax({
                             method: 'POST',
                             url: '{{ fsc.url() }}',
-                            data: getAutocompleteData(formName, source, field, title, request.term),
+                            data: getAutocompleteData(formName, field, source, fieldcode, fieldtitle, request.term),
                             dataType: 'json',
                             success: function (results) {
                                 var values = [];
@@ -207,7 +208,8 @@
                                     <div class="form-group">
                                         <div class="input-group">
                                             {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
-                                            <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
+                                            <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off"
+                                                   placeholder="{{ i18n.trans('search') }}" autofocus=""/>
                                             <span class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
                                                     <i class="fa fa-search" aria-hidden="true"></i>
