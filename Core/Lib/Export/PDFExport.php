@@ -354,7 +354,7 @@ class PDFExport extends PDFCore implements ExportInterface
         }
     }
 
-    private function addedShippingSection($model) : void
+    private function insertBusinessDocShipping($model) : void
     {
         $headerData = [
             'name' => $this->i18n->trans('name'),
