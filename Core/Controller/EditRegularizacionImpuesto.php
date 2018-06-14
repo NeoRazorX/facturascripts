@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\CodeModel;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class EditRegularizacionImpuesto extends ExtendedController\PanelController
 {
@@ -97,80 +98,81 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        switch ($viewName) {
-            case 'EditRegularizacionImpuesto':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
+        $function = 'get' . str_replace("-", "", $viewName);
+        $this->$function($view);
+    }
 
-            case 'ListPartida':
-                $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
-                if (!empty($idasiento)) {
-                    $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData($where, ['orden' => 'ASC']);
-                }
-                break;
+    private function getEditRegularizacionImpuesto($view) : void
+    {
+        $code = $this->request->get('code');
+        $view->loadData($code);
+    }
 
-            case 'ListPartidaImpuestoResumen':
-                $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
-                if (!empty($id)) {
-                    $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
-                    $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
-                    $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
-                    $where = [
-                        new DataBaseWhere('asientos.codejercicio', $exercise),
-                        new DataBaseWhere('asientos.fecha', $startDate, '>='),
-                        new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                        new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE,IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
-                    ];
-                    $orderby = [
-                        'cuentasesp.descripcion' => 'ASC',
-                        'subcuentas.codimpuesto' => 'ASC',
-                        'partidas.iva' => 'ASC',
-                        'partidas.recargo' => 'ASC'
-                    ];
-                    $view->loadData(false, $where, $orderby);
-                    $this->calculateAmounts($view->getCursor());
-                }
-                break;
+    private function getListPartida($view) : void
+    {
+        $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
+        if (!empty($idasiento)) {
+            $where = [new DataBaseWhere('idasiento', $idasiento)];
+            $view->loadData($where, ['orden' => 'ASC']);
+        }
+    } 
 
-            case 'ListPartidaImpuesto-1':
-                $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
-                if (!empty($id)) {
-                    $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
-                    $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
-                    $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
-                    $where = [
-                        new DataBaseWhere('asientos.codejercicio', $exercise),
-                        new DataBaseWhere('asientos.fecha', $startDate, '>='),
-                        new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                        new DataBaseWhere('subcuentas.codcuentaesp', 'IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
-                    ];
-                    $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
-                }
-                break;
-
-            case 'ListPartidaImpuesto-2':
-                $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
-                if (!empty($id)) {
-                    $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
-                    $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
-                    $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
-                    $where = [
-                        new DataBaseWhere('asientos.codejercicio', $exercise),
-                        new DataBaseWhere('asientos.fecha', $startDate, '>='),
-                        new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                        new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE', 'IN')
-                    ];
-                    $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
-                }
-                break;
+    private function getListPartidaImpuestoResumen($view) : void 
+    {
+        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+        if (!empty($id)) {
+            $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
+            $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
+            $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
+            $where = [
+                new DataBaseWhere('asientos.codejercicio', $exercise),
+                new DataBaseWhere('asientos.fecha', $startDate, '>='),
+                new DataBaseWhere('asientos.fecha', $endDate, '<='),
+                new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE,IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
+            ];
+            $orderby = [
+                'cuentasesp.descripcion' => 'ASC',
+                'subcuentas.codimpuesto' => 'ASC',
+                'partidas.iva' => 'ASC',
+                'partidas.recargo' => 'ASC'
+            ];
+            $view->loadData(false, $where, $orderby);
+            $this->calculateAmounts($view->getCursor());
         }
     }
 
-    private function listPartidaImpuestoResumen() : void 
+    private function getListPartidaImpuesto1($view) : void
     {
-        
+        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+        if (!empty($id)) {
+            $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
+            $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
+            $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
+            $where = [
+                new DataBaseWhere('asientos.codejercicio', $exercise),
+                new DataBaseWhere('asientos.fecha', $startDate, '>='),
+                new DataBaseWhere('asientos.fecha', $endDate, '<='),
+                new DataBaseWhere('subcuentas.codcuentaesp', 'IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
+            ];
+            $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
+        }
+    }
+    
+    private function getListPartidaImpuesto2($view) : void
+    {
+        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+        if (!empty($id)) {
+            $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
+            $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
+            $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
+            $where = [
+                new DataBaseWhere('asientos.codejercicio', $exercise),
+                new DataBaseWhere('asientos.fecha', $startDate, '>='),
+                new DataBaseWhere('asientos.fecha', $endDate, '<='),
+                new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE', 'IN')
+            ];
+            $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
+        }
     }
 
     /**
