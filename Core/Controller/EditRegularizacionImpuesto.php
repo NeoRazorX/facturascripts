@@ -168,6 +168,11 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         }
     }
 
+    private function listPartidaImpuestoResumen() : void 
+    {
+        
+    }
+
     /**
      * Run the actions that alter data before reading it.
      *
