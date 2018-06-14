@@ -8,6 +8,7 @@
 {% set coddivisa = appSettings.get('default','coddivisa','EUR') %}
 {% set codpais = appSettings.get('default','codpais','ESP') %}
 {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
+{% set usuario = fsc.user.nick ? fsc.user.nick : '' %}
 
 <div class="container">
     <div class="row">
@@ -46,6 +47,20 @@
                 </div>
             </div>
         </div>
+        {% if fsc.user.verifyPassword('admin') %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ forms.simpleInput('usuario', 'usuario', usuario, 'text', i18n.trans('user')) }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('password')) }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         <div class="row">
             <div class="col-sm-12">
                 <button type="submit" class="btn btn-primary">

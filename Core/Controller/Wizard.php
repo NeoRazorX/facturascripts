@@ -83,6 +83,9 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
+        if($user->verifyPassword('admin'))
+            $this->miniLog->warning($this->i18n->trans('you-should-change-the-default-user-and-password'));
+
         $coddivisa = $this->request->request->get('coddivisa', '');
         $codpais = $this->request->request->get('codpais', '');
         if ($codpais !== '') {
