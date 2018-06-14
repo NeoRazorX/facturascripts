@@ -208,7 +208,7 @@ class PDFExport extends PDFCore implements ExportInterface
             'price' => $this->i18n->trans('price'),
             'discount' => $this->i18n->trans('discount'),
             'tax' => $this->i18n->trans('tax'),
-            'totalSurcharge' => $this->i18n->trans('total') . ' - ' . $this->i18n->trans('surcharge'),
+            'surcharge' => $this->$this->i18n->trans('surcharge'),
             'irpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
@@ -220,7 +220,7 @@ class PDFExport extends PDFCore implements ExportInterface
                 'price' => $line->pvpunitario,
                 'discount' => $line->dtopor,
                 'tax' => $line->iva,
-                'totalSurcharge' => $line->recargo,
+                'surcharge' => $line->recargo,
                 'irpf' => $line->irpf,
                 'total' => $line->pvptotal,
             ];
@@ -231,7 +231,7 @@ class PDFExport extends PDFCore implements ExportInterface
             $tableData[$key]['price'] = $this->numberTools->format($value['price']);
             $tableData[$key]['discount'] = $this->numberTools->format($value['discount']);
             $tableData[$key]['tax'] = $this->numberTools->format($value['tax']);
-            $tableData[$key]['totalSurcharge'] = $this->numberTools->format($value['totalSurcharge']);
+            $tableData[$key]['surcharge'] = $this->numberTools->format($value['surcharge']);
             $tableData[$key]['irpf'] = $this->numberTools->format($value['irpf']);
             $tableData[$key]['total'] = $this->numberTools->format($value['total']);
         }
@@ -242,7 +242,7 @@ class PDFExport extends PDFCore implements ExportInterface
                 'price' => ['justification' => 'right'],
                 'discount' => ['justification' => 'right'],
                 'tax' => ['justification' => 'right'],
-                'totalSurcharge' => ['justification' => 'right'],
+                'surcharge' => ['justification' => 'right'],
                 'irpf' => ['justification' => 'right'],
                 'total' => ['justification' => 'right'],
             ],
@@ -272,8 +272,8 @@ class PDFExport extends PDFCore implements ExportInterface
             'currency' => $this->i18n->trans('currency'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
-            'totalSurcharge' => $this->i18n->trans('total') . ' - ' . $this->i18n->trans('surcharge'),
-            'totalIrpf' => $this->i18n->trans('total') . ' - ' . $this->i18n->trans('irpf'),
+            'totalsSurcharge' => $this->i18n->trans('surcharge'),
+            'totalIrpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
         $rows = [
