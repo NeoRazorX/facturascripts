@@ -48,9 +48,17 @@
         <null>NO</null>
     </column>
     <column>
+        <name>editable</name>
+        <type>boolean</type>
+    </column>
+    <column>
         <name>fecha</name>
         <type>date</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>femail</name>
+        <type>date</type>
     </column>
     <column>
         <name>hora</name>
@@ -61,6 +69,14 @@
         <type>serial</type>
         <null>NO</null>
         <default>nextval('albaranesprov_idalbaran_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idestado</name>
+        <type>integer</type>
     </column>
     <column>
         <name>idfactura</name>
@@ -95,18 +111,6 @@
     <column>
         <name>observaciones</name>
         <type>text</type>
-    </column>
-    <column>
-        <name>femail</name>
-        <type>date</type>
-    </column>
-    <column>
-        <name>editable</name>
-        <type>boolean</type>
-    </column>
-    <column>
-        <name>idestado</name>
-        <type>integer</type>
     </column>
     <column>
         <name>tasaconv</name>
@@ -144,10 +148,10 @@
         <null>NO</null>
         <default>0</default>
     </column>
-    <column>
-        <name>idempresa</name>
-        <type>integer</type>
-    </column>
+    <constraint>
+        <name>albaranesprov_pkey</name>
+        <type>PRIMARY KEY (idalbaran)</type>
+    </constraint>
     <constraint>
         <name>ca_albaranesprov_series2</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
@@ -163,9 +167,5 @@
     <constraint>
         <name>uniq_codigo_albaranesprov2</name>
         <type>UNIQUE (codigo,idempresa)</type>
-    </constraint>
-    <constraint>
-        <name>albaranesprov_pkey</name>
-        <type>PRIMARY KEY (idalbaran)</type>
     </constraint>
 </table>

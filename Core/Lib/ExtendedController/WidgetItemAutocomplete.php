@@ -49,7 +49,6 @@ class WidgetItemAutocomplete extends WidgetItem
     public function __construct()
     {
         parent::__construct();
-
         $this->codeModel = new Model\CodeModel();
         $this->type = 'autocomplete';
         $this->values = [];
@@ -87,9 +86,9 @@ class WidgetItemAutocomplete extends WidgetItem
         }
 
         $html .= '<input type="text" id="' . $this->fieldName . 'Autocomplete2" value="' . $this->getTextValue($value) . '" class="form-control autocomplete"'
-            . ' data-source="' . $this->values[0]['source'] . '" data-field="' . $this->values[0]['fieldcode'] . '"'
-            . ' data-title="' . $this->values[0]['fieldtitle'] . '" ' . $specialAttributes . ' />'
-            . '</div>';
+            . ' data-field="' . $this->fieldName . '" data-source="' . $this->values[0]['source'] . '"'
+            . ' data-fieldcode="' . $this->values[0]['fieldcode'] . '" data-fieldtitle="' . $this->values[0]['fieldtitle'] . '"'
+            . ' ' . $specialAttributes . ' /></div>';
 
         return $html;
     }

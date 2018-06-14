@@ -134,8 +134,10 @@ class EditApiKey extends ExtendedController\PanelController
             if (substr($resource, -4) === '.php') {
                 $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
                 $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
-                foreach ($APIClass->getResources() as $name => $data) {
-                    $resources[] = $name;
+                if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
+                    foreach ($APIClass->getResources() as $name => $data) {
+                        $resources[] = $name;
+                    }
                 }
                 unset($APIClass);
             }
