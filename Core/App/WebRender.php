@@ -21,9 +21,11 @@ namespace FacturaScripts\Core\App;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use Twig_Environment;
 use Twig_Extension_Debug;
+use Twig_Filter;
 use Twig_Function;
 use Twig_Loader_Filesystem;
 
@@ -112,6 +114,12 @@ class WebRender
             return AssetManager::combine($fileList);
         });
         $twig->addFunction($assetCombineFunction);
+
+        /// fixHtml functions
+        $fixHtmlFunction = new Twig_Filter('fixHtml', function ($string) {
+            return Utils::fixHtml($string);
+        });
+        $twig->addFilter($fixHtmlFunction);
 
         /// debug extension
         $twig->addExtension(new Twig_Extension_Debug());
