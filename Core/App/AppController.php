@@ -283,12 +283,11 @@ class AppController extends App
     {
         $user = new User();
         $nick = $this->request->request->get('fsNick', '');
-
         if ($nick === '') {
             return $this->cookieAuth($user);
         }
 
-        if ($user->loadFromCode($nick)) {
+        if ($user->loadFromCode($nick) && $user->enabled) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                 $this->updateCookies($user, true);
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
@@ -319,7 +318,7 @@ class AppController extends App
             return false;
         }
 
-        if ($user->loadFromCode($cookieNick)) {
+        if ($user->loadFromCode($cookieNick) && $user->enabled) {
             if ($user->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                 $this->updateCookies($user);
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));

@@ -139,7 +139,7 @@ class Wizard extends Controller
             $almacen->provincia = $this->empresa->provincia;
             $almacen->ciudad = $this->empresa->ciudad;
             $almacen->save();
-
+                 
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
             $appSettings->save();
             break;

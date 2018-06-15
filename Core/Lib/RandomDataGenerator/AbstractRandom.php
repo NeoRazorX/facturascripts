@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -261,6 +261,83 @@ abstract class AbstractRandom
     }
 
     /**
+     * Returns an array with random empleados.
+     *
+     * @return Model\Agente[]
+     */
+    protected function randomAgentes()
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Agente', 'agentes');
+    }
+
+    /**
+     * Returns an array with random artículos.
+     *
+     * @return Model\Articulo[]
+     */
+    protected function randomArticulos()
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Articulo', 'articulos');
+    }
+
+    /**
+     * Returns an array with random clientes.
+     *
+     * @return Model\Cliente[]
+     */
+    protected function randomClientes()
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Cliente', 'clientes');
+    }
+
+    /**
+     * Devuelve listados de datos del model indicado.
+     *
+     * @param string $modelName
+     * @param string $tableName
+     *
+     * @return array
+     */
+    protected function randomModel($modelName, $tableName)
+    {
+        $lista = [];
+
+        $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY ';
+        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
+
+        $data = $this->dataBase->selectLimit($sql, 100, 0);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new $modelName($d);
+            }
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Returns an array with random proveedores.
+     *
+     * @return Model\Proveedor[]
+     */
+    protected function randomProveedores()
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Proveedor', 'proveedores');
+    }
+
+    /**
+     * Returns a random string of $length length
+     *
+     * @param string $length la longitud del string
+     *
+     * @return string la cadena aleatoria
+     */
+    public function randomString($length = 30)
+    {
+        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+    }
+
+    /**
      * Suffle all items from $model and put it to $variable.
      *
      * @param $variable
@@ -290,95 +367,5 @@ abstract class AbstractRandom
         }
 
         return $result;
-    }
-
-    /**
-     * Returns a random string of $length length
-     *
-     * @param string $length la longitud del string
-     *
-     * @return string la cadena aleatoria
-     */
-    public function randomString($length = 30)
-    {
-        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
-    }
-
-    /**
-     * Devuelve listados de datos del model indicado.
-     *
-     * @param string $modelName
-     * @param string $tableName
-     * @param string $functionName
-     * @param bool   $recursivo
-     *
-     * @return array
-     */
-    protected function randomModel($modelName, $tableName, $functionName, $recursivo = true)
-    {
-        $lista = [];
-
-        $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
-
-        $data = $this->dataBase->selectLimit($sql, 100, 0);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new $modelName($d);
-            }
-        } elseif ($recursivo) {
-            $this->{$functionName}();
-            $lista = $this->randomModel($modelName, $tableName, $functionName, false);
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Returns an array with random clientes.
-     *
-     * @param bool $recursivo
-     *
-     * @return Model\Cliente[]
-     */
-    protected function randomClientes($recursivo = true)
-    {
-        return $this->randomModel('\FacturaScripts\Dinamic\Model\Cliente', 'clientes', 'clientes', $recursivo);
-    }
-
-    /**
-     * Returns an array with random proveedores.
-     *
-     * @param bool $recursivo
-     *
-     * @return Model\Proveedor[]
-     */
-    protected function randomProveedores($recursivo = true)
-    {
-        return $this->randomModel('\FacturaScripts\Dinamic\Model\Proveedor', 'proveedores', 'proveedores', $recursivo);
-    }
-
-    /**
-     * Returns an array with random empleados.
-     *
-     * @param bool $recursivo
-     *
-     * @return Model\Agente[]
-     */
-    protected function randomAgentes($recursivo = true)
-    {
-        return $this->randomModel('\FacturaScripts\Dinamic\Model\Agente', 'agentes', 'agentes', $recursivo);
-    }
-
-    /**
-     * Returns an array with random artículos.
-     *
-     * @param bool $recursivo
-     *
-     * @return Model\Articulo[]
-     */
-    protected function randomArticulos($recursivo = true)
-    {
-        return $this->randomModel('\FacturaScripts\Dinamic\Model\Articulo', 'articulos', 'articulos', $recursivo);
     }
 }

@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Carlos Jiménez Gómez <carlos@evolunext.es>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class PDFExport extends PDFCore implements ExportInterface
 {
@@ -208,6 +209,8 @@ class PDFExport extends PDFCore implements ExportInterface
             'price' => $this->i18n->trans('price'),
             'discount' => $this->i18n->trans('discount'),
             'tax' => $this->i18n->trans('tax'),
+            'surcharge' => $this->$this->i18n->trans('surcharge'),
+            'irpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
         $tableData = [];
@@ -218,6 +221,8 @@ class PDFExport extends PDFCore implements ExportInterface
                 'price' => $line->pvpunitario,
                 'discount' => $line->dtopor,
                 'tax' => $line->iva,
+                'surcharge' => $line->recargo,
+                'irpf' => $line->irpf,
                 'total' => $line->pvptotal,
             ];
         }
@@ -227,6 +232,8 @@ class PDFExport extends PDFCore implements ExportInterface
             $tableData[$key]['price'] = $this->numberTools->format($value['price']);
             $tableData[$key]['discount'] = $this->numberTools->format($value['discount']);
             $tableData[$key]['tax'] = $this->numberTools->format($value['tax']);
+            $tableData[$key]['surcharge'] = $this->numberTools->format($value['surcharge']);
+            $tableData[$key]['irpf'] = $this->numberTools->format($value['irpf']);
             $tableData[$key]['total'] = $this->numberTools->format($value['total']);
         }
 
@@ -236,6 +243,8 @@ class PDFExport extends PDFCore implements ExportInterface
                 'price' => ['justification' => 'right'],
                 'discount' => ['justification' => 'right'],
                 'tax' => ['justification' => 'right'],
+                'surcharge' => ['justification' => 'right'],
+                'irpf' => ['justification' => 'right'],
                 'total' => ['justification' => 'right'],
             ],
             'shadeCol' => [0.95, 0.95, 0.95],
@@ -264,6 +273,8 @@ class PDFExport extends PDFCore implements ExportInterface
             'currency' => $this->i18n->trans('currency'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
+            'totalsSurcharge' => $this->i18n->trans('surcharge'),
+            'totalIrpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
         $rows = [
@@ -271,6 +282,8 @@ class PDFExport extends PDFCore implements ExportInterface
                 'currency' => $model->coddivisa,
                 'net' => $this->numberTools::format($model->neto, FS_NF0),
                 'taxes' => $this->numberTools::format($model->totaliva, FS_NF0),
+                'totalSurcharge' => $this->numberTools::format($model->totalrecargo, FS_NF0),
+                'totalIrpf' => $this->numberTools::format($model->totalirpf, FS_NF0),
                 'total' => $this->numberTools::format($model->total, FS_NF0),
             ]
         ];
@@ -278,6 +291,8 @@ class PDFExport extends PDFCore implements ExportInterface
             'cols' => [
                 'net' => ['justification' => 'right'],
                 'taxes' => ['justification' => 'right'],
+                'totalSurcharge' => ['justification' => 'right'],
+                'totalIrpf' => ['justification' => 'right'],
                 'total' => ['justification' => 'right'],
             ],
             'shadeCol' => [0.95, 0.95, 0.95],
@@ -326,13 +341,14 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->newLine();
 
         $tableData = [
-            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha,],
-            ['key' => $headerData['subject'], 'value' => $model->{$headerData['fieldName']},],
-            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif,],
+            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
+            ['key' => $headerData['subject'], 'value' => Base\Utils::fixHtml($model->{$headerData['fieldName']})],
+            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif],
         ];
 
         if (isset($model->direccion)) {
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccion)];
+            $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
             $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
             $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
             $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
@@ -361,27 +377,18 @@ class PDFExport extends PDFCore implements ExportInterface
      */
     private function insertBusinessDocShipping($model)
     {
-        $headerData = [
-            'name' => $this->i18n->trans('name'),
-            'surname' => $this->i18n->trans('surname'),
-            'address' => $this->i18n->trans('address'),
-            'city' => $this->i18n->trans('city'),
-            'province' => $this->i18n->trans('province'),
-            'zipCode'=> $this->i18n->trans('zip-code'),
-            'postOfficeBox'=> $this->i18n->trans('post-office-box'),
-        ];
-
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
-        
-        $tableData = [];
-        $tableData[] = ['key' => $this->i18n->trans('name'), 'value' => $model->nombreenv];
-        $tableData[] = ['key' => $this->i18n->trans('surname'), 'value' => $model->apellidosenv];
-        $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $model->direccionenv];
-        $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => $model->ciudadenv];
-        $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => $model->provinciaenv];
-        $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv];
-        $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
+
+        $tableData = [
+            ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($model->nombreenv)],
+            ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($model->apellidosenv)],
+            ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccionenv)],
+            ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv],
+            ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv],
+            ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudadenv)],
+            ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provinciaenv)],
+        ];
 
         $tableOptions = [
             'width' => $this->tableWidth,
