@@ -33,7 +33,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Wizard extends Controller
 {
+
     const ITEM_SELECT_LIMIT = 500;
+
     /**
      * Returns basic page attributes
      *
@@ -45,8 +47,10 @@ class Wizard extends Controller
         $pageData['menu'] = 'admin';
         $pageData['showonmenu'] = false;
         $pageData['icon'] = 'fa-magic';
+
         return $pageData;
     }
+
     /**
      * Returns an array with all data from selected model.
      *
@@ -59,12 +63,15 @@ class Wizard extends Controller
         $values = [];
         $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
         $model = new $modelName();
+
         $order = [$model->primaryDescriptionColumn() => 'ASC'];
         foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
             $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
         }
+
         return $values;
     }
+
     /**
      * Runs the controller's private logic.
      *
@@ -75,6 +82,7 @@ class Wizard extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $coddivisa = $this->request->request->get('coddivisa', '');
         $codpais = $this->request->request->get('codpais', '');
         if ($codpais !== '') {
@@ -85,16 +93,20 @@ class Wizard extends Controller
             $appSettings->save();
             $this->initModels();
             $this->saveAddress($appSettings, $codpais);
+
             /// change user homepage
             $this->user->homepage = 'AdminPlugins';
             $this->user->save();
+
             /// clear routes
             $appRouter = new AppRouter();
             $appRouter->clear();
+
             /// redir to EditSettings
             $this->response->headers->set('Refresh', '0; EditSettings');
         }
     }
+
     /**
      * Initialize required models.
      */
@@ -103,9 +115,11 @@ class Wizard extends Controller
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+
         $pluginManager = new PluginManager();
         $pluginManager->deploy(true, true);
     }
+
     /**
      * Save company default address.
      *
@@ -118,12 +132,14 @@ class Wizard extends Controller
         $this->empresa->provincia = $this->request->request->get('provincia');
         $this->empresa->ciudad = $this->request->request->get('ciudad');
         $this->empresa->save();
+
         $almacenModel = new Model\Almacen();
         foreach ($almacenModel->all() as $almacen) {
             $almacen->codpais = $codpais;
             $almacen->provincia = $this->empresa->provincia;
             $almacen->ciudad = $this->empresa->ciudad;
             $almacen->save();
+            
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
             $appSettings->save();
             break;
