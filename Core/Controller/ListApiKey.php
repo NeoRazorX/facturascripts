@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Controller to list the items in the ApiKey model
@@ -29,6 +29,7 @@ use FacturaScripts\Core\App\AppSettings;
  */
 class ListApiKey extends ExtendedController\ListController
 {
+
     /**
      * Returns basic page attributes
      *
@@ -52,7 +53,6 @@ class ListApiKey extends ExtendedController\ListController
     {
         $this->addView('ListApiKey', 'ApiKey');
         $this->addSearchFields('ListApiKey', ['description', 'apikey', 'nick']);
-
         $this->addOrderBy('ListApiKey', ['apikey'], 'api-key');
         $this->addOrderBy('ListApiKey', ['descripcion'], 'description');
         $this->addOrderBy('ListApiKey', ['nick'], 'nick');
@@ -60,18 +60,12 @@ class ListApiKey extends ExtendedController\ListController
         $this->addFilterCheckbox('ListApiKey', 'enabled', 'enabled', 'enabled');
     }
 
-     /**
-     * Runs the controller's private logic.
-     *
-     * @param Response                   $response
-     * @param User                       $user
-     * @param Base\ControllerPermissions $permissions
-     */
-    public function privateCore(&$response, $user, $permissions)
+    protected function execAfterAction($action)
     {
-        parent::privateCore($response, $user, $permissions);
+        if (!AppSettings::get('default', 'enable_api', '')) {
+            $this->miniLog->info($this->i18n->trans('api-disabled'));
+        }
 
-        if(!AppSettings::get('default', 'enable_api', ''))
-            $this->miniLog->info($this->i18n->trans('api-disable'));
+        return parent::execAfterAction($action);
     }
 }
