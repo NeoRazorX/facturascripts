@@ -354,7 +354,12 @@ class PDFExport extends PDFCore implements ExportInterface
         }
     }
 
-    private function insertBusinessDocShipping($model) : void
+    /**
+     * Inserts the address of delivery with the model data.
+     *
+     * @param BusinessDocument $model
+     */
+    private function insertBusinessDocShipping($model)
     {
         $headerData = [
             'name' => $this->i18n->trans('name'),
@@ -377,7 +382,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => $model->provinciaenv];
         $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv];
         $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
-        
+
         $tableOptions = [
             'width' => $this->tableWidth,
             'showHeadings' => 0,
