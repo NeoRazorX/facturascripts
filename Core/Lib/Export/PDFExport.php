@@ -326,13 +326,14 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->newLine();
 
         $tableData = [
-            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha,],
-            ['key' => $headerData['subject'], 'value' => $model->{$headerData['fieldName']},],
-            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif,],
+            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
+            ['key' => $headerData['subject'], 'value' => Base\Utils::fixHtml($model->{$headerData['fieldName']})],
+            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif],
         ];
 
         if (isset($model->direccion)) {
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccion)];
+            $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
             $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
             $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
             $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
@@ -361,27 +362,18 @@ class PDFExport extends PDFCore implements ExportInterface
      */
     private function insertBusinessDocShipping($model)
     {
-        $headerData = [
-            'name' => $this->i18n->trans('name'),
-            'surname' => $this->i18n->trans('surname'),
-            'address' => $this->i18n->trans('address'),
-            'city' => $this->i18n->trans('city'),
-            'province' => $this->i18n->trans('province'),
-            'zipCode'=> $this->i18n->trans('zip-code'),
-            'postOfficeBox'=> $this->i18n->trans('post-office-box'),
-        ];
-
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
-        
-        $tableData = [];
-        $tableData[] = ['key' => $this->i18n->trans('name'), 'value' => $model->nombreenv];
-        $tableData[] = ['key' => $this->i18n->trans('surname'), 'value' => $model->apellidosenv];
-        $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $model->direccionenv];
-        $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => $model->ciudadenv];
-        $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => $model->provinciaenv];
-        $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv];
-        $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
+
+        $tableData = [
+            ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($model->nombreenv)],
+            ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($model->apellidosenv)],
+            ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccionenv)],
+            ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv],
+            ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv],
+            ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudadenv)],
+            ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provinciaenv)],
+        ];
 
         $tableOptions = [
             'width' => $this->tableWidth,
