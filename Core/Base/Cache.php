@@ -75,12 +75,16 @@ class Cache
      *
      * @param string $key
      * @param mixed  $content
+     * @param int    $expire
      *
      * @return bool
      */
-    public function set($key, $content)
+    public function set($key, $content, $expire = 3600)
     {
-        return self::$engine->set($key, $content);
+        if (self::$engine instanceof FileCache) {
+            return self::$engine->set($key, $content);
+        }
+        return self::$engine->set($key, $content, $expire);
     }
 
     /**

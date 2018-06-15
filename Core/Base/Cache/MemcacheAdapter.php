@@ -117,7 +117,7 @@ class MemcacheAdapter implements AdaptorInterface
      *
      * @return bool whether if the operation was successful or not
      */
-    public function set($key, $content, $expire = 5400)
+    public function set($key, $content, $expire = 3600)
     {
         $this->minilog->debug($this->i18n->trans('memcache-set-key-item', ['%item%' => $key]));
         if (self::$connected) {
