@@ -350,7 +350,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->pdf->ezText('');
 
         if (isset($model->direccionenv) && $model->direccionenv !== '') {
-            $this->addedShippingSection($model);
+            $this->insertBusinessDocShipping($model);
         }
     }
 
@@ -368,7 +368,8 @@ class PDFExport extends PDFCore implements ExportInterface
 
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
-
+        
+        $tableData = [];
         $tableData[] = ['key' => $this->i18n->trans('name'), 'value' => $model->nombreenv];
         $tableData[] = ['key' => $this->i18n->trans('surname'), 'value' => $model->apellidosenv];
         $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $model->direccionenv];
@@ -376,7 +377,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => $model->provinciaenv];
         $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv];
         $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
-
+        
         $tableOptions = [
             'width' => $this->tableWidth,
             'showHeadings' => 0,
