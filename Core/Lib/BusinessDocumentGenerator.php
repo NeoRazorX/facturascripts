@@ -30,11 +30,11 @@ class BusinessDocumentGenerator
 
     public function generate(BusinessDocument $prototype, string $newClass)
     {
-        $exclude = ['idestado', 'fecha', 'hora'];
+        $exclude = ['codigo', 'idestado', 'fecha', 'hora', 'numero'];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
-        foreach ($prototype->getModelFields() as $field => $value) {
-            if (in_array($field, $exclude)) {
+        foreach (array_keys($prototype->getModelFields()) as $field) {
+            if (in_array($field, $exclude) || !property_exists($newDocClass, $field)) {
                 continue;
             }
 

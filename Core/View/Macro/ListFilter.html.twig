@@ -83,8 +83,8 @@
                         </button>
                     </span>
                 {% endif %}
-                <input type="text" value="{{ filter.getCurrentValue() }}" class="form-control autocomplete" data-source="{{ filter.options.table }}"
-                       data-field="{{ filter.options.fieldcode }}" data-title="{{ filter.options.fieldtitle }}" placeholder="{{ label }}" autocomplete="off"/>
+                <input type="text" value="{{ filter.getCurrentValue() }}" class="form-control autocomplete" data-field="{{ key }}" data-source="{{ filter.options.table }}"
+                       data-fieldcode="{{ filter.options.fieldcode }}" data-fieldtitle="{{ filter.options.fieldtitle }}" placeholder="{{ label }}" autocomplete="off"/>
             </div>
         </div>
     </div>

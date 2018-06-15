@@ -58,7 +58,7 @@
                     </span>
                     <input type="text" id="doc_total" name="total" value="{{ model.total }}" class="form-control text-right" disabled="" />
                     <div class="input-group-append">
-                        <button type="button" class="btn btn-primary" onclick="documentSave()">
+                        <button type="button" class="btn btn-primary" onclick="documentSave();">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -77,7 +77,7 @@
         <br/>
         <div class="form-row">
             <div class="col">
-                <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary')">
+                <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary');">
                     <i class="fa fa-trash" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ context.i18n.trans('delete') }}</span>
                 </a>
@@ -88,7 +88,7 @@
             {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
             {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
             <div class="col text-right">
-                <button type="button" class="btn btn-sm btn-primary" onclick="documentSave()">
+                <button type="button" class="btn btn-sm btn-primary" onclick="documentSave();">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
                 </button>
             </div>
@@ -150,7 +150,7 @@
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente|raw }}" class="form-control autocomplete"
-                   data-source="clientes" data-field="codcliente" data-title="nombre"
+                   data-field="{{ id }}" data-source="clientes" data-fieldcode="codcliente" data-fieldtitle="nombre"
                    placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-append">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newCustomerModal">
@@ -198,7 +198,7 @@
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombre|raw }}" class="form-control autocomplete"
-                   data-source="proveedores" data-field="codproveedor" data-title="nombre"
+                   data-field="{{ id }}" data-source="proveedores" data-fieldcode="codproveedor" data-fieldtitle="nombre"
                    placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-append">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newSupplierModal">

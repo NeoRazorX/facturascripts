@@ -466,10 +466,10 @@ abstract class BusinessDocument extends ModelClass
     private function newCodigo()
     {
         $this->numero = '1';
-
         $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
             . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
-            . " AND codserie = " . self::$dataBase->var2str($this->codserie) . ";";
+            . " AND codserie = " . self::$dataBase->var2str($this->codserie)
+            . " AND idempresa = " . self::$dataBase->var2str($this->idempresa) . ";";
 
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {

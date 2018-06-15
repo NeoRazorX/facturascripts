@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -214,14 +214,14 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     protected function autocompleteAction(): array
     {
         $results = [];
-        $data = $this->requestGet(['source', 'field', 'title', 'term']);
-        $fields = $data['field'] . '|' . $data['title'];
+        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'codejercicio']);
+        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
         $where = [
-            new DataBaseWhere('codejercicio', '2018'),
+            new DataBaseWhere('codejercicio', $data['codejercicio']),
             new DataBaseWhere($fields, mb_strtolower($data['term']), 'LIKE')
         ];
 
-        foreach (CodeModel::all($data['source'], $data['field'], $data['title'], false, $where) as $row) {
+        foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
             $results[] = ['key' => $row->code, 'value' => $row->description];
         }
         return $results;

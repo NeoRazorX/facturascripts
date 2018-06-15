@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -184,10 +184,29 @@ class Subcuenta extends Base\ModelClass
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codcuenta', $this->codcuenta),
         ];
-
         $account = new Cuenta();
         $account->loadFromCode('', $where);
+
         return $account->idcuenta;
+    }
+
+    /**
+     * Load de ID for subAccount
+     *
+     * @return int
+     */
+    public function getIdSubaccount(): int
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+        ];
+        $subaccount = new Subcuenta();
+        foreach ($subaccount->all($where) as $subc) {
+            return $subc->idsubcuenta;
+        }
+
+        return 0;
     }
 
     /**
