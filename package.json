@@ -30,7 +30,7 @@
     "bootstrap": "^4.1.1",
     "chart.js": "^2.7.2",
     "font-awesome": "^4.x",
-    "handsontable": "^0.37.0",
+    "handsontable": "^4.0.0",
     "jquery": "^3.x",
     "jquery-ui-dist": "^1.12.x",
     "jscolor-picker": "^2.0.4",
