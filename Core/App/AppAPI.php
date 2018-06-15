@@ -95,9 +95,8 @@ class AppAPI extends App
             return false;
         }
 
-        $apiKey = new ApiKey();
-        $this->apiKey = $apiKey->loadFromCode('', [new DataBaseWhere('apikey', $token)]);
-        return $ret;
+        $this->apiKey = new ApiKey();
+        return $this->apiKey->loadFromCode('', [new DataBaseWhere('apikey', $token)]);
     }
 
     /**
@@ -109,7 +108,7 @@ class AppAPI extends App
     {
         $method = $this->request->getMethod();
 
-        $apiAccess = new \ApiAccess();
+        $apiAccess = new ApiAccess();
         if ($apiAccess === null) {
             return false;
         }
