@@ -84,7 +84,7 @@ class APCAdapter implements AdaptorInterface
      *
      * @return bool whether if the operation was successful or not
      */
-    public function set($key, $content, $expire = 5400)
+    public function set($key, $content, $expire = 3600)
     {
         $this->minilog->debug($this->i18n->trans('apc-set-key-item', ['%item%' => $key]));
 
