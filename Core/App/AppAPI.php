@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Model\ApiKey;
+use FacturaScripts\Core\Model\ApiAccess;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,11 +34,11 @@ class AppAPI extends App
 {
 
     /**
-     * Contains the idApiKey for the constraints
+     * Contains the ApiKey model
      *
      * @var int $idApiKey
      */
-    protected $idApiKey;
+    protected $apiKey;
 
     /**
      * Runs the API.
@@ -95,9 +96,7 @@ class AppAPI extends App
         }
 
         $apiKey = new ApiKey();
-        $ret = $apiKey->loadFromCode('', [new DataBaseWhere('apikey', $token)]);
-        // Assing to idApiKey the id of the user associated with the token
-        $this->idApiKey = $apiKey->id;
+        $this->apiKey = $apiKey->loadFromCode('', [new DataBaseWhere('apikey', $token)]);
         return $ret;
     }
 
@@ -110,12 +109,12 @@ class AppAPI extends App
     {
         $method = $this->request->getMethod();
 
-        $apiAccess = new \FacturaScripts\Core\Model\ApiAccess();
+        $apiAccess = new \ApiAccess();
         if ($apiAccess === null) {
-            $this->fatalError('API-ERROR', Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
-        $where = [new DataBaseWhere('idapikey', $this->idApiKey)];
+
+        $where = [new DataBaseWhere('idapikey', $this->apiKey->id)];
         $constraints = $apiAccess->all($where);
         $result = null;
 
@@ -145,7 +144,6 @@ class AppAPI extends App
             }
         }
 
-        $this->fatalError('FORBIDDEN', Response::HTTP_FORBIDDEN);
         return false;
     }
 
