@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
@@ -104,24 +102,5 @@ class ApiKey extends Base\ModelClass
         $this->description = '';
         $this->enabled = false;
         $this->creationdate = date('d-m-Y');
-    }
-
-    /**
-     * Checks the token provided as api key
-     *
-     * @param string $token The token to check as api key
-     *
-     * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
-     *
-     * @return boolean
-     */
-    public function checkAuthToken(string $token)
-    {
-        // SELECT id FROM api_keys WHERE apikey='TOKEN' AND enabled=1
-        $where = [
-            new DataBaseWhere('apikey', $token),
-            new DataBaseWhere('enabled', true)
-        ];
-        return $this->loadFromCode('', $where);
     }
 }
