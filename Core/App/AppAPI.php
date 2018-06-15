@@ -36,7 +36,7 @@ class AppAPI extends App
     /**
      * Contains the ApiKey model
      *
-     * @var int $idApiKey
+     * @var int $apiKey
      */
     protected $apiKey;
 
