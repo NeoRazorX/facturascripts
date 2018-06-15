@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Description of Wizard
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class Wizard extends Controller
 {
@@ -147,5 +148,16 @@ class Wizard extends Controller
             $appSettings->save();
             break;
         }
+    }
+
+    /**
+     * Save user and password
+     *
+     * @return void
+     */
+    private function savePassword() : void
+    {
+        $this->user->nick = $this->request->request->get('usuario');
+        $this->user->password = $this->request->request->get('password');
     }
 }
