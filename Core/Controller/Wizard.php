@@ -98,6 +98,9 @@ class Wizard extends Controller
             $this->user->homepage = 'AdminPlugins';
             $this->user->save();
 
+            /// change default log values to enabled
+            $this->enableLogs();
+
             /// clear routes
             $appRouter = new AppRouter();
             $appRouter->clear();
@@ -144,5 +147,18 @@ class Wizard extends Controller
             $appSettings->save();
             break;
         }
+    }
+
+    /**
+     * Enable all logs by default.
+     */
+    private function enableLogs()
+    {
+        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+        $appSettings = new AppSettings();
+        foreach ($types as $type) {
+            $appSettings->set('log', $type, 'true');
+        }
+        $appSettings->save();
     }
 }
