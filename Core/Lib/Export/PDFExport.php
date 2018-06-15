@@ -297,7 +297,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $headerData = [
             'title' => $this->i18n->trans('delivery-note'),
             'subject' => $this->i18n->trans('customer'),
-            'fieldName' => 'nombrecliente',
+            'fieldName' => 'nombrecliente'
         ];
 
         if (isset($model->codproveedor)) {
@@ -338,6 +338,50 @@ class PDFExport extends PDFCore implements ExportInterface
             $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
             $tableData[] = ['key' => $this->i18n->trans('country'), 'value' => $this->getCountryName($model->codpais)];
         }
+
+        $tableOptions = [
+            'width' => $this->tableWidth,
+            'showHeadings' => 0,
+            'shaded' => 0,
+            'lineCol' => [1, 1, 1],
+            'cols' => [],
+        ];
+        $this->insertParalellTable($tableData, '', $tableOptions);
+        $this->pdf->ezText('');
+
+        if (isset($model->direccionenv) && $model->direccionenv !== '') {
+            $this->insertBusinessDocShipping($model);
+        }
+    }
+
+    /**
+     * Inserts the address of delivery with the model data.
+     *
+     * @param BusinessDocument $model
+     */
+    private function insertBusinessDocShipping($model)
+    {
+        $headerData = [
+            'name' => $this->i18n->trans('name'),
+            'surname' => $this->i18n->trans('surname'),
+            'address' => $this->i18n->trans('address'),
+            'city' => $this->i18n->trans('city'),
+            'province' => $this->i18n->trans('province'),
+            'zipCode'=> $this->i18n->trans('zip-code'),
+            'postOfficeBox'=> $this->i18n->trans('post-office-box'),
+        ];
+
+        $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
+        $this->newLine();
+        
+        $tableData = [];
+        $tableData[] = ['key' => $this->i18n->trans('name'), 'value' => $model->nombreenv];
+        $tableData[] = ['key' => $this->i18n->trans('surname'), 'value' => $model->apellidosenv];
+        $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $model->direccionenv];
+        $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => $model->ciudadenv];
+        $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => $model->provinciaenv];
+        $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv];
+        $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
 
         $tableOptions = [
             'width' => $this->tableWidth,
