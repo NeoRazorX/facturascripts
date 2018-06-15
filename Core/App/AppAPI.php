@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Model\ApiKey;
+use FacturaScripts\Core\Model\ApiAccess;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,6 +32,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
+    /**
+     * Contains the ApiKey model
+     *
+     * @var int $apiKey
+     */
+    protected $apiKey;
 
     /**
      * Runs the API.
@@ -62,13 +71,18 @@ class AppAPI extends App
             return false;
         }
 
+        if (!$this->isAllowed()) {
+            $this->fatalError('FORBIDDEN', Response::HTTP_FORBIDDEN);
+            return false;
+        }
+
         return $this->selectVersion();
     }
 
     /**
      * Check authentication using one of the supported tokens.
-     * In the header you have to pass a token using the header 'Token' or the 
-     * standard 'X-Auth-Token', returning true if the token passed by any of 
+     * In the header you have to pass a token using the header 'Token' or the
+     * standard 'X-Auth-Token', returning true if the token passed by any of
      * those headers is valid.
      *
      * @return boolean
@@ -77,7 +91,59 @@ class AppAPI extends App
     {
         $altToken = $this->request->headers->get('Token', '');
         $token = $this->request->headers->get('X-Auth-Token', $altToken);
-        return empty($token) ? false : (new ApiKey())->checkAuthToken($token);
+        if (empty($token)) {
+            return false;
+        }
+
+        $this->apiKey = new ApiKey();
+        return $this->apiKey->loadFromCode('', [new DataBaseWhere('apikey', $token)]);
+    }
+
+    /**
+     * returns true if the token user has the requested access to the resource
+     *
+     * @return bool
+     */
+    public function isAllowed(): bool
+    {
+        $method = $this->request->getMethod();
+
+        $apiAccess = new ApiAccess();
+        if ($apiAccess === null) {
+            return false;
+        }
+
+        $where = [new DataBaseWhere('idapikey', $this->apiKey->id)];
+        $constraints = $apiAccess->all($where);
+        $result = null;
+
+        $resource = $this->getUriParam(2);
+        if ($resource === '') {
+            return true;
+        }
+
+        foreach ($constraints as $value) {
+            if ($value->resource === $resource) {
+                $result = (array) $value;
+            }
+        }
+
+        if ($result !== null) {
+            if ($method == 'POST' && $result['allowpost']) {
+                return true;
+            }
+            if ($method == 'GET' && $result['allowget']) {
+                return true;
+            }
+            if ($method == 'PUT' && $result['allowput']) {
+                return true;
+            }
+            if ($method == 'DELETE' && $result['allowdelete']) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -97,8 +163,8 @@ class AppAPI extends App
     }
 
     /**
-     * Go through all the files in the /Dinamic/Lib/API, collecting the name of 
-     * all available resources in each of them, and adding them to an array that 
+     * Go through all the files in the /Dinamic/Lib/API, collecting the name of
+     * all available resources in each of them, and adding them to an array that
      * is returned.
      *
      * @return array
@@ -111,16 +177,16 @@ class AppAPI extends App
             if (substr($resource, -4) === '.php') {
                 // The name of the class will be the same as that of the file
                 // without the php extension.
-                // 
-                // Classes will be descendants of Base/APIResourceClass
+                //
+                // Classes will be descendants of Base/APIResourceClass.
                 $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
                 $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
                 if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
-                    // getResources obtains an associative array of arrays generated 
-                    // with setResource ('name'). These arrays keep the name of the class 
+                    // getResources obtains an associative array of arrays generated
+                    // with setResource ('name'). These arrays keep the name of the class
                     // and the resource so that they can be invoked later.
                     //
-                    // This allows using different API extensions, and not just the 
+                    // This allows using different API extensions, and not just the
                     // usual Lib/API/APIModel.
                     $resources[] = $APIClass->getResources();
                 }
@@ -172,8 +238,8 @@ class AppAPI extends App
         }
 
         $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n, $params);
-        if (isset($APIClass)) {
-            return $APIClass->processResource($map[$resourceName]['Name'], $params);
+        if (isset($APIClass) && method_exists($APIClass, 'processResource')) {
+            return $APIClass->processResource($map[$resourceName]['Name']);
         }
 
         $this->fatalError('database-error', Response::HTTP_INTERNAL_SERVER_ERROR);
