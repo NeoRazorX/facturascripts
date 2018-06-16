@@ -58,7 +58,6 @@ class PDFExport extends PDFCore implements ExportInterface
     {
         $this->newPage();
         $this->insertHeader($model->idempresa);
-
         $this->insertBusinessDocHeader($model);
         $this->insertBusinessDocBody($model);
         $this->insertBusinessDocFooter($model);
@@ -209,7 +208,7 @@ class PDFExport extends PDFCore implements ExportInterface
             'price' => $this->i18n->trans('price'),
             'discount' => $this->i18n->trans('discount'),
             'tax' => $this->i18n->trans('tax'),
-            'surcharge' => $this->$this->i18n->trans('surcharge'),
+            'surcharge' => $this->i18n->trans('surcharge'),
             'irpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
@@ -217,26 +216,17 @@ class PDFExport extends PDFCore implements ExportInterface
         foreach ($model->getlines() as $line) {
             $tableData[] = [
                 'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $line->cantidad,
-                'price' => $line->pvpunitario,
-                'discount' => $line->dtopor,
-                'tax' => $line->iva,
-                'surcharge' => $line->recargo,
-                'irpf' => $line->irpf,
-                'total' => $line->pvptotal,
+                'quantity' => $this->numberTools->format($line->cantidad),
+                'price' => $this->numberTools->format($line->pvpunitario),
+                'discount' => $this->numberTools->format($line->dtopor),
+                'tax' => $this->numberTools->format($line->iva),
+                'surcharge' => $this->numberTools->format($line->recargo),
+                'irpf' => $this->numberTools->format($line->irpf),
+                'total' => $this->numberTools->format($line->pvptotal),
             ];
         }
 
-        $this->removeEmptyCols($tableData, $headers);
-        foreach ($tableData as $key => $value) {
-            $tableData[$key]['price'] = $this->numberTools->format($value['price']);
-            $tableData[$key]['discount'] = $this->numberTools->format($value['discount']);
-            $tableData[$key]['tax'] = $this->numberTools->format($value['tax']);
-            $tableData[$key]['surcharge'] = $this->numberTools->format($value['surcharge']);
-            $tableData[$key]['irpf'] = $this->numberTools->format($value['irpf']);
-            $tableData[$key]['total'] = $this->numberTools->format($value['total']);
-        }
-
+        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
         $tableOptions = [
             'cols' => [
                 'quantity' => ['justification' => 'right'],
@@ -273,20 +263,21 @@ class PDFExport extends PDFCore implements ExportInterface
             'currency' => $this->i18n->trans('currency'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
-            'totalsSurcharge' => $this->i18n->trans('surcharge'),
+            'totalSurcharge' => $this->i18n->trans('surcharge'),
             'totalIrpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
         $rows = [
             [
                 'currency' => $model->coddivisa,
-                'net' => $this->numberTools::format($model->neto, FS_NF0),
-                'taxes' => $this->numberTools::format($model->totaliva, FS_NF0),
-                'totalSurcharge' => $this->numberTools::format($model->totalrecargo, FS_NF0),
-                'totalIrpf' => $this->numberTools::format($model->totalirpf, FS_NF0),
-                'total' => $this->numberTools::format($model->total, FS_NF0),
+                'net' => $this->numberTools->format($model->neto),
+                'taxes' => $this->numberTools->format($model->totaliva),
+                'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
+                'totalIrpf' => $this->numberTools->format($model->totalirpf),
+                'total' => $this->numberTools->format($model->total),
             ]
         ];
+        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
         $tableOptions = [
             'cols' => [
                 'net' => ['justification' => 'right'],

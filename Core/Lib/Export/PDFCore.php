@@ -286,16 +286,17 @@ class PDFCore
 
     /**
      * Remove the empty columns to save space.
-     *
-     * @param $tableData
-     * @param $tableColsTitle
+     * 
+     * @param array $tableData
+     * @param array $tableColsTitle
+     * @param mixed $customEmptyValue
      */
-    protected function removeEmptyCols(&$tableData, &$tableColsTitle)
+    protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
     {
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if (!empty($row[$key])) {
+                if (!empty($row[$key]) && $row[$key] != $customEmptyValue) {
                     $remove = false;
                     break;
                 }
