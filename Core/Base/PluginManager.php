@@ -31,9 +31,9 @@ class PluginManager
 {
 
     /**
-     * Minimum version required of FacturaScripts.
+     * FacturaScripts core version.
      */
-    const MIN_VERSION = 2018;
+    const CORE_VERSION = 2018.005;
 
     /**
      * Path to list plugins on file.
@@ -349,11 +349,11 @@ class PluginManager
                 $info['require'] = explode(',', $ini['require']);
             }
 
-            if ($info['min_version'] >= 2018 && $info['min_version'] <= self::MIN_VERSION) {
+            if ($info['min_version'] >= 2018 && $info['min_version'] <= self::CORE_VERSION) {
                 $info['compatible'] = true;
                 $info['description'] = ('Incompatible' === $info['description']) ? self::$i18n->trans('compatible') : $info['description'];
             } else {
-                $info['description'] = self::$i18n->trans('incompatible-with-facturascripts', ['%version%' => self::MIN_VERSION]);
+                $info['description'] = self::$i18n->trans('incompatible-with-facturascripts', ['%version%' => self::CORE_VERSION]);
             }
 
             $info['enabled'] = in_array($info['name'], $this->enabledPlugins());
