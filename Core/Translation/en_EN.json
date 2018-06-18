@@ -339,6 +339,7 @@
     "not-valid-client-business-name": "Invalid customer's business name: %businessName% %fieldName%",
     "not-valid-client-code": "Invalid customer code: %customerCode% %fieldName%",
     "not-valid-client-name": "Invalid customer name: %customerName% %fieldName%",
+    "not-valid-contact-name": "Invalid contact name: %contactName% %fieldName%",
     "not-valid-description-tax": "Invalid tax description.",
     "not-valid-supplier-business-name": "Invalid supplier's business name.",
     "not-valid-supplier-code": "Invalid supplier code.",
