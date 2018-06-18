@@ -84,8 +84,12 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
+        //Show message if user and password are admin
         if($user->verifyPassword('admin'))
             $this->miniLog->warning($this->i18n->trans('you-should-change-the-default-user-and-password'));
+
+        //Save the new password
+        $this->savePassword();
 
         $coddivisa = $this->request->request->get('coddivisa', '');
         $codpais = $this->request->request->get('codpais', '');
@@ -101,6 +105,9 @@ class Wizard extends Controller
             /// change user homepage
             $this->user->homepage = 'AdminPlugins';
             $this->user->save();
+
+            /// change default log values to enabled
+            $this->enableLogs();
 
             /// clear routes
             $appRouter = new AppRouter();
@@ -143,7 +150,7 @@ class Wizard extends Controller
             $almacen->provincia = $this->empresa->provincia;
             $almacen->ciudad = $this->empresa->ciudad;
             $almacen->save();
-
+                 
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
             $appSettings->save();
             break;
@@ -151,13 +158,29 @@ class Wizard extends Controller
     }
 
     /**
-     * Save user and password
+     * Save the new password if data is admin admin
      *
      * @return void
      */
-    private function savePassword() : void
+    private function savePassword()
     {
-        $this->user->nick = $this->request->request->get('usuario');
-        $this->user->password = $this->request->request->get('password');
+        $pass = $this->request->request->get('password');
+        $repeatPass = $this->request->request->get('repassword');
+
+        if ($pass === $repeatPass)
+            var_dump($pass);
+    }
+
+    /**
+     * Enable all logs by default.
+     */
+    private function enableLogs()
+    {
+        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+        $appSettings = new AppSettings();
+        foreach ($types as $type) {
+            $appSettings->set('log', $type, 'true');
+        }
+        $appSettings->save();
     }
 }

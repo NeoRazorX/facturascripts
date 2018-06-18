@@ -195,17 +195,32 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $function = 'get' . str_replace("-", "", $viewName);
-        $this->$function($view);
+        switch ($viewName) {
+            case 'EditRegularizacionImpuesto':
+                $this->getEditRegularizacionImpuesto($view);
+                break;
+            case 'ListPartida':
+                $this->getListPartida($view);
+                break;
+            case 'ListPartidaImpuestoResumen':
+                $this->getListPartidaImpuestoResumen($view);
+                break;
+            case 'ListPartidaImpuesto-1':
+                $this->getListPartidaImpuesto1($view);
+                break;
+            case 'ListPartidaImpuesto-2':
+                $this->getListPartidaImpuesto2($view);
+                break;
+        }
     }
 
-    private function getEditRegularizacionImpuesto($view) : void
+    private function getEditRegularizacionImpuesto($view)
     {
         $code = $this->request->get('code');
         $view->loadData($code);
     }
 
-    private function getListPartida($view) : void
+    private function getListPartida($view)
     {
         $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
         if (!empty($idasiento)) {
@@ -214,7 +229,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         }
     } 
 
-    private function getListPartidaImpuestoResumen($view) : void 
+    private function getListPartidaImpuestoResumen($view)
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
         if (!empty($id)) {
@@ -238,7 +253,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         }
     }
 
-    private function getListPartidaImpuesto1($view) : void
+    private function getListPartidaImpuesto1($view)
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
         if (!empty($id)) {
@@ -255,7 +270,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         }
     }
 
-    private function getListPartidaImpuesto2($view) : void
+    private function getListPartidaImpuesto2($view)
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
         if (!empty($id)) {

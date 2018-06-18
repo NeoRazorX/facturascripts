@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\Cache;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -31,12 +30,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 class MemcacheAdapter implements AdaptorInterface
 {
-    /**
-     * Memcache object
-     *
-     * @var \Memcache
-     */
-    private static $memcache;
 
     /**
      * True if connected, or False when not
@@ -51,6 +44,13 @@ class MemcacheAdapter implements AdaptorInterface
      * @var Translator
      */
     private $i18n;
+
+    /**
+     * Memcache object
+     *
+     * @var \Memcache
+     */
+    private static $memcache;
 
     /**
      * MiniLog object
@@ -71,7 +71,7 @@ class MemcacheAdapter implements AdaptorInterface
         self::$connected = false;
         if (self::$memcache === null) {
             self::$memcache = new \Memcache();
-            if (@self::$memcache->connect(FS_CACHE_HOST, (int) FS_CACHE_PORT)) {
+            if (self::$memcache->connect(\FS_CACHE_HOST, (int) \FS_CACHE_PORT)) {
                 self::$connected = true;
                 $this->minilog->debug($this->i18n->trans('using-memcache'));
             } else {
@@ -81,13 +81,35 @@ class MemcacheAdapter implements AdaptorInterface
     }
 
     /**
-     * Return if is connected or not.
+     * Flush all cache.
      *
-     * @return bool
+     * @return bool always true
      */
-    public function isConnected()
+    public function clear()
     {
-        return self::$connected;
+        $this->minilog->debug($this->i18n->trans('memcache-clear'));
+        if (self::$connected) {
+            return self::$memcache->flush();
+        }
+
+        return false;
+    }
+
+    /**
+     * Delete data from cache.
+     *
+     * @param string $key
+     *
+     * @return bool true if the data was removed successfully
+     */
+    public function delete($key)
+    {
+        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', ['%item%' => $key]));
+        if (self::$connected) {
+            return self::$memcache->delete(\FS_CACHE_PREFIX . $key);
+        }
+
+        return false;
     }
 
     /**
@@ -102,10 +124,30 @@ class MemcacheAdapter implements AdaptorInterface
         if (self::$connected) {
             $this->minilog->debug($this->i18n->trans('memcache-get-key-item', ['%item%' => $key]));
 
-            return self::$memcache->get(FS_CACHE_PREFIX . $key);
+            /**
+             * Memcache::get() returns false if key is not found.
+             * To distinguish this case from when it is stored false, whe must use $falgs.
+             */
+            $flags = false;
+            $data = self::$memcache->get(\FS_CACHE_PREFIX . $key, $flags);
+            if (false === $data && false === $flags) {
+                return null;
+            }
+
+            return $data;
         }
 
-        return false;
+        return null;
+    }
+
+    /**
+     * Return if is connected or not.
+     *
+     * @return bool
+     */
+    public function isConnected()
+    {
+        return self::$connected;
     }
 
     /**
@@ -117,46 +159,11 @@ class MemcacheAdapter implements AdaptorInterface
      *
      * @return bool whether if the operation was successful or not
      */
-    public function set($key, $content, $expire = 5400)
+    public function set($key, $content, $expire)
     {
         $this->minilog->debug($this->i18n->trans('memcache-set-key-item', ['%item%' => $key]));
         if (self::$connected) {
-            return self::$memcache->set(FS_CACHE_PREFIX . $key, $content, 0, $expire);
-        }
-
-        return false;
-    }
-
-    /**
-     * Delete data from cache.
-     * If $key is string, only delete one key.
-     * If $key is array, delete all key strings on array.
-     *
-     * @param string $key
-     *
-     * @return bool true if the data was removed successfully
-     */
-    public function delete($key)
-    {
-        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', ['%item%' => $key]));
-
-        if (self::$connected) {
-            return self::$memcache->delete(FS_CACHE_PREFIX . $key);
-        }
-
-        return false;
-    }
-
-    /**
-     * Flush all cache.
-     *
-     * @return bool always true
-     */
-    public function clear()
-    {
-        $this->minilog->debug($this->i18n->trans('memcache-clear'));
-        if (self::$connected) {
-            return self::$memcache->flush();
+            return self::$memcache->set(\FS_CACHE_PREFIX . $key, $content, 0, $expire);
         }
 
         return false;

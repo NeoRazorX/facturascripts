@@ -21,19 +21,18 @@
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 
-var tabActive = '';
+var tabActive = "";
 var settings = {};
 var urls = {};
-
 /**
  * Send a action to controller
  *
  * @param {string} actionValue
  */
 function execActionForm(actionValue) {
-    var form = document.getElementById('form' + tabActive);
-    $('<input>').attr({type: 'hidden', name: 'action'}).appendTo(form);
-    $('<input>').attr({type: 'hidden', name: 'code'}).appendTo(form);
+    var form = document.getElementById("form" + tabActive);
+    $("<input>").attr({type: "hidden", name: "action"}).appendTo(form);
+    $("<input>").attr({type: "hidden", name: "code"}).appendTo(form);
     var lineCodes = getLineCodes();
     form.action.value = actionValue;
     form.code.value = lineCodes.join();
@@ -53,16 +52,16 @@ function execActionForm(actionValue) {
  */
 function getAutocompleteData(formName, field, source, fieldcode, fieldtitle, term) {
     var formData = {};
-    var rawForm = $('form[name="' + formName + '"]').serializeArray();
+    var rawForm = $("form[name=" + formName + "]").serializeArray();
     $.each(rawForm, function (i, input) {
         formData[input.name] = input.value;
     });
-    formData['action'] = 'autocomplete';
-    formData['field'] = field;
-    formData['source'] = source;
-    formData['fieldcode'] = fieldcode;
-    formData['fieldtitle'] = fieldtitle;
-    formData['term'] = term;
+    formData["action"] = "autocomplete";
+    formData["field"] = field;
+    formData["source"] = source;
+    formData["fieldcode"] = fieldcode;
+    formData["fieldtitle"] = fieldtitle;
+    formData["term"] = term;
     return formData;
 }
 
@@ -73,8 +72,8 @@ function getAutocompleteData(formName, field, source, fieldcode, fieldtitle, ter
  */
 function getLineCodes() {
     var lineCodes = [];
-    $('.tab' + tabActive + ' .listAction').each(function () {
-        if ($(this).prop('checked')) {
+    $(".tab" + tabActive + " .listAction").each(function () {
+        if ($(this).prop("checked")) {
             lineCodes.push($(this).val());
         }
     });
@@ -87,8 +86,8 @@ function getLineCodes() {
  * @param {string} option
  */
 function goToExport(option) {
-    $('#form' + tabActive).append('<input type="hidden" name="option" value="' + option + '"/>');
-    execActionForm('export');
+    $("#form" + tabActive).append("<input type=\"hidden\" name=\"option\" value=\"" + option + "\"/>");
+    execActionForm("export");
 }
 
 /**
@@ -97,11 +96,11 @@ function goToExport(option) {
  * @param {string} url
  */
 function goToOptions(url) {
-    var previous = '';
-    if (typeof url !== 'undefined') {
-        previous = '&url=' + encodeURIComponent(url + '?active=' + tabActive);
+    var previous = "";
+    if (typeof url !== "undefined") {
+        previous = "&url=" + encodeURIComponent(url + "?active=" + tabActive);
     }
-    window.location.href = 'EditPageOption?code=' + tabActive + previous;
+    window.location.href = "EditPageOption?code=" + tabActive + previous;
 }
 
 /**
@@ -119,9 +118,9 @@ function insertRecord() {
  * @param {string} operator
  */
 function setOperator(buttonID, operator) {
-    document.getElementById(buttonID + '-operator').value = operator;
-    document.getElementById(buttonID + '-btn').value = operator;
-    $('#form' + tabActive).submit();
+    document.getElementById(buttonID + "-operator").value = operator;
+    document.getElementById(buttonID + "-btn").value = operator;
+    $("#form" + tabActive).submit();
 }
 
 /**
@@ -130,8 +129,8 @@ function setOperator(buttonID, operator) {
  * @param {string} value
  */
 function setOrder(value) {
-    $("#form" + tabActive + " :input[name='order']").val(value);
-    $('#form' + tabActive).submit();
+    $("#form" + tabActive + " :input[name=\"order\"]").val(value);
+    $("#form" + tabActive).submit();
 }
 
 /**
@@ -139,9 +138,9 @@ function setOrder(value) {
  */
 function setInsertStatus() {
     if (settings[tabActive].insert) {
-        document.getElementById('b_new_record').classList.remove('disabled');
+        document.getElementById("b_new_record").classList.remove("disabled");
     } else {
-        document.getElementById('b_new_record').classList.add('disabled');
+        document.getElementById("b_new_record").classList.add("disabled");
     }
 }
 
@@ -165,15 +164,15 @@ function showInfoCard(actionValue)
  */
 $(document).ready(function () {
     // set focus on tab change
-    $('#mainTabs').on('shown.bs.tab', function (e) {
+    $("#mainTabs").on("shown.bs.tab", function (e) {
         tabActive = e.target.hash.substring(1);
-        $('#form' + tabActive + ' :text:first').focus().select();
+        $("#form" + tabActive + " :text:first").focus().select();
         setInsertStatus();
     });
     // set/unset all delete checkbox
-    $('.listActionCB').click(function () {
-        var checked = $(this).prop('checked');
-        $('.listAction').prop('checked', checked);
+    $(".listActionCB").click(function () {
+        var checked = $(this).prop("checked");
+        $(".listAction").prop("checked", checked);
     });
     // Update button insert status
     setInsertStatus();

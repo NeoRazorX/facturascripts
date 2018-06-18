@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\Cache;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 class APCAdapter implements AdaptorInterface
 {
+
     /**
      * Translator object
      *
@@ -52,57 +52,7 @@ class APCAdapter implements AdaptorInterface
     {
         $this->i18n = new Translator();
         $this->minilog = new MiniLog();
-
         $this->minilog->debug($this->i18n->trans('using-apc'));
-    }
-
-    /**
-     * Get the data associated with a key.
-     *
-     * @param string $key
-     *
-     * @return mixed the content you put in, or null if expired or not found
-     */
-    public function get($key)
-    {
-        $this->minilog->debug($this->i18n->trans('apc-get-key-item', ['%item%' => $key]));
-        if (apc_exists(FS_CACHE_PREFIX . $key)) {
-            $result = apc_fetch(FS_CACHE_PREFIX . $key);
-
-            return ($result === false) ? null : $result;
-        }
-
-        return null;
-    }
-
-    /**
-     * Put content into the cache.
-     *
-     * @param string $key
-     * @param mixed  $content the the content you want to store
-     * @param int    $expire  time to expire
-     *
-     * @return bool whether if the operation was successful or not
-     */
-    public function set($key, $content, $expire = 5400)
-    {
-        $this->minilog->debug($this->i18n->trans('apc-set-key-item', ['%item%' => $key]));
-
-        return (bool) apc_store(FS_CACHE_PREFIX . $key, $content, $expire);
-    }
-
-    /**
-     * Delete data from cache.
-     *
-     * @param string $key
-     *
-     * @return bool true if the data was removed successfully
-     */
-    public function delete($key)
-    {
-        $this->minilog->debug($this->i18n->trans('apc-delete-key-item', ['%item%' => $key]));
-
-        return apc_delete(FS_CACHE_PREFIX . $key) || !apc_exists(FS_CACHE_PREFIX . $key);
     }
 
     /**
@@ -121,5 +71,51 @@ class APCAdapter implements AdaptorInterface
          * @source: http://php.net/manual/function.apc-clear-cache.php
          */
         return apc_clear_cache('user');
+    }
+
+    /**
+     * Delete data from cache.
+     *
+     * @param string $key
+     *
+     * @return bool true if the data was removed successfully
+     */
+    public function delete($key)
+    {
+        $this->minilog->debug($this->i18n->trans('apc-delete-key-item', ['%item%' => $key]));
+        return apc_delete(FS_CACHE_PREFIX . $key) || !apc_exists(FS_CACHE_PREFIX . $key);
+    }
+
+    /**
+     * Get the data associated with a key.
+     *
+     * @param string $key
+     *
+     * @return mixed the content you put in, or null if expired or not found
+     */
+    public function get($key)
+    {
+        $this->minilog->debug($this->i18n->trans('apc-get-key-item', ['%item%' => $key]));
+        if (apc_exists(FS_CACHE_PREFIX . $key)) {
+            $result = apc_fetch(FS_CACHE_PREFIX . $key);
+            return ($result === false) ? null : $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Put content into the cache.
+     *
+     * @param string $key
+     * @param mixed  $content the the content you want to store
+     * @param int    $expire  time to expire
+     *
+     * @return bool whether if the operation was successful or not
+     */
+    public function set($key, $content, $expire)
+    {
+        $this->minilog->debug($this->i18n->trans('apc-set-key-item', ['%item%' => $key]));
+        return (bool) apc_store(FS_CACHE_PREFIX . $key, $content, $expire);
     }
 }

@@ -21,9 +21,9 @@
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 
-var tabActive = '';
+var tabActive = "";
 var settings = {};
-var url = '#';
+var url = "#";
 
 /**
  * Send a action to controller
@@ -50,16 +50,16 @@ function execActionForm(actionValue, formName) {
  */
 function getAutocompleteData(formName, field, source, fieldcode, fieldtitle, term) {
     var formData = {};
-    var rawForm = $('form[name="' + formName + '"]').serializeArray();
+    var rawForm = $("form[name=\"" + formName + "\"]").serializeArray();
     $.each(rawForm, function (i, input) {
         formData[input.name] = input.value;
     });
-    formData['action'] = 'autocomplete';
-    formData['field'] = field;
-    formData['source'] = source;
-    formData['fieldcode'] = fieldcode;
-    formData['fieldtitle'] = fieldtitle;
-    formData['term'] = term;
+    formData["action"] = "autocomplete";
+    formData["field"] = field;
+    formData["source"] = source;
+    formData["fieldcode"] = fieldcode;
+    formData["fieldtitle"] = fieldtitle;
+    formData["term"] = term;
     console.log(formData);
     return formData;
 }
@@ -92,7 +92,7 @@ function showInfoCard(actionValue)
  */
 $(document).ready(function () {
     // update tabActive on tab change
-    $('#mainTabs').on('shown.bs.tab', function (e) {
+    $("#mainTabs").on("shown.bs.tab", function (e) {
         tabActive = e.target.hash.substring(1);
     });
 });

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,10 +45,13 @@ class PresupuestosProveedor extends AbstractRandomDocuments
      */
     public function generate($num = 50)
     {
-        $pre = $this->model;
-        $this->shuffle($proveedores, new Model\Proveedor());
+        $proveedores = $this->randomProveedores();
+        if (empty($proveedores)) {
+            return 0;
+        }
 
         $generated = 0;
+        $pre = $this->model;
         while ($generated < $num) {
             $pre->clear();
             $this->randomizeDocument($pre);

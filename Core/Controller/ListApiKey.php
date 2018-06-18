@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,12 +18,14 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Controller to list the items in the ApiKey model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListApiKey extends ExtendedController\ListController
 {
@@ -51,11 +53,19 @@ class ListApiKey extends ExtendedController\ListController
     {
         $this->addView('ListApiKey', 'ApiKey');
         $this->addSearchFields('ListApiKey', ['description', 'apikey', 'nick']);
-
         $this->addOrderBy('ListApiKey', ['apikey'], 'api-key');
         $this->addOrderBy('ListApiKey', ['descripcion'], 'description');
         $this->addOrderBy('ListApiKey', ['nick'], 'nick');
 
         $this->addFilterCheckbox('ListApiKey', 'enabled', 'enabled', 'enabled');
+    }
+
+    protected function execAfterAction($action)
+    {
+        if (!AppSettings::get('default', 'enable_api', '')) {
+            $this->miniLog->info($this->i18n->trans('api-disabled'));
+        }
+
+        return parent::execAfterAction($action);
     }
 }
