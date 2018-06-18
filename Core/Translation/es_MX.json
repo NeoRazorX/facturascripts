@@ -1408,5 +1408,7 @@
     "6-months": "Seis meses después",
     "1-year": "Un año después",
     "shipping": "Envío",
-    "billing": "Facturación"
+    "billing": "Facturación",
+    "not-valid-contact-name": "Nombre del contacto no válido: %contactName% %fieldName%",
+    "not-valid-email": "Email %email% no válido"
 }
