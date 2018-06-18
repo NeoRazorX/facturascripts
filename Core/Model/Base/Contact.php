@@ -118,6 +118,7 @@ abstract class Contact extends ModelClass
         $this->telefono2 = Utils::noHtml($this->telefono2);
 
         if (empty($this->nombre)) {
+            self::$miniLog->alert(self::$i18n->trans('"not-valid-contact-name"', ['%contactName%' => $this->nombre, '%fieldName%' => 'nombre']));
             return false;
         }
 
