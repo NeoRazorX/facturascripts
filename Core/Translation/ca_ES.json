@@ -1327,5 +1327,7 @@
     "6-months": "Sis mesos després",
     "1-year": "Un any després",
     "shipping": "Envio",
-    "billing": "Facturació"
+    "billing": "Facturació",
+    "not-valid-contact-name": "Nom del contacte no vàlid: %contactName% %fieldName%",
+    "not-valid-email": "E-mail %email% no vàlid"
 }
