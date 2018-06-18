@@ -1421,5 +1421,6 @@
     "shipping": "Envío",
     "billing": "Facturación",
     "not-valid-contact-name": "Nombre del contacto no válido: %contactName% %fieldName%",
-    "not-valid-email": "Email %email% no válido"
+    "not-valid-email": "Email %email% no válido",
+    "reference+description": "Referencia + Descripción"
 }
