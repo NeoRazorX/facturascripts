@@ -1254,5 +1254,7 @@
     "6-months": "Six months later",
     "1-year": "One year later",
     "shipping": "Shipping",
-    "billing": "Billing"
+    "billing": "Billing",
+    "not-valid-contact-name": "Invalid contact name: %contactName% %fieldName%",
+    "not-valid-email": "Invalid email %email%"
 }
