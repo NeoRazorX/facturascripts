@@ -391,4 +391,9 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->insertParalellTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
     }
+
+    private function combineAddress(string $address, string $apartado, string $codPostal, string $ciudad, string $provincia, string $pais) : string
+    {
+        
+    }
 }
