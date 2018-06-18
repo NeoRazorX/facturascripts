@@ -128,6 +128,24 @@ class GridView extends BaseView
     }
 
     /**
+     * Return array of values to select
+     *
+     * @param WidgetItemSelect $widget
+     */
+    private function getSelectSource($widget): array
+    {
+        $result = [];
+        if (!$widget->required) {
+            $result[] = '';
+        }
+
+        foreach ($widget->values as $value) {
+            $result[] = $value['title'];
+        }
+        return $result;
+    }
+
+    /**
      * Return grid column configuration
      *
      * @param ColumnItem $column
@@ -145,6 +163,11 @@ class GridView extends BaseView
                 $item['trimDropdown'] = false;
                 $item['strict'] = $this->getAutocompeteStrict($column->widget->values[0]);
                 $item['data-source'] = $this->getAutocompleteSource($column->widget->values[0]);
+                break;
+
+            case 'select':
+                $item['editor'] = 'select';
+                $item['selectOptions'] = $this->getSelectSource($column->widget);
                 break;
 
             case 'number':
