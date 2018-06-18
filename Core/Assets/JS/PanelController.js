@@ -60,7 +60,7 @@ function getAutocompleteData(formName, field, source, fieldcode, fieldtitle, ter
     formData["fieldcode"] = fieldcode;
     formData["fieldtitle"] = fieldtitle;
     formData["term"] = term;
-    console.log(formData);
+    formData["formname"] = formName;
     return formData;
 }
 
