@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -269,7 +270,7 @@ class PDFExport extends PDFCore implements ExportInterface
         ];
         $rows = [
             [
-                'currency' => $model->coddivisa,
+                'currency' => $this->getDivisaName($model->coddivisa),
                 'net' => $this->numberTools->format($model->neto),
                 'taxes' => $this->numberTools->format($model->totaliva),
                 'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
@@ -291,6 +292,18 @@ class PDFExport extends PDFCore implements ExportInterface
             'width' => $this->tableWidth
         ];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+    }
+
+     /**
+     * Get the name of an specify divisa
+     *
+     * @param string $cod Code of divisa
+     * @return string
+     */
+    private function getDivisaName(string $cod) : string
+    {
+        $divisa = new Divisa();
+        return $divisa->get($cod)->descripcion;
     }
 
     /**
