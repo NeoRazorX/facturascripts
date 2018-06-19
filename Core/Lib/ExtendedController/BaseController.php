@@ -149,12 +149,36 @@ abstract class BaseController extends Base\Controller
      */
     protected function autocompleteAction(): array
     {
+        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'formname']);
+
+        if ($data['source'] == '') {
+            return $this->getAutocompleteValues($data['formname'], $data['field']);
+        }
+
         $results = [];
-        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term']);
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
+    }
+
+    /**
+     * Return values from Widget Values for autocomplete action
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     * @return array
+     */
+    protected function getAutocompleteValues(string $viewName, string $fieldName): array
+    {
+        $result = [];
+        $column = $this->views[$viewName]->columnForField($fieldName);
+        if (!empty($column)) {
+            foreach ($column->widget->values as $value) {
+                $result[] = ['key' => $this->i18n->trans($value['title']), 'value' => $value['value']];
+            }
+        }
+        return $result;
     }
 
     protected function getFormData(): array
