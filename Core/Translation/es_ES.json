@@ -1422,5 +1422,19 @@
     "billing": "Facturación",
     "not-valid-contact-name": "Nombre del contacto no válido: %contactName% %fieldName%",
     "not-valid-email": "Email %email% no válido",
-    "reference+description": "Referencia + Descripción"
+    "reference+description": "Referencia + Descripción",
+    "empty": "Vacío",
+    "empty-general-info": "Se preguntará el valor al usuario",
+    "general-concepts": "Conceptos generales",
+    "wildcard": "Comodín",
+    "wildcard-title": "Comodines reemplazables por valor",
+    "wildcard-general-info": "Se substituirá por el valor correspondiente",
+    "alias": "Alias",
+    "alias-general-info": "Permite dar un nombre al valor de la columna de su izquierda",
+    "alias-wildcard-info": "Valor del alias definido previamente. Ejplo: %base%, %cuota%",
+    "document-wildcard-info": "Documento indicado en la cabecera del asiento contable",
+    "idem-wildcard-info": "Copiar el valor de la linea anterior",
+    "date-wildcard-info": "Fecha actual (fecha del ordenador)",
+    "month-wildcard-info": "Mes actual (de la fecha actual)",
+    "year-wildcard-info": "Año actual (de la fecha actual)"
 }
