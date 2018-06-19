@@ -1329,5 +1329,6 @@
     "shipping": "Envio",
     "billing": "Facturació",
     "not-valid-contact-name": "Nom del contacte no vàlid: %contactName% %fieldName%",
-    "not-valid-email": "E-mail %email% no vàlid"
+    "not-valid-email": "E-mail %email% no vàlid",
+    "reference+description": "Referència + Descripció"
 }
