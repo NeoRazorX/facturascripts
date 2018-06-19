@@ -1998,6 +1998,6 @@
     "document-wildcard-info": "Kontabilitate idazpenaren buruan adierazitako dokumentua",
     "idem-wildcard-info": "Aurreko lerroko balioa kopiatu",
     "date-wildcard-info": "Gaurko data (ordenagailukoa)",
-    "month-wildcard-info": "Gaurko hilabetea (gaurko datakoa)",
+    "month-wildcard-info": "Oraingo hilabetea (gaurko datakoa)",
     "year-wildcard-info": "Oraingo urtea (gaurko datakoa)"
 }
