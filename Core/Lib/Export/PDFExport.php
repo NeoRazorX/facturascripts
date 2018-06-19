@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -292,18 +291,6 @@ class PDFExport extends PDFCore implements ExportInterface
             'width' => $this->tableWidth
         ];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
-    }
-
-     /**
-     * Get the name of an specify divisa
-     *
-     * @param string $cod Code of divisa
-     * @return string
-     */
-    private function getDivisaName(string $cod) : string
-    {
-        $divisa = new Divisa();
-        return $divisa->get($cod)->descripcion;
     }
 
     /**

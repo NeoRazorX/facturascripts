@@ -98,8 +98,11 @@ class PDFCore
     }
 
     /**
-     * 
+     * Gets the name of the country with that code.
+     *
      * @param string $code
+     * 
+     * @return string
      */
     protected function getCountryName($code): string
     {
@@ -109,6 +112,23 @@ class PDFCore
 
         $country = new Model\Pais();
         return $country->loadFromCode($code) ? $country->nombre : '';
+    }
+
+    /**
+     * Gets the name of an specify divisa
+     * 
+     * @param string $code
+     * 
+     * @return string
+     */
+    protected function getDivisaName($code): string
+    {
+        if (empty($code)) {
+            return '';
+        }
+
+        $divisa = new Model\Divisa();
+        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
     }
 
     /**
