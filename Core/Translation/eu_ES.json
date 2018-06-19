@@ -1605,7 +1605,7 @@
     "status": "Egoera",
     "status-document": "Egoeraren dokumentua",
     "status-name-valid-length": "Egoeraren izen baliogabea. 1 eta 20 karaktere artean egon behar du.",
-    "status-value-is-number": "Egoera zenbakia izan behar du.",
+    "status-value-is-number": "Egoera eremua zenbakia izan behar du.",
     "stock": "Stock",
     "stockmax": "Gehienezko stock",
     "stockmin": "Gutxienezko stock",
@@ -1757,9 +1757,9 @@
     "auto": "Auto",
     "block-date": "Blokeatze data",
     "generate": "Sortu",
-    "balance-ammounts": "Batura eta saldoen balantzea",
+    "balance-ammounts": "Saldo eta baturen egiaztapen balantzea",
     "balance-sheet": "Egoera balantzea",
-    "profit-and-loss-balance": "Irabazi eta galeren balantzea",
+    "profit-and-loss-balance": "Galdu-irabazien kontua",
     "ammount": "Kopurua",
     "serial-number": "Serie zenbakia",
     "default": "Lehenetsia",
@@ -1984,5 +1984,6 @@
     "shipping": "Bidalketa",
     "billing": "fakturazioa",
     "not-valid-email": "%email% eposta baliogabea",
-    "reference+description": "Erreferentzia + deskribapena"
+    "reference+description": "Erreferentzia + deskribapena",
+    "not-valid-contact-name": "Kontaktu izen baliogabea: %contactName% %fieldName%"
 }
