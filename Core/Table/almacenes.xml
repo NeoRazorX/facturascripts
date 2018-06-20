@@ -44,8 +44,16 @@
         <name>telefono</name>
         <type>character varying(50)</type>
     </column>
+        <column>
+        <name>idempresa</name>
+        <type>int</type>
+    </column>
     <constraint>
         <name>almacenes_pkey</name>
         <type>PRIMARY KEY (codalmacen)</type>
+    </constraint>
+    <constraint>
+        <name>ca_almacenes_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>
