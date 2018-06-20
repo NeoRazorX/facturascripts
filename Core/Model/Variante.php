@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Define a permission package to quickly assign users.
+ * Define method and attributes of table variantes.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
