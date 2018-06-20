@@ -115,13 +115,12 @@ class AppAPI extends App
             return true;
         }
 
-        $apiAccessModel = new ApiAccess();
-        $where = [new DataBaseWhere('idapikey', $this->apiKey->id)];
-        foreach ($apiAccessModel->all($where) as $apiAccess) {
-            if ($apiAccess->resource !== $resource) {
-                continue;
-            }
-
+        $apiAccess = new ApiAccess();
+        $where = [
+            new DataBaseWhere('idapikey', $this->apiKey->id),
+            new DataBaseWhere('resource', $resource)
+        ];
+        if ($apiAccess->loadFromCode('', $where)) {
             $method = $this->request->getMethod();
             if ($method == 'DELETE' && $apiAccess->allowdelete) {
                 return true;

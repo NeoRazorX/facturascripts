@@ -269,7 +269,7 @@ class PDFExport extends PDFCore implements ExportInterface
         ];
         $rows = [
             [
-                'currency' => $model->coddivisa,
+                'currency' => $this->getDivisaName($model->coddivisa),
                 'net' => $this->numberTools->format($model->neto),
                 'taxes' => $this->numberTools->format($model->totaliva),
                 'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
