@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Miscellany;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Request;
@@ -230,12 +231,8 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        if (!file_exists(FS_FOLDER . '/.htaccess')) {
-            $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
-            file_put_contents(FS_FOLDER . '/.htaccess', \is_string($txt) ? $txt : '');
-        }
-
-        return true;
+        $contentFile = Miscellany::extractFromMarkers(FS_FOLDER . '/htaccess-sample');
+        return Miscellany::insertWithMarkers($contentFile);
     }
 
     /**
