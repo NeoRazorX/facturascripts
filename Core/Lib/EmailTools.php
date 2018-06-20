@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,29 +49,32 @@ class EmailTools
     }
 
     /**
-     * Returns the HTML code for the email.
-     *
-     * @param string $companyName
-     * @param string $title
-     * @param string $txt
-     * @param string $sign
-     *
-     * @return mixed
+     * Returns the HTML code for the email from a template.
+     * 
+     * @param array  $params
+     * @param string $template
+     * 
+     * @return string
      */
-    public function getHtml($companyName, $title, $txt, $sign)
+    public function getTemplateHtml(array $params, string $template = '/Dinamic/Assets/Email/BasicTemplate.html.twig'): string
     {
-        $html = file_get_contents(FS_FOLDER . '/Dinamic/Assets/Email/BasicTemplate.html.twig');
+        $html = file_get_contents(FS_FOLDER . $template);
+        $title = isset($params['title']) ? $params['title'] : '-';
+        $company = isset($params['company']) ? $params['company'] : '-';
+        $body = isset($params['body']) ? $params['body'] : '-';
+        $footer = isset($params['footer']) ? $params['footer'] : '-';
+
         $search = [
-            '[[titulo]]',
-            '[[empresa]]',
-            '[[texto]]',
-            '[[pie]]',
+            '[[title]]',
+            '[[company]]',
+            '[[text]]',
+            '[[footer]]',
         ];
         $replace = [
             $title,
-            $companyName,
-            nl2br($txt),
-            $sign,
+            $company,
+            $body,
+            $footer,
         ];
 
         return str_replace($search, $replace, $html);
