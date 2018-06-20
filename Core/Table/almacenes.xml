@@ -44,7 +44,7 @@
         <name>telefono</name>
         <type>character varying(50)</type>
     </column>
-        <column>
+    <column>
         <name>idempresa</name>
         <type>int</type>
     </column>
