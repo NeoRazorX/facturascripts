@@ -793,5 +793,8 @@
     "shipping": "Shipping",
     "billing": "Billing",
     "not-valid-email": "Invalid email %email%",
-    "reference+description": "Reference + Description"
+    "reference+description": "Reference + Description",
+    "starting-cron": "Starting FacturaScripts cron execution...",
+    "finished-cron": "Finished FacturaScripts cron execution, needed time: %timeNeeded%",
+    "running-plugin-cron": "Running FacturaScripts cron for plugin %pluginName%"
 }
