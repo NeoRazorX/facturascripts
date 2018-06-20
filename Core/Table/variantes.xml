@@ -36,8 +36,8 @@
         <type>integer</type>
     </column>
     <constraint>
-        <name>users_pkey</name>
-        <type>PRIMARY KEY (nick)</type>
+        <name>variantes_pkey</name>
+        <type>PRIMARY KEY (idvariante)</type>
     </constraint>
     <constraint>
         <name>ca_variantes_articulos</name>
