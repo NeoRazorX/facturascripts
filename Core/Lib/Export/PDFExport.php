@@ -392,8 +392,27 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->pdf->ezText('');
     }
 
+    /**
+     * Combine address using the parameters that not is empty.
+     *
+     * @param string $address
+     * @param string $apartado
+     * @param string $codPostal
+     * @param string $ciudad
+     * @param string $provincia
+     * @param string $pais
+     * @return string
+     */
     private function combineAddress(string $address, string $apartado, string $codPostal, string $ciudad, string $provincia, string $pais) : string
     {
-        
+        $completeAdress = "";
+        $completeAdress .= (empty($address)) ? $address . ', ' : '';
+        $completeAdress .= (empty($apartado)) ? $apartado . ', ' : '';
+        $completeAdress .= (empty($codPostal)) ? 'CP:' . $codPostal . ', ' : '';
+        $completeAdress .= (empty($ciudad)) ? $ciudad : '';
+        $completeAdress .= (empty($provincia)) ?'(' .  $provincia . '), ': '';
+        $completeAdress .= (empty($pais)) ? $pais : '';
+
+        return $completeAdress;
     }
 }
