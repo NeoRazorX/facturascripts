@@ -35,7 +35,7 @@
                 <widget type="text" fieldname="telefono" />
             </column>
             <column name="business" numcolumns="3" order="130">
-                <widget type="select" fieldname="empresa" required="true">
+                <widget type="select" fieldname="idempresa" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
