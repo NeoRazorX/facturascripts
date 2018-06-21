@@ -54,5 +54,8 @@ class ListAlmacen extends ExtendedController\ListController
 
         $this->addOrderBy('ListAlmacen', ['codalmacen'], 'code');
         $this->addOrderBy('ListAlmacen', ['nombre'], 'name');
+
+        $selectValues = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect('ListAlmacen', 'idempresa', 'business', 'idempresa', $selectValues);
     }
 }
