@@ -410,7 +410,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $completeAdress .= (empty($apartado)) ? $apartado . ', ' : '';
         $completeAdress .= (empty($codPostal)) ? 'CP:' . $codPostal . ', ' : '';
         $completeAdress .= (empty($ciudad)) ? $ciudad : '';
-        $completeAdress .= (empty($provincia)) ?'(' .  $provincia . '), ': '';
+        $completeAdress .= (empty($provincia)) ?'(' . $provincia . '), ': '';
         $completeAdress .= (empty($pais)) ? $pais : '';
 
         return $completeAdress;
