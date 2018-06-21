@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\App;
 
+use FacturaScripts\Core\Base\PluginManager;
+
 /**
  * App description
  *
@@ -35,12 +37,33 @@ class AppCron extends App
     {
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
-            /// implement here
-            /// return true for test purposes
+            $startTime = new \DateTime();
+            $this->miniLog->notice($this->i18n->trans('starting-cron'));
+
+            $this->runCronPlugins();
+
+            $endTime = new \DateTime();
+            $executionTime = $startTime->diff($endTime);
+            $this->miniLog->notice($this->i18n->trans('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]));
             return true;
         }
 
         $this->response->setContent('DB-ERROR');
         return false;
+    }
+
+    /**
+     * Runs cron from enabled plugins.
+     */
+    public function runCronPlugins()
+    {
+        $pluginManager = new PluginManager();
+        foreach ($pluginManager->enabledPlugins() as $pluginName) {
+            $pluginCron = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . 'cron.php';
+            if (\file_exists($pluginCron)) {
+                $this->miniLog->notice($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
+                include $pluginCron;
+            }
+        }
     }
 }
