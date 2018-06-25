@@ -120,6 +120,25 @@ abstract class ModelClass extends ModelCore
     }
 
     /**
+     * Check correct length of field value.
+     * (set min length to 1 for mandatory field value)
+     *
+     * @param string $value
+     * @param string $column
+     * @param integer $max
+     * @param integer $min
+     * @return boolean
+     */
+    protected function errorInStrLen(string $value, string $column, integer $max, integer $min = 0): boolean
+    {
+        if (strlen($value) < $min || strlen($value) > $max) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => $column, '%min%' => $min, '%max%' => $max]));
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Returns true if the model data is stored in the database.
      *
      * @return bool
