@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -289,6 +290,7 @@ class AppController extends App
 
         if ($user->loadFromCode($nick) && $user->enabled) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
+                EventManager::trigger('App:User:Login', $user);
                 $this->updateCookies($user, true);
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
                 return $user;
