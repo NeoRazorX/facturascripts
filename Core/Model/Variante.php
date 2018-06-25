@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017-2018  Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,32 +29,11 @@ class Variante extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary Key, autoincremental.
-     *
-     * @var int
-     */
-    public $idvariante;
-
-    /**
-     * Reference of the variant. Maximun 30 characteres.
-     *
-     * @var string
-     */
-    public $referencia;
-
-    /**
      * Barcode. Maximun 20 characteres.
      *
      * @var string
      */
     public $codbarras;
-
-    /**
-     * Price of the variant
-     *
-     * @var double
-     */
-    public $pvp;
 
     /**
      * Foreign key of table atributo_valores.
@@ -70,6 +48,33 @@ class Variante extends Base\ModelClass
      * @var int
      */
     public $idatributovalor2;
+
+    /**
+     * Primary Key, autoincremental.
+     *
+     * @var int
+     */
+    public $idvariante;
+
+    /**
+     * Price of the variant
+     *
+     * @var int|float
+     */
+    public $pvp;
+
+    /**
+     * Reference of the variant. Maximun 30 characteres.
+     *
+     * @var string
+     */
+    public $referencia;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->pvp = 0.0;
+    }
 
     /**
      * Returns the name of the column that is the model's primary key.
