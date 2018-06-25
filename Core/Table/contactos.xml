@@ -82,6 +82,10 @@
         <type>text</type>
     </column>
     <column>
+        <name>password</name>
+        <type>character varying(255)</type>
+    </column>
+    <column>
         <name>personafisica</name>
         <type>boolean</type>
         <default>true</default>

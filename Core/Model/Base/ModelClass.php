@@ -112,7 +112,7 @@ abstract class ModelClass extends ModelCore
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
-            EventManager::trigger('model::' . $this->modelClassName() . '::delete()', $this);
+            EventManager::trigger('Model::' . $this->modelClassName() . '::delete()', $this);
             return true;
         }
 
@@ -334,8 +334,8 @@ abstract class ModelClass extends ModelCore
                 $this->{static::primaryColumn()} = self::$dataBase->lastval();
             }
 
-            EventManager::trigger('model::' . $this->modelClassName() . '::saveInsert()', $this);
-            EventManager::trigger('model::' . $this->modelClassName() . '::save()', $this);
+            EventManager::trigger('Model::' . $this->modelClassName() . '::saveInsert()', $this);
+            EventManager::trigger('Model::' . $this->modelClassName() . '::save()', $this);
             return true;
         }
 
@@ -365,8 +365,8 @@ abstract class ModelClass extends ModelCore
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
         if (self::$dataBase->exec($sql)) {
-            EventManager::trigger('model::' . $this->modelClassName() . '::saveUpdate()', $this);
-            EventManager::trigger('model::' . $this->modelClassName() . '::save()', $this);
+            EventManager::trigger('Model::' . $this->modelClassName() . '::saveUpdate()', $this);
+            EventManager::trigger('Model::' . $this->modelClassName() . '::save()', $this);
             return true;
         }
 
