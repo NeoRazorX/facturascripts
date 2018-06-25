@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -195,7 +195,7 @@ class Utils
     {
         return in_array(strtolower($val), ['true', 't', '1'], false);
     }
-    
+
     /**
      * Breaks text at maximum width, without break words.
      *
@@ -204,8 +204,10 @@ class Utils
      * 
      * @return string
      */
-    public static function trueTextBreak($desc, $maxWidth = 500)
+    public static function trueTextBreak($text, $maxWidth = 500)
     {
+        /// remove blank lines
+        $desc = trim(preg_replace(["/\s\s+/"], [" "], $text));
         if (mb_strlen($desc) <= $maxWidth) {
             return $desc;
         }
