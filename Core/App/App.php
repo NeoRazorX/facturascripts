@@ -109,7 +109,6 @@ abstract class App
     public function __construct(string $uri = '/')
     {
         $this->request = Request::createFromGlobals();
-
         if ($this->request->cookies->get('fsLang')) {
             $this->i18n = new Base\Translator($this->request->cookies->get('fsLang'));
         } else {
@@ -140,6 +139,7 @@ abstract class App
     {
         if ($this->dataBase->connect()) {
             $this->settings->load();
+            $this->loadPlugins();
             return true;
         }
 
@@ -193,5 +193,16 @@ abstract class App
     protected function isIPBanned()
     {
         return $this->ipFilter->isBanned($this->request->getClientIp());
+    }
+
+    private function loadPlugins()
+    {
+        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+            $initClass = "FacturaScripts\\Plugins\\{$pluginName}\\Init";
+            if (class_exists($initClass)) {
+                $initObject = new $initClass();
+                $initObject->init();
+            }
+        }
     }
 }

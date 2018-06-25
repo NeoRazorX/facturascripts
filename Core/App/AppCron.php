@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base\PluginManager;
-
 /**
  * App description
  *
@@ -57,12 +55,12 @@ class AppCron extends App
      */
     public function runCronPlugins()
     {
-        $pluginManager = new PluginManager();
-        foreach ($pluginManager->enabledPlugins() as $pluginName) {
-            $pluginCron = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . 'cron.php';
-            if (\file_exists($pluginCron)) {
+        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+            $cronClass = "FacturaScripts\\Plugins\\{$pluginName}\\Cron";
+            if (class_exists($cronClass)) {
                 $this->miniLog->notice($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
-                include $pluginCron;
+                $cron = new $cronClass();
+                $cron->run();
             }
         }
     }
