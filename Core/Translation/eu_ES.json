@@ -1985,5 +1985,19 @@
     "billing": "fakturazioa",
     "not-valid-email": "%email% eposta baliogabea",
     "reference+description": "Erreferentzia + deskribapena",
-    "not-valid-contact-name": "Kontaktu izen baliogabea: %contactName% %fieldName%"
+    "not-valid-contact-name": "Kontaktu izen baliogabea: %contactName% %fieldName%",
+    "empty": "Hutsik",
+    "empty-general-info": "Balioa erabiltzaileari galdetuko zaio",
+    "general-concepts": "Kontzeptu orokorrak",
+    "wildcard": "Komodin",
+    "wildcard-title": "Balioagatik aldatu daitezken komodinak",
+    "wildcard-general-info": "Dagokion balioagatik aldatuko dira",
+    "alias": "Alias",
+    "alias-general-info": "Bere ezkerreko zutabeko balioari izena jartzen uzten du",
+    "alias-wildcard-info": "Aurrez definitutako alias balioa. Adib. %oinarri%, %kuota%",
+    "document-wildcard-info": "Kontabilitate idazpenaren buruan adierazitako dokumentua",
+    "idem-wildcard-info": "Aurreko lerroko balioa kopiatu",
+    "date-wildcard-info": "Gaurko data (ordenagailukoa)",
+    "month-wildcard-info": "Oraingo hilabetea (gaurko datakoa)",
+    "year-wildcard-info": "Oraingo urtea (gaurko datakoa)"
 }
