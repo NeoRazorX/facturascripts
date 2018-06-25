@@ -1,12 +1,18 @@
-<div class="item-data text-info col-sm-12">
-    
-    <div class="title"><h3>{{ context.i18n.trans('macro-account-note-info') }}</h3></div>
-    <div class="element">
-    <ul>
-        <li><strong>%document%</strong> {{ context.i18n.trans('document') }}</li>
-        <li><strong>%date%</strong> {{ context.i18n.trans('date') }}</li>
-    <li><strong>%date-entry%</strong> {{ context.i18n.trans('accounting-entry-date') }}</li>
-    <li><strong>%month%</strong> {{ context.i18n.trans('month-name') }}</li>
-    </ul>
+<div class="col-12 text-secondary" style="font-size: smaller">
+    <div class="row text-info">
+        <div class="col-6"><h4>{{ context.i18n.trans('general-concepts') }}</h4></div>
+        <div class="col-6"><h4>{{ context.i18n.trans('wildcard-title') }}</h4></div>
     </div>
-</div
+    <div class="row">
+        <div class="col-6">
+            <div class="row"><div class="col-3"><b>{{ context.i18n.trans('wildcard') }}</b></div><div class="col-9">{{ context.i18n.trans('wildcard-general-info') }}</div></div>
+        </div>
+        <div class="col-6">
+            <div class="row"><div class="col-3"><b>%document%</b></div><div class="col-9">{{ context.i18n.trans('document-wildcard-info') }}</div></div>
+            <div class="row"><div class="col-3"><b>%date%</b></div><div class="col-9">{{ context.i18n.trans('date-wildcard-info') }}</div></div>
+            <div class="row"><div class="col-3"><b>%date-entry%</b></div><div class="col-9">{{ context.i18n.trans('dateentry-wildcard-info') }}</div></div>
+            <div class="row"><div class="col-3"><b>%month%</b></div><div class="col-9">{{ context.i18n.trans('month-wildcard-info') }}</div></div>
+            <div class="row"><div class="col-3"><b>%year%</b></div><div class="col-9">{{ context.i18n.trans('year-wildcard-info') }}</div></div>
+        </div>
+    </div>
+</div>

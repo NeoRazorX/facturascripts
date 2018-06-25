@@ -28,6 +28,10 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>nombre</name>
         <type>character varying(100)</type>
         <null>NO</null>
@@ -47,5 +51,9 @@
     <constraint>
         <name>almacenes_pkey</name>
         <type>PRIMARY KEY (codalmacen)</type>
+    </constraint>
+    <constraint>
+        <name>ca_almacenes_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

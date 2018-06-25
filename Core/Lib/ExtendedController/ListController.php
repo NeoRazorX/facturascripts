@@ -275,7 +275,7 @@ abstract class ListController extends BaseController
      * @param string       $label
      * @param int          $default   (0 = None, 1 = ASC, 2 = DESC)
      */
-    protected function addOrderBy(string $viewName, array $fields, string $label = '', int $default = 0) : void
+    protected function addOrderBy(string $viewName, array $fields, string $label = '', int $default = 0)
     {
         $orderLabel = empty($label) ? $fields[0] : $label;
         $this->views[$viewName]->addOrderBy($fields, $orderLabel, $default);

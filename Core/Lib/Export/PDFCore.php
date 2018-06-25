@@ -98,8 +98,11 @@ class PDFCore
     }
 
     /**
-     * 
+     * Gets the name of the country with that code.
+     *
      * @param string $code
+     * 
+     * @return string
      */
     protected function getCountryName($code): string
     {
@@ -109,6 +112,23 @@ class PDFCore
 
         $country = new Model\Pais();
         return $country->loadFromCode($code) ? $country->nombre : '';
+    }
+
+    /**
+     * Gets the name of an specify divisa
+     * 
+     * @param string $code
+     * 
+     * @return string
+     */
+    protected function getDivisaName($code): string
+    {
+        if (empty($code)) {
+            return '';
+        }
+
+        $divisa = new Model\Divisa();
+        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
     }
 
     /**
@@ -286,16 +306,17 @@ class PDFCore
 
     /**
      * Remove the empty columns to save space.
-     *
-     * @param $tableData
-     * @param $tableColsTitle
+     * 
+     * @param array $tableData
+     * @param array $tableColsTitle
+     * @param mixed $customEmptyValue
      */
-    protected function removeEmptyCols(&$tableData, &$tableColsTitle)
+    protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
     {
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if (!empty($row[$key])) {
+                if (!empty($row[$key]) && $row[$key] != $customEmptyValue) {
                     $remove = false;
                     break;
                 }

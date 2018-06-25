@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Carlos Jiménez Gómez <carlos@evolunext.es>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class PDFExport extends PDFCore implements ExportInterface
 {
@@ -57,7 +58,6 @@ class PDFExport extends PDFCore implements ExportInterface
     {
         $this->newPage();
         $this->insertHeader($model->idempresa);
-
         $this->insertBusinessDocHeader($model);
         $this->insertBusinessDocBody($model);
         $this->insertBusinessDocFooter($model);
@@ -208,34 +208,33 @@ class PDFExport extends PDFCore implements ExportInterface
             'price' => $this->i18n->trans('price'),
             'discount' => $this->i18n->trans('discount'),
             'tax' => $this->i18n->trans('tax'),
+            'surcharge' => $this->i18n->trans('surcharge'),
+            'irpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
         $tableData = [];
         foreach ($model->getlines() as $line) {
             $tableData[] = [
                 'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $line->cantidad,
-                'price' => $line->pvpunitario,
-                'discount' => $line->dtopor,
-                'tax' => $line->iva,
-                'total' => $line->pvptotal,
+                'quantity' => $this->numberTools->format($line->cantidad),
+                'price' => $this->numberTools->format($line->pvpunitario),
+                'discount' => $this->numberTools->format($line->dtopor),
+                'tax' => $this->numberTools->format($line->iva),
+                'surcharge' => $this->numberTools->format($line->recargo),
+                'irpf' => $this->numberTools->format($line->irpf),
+                'total' => $this->numberTools->format($line->pvptotal),
             ];
         }
 
-        $this->removeEmptyCols($tableData, $headers);
-        foreach ($tableData as $key => $value) {
-            $tableData[$key]['price'] = $this->numberTools->format($value['price']);
-            $tableData[$key]['discount'] = $this->numberTools->format($value['discount']);
-            $tableData[$key]['tax'] = $this->numberTools->format($value['tax']);
-            $tableData[$key]['total'] = $this->numberTools->format($value['total']);
-        }
-
+        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
         $tableOptions = [
             'cols' => [
                 'quantity' => ['justification' => 'right'],
                 'price' => ['justification' => 'right'],
                 'discount' => ['justification' => 'right'],
                 'tax' => ['justification' => 'right'],
+                'surcharge' => ['justification' => 'right'],
+                'irpf' => ['justification' => 'right'],
                 'total' => ['justification' => 'right'],
             ],
             'shadeCol' => [0.95, 0.95, 0.95],
@@ -264,20 +263,27 @@ class PDFExport extends PDFCore implements ExportInterface
             'currency' => $this->i18n->trans('currency'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
+            'totalSurcharge' => $this->i18n->trans('surcharge'),
+            'totalIrpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
         $rows = [
             [
-                'currency' => $model->coddivisa,
-                'net' => $this->numberTools::format($model->neto, FS_NF0),
-                'taxes' => $this->numberTools::format($model->totaliva, FS_NF0),
-                'total' => $this->numberTools::format($model->total, FS_NF0),
+                'currency' => $this->getDivisaName($model->coddivisa),
+                'net' => $this->numberTools->format($model->neto),
+                'taxes' => $this->numberTools->format($model->totaliva),
+                'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
+                'totalIrpf' => $this->numberTools->format($model->totalirpf),
+                'total' => $this->numberTools->format($model->total),
             ]
         ];
+        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
         $tableOptions = [
             'cols' => [
                 'net' => ['justification' => 'right'],
                 'taxes' => ['justification' => 'right'],
+                'totalSurcharge' => ['justification' => 'right'],
+                'totalIrpf' => ['justification' => 'right'],
                 'total' => ['justification' => 'right'],
             ],
             'shadeCol' => [0.95, 0.95, 0.95],
@@ -297,7 +303,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $headerData = [
             'title' => $this->i18n->trans('delivery-note'),
             'subject' => $this->i18n->trans('customer'),
-            'fieldName' => 'nombrecliente',
+            'fieldName' => 'nombrecliente'
         ];
 
         if (isset($model->codproveedor)) {
@@ -326,18 +332,54 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->newLine();
 
         $tableData = [
-            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha,],
-            ['key' => $headerData['subject'], 'value' => $model->{$headerData['fieldName']},],
-            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif,],
+            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
+            ['key' => $headerData['subject'], 'value' => Base\Utils::fixHtml($model->{$headerData['fieldName']})],
+            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif],
         ];
 
         if (isset($model->direccion)) {
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccion)];
+            $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
             $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
             $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
             $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
             $tableData[] = ['key' => $this->i18n->trans('country'), 'value' => $this->getCountryName($model->codpais)];
         }
+
+        $tableOptions = [
+            'width' => $this->tableWidth,
+            'showHeadings' => 0,
+            'shaded' => 0,
+            'lineCol' => [1, 1, 1],
+            'cols' => [],
+        ];
+        $this->insertParalellTable($tableData, '', $tableOptions);
+        $this->pdf->ezText('');
+
+        if (isset($model->direccionenv) && $model->direccionenv !== '') {
+            $this->insertBusinessDocShipping($model);
+        }
+    }
+
+    /**
+     * Inserts the address of delivery with the model data.
+     *
+     * @param BusinessDocument $model
+     */
+    private function insertBusinessDocShipping($model)
+    {
+        $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
+        $this->newLine();
+
+        $tableData = [
+            ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($model->nombreenv)],
+            ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($model->apellidosenv)],
+            ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccionenv)],
+            ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv],
+            ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv],
+            ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudadenv)],
+            ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provinciaenv)],
+        ];
 
         $tableOptions = [
             'width' => $this->tableWidth,

@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ $(document).ready(function () {
     });
 
     // Adds a delay to help messages
-    $('[data-toggle="popover"]').popover({
+    $("[data-toggle=\"popover\"]").popover({
         delay: {"show": 1000, "hide": 100}
     });
 
@@ -46,7 +46,7 @@ $(document).ready(function () {
         event.stopPropagation();
     });
 
-    $(document).on('click', 'nav .dropdown-submenu', function (e) {
+    $(document).on("click", "nav .dropdown-submenu", function (e) {
         e.stopPropagation();
     });
 });

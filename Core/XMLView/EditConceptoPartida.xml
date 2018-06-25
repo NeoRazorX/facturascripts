@@ -41,7 +41,7 @@
             <button type="action" label='help' color="primary" action="help" icon="fa-question-circle" onclick="showInfoCard" />
         </row>
         <row type="footer">
-            <group name="help" class="collapse show" html="Block/AccountNoteInfo.html.twig"></group>
+            <group name="help" class="collapse" html="Block/AccountNoteInfo.html.twig"></group>
         </row>
     </rows>
 </view>

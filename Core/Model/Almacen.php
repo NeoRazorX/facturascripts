@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,6 +40,13 @@ class Almacen extends Base\Address
     public $codalmacen;
 
     /**
+     * Foreign Key with Empresas table.
+     *
+     * @var int
+     */
+    public $idempresa;
+
+    /**
      * Store name.
      *
      * @var string
@@ -52,6 +59,12 @@ class Almacen extends Base\Address
      * @var string
      */
     public $telefono;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->idempresa = AppSettings::get('default', 'idempresa');
+    }
 
     /**
      * Returns True if is the default wharehouse for the company.
