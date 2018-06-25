@@ -54,6 +54,13 @@ class Almacen extends Base\Address
     public $telefono;
 
     /**
+     * Foreign Key with Empresas table.
+     *
+     * @var int
+     */
+    public $idempresa;
+
+    /**
      * Returns True if is the default wharehouse for the company.
      *
      * @return bool
