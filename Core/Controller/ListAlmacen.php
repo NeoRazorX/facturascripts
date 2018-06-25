@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,6 +56,6 @@ class ListAlmacen extends ExtendedController\ListController
         $this->addOrderBy('ListAlmacen', ['nombre'], 'name');
 
         $selectValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect('ListAlmacen', 'idempresa', 'business', 'idempresa', $selectValues);
+        $this->addFilterSelect('ListAlmacen', 'idempresa', 'company', 'idempresa', $selectValues);
     }
 }
