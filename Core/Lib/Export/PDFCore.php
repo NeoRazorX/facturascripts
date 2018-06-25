@@ -228,17 +228,17 @@ class PDFCore
     protected function insertCompanyLogo()
     {
         $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
-        if (\file_exists($logoPath)) {
-            if (\function_exists('imagecreatefromstring')) {
-                $this->addImage($logoPath);
-            } else {
-                die('ERROR: function imagecreatefromstring() not founded. '
-                    . ' Do you have installed php-gd package and enabled support to allow us render images? .'
-                    . 'Note that the package name can differ between operating system or PHP version.');
-            }
-        } else {
+        if (!\file_exists($logoPath)) {
             die('ERROR: logo file not founded on path: ' . $logoPath);
         }
+
+        if (!\function_exists('imagecreatefromstring')) {
+            die('ERROR: function imagecreatefromstring() not founded. '
+                . ' Do you have installed php-gd package and enabled support to allow us render images? .'
+                . 'Note that the package name can differ between operating system or PHP version.');
+        }
+
+        $this->addImage($logoPath);
     }
 
     /**
