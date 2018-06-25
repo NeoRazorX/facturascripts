@@ -129,7 +129,7 @@ abstract class ModelClass extends ModelCore
      * @param integer $min
      * @return boolean
      */
-    protected function errorInStrLen(string $value, string $column, integer $max, integer $min = 0): boolean
+    protected function errorInStrLen($value, $column, $max, $min = 0)
     {
         if (strlen($value) < $min || strlen($value) > $max) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => $column, '%min%' => $min, '%max%' => $max]));
