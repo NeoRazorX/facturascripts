@@ -25,19 +25,10 @@ use FacturaScripts\Core\Model;
 /**
  * Description of PDFCore
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PDFCore
 {
-    /**
-     * X position to start render logo
-     */
-    const LOGO_X = 540;
-
-    /**
-     * Y position to start render logo
-     */
-    const LOGO_Y = 777;
 
     /**
      * X position to start writting.
@@ -203,6 +194,8 @@ class PDFCore
         }
 
         $this->insertedHeader = true;
+        $this->insertCompanyLogo();
+
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Model\Empresa();
         if ($company->loadFromCode($code)) {
@@ -218,7 +211,6 @@ class PDFCore
 
             $lineText = $company->cifnif . ' - ' . $address . ' - ' . $contactData;
             $this->pdf->ezText($lineText . "\n", self::FONT_SIZE);
-            $this->insertCompanyLogo();
         }
     }
 
@@ -227,44 +219,18 @@ class PDFCore
      */
     protected function insertCompanyLogo()
     {
-        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
-        if (!\file_exists($logoPath)) {
-            die('ERROR: logo file not founded on path: ' . $logoPath);
-        }
-
         if (!\function_exists('imagecreatefromstring')) {
             die('ERROR: function imagecreatefromstring() not founded. '
                 . ' Do you have installed php-gd package and enabled support to allow us render images? .'
                 . 'Note that the package name can differ between operating system or PHP version.');
         }
 
-        $this->addImage($logoPath);
-    }
-
-    /**
-     * Adds the image to the PDF.
-     *
-     * @param $logoPath
-     */
-    protected function addImage($logoPath)
-    {
-        $myLogoPath = \FS_FOLDER . '/MyFiles/logo.png';
+        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
         $logoSize = $this->calcLogoSize($logoPath);
-        /// Calculated position to place logo.
-        $xPos = self::LOGO_X - $logoSize['width'];
-        $yPos = self::LOGO_Y - $logoSize['height'];
-        if (strtolower(substr($logoPath, -4)) === '.png') {
-            $this->pdf->addPngFromFile($logoPath, self::LOGO_X, self::LOGO_Y, $logoSize['width'], $logoSize['height']);
-        } elseif (\function_exists('imagepng')) {
-            /// ezPDF library have problems resizing JPEG files, we do a conversion to PNG to bypass this issues
-            if (imagepng(imagecreatefromstring(file_get_contents($logoPath)), $myLogoPath)) {
-                $this->pdf->addPngFromFile($myLogoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
-            } else {
-                $this->pdf->addJpegFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
-            }
-        } else {
-            $this->pdf->addJpegFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
-        }
+
+        $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
+        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
+        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
     }
 
     /**
