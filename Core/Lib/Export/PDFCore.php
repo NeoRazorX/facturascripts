@@ -29,6 +29,15 @@ use FacturaScripts\Core\Model;
  */
 class PDFCore
 {
+    /**
+     * X position to start render logo
+     */
+    const LOGO_X = 540;
+
+    /**
+     * Y position to start render logo
+     */
+    const LOGO_Y = 777;
 
     /**
      * X position to start writting.
@@ -101,7 +110,7 @@ class PDFCore
      * Gets the name of the country with that code.
      *
      * @param string $code
-     * 
+     *
      * @return string
      */
     protected function getCountryName($code): string
@@ -116,9 +125,9 @@ class PDFCore
 
     /**
      * Gets the name of an specify divisa
-     * 
+     *
      * @param string $code
-     * 
+     *
      * @return string
      */
     protected function getDivisaName($code): string
@@ -184,7 +193,7 @@ class PDFCore
 
     /**
      * Insert header details.
-     * 
+     *
      * @param int $idempresa
      */
     protected function insertHeader($idempresa = null)
@@ -209,9 +218,88 @@ class PDFCore
 
             $lineText = $company->cifnif . ' - ' . $address . ' - ' . $contactData;
             $this->pdf->ezText($lineText . "\n", self::FONT_SIZE);
+            $this->insertCompanyLogo();
         }
     }
 
+    /**
+     * Insert company logo to PDF document or dies with a message to try to solve the problem.
+     */
+    protected function insertCompanyLogo()
+    {
+        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
+        if (!\file_exists($logoPath)) {
+            die('ERROR: logo file not founded on path: ' . $logoPath);
+        }
+
+        if (!\function_exists('imagecreatefromstring')) {
+            die('ERROR: function imagecreatefromstring() not founded. '
+                . ' Do you have installed php-gd package and enabled support to allow us render images? .'
+                . 'Note that the package name can differ between operating system or PHP version.');
+        }
+
+        $this->addImage($logoPath);
+    }
+
+    /**
+     * Adds the image to the PDF.
+     *
+     * @param $logoPath
+     */
+    protected function addImage($logoPath)
+    {
+        $myLogoPath = \FS_FOLDER . '/MyFiles/logo.png';
+        $logoSize = $this->calcLogoSize($logoPath);
+        /// Calculated position to place logo.
+        $xPos = self::LOGO_X - $logoSize['width'];
+        $yPos = self::LOGO_Y - $logoSize['height'];
+        if (strtolower(substr($logoPath, -4)) === '.png') {
+            $this->pdf->addPngFromFile($logoPath, self::LOGO_X, self::LOGO_Y, $logoSize['width'], $logoSize['height']);
+        } elseif (\function_exists('imagepng')) {
+            /// ezPDF library have problems resizing JPEG files, we do a conversion to PNG to bypass this issues
+            if (imagepng(imagecreatefromstring(file_get_contents($logoPath)), $myLogoPath)) {
+                $this->pdf->addPngFromFile($myLogoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+            } else {
+                $this->pdf->addJpegFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+            }
+        } else {
+            $this->pdf->addJpegFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        }
+    }
+
+    /**
+     * Calculate logo size and return as array of width and height
+     *
+     * @param $logo
+     *
+     * @return array|bool
+     */
+    protected function calcLogoSize($logo)
+    {
+        $logoSize = $size = getimagesize($logo);
+        if ($size[0] > 200) {
+            $logoSize[0] = 200;
+            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
+            $size[0] = $logoSize[0];
+            $size[1] = $logoSize[1];
+        }
+        if ($size[1] > 80) {
+            $logoSize[1] = 80;
+            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
+        }
+        return [
+            'width' => $logoSize[0],
+            'height' => $logoSize[1],
+        ];
+    }
+
+    /**
+     * Generate a table with two key => value per row.
+     *
+     * @param        $tableData
+     * @param string $title
+     * @param array  $options
+     */
     protected function insertParalellTable($tableData, $title = '', $options = [])
     {
         $headers = ['data1' => 'data1', 'data2' => 'data2'];
@@ -306,7 +394,7 @@ class PDFCore
 
     /**
      * Remove the empty columns to save space.
-     * 
+     *
      * @param array $tableData
      * @param array $tableColsTitle
      * @param mixed $customEmptyValue
