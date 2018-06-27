@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -192,16 +192,6 @@ class Contacto extends Base\Contact
     }
 
     /**
-     * Asigns the new password to the contact.
-     *
-     * @param string $pass
-     */
-    public function setPassword(string $pass): void
-    {
-        $this->password = password_hash($pass, PASSWORD_DEFAULT);
-    }
-
-    /**
      * Returns the name of the column used to describe this item.
      * 
      * @return string
@@ -209,6 +199,16 @@ class Contacto extends Base\Contact
     public function primaryDescriptionColumn()
     {
         return 'email';
+    }
+
+    /**
+     * Asigns the new password to the contact.
+     *
+     * @param string $pass
+     */
+    public function setPassword(string $pass): void
+    {
+        $this->password = password_hash($pass, PASSWORD_DEFAULT);
     }
 
     /**
@@ -263,8 +263,10 @@ class Contacto extends Base\Contact
             if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
                 $this->setPassword($pass);
             }
+
             return true;
         }
+
         return false;
     }
 }
