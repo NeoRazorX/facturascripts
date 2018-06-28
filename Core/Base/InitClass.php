@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,11 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Defines global attributes and methos for all classes.
+ * Description of InitClass
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Rafael San José Tovar
  */
-abstract class CronClass
+abstract class InitClass
 {
 
     /**
@@ -69,9 +68,12 @@ abstract class CronClass
     }
 
     /**
-     * Select and execute the relevant controller for the cron.
-     *
-     * @return mixed
+     * Code to load every time FacturaScripts starts.
      */
-    abstract public function run();
+    abstract public function init();
+
+    /**
+     * Code to load every time the plugin is installed or updated.
+     */
+    abstract public function update();
 }

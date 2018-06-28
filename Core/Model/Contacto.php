@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -123,6 +123,13 @@ class Contacto extends Base\Contact
     public $logkey;
 
     /**
+     * Password hashed with password_hash()
+     *
+     * @var string
+     */
+    public $password;
+
+    /**
      * Contact province.
      *
      * @var string
@@ -195,6 +202,16 @@ class Contacto extends Base\Contact
     }
 
     /**
+     * Asigns the new password to the contact.
+     *
+     * @param string $pass
+     */
+    public function setPassword(string $pass): void
+    {
+        $this->password = password_hash($pass, PASSWORD_DEFAULT);
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -231,5 +248,25 @@ class Contacto extends Base\Contact
     public function verifyLogkey($value)
     {
         return $this->logkey === $value;
+    }
+
+    /**
+     * Verifies password. It also rehash the password if needed.
+     *
+     * @param string $pass
+     *
+     * @return bool
+     */
+    public function verifyPassword(string $pass): bool
+    {
+        if (password_verify($pass, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($pass);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

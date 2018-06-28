@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 define('FS_FOLDER', __DIR__);
 
 /// This function shows useful error data
@@ -65,7 +64,14 @@ set_time_limit(0);
 /// Initialise the application
 $router = new FacturaScripts\Core\App\AppRouter();
 
-if (!$router->getFile()) {
+if (isset($argv[1]) && $argv[1] === '-cron') {
+    chdir(__DIR__);
+    $app = new \FacturaScripts\Core\App\AppCron();
+    $app->connect();
+    $app->run();
+    $app->render();
+    $app->close();
+} elseif (!$router->getFile()) {
     $app = $router->getApp();
 
     /// Connect to the database, cache, etc.

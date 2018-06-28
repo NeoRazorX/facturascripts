@@ -147,6 +147,7 @@ class PluginManager
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
                 $this->deploy(false, true);
+                $this->initPlugin($pluginName);
                 self::$minilog->notice(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
             }
             break;
@@ -360,6 +361,19 @@ class PluginManager
         }
 
         return $info;
+    }
+
+    /**
+     * 
+     * @param string $pluginName
+     */
+    private function initPlugin(string $pluginName)
+    {
+        $pluginClass = "FacturaScripts\\Plugins\\{$pluginName}\\Init";
+        if (class_exists($pluginClass)) {
+            $initObject = new $pluginClass();
+            $initObject->update();
+        }
     }
 
     /**

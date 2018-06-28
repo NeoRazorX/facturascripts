@@ -25,7 +25,7 @@ use FacturaScripts\Core\Model;
 /**
  * Description of PDFCore
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PDFCore
 {
@@ -101,7 +101,7 @@ class PDFCore
      * Gets the name of the country with that code.
      *
      * @param string $code
-     * 
+     *
      * @return string
      */
     protected function getCountryName($code): string
@@ -116,9 +116,9 @@ class PDFCore
 
     /**
      * Gets the name of an specify divisa
-     * 
+     *
      * @param string $code
-     * 
+     *
      * @return string
      */
     protected function getDivisaName($code): string
@@ -184,7 +184,7 @@ class PDFCore
 
     /**
      * Insert header details.
-     * 
+     *
      * @param int $idempresa
      */
     protected function insertHeader($idempresa = null)
@@ -194,6 +194,8 @@ class PDFCore
         }
 
         $this->insertedHeader = true;
+        $this->insertCompanyLogo();
+
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Model\Empresa();
         if ($company->loadFromCode($code)) {
@@ -212,6 +214,58 @@ class PDFCore
         }
     }
 
+    /**
+     * Insert company logo to PDF document or dies with a message to try to solve the problem.
+     */
+    protected function insertCompanyLogo()
+    {
+        if (!\function_exists('imagecreatefromstring')) {
+            die('ERROR: function imagecreatefromstring() not founded. '
+                . ' Do you have installed php-gd package and enabled support to allow us render images? .'
+                . 'Note that the package name can differ between operating system or PHP version.');
+        }
+
+        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
+        $logoSize = $this->calcLogoSize($logoPath);
+
+        $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
+        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
+        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+    }
+
+    /**
+     * Calculate logo size and return as array of width and height
+     *
+     * @param $logo
+     *
+     * @return array|bool
+     */
+    protected function calcLogoSize($logo)
+    {
+        $logoSize = $size = getimagesize($logo);
+        if ($size[0] > 200) {
+            $logoSize[0] = 200;
+            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
+            $size[0] = $logoSize[0];
+            $size[1] = $logoSize[1];
+        }
+        if ($size[1] > 80) {
+            $logoSize[1] = 80;
+            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
+        }
+        return [
+            'width' => $logoSize[0],
+            'height' => $logoSize[1],
+        ];
+    }
+
+    /**
+     * Generate a table with two key => value per row.
+     *
+     * @param        $tableData
+     * @param string $title
+     * @param array  $options
+     */
     protected function insertParalellTable($tableData, $title = '', $options = [])
     {
         $headers = ['data1' => 'data1', 'data2' => 'data2'];
@@ -306,7 +360,7 @@ class PDFCore
 
     /**
      * Remove the empty columns to save space.
-     * 
+     *
      * @param array $tableData
      * @param array $tableColsTitle
      * @param mixed $customEmptyValue
