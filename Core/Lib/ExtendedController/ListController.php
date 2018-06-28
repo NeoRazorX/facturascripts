@@ -301,9 +301,10 @@ abstract class ListController extends BaseController
      * @param string $viewTitle
      * @param string $icon
      */
-    protected function addView($viewName, $modelName, $viewTitle = 'search', $icon = 'fa-search')
+    protected function addView($viewName, $modelName, $viewTitle = '', $icon = 'fa-search')
     {
-        $this->views[$viewName] = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
+        $title = empty($viewTitle) ? $this->title : $viewTitle;
+        $this->views[$viewName] = new ListView($title, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
         $this->setSettings($viewName, 'icon', $icon);
         $this->setSettings($viewName, 'insert', true);
         $this->setSettings($viewName, 'megasearch', true);
