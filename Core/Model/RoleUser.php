@@ -76,7 +76,7 @@ class RoleUser extends Base\ModelClass
             $filter[] = new DataBaseWhere('pagename', $pageName);
         }
 
-        foreach ($roleAccessModel->all($filter) as $roleAccess) {
+        foreach ($roleAccessModel->all($filter, ['pagename' => 'ASC'], 0, 0) as $roleAccess) {
             $accesses[] = $roleAccess;
         }
 

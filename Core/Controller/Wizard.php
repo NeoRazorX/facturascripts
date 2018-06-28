@@ -115,6 +115,72 @@ class Wizard extends Controller
     }
 
     /**
+     * Add/update the default role for agents, and adds to this role access to all default pages.
+     *
+     * @return bool Returns true on success, false otherwise
+     */
+    private function addDefaultRoleAccess(): bool
+    {
+        $role = new Model\Role();
+        if ($role->loadFromCode($role->codrole)) {
+            return $this->addPagesToRole($role->codrole);
+        }
+
+        $role->codrole = \mb_strtolower($this->i18n->trans('agents'));
+        $role->descripcion = $this->i18n->trans('agents');
+        if ($role->save()) {
+            return $this->addPagesToRole($role->codrole);
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds to received codrole, all pages that are not in admin menu and are not yet enabled.
+     *
+     * @param $codrole
+     *
+     * @return bool Returns true on success, false otherwise and rollback the changes
+     */
+    private function addPagesToRole($codrole): bool
+    {
+        $roleAccess = new Model\RoleAccess();
+        $this->dataBase->beginTransaction();
+        try {
+            $page = new Model\Page();
+            /// All pages not in admin menu and not yet enabled
+            $inSQL = "SELECT name FROM pages WHERE menu != 'admin' AND name NOT IN ("
+                . 'SELECT pagename FROM roles_access WHERE codrole = ' . $this->dataBase->var2str($codrole)
+                . ')';
+            $where = [new DataBaseWhere('name', $inSQL, 'IN')];
+            $pages = $page->all($where, [], 0, 0);
+            // add Pages to Rol
+            if (!$roleAccess->addPagesToRole($codrole, $pages)) {
+                throw new \Exception($this->i18n->trans('cancel-process'));
+            }
+            $this->dataBase->commit();
+            return true;
+        } catch (\Exception $exc) {
+            $this->dataBase->rollback();
+            $this->miniLog->error($exc->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Enable all logs by default.
+     */
+    private function enableLogs()
+    {
+        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+        $appSettings = new AppSettings();
+        foreach ($types as $type) {
+            $appSettings->set('log', $type, 'true');
+        }
+        $appSettings->save();
+    }
+
+    /**
      * Initialize required models.
      */
     private function initModels()
@@ -146,75 +212,10 @@ class Wizard extends Controller
             $almacen->provincia = $this->empresa->provincia;
             $almacen->ciudad = $this->empresa->ciudad;
             $almacen->save();
-                 
+
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
             $appSettings->save();
             break;
-        }
-    }
-
-    /**
-     * Enable all logs by default.
-     */
-    private function enableLogs()
-    {
-        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
-        $appSettings = new AppSettings();
-        foreach ($types as $type) {
-            $appSettings->set('log', $type, 'true');
-        }
-        $appSettings->save();
-    }
-
-    /**
-     * Add/update the default role for agents, and adds to this role access to all default pages.
-     *
-     * @return bool Returns true on success, false otherwise
-     */
-    private function addDefaultRoleAccess(): bool
-    {
-        $role = new Model\Role();
-        if ($role->loadFromCode($role->codrole)) {
-            return $this->insertDefaultPages($role->codrole);
-        }
-
-        $role->codrole = \mb_strtolower($this->i18n->trans('agents'));
-        $role->descripcion = $this->i18n->trans('agents');
-        if ($role->save()) {
-            return $this->insertDefaultPages($role->codrole);
-        }
-
-        return false;
-    }
-
-    /**
-     * Adds to received codrole, all pages that are not in admin menu and are not yet enabled.
-     *
-     * @param $codrole
-     *
-     * @return bool Returns true on success, false otherwise and rollback the changes
-     */
-    private function insertDefaultPages($codrole): bool
-    {
-        $this->dataBase->beginTransaction();
-        try {
-            $page = new Model\Page();
-            /// All pages not in admin menu and not yet enabled
-            $inSQL = "SELECT name FROM pages WHERE menu <> 'admin' AND name NOT IN ("
-                . 'SELECT pagename FROM roles_access WHERE codrole = ' . $this->dataBase->var2str($codrole)
-                . ')';
-            $where = [new DataBaseWhere('name', $inSQL, 'IN')];
-            $pages = $page->all($where, [], 0, 0);
-            // add Pages to Rol
-            if (!Model\RoleAccess::addPagesToRole($codrole, $pages)) {
-                throw new \Exception($this->i18n->trans('cancel-process'));
-            }
-            $this->dataBase->commit();
-            return true;
-        } catch (\Exception $e) {
-            $this->dataBase->rollback();
-            $this->miniLog->notice($e->getMessage());
-            return false;
         }
     }
 }

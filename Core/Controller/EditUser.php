@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,7 +76,7 @@ class EditUser extends ExtendedController\PanelController
         $pageList = [];
         if ($user->admin) {
             $pageModel = new Model\Page();
-            foreach ($pageModel->all([], ['name' => 'ASC'], 0, 500) as $page) {
+            foreach ($pageModel->all([], ['name' => 'ASC'], 0, 0) as $page) {
                 if (!$page->showonmenu) {
                     continue;
                 }
