@@ -231,8 +231,8 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . '/htaccess-sample');
-        return FileManager::insertWithMarkers($contentFile);
+        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . '/htaccess-sample', 'FacturaScripts code');
+        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . '/.htaccess', 'FacturaScripts code');
     }
 
     /**

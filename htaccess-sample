@@ -1,4 +1,4 @@
-# BEGIN FacturaScripts-generated handler, do not edit
+# BEGIN FacturaScripts code
 Options -Indexes
 
 <IfModule mod_php7.c>
@@ -23,4 +23,4 @@ Options -Indexes
       ExpiresActive Off
    </FilesMatch>
 </IfModule>
-# END FacturaScripts-generated handler, do not edit
+# END FacturaScripts code
