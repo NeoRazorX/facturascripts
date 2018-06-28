@@ -229,5 +229,4 @@ class PDFDocument extends PDFCore
         $divisa = new Model\Divisa();
         return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
     }
-
 }
