@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
-use Symfony\Component\HttpFoundation\Response;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
