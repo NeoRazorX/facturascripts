@@ -75,8 +75,9 @@
                         </a>
                         <div class="navbar-collapse collapse">
                             <ul class="navbar-nav pt-1">
+                                {% import 'Macro/MenuItems.html.twig' as menuItems %}
                                 {% for menuItem in menuManager.getMenu() %}
-                                    {{ menuItem.getHTML()|raw }}
+                                    {{ menuItems.getHTML(menuItem) }}
                                 {% endfor %}
                             </ul>
                             <ul class="navbar-nav flex-row ml-auto">
