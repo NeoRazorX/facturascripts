@@ -27,16 +27,6 @@
 #}
 
 {#
-    Generate the menu items of private core
-#}
-{% macro generate(menuManager) %}
-    {% import _self as menuTree %}
-    {% for menuItem in menuManager.getMenu() %}
-        {{ menuTree.getHTML(menuItem) }}
-    {% endfor %}
-{% endmacro %}
-
-{#
     Returns the HTML for the icon of the item.
 #}
 {% macro getHTMLIcon(menuItem) %}
