@@ -45,11 +45,11 @@ class MenuManager
     private static $menuActive;
 
     /**
-     * Stores active menu item to use when reload.
+     * Stores active page to use when reload.
      *
-     * @var MenuItem
+     * @var Model\Page
      */
-    private static $menuItemActive;
+    private static $menuPageActive;
 
     /**
      * Controller associated with the page
@@ -95,7 +95,7 @@ class MenuManager
     public function reload()
     {
         self::$menu = $this->loadUserMenu();
-        $this->setActiveMenu(self::$menuItemActive);
+        $this->setActiveMenu(self::$menuPageActive);
     }
 
     /**
@@ -296,7 +296,7 @@ class MenuManager
         foreach ($menu as $key => $menuItem) {
             if ($menuItem->name === $pageModel->name) {
                 $menu[$key]->active = true;
-                self::$menuItemActive = $pageModel;
+                self::$menuPageActive = $pageModel;
                 break;
             } elseif (!empty($pageModel->submenu) && !empty($menuItem->menu) && $menuItem->name === $pageModel->submenu) {
                 $menu[$key]->active = true;
