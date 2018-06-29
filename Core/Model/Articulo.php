@@ -174,6 +174,7 @@ class Articulo extends Base\Product
         new Fabricante();
         new Familia();
         new Impuesto();
+        new Variante();
 
         return '';
     }

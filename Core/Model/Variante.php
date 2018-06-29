@@ -77,6 +77,20 @@ class Variante extends Base\ModelClass
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new AtributoValor();
+
+        return '';
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string

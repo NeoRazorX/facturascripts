@@ -810,5 +810,8 @@
     "reference+description": "Reference + Description",
     "starting-cron": "Starting FacturaScripts cron execution...",
     "finished-cron": "Finished FacturaScripts cron execution, needed time: %timeNeeded%",
-    "running-plugin-cron": "Running FacturaScripts cron for plugin %pluginName%"
+    "running-plugin-cron": "Running FacturaScripts cron for plugin %pluginName%",
+    "variant": "Variant",
+    "attribute-value-1": "Attribute value 1",
+    "attribute-value-2": "Attribute value 2"
 }
