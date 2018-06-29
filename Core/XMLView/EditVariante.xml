@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller EditVariante
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+-->
+
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="code" title="code" display="none" order="100">
+                <widget type="text" fieldname="idvariante" icon="fa-globe" required="true" />
+            </column>
+            <column name="reference" numcolumns="3" order="110">
+                <widget type="text" fieldname="referencia" icon="fa-key" />
+            </column>
+            <column name="barcode" numcolumns="5" order="120">
+                <widget type="text" fieldname="codbarras" icon="fa-barcode" />
+            </column>
+            <column name="price" numcolumns="4" order="130">
+                <widget type="money" decimal="2" fieldname="pvp" />
+            </column>
+            <column name="attribute-value-1" numcolumns="4" order="140">
+                <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
+                    <values source="atributos_valores" fieldcode="id" fieldtitle="valor"></values>
+                </widget>
+            </column>
+            <column name="attribute-value-2" numcolumns="4" order="150">
+                <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo">
+                    <values source="atributos_valores" fieldcode="id" fieldtitle="valor"></values>
+                </widget>
+            </column>
+        </group>
+    </columns>
+</view>

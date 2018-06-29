@@ -52,6 +52,7 @@ class EditArticulo extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditArticulo', 'Articulo', 'products', 'fa-cubes');
+        $this->addEditListView('EditVariante', 'Variante', 'variant', 'fa-code-fork');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
         $this->addListView('ListArticuloProveedor', 'ArticuloProveedor', 'suppliers', 'fa-users');
 
@@ -78,6 +79,7 @@ class EditArticulo extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
+            case 'EditVariante':
             case 'EditStock':
                 $limit = 0;
             /// no break
