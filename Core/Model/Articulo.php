@@ -125,14 +125,6 @@ class Articulo extends Base\Product
     public $sevende;
 
     /**
-     * Defines the type of item, so you can set distinctions
-     * according to one type or another. Varchar (10)
-     *
-     * @var string
-     */
-    public $tipo;
-
-    /**
      * Traceability control.
      *
      * @var bool
