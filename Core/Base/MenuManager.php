@@ -95,7 +95,9 @@ class MenuManager
     public function reload()
     {
         self::$menu = $this->loadUserMenu();
-        $this->setActiveMenu(self::$menuPageActive);
+        if (null !== self::$menuPageActive) {
+            $this->setActiveMenu(self::$menuPageActive);
+        }
     }
 
     /**
