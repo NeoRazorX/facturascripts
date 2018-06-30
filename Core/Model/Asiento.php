@@ -390,6 +390,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
     {
         $exerciseModel = new Ejercicio();
         $exercise = $exerciseModel->getByFecha($this->fecha);
+
         if (empty($exercise) || empty($exercise->codejercicio)) {
             return 'exercise-data-missing';
         }
