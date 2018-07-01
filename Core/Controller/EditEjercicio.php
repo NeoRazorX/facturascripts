@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -118,9 +118,9 @@ class EditEjercicio extends ExtendedController\PanelController
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
             $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
-
             return false;
         }
+
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
