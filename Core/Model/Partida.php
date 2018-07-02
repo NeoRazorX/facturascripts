@@ -306,7 +306,7 @@ class Partida extends Base\ModelClass
 
         $this->idsubcuenta = $this->getIdSubAccount($this->codsubcuenta, $accounting->codejercicio);
         if (empty($this->idsubcuenta)) {
-            self::$miniLog->alert(self::$i18n->trans('account-data-error  test partida'));
+            self::$miniLog->alert(self::$i18n->trans('account-data-error'));
             return false;
         }
 

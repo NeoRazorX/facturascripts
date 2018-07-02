@@ -254,7 +254,7 @@ class Subcuenta extends Base\ModelClass
 
         $this->idcuenta = $this->getIdAccount();
         if (empty($this->idcuenta)) {
-            self::$miniLog->alert(self::$i18n->trans('account-data-error test subcuenta'));
+            self::$miniLog->alert(self::$i18n->trans('account-data-error'));
             return false;
         }
 
