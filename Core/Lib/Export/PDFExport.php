@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class PDFExport extends PDFCore implements ExportInterface
+class PDFExport extends PDFDocument implements ExportInterface
 {
 
     const LIST_LIMIT = 500;

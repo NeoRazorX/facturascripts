@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cronlogs.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the cronlogs table.
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('cronlogs_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>pluginname</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>date</name>
+        <type>timestamp</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>cronlogs_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>
