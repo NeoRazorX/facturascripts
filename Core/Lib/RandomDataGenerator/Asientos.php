@@ -47,21 +47,28 @@ class Asientos extends AbstractRandomAccounting
     {
         $asiento = $this->model;
         $partida = new Model\Partida();
-        $this->shuffle($subcuentas, new Model\Subcuenta());
-
-        if (count($subcuentas) < 10) {
-            return 0;
-        }
+        $subcuenta = new Model\Subcuenta();
 
         for ($generated = 0; $generated < $num; ++$generated) {
+
             $ejercicio = $this->getOneItem($this->ejercicios);
 
             $asiento->clear();
             $asiento->codejercicio = $ejercicio->codejercicio;
             $asiento->concepto = $this->descripcion();
             $asiento->fecha = date('d-m-Y', strtotime($ejercicio->fechainicio . ' +' . mt_rand(1, 360) . ' days'));
+
+            $filter = [new \FacturaScripts\Core\Base\DataBase\DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+            $subcuentas = $subcuenta->all($filter);
+            
+            if (count($subcuentas) < 10) {
+               
+                return 0;
+            }
+
             $asiento->importe = $this->precio(-999, 150, 99999);
             if ($asiento->save()) {
+
                 shuffle($subcuentas);
                 $lineas = mt_rand(1, 20) * 2;
                 $debe = true;
@@ -79,7 +86,7 @@ class Asientos extends AbstractRandomAccounting
 
                     if ($partida->save()) {
                         $debe = !$debe;
-                    }
+                    } 
                 }
                 continue;
             }
