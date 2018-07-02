@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Description of Wizard
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class Wizard extends Controller
 {
@@ -84,6 +85,11 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
+        //Show message if user and password are admin
+        if ($this->user->verifyPassword('admin')) {
+            $this->miniLog->warning($this->i18n->trans('you-should-change-the-default-user-and-password'));
+        }
+
         $coddivisa = $this->request->request->get('coddivisa', '');
         $codpais = $this->request->request->get('codpais', '');
         if ($codpais !== '') {
@@ -109,8 +115,11 @@ class Wizard extends Controller
             $appRouter = new AppRouter();
             $appRouter->clear();
 
-            /// redir to EditSettings
-            $this->response->headers->set('Refresh', '0; EditSettings');
+            // If password is empty don't update and use default password, check and updates the new password
+            if (empty($this->request->request->get('password', '')) || $this->checkPassword()) {
+                /// redir to EditSettings
+                $this->response->headers->set('Refresh', '0; EditSettings');
+            }
         }
     }
 
@@ -217,5 +226,29 @@ class Wizard extends Controller
             $appSettings->save();
             break;
         }
+    }
+
+    /**
+     * Save the new password if data is admin admin
+     *
+     * @return bool Returns true if success, otherwise return false.
+     */
+    private function checkPassword() : bool
+    {
+        $pass = $this->request->request->get('password', '');
+        $repeatPass = $this->request->request->get('repassword', '');
+
+        if ($pass !== $repeatPass) {
+            $this->miniLog->warning($this->i18n->trans('pass-not-match'));
+            return false;
+        }
+
+        $this->user->setPassword($pass);
+        if (!$this->user->save()) {
+            $this->miniLog->warning($this->i18n->trans('pass-not-updated'));
+            return false;
+        }
+
+        return true;
     }
 }
