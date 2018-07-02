@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@ class BusinessDocumentGenerator
 
     public function generate(BusinessDocument $prototype, string $newClass)
     {
-        $exclude = ['codigo', 'idestado', 'fecha', 'hora', 'numero'];
+        $exclude = ['codigo', 'idestado', 'fecha', 'hora', 'numero', 'femail'];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
