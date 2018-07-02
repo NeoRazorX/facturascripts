@@ -5,8 +5,6 @@
 <img src="http://i18n.facturascripts.com/widgets/facturascripts/-/core/svg-badge.svg" alt="Estado de la traducción" />
 </a>
 
-[![Throughput Graph](https://graphs.waffle.io/NeoRazorX/facturascripts/throughput.svg)](https://waffle.io/NeoRazorX/facturascripts/metrics/throughput)
-
 # FacturaScripts
 *Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes. Es compatible con FacturaLux, Abanq y Eneboo. Es software libre bajo licencia GNU/LGPL.*
 
