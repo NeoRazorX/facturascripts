@@ -33,7 +33,7 @@
 
     <script type="text/javascript">
         documentLineData = {{ view.getLineData() | raw }};
-        documentUrl = '{{ model.url('edit') | raw }}';
+                documentUrl = '{{ model.url('edit') | raw }}';
     </script>
 
     <form name="f_document_primary" action="#" method="post">
@@ -48,7 +48,7 @@
                 {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
             {% endif %}
             {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
-            {{ macros.stateSelect(model, view) }}
+            {{ macros.stateSelect(model, view, context.i18n) }}
             <div class="col">
                 <div class="input-group">
                     <span class="input-group-prepend">
@@ -236,7 +236,7 @@
     </div>
 {% endmacro %}
 
-{% macro stateSelect(model, view) %}
+{% macro stateSelect(model, view, i18n) %}
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% for state in view.documentStates %}
@@ -270,6 +270,12 @@
                     </a>
                 {% endif %}
             {% endfor %}
+            {% if model.exists() %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="DocumentStitcher?model={{ model.modelClassName() }}&codes={{ model.primaryColumnValue() }}">
+                    <i class="fa fa-copy fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-lines') }}
+                </a>
+            {% endif %}
         </div>
     </div>
 {% endmacro %}

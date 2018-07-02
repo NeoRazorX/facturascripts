@@ -102,7 +102,7 @@ abstract class AbstractRandom
         $texto = $this->familia() . $this->getOneItem($sufijos);
 
         $descripciones1 = [
-            'Una alcachofa', 'Un motor', 'Una targeta gráfica (GPU)', 'Un procesador',
+            'Una alcachofa', 'Un motor', 'Una tarjeta gráfica (GPU)', 'Un procesador',
             'Un coche', 'Un dispositivo tecnológico', 'Un magnetofón', 'Un palo',
             'un cubo de basura', "Un objeto pequeño d'or", '"La hostia"',
         ];
