@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,6 +51,9 @@ class ListAsiento extends ExtendedController\ListController
         /// accounting entries
         $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
+        $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
+        $this->addOrderBy('ListAsiento', ['numero'], 'number');
+        $this->addOrderBy('ListAsiento', ['importe'], 'ammount');
 
         $this->addFilterDatePicker('ListAsiento', 'fecha', 'date', 'fecha');
         $this->addFilterNumber('ListAsiento', 'importe', 'amount', 'importe');
@@ -60,9 +63,6 @@ class ListAsiento extends ExtendedController\ListController
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
-
-        $this->addOrderBy('ListAsiento', ['numero'], 'number');
-        $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
 
         /// concepts
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');

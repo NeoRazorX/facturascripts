@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model;
 
 /**
@@ -46,11 +47,9 @@ class Asientos extends AbstractRandomAccounting
     public function generate($num = 25)
     {
         $asiento = $this->model;
-        $partida = new Model\Partida();
         $subcuenta = new Model\Subcuenta();
 
         for ($generated = 0; $generated < $num; ++$generated) {
-
             $ejercicio = $this->getOneItem($this->ejercicios);
 
             $asiento->clear();
@@ -58,36 +57,11 @@ class Asientos extends AbstractRandomAccounting
             $asiento->concepto = $this->descripcion();
             $asiento->fecha = date('d-m-Y', strtotime($ejercicio->fechainicio . ' +' . mt_rand(1, 360) . ' days'));
 
-            $filter = [new \FacturaScripts\Core\Base\DataBase\DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
-            $subcuentas = $subcuenta->all($filter);
-            
-            if (count($subcuentas) < 10) {
-               
-                return 0;
-            }
-
-            $asiento->importe = $this->precio(-999, 150, 99999);
             if ($asiento->save()) {
-
-                shuffle($subcuentas);
-                $lineas = mt_rand(1, 20) * 2;
-                $debe = true;
-                for ($linea = 0; $linea < $lineas; ++$linea) {
-                    $partida->clear();
-                    $partida->idasiento = $asiento->idasiento;
-                    $partida->idsubcuenta = $subcuentas[$linea]->idsubcuenta;
-                    $partida->codsubcuenta = $subcuentas[$linea]->codsubcuenta;
-                    $partida->concepto = $asiento->concepto;
-                    if ($debe) {
-                        $partida->debe = $asiento->importe;
-                    } else {
-                        $partida->haber = $asiento->importe;
-                    }
-
-                    if ($partida->save()) {
-                        $debe = !$debe;
-                    } 
-                }
+                $filter = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+                $subcuentas = $subcuenta->all($filter);
+                $this->generateLines($asiento, $subcuentas);
+                $asiento->save();
                 continue;
             }
 
@@ -95,5 +69,37 @@ class Asientos extends AbstractRandomAccounting
         }
 
         return $generated;
+    }
+
+    private function generateLines(Model\Asiento &$asiento, array $subcuentas)
+    {
+        if (count($subcuentas) < 40) {
+            return;
+        }
+
+        shuffle($subcuentas);
+        $debe = (bool) mt_rand(0, 1);
+        $lineas = mt_rand(1, 10) * 2;
+        $partida = new Model\Partida();
+
+        $importe = $this->precio(-999, 150, 99999);
+        for ($linea = 0; $linea < $lineas; ++$linea) {
+            $partida->clear();
+            $partida->idasiento = $asiento->idasiento;
+            $partida->idsubcuenta = $subcuentas[$linea]->idsubcuenta;
+            $partida->codsubcuenta = $subcuentas[$linea]->codsubcuenta;
+            $partida->concepto = $this->descripcion();
+
+            if ($debe) {
+                $partida->debe = $importe;
+            } else {
+                $partida->haber = $importe;
+                $asiento->importe += $importe;
+            }
+
+            if ($partida->save()) {
+                $debe = !$debe;
+            }
+        }
     }
 }
