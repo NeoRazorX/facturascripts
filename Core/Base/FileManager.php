@@ -229,7 +229,7 @@ class FileManager
      *
      * @return array
      */
-    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = ['.', '..','.DS_Store']): array
+    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = ['.', '..', '.DS_Store']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (!is_array($scan)) {
