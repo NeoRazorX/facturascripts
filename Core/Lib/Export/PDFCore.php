@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of PDFCore
@@ -98,23 +96,6 @@ class PDFCore
     }
 
     /**
-     * Gets the name of the country with that code.
-     *
-     * @param string $code
-     *
-     * @return string
-     */
-    protected function getCountryName($code): string
-    {
-        if (empty($code)) {
-            return '';
-        }
-
-        $country = new Model\Pais();
-        return $country->loadFromCode($code) ? $country->nombre : '';
-    }
-
-    /**
      * Returns the table data
      *
      * @param array $cursor
@@ -157,48 +138,33 @@ class PDFCore
     }
 
     /**
-     * Insert company logo to PDF document or dies with a message to try to solve the problem.
+     * Adds a new line to the PDF.
      */
-    protected function insertCompanyLogo()
+    protected function newLine()
     {
-        if (!\function_exists('imagecreatefromstring')) {
-            die('ERROR: function imagecreatefromstring() not founded. '
-                . ' Do you have installed php-gd package and enabled support to allow us render images? .'
-                . 'Note that the package name can differ between operating system or PHP version.');
-        }
-
-        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
-        $logoSize = $this->calcLogoSize($logoPath);
-
-        $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
-        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
-        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        $posY = $this->pdf->y + 5;
+        $this->pdf->line(self::CONTENT_X, $posY, $this->tableWidth + self::CONTENT_X, $posY);
     }
 
     /**
-     * Calculate logo size and return as array of width and height
+     * Adds a description of long titles to the PDF.
      *
-     * @param $logo
-     *
-     * @return array|bool
+     * @param array $titles
      */
-    protected function calcLogoSize($logo)
+    protected function newLongTitles(&$titles)
     {
-        $logoSize = $size = getimagesize($logo);
-        if ($size[0] > 200) {
-            $logoSize[0] = 200;
-            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
-            $size[0] = $logoSize[0];
-            $size[1] = $logoSize[1];
+        $txt = '';
+        foreach ($titles as $key => $value) {
+            if ($txt !== '') {
+                $txt .= ', ';
+            }
+
+            $txt .= '*' . $key . ' = ' . $value;
         }
-        if ($size[1] > 80) {
-            $logoSize[1] = 80;
-            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
+
+        if ($txt !== '') {
+            $this->pdf->ezText($txt);
         }
-        return [
-            'width' => $logoSize[0],
-            'height' => $logoSize[1],
-        ];
     }
 
     /**
@@ -233,26 +199,76 @@ class PDFCore
     }
 
     /**
-     * Set table data as key => value.
+     * Remove the empty columns to save space.
      *
+     * @param array $tableData
      * @param array $tableColsTitle
-     * @param array $tableDataAux
-     * @param mixed $model
+     * @param mixed $customEmptyValue
      */
-    protected function setTablaData(&$tableColsTitle, &$tableDataAux, $model)
+    protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
     {
-        foreach ($tableColsTitle as $key => $colTitle) {
-            $value = null;
-            if (isset($model->{$key})) {
-                $value = $model->{$key};
+        foreach (array_keys($tableColsTitle) as $key) {
+            $remove = true;
+            foreach ($tableData as $row) {
+                if (!empty($row[$key]) && $row[$key] != $customEmptyValue) {
+                    $remove = false;
+                    break;
+                }
             }
 
-            if (\is_bool($value)) {
-                $txt = $this->i18n->trans($value ? 'yes' : 'no');
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
-            } elseif ($value !== null && $value !== '') {
-                $value = \is_string($value) ? Base\Utils::fixHtml($value) : $value;
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
+            if ($remove) {
+                unset($tableColsTitle[$key]);
+            }
+        }
+    }
+
+    /**
+     * Adds to $longTitles, and replace all long titles from $titles
+     *
+     * @param array $longTitles
+     * @param array $titles
+     */
+    protected function removeLongTitles(&$longTitles, &$titles)
+    {
+        $num = 1;
+        foreach ($titles as $key => $value) {
+            if (mb_strlen($value) > 12) {
+                $longTitles[$num] = $value;
+                $titles[$key] = '*' . $num;
+                ++$num;
+            }
+        }
+    }
+
+    /**
+     * Set the table content.
+     *
+     * @param array $columns
+     * @param array $tableCols
+     * @param array $tableColsTitle
+     * @param array $tableOptions
+     */
+    protected function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
+    {
+        foreach ($columns as $col) {
+            if (is_string($col)) {
+                $tableCols[$col] = $col;
+                $tableColsTitle[$col] = $col;
+                continue;
+            }
+
+            if (isset($col->columns)) {
+                $this->setTableColumns($col->columns, $tableCols, $tableColsTitle, $tableOptions);
+                continue;
+            }
+
+            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
+                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
+                $tableOptions['cols'][$col->widget->fieldName] = [
+                    'justification' => $col->display,
+                    'col-type' => $col->widget->type,
+                ];
             }
         }
     }

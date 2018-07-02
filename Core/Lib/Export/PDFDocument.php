@@ -30,30 +30,94 @@ class PDFDocument extends PDFCore
 {
 
     /**
-     * Adds a new page.
+     * Calculate logo size and return as array of width and height
      *
-     * @param string $orientation
+     * @param $logo
+     *
+     * @return array|bool
      */
-    protected function newPage($orientation = 'portrait')
+    protected function calcLogoSize($logo)
     {
-        if ($this->pdf === null) {
-            $this->pdf = new \Cezpdf('a4', $orientation);
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
-
-            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
-
-            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } elseif ($this->pdf->y < 200) {
-            $this->pdf->ezNewPage();
-            $this->insertedHeader = false;
-        } else {
-            $this->pdf->ezText("\n");
+        $logoSize = $size = getimagesize($logo);
+        if ($size[0] > 200) {
+            $logoSize[0] = 200;
+            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
+            $size[0] = $logoSize[0];
+            $size[1] = $logoSize[1];
         }
+        if ($size[1] > 80) {
+            $logoSize[1] = 80;
+            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
+        }
+        return [
+            'width' => $logoSize[0],
+            'height' => $logoSize[1],
+        ];
     }
 
-     /**
+    /**
+     * Gets the name of the country with that code.
+     *
+     * @param string $code
+     *
+     * @return string
+     */
+    protected function getCountryName($code): string
+    {
+        if (empty($code)) {
+            return '';
+        }
+
+        $country = new Model\Pais();
+        return $country->loadFromCode($code) ? $country->nombre : '';
+    }
+
+    /**
+     * Gets the name of an specify divisa
+     *
+     * @param string $code
+     *
+     * @return string
+     */
+    protected function getDivisaName($code): string
+    {
+        if (empty($code)) {
+            return '';
+        }
+
+        $divisa = new Model\Divisa();
+        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
+    }
+
+    /**
+     * Insert company logo to PDF document or dies with a message to try to solve the problem.
+     */
+    protected function insertCompanyLogo()
+    {
+        if (!\function_exists('imagecreatefromstring')) {
+            die('ERROR: function imagecreatefromstring() not founded. '
+                . ' Do you have installed php-gd package and enabled support to allow us render images? .'
+                . 'Note that the package name can differ between operating system or PHP version.');
+        }
+
+        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
+        $logoSize = $this->calcLogoSize($logoPath);
+
+        $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
+        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
+        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+    }
+
+    /**
+     * Insert footer details.
+     */
+    protected function insertFooter()
+    {
+        $now = $this->i18n->trans('generated-at', ['%when%' => date('d-m-Y H:i')]);
+        $this->pdf->addText($this->tableWidth + self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, $now, 0, 'right');
+    }
+
+    /**
      * Insert header details.
      *
      * @param int $idempresa
@@ -86,120 +150,6 @@ class PDFDocument extends PDFCore
     }
 
     /**
-     * Adds to $longTitles, and replace all long titles from $titles
-     *
-     * @param array $longTitles
-     * @param array $titles
-     */
-    protected function removeLongTitles(&$longTitles, &$titles)
-    {
-        $num = 1;
-        foreach ($titles as $key => $value) {
-            if (mb_strlen($value) > 12) {
-                $longTitles[$num] = $value;
-                $titles[$key] = '*' . $num;
-                ++$num;
-            }
-        }
-    }
-
-    /**
-     * Remove the empty columns to save space.
-     *
-     * @param array $tableData
-     * @param array $tableColsTitle
-     * @param mixed $customEmptyValue
-     */
-    protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
-    {
-        foreach (array_keys($tableColsTitle) as $key) {
-            $remove = true;
-            foreach ($tableData as $row) {
-                if (!empty($row[$key]) && $row[$key] != $customEmptyValue) {
-                    $remove = false;
-                    break;
-                }
-            }
-
-            if ($remove) {
-                unset($tableColsTitle[$key]);
-            }
-        }
-    }
-
-     /**
-     * Adds a description of long titles to the PDF.
-     *
-     * @param array $titles
-     */
-    protected function newLongTitles(&$titles)
-    {
-        $txt = '';
-        foreach ($titles as $key => $value) {
-            if ($txt !== '') {
-                $txt .= ', ';
-            }
-
-            $txt .= '*' . $key . ' = ' . $value;
-        }
-
-        if ($txt !== '') {
-            $this->pdf->ezText($txt);
-        }
-    }
-
-    /**
-     * Insert footer details.
-     */
-    protected function insertFooter()
-    {
-        $now = $this->i18n->trans('generated-at', ['%when%' => date('d-m-Y H:i')]);
-        $this->pdf->addText($this->tableWidth + self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, $now, 0, 'right');
-    }
-
-    /**
-     * Set the table content.
-     *
-     * @param array $columns
-     * @param array $tableCols
-     * @param array $tableColsTitle
-     * @param array $tableOptions
-     */
-    protected function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
-    {
-        foreach ($columns as $col) {
-            if (is_string($col)) {
-                $tableCols[$col] = $col;
-                $tableColsTitle[$col] = $col;
-                continue;
-            }
-
-            if (isset($col->columns)) {
-                $this->setTableColumns($col->columns, $tableCols, $tableColsTitle, $tableOptions);
-                continue;
-            }
-
-            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
-                $tableOptions['cols'][$col->widget->fieldName] = [
-                    'justification' => $col->display,
-                    'col-type' => $col->widget->type,
-                ];
-            }
-        }
-    }
-
-    /**
-     * Adds a new line to the PDF.
-     */
-    protected function newLine()
-    {
-        $posY = $this->pdf->y + 5;
-        $this->pdf->line(self::CONTENT_X, $posY, $this->tableWidth + self::CONTENT_X, $posY);
-    }
-
-    /**
      * Generate a table with two key => value per row.
      *
      * @param        $tableData
@@ -214,19 +164,26 @@ class PDFDocument extends PDFCore
     }
 
     /**
-     * Gets the name of an specify divisa
+     * Adds a new page.
      *
-     * @param string $code
-     *
-     * @return string
+     * @param string $orientation
      */
-    protected function getDivisaName($code): string
+    protected function newPage($orientation = 'portrait')
     {
-        if (empty($code)) {
-            return '';
-        }
+        if ($this->pdf === null) {
+            $this->pdf = new \Cezpdf('a4', $orientation);
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
 
-        $divisa = new Model\Divisa();
-        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
+            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
+
+            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+        } elseif ($this->pdf->y < 200) {
+            $this->pdf->ezNewPage();
+            $this->insertedHeader = false;
+        } else {
+            $this->pdf->ezText("\n");
+        }
     }
 }
