@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class FileManager
 {
@@ -228,7 +229,7 @@ class FileManager
      *
      * @return array
      */
-    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = ['.', '..']): array
+    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = ['.', '..','.DS_Store']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (!is_array($scan)) {
