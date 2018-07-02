@@ -41,7 +41,7 @@
     </constraint>
     <constraint>
         <name>ca_variantes_articulos</name>
-        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_variantes_articulosvalores1</name>

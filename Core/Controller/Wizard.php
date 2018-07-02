@@ -22,6 +22,7 @@ use FacturaScripts\Core\App\AppRouter;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
@@ -101,6 +102,9 @@ class Wizard extends Controller
             /// change default log values to enabled
             $this->enableLogs();
 
+            /// add the default role for agents
+            $this->addDefaultRoleAccess();
+
             /// clear routes
             $appRouter = new AppRouter();
             $appRouter->clear();
@@ -108,6 +112,72 @@ class Wizard extends Controller
             /// redir to EditSettings
             $this->response->headers->set('Refresh', '0; EditSettings');
         }
+    }
+
+    /**
+     * Add/update the default role for agents, and adds to this role access to all default pages.
+     *
+     * @return bool Returns true on success, false otherwise
+     */
+    private function addDefaultRoleAccess(): bool
+    {
+        $role = new Model\Role();
+        if ($role->loadFromCode($role->codrole)) {
+            return $this->addPagesToRole($role->codrole);
+        }
+
+        $role->codrole = \mb_strtolower($this->i18n->trans('agents'));
+        $role->descripcion = $this->i18n->trans('agents');
+        if ($role->save()) {
+            return $this->addPagesToRole($role->codrole);
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds to received codrole, all pages that are not in admin menu and are not yet enabled.
+     *
+     * @param $codrole
+     *
+     * @return bool Returns true on success, false otherwise and rollback the changes
+     */
+    private function addPagesToRole($codrole): bool
+    {
+        $roleAccess = new Model\RoleAccess();
+        $this->dataBase->beginTransaction();
+        try {
+            $page = new Model\Page();
+            /// All pages not in admin menu and not yet enabled
+            $inSQL = "SELECT name FROM pages WHERE menu != 'admin' AND name NOT IN ("
+                . 'SELECT pagename FROM roles_access WHERE codrole = ' . $this->dataBase->var2str($codrole)
+                . ')';
+            $where = [new DataBaseWhere('name', $inSQL, 'IN')];
+            $pages = $page->all($where, [], 0, 0);
+            // add Pages to Rol
+            if (!$roleAccess->addPagesToRole($codrole, $pages)) {
+                throw new \Exception($this->i18n->trans('cancel-process'));
+            }
+            $this->dataBase->commit();
+            return true;
+        } catch (\Exception $exc) {
+            $this->dataBase->rollback();
+            $this->miniLog->error($exc->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Enable all logs by default.
+     */
+    private function enableLogs()
+    {
+        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+        $appSettings = new AppSettings();
+        foreach ($types as $type) {
+            $appSettings->set('log', $type, 'true');
+        }
+        $appSettings->save();
     }
 
     /**
@@ -142,23 +212,10 @@ class Wizard extends Controller
             $almacen->provincia = $this->empresa->provincia;
             $almacen->ciudad = $this->empresa->ciudad;
             $almacen->save();
-                 
+
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
             $appSettings->save();
             break;
         }
-    }
-
-    /**
-     * Enable all logs by default.
-     */
-    private function enableLogs()
-    {
-        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
-        $appSettings = new AppSettings();
-        foreach ($types as $type) {
-            $appSettings->set('log', $type, 'true');
-        }
-        $appSettings->save();
     }
 }

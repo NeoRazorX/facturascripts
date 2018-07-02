@@ -6,7 +6,7 @@
      * Establishes the basic characteristics of the Facturascripts.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -75,8 +75,9 @@
                         </a>
                         <div class="navbar-collapse collapse">
                             <ul class="navbar-nav pt-1">
+                                {% import 'Macro/Menu.html.twig' as MenuMacro %}
                                 {% for menuItem in menuManager.getMenu() %}
-                                    {{ menuItem.getHTML()|raw }}
+                                    {{ MenuMacro.showMenu(menuItem) }}
                                 {% endfor %}
                             </ul>
                             <ul class="navbar-nav flex-row ml-auto">

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,6 +45,13 @@ class MenuManager
     private static $menuActive;
 
     /**
+     * Stores active page to use when reload.
+     *
+     * @var Model\Page
+     */
+    private static $menuPageActive;
+
+    /**
      * Controller associated with the page
      *
      * @var Model\Page
@@ -79,6 +86,17 @@ class MenuManager
 
         if (self::$user !== false && self::$menu === null) {
             self::$menu = $this->loadUserMenu();
+        }
+    }
+
+    /**
+     * Reloads menu from database.
+     */
+    public function reload()
+    {
+        self::$menu = $this->loadUserMenu();
+        if (null !== self::$menuPageActive) {
+            $this->setActiveMenu(self::$menuPageActive);
         }
     }
 
@@ -134,14 +152,6 @@ class MenuManager
     {
         self::$user = $user;
         $this->init();
-    }
-
-    /**
-     * Reloads menu from database.
-     */
-    public function reload()
-    {
-        self::$menu = $this->loadUserMenu();
     }
 
     /**
@@ -288,6 +298,7 @@ class MenuManager
         foreach ($menu as $key => $menuItem) {
             if ($menuItem->name === $pageModel->name) {
                 $menu[$key]->active = true;
+                self::$menuPageActive = $pageModel;
                 break;
             } elseif (!empty($pageModel->submenu) && !empty($menuItem->menu) && $menuItem->name === $pageModel->submenu) {
                 $menu[$key]->active = true;
