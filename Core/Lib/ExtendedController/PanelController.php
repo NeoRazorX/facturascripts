@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -310,6 +310,9 @@ abstract class PanelController extends BaseController
      */
     protected function editAction()
     {
+        $data = $this->getFormData();
+        $this->views[$this->active]->loadFromData($data);
+
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
             return false;
@@ -365,8 +368,6 @@ abstract class PanelController extends BaseController
                 return false;
 
             case 'save':
-                $data = $this->getFormData();
-                $this->views[$this->active]->loadFromData($data);
                 $this->editAction();
                 break;
 
