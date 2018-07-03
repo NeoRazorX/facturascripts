@@ -35,6 +35,10 @@
         <type>timestamp</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>uri</name>
+        <type>character varying(200)</type>
+    </column>
     <constraint>
         <name>id_pkey</name>
         <type>PRIMARY KEY (id)</type>

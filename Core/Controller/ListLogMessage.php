@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,7 +50,7 @@ class ListLogMessage extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListLogMessage', 'LogMessage');
-        $this->addSearchFields('ListLogMessage', ['level', 'message']);
+        $this->addSearchFields('ListLogMessage', ['message', 'uri']);
 
         $this->addOrderBy('ListLogMessage', ['time'], 'date', 2);
         $this->addOrderBy('ListLogMessage', ['level'], 'level');

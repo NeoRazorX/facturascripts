@@ -36,10 +36,13 @@
         <column name="user" order="130">
             <widget type="text" fieldname="nick" />
         </column>
-        <column name="ip" order="140">
+        <column name="url" order="140">
+            <widget type="text" fieldname="uri" />
+        </column>
+        <column name="ip" order="150">
             <widget type="text" fieldname="ip" />
         </column>
-        <column name="date" display="right" order="150">
+        <column name="date" display="right" order="160">
             <widget type="text" fieldname="time" />
         </column>
     </columns>

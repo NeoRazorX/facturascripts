@@ -73,6 +73,12 @@ class LogMessage extends Base\ModelClass
     public $time;
 
     /**
+     *
+     * @var string
+     */
+    public $uri;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -109,6 +115,8 @@ class LogMessage extends Base\ModelClass
     public function test()
     {
         $this->message = Utils::noHtml($this->message);
+        $this->uri = Utils::noHtml($this->uri);
+
         return empty($this->message) ? false : parent::test();
     }
 }

@@ -153,7 +153,7 @@ abstract class App
      */
     public function close(string $nick = '')
     {
-        new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick);
+        new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick, $this->uri);
         $this->dataBase->close();
     }
 

@@ -218,6 +218,8 @@ class AppController extends App
                 $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
                 $template = 'Error/ControllerError.html.twig';
             }
+        } else {
+            $this->miniLog->alert($this->i18n->trans('controller-not-found'));
         }
 
         $this->response->setStatusCode($httpStatus);
