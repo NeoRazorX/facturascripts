@@ -33,32 +33,11 @@ class Subcuenta extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $idsubcuenta;
-
-    /**
      * Sub-account code.
      *
      * @var string
      */
     public $codsubcuenta;
-
-    /**
-     * Description of the subaccount.
-     *
-     * @var string
-     */
-    public $descripcion;
-
-    /**
-     * ID of the account to which it belongs.
-     *
-     * @var int
-     */
-    public $idcuenta;
 
     /**
      * Account code.
@@ -89,13 +68,6 @@ class Subcuenta extends Base\ModelClass
     public $codimpuesto;
 
     /**
-     * Amount of credit.
-     *
-     * @var float|int
-     */
-    public $haber;
-
-    /**
      * Amount of the debit.
      *
      * @var float|int
@@ -103,45 +75,39 @@ class Subcuenta extends Base\ModelClass
     public $debe;
 
     /**
+     * Description of the subaccount.
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
+     * Amount of credit.
+     *
+     * @var float|int
+     */
+    public $haber;
+
+    /**
+     * ID of the account to which it belongs.
+     *
+     * @var int
+     */
+    public $idcuenta;
+    
+    /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $idsubcuenta;
+
+    /**
      * Balance amount.
      *
      * @var float|int
      */
     public $saldo;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'subcuentas';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'idsubcuenta';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new CuentaEspecial();
-        new Cuenta();
-        return '';
-    }
 
     /**
      * Reset the values of all model properties.
@@ -210,25 +176,37 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * Check if exists error in data of account
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
-     * @return bool
+     * @return string
      */
-    private function testErrorInData(): bool
+    public function install()
     {
-        return empty($this->codcuenta) || empty($this->codsubcuenta) || empty($this->descripcion) || empty($this->codejercicio);
+        new CuentaEspecial();
+        new Cuenta();
+        return '';
     }
 
     /**
-     * Check if exists error in long of subaccount
+     * Returns the name of the column that is the model's primary key.
      *
-     * @return bool
+     * @return string
      */
-    private function testErrorInLengthSubAccount(): bool
+    public static function primaryColumn()
     {
-        $exercise = new Ejercicio();
-        $exercise->loadFromCode($this->codejercicio);
-        return empty($exercise->codejercicio) || (strlen($this->codsubcuenta) <> $exercise->longsubcuenta);
+        return 'idsubcuenta';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'subcuentas';
     }
 
     /**
@@ -261,53 +239,6 @@ class Subcuenta extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        $accountDetail = new SubcuentaSaldo();
-        $inTransaction = self::$dataBase->inTransaction();
-        try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
-
-            /// main insert
-            if (!parent::saveInsert($values)) {
-                return false;
-            }
-
-            /// add account detail balance
-            $accountDetail->idcuenta = $this->idcuenta;
-            $accountDetail->idsubcuenta = $this->idsubcuenta;
-            for ($index = 1; $index < 13; $index++) {
-                $accountDetail->mes = $index;
-                $accountDetail->id = null;
-                if (!$accountDetail->save()) {
-                    return false;
-                }
-            }
-
-            /// save transaction
-            if ($inTransaction === false) {
-                self::$dataBase->commit();
-            }
-        } catch (\Exception $e) {
-            self::$miniLog->error($e->getMessage());
-            return false;
-        } finally {
-            if (!$inTransaction && self::$dataBase->inTransaction()) {
-                self::$dataBase->rollback();
-                return false;
-            }
-        }
-        return true;
-    }
     /*
      * Update account balance
      *
@@ -370,5 +301,75 @@ class Subcuenta extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCuenta?active=List');
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $accountDetail = new SubcuentaSaldo();
+        $inTransaction = self::$dataBase->inTransaction();
+        try {
+            if ($inTransaction === false) {
+                self::$dataBase->beginTransaction();
+            }
+
+            /// main insert
+            if (!parent::saveInsert($values)) {
+                return false;
+            }
+
+            /// add account detail balance
+            $accountDetail->idcuenta = $this->idcuenta;
+            $accountDetail->idsubcuenta = $this->idsubcuenta;
+            for ($index = 1; $index < 13; $index++) {
+                $accountDetail->mes = $index;
+                $accountDetail->id = null;
+                if (!$accountDetail->save()) {
+                    return false;
+                }
+            }
+
+            /// save transaction
+            if ($inTransaction === false) {
+                self::$dataBase->commit();
+            }
+        } catch (\Exception $e) {
+            self::$miniLog->error($e->getMessage());
+            return false;
+        } finally {
+            if (!$inTransaction && self::$dataBase->inTransaction()) {
+                self::$dataBase->rollback();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if exists error in data of account
+     *
+     * @return bool
+     */
+    private function testErrorInData(): bool
+    {
+        return empty($this->codcuenta) || empty($this->codsubcuenta) || empty($this->descripcion) || empty($this->codejercicio);
+    }
+
+    /**
+     * Check if exists error in long of subaccount
+     *
+     * @return bool
+     */
+    private function testErrorInLengthSubAccount(): bool
+    {
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($this->codejercicio);
+        return empty($exercise->codejercicio) || (strlen($this->codsubcuenta) <> $exercise->longsubcuenta);
     }
 }
