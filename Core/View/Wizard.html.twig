@@ -46,6 +46,20 @@
                 </div>
             </div>
         </div>
+        {% if fsc.user.verifyPassword('admin') %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('password')) }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-password')) }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         <div class="row">
             <div class="col-sm-12">
                 <button type="submit" class="btn btn-primary">
