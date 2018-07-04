@@ -33,25 +33,11 @@ class Subcuenta extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Sub-account code.
-     *
-     * @var string
-     */
-    public $codsubcuenta;
-
-    /**
      * Account code.
      *
      * @var string
      */
     public $codcuenta;
-
-    /**
-     * Exercise code.
-     *
-     * @var string
-     */
-    public $codejercicio;
 
     /**
      * Identifier of the special account.
@@ -61,11 +47,25 @@ class Subcuenta extends Base\ModelClass
     public $codcuentaesp;
 
     /**
+     * Exercise code.
+     *
+     * @var string
+     */
+    public $codejercicio;
+
+    /**
      * Tax code.
      *
      * @var string
      */
     public $codimpuesto;
+
+    /**
+     * Sub-account code.
+     *
+     * @var string
+     */
+    public $codsubcuenta;
 
     /**
      * Amount of the debit.
@@ -94,7 +94,7 @@ class Subcuenta extends Base\ModelClass
      * @var int
      */
     public $idcuenta;
-    
+
     /**
      * Primary key.
      *
@@ -129,14 +129,14 @@ class Subcuenta extends Base\ModelClass
 
     public function getSpecialAccountCode()
     {
-        $result = $this->codcuentaesp;
-        if (empty($result)) {
+        if (empty($this->codcuentaesp)) {
             $account = new Cuenta();
             if ($account->loadFromCode($this->idcuenta)) {
-                $result = $account->codcuentaesp;
+                return $account->codcuentaesp;
             }
         }
-        return $result;
+
+        return $this->codcuentaesp;
     }
 
     /**
@@ -238,7 +238,6 @@ class Subcuenta extends Base\ModelClass
 
         return parent::test();
     }
-
     /*
      * Update account balance
      *
