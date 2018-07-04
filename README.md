@@ -6,7 +6,7 @@
 </a>
 
 # FacturaScripts
-*Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes. Es compatible con FacturaLux, Abanq y Eneboo. Es software libre bajo licencia GNU/LGPL.*
+*Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes. Es software libre bajo licencia GNU/LGPL.*
 
 ## Atención
 Esta es la versión que estamos rediseñando para 2018. La versión actual (2017) de FacturaScripts está en
@@ -18,9 +18,8 @@ Clonar y desplegar con composer y npm (composer gestiona las dependencias php y 
 git clone https://github.com/NeoRazorX/facturascripts.git
 cd facturascripts
 composer install
-npm install
 ```
 
-## Feedback
-Tienes las instrucciones para colaborar en desarrollo o traducciones aquí:
-https://beta.facturascripts.com/colabora
+## Documentación / Issues / Feedback
+Dispone de documentación detallada y actualizada en la web oficial. Si tiene dudas o desea informar de cualquier problema, hágalo a través del **formulario de contacto** de la web.
+https://beta.facturascripts.com
