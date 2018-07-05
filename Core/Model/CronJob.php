@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
  */
-class CronLog extends Base\ModelClass
+class CronJob extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -50,6 +50,13 @@ class CronLog extends Base\ModelClass
      * @var string
      */
     public $date;
+
+    /**
+     * Name of the cron job.
+     *
+     * @var null|string
+     */
+    public $jobname;
 
     /**
      * Reset the values of all model properties.
@@ -78,7 +85,7 @@ class CronLog extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'cronlogs';
+        return 'cronjobs';
     }
 
     /**
@@ -89,6 +96,7 @@ class CronLog extends Base\ModelClass
     public function test()
     {
         $this->pluginname = Utils::noHtml($this->pluginname);
+        $this->jobname = $this->jobname === null ? $this->jobname : Utils::noHtml($this->jobname);
         return parent::test();
     }
 }

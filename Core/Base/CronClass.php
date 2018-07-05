@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\CronJob;
+
 /**
  * Defines global attributes and methos for all classes.
  *
@@ -74,4 +77,49 @@ abstract class CronClass
      * @return mixed
      */
     abstract public function run();
+
+    /**
+     * Returns true if this cron job can be executed (never executed or more than period),
+     * false otherwise.
+     *
+     * @param string      $pluginName
+     * @param null|string $jobName
+     * @param string      $period
+     *
+     * @return bool
+     */
+    public function isTimeForJob($pluginName, $jobName = null, $period = '1 day')
+    {
+        $cronJob = new CronJob();
+        $where = [
+            new DataBaseWhere('pluginname', $pluginName),
+            new DataBaseWhere('jobname', $jobName),
+        ];
+        if (!$cronJob->loadFromCode('', $where)) {
+            return true;
+        }
+        $previousExec = date('d-m-Y H:i:s', strtotime('-' . $period));
+        $where[] = new DataBaseWhere('date', $previousExec, '<=');
+        return $cronJob->loadFromCode('', $where);
+    }
+
+    /**
+     * Update when this job is executed.
+     *
+     * @param string      $pluginName
+     * @param null|string $jobName
+     */
+    public function jobDone($pluginName, $jobName = null)
+    {
+        $cronJob = new CronJob();
+        $where = [
+            new DataBaseWhere('pluginname', $pluginName),
+            new DataBaseWhere('jobname', $jobName)
+        ];
+        $cronJob->loadFromCode('', $where);
+        $cronJob->date = date('d-m-Y H:i:s');
+        if (!$cronJob->save()) {
+            self::$miniLog->error('can-not-save-finished-cronjob', ['%pluginName%' => $pluginName, '%jobName%' => $jobName ?? '']);
+        }
+    }
 }
