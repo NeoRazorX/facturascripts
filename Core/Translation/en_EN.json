@@ -813,5 +813,6 @@
     "running-plugin-cron": "Running FacturaScripts cron for plugin %pluginName%",
     "variant": "Variant",
     "attribute-value-1": "Attribute value 1",
-    "attribute-value-2": "Attribute value 2"
+    "attribute-value-2": "Attribute value 2",
+    "can-not-save-finished-cronjob": "Can't save finished cron job for %pluginName% with name %jobname%"
 }
