@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Model;
+use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Controller to edit a single item from the User model
@@ -62,6 +63,19 @@ class EditUser extends ExtendedController\PanelController
 
         /// Disable column
         $this->views['EditRoleUser']->disableColumn('user', true);
+    }
+
+    protected function editAction()
+    {
+        parent::editAction();
+
+        // Are we changing user language?
+        if ($this->views['EditUser']->model->nick === $this->user->nick) {
+            $this->i18n->setLangCode($this->views['EditUser']->model->nick);
+
+            $expire = time() + FS_COOKIES_EXPIRE;
+            $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
+        }
     }
 
     /**
