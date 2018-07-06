@@ -59,6 +59,13 @@ abstract class CronClass
     protected static $miniLog;
 
     /**
+     * Select and execute the relevant controller for the cron.
+     *
+     * @return mixed
+     */
+    abstract public function run();
+
+    /**
      * CronClass constructor.
      */
     public function __construct()
@@ -72,42 +79,38 @@ abstract class CronClass
     }
 
     /**
-     * Select and execute the relevant controller for the cron.
-     *
-     * @return mixed
-     */
-    abstract public function run();
-
-    /**
      * Returns true if this cron job can be executed (never executed or more than period),
      * false otherwise.
      *
-     * @param string      $pluginName
-     * @param null|string $jobName
-     * @param string      $period
+     * @param string $pluginName
+     * @param string $jobName
+     * @param string $period
      *
      * @return bool
      */
-    public function isTimeForJob($pluginName, $jobName = null, $period = '1 day')
+    public function isTimeForJob($pluginName, $jobName, $period = '1 day')
     {
         $cronJob = new CronJob();
+        $previousExec = date('d-m-Y H:i:s', strtotime('-' . $period));
         $where = [
             new DataBaseWhere('pluginname', $pluginName),
             new DataBaseWhere('jobname', $jobName),
+            new DataBaseWhere('date', $previousExec, '<=')
         ];
-        if (!$cronJob->loadFromCode('', $where)) {
-            return true;
+
+        // if we find this job executed, is not time to do now
+        if ($cronJob->loadFromCode('', $where)) {
+            return false;
         }
-        $previousExec = date('d-m-Y H:i:s', strtotime('-' . $period));
-        $where[] = new DataBaseWhere('date', $previousExec, '<=');
-        return $cronJob->loadFromCode('', $where);
+
+        return true;
     }
 
     /**
-     * Update when this job is executed.
+     * Updates when this job is executed.
      *
-     * @param string      $pluginName
-     * @param null|string $jobName
+     * @param string $pluginName
+     * @param string $jobName
      */
     public function jobDone($pluginName, $jobName = null)
     {
@@ -116,7 +119,12 @@ abstract class CronClass
             new DataBaseWhere('pluginname', $pluginName),
             new DataBaseWhere('jobname', $jobName)
         ];
-        $cronJob->loadFromCode('', $where);
+
+        if (!$cronJob->loadFromCode('', $where)) {
+            $cronJob->pluginname = $pluginName;
+            $cronJob->jobname = $jobName;
+        }
+
         $cronJob->date = date('d-m-Y H:i:s');
         if (!$cronJob->save()) {
             self::$miniLog->error('can-not-save-finished-cronjob', ['%pluginName%' => $pluginName, '%jobName%' => $jobName ?? '']);

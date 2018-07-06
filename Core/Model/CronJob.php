@@ -31,11 +31,25 @@ class CronJob extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     * Date of execution of the plugin with cron.
+     *
+     * @var string
+     */
+    public $date;
+
+    /**
      * Primary key.
      *
      * @var int
      */
     public $id;
+
+    /**
+     * Name of the cron job.
+     *
+     * @var string
+     */
+    public $jobname;
 
     /**
      * Name of the plugin executed in cron.
@@ -45,26 +59,11 @@ class CronJob extends Base\ModelClass
     public $pluginname;
 
     /**
-     * Date of execution of the plugin with cron.
-     *
-     * @var string
-     */
-    public $date;
-
-    /**
-     * Name of the cron job.
-     *
-     * @var null|string
-     */
-    public $jobname;
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
-        $this->pluginname = '';
         $this->date = date('d-m-Y H:i:s');
     }
 
@@ -95,8 +94,8 @@ class CronJob extends Base\ModelClass
      */
     public function test()
     {
+        $this->jobname = Utils::noHtml($this->jobname);
         $this->pluginname = Utils::noHtml($this->pluginname);
-        $this->jobname = $this->jobname === null ? $this->jobname : Utils::noHtml($this->jobname);
         return parent::test();
     }
 }

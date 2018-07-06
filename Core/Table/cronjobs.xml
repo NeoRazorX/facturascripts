@@ -20,11 +20,11 @@
     <column>
         <name>date</name>
         <type>timestamp</type>
-        <null>NO</null>
     </column>
     <column>
         <name>jobname</name>
         <type>character varying(50)</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>cronjobs_pkey</name>
