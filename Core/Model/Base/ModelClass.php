@@ -83,6 +83,8 @@ abstract class ModelClass extends ModelCore
             } elseif (isset($data[$field]) && $data[$field] === '---null---') {
                 /// ---null--- text comes from widgetItemSelect.
                 $data[$field] = null;
+            } elseif (in_array($values['type'], ['date', 'datetime', 'timestamp']) && '' === $data[$field]) {
+                $data[$field] = null;
             }
         }
     }

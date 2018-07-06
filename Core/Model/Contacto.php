@@ -60,7 +60,7 @@ class Contacto extends Base\Contact
     public $ciudad;
 
     /**
-     * Associated employee has this contact. Agent model.
+     * Associated agente to this contact. Agent model.
      *
      * @var string
      */
@@ -137,6 +137,12 @@ class Contacto extends Base\Contact
     public $provincia;
 
     /**
+     *
+     * @var integer
+     */
+    public $puntos;
+
+    /**
      * TRUE if contact is verified.
      *
      * @var bool
@@ -151,6 +157,7 @@ class Contacto extends Base\Contact
         parent::clear();
         $this->admitemarketing = false;
         $this->codpais = AppSettings::get('default', 'codpais');
+        $this->puntos = 0;
         $this->verificado = false;
     }
 
