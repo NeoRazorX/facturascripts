@@ -45,9 +45,6 @@
                     <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="codbarras" title="barcode" numcolumns="2" order="130">
-                <widget type="text" fieldname="codbarras" icon="fa-barcode"/>
-            </column>
             <column name="partnumber" numcolumns="2" order="140">
                 <widget type="text" fieldname="partnumber"/>
             </column>
@@ -85,15 +82,6 @@
             </column>
         </group>
         <group name="precios" title="price" numcolumns="12">
-            <column name="preciocoste" title="cost-price" numcolumns="3" order="100">
-                <widget type="number" fieldname="preciocoste" readonly="readonly"/>
-            </column>
-            <column name="costemedio" title="average-cost" numcolumns="3" order="120">
-                <widget type="number" fieldname="costemedio" readonly="readonly"/>
-            </column>
-            <column name="pvp" title="pvp" numcolumns="3" order="130">
-                <widget type="number" fieldname="pvp"/>
-            </column>
             <column name="codimpuesto" title="tax" numcolumns="3" order="140">
                 <widget type="select" fieldname="codimpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
