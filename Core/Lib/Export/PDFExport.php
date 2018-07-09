@@ -391,4 +391,28 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->insertParalellTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
     }
+
+    /**
+     * Combine address if the parameters don´t empty
+     *
+     * @param string $address
+     * @param string $pobox
+     * @param string $zipCode
+     * @param string $city
+     * @param string $province
+     * @param string $country
+     * @return string
+     */
+    private function combineAddress(string $address, string $pobox, string $zipCode, string $city, string $province, string $country) :string
+    {
+        $completeAddress = '';
+        (!empty($address)) ? $completeAddress .= $this->i18n->trans('street') . ' ' . $address . ',' : '';
+        (!empty($pobox)) ? $completeAddress .= $pobox . ',' : '';
+        (!empty($zipCode)) ? $completeAddress .= 'CP: ' . $zipCode . ',' : '';
+        (!empty($city)) ? $completeAddress .= $city : '';
+        (!empty($province)) ? $completeAddress .= '(' . $province . ') ' : '';
+        (!empty($country)) ? $completeAddress .= $country : ',';
+
+        return $completeAddress;
+    }
 }
