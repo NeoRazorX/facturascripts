@@ -31,13 +31,6 @@ abstract class Product extends ModelClass
 {
 
     /**
-     * Barcode. Maximum 20 characters.
-     *
-     * @var string
-     */
-    public $codbarras;
-
-    /**
      * Tax identifier of the tax assigned.
      *
      * @var string
@@ -188,7 +181,6 @@ abstract class Product extends ModelClass
      */
     public function test()
     {
-        $this->codbarras = Utils::noHtml($this->codbarras);
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->partnumber = Utils::noHtml($this->partnumber);
         $this->referencia = Utils::noHtml($this->referencia);

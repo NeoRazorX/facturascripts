@@ -36,6 +36,13 @@ class ArticuloProveedor extends Base\Product
     public $codproveedor;
 
     /**
+     * Código de barra
+     *
+     * @var string
+     */
+    public $codbarras;
+
+    /**
      * Descuento sobre el precio que nos hace el proveedor.
      *
      * @var float|int
