@@ -66,6 +66,12 @@ class Almacen extends Base\Address
         $this->idempresa = AppSettings::get('default', 'idempresa');
     }
 
+    public function install()
+    {
+        new Empresa();
+        return parent::install();
+    }
+
     /**
      * Returns True if is the default wharehouse for the company.
      *
