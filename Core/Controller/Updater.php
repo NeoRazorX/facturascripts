@@ -206,13 +206,13 @@ class Updater extends Controller
             $dest = FS_FOLDER . DIRECTORY_SEPARATOR . $folder;
             if (!file_exists($origin)) {
                 $this->miniLog->critical('COPY ERROR: ' . $origin);
-                break;
+                return false;
             }
 
             FileManager::delTree($dest);
-
             if (!FileManager::recurseCopy($origin, $dest)) {
-                break;
+                $this->miniLog->critical('COPY ERROR2: ' . $origin);
+                return false;
             }
         }
 
