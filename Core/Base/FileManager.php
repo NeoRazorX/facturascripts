@@ -210,9 +210,10 @@ class FileManager
     {
         $folder = opendir($src);
 
-        if( !@mkdir($dst) ) 
+        if (!@mkdir($dst)) {
             return false;
-
+        }
+        
         while (false !== ($file = readdir($folder))) {
             if ($file === '.' || $file === '..') {
                 continue;

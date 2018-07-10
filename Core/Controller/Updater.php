@@ -210,7 +210,10 @@ class Updater extends Controller
             }
 
             FileManager::delTree($dest);
-            FileManager::recurseCopy($origin, $dest);
+
+            if (!FileManager::recurseCopy($origin, $dest)) {
+                break;
+            }
         }
 
         FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
