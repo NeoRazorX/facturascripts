@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model;
 
 /**
@@ -69,7 +70,7 @@ class PDFDocument extends PDFCore
         }
 
         $country = new Model\Pais();
-        return $country->loadFromCode($code) ? $country->nombre : '';
+        return $country->loadFromCode($code) ? Utils::fixHtml($country->nombre) : '';
     }
 
     /**

@@ -339,11 +339,6 @@ class PDFExport extends PDFDocument implements ExportInterface
 
         if (isset($model->direccion)) {
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
-            $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
-            $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
-            $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
-            $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
-            $tableData[] = ['key' => $this->i18n->trans('country'), 'value' => $this->getCountryName($model->codpais)];
         }
 
         $tableOptions = [
@@ -396,17 +391,17 @@ class PDFExport extends PDFDocument implements ExportInterface
      * Combine address if the parameters don´t empty
      *
      * @param BusinessDocument $model
+     *
      * @return string
      */
-    private function combineAddress($model) :string
+    private function combineAddress($model): string
     {
-        $completeAddress = '';
-        $completeAddress .= Base\Utils::fixHtml($model->direccion);
-        $completeAddress .= (isset($model->apartado)) ? $this->i18n->trans('box') . ' ' . $model->apartado . ',' : '';
-        $completeAddress .= (isset($model->codpostal)) ? 'CP: ' . $model->codpostal . ',' : '';
-        $completeAddress .= (isset($model->ciudad)) ? Base\Utils::fixHtml($model->ciudad) : '';
-        $completeAddress .= (isset($model->provincia)) ? '(' . Base\Utils::fixHtml($model->provincia) . ') ' : '';
-        $completeAddress .= (isset($model->codpais)) ? Base\Utils::fixHtml($model->codpais) : ',';
+        $completeAddress = Base\Utils::fixHtml($model->direccion);
+        $completeAddress .= isset($model->apartado) ? ', ' . $this->i18n->trans('box') . ' ' . $model->apartado : '';
+        $completeAddress .= isset($model->codpostal) ? ', ' . $model->codpostal : '';
+        $completeAddress .= isset($model->ciudad) ? ', ' . Base\Utils::fixHtml($model->ciudad) : '';
+        $completeAddress .= isset($model->provincia) ? ' (' . Base\Utils::fixHtml($model->provincia) . ')' : '';
+        $completeAddress .= isset($model->codpais) ? ' ' . $this->getCountryName($model->codpais) : ',';
 
         return $completeAddress;
     }
