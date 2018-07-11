@@ -64,6 +64,13 @@ class Variante extends Base\ModelClass
     public $pvp;
 
     /**
+     * Price of cost
+     *
+     * @var int|float
+     */
+    public $pcte;
+
+    /**
      * Reference of the variant. Maximun 30 characteres.
      *
      * @var string
