@@ -402,11 +402,11 @@ class PDFExport extends PDFDocument implements ExportInterface
     {
         $completeAddress = '';
         $completeAddress .= Base\Utils::fixHtml($model->direccion);
-        (isset($model->apartado)) ? $completeAddress .= $this->i18n->trans('box') . ' ' . $model->apartado . ',' : '';
-        (isset($model->codpostal)) ? $completeAddress .= 'CP: ' . $model->codpostal . ',' : '';
-        (isset($model->ciudad)) ? $completeAddress .= Base\Utils::fixHtml($model->ciudad) : '';
-        (isset($model->provincia)) ? $completeAddress .= '(' . Base\Utils::fixHtml($model->provincia) . ') ' : '';
-        (isset($model->codpais)) ? $completeAddress .= Base\Utils::fixHtml($model->codpais) : ',';
+        $completeAddress .= (isset($model->apartado)) ? $this->i18n->trans('box') . ' ' . $model->apartado . ',' : '';
+        $completeAddress .= (isset($model->codpostal)) ? 'CP: ' . $model->codpostal . ',' : '';
+        $completeAddress .= (isset($model->ciudad)) ? Base\Utils::fixHtml($model->ciudad) : '';
+        $completeAddress .= (isset($model->provincia)) ? '(' . Base\Utils::fixHtml($model->provincia) . ') ' : '';
+        $completeAddress .= (isset($model->codpais)) ? Base\Utils::fixHtml($model->codpais) : ',';
 
         return $completeAddress;
     }
