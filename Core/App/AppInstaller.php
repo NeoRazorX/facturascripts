@@ -87,14 +87,18 @@ class AppInstaller
     /**
      * Check database connection and creates the database if needed.
      *
-     * @return boolean
+     * @return bool
      */
     private function createDataBase()
     {
-        $dbData = ['socket' => $this->request->request->get('mysql_socket', '')];
-        foreach (['host', 'port', 'user', 'pass', 'name'] as $name) {
-            $dbData[$name] = $this->request->request->get('fs_db_' . $name);
-        }
+        $dbData = [
+            'host' => $this->request->request->get('fs_db_host'),
+            'port' => $this->request->request->get('fs_db_port'),
+            'user' => $this->request->request->get('fs_db_user'),
+            'pass' => $this->request->request->get('fs_db_pass'),
+            'name' => strtolower($this->request->request->get('fs_db_name')),
+            'socket' => $this->request->request->get('mysql_socket', '')
+        ];
 
         switch ($this->request->request->get('fs_db_type')) {
             case 'mysql':
