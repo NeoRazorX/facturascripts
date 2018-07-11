@@ -96,9 +96,14 @@ class AppInstaller
             'port' => $this->request->request->get('fs_db_port'),
             'user' => $this->request->request->get('fs_db_user'),
             'pass' => $this->request->request->get('fs_db_pass'),
-            'name' => strtolower($this->request->request->get('fs_db_name')),
+            'name' => $this->request->request->get('fs_db_name'),
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
+
+        if (strtolower($dbData['name']) != $dbData['name']) {
+            $this->miniLog->alert($this->i18n->trans('database-name-must-be-lowercase'));
+            return false;
+        }
 
         switch ($this->request->request->get('fs_db_type')) {
             case 'mysql':
