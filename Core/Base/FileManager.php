@@ -70,7 +70,7 @@ class FileManager
             return $result;
         }
 
-        $markerData = explode(\PHP_EOL, file_get_contents($fileName));
+        $markerData = explode("\n", file_get_contents($fileName));
         $state = false;
         foreach ($markerData as $markerLine) {
             if (false !== strpos($markerLine, '# END ' . $marker)) {
@@ -203,11 +203,17 @@ class FileManager
      *
      * @param string $src
      * @param string $dst
+     * 
+     * @return bool
      */
-    public static function recurseCopy(string $src, string $dst)
+    public static function recurseCopy(string $src, string $dst): bool
     {
         $folder = opendir($src);
-        @mkdir($dst);
+
+        if (!@mkdir($dst)) {
+            return false;
+        }
+
         while (false !== ($file = readdir($folder))) {
             if ($file === '.' || $file === '..') {
                 continue;
@@ -218,6 +224,8 @@ class FileManager
             }
         }
         closedir($folder);
+
+        return true;
     }
 
     /**

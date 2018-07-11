@@ -66,13 +66,6 @@ class Articulo extends Base\Product
     public $codsubcuentairpfcom;
 
     /**
-     * Average cost when buying the item. Calculated.
-     *
-     * @var float|int
-     */
-    public $costemedio;
-
-    /**
      * Equivalence code. Varchar (18).
      * Two or more articles are equivalent if they have the same equivalence code.
      *
@@ -86,15 +79,6 @@ class Articulo extends Base\Product
      * @var string
      */
     public $observaciones;
-
-    /**
-     * Cost price manually edited
-     * It is not necessarily the purchase price, it can include
-     * also other costs.
-     *
-     * @var float|int
-     */
-    public $preciocoste;
 
     /**
      * True -> will be synchronized with the online store.
@@ -144,8 +128,6 @@ class Articulo extends Base\Product
     public function clear()
     {
         parent::clear();
-        $this->costemedio = 0.0;
-        $this->preciocoste = 0.0;
         $this->pvp = 0.0;
         $this->secompra = true;
         $this->sevende = true;

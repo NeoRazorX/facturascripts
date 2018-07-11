@@ -28,9 +28,14 @@
             <column name="referencia" title="reference" numcolumns="12" order="100">
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />
             </column>
+            <column name="codimpuesto" title="tax" numcolumns="12" order="110">
+                <widget type="select" fieldname="codimpuesto">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
         </group>
         <group name="descripcion" numcolumns="10">
-            <column name="description" numcolumns="12" order="110">
+            <column name="description" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="descripcion" required="true" />
             </column>
         </group>
@@ -45,13 +50,10 @@
                     <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="codbarras" title="barcode" numcolumns="2" order="130">
-                <widget type="text" fieldname="codbarras" icon="fa-barcode"/>
-            </column>
-            <column name="partnumber" numcolumns="2" order="140">
+            <column name="partnumber" numcolumns="3" order="120">
                 <widget type="text" fieldname="partnumber"/>
             </column>
-            <column name="equivalencia" title="equivalence" numcolumns="2" order="150">
+            <column name="equivalencia" title="equivalence" numcolumns="3" order="130">
                 <widget type="text" fieldname="equivalencia"/>
             </column>
         </group>
@@ -82,22 +84,6 @@
             </column> 
             <column name="bloqueado" title="blocked" numcolumns="12" order="150">
                 <widget type="checkbox" fieldname="bloqueado"/>
-            </column>
-        </group>
-        <group name="precios" title="price" numcolumns="12">
-            <column name="preciocoste" title="cost-price" numcolumns="3" order="100">
-                <widget type="number" fieldname="preciocoste" readonly="readonly"/>
-            </column>
-            <column name="costemedio" title="average-cost" numcolumns="3" order="120">
-                <widget type="number" fieldname="costemedio" readonly="readonly"/>
-            </column>
-            <column name="pvp" title="pvp" numcolumns="3" order="130">
-                <widget type="number" fieldname="pvp"/>
-            </column>
-            <column name="codimpuesto" title="tax" numcolumns="3" order="140">
-                <widget type="select" fieldname="codimpuesto">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
-                </widget>
             </column>
         </group>
         <group name="observations" numcolumns="12">

@@ -87,7 +87,7 @@ class AppInstaller
     /**
      * Check database connection and creates the database if needed.
      *
-     * @return boolean
+     * @return bool
      */
     private function createDataBase()
     {
@@ -96,9 +96,10 @@ class AppInstaller
             'port' => $this->request->request->get('fs_db_port'),
             'user' => $this->request->request->get('fs_db_user'),
             'pass' => $this->request->request->get('fs_db_pass'),
-            'name' => $this->request->request->get('fs_db_name'),
+            'name' => strtolower($this->request->request->get('fs_db_name')),
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
+
         switch ($this->request->request->get('fs_db_type')) {
             case 'mysql':
                 if (class_exists('mysqli')) {
@@ -211,7 +212,7 @@ class AppInstaller
     {
         /// HTML template variables
         $templateVars = [
-            'license' => file_get_contents(FS_FOLDER . '/COPYING'),
+            'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => $this->randomString(8),
             'timezones' => $this->getTimezoneList()
         ];
@@ -231,8 +232,8 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . '/htaccess-sample', 'FacturaScripts code');
-        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . '/.htaccess', 'FacturaScripts code');
+        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
+        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
 
     /**
