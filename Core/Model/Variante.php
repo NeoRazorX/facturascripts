@@ -81,6 +81,7 @@ class Variante extends Base\ModelClass
     {
         parent::clear();
         $this->pvp = 0.0;
+        $this->pcte = 0.0;
     }
 
     /**

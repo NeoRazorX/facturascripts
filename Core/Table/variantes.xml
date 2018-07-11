@@ -28,6 +28,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>pcte</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>idatributovalor1</name>
         <type>integer</type>
     </column>
