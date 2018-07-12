@@ -37,12 +37,15 @@
             <column name="price" numcolumns="4" order="130">
                 <widget type="money" decimal="2" fieldname="pvp" />
             </column>
-            <column name="attribute-value-1" numcolumns="4" order="140">
+            <column name="price-cost" numcolumns="4" order="140">
+                <widget type="money" decimal="2" fieldname="pcte" />
+            </column>
+            <column name="attribute-value-1" numcolumns="4" order="150">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
                     <values source="atributos_valores" fieldcode="id" fieldtitle="valor"></values>
                 </widget>
             </column>
-            <column name="attribute-value-2" numcolumns="4" order="150">
+            <column name="attribute-value-2" numcolumns="4" order="160">
                 <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo">
                     <values source="atributos_valores" fieldcode="id" fieldtitle="valor"></values>
                 </widget>

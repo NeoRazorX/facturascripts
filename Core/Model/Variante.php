@@ -64,6 +64,13 @@ class Variante extends Base\ModelClass
     public $pvp;
 
     /**
+     * Price of cost
+     *
+     * @var int|float
+     */
+    public $pcte;
+
+    /**
      * Reference of the variant. Maximun 30 characteres.
      *
      * @var string
@@ -74,6 +81,7 @@ class Variante extends Base\ModelClass
     {
         parent::clear();
         $this->pvp = 0.0;
+        $this->pcte = 0.0;
     }
 
     /**
