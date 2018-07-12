@@ -24,13 +24,12 @@
     </column>
     <column>
         <name>codisopro</name>
-        <type>character varying(20)</type>
+        <type>character varying(10)</type>
         <null>NO</null>
     </column>
     <column>
         <name>codimpuestosel</name>
         <type>character varying(10)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>prioridad</name>
@@ -53,7 +52,7 @@
         <type>FOREIGN KEY (codisopro) REFERENCES provincias (codisopro) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_impuestoszonas_provincias</name>
-        <type>FOREIGN KEY (codimpuestosel) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_impuestoszonas_impuestos</name>
+        <type>FOREIGN KEY (codimpuestosel) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

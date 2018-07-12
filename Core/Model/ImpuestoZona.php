@@ -50,7 +50,7 @@ class ImpuestoZona extends Base\ModelClass
     public $codpais;
 
     /**
-     * Foreign key with provincias table. varchar(20).
+     * Foreign key with provincias table. varchar(10).
      *
      * @var string
      */
