@@ -20,12 +20,10 @@
     <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>codisopro</name>
         <type>character varying(10)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>codimpuestosel</name>
@@ -44,15 +42,7 @@
         <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_impuestoszonas_paises</name>
-        <type>FOREIGN KEY (codpais) REFERENCES paises (codpais) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_impuestoszonas_provincias</name>
-        <type>FOREIGN KEY (codisopro) REFERENCES provincias (codisopro) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_impuestoszonas_impuestos</name>
+        <name>ca_impuestoszonas_impuestos2</name>
         <type>FOREIGN KEY (codimpuestosel) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>
