@@ -84,6 +84,7 @@ class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
                 $view->loadData($idfactura);
                 break;
             case 'EditAsiento':
+                $where = array();
                 $where[] = new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasiento'));
                 $where[] = new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasientop'), '=', 'OR');
                 $view->loadData('', $where);
