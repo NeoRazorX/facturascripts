@@ -18,10 +18,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codcombinacion</name>
-        <type>character varying(18)</type>
-    </column>
-    <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
     </column>
@@ -51,6 +47,10 @@
     </column>
     <column>
         <name>idpresupuesto</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idvariante</name>
         <type>integer</type>
     </column>
     <column>
@@ -108,5 +108,9 @@
     <constraint>
         <name>ca_lineaspedidoscli_pedidoscli</name>
         <type>FOREIGN KEY (idpedido) REFERENCES pedidoscli (idpedido) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineaspedidoscli_variantes</name>
+        <type>FOREIGN KEY (idvariante) REFERENCES variantes (idvariante) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>
