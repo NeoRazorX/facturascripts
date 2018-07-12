@@ -181,6 +181,7 @@ class Randomizer extends Base\Controller
 
         if (false !== $app) {
             $this->miniLog->notice($this->i18n->trans($txt, ['%quantity%' => $app->generate()]));
+            $this->miniLog->notice($this->i18n->trans('randomizer-generating-more-items'));
         }
 
         return;
