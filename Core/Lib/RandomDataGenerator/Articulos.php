@@ -78,20 +78,35 @@ class Articulos extends AbstractRandom
     public function generate($num = 50)
     {
         $art = $this->model;
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $art->clear();
-            $this->setArticuloData($art);
 
-            if ($art->exists()) {
-                continue;
-            } elseif (!$art->save()) {
-                break;
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $art->clear();
+                $this->setArticuloData($art);
+
+                if ($art->exists()) {
+                    continue;
+                } elseif (!$art->save()) {
+                    break;
+                }
+
+                if (mt_rand(0, 2) == 0) {
+                    $this->sumStock($art, mt_rand(0, 1000));
+                } else {
+                    $this->sumStock($art, mt_rand(0, 20));
+                }
             }
-
-            if (mt_rand(0, 2) == 0) {
-                $this->sumStock($art, mt_rand(0, 1000));
-            } else {
-                $this->sumStock($art, mt_rand(0, 20));
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

@@ -48,16 +48,30 @@ class Familias extends AbstractRandom
         $fam = $this->model;
         $codfamilia = null;
 
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $fam->clear();
-            $fam->descripcion = $this->familia();
-            $fam->codfamilia = $this->txt2codigo($fam->descripcion);
-            $fam->madre = (mt_rand(0, 4) == 0 && $fam->codfamilia != $codfamilia) ? $codfamilia : null;
-            if (!$fam->save()) {
-                break;
-            }
+        // start transaction
+        $this->dataBase->beginTransaction();
 
-            $codfamilia = $fam->codfamilia;
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $fam->clear();
+                $fam->descripcion = $this->familia();
+                $fam->codfamilia = $this->txt2codigo($fam->descripcion);
+                $fam->madre = (mt_rand(0, 4) == 0 && $fam->codfamilia != $codfamilia) ? $codfamilia : null;
+                if (!$fam->save()) {
+                    break;
+                }
+
+                $codfamilia = $fam->codfamilia;
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
         }
 
         return $generated;
