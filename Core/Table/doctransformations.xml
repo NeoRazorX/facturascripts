@@ -36,8 +36,4 @@
         <name>doctransformations_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
-    <constraint>
-        <name>ca_doctransformations_series2</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
 </table>
