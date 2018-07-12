@@ -19,12 +19,14 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to edit a single item from the AlbaranCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
 {
@@ -55,6 +57,7 @@ class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
         $this->addEditView($viewName, $modelName, 'invoice');
+        $this->addListView('EditAsiento', 'asiento', 'accounting-entries', 'fa-balance-scale');
     }
 
     /**
@@ -75,9 +78,17 @@ class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
      */
     protected function loadData($viewName, $view)
     {
-        if ($viewName === 'EditFacturaProveedor') {
-            $idfactura = $this->getViewModelValue('Document', 'idfactura');
-            $view->loadData($idfactura);
+        switch ($viewName) {
+            case 'EditFacturaProveedor':
+                $idfactura = $this->getViewModelValue('Document', 'idfactura');
+                $view->loadData($idfactura);
+                break;
+            case 'EditAsiento':
+                $idasiento = $this->getViewModelValue('Document', 'idasiento');
+                $where[] = new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasiento'));
+                $where[] = new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasientop'), '=', 'OR');
+                $view->loadData('', $where);
+                break;
         }
 
         parent::loadData($viewName, $view);
