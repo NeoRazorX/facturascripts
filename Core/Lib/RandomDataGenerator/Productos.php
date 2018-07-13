@@ -36,6 +36,12 @@ class Productos extends AbstractRandom
     protected $almacenes;
 
     /**
+     *
+     * @var Model\AtributoValor[]
+     */
+    protected $atributoValores;
+
+    /**
      * List of manufacturers.
      *
      * @var Model\Fabricante[]
@@ -63,6 +69,7 @@ class Productos extends AbstractRandom
     {
         parent::__construct(new Model\Producto());
         $this->shuffle($this->almacenes, new Model\Almacen());
+        $this->shuffle($this->atributoValores, new Model\AtributoValor());
         $this->shuffle($this->fabricantes, new Model\Fabricante());
         $this->shuffle($this->familias, new Model\Familia());
         $this->shuffle($this->impuestos, new Model\Impuesto());
@@ -110,7 +117,6 @@ class Productos extends AbstractRandom
     {
         $product->descripcion = $this->descripcion();
         $product->codimpuesto = $this->impuestos[0]->codimpuesto;
-        ///$product->setPvpIva($this->precio(1, 49, 699));
 
         switch (mt_rand(0, 2)) {
             case 0:
@@ -163,6 +169,12 @@ class Productos extends AbstractRandom
             $newVariant->coste = $this->precio(1, 49, 699);
             $newVariant->precio = $newVariant->coste + $this->precio(1, 49, 699);
             $newVariant->referencia = (0 === mt_rand(0, 1)) ? $newVariant->newCode('referencia') : $this->randomString(10);
+
+            if (count($this->atributoValores) > 1) {
+                $newVariant->idatributovalor1 = $this->getOneItem($this->atributoValores)->id;
+                $newVariant->idatributovalor2 = $this->getOneItem($this->atributoValores)->id;
+            }
+
             if (!$newVariant->save()) {
                 break;
             }
