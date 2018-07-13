@@ -49,8 +49,7 @@ class ListProducto extends ExtendedController\ListController
     protected function createViews()
     {
         $this->createViewProducto();
-        //$this->createViewProductoProveedor();
-        //$this->createViewStock();
+        $this->createViewVariante();
     }
 
     private function createViewProducto()
@@ -77,32 +76,30 @@ class ListProducto extends ExtendedController\ListController
         $this->addFilterCheckbox('ListProducto', 'sevende', 'for-sale', 'sevende');
         $this->addFilterCheckbox('ListProducto', 'publico', 'public', 'publico');
     }
-
-    private function createViewProductoProveedor()
+    
+    private function createViewVariante()
     {
-        $this->addView('ListProductoProveedor', 'ProductoProveedor', 'supplier-products', 'fa-users');
-        $this->addSearchFields('ListProductoProveedor', ['referencia', 'refproveedor', 'descripcion']);
-        $this->addOrderBy('ListProductoProveedor', ['referencia'], 'reference');
-        $this->addOrderBy('ListProductoProveedor', ['refproveedor'], 'supplier-reference');
-        $this->addOrderBy('ListProductoProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListProductoProveedor', ['precio'], 'price');
-        $this->addOrderBy('ListProductoProveedor', ['dto'], 'discount');
-        $this->addOrderBy('ListProductoProveedor', ['stockfis'], 'stock');
-
-        $this->addFilterAutocomplete('ListProductoProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-        $this->addFilterCheckbox('ListProductoProveedor', 'nostock', 'no-stock', 'nostock');
+        $this->addView('ListVariante', 'Variante', 'Variants', 'fa-code-fork');
+        $this->addSearchFields('ListVariante', ['referencia', 'codbarras']);
+        $this->addOrderBy('ListVariante', ['referencia'], 'reference');
+        $this->addOrderBy('ListVariante', ['codbarras'], 'barcode');
+        $this->addOrderBy('ListVariante', ['precio'], 'price');
+        $this->addOrderBy('ListVariante', ['coste'], 'cost-price');
+        
+        $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'valor');
+        $this->addFilterSelect('ListVariante', 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
+        $this->addFilterSelect('ListVariante', 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
     }
 
     private function createViewStock()
     {
         $this->addView('ListStock', 'Stock', 'stock', 'fa-tasks');
         $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
-
-        $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListStock', 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
-
         $this->addOrderBy('ListStock', ['referencia'], 'reference');
         $this->addOrderBy('ListStock', ['cantidad'], 'quantity');
         $this->addOrderBy('ListStock', ['disponible'], 'available');
+
+        $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect('ListStock', 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
     }
 }

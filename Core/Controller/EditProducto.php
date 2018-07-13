@@ -52,12 +52,8 @@ class EditProducto extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
-        $this->addEditListView('EditVariante', 'Variante', 'variant', 'fa-code-fork');
+        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-fork');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
-        $this->addListView('ListProductoProveedor', 'ProductoProveedor', 'suppliers', 'fa-users');
-
-        /// Disable column
-        $this->views['ListProductoProveedor']->disableColumn('reference', true);
     }
 
     /**
@@ -68,11 +64,6 @@ class EditProducto extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if ($this->getViewModelValue('EditProducto', 'secompra') === false) {
-            unset($this->views['ListProductoProveedor']);
-        }
-
-        $limit = FS_ITEM_LIMIT;
         switch ($viewName) {
             case 'EditProducto':
                 $code = $this->request->get('code');
@@ -82,16 +73,13 @@ class EditProducto extends ExtendedController\PanelController
             case 'EditVariante':
                 $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
                 $where = [new DataBaseWhere('idproducto', $idproducto)];
-                $view->loadData('', $where, [], 0, $limit);
+                $view->loadData('', $where, [], 0);
                 break;
             
             case 'EditStock':
-                $limit = 0;
-            /// no break
-            case 'ListProductoProveedor':
                 $referencia = $this->getViewModelValue('EditProducto', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
-                $view->loadData('', $where, [], 0, $limit);
+                $view->loadData('', $where, [], 0, 0);
                 break;
         }
     }

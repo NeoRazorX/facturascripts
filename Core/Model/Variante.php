@@ -164,6 +164,11 @@ class Variante extends Base\ModelClass
         $this->codbarras = Utils::noHtml($this->codbarras);
         $this->referencia = Utils::noHtml($this->referencia);
 
+        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            return false;
+        }
+
         return parent::test();
     }
 }

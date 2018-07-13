@@ -116,14 +116,12 @@ class EditProveedor extends ExtendedController\PanelController
 
         $this->addEditListView('EditDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addListView('ListProductoProveedor', 'ProductoProveedor', 'products', 'fa-cubes');
         $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fa-files-o');
         $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fa-files-o');
         $this->addListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fa-files-o');
 
         /// Disable columns
-        $this->views['ListProductoProveedor']->disableColumn('supplier', true);
         $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
         $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
         $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
@@ -149,7 +147,6 @@ class EditProveedor extends ExtendedController\PanelController
             case 'EditCuentaBancoProveedor':
                 $limit = 0;
             /// no break
-            case 'ListProductoProveedor':
             case 'ListFacturaProveedor':
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
