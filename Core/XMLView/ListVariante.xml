@@ -52,5 +52,14 @@
         <column name="cost-price" title="cost-price" display="none" order="150">
             <widget type="money" fieldname="coste" />
         </column>
+        <column name="stockfis" title="physical-stock" display="right" order="160">
+            <widget type="number" fieldname="stockfis"/>
+        </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="table-success" fieldname="stockfis">&gt;0</option>
+            <option color="table-warning" fieldname="stockfis">&lt;1</option>
+        </row>
+    </rows>
 </view>

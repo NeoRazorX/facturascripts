@@ -44,6 +44,11 @@
         <type>character varying(30)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>stockfis</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
     <constraint>
         <name>variantes_pkey</name>
         <type>PRIMARY KEY (idvariante)</type>

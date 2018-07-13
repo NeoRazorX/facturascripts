@@ -88,6 +88,13 @@ class Variante extends Base\ModelClass
     public $referencia;
 
     /**
+     * Physical stock.
+     *
+     * @var float|int
+     */
+    public $stockfis;
+
+    /**
      * Sets default values.
      */
     public function clear()
@@ -95,6 +102,7 @@ class Variante extends Base\ModelClass
         parent::clear();
         $this->coste = 0.0;
         $this->precio = 0.0;
+        $this->stockfis = 0.0;
     }
 
     /**
