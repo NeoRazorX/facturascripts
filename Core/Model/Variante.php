@@ -142,6 +142,10 @@ class Variante extends Base\ModelClass
         return 'idvariante';
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function save()
     {
         if (parent::save()) {

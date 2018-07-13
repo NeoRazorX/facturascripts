@@ -54,6 +54,23 @@ class EditProducto extends ExtendedController\PanelController
         $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
         $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-fork');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
+
+        $this->loadCustomStockWidget();
+    }
+
+    /**
+     * 
+     */
+    protected function loadCustomStockWidget()
+    {
+        $references = [];
+        $where = [new DataBaseWhere('idproducto', $this->request->get('code'))];
+        foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
+            $references[] = ['value' => $code->code, 'title' => $code->description];
+        }
+
+        $columnReference = $this->views['EditStock']->columnForName('reference');
+        $columnReference->widget->setValuesFromArray($references, false);
     }
 
     /**
@@ -68,17 +85,15 @@ class EditProducto extends ExtendedController\PanelController
             case 'EditProducto':
                 $code = $this->request->get('code');
                 $view->loadData($code);
+                if ($view->model->nostock) {
+                    unset($this->views['EditStock']);
+                }
                 break;
 
             case 'EditVariante':
+            case 'EditStock':
                 $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
                 $where = [new DataBaseWhere('idproducto', $idproducto)];
-                $view->loadData('', $where, [], 0);
-                break;
-            
-            case 'EditStock':
-                $referencia = $this->getViewModelValue('EditProducto', 'referencia');
-                $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData('', $where, [], 0, 0);
                 break;
         }

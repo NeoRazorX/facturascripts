@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -148,15 +149,14 @@ class Stock extends Base\ModelClass
         return 'idstock';
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function save()
     {
         if (parent::save()) {
-            $product = new Producto();
-            if ($product->loadFromCode($this->idproducto)) {
-                $product->stockfis = $this->totalFromProducto($this->idproducto);
-                return $product->save();
-            }
-
+            $this->updateProductoStock();
             return true;
         }
 
@@ -200,15 +200,20 @@ class Stock extends Base\ModelClass
 
     /**
      * Returns the total stock of the product.
-     *
-     * @param int $idproducto
-     *
-     * @return float
+     * 
+     * @param int    $idproducto
+     * @param string $referencia
+     * 
+     * @return real
      */
-    public function totalFromProducto(int $idproducto)
+    public function totalFromProducto(int $idproducto, string $referencia = '')
     {
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . static::tableName()
             . ' WHERE idproducto = ' . self::$dataBase->var2str($idproducto);
+
+        if (!empty($referencia)) {
+            $sql .= ' AND referencia = ' . self::$dataBase->var2str($referencia);
+        }
 
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
@@ -233,5 +238,22 @@ class Stock extends Base\ModelClass
         }
 
         return parent::url($type, 'ListProducto?active=List');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function updateProductoStock()
+    {
+        $total = $this->totalFromProducto($this->idproducto);
+        $sql = "UPDATE " . Producto::tableName() . " SET stockfis = " . self::$dataBase->var2str($total)
+            . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto) . ';';
+
+        $totalVariant = $this->totalFromProducto($this->idproducto, $this->referencia);
+        $sql .= "UPDATE " . Variante::tableName() . " SET stockfis = " . self::$dataBase->var2str($totalVariant)
+            . " WHERE referencia = " . self::$dataBase->var2str($this->referencia) . ';';
+
+        return self::$dataBase->exec($sql);
     }
 }

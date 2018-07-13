@@ -198,6 +198,10 @@ class Producto extends Base\ModelClass
         return 'idproducto';
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'referencia';
@@ -241,6 +245,9 @@ class Producto extends Base\ModelClass
         return parent::test();
     }
 
+    /**
+     * 
+     */
     public function update()
     {
         $this->precio = 0.0;
@@ -256,6 +263,12 @@ class Producto extends Base\ModelClass
         $this->save();
     }
 
+    /**
+     * 
+     * @param array $values
+     *
+     * @return boolean
+     */
     protected function saveInsert(array $values = [])
     {
         if (parent::saveInsert($values)) {
