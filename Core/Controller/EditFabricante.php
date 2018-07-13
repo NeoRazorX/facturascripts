@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,7 @@ class EditFabricante extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'manufacturer';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['icon'] = 'fa-columns';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

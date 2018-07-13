@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,9 +49,8 @@ class ListAgenciaTransporte extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte');
-        $this->addSearchFields('ListAgenciaTransporte', ['nombre', 'codtrans']);
-
+        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fa-truck');
+        $this->addSearchFields('ListAgenciaTransporte', ['nombre', 'web', 'codtrans']);
         $this->addOrderBy('ListAgenciaTransporte', ['codtrans'], 'code');
         $this->addOrderBy('ListAgenciaTransporte', ['nombre'], 'name');
 
