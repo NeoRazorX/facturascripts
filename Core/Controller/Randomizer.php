@@ -159,11 +159,6 @@ class Randomizer extends Base\Controller
                 $txt = 'generated-products';
                 break;
 
-            case 'productosprov':
-                $app = new RandomDataGenerator\ProductosProveedor();
-                $txt = 'generated-products';
-                break;
-
             case 'proveedores':
                 $app = new RandomDataGenerator\Proveedores();
                 $txt = 'generated-supplier';
@@ -207,7 +202,6 @@ class Randomizer extends Base\Controller
             'presupuestoscli' => '\FacturaScripts\Dinamic\Model\PresupuestoCliente',
             'presupuestosprov' => '\FacturaScripts\Dinamic\Model\PresupuestoProveedor',
             'productos' => '\FacturaScripts\Dinamic\Model\Producto',
-            'productosprov' => '\FacturaScripts\Dinamic\Model\ProductoProveedor',
             'proveedores' => '\FacturaScripts\Dinamic\Model\Proveedor',
             'subcuentas' => '\FacturaScripts\Dinamic\Model\Subcuenta'
         ];
