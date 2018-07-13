@@ -29,7 +29,7 @@
             <widget type="text" fieldname="idstock" />
         </column>
         <column name="reference" display="none" order="110">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+            <widget type="text" fieldname="referencia" onclick="EditProducto" />
         </column>
         <column name="warehouse" order="120">
             <widget type="select" fieldname="codalmacen" required="true">

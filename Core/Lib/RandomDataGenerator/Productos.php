@@ -21,11 +21,11 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 use FacturaScripts\Core\Model;
 
 /**
- * Generate random data for the products (Articulos) file
+ * Generate random data for the products (Productos) file
  *
  * @author Rafael San José <info@rsanjoseo.com>
  */
-class Articulos extends AbstractRandom
+class Productos extends AbstractRandom
 {
 
     /**
@@ -57,11 +57,11 @@ class Articulos extends AbstractRandom
     protected $impuestos;
 
     /**
-     * Articulos constructor.
+     * Productos constructor.
      */
     public function __construct()
     {
-        parent::__construct(new Model\Articulo());
+        parent::__construct(new Model\Producto());
         $this->shuffle($this->almacenes, new Model\Almacen());
         $this->shuffle($this->fabricantes, new Model\Fabricante());
         $this->shuffle($this->familias, new Model\Familia());
@@ -86,7 +86,7 @@ class Articulos extends AbstractRandom
         try {
             for ($generated = 0; $generated < $num; ++$generated) {
                 $art->clear();
-                $this->setArticuloData($art);
+                $this->setProductoData($art);
 
                 if ($art->exists()) {
                     continue;
@@ -113,7 +113,7 @@ class Articulos extends AbstractRandom
         return $generated;
     }
 
-    private function setArticuloData(Model\Articulo &$art)
+    private function setProductoData(Model\Producto &$art)
     {
         $art->descripcion = $this->descripcion();
         $art->codimpuesto = $this->impuestos[0]->codimpuesto;

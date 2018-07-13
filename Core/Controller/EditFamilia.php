@@ -54,7 +54,7 @@ class EditFamilia extends ExtendedController\PanelController
     {
         $this->addEditView('EditFamilia', 'Familia', 'family');
         $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down');
-        $this->addListView('ListArticulo', 'Articulo', 'products', 'fa-cubes');
+        $this->addListView('ListProducto', 'Producto', 'products', 'fa-cubes');
     }
 
     /**
@@ -71,7 +71,7 @@ class EditFamilia extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
-            case 'ListArticulo':
+            case 'ListProducto':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
                 $view->loadData('', $where);

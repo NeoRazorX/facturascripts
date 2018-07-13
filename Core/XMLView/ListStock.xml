@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller ListArticulo
+ * Initial description for the controller ListStock
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
 -->
@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="reference" order="100">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+            <widget type="text" fieldname="referencia" onclick="EditProducto" />
         </column>
         <column name="warehouse" order="110">
             <widget type="text" fieldname="codalmacen" />

@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditArticulo
+ * Initial description for the controller EditProducto
  *
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
 -->
@@ -25,8 +25,8 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="idarticulo" display="none" order="100">
-                <widget type="text" fieldname="idarticulo" />
+            <column name="idproducto" display="none" order="100">
+                <widget type="text" fieldname="idproducto" />
             </column>
             <column name="referencia" title="reference" order="100">
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />

@@ -19,19 +19,19 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\Articulo;
+use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \Articulo
+ * @covers \ProductoProveedor
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class ArticuloTest extends CustomTest
+final class ProductoProveedorTest extends CustomTest
 {
 
     protected function setUp()
     {
-        $this->model = new Articulo();
+        $this->model = new ProductoProveedor();
     }
 }

@@ -21,13 +21,13 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the ArticuloProveedor model
+ * Controller to edit a single item from the ProductoProveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditArticuloProveedor extends ExtendedController\EditController
+class EditProductoProveedor extends ExtendedController\EditController
 {
 
     /**
@@ -35,7 +35,7 @@ class EditArticuloProveedor extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return 'ArticuloProveedor';
+        return 'ProductoProveedor';
     }
 
     /**

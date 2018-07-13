@@ -25,15 +25,15 @@ use FacturaScripts\Core\Model;
  *
  * @author Rafael San José <info@rsanjoseo.com>
  */
-class ArticulosProveedor extends AbstractRandom
+class ProductosProveedor extends AbstractRandom
 {
 
     /**
-     * ArticulosProveedor constructor.
+     * ProductosProveedor constructor.
      */
     public function __construct()
     {
-        parent::__construct(new Model\ArticuloProveedor());
+        parent::__construct(new Model\ProductoProveedor());
     }
 
     /**
@@ -45,7 +45,7 @@ class ArticulosProveedor extends AbstractRandom
      */
     public function generate($num = 50)
     {
-        $this->shuffle($articulos, new Model\Articulo());
+        $this->shuffle($articulos, new Model\Producto());
         $proveedores = $this->randomProveedores();
         if (empty($proveedores)) {
             return 0;

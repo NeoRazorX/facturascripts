@@ -52,7 +52,7 @@ class EditFabricante extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditFabricante', 'Fabricante', 'manufacturer');
-        $this->addListView('EditFabricanteListArticulos', 'Articulo', 'products');
+        $this->addListView('ListProducto', 'Producto', 'products');
     }
 
     /**
@@ -69,7 +69,7 @@ class EditFabricante extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
-            case 'EditFabricanteListArticulos':
+            case 'ListProducto':
                 $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
                 $where = [new DataBaseWhere('codfabricante', $codfabricante)];
                 $view->loadData('', $where);

@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ArticuloProveedor extends Base\ModelClass
+class ProductoProveedor extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -161,7 +161,7 @@ class ArticuloProveedor extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'articulosprov';
+        return 'productosprov';
     }
 
     /**
@@ -187,6 +187,6 @@ class ArticuloProveedor extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return parent::url($type, 'ListArticulo?active=List');
+        return parent::url($type, 'ListProducto?active=List');
     }
 }

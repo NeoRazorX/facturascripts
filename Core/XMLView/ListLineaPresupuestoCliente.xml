@@ -32,9 +32,8 @@
                 <values source="presupuestoscli" fieldcode="idpresupuesto" fieldtitle="codigo"></values>
             </widget>
         </column>
-        
         <column name="reference" order="120">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+            <widget type="text" fieldname="referencia" onclick="EditProducto" />
         </column>
         <column name="description" order="130">
             <widget type="text" fieldname="descripcion" />

@@ -22,12 +22,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the EditArticulo model
+ * Controller to edit a single item from the EditProducto model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditArticulo extends ExtendedController\PanelController
+class EditProducto extends ExtendedController\PanelController
 {
 
     /**
@@ -51,13 +51,13 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditArticulo', 'Articulo', 'product', 'fa-cube');
+        $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
         $this->addEditListView('EditVariante', 'Variante', 'variant', 'fa-code-fork');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
-        $this->addListView('ListArticuloProveedor', 'ArticuloProveedor', 'suppliers', 'fa-users');
+        $this->addListView('ListProductoProveedor', 'ProductoProveedor', 'suppliers', 'fa-users');
 
         /// Disable column
-        $this->views['ListArticuloProveedor']->disableColumn('reference', true);
+        $this->views['ListProductoProveedor']->disableColumn('reference', true);
     }
 
     /**
@@ -68,28 +68,28 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
-            unset($this->views['ListArticuloProveedor']);
+        if ($this->getViewModelValue('EditProducto', 'secompra') === false) {
+            unset($this->views['ListProductoProveedor']);
         }
 
         $limit = FS_ITEM_LIMIT;
         switch ($viewName) {
-            case 'EditArticulo':
+            case 'EditProducto':
                 $code = $this->request->get('code');
                 $view->loadData($code);
                 break;
 
             case 'EditVariante':
-                $idarticulo = $this->getViewModelValue('EditArticulo', 'idarticulo');
-                $where = [new DataBaseWhere('idarticulo', $idarticulo)];
+                $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
+                $where = [new DataBaseWhere('idproducto', $idproducto)];
                 $view->loadData('', $where, [], 0, $limit);
                 break;
             
             case 'EditStock':
                 $limit = 0;
             /// no break
-            case 'ListArticuloProveedor':
-                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
+            case 'ListProductoProveedor':
+                $referencia = $this->getViewModelValue('EditProducto', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData('', $where, [], 0, $limit);
                 break;

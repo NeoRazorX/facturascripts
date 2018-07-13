@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller ListArticulo
+ * Initial description for the controller ListProducto
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="id" onclick="EditArticuloProveedor" />
+            <widget type="text" fieldname="id" onclick="EditProductoProveedor" />
         </column>
         <column name="reference" order="100">
             <widget type="text" fieldname="referencia" icon="fa-barcode" required="true" />

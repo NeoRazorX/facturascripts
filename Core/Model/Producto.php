@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Articulo extends Base\ModelClass
+class Producto extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -86,7 +86,7 @@ class Articulo extends Base\ModelClass
      *
      * @var int
      */
-    public $idarticulo;
+    public $idproducto;
 
     /**
      * True -> do not control the stock.
@@ -195,7 +195,7 @@ class Articulo extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idarticulo';
+        return 'idproducto';
     }
 
     /**
@@ -205,7 +205,7 @@ class Articulo extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'articulos';
+        return 'productos';
     }
 
     /**
@@ -237,7 +237,7 @@ class Articulo extends Base\ModelClass
         $this->referencia = null;
 
         $variantModel = new Variante();
-        $where = [new DataBaseWhere('idarticulo', $this->idarticulo)];
+        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
         foreach ($variantModel->all($where, [], 0, 0) as $variant) {
             $this->precio = ($this->precio == 0.0 || $variant->precio < $this->precio) ? $variant->precio : $this->precio;
             $this->referencia = is_null($this->referencia) ? $variant->referencia : $this->referencia;
@@ -250,7 +250,7 @@ class Articulo extends Base\ModelClass
     {
         if (parent::saveInsert($values)) {
             $variant = new Variante();
-            $variant->idarticulo = $this->idarticulo;
+            $variant->idproducto = $this->idproducto;
             $variant->referencia = $this->referencia;
             return $variant->save();
         }

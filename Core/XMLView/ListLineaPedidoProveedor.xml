@@ -31,10 +31,9 @@
             <widget type="select" fieldname="idpedido" onclick="EditPedidoProveedor">
                 <values source="pedidosprov" fieldcode="idpedido" fieldtitle="codigo"></values>
             </widget>
-        </column>
-        
+        </column>        
         <column name="reference" order="120">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+            <widget type="text" fieldname="referencia" onclick="EditProducto" />
         </column>
         <column name="description" order="130">
             <widget type="text" fieldname="descripcion" />

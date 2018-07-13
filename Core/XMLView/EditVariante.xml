@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="idvariante" required="true" />
             </column>
             <column name="product" display="none" order="110">
-                <widget type="text" fieldname="idarticulo" required="true" />
+                <widget type="text" fieldname="idproducto" required="true" />
             </column>
             <column name="reference" numcolumns="4" order="120">
                 <widget type="text" fieldname="referencia" icon="fa-key" />

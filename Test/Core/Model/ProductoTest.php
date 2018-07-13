@@ -19,19 +19,19 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\RegularizacionStock;
+use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * @covers \RegularizacionStock
+ * @covers \Producto
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class RegularizacionStockTest extends CustomTest
+final class ProductoTest extends CustomTest
 {
 
     protected function setUp()
     {
-        $this->model = new RegularizacionStock();
+        $this->model = new Producto();
     }
 }

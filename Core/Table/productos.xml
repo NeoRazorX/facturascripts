@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : articulos.xml
+    Document   : productos.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the articulos table.
+        Structure for the productos table.
 -->
 <table>
     <column>
@@ -36,10 +36,10 @@
         <type>text</type>
     </column>
     <column>
-        <name>idarticulo</name>
+        <name>idproducto</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('articulos_idarticulo_seq'::regclass)</default>
+        <default>nextval('productos_idproducto_seq'::regclass)</default>
     </column>
     <column>
         <name>nostock</name>
@@ -86,23 +86,23 @@
         <default>false</default>
     </column>
     <constraint>
-        <name>articulos_pkey</name>
-        <type>PRIMARY KEY (idarticulo)</type>
+        <name>productos_pkey</name>
+        <type>PRIMARY KEY (idproducto)</type>
     </constraint>
     <constraint>
-        <name>ca_articulos_fabricantes</name>
+        <name>ca_productos_fabricantes</name>
         <type>FOREIGN KEY (codfabricante) REFERENCES fabricantes (codfabricante) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_articulos_familias</name>
+        <name>ca_productos_familias</name>
         <type>FOREIGN KEY (codfamilia) REFERENCES familias (codfamilia) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_articulos_impuestos</name>
+        <name>ca_productos_impuestos</name>
         <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_articulos_referencia</name>
+        <name>uniq_productos_referencia</name>
         <type>UNIQUE (referencia)</type>
     </constraint>
 </table>

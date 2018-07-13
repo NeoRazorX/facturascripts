@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : articulosprov.xml
+    Document   : productosprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the articulosprov table.
+        Structure for the productosprov table.
 -->
 <table>
     <column>
@@ -36,7 +36,7 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('articulosprov_id_seq'::regclass)</default>
+        <default>nextval('productosprov_id_seq'::regclass)</default>
     </column>
     <column>
         <name>nostock</name>
@@ -64,15 +64,15 @@
         <default>0</default>
     </column>
     <constraint>
-        <name>articulosprov_pkey</name>
+        <name>productosprov_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>ca_articulosprov_proveedores</name>
+        <name>ca_productosprov_proveedores</name>
         <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_articulosprov_proveedor</name>
+        <name>uniq_productosprov_proveedor</name>
         <type>UNIQUE (codproveedor, refproveedor)</type>
     </constraint>
 </table>
