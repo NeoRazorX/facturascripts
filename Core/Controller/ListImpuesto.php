@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class ListImpuesto extends ExtendedController\ListController
 {
@@ -50,16 +51,24 @@ class ListImpuesto extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListImpuesto', 'Impuesto');
+        /// Taxes
+        $this->addView('ListImpuesto', 'Impuesto', 'taxes', 'fa-usd');
         $this->addSearchFields('ListImpuesto', ['descripcion', 'codimpuesto']);
 
         $this->addOrderBy('ListImpuesto', ['codimpuesto'], 'code');
         $this->addOrderBy('ListImpuesto', ['descripcion'], 'description');
 
+        /// Withholdings
         $this->addView('ListRetencion', 'Retencion', 'retentions', 'fa-plus-square-o');
         $this->addSearchFields('ListRetencion', ['descripcion', 'codretencion']);
 
         $this->addOrderBy('ListRetencion', ['codretencion'], 'code');
         $this->addOrderBy('ListRetencion', ['descripcion'], 'description');
+
+        /// Tax areas
+        $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-area', 'fa-usd');
+        $this->addSearchFields('ListImpuestoZona', ['codpais']);
+
+        $this->addOrderBy('ListImpuestoZona', ['codpais'], 'country');
     }
 }
