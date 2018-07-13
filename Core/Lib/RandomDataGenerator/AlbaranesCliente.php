@@ -52,27 +52,43 @@ class AlbaranesCliente extends AbstractRandomDocuments
 
         $alb = $this->model;
         $generated = 0;
-        while ($generated < $num) {
-            $alb->clear();
-            $this->randomizeDocument($alb);
-            $eje = $this->ejercicio->getByFecha($alb->fecha);
-            if (false === $eje) {
-                break;
-            }
 
-            $recargo = false;
-            if ($clientes[0]->recargo || mt_rand(0, 4) === 0) {
-                $recargo = true;
-            }
+        // start transaction
+        $this->dataBase->beginTransaction();
 
-            $regimeniva = $this->randomizeDocumentVenta($alb, $eje, $clientes, $generated);
-            if ($alb->save()) {
-                $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, -1);
-                ++$generated;
-            } else {
-                break;
+        // main save process
+        try {
+            while ($generated < $num) {
+                $alb->clear();
+                $this->randomizeDocument($alb);
+                $eje = $this->ejercicio->getByFecha($alb->fecha);
+                if (false === $eje) {
+                    break;
+                }
+
+                $recargo = false;
+                if ($clientes[0]->recargo || mt_rand(0, 4) === 0) {
+                    $recargo = true;
+                }
+
+                $regimeniva = $this->randomizeDocumentVenta($alb, $eje, $clientes, $generated);
+                if ($alb->save()) {
+                    $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, -1);
+                    ++$generated;
+                } else {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
+
 
         return $generated;
     }

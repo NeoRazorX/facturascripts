@@ -52,22 +52,37 @@ class PresupuestosCliente extends AbstractRandomDocuments
 
         $generated = 0;
         $presu = $this->model;
-        while ($generated < $num) {
-            $presu->clear();
-            $this->randomizeDocument($presu);
-            $eje = $this->ejercicio->getByFecha($presu->fecha);
-            if (false === $eje) {
-                break;
-            }
 
-            $recargo = ($clientes[0]->recargo || mt_rand(0, 4) === 0);
-            $regimeniva = $this->randomizeDocumentVenta($presu, $eje, $clientes, $generated);
-            $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
-            if ($presu->save()) {
-                $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Dinamic\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
-                ++$generated;
-            } else {
-                break;
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            while ($generated < $num) {
+                $presu->clear();
+                $this->randomizeDocument($presu);
+                $eje = $this->ejercicio->getByFecha($presu->fecha);
+                if (false === $eje) {
+                    break;
+                }
+
+                $recargo = ($clientes[0]->recargo || mt_rand(0, 4) === 0);
+                $regimeniva = $this->randomizeDocumentVenta($presu, $eje, $clientes, $generated);
+                $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
+                if ($presu->save()) {
+                    $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Dinamic\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
+                    ++$generated;
+                } else {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

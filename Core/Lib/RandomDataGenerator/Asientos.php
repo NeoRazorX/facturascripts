@@ -44,28 +44,42 @@ class Asientos extends AbstractRandomAccounting
      *
      * @return int
      */
-    public function generate($num = 25)
+    public function generate($num = 50)
     {
         $asiento = $this->model;
         $subcuenta = new Model\Subcuenta();
 
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $ejercicio = $this->getOneItem($this->ejercicios);
+        // start transaction
+        $this->dataBase->beginTransaction();
 
-            $asiento->clear();
-            $asiento->codejercicio = $ejercicio->codejercicio;
-            $asiento->concepto = $this->descripcion();
-            $asiento->fecha = date('d-m-Y', strtotime($ejercicio->fechainicio . ' +' . mt_rand(1, 360) . ' days'));
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $ejercicio = $this->getOneItem($this->ejercicios);
 
-            if ($asiento->save()) {
-                $filter = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
-                $subcuentas = $subcuenta->all($filter);
-                $this->generateLines($asiento, $subcuentas);
-                $asiento->save();
-                continue;
+                $asiento->clear();
+                $asiento->codejercicio = $ejercicio->codejercicio;
+                $asiento->concepto = $this->descripcion();
+                $asiento->fecha = date('d-m-Y', strtotime($ejercicio->fechainicio . ' +' . mt_rand(1, 360) . ' days'));
+
+                if ($asiento->save()) {
+                    $filter = [new DataBaseWhere('codejercicio', $ejercicio->codejercicio)];
+                    $subcuentas = $subcuenta->all($filter);
+                    $this->generateLines($asiento, $subcuentas);
+                    $asiento->save();
+                    continue;
+                }
+
+                break;
             }
-
-            break;
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
         }
 
         return $generated;

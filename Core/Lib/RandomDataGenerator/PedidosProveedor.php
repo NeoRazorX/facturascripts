@@ -52,21 +52,36 @@ class PedidosProveedor extends AbstractRandomDocuments
 
         $generated = 0;
         $ped = $this->model;
-        while ($generated < $num) {
-            $ped->clear();
-            $this->randomizeDocument($ped);
-            $eje = $this->ejercicio->getByFecha($ped->fecha);
-            if (false === $eje) {
-                break;
-            }
 
-            $recargo = (mt_rand(0, 4) === 0);
-            $regimeniva = $this->randomizeDocumentCompra($ped, $eje, $proveedores, $generated);
-            if ($ped->save()) {
-                $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoProveedor', $regimeniva, $recargo);
-                ++$generated;
-            } else {
-                break;
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            while ($generated < $num) {
+                $ped->clear();
+                $this->randomizeDocument($ped);
+                $eje = $this->ejercicio->getByFecha($ped->fecha);
+                if (false === $eje) {
+                    break;
+                }
+
+                $recargo = (mt_rand(0, 4) === 0);
+                $regimeniva = $this->randomizeDocumentCompra($ped, $eje, $proveedores, $generated);
+                if ($ped->save()) {
+                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoProveedor', $regimeniva, $recargo);
+                    ++$generated;
+                } else {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

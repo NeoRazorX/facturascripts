@@ -47,39 +47,54 @@ class Clientes extends AbstractRandomPeople
     public function generate($num = 50)
     {
         $cliente = $this->model;
-        for ($i = 0; $i < $num; ++$i) {
-            $cliente->clear();
-            $this->fillCliPro($cliente);
 
-            $cliente->fechaalta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y')));
-            $cliente->regimeniva = (mt_rand(0, 9) === 0) ? 'Exento' : 'General';
+        // start transaction
+        $this->dataBase->beginTransaction();
 
-            if (mt_rand(0, 2) > 0) {
-                shuffle($this->agentes);
-                $cliente->codagente = $this->agentes[0]->codagente;
-            } else {
-                $cliente->codagente = null;
+        // main save process
+        try {
+            for ($i = 0; $i < $num; ++$i) {
+                $cliente->clear();
+                $this->fillCliPro($cliente);
+
+                $cliente->fechaalta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y')));
+                $cliente->regimeniva = (mt_rand(0, 9) === 0) ? 'Exento' : 'General';
+
+                if (mt_rand(0, 2) > 0) {
+                    shuffle($this->agentes);
+                    $cliente->codagente = $this->agentes[0]->codagente;
+                } else {
+                    $cliente->codagente = null;
+                }
+
+                if (mt_rand(0, 2) > 0 && !empty($this->grupos)) {
+                    shuffle($this->grupos);
+                    $cliente->codgrupo = $this->grupos[0]->codgrupo;
+                } else {
+                    $cliente->codgrupo = null;
+                }
+
+                $cliente->codcliente = $cliente->newCode();
+                if (!$cliente->save()) {
+                    break;
+                }
+
+                /// añadimos direcciones
+                $numDirs = mt_rand(0, 3);
+                $this->direccionesCliente($cliente, $numDirs);
+
+                /// Añadimos cuentas bancarias
+                $numCuentas = mt_rand(0, 3);
+                $this->cuentasBancoCliente($cliente, $numCuentas);
             }
-
-            if (mt_rand(0, 2) > 0 && !empty($this->grupos)) {
-                shuffle($this->grupos);
-                $cliente->codgrupo = $this->grupos[0]->codgrupo;
-            } else {
-                $cliente->codgrupo = null;
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
-
-            $cliente->codcliente = $cliente->newCode();
-            if (!$cliente->save()) {
-                break;
-            }
-
-            /// añadimos direcciones
-            $numDirs = mt_rand(0, 3);
-            $this->direccionesCliente($cliente, $numDirs);
-
-            /// Añadimos cuentas bancarias
-            $numCuentas = mt_rand(0, 3);
-            $this->cuentasBancoCliente($cliente, $numCuentas);
         }
 
         return $i;

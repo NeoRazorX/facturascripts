@@ -52,12 +52,27 @@ class Grupos extends AbstractRandomPeople
         $sufijos = ['VIP', 'PRO', 'NEO', 'XL', 'XXL', '50 aniversario', 'C', 'Z'];
 
         $grupo = $this->model;
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $grupo->clear();
-            $grupo->codgrupo = $grupo->newCode();
-            $grupo->nombre = $this->getOneItem($nombres) . ' ' . $this->getOneItem($sufijos) . " $generated";
-            if (!$grupo->save()) {
-                break;
+
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $grupo->clear();
+                $grupo->codgrupo = $grupo->newCode();
+                $grupo->nombre = $this->getOneItem($nombres) . ' ' . $this->getOneItem($sufijos) . " $generated";
+                if (!$grupo->save()) {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 
