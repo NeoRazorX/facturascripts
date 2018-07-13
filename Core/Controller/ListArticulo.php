@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,41 +49,48 @@ class ListArticulo extends ExtendedController\ListController
     protected function createViews()
     {
         $this->createViewArticulo();
-        $this->createViewArticuloProveedor();
-        $this->createViewStock();
+        //$this->createViewArticuloProveedor();
+        //$this->createViewStock();
     }
 
     private function createViewArticulo()
     {
-        $this->addView('ListArticulo', 'Articulo', 'products');
-        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
-
-        $selectValues = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->addFilterSelect('ListArticulo', 'codfabricante', 'manufacturer', 'codfabricante', $selectValues);
-
-        $familyValues = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->addFilterSelect('ListArticulo', 'codfamilia', 'family', 'codfamilia', $familyValues);
-
-        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
-        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
-
+        $this->addView('ListArticulo', 'Articulo', 'products', 'fa-cubes');
+        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion', 'observaciones']);
         $this->addOrderBy('ListArticulo', ['referencia'], 'reference');
         $this->addOrderBy('ListArticulo', ['descripcion'], 'description');
-        $this->addOrderBy('ListArticulo', ['pvp'], 'price');
+        $this->addOrderBy('ListArticulo', ['precio'], 'price');
         $this->addOrderBy('ListArticulo', ['stockfis'], 'stock');
+
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'family', 'codfamilia', $families);
+        
+        $taxes = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $this->addFilterSelect('ListArticulo', 'codimpuesto', 'tax', 'codimpuesto', $taxes);
+
+        $this->addFilterCheckbox('ListArticulo', 'nostock', 'no-stock', 'nostock');
+        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
+        $this->addFilterCheckbox('ListArticulo', 'secompra', 'for-purchase', 'secompra');
+        $this->addFilterCheckbox('ListArticulo', 'sevende', 'for-sale', 'sevende');
+        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
     }
 
     private function createViewArticuloProveedor()
     {
         $this->addView('ListArticuloProveedor', 'ArticuloProveedor', 'supplier-products', 'fa-users');
-        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
+        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'refproveedor', 'descripcion']);
+        $this->addOrderBy('ListArticuloProveedor', ['referencia'], 'reference');
+        $this->addOrderBy('ListArticuloProveedor', ['refproveedor'], 'supplier-reference');
+        $this->addOrderBy('ListArticuloProveedor', ['descripcion'], 'description');
+        $this->addOrderBy('ListArticuloProveedor', ['precio'], 'price');
+        $this->addOrderBy('ListArticuloProveedor', ['dto'], 'discount');
+        $this->addOrderBy('ListArticuloProveedor', ['stockfis'], 'stock');
 
         $this->addFilterAutocomplete('ListArticuloProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-
-        $this->addOrderBy('ListArticuloProveedor', ['referencia'], 'reference');
-        $this->addOrderBy('ListArticuloProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListArticuloProveedor', ['pvp'], 'price');
-        $this->addOrderBy('ListArticuloProveedor', ['stockfis'], 'stock');
+        $this->addFilterCheckbox('ListArticuloProveedor', 'nostock', 'no-stock', 'nostock');
     }
 
     private function createViewStock()

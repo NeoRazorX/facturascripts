@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,39 +24,40 @@
 
 <view>
     <columns>
+        <column name="code" display="none" order="90">
+            <widget type="text" fieldname="idarticulo" onclick="EditArticulo" />
+        </column>
         <column name="reference" order="100">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+            <widget type="text" fieldname="referencia" />
         </column>
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="partnumber" display="none" order="120">
-            <widget type="text" fieldname="partnumber" />
-        </column>
-        <column name="manufacturer" order="130">
+        <column name="manufacturer" order="120">
             <widget type="select" fieldname="codfabricante" onclick="EditFabricante">
                 <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="family" order="140">
+        <column name="family" order="130">
             <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="price" title="price" display="right" order="150">
-            <widget type="money" fieldname="pvp" />
+        <column name="price" title="price" display="right" order="140">
+            <widget type="money" fieldname="precio" />
         </column>
-        <column name="stock" display="right" order="160">
+        <column name="stock" display="right" order="150">
             <widget type="number" fieldname="stockfis">
                 <option color="red">&lt;0</option>
             </widget>
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="stockfis">
-            <option color="table-danger">&lt;0</option>
-            <option color="table-success">&gt;1</option>
-            <option color="table-warning">&lt;1</option>
+        <row type="status">
+            <option color="table-info" fieldname="nostock">1</option>
+            <option color="table-danger" fieldname="bloqueado">1</option>
+            <option color="table-success" fieldname="stockfis">&gt;0</option>
+            <option color="table-warning" fieldname="stockfis">&lt;1</option>
         </row>
     </rows>
 </view>

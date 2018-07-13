@@ -33,7 +33,7 @@
     <script type="text/javascript">
         tabActive = '{{ fsc.active }}';
         settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-                urls = { {{ fsc.getStringURLs('new') | raw }} };
+        urls = { {{ fsc.getStringURLs('new') | raw }} };
 
         function deleteFromList() {
             var deleteCodes = getLineCodes();

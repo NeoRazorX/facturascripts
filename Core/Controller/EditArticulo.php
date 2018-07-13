@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditArticulo', 'Articulo', 'products', 'fa-cubes');
+        $this->addEditView('EditArticulo', 'Articulo', 'product', 'fa-cube');
         $this->addEditListView('EditVariante', 'Variante', 'variant', 'fa-code-fork');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
         $this->addListView('ListArticuloProveedor', 'ArticuloProveedor', 'suppliers', 'fa-users');
@@ -80,6 +80,11 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'EditVariante':
+                $idarticulo = $this->getViewModelValue('EditArticulo', 'idarticulo');
+                $where = [new DataBaseWhere('idarticulo', $idarticulo)];
+                $view->loadData('', $where, [], 0, $limit);
+                break;
+            
             case 'EditStock':
                 $limit = 0;
             /// no break

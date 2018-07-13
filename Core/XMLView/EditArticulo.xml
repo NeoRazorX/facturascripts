@@ -24,70 +24,58 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="2">
-            <column name="referencia" title="reference" numcolumns="12" order="100">
+        <group name="data" numcolumns="12">
+            <column name="idarticulo" display="none" order="100">
+                <widget type="text" fieldname="idarticulo" />
+            </column>
+            <column name="referencia" title="reference" order="100">
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />
             </column>
-            <column name="codimpuesto" title="tax" numcolumns="12" order="110">
+            <column name="codfamilia" title="family-code" order="110">
+                <widget type="select" fieldname="codfamilia">
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="codfabricante" title="manufacturer-code" order="120">
+                <widget type="select" fieldname="codfabricante">
+                    <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="codimpuesto" title="tax" order="130">
                 <widget type="select" fieldname="codimpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
         </group>
-        <group name="descripcion" numcolumns="10">
-            <column name="description" numcolumns="12" order="100">
+        <group name="descripcion" numcolumns="12">
+            <column name="description" order="100">
                 <widget type="textarea" fieldname="descripcion" required="true" />
             </column>
         </group>
-        <group name="varios" numcolumns="12">
-            <column name="codfamilia" title="family-code" numcolumns="3" order="100">
-                <widget type="select" fieldname="codfamilia">
-                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="codfabricante" title="manufacturer-code" numcolumns="3" order="110">
-                <widget type="select" fieldname="codfabricante">
-                    <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="partnumber" numcolumns="3" order="120">
-                <widget type="text" fieldname="partnumber"/>
-            </column>
-            <column name="equivalencia" title="equivalence" numcolumns="3" order="130">
-                <widget type="text" fieldname="equivalencia"/>
-            </column>
-        </group>
-        <group name="stock" numcolumns="3">
+        <group name="stock" numcolumns="4">
             <column name="stockfis" title="physical-stock" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
-        </group>
-        <group name="options" numcolumns="3">
-            <column name="nostock" title="no-stock" numcolumns="12" order="100">
+            <column name="nostock" title="no-stock" order="110">
                 <widget type="checkbox" fieldname="nostock" />
             </column>
-            <column name="trazabilidad" title="traceability" numcolumns="12" order="110">
-                <widget type="checkbox" fieldname="trazabilidad"/>
-            </column>
         </group>
-        <group name="options2" numcolumns="3">
-            <column name="secompra" title="for-purchase" numcolumns="12" order="120">
+        <group name="options" numcolumns="8">
+            <column name="secompra" title="for-purchase" order="100">
                 <widget type="checkbox" fieldname="secompra" />
             </column>
-            <column name="sevende" title="for-sale" numcolumns="12" order="130">
+            <column name="sevende" title="for-sale" order="110">
                 <widget type="checkbox" fieldname="sevende" />
             </column>
-        </group>
-        <group name="options3" numcolumns="3">
-            <column name="publico" title="public" numcolumns="12" order="140">
+            <column name="publico" title="public" order="120">
                 <widget type="checkbox" fieldname="publico" />
             </column> 
-            <column name="bloqueado" title="blocked" numcolumns="12" order="150">
+            <column name="bloqueado" title="blocked" order="130">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
         </group>
         <group name="observations" numcolumns="12">
-            <column name="observations" numcolumns="12" order="110">
+            <column name="observations" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

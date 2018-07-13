@@ -18,10 +18,13 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Define method and attributes of table variantes.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Variante extends Base\ModelClass
 {
@@ -34,6 +37,20 @@ class Variante extends Base\ModelClass
      * @var string
      */
     public $codbarras;
+
+    /**
+     * Cost price.
+     *
+     * @var int|float
+     */
+    public $coste;
+
+    /**
+     * Producti identifier.
+     *
+     * @var int
+     */
+    public $idarticulo;
 
     /**
      * Foreign key of table atributo_valores.
@@ -57,18 +74,11 @@ class Variante extends Base\ModelClass
     public $idvariante;
 
     /**
-     * Price of the variant
+     * Price of the variant. Without tax.
      *
      * @var int|float
      */
-    public $pvp;
-
-    /**
-     * Price of cost
-     *
-     * @var int|float
-     */
-    public $pcte;
+    public $precio;
 
     /**
      * Reference of the variant. Maximun 30 characteres.
@@ -77,11 +87,26 @@ class Variante extends Base\ModelClass
      */
     public $referencia;
 
+    /**
+     * Sets default values.
+     */
     public function clear()
     {
         parent::clear();
-        $this->pvp = 0.0;
-        $this->pcte = 0.0;
+        $this->coste = 0.0;
+        $this->precio = 0.0;
+    }
+    
+    /**
+     * Returns related product.
+     *
+     * @return Articulo
+     */
+    public function getArticulo()
+    {
+        $articulo = new Articulo();
+        $articulo->loadFromCode($this->idarticulo);
+        return $articulo;
     }
 
     /**
@@ -93,9 +118,10 @@ class Variante extends Base\ModelClass
      */
     public function install()
     {
+        new Articulo();
         new AtributoValor();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -107,6 +133,17 @@ class Variante extends Base\ModelClass
     {
         return 'idvariante';
     }
+    
+    public function save()
+    {
+        if(parent::save()) {
+            $articulo = $this->getArticulo();
+            $articulo->update();
+            return true;
+        }
+        
+        return false;
+    }
 
     /**
      * Returns the name of the table that uses this model.
@@ -116,5 +153,17 @@ class Variante extends Base\ModelClass
     public static function tableName()
     {
         return 'variantes';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->codbarras = Utils::noHtml($this->codbarras);
+        $this->referencia = Utils::noHtml($this->referencia);
+
+        return parent::test();
     }
 }

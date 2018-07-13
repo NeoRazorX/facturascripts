@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -25,27 +26,48 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ArticuloProveedor extends Base\Product
+class ArticuloProveedor extends Base\ModelClass
 {
 
     use Base\ModelTrait;
 
     /**
-     * Código de barra
+     * Barcode,
      *
      * @var string
      */
     public $codbarras;
 
     /**
-     * Código del proveedor asociado.
+     * Currency identifier.
+     *
+     * @var string
+     */
+    public $coddivisa;
+
+    /**
+     * Tax identifier of the tax assigned.
+     *
+     * @var string
+     */
+    public $codimpuesto;
+
+    /**
+     * Supplier identifier.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Descuento sobre el precio que nos hace el proveedor.
+     * Description of the product.
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
+     * Discount.
      *
      * @var float|int
      */
@@ -59,18 +81,39 @@ class ArticuloProveedor extends Base\Product
     public $id;
 
     /**
-     * Precio neto al que nos ofrece el proveedor este producto.
+     * True -> do not control the stock.
+     *
+     * @var bool
+     */
+    public $nostock;
+
+    /**
+     * Product price, without tax.
      *
      * @var float|int
      */
     public $precio;
 
     /**
-     * Referencia del artículo para el proveedor.
+     * Product identifier or SKU in our warehouse.
+     *
+     * @var string
+     */
+    public $referencia;
+
+    /**
+     * Product identifier or SKU in supplier's warehouse.
      *
      * @var string
      */
     public $refproveedor;
+
+    /**
+     * Physical stock is supplier's warehouse.
+     *
+     * @var float|int
+     */
+    public $stockfis;
 
     /**
      * Reset the values of all model properties.
@@ -78,8 +121,12 @@ class ArticuloProveedor extends Base\Product
     public function clear()
     {
         parent::clear();
-        $this->precio = 0.0;
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
+        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
         $this->dto = 0.0;
+        $this->nostock = false;
+        $this->precio = 0.0;
+        $this->stockfis = 0.0;
     }
 
     /**
@@ -94,7 +141,7 @@ class ArticuloProveedor extends Base\Product
         /// force the verification of the provider table
         new Proveedor();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -117,9 +164,16 @@ class ArticuloProveedor extends Base\Product
         return 'articulosprov';
     }
 
+    /**
+     * 
+     * @return bool
+     */
     public function test()
     {
         $this->codbarras = Utils::noHtml($this->codbarras);
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->referencia = Utils::noHtml($this->referencia);
+        $this->refproveedor = Utils::noHtml($this->refproveedor);
         return parent::test();
     }
 

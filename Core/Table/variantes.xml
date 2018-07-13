@@ -7,29 +7,17 @@
 -->
 <table>
     <column>
-        <name>idvariante</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('variantes_idvariante_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>referencia</name>
-        <type>character varying(30)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>codbarras</name>
         <type>character varying(20)</type>
-        <null>NO</null>
     </column>
     <column>
-        <name>pvp</name>
+        <name>coste</name>
         <type>double precision</type>
-        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
-        <name>pcte</name>
-        <type>double precision</type>
+        <name>idarticulo</name>
+        <type>integer</type>
         <null>NO</null>
     </column>
     <column>
@@ -40,13 +28,29 @@
         <name>idatributovalor2</name>
         <type>integer</type>
     </column>
+    <column>
+        <name>idvariante</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('variantes_idvariante_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>precio</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
     <constraint>
         <name>variantes_pkey</name>
         <type>PRIMARY KEY (idvariante)</type>
     </constraint>
     <constraint>
         <name>ca_variantes_articulos</name>
-        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idarticulo) REFERENCES articulos (idarticulo) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_variantes_articulosvalores1</name>
@@ -55,5 +59,9 @@
     <constraint>
         <name>ca_variantes_articulosvalores2</name>
         <type>FOREIGN KEY (idatributovalor2) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_variantes_referencia</name>
+        <type>UNIQUE (referencia)</type>
     </constraint>
 </table>

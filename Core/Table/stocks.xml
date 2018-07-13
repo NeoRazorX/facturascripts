@@ -23,6 +23,16 @@
         <null>NO</null>
     </column>
     <column>
+        <name>idarticulo</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idvariante</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>idstock</name>
         <type>serial</type>
         <null>NO</null>
@@ -60,8 +70,12 @@
         <type>character varying(100)</type>
     </column>
     <constraint>
-        <name>ca_stocks_articulos2</name>
-        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>stocks_pkey</name>
+        <type>PRIMARY KEY (idstock)</type>
+    </constraint>
+    <constraint>
+        <name>ca_stocks_variantes</name>
+        <type>FOREIGN KEY (referencia) REFERENCES variantes (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_stocks_almacenes3</name>
@@ -70,9 +84,5 @@
     <constraint>
         <name>uniq_stocks_almacen_referencia</name>
         <type>UNIQUE (codalmacen, referencia)</type>
-    </constraint>
-    <constraint>
-        <name>stocks_pkey</name>
-        <type>PRIMARY KEY (idstock)</type>
     </constraint>
 </table>

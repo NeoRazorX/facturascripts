@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -25,7 +27,7 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Articulo extends Base\Product
+class Articulo extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -52,6 +54,13 @@ class Articulo extends Base\Product
     public $codfamilia;
 
     /**
+     * Tax identifier of the tax assigned.
+     *
+     * @var string
+     */
+    public $codimpuesto;
+
+    /**
      * Sub-account code for purchases.
      *
      * @var string
@@ -66,12 +75,26 @@ class Articulo extends Base\Product
     public $codsubcuentairpfcom;
 
     /**
-     * Equivalence code. Varchar (18).
-     * Two or more articles are equivalent if they have the same equivalence code.
+     * Description of the product.
      *
      * @var string
      */
-    public $equivalencia;
+    public $descripcion;
+
+    /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $idarticulo;
+
+    /**
+     * True -> do not control the stock.
+     * Activating it implies putting True $ventasinstock;
+     *
+     * @var bool
+     */
+    public $nostock;
 
     /**
      * Observations of the article.
@@ -81,6 +104,13 @@ class Articulo extends Base\Product
     public $observaciones;
 
     /**
+     * Price of the item, without taxes.
+     *
+     * @var float|int
+     */
+    public $precio;
+
+    /**
      * True -> will be synchronized with the online store.
      *
      * @var bool
@@ -88,11 +118,11 @@ class Articulo extends Base\Product
     public $publico;
 
     /**
-     * Price of the item, without taxes.
+     * Main product reference or SKU.
      *
-     * @var float|int
+     * @var string
      */
-    public $pvp;
+    public $referencia;
 
     /**
      * True => the item is purchased.
@@ -109,11 +139,11 @@ class Articulo extends Base\Product
     public $sevende;
 
     /**
-     * Traceability control.
+     * Physical stock.
      *
-     * @var bool
+     * @var float|int
      */
-    public $trazabilidad;
+    public $stockfis;
 
     /**
      * True -> allow sales without stock.
@@ -128,9 +158,15 @@ class Articulo extends Base\Product
     public function clear()
     {
         parent::clear();
-        $this->pvp = 0.0;
+        $this->bloqueado = false;
+        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $this->nostock = false;
+        $this->precio = 0.0;
+        $this->publico = false;
         $this->secompra = true;
         $this->sevende = true;
+        $this->stockfis = 0.0;
+        $this->ventasinstock = false;
     }
 
     /**
@@ -149,7 +185,7 @@ class Articulo extends Base\Product
         new Familia();
         new Impuesto();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -159,31 +195,7 @@ class Articulo extends Base\Product
      */
     public static function primaryColumn()
     {
-        return 'referencia';
-    }
-
-    /**
-     * Sets the retail price.
-     *
-     * @param float $pvp
-     */
-    public function setPvp($pvp)
-    {
-        $pvp2 = round($pvp, FS_NF0 + 2);
-
-        if (!Utils::floatcmp($this->pvp, $pvp2, FS_NF0 + 2)) {
-            $this->pvp = $pvp2;
-        }
-    }
-
-    /**
-     * Sets the retail price with VAT.
-     *
-     * @param float $pvp
-     */
-    public function setPvpIva($pvp)
-    {
-        $this->setPvp((100 * $pvp) / (100 + $this->getIva()));
+        return 'idarticulo';
     }
 
     /**
@@ -203,13 +215,12 @@ class Articulo extends Base\Product
      */
     public function test()
     {
+        $this->descripcion = Utils::noHtml($this->descripcion);
         $this->observaciones = Utils::noHtml($this->observaciones);
-
-        if ($this->equivalencia === '') {
-            $this->equivalencia = null;
-        }
+        $this->referencia = Utils::noHtml($this->referencia);
 
         if ($this->nostock) {
+            $this->stockfis = 0.0;
             $this->ventasinstock = true;
         }
 
@@ -218,5 +229,32 @@ class Articulo extends Base\Product
         }
 
         return parent::test();
+    }
+
+    public function update()
+    {
+        $this->precio = 0.0;
+        $this->referencia = null;
+
+        $variantModel = new Variante();
+        $where = [new DataBaseWhere('idarticulo', $this->idarticulo)];
+        foreach ($variantModel->all($where, [], 0, 0) as $variant) {
+            $this->precio = ($this->precio == 0.0 || $variant->precio < $this->precio) ? $variant->precio : $this->precio;
+            $this->referencia = is_null($this->referencia) ? $variant->referencia : $this->referencia;
+        }
+
+        $this->save();
+    }
+
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            $variant = new Variante();
+            $variant->idarticulo = $this->idarticulo;
+            $variant->referencia = $this->referencia;
+            return $variant->save();
+        }
+
+        return false;
     }
 }

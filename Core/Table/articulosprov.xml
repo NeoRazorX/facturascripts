@@ -7,15 +7,16 @@
 -->
 <table>
     <column>
-        <name>id</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('articulosprov_id_seq'::regclass)</default>
+        <name>codbarras</name>
+        <type>character varying(20)</type>
     </column>
     <column>
-        <name>referencia</name>
-        <type>character varying(30)</type>
-        <null>NO</null>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
     </column>
     <column>
         <name>codproveedor</name>
@@ -23,30 +24,19 @@
         <null>NO</null>
     </column>
     <column>
-        <name>refproveedor</name>
-        <type>character varying(30)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>descripcion</name>
         <type>text</type>
     </column>
     <column>
-        <name>precio</name>
-        <type>double precision</type>
-    </column>
-    <column>
         <name>dto</name>
         <type>double precision</type>
-    </column>
-    <column>
-        <name>codimpuesto</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>stockfis</name>
-        <type>double precision</type>
         <default>0</default>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('articulosprov_id_seq'::regclass)</default>
     </column>
     <column>
         <name>nostock</name>
@@ -54,20 +44,24 @@
         <default>true</default>
     </column>
     <column>
-        <name>nombre</name>
-        <type>character varying(100)</type>
+        <name>precio</name>
+        <type>double precision</type>
+        <default>0</default>
     </column>
     <column>
-        <name>coddivisa</name>
-        <type>character varying(3)</type>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
     </column>
     <column>
-        <name>codbarras</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
-        <name>partnumber</name>
+        <name>refproveedor</name>
         <type>character varying(40)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>stockfis</name>
+        <type>double precision</type>
+        <default>0</default>
     </column>
     <constraint>
         <name>articulosprov_pkey</name>
@@ -78,7 +72,7 @@
         <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_articulo_proveedor2</name>
+        <name>uniq_articulosprov_proveedor</name>
         <type>UNIQUE (codproveedor, refproveedor)</type>
     </constraint>
 </table>
