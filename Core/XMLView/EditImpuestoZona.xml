@@ -32,13 +32,19 @@
                 <widget type="text" fieldname="codimpuesto" required="true" />
             </column>
             <column name="country" numcolumns="6" order="30">
-                <widget type="text" fieldname="codpais" required="true" />
+                <widget type="select" fieldname="codpais" icon="fa-globe" required="true">
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                </widget>
             </column>
             <column name="province" numcolumns="6" order="40">
-                <widget type="text" fieldname="codisopro" required="true" />
+                <widget type="select" fieldname="codisopro">
+                    <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
+                </widget>
             </column>
             <column name="tax" numcolumns="6" order="50">
-                <widget type="text" fieldname="codimpuestosel" required="true" />
+                <widget type="select" fieldname="codimpuestosel">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
             </column>
             <column name="priority" numcolumns="6" order="60">
                 <widget type="number" fieldname="prioridad" required="true" />

@@ -92,6 +92,18 @@ class ImpuestoZona extends Base\ModelClass
     }
 
     /**
+     * Returns True if there is no erros on properties values.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        $this->prioridad = 1;
+
+        return parent::test();
+    }
+
+    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type
