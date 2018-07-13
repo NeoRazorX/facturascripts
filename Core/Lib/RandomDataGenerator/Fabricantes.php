@@ -46,12 +46,27 @@ class Fabricantes extends AbstractRandomPeople
     public function generate($num = 50)
     {
         $fabri = $this->model;
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $fabri->clear();
-            $fabri->nombre = $this->empresa();
-            $fabri->codfabricante = $this->txt2codigo($fabri->nombre);
-            if (!$fabri->save()) {
-                break;
+
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $fabri->clear();
+                $fabri->nombre = $this->empresa();
+                $fabri->codfabricante = $this->txt2codigo($fabri->nombre);
+                if (!$fabri->save()) {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

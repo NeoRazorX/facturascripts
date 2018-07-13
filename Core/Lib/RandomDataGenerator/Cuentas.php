@@ -44,22 +44,37 @@ class Cuentas extends AbstractRandomAccounting
      *
      * @return int
      */
-    public function generate($num = 25)
+    public function generate($num = 50)
     {
         $cuenta = $this->model;
-        for ($i = 0; $i < $num; ++$i) {
-            $codigo = mt_rand(1000, 9990);
-            $madre = floor($codigo / 10);
 
-            $ejercicio = $this->getOneItem($this->ejercicios)->codejercicio;
-            foreach ([$madre, $codigo] as $value) {
-                $cuenta->clear();
-                $cuenta->codejercicio = $ejercicio;
-                $cuenta->codcuenta = $value;
-                $cuenta->descripcion = $this->descripcion();
-                if (!$cuenta->save()) {
-                    break;
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($i = 0; $i < $num; ++$i) {
+                $codigo = mt_rand(1000, 9990);
+                $madre = floor($codigo / 10);
+
+                $ejercicio = $this->getOneItem($this->ejercicios)->codejercicio;
+                foreach ([$madre, $codigo] as $value) {
+                    $cuenta->clear();
+                    $cuenta->codejercicio = $ejercicio;
+                    $cuenta->codcuenta = $value;
+                    $cuenta->descripcion = $this->descripcion();
+                    if (!$cuenta->save()) {
+                        break;
+                    }
                 }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

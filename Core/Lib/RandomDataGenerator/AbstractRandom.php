@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model;
 
 /**
@@ -35,7 +36,14 @@ abstract class AbstractRandom
      *
      * @var DataBase
      */
-    private $dataBase;
+    protected $dataBase;
+
+    /**
+     * App log manager.
+     *
+     * @var MiniLog
+     */
+    protected $miniLog;
 
     /**
      * Contains the model to generate random data.
@@ -61,6 +69,7 @@ abstract class AbstractRandom
     public function __construct($model)
     {
         $this->dataBase = new DataBase();
+        $this->miniLog = new MiniLog();
         $this->model = $model;
     }
 

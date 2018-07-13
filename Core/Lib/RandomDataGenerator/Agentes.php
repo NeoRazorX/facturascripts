@@ -46,12 +46,27 @@ class Agentes extends AbstractRandomPeople
     public function generate($num = 50)
     {
         $agente = $this->model;
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $agente->clear();
-            $this->setAgenteData($agente);
 
-            if (!$agente->save()) {
-                break;
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $agente->clear();
+                $this->setAgenteData($agente);
+
+                if (!$agente->save()) {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

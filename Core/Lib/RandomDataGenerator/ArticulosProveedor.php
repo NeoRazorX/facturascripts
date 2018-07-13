@@ -52,23 +52,38 @@ class ArticulosProveedor extends AbstractRandom
         }
 
         $art = $this->model;
-        for ($generated = 0; $generated < $num; ++$generated) {
-            if (!isset($articulos[$generated])) {
-                break;
-            }
 
-            $art->clear();
-            $art->referencia = $articulos[$generated]->referencia;
-            $art->refproveedor = (string) mt_rand(1, 99999999);
-            $art->descripcion = $this->descripcion();
-            $art->codimpuesto = $articulos[$generated]->codimpuesto;
-            $art->codproveedor = $proveedores[$generated]->codproveedor;
-            $art->precio = $this->precio(1, 49, 699);
-            $art->dto = mt_rand(0, 80);
-            $art->nostock = (mt_rand(0, 2) == 0);
-            $art->stockfis = mt_rand(0, 10);
-            if (!$art->save()) {
-                break;
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                if (!isset($articulos[$generated])) {
+                    break;
+                }
+
+                $art->clear();
+                $art->referencia = $articulos[$generated]->referencia;
+                $art->refproveedor = (string) mt_rand(1, 99999999);
+                $art->descripcion = $this->descripcion();
+                $art->codimpuesto = $articulos[$generated]->codimpuesto;
+                $art->codproveedor = $proveedores[$generated]->codproveedor;
+                $art->precio = $this->precio(1, 49, 699);
+                $art->dto = mt_rand(0, 80);
+                $art->nostock = (mt_rand(0, 2) == 0);
+                $art->stockfis = mt_rand(0, 10);
+                if (!$art->save()) {
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 

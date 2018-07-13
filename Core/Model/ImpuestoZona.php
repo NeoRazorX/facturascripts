@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
  * A tax (VAT) that can be associated to tax, country, province, and.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class ImpuestoZona extends Base\ModelClass
 {
@@ -88,5 +89,18 @@ class ImpuestoZona extends Base\ModelClass
     public static function tableName()
     {
         return 'impuestoszonas';
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListImpuesto?active=List');
     }
 }

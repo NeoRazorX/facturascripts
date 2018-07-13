@@ -47,25 +47,40 @@ class Proveedores extends AbstractRandomPeople
     public function generate($num = 50)
     {
         $proveedor = $this->model;
-        for ($generated = 0; $generated < $num; ++$generated) {
-            $proveedor->clear();
-            $this->fillCliPro($proveedor);
 
-            if (mt_rand(0, 9) == 0) {
-                $proveedor->regimeniva = 'Exento';
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            for ($generated = 0; $generated < $num; ++$generated) {
+                $proveedor->clear();
+                $this->fillCliPro($proveedor);
+
+                if (mt_rand(0, 9) == 0) {
+                    $proveedor->regimeniva = 'Exento';
+                }
+
+                $proveedor->codproveedor = $proveedor->newCode();
+                if ($proveedor->save()) {
+                    /// añadimos direcciones
+                    $numDirs = mt_rand(0, 3);
+                    $this->direccionesProveedor($proveedor, $numDirs);
+
+                    /// Añadimos cuentas bancarias
+                    $numCuentas = mt_rand(0, 3);
+                    $this->cuentasBancoProveedor($proveedor, $numCuentas);
+                } else {
+                    break;
+                }
             }
-
-            $proveedor->codproveedor = $proveedor->newCode();
-            if ($proveedor->save()) {
-                /// añadimos direcciones
-                $numDirs = mt_rand(0, 3);
-                $this->direccionesProveedor($proveedor, $numDirs);
-
-                /// Añadimos cuentas bancarias
-                $numCuentas = mt_rand(0, 3);
-                $this->cuentasBancoProveedor($proveedor, $numCuentas);
-            } else {
-                break;
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 
