@@ -46,13 +46,6 @@ class Variante extends Base\ModelClass
     public $coste;
 
     /**
-     * Producti identifier.
-     *
-     * @var int
-     */
-    public $idarticulo;
-
-    /**
      * Foreign key of table atributo_valores.
      *
      * @var int
@@ -65,6 +58,13 @@ class Variante extends Base\ModelClass
      * @var int
      */
     public $idatributovalor2;
+
+    /**
+     * Product identifier.
+     *
+     * @var int
+     */
+    public $idproducto;
 
     /**
      * Primary Key, autoincremental.
@@ -96,17 +96,17 @@ class Variante extends Base\ModelClass
         $this->coste = 0.0;
         $this->precio = 0.0;
     }
-    
+
     /**
      * Returns related product.
      *
-     * @return Articulo
+     * @return Producto
      */
-    public function getArticulo()
+    public function getProducto()
     {
-        $articulo = new Articulo();
-        $articulo->loadFromCode($this->idarticulo);
-        return $articulo;
+        $producto = new Producto();
+        $producto->loadFromCode($this->idproducto);
+        return $producto;
     }
 
     /**
@@ -118,7 +118,7 @@ class Variante extends Base\ModelClass
      */
     public function install()
     {
-        new Articulo();
+        new Producto();
         new AtributoValor();
 
         return parent::install();
@@ -133,15 +133,15 @@ class Variante extends Base\ModelClass
     {
         return 'idvariante';
     }
-    
+
     public function save()
     {
-        if(parent::save()) {
-            $articulo = $this->getArticulo();
-            $articulo->update();
+        if (parent::save()) {
+            $product = $this->getProducto();
+            $product->update();
             return true;
         }
-        
+
         return false;
     }
 

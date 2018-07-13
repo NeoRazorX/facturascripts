@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,6 +52,13 @@ class Stock extends Base\ModelClass
      * @var float|int
      */
     public $disponible;
+
+    /**
+     * Product identifier.
+     *
+     * @var int
+     */
+    public $idproducto;
 
     /**
      * Primary key.
@@ -126,7 +133,7 @@ class Stock extends Base\ModelClass
     public function install()
     {
         new Almacen();
-        new Articulo();
+        new Producto();
 
         return '';
     }
@@ -144,10 +151,10 @@ class Stock extends Base\ModelClass
     public function save()
     {
         if (parent::save()) {
-            $articulo = new Articulo();
-            if ($articulo->loadFromCode($this->referencia)) {
-                $articulo->stockfis = $this->totalFromArticulo($this->referencia);
-                return $articulo->save();
+            $product = new Producto();
+            if ($product->loadFromCode($this->idproducto)) {
+                $product->stockfis = $this->totalFromProducto($this->idproducto);
+                return $product->save();
             }
 
             return true;
@@ -192,16 +199,16 @@ class Stock extends Base\ModelClass
     }
 
     /**
-     * Returns the total stock by reference.
+     * Returns the total stock of the product.
      *
-     * @param string $ref
+     * @param int $idproducto
      *
      * @return float
      */
-    public function totalFromArticulo($ref)
+    public function totalFromProducto(int $idproducto)
     {
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . static::tableName()
-            . ' WHERE referencia = ' . self::$dataBase->var2str($ref);
+            . ' WHERE idproducto = ' . self::$dataBase->var2str($idproducto);
 
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
@@ -222,9 +229,9 @@ class Stock extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         if ($type === 'new') {
-            return 'EditArticulo';
+            return 'EditProducto';
         }
 
-        return parent::url($type, 'ListArticulo?active=List');
+        return parent::url($type, 'ListProducto?active=List');
     }
 }

@@ -70,7 +70,7 @@
         <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE </type>
     </constraint>
     <constraint>
-        <name>ca_variantes_productos</name>
+        <name>ca_stocks_productos</name>
         <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
