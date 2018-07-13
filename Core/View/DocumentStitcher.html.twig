@@ -1,0 +1,123 @@
+{#
+   /**
+     * Admin Home view template.
+     *
+     * Main page for administration of plugins and addons.
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program. If not, see <http://www.gnu.org/licenses/>.
+     *
+    */
+#}
+
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            // set/unset all delete checkbox
+            {% for iddoc,doc in fsc.docs %}
+            $(".listActionCB{{ doc.codigo }}").click(function () {
+                var checked = $(this).prop("checked");
+                $(".listAction{{ doc.codigo }}").prop("checked", checked);
+            });
+            {% endfor %}
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col text-right">
+                <h1 class="h3">
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }} {{ fsc.modelName }}
+                </h1>
+            </div>
+        </div>
+        <form name="fs_install" method="post" class="form">
+            <input type="hidden" name="model" value="{{ fsc.modelName }}" />
+            <div class="row text-right">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary" name="action" value="submit">{{ i18n.trans('continue') }}</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">&nbsp;</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {% for iddoc,doc in fsc.docs %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{{ doc.url }}" target="_blank">{{ doc.codigo }}</a> {{ doc.fecha }}</h5>
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ i18n.trans('reference') }}</th>
+                                            <th>{{ i18n.trans('description') }}</th>
+                                            <th>{{ i18n.trans('quantity') }}</th>
+                                            <th class="text-right">
+                                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                                    <input class="form-check-input listActionCB{{ doc.codigo }}" type="checkbox" />
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for lineDoc in fsc.linesDocs[iddoc] %}
+                                        <tr>
+                                            <td>
+                                                {{ lineDoc.referencia }}
+                                            </td>
+                                            <td>
+                                                {{ lineDoc.descripcion }}
+                                            </td>
+                                            <td class="text-right">
+                                                {{ lineDoc.cantidad }}
+                                            </td>
+                                            <td class="text-right cancelClickable">
+                                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                                    <input class="form-check-input listAction{{ doc.codigo }}" type="checkbox" name="code[]" value="{{ lineDoc.primaryColumnValue() }}" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr class="table-warning">
+                                            <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">&nbsp;</div>
+            </div>
+            <div class="row text-right">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary" name="action" value="submit">{{ i18n.trans('continue') }}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
