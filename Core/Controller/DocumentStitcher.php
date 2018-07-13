@@ -111,10 +111,15 @@ class DocumentStitcher extends Base\Controller
     {
         switch ($modelName) {
             case 'AlbaranCliente':
+                /// no break
             case 'AlbaranProveedor':
+                /// no break
             case 'PedidoCliente':
+                /// no break
             case 'PedidoProveedor':
+                /// no break
             case 'PresupuestoCliente':
+                /// no break
             case 'PresupuestoProveedor':
                 $this->codes = \explode(',', trim($this->request->get('codes', [])));
                 if (empty($this->codes)) {
@@ -398,6 +403,7 @@ class DocumentStitcher extends Base\Controller
                 break;
             case 'PedidoCliente':
                 //$lineDestiny->porcomision = $lineSource->porcomision;
+                /// no break
             case 'PedidoProveedor':
                 $lineDestiny->idpedido = $docDestiny->idpedido;
                 $lineDestiny->idlineapresupuesto = $lineSource->idlinea;
@@ -405,11 +411,13 @@ class DocumentStitcher extends Base\Controller
                 break;
             case 'PresupuestoCliente':
                 //$lineDestiny->porcomision = $lineSource->porcomision;
+                /// no break
             case 'PresupuestoProveedor':
                 $lineDestiny->idpresupuesto = $docDestiny->idpresupuesto;
                 break;
             case 'FacturaCliente':
                 $lineDestiny->porcomision = $lineSource->porcomision;
+                /// no break
             case 'FacturaProveedor':
                 $lineDestiny->idfactura = $docDestiny->idfactura;
                 $lineDestiny->idlineaalbaran = $lineSource->idlinea;
