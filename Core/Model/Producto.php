@@ -197,6 +197,11 @@ class Producto extends Base\ModelClass
     {
         return 'idproducto';
     }
+    
+    public function primaryDescriptionColumn()
+    {
+        return 'referencia';
+    }
 
     /**
      * Returns the name of the table that uses this model.

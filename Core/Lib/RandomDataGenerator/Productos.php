@@ -77,7 +77,7 @@ class Productos extends AbstractRandom
      */
     public function generate($num = 50)
     {
-        $art = $this->model;
+        $product = $this->model;
 
         // start transaction
         $this->dataBase->beginTransaction();
@@ -85,20 +85,13 @@ class Productos extends AbstractRandom
         // main save process
         try {
             for ($generated = 0; $generated < $num; ++$generated) {
-                $art->clear();
-                $this->setProductoData($art);
-
-                if ($art->exists()) {
-                    continue;
-                } elseif (!$art->save()) {
+                $product->clear();
+                $this->setProductoData($product);
+                if (!$product->save()) {
                     break;
                 }
 
-                if (mt_rand(0, 2) == 0) {
-                    $this->sumStock($art, mt_rand(0, 1000));
-                } else {
-                    $this->sumStock($art, mt_rand(0, 20));
-                }
+                $this->setVariants($product);
             }
             // confirm data
             $this->dataBase->commit();
@@ -113,47 +106,66 @@ class Productos extends AbstractRandom
         return $generated;
     }
 
-    private function setProductoData(Model\Producto &$art)
+    private function setProductoData(Model\Producto &$product)
     {
-        $art->descripcion = $this->descripcion();
-        $art->codimpuesto = $this->impuestos[0]->codimpuesto;
-        $art->setPvpIva($this->precio(1, 49, 699));
+        $product->descripcion = $this->descripcion();
+        $product->codimpuesto = $this->impuestos[0]->codimpuesto;
+        ///$product->setPvpIva($this->precio(1, 49, 699));
 
         switch (mt_rand(0, 2)) {
             case 0:
-                $art->referencia = $art->newCode();
+                $product->referencia = $product->newCode('referencia');
                 break;
 
             case 1:
-                $aux = explode(':', $art->descripcion);
-                $art->referencia = empty($aux) ? $art->newCode() : $this->txt2codigo($aux[0], 25);
+                $aux = explode(':', $product->descripcion);
+                $product->referencia = empty($aux) ? $product->newCode() : $this->txt2codigo($aux[0], 25);
                 break;
 
             default:
-                $art->referencia = $this->randomString(10);
+                $product->referencia = $this->randomString(10);
         }
 
         if (mt_rand(0, 9) > 0) {
-            $art->codfabricante = $this->getOneItem($this->fabricantes)->codfabricante;
-            $art->codfamilia = $this->getOneItem($this->familias)->codfamilia;
-        } else {
-            $art->codfabricante = null;
-            $art->codfamilia = null;
+            $product->codfabricante = $this->getOneItem($this->fabricantes)->codfabricante;
+            $product->codfamilia = $this->getOneItem($this->familias)->codfamilia;
         }
 
-        $art->publico = (mt_rand(0, 3) == 0);
-        $art->bloqueado = (mt_rand(0, 9) == 0);
-        $art->nostock = (mt_rand(0, 9) == 0);
-        $art->secompra = (mt_rand(0, 9) != 0);
-        $art->sevende = (mt_rand(0, 9) != 0);
+        $product->publico = (mt_rand(0, 3) == 0);
+        $product->bloqueado = (mt_rand(0, 9) == 0);
+        $product->nostock = (mt_rand(0, 9) == 0);
+        $product->secompra = (mt_rand(0, 9) != 0);
+        $product->sevende = (mt_rand(0, 9) != 0);
     }
 
-    private function sumStock($art, $quantity)
+    private function setVariants(Model\Producto &$product)
     {
-        $stock = new Model\Stock();
-        $stock->referencia = $art->referencia;
-        $stock->codalmacen = $this->getOneItem($this->almacenes)->codalmacen;
-        $stock->cantidad = $quantity;
-        $stock->save();
+        $variant = new Model\Variante();
+        if (!$variant->loadFromCode($product->idproducto)) {
+            return;
+        }
+
+        $variant->codbarras = (0 === mt_rand(0, 2)) ? '' : $this->randomString(10);
+        $variant->coste = $this->precio(1, 49, 699);
+        $variant->precio = $variant->coste + $this->precio(1, 49, 699);
+        if (!$variant->save()) {
+            return;
+        }
+
+        if (mt_rand(0, 2) > 0) {
+            return;
+        }
+
+        for ($num = mt_rand(1, 9); $num > 0; $num--) {
+            $newVariant = new Model\Variante();
+            $newVariant->idproducto = $product->idproducto;
+            $newVariant->codbarras = (0 === mt_rand(0, 2)) ? '' : $this->randomString(10);
+            $newVariant->coste = $this->precio(1, 49, 699);
+            $newVariant->precio = $newVariant->coste + $this->precio(1, 49, 699);
+            $newVariant->referencia = (0 === mt_rand(0, 1)) ? $newVariant->newCode('referencia') : $this->randomString(10);
+            if (!$newVariant->save()) {
+                break;
+            }
+        }
     }
 }
