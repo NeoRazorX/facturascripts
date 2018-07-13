@@ -36,12 +36,12 @@
             </column>
             <column name="attribute-value-1" numcolumns="4" order="130">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
-                    <values source="atributos_valores" fieldcode="id" fieldtitle="valor"></values>
+                    <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="attribute-value-2" numcolumns="4" order="140">
                 <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo">
-                    <values source="atributos_valores" fieldcode="id" fieldtitle="valor"></values>
+                    <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="barcode" numcolumns="4" order="150">

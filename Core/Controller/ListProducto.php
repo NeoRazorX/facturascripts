@@ -86,7 +86,7 @@ class ListProducto extends ExtendedController\ListController
         $this->addOrderBy('ListVariante', ['precio'], 'price');
         $this->addOrderBy('ListVariante', ['coste'], 'cost-price');
         
-        $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'valor');
+        $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect('ListVariante', 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
         $this->addFilterSelect('ListVariante', 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
     }
