@@ -92,15 +92,13 @@ class ImpuestoZona extends Base\ModelClass
     }
 
     /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
+     * Reset the values of all model properties.
      */
-    public function test()
+    public function clear()
     {
-        $this->prioridad = 1;
+        parent::clear();
 
-        return parent::test();
+        $this->prioridad = 1;
     }
 
     /**
