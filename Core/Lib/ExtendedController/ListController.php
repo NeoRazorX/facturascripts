@@ -104,7 +104,14 @@ abstract class ListController extends BaseController
     {
         $offset = $this->getOffSet($viewName);
         $count = $this->views[$viewName]->count;
-        $url = $this->views[$viewName]->getURL('list') . $this->getParams($viewName);
+        $url = $this->views[$viewName]->getURL('list');
+
+        $extra = $this->getParams($viewName);
+        if (strpos($url, '?') === false) {
+            $url .= $extra;
+        } elseif (!empty($extra)) {
+            $url .= '&' . substr($extra, 1);
+        }
 
         $paginationObj = new Base\Pagination($url);
         return $paginationObj->getPages($count, $offset);
