@@ -18,12 +18,14 @@
  */
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model;
 
 /**
  * Generate random data for the products (Productos) file
  *
  * @author Rafael San José <info@rsanjoseo.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Productos extends AbstractRandom
 {
@@ -115,7 +117,8 @@ class Productos extends AbstractRandom
 
         switch (mt_rand(0, 2)) {
             case 0:
-                $product->referencia = $product->newCode('referencia');
+                $variante = new Model\Variante();
+                $product->referencia = $variante->newCode('referencia');
                 break;
 
             case 1:
@@ -143,7 +146,7 @@ class Productos extends AbstractRandom
     {
         $variants = [];
         $variant = new Model\Variante();
-        if (!$variant->loadFromCode($product->idproducto)) {
+        if (!$variant->loadFromCode('', [new DataBaseWhere('idproducto', $product->idproducto)])) {
             return $variants;
         }
 
