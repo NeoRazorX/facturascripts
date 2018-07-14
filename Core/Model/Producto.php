@@ -275,7 +275,12 @@ class Producto extends Base\ModelClass
             $variant = new Variante();
             $variant->idproducto = $this->idproducto;
             $variant->referencia = $this->referencia;
-            return $variant->save();
+            if ($variant->save()) {
+                return true;
+            }
+
+            $this->delete();
+            return false;
         }
 
         return false;

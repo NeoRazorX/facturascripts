@@ -193,6 +193,10 @@ class Variante extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
+        if ($type === 'new') {
+            return 'EditProducto';
+        }
+
         return parent::url($type, 'ListProducto?active=List');
     }
 }

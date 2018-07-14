@@ -90,25 +90,20 @@ class Productos extends AbstractRandom
         $this->dataBase->beginTransaction();
 
         // main save process
-        try {
-            for ($generated = 0; $generated < $num; ++$generated) {
-                $product->clear();
-                $this->setProductoData($product);
-                if (!$product->save()) {
-                    break;
-                }
+        $generated = 0;
+        for (; $generated < $num; ++$generated) {
+            $product->clear();
+            $this->setProductoData($product);
+            if (!$product->save()) {
+                break;
+            }
 
-                $this->setVariants($product);
-            }
-            // confirm data
-            $this->dataBase->commit();
-        } catch (\Exception $e) {
-            $this->miniLog->alert($e->getMessage());
-        } finally {
-            if ($this->dataBase->inTransaction()) {
-                $this->dataBase->rollback();
-            }
+            $variants = $this->setVariants($product);
+            $this->setStock($variants);
         }
+
+        // confirm data
+        $this->dataBase->commit();
 
         return $generated;
     }
@@ -144,22 +139,24 @@ class Productos extends AbstractRandom
         $product->sevende = (mt_rand(0, 9) != 0);
     }
 
-    private function setVariants(Model\Producto &$product)
+    private function setVariants(Model\Producto &$product): array
     {
+        $variants = [];
         $variant = new Model\Variante();
         if (!$variant->loadFromCode($product->idproducto)) {
-            return;
+            return $variants;
         }
 
         $variant->codbarras = (0 === mt_rand(0, 2)) ? '' : $this->randomString(10);
         $variant->coste = $this->precio(1, 49, 699);
         $variant->precio = $variant->coste + $this->precio(1, 49, 699);
         if (!$variant->save()) {
-            return;
+            return $variants;
         }
 
+        $variants[] = $variant;
         if (mt_rand(0, 2) > 0) {
-            return;
+            return $variants;
         }
 
         for ($num = mt_rand(1, 9); $num > 0; $num--) {
@@ -178,6 +175,30 @@ class Productos extends AbstractRandom
             if (!$newVariant->save()) {
                 break;
             }
+
+            $variants[] = $newVariant;
+        }
+
+        return $variants;
+    }
+
+    /**
+     * 
+     * @param Model\Variante[] $variants
+     */
+    private function setStock($variants)
+    {
+        foreach ($variants as $variant) {
+            if (mt_rand(0, 2) === 0) {
+                continue;
+            }
+
+            $newStock = new Model\Stock();
+            $newStock->codalmacen = $this->getOneItem($this->almacenes)->codalmacen;
+            $newStock->idproducto = $variant->idproducto;
+            $newStock->referencia = $variant->referencia;
+            $newStock->cantidad = $this->cantidad(-10, 90, 1200);
+            $newStock->save();
         }
     }
 }
