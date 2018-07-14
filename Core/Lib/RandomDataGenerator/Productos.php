@@ -101,6 +101,10 @@ class Productos extends AbstractRandom
             }
 
             $variants = $this->setVariants($product);
+            if ($product->nostock) {
+                break;
+            }
+
             $this->setStock($variants);
         }
 

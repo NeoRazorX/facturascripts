@@ -228,6 +228,13 @@ class Producto extends Base\ModelClass
         $this->observaciones = Utils::noHtml($this->observaciones);
         $this->referencia = Utils::noHtml($this->referencia);
 
+        if ($this->nostock && $this->stockfis != 0 && null !== $this->idproducto) {
+            $sql = "DELETE FROM " . Stock::tableName() . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto)
+                . "; UPDATE " . Variante::tableName() . " SET stockfis = 0 WHERE idproducto = "
+                . self::$dataBase->var2str($this->idproducto) . ";";
+            self::$dataBase->exec($sql);
+        }
+
         if ($this->nostock) {
             $this->stockfis = 0.0;
             $this->ventasinstock = true;
