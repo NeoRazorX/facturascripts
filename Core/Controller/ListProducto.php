@@ -86,6 +86,7 @@ class ListProducto extends ExtendedController\ListController
         $this->addOrderBy('ListVariante', ['codbarras'], 'barcode');
         $this->addOrderBy('ListVariante', ['precio'], 'price');
         $this->addOrderBy('ListVariante', ['coste'], 'cost-price');
+        $this->addOrderBy('ListVariante', ['stockfis'], 'stock');
 
         $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect('ListVariante', 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
@@ -99,6 +100,8 @@ class ListProducto extends ExtendedController\ListController
         $this->addOrderBy('ListStock', ['referencia'], 'reference');
         $this->addOrderBy('ListStock', ['cantidad'], 'quantity');
         $this->addOrderBy('ListStock', ['disponible'], 'available');
+        $this->addOrderBy('ListStock', ['reservada'], 'reserved');
+        $this->addOrderBy('ListStock', ['pterecibir'], 'pending-reception');
 
         $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListStock', 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
