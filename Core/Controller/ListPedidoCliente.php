@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ class ListPedidoCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPedidoCliente', 'PedidoCliente');
+        $this->addView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
         $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
         $this->addOrderBy('ListPedidoCliente', ['codigo'], 'code');
         $this->addOrderBy('ListPedidoCliente', ['fecha'], 'date', 2);

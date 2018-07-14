@@ -8,7 +8,7 @@
      * {% from 'Macro/BaseController.html.twig' import filterForTextInput as filterForTextInput %}
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -99,7 +99,7 @@
 {% macro filterCheckbox(context, key, filter) %}
     {% set label = context.i18n.trans(filter.options.label) %}
 
-    <div class="col-md-2">
+    <div class="col">
         <div class="form-group">
             <div class="form-check mb-2 mb-sm-0">
                 <label class="form-check-label">

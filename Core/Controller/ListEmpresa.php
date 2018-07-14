@@ -49,7 +49,7 @@ class ListEmpresa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEmpresa', 'Empresa');
+        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fa-building-o');
         $this->addSearchFields('ListEmpresa', ['nombre', 'nombrecorto']);
         $this->addOrderBy('ListEmpresa', ['idempresa'], 'code');
         $this->addOrderBy('ListEmpresa', ['nombre'], 'name');

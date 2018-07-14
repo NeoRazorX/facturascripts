@@ -94,7 +94,7 @@ class EditProducto extends ExtendedController\PanelController
             case 'EditStock':
                 $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
                 $where = [new DataBaseWhere('idproducto', $idproducto)];
-                $view->loadData('', $where, [], 0, 0);
+                $view->loadData('', $where, ['referencia' => 'ASC'], 0, 0);
                 break;
         }
     }

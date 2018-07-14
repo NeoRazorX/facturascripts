@@ -51,7 +51,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFacturaProveedor', 'FacturaProveedor');
+        $this->addView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fa-files-o');
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListFacturaProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListFacturaProveedor', ['fecha'], 'date', 2);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPresupuestoCliente', 'PresupuestoCliente');
+        $this->addView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
         $this->addOrderBy('ListPresupuestoCliente', ['codigo'], 'code');
         $this->addOrderBy('ListPresupuestoCliente', ['fecha'], 'date', 2);
