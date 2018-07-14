@@ -92,6 +92,16 @@ class ImpuestoZona extends Base\ModelClass
     }
 
     /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+
+        $this->prioridad = 1;
+    }
+
+    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type
