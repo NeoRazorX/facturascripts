@@ -253,21 +253,23 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     * Updated product price or reference if any change in variants.
      */
     public function update()
     {
-        $this->precio = 0.0;
-        $this->referencia = null;
+        $newPrecio = 0.0;
+        $newReferencia = null;
 
         $variantModel = new Variante();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
         foreach ($variantModel->all($where, [], 0, 0) as $variant) {
-            $this->precio = ($this->precio == 0.0 || $variant->precio < $this->precio) ? $variant->precio : $this->precio;
-            $this->referencia = is_null($this->referencia) ? $variant->referencia : $this->referencia;
+            $newPrecio = ($newPrecio == 0.0 || $variant->precio < $newPrecio) ? $variant->precio : $newPrecio;
+            $newReferencia = is_null($newReferencia) ? $variant->referencia : $newReferencia;
         }
 
-        $this->save();
+        if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
+            $this->save();
+        }
     }
 
     /**
@@ -281,6 +283,7 @@ class Producto extends Base\ModelClass
         if (parent::saveInsert($values)) {
             $variant = new Variante();
             $variant->idproducto = $this->idproducto;
+            $variant->precio = $this->precio;
             $variant->referencia = $this->referencia;
             if ($variant->save()) {
                 return true;

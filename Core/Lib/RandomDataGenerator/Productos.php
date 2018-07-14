@@ -102,7 +102,7 @@ class Productos extends AbstractRandom
 
             $variants = $this->setVariants($product);
             if ($product->nostock) {
-                break;
+                continue;
             }
 
             $this->setStock($variants);
@@ -118,6 +118,7 @@ class Productos extends AbstractRandom
     {
         $product->descripcion = $this->descripcion();
         $product->codimpuesto = $this->impuestos[0]->codimpuesto;
+        $product->precio = $this->precio(1, 49, 699);
 
         switch (mt_rand(0, 2)) {
             case 0:
@@ -155,8 +156,7 @@ class Productos extends AbstractRandom
         }
 
         $variant->codbarras = (0 === mt_rand(0, 2)) ? '' : $this->randomString(10);
-        $variant->coste = $this->precio(1, 49, 699);
-        $variant->precio = $variant->coste + $this->precio(1, 49, 699);
+        $variant->coste = $this->precio(0, $product->precio, $product->precio);
         if (!$variant->save()) {
             return $variants;
         }
