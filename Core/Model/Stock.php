@@ -104,13 +104,6 @@ class Stock extends Base\ModelClass
     public $stockmin;
 
     /**
-     * Location.
-     *
-     * @var string
-     */
-    public $ubicacion;
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -193,7 +186,6 @@ class Stock extends Base\ModelClass
         }
 
         $this->disponible = $this->cantidad - $this->reservada;
-        $this->ubicacion = Utils::noHtml($this->ubicacion);
 
         return parent::test();
     }

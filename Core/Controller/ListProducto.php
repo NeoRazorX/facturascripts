@@ -50,6 +50,7 @@ class ListProducto extends ExtendedController\ListController
     {
         $this->createViewProducto();
         $this->createViewVariante();
+        $this->createViewStock();
     }
 
     private function createViewProducto()
@@ -66,7 +67,7 @@ class ListProducto extends ExtendedController\ListController
 
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect('ListProducto', 'codfamilia', 'family', 'codfamilia', $families);
-        
+
         $taxes = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect('ListProducto', 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
@@ -76,7 +77,7 @@ class ListProducto extends ExtendedController\ListController
         $this->addFilterCheckbox('ListProducto', 'sevende', 'for-sale', 'sevende');
         $this->addFilterCheckbox('ListProducto', 'publico', 'public', 'publico');
     }
-    
+
     private function createViewVariante()
     {
         $this->addView('ListVariante', 'Variante', 'Variants', 'fa-code-fork');
@@ -85,7 +86,7 @@ class ListProducto extends ExtendedController\ListController
         $this->addOrderBy('ListVariante', ['codbarras'], 'barcode');
         $this->addOrderBy('ListVariante', ['precio'], 'price');
         $this->addOrderBy('ListVariante', ['coste'], 'cost-price');
-        
+
         $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect('ListVariante', 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
         $this->addFilterSelect('ListVariante', 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
@@ -94,7 +95,7 @@ class ListProducto extends ExtendedController\ListController
     private function createViewStock()
     {
         $this->addView('ListStock', 'Stock', 'stock', 'fa-tasks');
-        $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
+        $this->addSearchFields('ListStock', ['referencia']);
         $this->addOrderBy('ListStock', ['referencia'], 'reference');
         $this->addOrderBy('ListStock', ['cantidad'], 'quantity');
         $this->addOrderBy('ListStock', ['disponible'], 'available');
