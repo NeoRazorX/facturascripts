@@ -228,7 +228,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
             if (isset($productos[$numlineas]) && $productos[$numlineas]->sevende) {
                 $lin->referencia = $productos[$numlineas]->referencia;
                 $lin->descripcion = $productos[$numlineas]->descripcion;
-                $lin->pvpunitario = $productos[$numlineas]->pvp;
+                $lin->pvpunitario = $productos[$numlineas]->precio;
                 $lin->codimpuesto = $productos[$numlineas]->codimpuesto;
                 $lin->iva = $imp->get($productos[$numlineas]->codimpuesto)->iva;
                 $lin->recargo = 0;

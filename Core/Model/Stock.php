@@ -194,7 +194,7 @@ class Stock extends Base\ModelClass
      * @param int    $idproducto
      * @param string $referencia
      * 
-     * @return real
+     * @return float
      */
     public function totalFromProducto(int $idproducto, string $referencia = '')
     {

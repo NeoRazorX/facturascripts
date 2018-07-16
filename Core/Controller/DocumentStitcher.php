@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -31,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DocumentStitcher extends Base\Controller
 {
+
     /**
      * Model name source.
      *
@@ -111,17 +111,17 @@ class DocumentStitcher extends Base\Controller
     {
         switch ($modelName) {
             case 'AlbaranCliente':
-                /// no break
+            /// no break
             case 'AlbaranProveedor':
-                /// no break
+            /// no break
             case 'PedidoCliente':
-                /// no break
+            /// no break
             case 'PedidoProveedor':
-                /// no break
+            /// no break
             case 'PresupuestoCliente':
-                /// no break
+            /// no break
             case 'PresupuestoProveedor':
-                $this->codes = \explode(',', trim($this->request->get('codes', [])));
+                $this->codes = \explode(',', trim($this->request->get('codes', '')));
                 if (empty($this->codes)) {
                     $this->miniLog->alert('no-codes-received');
                     return false;
@@ -206,10 +206,9 @@ class DocumentStitcher extends Base\Controller
             if ($docDestiny->save()) {
                 $this->miniLog->notice(
                     $this->i18n->trans(
-                        'document-generated-successfully',
-                        [
-                            '%code%' => $docDestiny->codigo,
-                            '%url%' => $docDestiny->url()
+                        'document-generated-successfully', [
+                        '%code%' => $docDestiny->codigo,
+                        '%url%' => $docDestiny->url()
                         ]
                     )
                 );
@@ -395,29 +394,29 @@ class DocumentStitcher extends Base\Controller
 
         switch ($className) {
             case 'AlbaranCliente':
-                //$lineDestiny->porcomision = $lineSource->porcomision;
+            //$lineDestiny->porcomision = $lineSource->porcomision;
             case 'AlbaranProveedor':
                 $lineDestiny->idalbaran = $docDestiny->idalbaran;
                 $lineDestiny->idlineapedido = $lineSource->idlinea;
                 $lineDestiny->idpedido = $docSource->idpedido;
                 break;
             case 'PedidoCliente':
-                //$lineDestiny->porcomision = $lineSource->porcomision;
-                /// no break
+            //$lineDestiny->porcomision = $lineSource->porcomision;
+            /// no break
             case 'PedidoProveedor':
                 $lineDestiny->idpedido = $docDestiny->idpedido;
                 $lineDestiny->idlineapresupuesto = $lineSource->idlinea;
                 $lineDestiny->idpresupuesto = $docSource->idpresupuesto;
                 break;
             case 'PresupuestoCliente':
-                //$lineDestiny->porcomision = $lineSource->porcomision;
-                /// no break
+            //$lineDestiny->porcomision = $lineSource->porcomision;
+            /// no break
             case 'PresupuestoProveedor':
                 $lineDestiny->idpresupuesto = $docDestiny->idpresupuesto;
                 break;
             case 'FacturaCliente':
                 $lineDestiny->porcomision = $lineSource->porcomision;
-                /// no break
+            /// no break
             case 'FacturaProveedor':
                 $lineDestiny->idfactura = $docDestiny->idfactura;
                 $lineDestiny->idlineaalbaran = $lineSource->idlinea;
