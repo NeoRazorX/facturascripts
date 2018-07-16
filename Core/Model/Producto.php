@@ -33,6 +33,13 @@ class Producto extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     * Date when this product was updated.
+     *
+     * @var string
+     */
+    public $actualizado;
+
+    /**
      * True => the articles are locked / obsolete.
      *
      * @var bool
@@ -158,6 +165,7 @@ class Producto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->actualizado = date('d-m-Y H:i:s');
         $this->bloqueado = false;
         $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
         $this->nostock = false;
@@ -249,6 +257,7 @@ class Producto extends Base\ModelClass
             return false;
         }
 
+        $this->actualizado = date('d-m-Y H:i:s');
         return parent::test();
     }
 

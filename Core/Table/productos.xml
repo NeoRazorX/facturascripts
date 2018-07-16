@@ -7,6 +7,10 @@
 -->
 <table>
     <column>
+        <name>actualizado</name>
+        <type>timestamp</type>
+    </column>
+    <column>
         <name>bloqueado</name>
         <type>boolean</type>
         <default>false</default>

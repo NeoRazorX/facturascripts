@@ -61,6 +61,7 @@ class ListProducto extends ExtendedController\ListController
         $this->addOrderBy('ListProducto', ['descripcion'], 'description');
         $this->addOrderBy('ListProducto', ['precio'], 'price');
         $this->addOrderBy('ListProducto', ['stockfis'], 'stock');
+        $this->addOrderBy('ListProducto', ['actualizado'], 'update-time');
 
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect('ListProducto', 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
