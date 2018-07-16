@@ -63,6 +63,9 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
+            <column name="ventasinstock" numcolumns="3" order="140">
+                <widget type="checkbox" fieldname="ventasinstock" />
+            </column>
         </group>
         <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fa-info-circle fa-lg">
             <column name="decimals" numcolumns="3" order="100">
