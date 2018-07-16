@@ -98,7 +98,8 @@ function goToExport(option) {
 function goToOptions(url) {
     var previous = "";
     if (typeof url !== "undefined") {
-        previous = "&url=" + encodeURIComponent(url + "?active=" + tabActive);
+        var finalUrl = url.split("?");
+        previous = "&url=" + encodeURIComponent(finalUrl[0] + "?active=" + tabActive);
     }
     window.location.href = "EditPageOption?code=" + tabActive + previous;
 }

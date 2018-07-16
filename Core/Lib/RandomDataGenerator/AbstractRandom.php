@@ -270,7 +270,7 @@ abstract class AbstractRandom
     }
 
     /**
-     * Returns an array with random empleados.
+     * Returns an array with random agents.
      *
      * @return Model\Agente[]
      */
@@ -280,17 +280,7 @@ abstract class AbstractRandom
     }
 
     /**
-     * Returns an array with random artículos.
-     *
-     * @return Model\Articulo[]
-     */
-    protected function randomArticulos()
-    {
-        return $this->randomModel('\FacturaScripts\Dinamic\Model\Articulo', 'articulos');
-    }
-
-    /**
-     * Returns an array with random clientes.
+     * Returns an array with random customers.
      *
      * @return Model\Cliente[]
      */
@@ -325,7 +315,17 @@ abstract class AbstractRandom
     }
 
     /**
-     * Returns an array with random proveedores.
+     * Returns an array with random products.
+     *
+     * @return Model\Producto[]
+     */
+    protected function randomProductos()
+    {
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Producto', 'articulos');
+    }
+
+    /**
+     * Returns an array with random suppliers.
      *
      * @return Model\Proveedor[]
      */

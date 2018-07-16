@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,7 @@ class EditAtributo extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attribute';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['icon'] = 'fa-sliders';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -54,7 +54,7 @@ class EditAtributo extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditAtributo', 'Atributo', 'attribute');
-        $this->addEditListView('EditAtributoValor', 'AtributoValor', 'attribute-values', 'fa-road');
+        $this->addEditListView('EditAtributoValor', 'AtributoValor', 'attribute-values');
     }
 
     /**

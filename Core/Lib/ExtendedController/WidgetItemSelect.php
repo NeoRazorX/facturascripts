@@ -111,7 +111,7 @@ class WidgetItemSelect extends WidgetItem
         $style = $this->getTextOptionsHTML($value);
 
         return empty($this->onClick) ? '<span' . $style . '>' . $txt . '</span>' : '<a href="' . $this->onClick
-            . '?code=' . $value . '" ' . $style . '>' . $txt . '</a>';
+            . '?code=' . $value . '" class="cancelClickable" ' . $style . '>' . $txt . '</a>';
     }
 
     /**

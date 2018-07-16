@@ -109,16 +109,6 @@ class Randomizer extends Base\Controller
                 $txt = 'generated-accounting-entries';
                 break;
 
-            case 'articulos':
-                $app = new RandomDataGenerator\Articulos();
-                $txt = 'generated-products';
-                break;
-
-            case 'articulosprov':
-                $app = new RandomDataGenerator\ArticulosProveedor();
-                $txt = 'generated-products';
-                break;
-
             case 'clientes':
                 $app = new RandomDataGenerator\Clientes();
                 $txt = 'generated-customers';
@@ -164,6 +154,11 @@ class Randomizer extends Base\Controller
                 $txt = 'generated-supplier-estimations';
                 break;
 
+            case 'productos':
+                $app = new RandomDataGenerator\Productos();
+                $txt = 'generated-products';
+                break;
+
             case 'proveedores':
                 $app = new RandomDataGenerator\Proveedores();
                 $txt = 'generated-supplier';
@@ -197,8 +192,6 @@ class Randomizer extends Base\Controller
             'albaranescli' => '\FacturaScripts\Dinamic\Model\AlbaranCliente',
             'albaranesprov' => '\FacturaScripts\Dinamic\Model\AlbaranProveedor',
             'asientos' => '\FacturaScripts\Dinamic\Model\Asiento',
-            'articulos' => '\FacturaScripts\Dinamic\Model\Articulo',
-            'articulosprov' => '\FacturaScripts\Dinamic\Model\ArticuloProveedor',
             'clientes' => '\FacturaScripts\Dinamic\Model\Cliente',
             'cuentas' => '\FacturaScripts\Dinamic\Model\Cuenta',
             'grupos' => '\FacturaScripts\Dinamic\Model\GrupoClientes',
@@ -208,6 +201,7 @@ class Randomizer extends Base\Controller
             'pedidosprov' => '\FacturaScripts\Dinamic\Model\PedidoProveedor',
             'presupuestoscli' => '\FacturaScripts\Dinamic\Model\PresupuestoCliente',
             'presupuestosprov' => '\FacturaScripts\Dinamic\Model\PresupuestoProveedor',
+            'productos' => '\FacturaScripts\Dinamic\Model\Producto',
             'proveedores' => '\FacturaScripts\Dinamic\Model\Proveedor',
             'subcuentas' => '\FacturaScripts\Dinamic\Model\Subcuenta'
         ];

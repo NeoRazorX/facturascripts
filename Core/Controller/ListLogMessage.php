@@ -49,7 +49,7 @@ class ListLogMessage extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListLogMessage', 'LogMessage');
+        $this->addView('ListLogMessage', 'LogMessage', 'logs', 'fa-file-text-o');
         $this->addSearchFields('ListLogMessage', ['message', 'uri']);
 
         $this->addOrderBy('ListLogMessage', ['time'], 'date', 2);

@@ -315,9 +315,7 @@ class ListView extends BaseView implements DataViewInterface
         }
 
         switch ($type) {
-            case 'list':
-                return parent::getURL($type) . $extra;
-
+            /// removed list case to fix problem with listcontroller pagination
             case 'new':
                 $extra .= ('' === $extra) ? '?action=insert' : '&action=insert';
                 return parent::getURL($type) . $extra;

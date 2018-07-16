@@ -18,10 +18,13 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Define method and attributes of table variantes.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Variante extends Base\ModelClass
 {
@@ -34,6 +37,13 @@ class Variante extends Base\ModelClass
      * @var string
      */
     public $codbarras;
+
+    /**
+     * Cost price.
+     *
+     * @var int|float
+     */
+    public $coste;
 
     /**
      * Foreign key of table atributo_valores.
@@ -50,6 +60,13 @@ class Variante extends Base\ModelClass
     public $idatributovalor2;
 
     /**
+     * Product identifier.
+     *
+     * @var int
+     */
+    public $idproducto;
+
+    /**
      * Primary Key, autoincremental.
      *
      * @var int
@@ -57,18 +74,11 @@ class Variante extends Base\ModelClass
     public $idvariante;
 
     /**
-     * Price of the variant
+     * Price of the variant. Without tax.
      *
      * @var int|float
      */
-    public $pvp;
-
-    /**
-     * Price of cost
-     *
-     * @var int|float
-     */
-    public $pcte;
+    public $precio;
 
     /**
      * Reference of the variant. Maximun 30 characteres.
@@ -77,11 +87,34 @@ class Variante extends Base\ModelClass
      */
     public $referencia;
 
+    /**
+     * Physical stock.
+     *
+     * @var float|int
+     */
+    public $stockfis;
+
+    /**
+     * Sets default values.
+     */
     public function clear()
     {
         parent::clear();
-        $this->pvp = 0.0;
-        $this->pcte = 0.0;
+        $this->coste = 0.0;
+        $this->precio = 0.0;
+        $this->stockfis = 0.0;
+    }
+
+    /**
+     * Returns related product.
+     *
+     * @return Producto
+     */
+    public function getProducto()
+    {
+        $producto = new Producto();
+        $producto->loadFromCode($this->idproducto);
+        return $producto;
     }
 
     /**
@@ -93,9 +126,10 @@ class Variante extends Base\ModelClass
      */
     public function install()
     {
+        new Producto();
         new AtributoValor();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -109,6 +143,21 @@ class Variante extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return boolean
+     */
+    public function save()
+    {
+        if (parent::save()) {
+            $product = $this->getProducto();
+            $product->update();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -116,5 +165,38 @@ class Variante extends Base\ModelClass
     public static function tableName()
     {
         return 'variantes';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->codbarras = Utils::noHtml($this->codbarras);
+        $this->referencia = Utils::noHtml($this->referencia);
+
+        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            return false;
+        }
+
+        return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if ($type === 'new') {
+            return 'EditProducto';
+        }
+
+        return parent::url($type, 'ListProducto?active=List');
     }
 }

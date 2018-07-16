@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -39,6 +38,13 @@ class AtributoValor extends Base\ModelClass
     public $codatributo;
 
     /**
+     * Attribute name + value.
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
      * Primary key
      *
      * @var int
@@ -51,21 +57,6 @@ class AtributoValor extends Base\ModelClass
      * @var string
      */
     public $valor;
-
-    /**
-     * Select all attributes of an attribute code
-     *
-     * @param string $cod
-     *
-     * @return self[]
-     */
-    public function allFromAtributo($cod)
-    {
-        $where = [new DataBaseWhere('codatributo', $cod)];
-        $order = ['valor' => 'ASC'];
-
-        return $this->all($where, $order);
-    }
 
     /**
      * This function is called when creating the model table. Returns the SQL
@@ -109,6 +100,12 @@ class AtributoValor extends Base\ModelClass
     public function test()
     {
         $this->valor = Utils::noHtml($this->valor);
+
+        /// combine attribute name + value
+        $attribute = new Atributo();
+        if ($attribute->loadFromCode($this->codatributo)) {
+            $this->descripcion = $attribute->nombre . ' ' . $this->valor;
+        }
 
         return parent::test();
     }

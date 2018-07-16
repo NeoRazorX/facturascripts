@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,11 +25,16 @@
 
 <view>
     <columns>
-        <column name="id" order="100" display="none">
+        <column name="id" display="none" order="90">
             <widget type="text" fieldname="idstock" />
         </column>
-        <column name="reference" display="none" order="110">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+        <column name="product" display="none" order="100">
+            <widget type="text" fieldname="idproducto" />
+        </column>
+        <column name="reference" order="110">
+            <widget type="select" fieldname="referencia" required="true">
+                <values></values>
+            </widget>
         </column>
         <column name="warehouse" order="120">
             <widget type="select" fieldname="codalmacen" required="true">

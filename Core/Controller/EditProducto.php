@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,12 +22,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the EditArticulo model
+ * Controller to edit a single item from the EditProducto model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditArticulo extends ExtendedController\PanelController
+class EditProducto extends ExtendedController\PanelController
 {
 
     /**
@@ -51,13 +51,26 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditArticulo', 'Articulo', 'products', 'fa-cubes');
-        $this->addEditListView('EditVariante', 'Variante', 'variant', 'fa-code-fork');
+        $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
+        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-fork');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
-        $this->addListView('ListArticuloProveedor', 'ArticuloProveedor', 'suppliers', 'fa-users');
 
-        /// Disable column
-        $this->views['ListArticuloProveedor']->disableColumn('reference', true);
+        $this->loadCustomStockWidget();
+    }
+
+    /**
+     * 
+     */
+    protected function loadCustomStockWidget()
+    {
+        $references = [];
+        $where = [new DataBaseWhere('idproducto', $this->request->get('code'))];
+        foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
+            $references[] = ['value' => $code->code, 'title' => $code->description];
+        }
+
+        $columnReference = $this->views['EditStock']->columnForName('reference');
+        $columnReference->widget->setValuesFromArray($references, false);
     }
 
     /**
@@ -68,25 +81,20 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
-            unset($this->views['ListArticuloProveedor']);
-        }
-
-        $limit = FS_ITEM_LIMIT;
         switch ($viewName) {
-            case 'EditArticulo':
+            case 'EditProducto':
                 $code = $this->request->get('code');
                 $view->loadData($code);
+                if ($view->model->nostock) {
+                    unset($this->views['EditStock']);
+                }
                 break;
 
             case 'EditVariante':
             case 'EditStock':
-                $limit = 0;
-            /// no break
-            case 'ListArticuloProveedor':
-                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
-                $where = [new DataBaseWhere('referencia', $referencia)];
-                $view->loadData('', $where, [], 0, $limit);
+                $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
+                $where = [new DataBaseWhere('idproducto', $idproducto)];
+                $view->loadData('', $where, ['referencia' => 'ASC'], 0, 0);
                 break;
         }
     }

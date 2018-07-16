@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@
         </column>
         <column name="reference" order="110">
             <widget type="autocomplete" fieldname="referencia">
-                <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
+                <values source="productos" fieldcode="referencia" fieldtitle="descripcion"></values>
             </widget>
         </column>
         <column name="description" order="120">

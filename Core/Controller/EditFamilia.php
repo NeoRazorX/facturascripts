@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ class EditFamilia extends ExtendedController\PanelController
     {
         $this->addEditView('EditFamilia', 'Familia', 'family');
         $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down');
-        $this->addListView('ListArticulo', 'Articulo', 'products', 'fa-cubes');
+        $this->addListView('ListProducto', 'Producto', 'products', 'fa-cubes');
     }
 
     /**
@@ -71,7 +71,7 @@ class EditFamilia extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
-            case 'ListArticulo':
+            case 'ListProducto':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
                 $view->loadData('', $where);

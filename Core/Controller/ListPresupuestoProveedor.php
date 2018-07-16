@@ -51,7 +51,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor');
+        $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fa-files-o');
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListPresupuestoProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);

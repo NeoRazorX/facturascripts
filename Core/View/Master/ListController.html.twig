@@ -33,7 +33,7 @@
     <script type="text/javascript">
         tabActive = '{{ fsc.active }}';
         settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-                urls = { {{ fsc.getStringURLs('new') | raw }} };
+        urls = { {{ fsc.getStringURLs('new') | raw }} };
 
         function deleteFromList() {
             var deleteCodes = getLineCodes();
@@ -159,7 +159,7 @@
                         <i class="fa fa-plus" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
-                    <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url | url_encode }}');" {{ popoverTitle(options_title, 'bottom') }}>
+                    <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url }}');" {{ popoverTitle(options_title, 'bottom') }}>
                         <i class="fa fa-wrench" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                     </a>

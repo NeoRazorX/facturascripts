@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -25,10 +27,17 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Articulo extends Base\Product
+class Producto extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+
+    /**
+     * Date when this product was updated.
+     *
+     * @var string
+     */
+    public $actualizado;
 
     /**
      * True => the articles are locked / obsolete.
@@ -52,6 +61,13 @@ class Articulo extends Base\Product
     public $codfamilia;
 
     /**
+     * Tax identifier of the tax assigned.
+     *
+     * @var string
+     */
+    public $codimpuesto;
+
+    /**
      * Sub-account code for purchases.
      *
      * @var string
@@ -66,12 +82,26 @@ class Articulo extends Base\Product
     public $codsubcuentairpfcom;
 
     /**
-     * Equivalence code. Varchar (18).
-     * Two or more articles are equivalent if they have the same equivalence code.
+     * Description of the product.
      *
      * @var string
      */
-    public $equivalencia;
+    public $descripcion;
+
+    /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $idproducto;
+
+    /**
+     * True -> do not control the stock.
+     * Activating it implies putting True $ventasinstock;
+     *
+     * @var bool
+     */
+    public $nostock;
 
     /**
      * Observations of the article.
@@ -81,6 +111,13 @@ class Articulo extends Base\Product
     public $observaciones;
 
     /**
+     * Price of the item, without taxes.
+     *
+     * @var float|int
+     */
+    public $precio;
+
+    /**
      * True -> will be synchronized with the online store.
      *
      * @var bool
@@ -88,11 +125,11 @@ class Articulo extends Base\Product
     public $publico;
 
     /**
-     * Price of the item, without taxes.
+     * Main product reference or SKU.
      *
-     * @var float|int
+     * @var string
      */
-    public $pvp;
+    public $referencia;
 
     /**
      * True => the item is purchased.
@@ -109,11 +146,11 @@ class Articulo extends Base\Product
     public $sevende;
 
     /**
-     * Traceability control.
+     * Physical stock.
      *
-     * @var bool
+     * @var float|int
      */
-    public $trazabilidad;
+    public $stockfis;
 
     /**
      * True -> allow sales without stock.
@@ -128,9 +165,16 @@ class Articulo extends Base\Product
     public function clear()
     {
         parent::clear();
-        $this->pvp = 0.0;
+        $this->actualizado = date('d-m-Y H:i:s');
+        $this->bloqueado = false;
+        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $this->nostock = false;
+        $this->precio = 0.0;
+        $this->publico = false;
         $this->secompra = true;
         $this->sevende = true;
+        $this->stockfis = 0.0;
+        $this->ventasinstock = false;
     }
 
     /**
@@ -149,7 +193,7 @@ class Articulo extends Base\Product
         new Familia();
         new Impuesto();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -159,31 +203,16 @@ class Articulo extends Base\Product
      */
     public static function primaryColumn()
     {
+        return 'idproducto';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
         return 'referencia';
-    }
-
-    /**
-     * Sets the retail price.
-     *
-     * @param float $pvp
-     */
-    public function setPvp($pvp)
-    {
-        $pvp2 = round($pvp, FS_NF0 + 2);
-
-        if (!Utils::floatcmp($this->pvp, $pvp2, FS_NF0 + 2)) {
-            $this->pvp = $pvp2;
-        }
-    }
-
-    /**
-     * Sets the retail price with VAT.
-     *
-     * @param float $pvp
-     */
-    public function setPvpIva($pvp)
-    {
-        $this->setPvp((100 * $pvp) / (100 + $this->getIva()));
     }
 
     /**
@@ -193,7 +222,7 @@ class Articulo extends Base\Product
      */
     public static function tableName()
     {
-        return 'articulos';
+        return 'productos';
     }
 
     /**
@@ -203,13 +232,19 @@ class Articulo extends Base\Product
      */
     public function test()
     {
+        $this->descripcion = Utils::noHtml($this->descripcion);
         $this->observaciones = Utils::noHtml($this->observaciones);
+        $this->referencia = Utils::noHtml($this->referencia);
 
-        if ($this->equivalencia === '') {
-            $this->equivalencia = null;
+        if ($this->nostock && $this->stockfis != 0 && null !== $this->idproducto) {
+            $sql = "DELETE FROM " . Stock::tableName() . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto)
+                . "; UPDATE " . Variante::tableName() . " SET stockfis = 0 WHERE idproducto = "
+                . self::$dataBase->var2str($this->idproducto) . ";";
+            self::$dataBase->exec($sql);
         }
 
         if ($this->nostock) {
+            $this->stockfis = 0.0;
             $this->ventasinstock = true;
         }
 
@@ -217,6 +252,56 @@ class Articulo extends Base\Product
             $this->publico = false;
         }
 
+        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            return false;
+        }
+
+        $this->actualizado = date('d-m-Y H:i:s');
         return parent::test();
+    }
+
+    /**
+     * Updated product price or reference if any change in variants.
+     */
+    public function update()
+    {
+        $newPrecio = 0.0;
+        $newReferencia = null;
+
+        $variantModel = new Variante();
+        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+        foreach ($variantModel->all($where, [], 0, 0) as $variant) {
+            $newPrecio = ($newPrecio == 0.0 || $variant->precio < $newPrecio) ? $variant->precio : $newPrecio;
+            $newReferencia = is_null($newReferencia) ? $variant->referencia : $newReferencia;
+        }
+
+        if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
+            $this->save();
+        }
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return boolean
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            $variant = new Variante();
+            $variant->idproducto = $this->idproducto;
+            $variant->precio = $this->precio;
+            $variant->referencia = $this->referencia;
+            if ($variant->save()) {
+                return true;
+            }
+
+            $this->delete();
+            return false;
+        }
+
+        return false;
     }
 }
