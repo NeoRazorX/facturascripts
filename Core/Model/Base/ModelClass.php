@@ -93,7 +93,7 @@ abstract class ModelClass extends ModelCore
     /**
      * Allows to use this model as source in CodeModel special model.
      * 
-     * @return CodeModel
+     * @return CodeModel[]
      */
     public function codeModelAll()
     {
@@ -113,7 +113,7 @@ abstract class ModelClass extends ModelCore
      * 
      * @param string $query
      * 
-     * @return CodeModel
+     * @return CodeModel[]
      */
     public function codeModelSearch(string $query)
     {
