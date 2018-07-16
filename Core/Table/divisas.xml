@@ -8,12 +8,12 @@
 <table>
     <column>
         <name>coddivisa</name>
-        <type>character varying(5)</type>
+        <type>character varying(3)</type>
         <null>NO</null>
     </column>
     <column>
         <name>codiso</name>
-        <type>character varying(3)</type>
+        <type>character varying(5)</type>
     </column>
     <column>
         <name>descripcion</name>
