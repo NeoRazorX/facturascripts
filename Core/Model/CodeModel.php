@@ -88,6 +88,13 @@ class CodeModel
             $result[] = new self(['code' => null, 'description' => '------']);
         }
 
+        /// is a table or a model?
+        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
+            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+            $model = new $modelClass();
+            return $model->codeModelAll();
+        }
+
         if (self::$dataBase === null) {
             self::$dataBase = new Base\DataBase();
         }
@@ -109,14 +116,21 @@ class CodeModel
      * @param string $tableName
      * @param string $fieldCode
      * @param string $fieldDescription
-     * @param string $search
+     * @param string $query
      *
      * @return self[]
      */
-    public static function search($tableName, $fieldCode, $fieldDescription, $search)
+    public static function search($tableName, $fieldCode, $fieldDescription, $query)
     {
+        /// is a table or a model?
+        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
+            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+            $model = new $modelClass();
+            return $model->codeModelSearch($query);
+        }
+
         $fields = $fieldCode . '|' . $fieldDescription;
-        $where = [new DataBaseWhere($fields, mb_strtolower($search), 'LIKE')];
+        $where = [new DataBaseWhere($fields, mb_strtolower($query), 'LIKE')];
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
@@ -161,7 +175,6 @@ class CodeModel
     public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
-
         return $model->description;
     }
 }

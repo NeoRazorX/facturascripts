@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\EventManager;
+use FacturaScripts\Core\Model\CodeModel;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -87,6 +88,38 @@ abstract class ModelClass extends ModelCore
                 $data[$field] = null;
             }
         }
+    }
+
+    /**
+     * Allows to use this model as source in CodeModel special model.
+     * 
+     * @return CodeModel
+     */
+    public function codeModelAll()
+    {
+        $results = [];
+
+        $sql = 'SELECT DISTINCT ' . $this->primaryColumn() . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
+            . 'FROM ' . $this->tableName() . ' ORDER BY 2 ASC';
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
+            $results[] = new CodeModel($d);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Allows to use this model as source in CodeModel special model.
+     * 
+     * @param string $query
+     * 
+     * @return CodeModel
+     */
+    public function codeModelSearch(string $query)
+    {
+        $fields = $this->primaryColumn() . '|' . $this->primaryDescriptionColumn();
+        $where = [new DataBase\DataBaseWhere($fields, mb_strtolower($query), 'LIKE')];
+        return CodeModel::all($this->tableName(), $this->primaryColumn(), $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**
@@ -224,7 +257,12 @@ abstract class ModelClass extends ModelCore
      */
     public function primaryDescriptionColumn()
     {
-        return 'descripcion';
+        $fields = $this->getModelFields();
+        if (isset($fields['descripcion'])) {
+            return 'descripcion';
+        }
+
+        return $this->primaryColumn();
     }
 
     /**
