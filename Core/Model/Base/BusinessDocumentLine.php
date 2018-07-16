@@ -58,13 +58,6 @@ abstract class BusinessDocumentLine extends ModelClass
     private $cantidadAnt;
 
     /**
-     * Code of the selected combination, in the case of articles with attributes.
-     *
-     * @var string
-     */
-    public $codcombinacion;
-
-    /**
      * Code of the related tax.
      *
      * @var string
@@ -98,6 +91,13 @@ abstract class BusinessDocumentLine extends ModelClass
      * @var int
      */
     public $idlinea;
+
+    /**
+     * Id of the selected variant.
+     *
+     * @var int
+     */
+    public $idvariante;
 
     /**
      * % of IRPF of the line.
