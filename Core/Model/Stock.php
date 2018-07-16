@@ -128,6 +128,7 @@ class Stock extends Base\ModelClass
     {
         new Almacen();
         new Producto();
+        new Variante();
 
         return '';
     }
