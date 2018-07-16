@@ -32,7 +32,7 @@ class Divisa extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key. Varchar (3).
+     * Primary key. Varchar (5).
      *
      * @var string
      */
@@ -125,7 +125,7 @@ class Divisa extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->simbolo = Utils::noHtml($this->simbolo);
 
-        if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
+        if (!preg_match('/^[A-Z0-9]{1,5}$/i', $this->coddivisa)) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']));
         } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,3}$/i', $this->codiso)) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codiso', '%min%' => '1', '%max%' => '3']));

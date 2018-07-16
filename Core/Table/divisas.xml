@@ -8,7 +8,7 @@
 <table>
     <column>
         <name>coddivisa</name>
-        <type>character varying(3)</type>
+        <type>character varying(5)</type>
         <null>NO</null>
     </column>
     <column>
