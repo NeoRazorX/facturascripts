@@ -30,13 +30,6 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
     use Base\ModelTrait;
 
     /**
-     * Related line ID in the related order, if any.
-     *
-     * @var integer
-     */
-    public $idlineapresupuesto;
-
-    /**
      * Order ID.
      *
      * @var integer
@@ -44,16 +37,12 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
     public $idpedido;
 
     /**
-     * Estimation ID, if any.
-     *
-     * @var integer
+     * 
+     * @return string
      */
-    public $idpresupuesto;
-
     public function install()
     {
         new PedidoCliente();
-
         return parent::install();
     }
 

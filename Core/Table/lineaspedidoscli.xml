@@ -18,10 +18,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codcombinacion</name>
-        <type>character varying(18)</type>
-    </column>
-    <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
     </column>
@@ -41,17 +37,9 @@
         <default>nextval('lineaspedidoscli_idlinea_seq'::regclass)</default>
     </column>
     <column>
-        <name>idlineapresupuesto</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idpedido</name>
         <type>integer</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>idpresupuesto</name>
-        <type>integer</type>
     </column>
     <column>
         <name>irpf</name>

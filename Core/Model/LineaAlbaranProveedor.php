@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,35 +29,11 @@ class LineaAlbaranProveedor extends Base\BusinessDocumentLine
     use Base\ModelTrait;
 
     /**
-     * Order line ID, if any.
-     *
-     * @var int
-     */
-    public $idlineapedido;
-
-    /**
      * Delivery note ID of this line.
      *
      * @var int
      */
     public $idalbaran;
-
-    /**
-     * Order ID related to the delivery note, if any.
-     *
-     * @var int
-     */
-    public $idpedido;
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'lineasalbaranesprov';
-    }
 
     /**
      * This function is called when creating the model table. Returns the SQL
@@ -69,7 +45,16 @@ class LineaAlbaranProveedor extends Base\BusinessDocumentLine
     public function install()
     {
         new AlbaranProveedor();
+        return parent::install();
+    }
 
-        return '';
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'lineasalbaranesprov';
     }
 }

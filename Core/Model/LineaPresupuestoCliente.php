@@ -36,10 +36,13 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      */
     public $idpresupuesto;
 
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
         new PresupuestoCliente();
-
         return parent::install();
     }
 

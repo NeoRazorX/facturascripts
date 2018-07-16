@@ -37,6 +37,16 @@ class LineaPresupuestoProveedor extends Base\BusinessDocumentLine
     public $idpresupuesto;
 
     /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        new PresupuestoProveedor();
+        return parent::install();
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string

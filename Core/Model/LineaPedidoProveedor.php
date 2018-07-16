@@ -36,10 +36,13 @@ class LineaPedidoProveedor extends Base\BusinessDocumentLine
      */
     public $idpedido;
 
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
         new PedidoProveedor();
-
         return parent::install();
     }
 
