@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * The quantity in inventory of an item in a particular warehouse.
  *

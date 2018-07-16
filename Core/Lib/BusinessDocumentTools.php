@@ -18,10 +18,11 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
-use FacturaScripts\Dinamic\Model\Articulo;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
@@ -231,14 +232,16 @@ class BusinessDocumentTools
 
     private function setProductData(array &$fLine)
     {
-        $articulo = new Articulo();
-        if ($articulo->loadFromCode($fLine['referencia'])) {
-            $fLine['descripcion'] = $articulo->descripcion;
+        $variante = new Variante();
+        $where = [new DataBaseWhere('referencia', $fLine['referencia'])];
+        if ($variante->loadFromCode('', $where)) {
+            $producto = $variante->getProducto();
+            $fLine['descripcion'] = $producto->descripcion;
             $fLine['cantidad'] = 1;
-            $fLine['pvpunitario'] = $articulo->pvp;
+            $fLine['pvpunitario'] = $variante->precio;
 
             $impuesto = new Impuesto();
-            if ($impuesto->loadFromCode($articulo->codimpuesto)) {
+            if ($impuesto->loadFromCode($producto->codimpuesto)) {
                 $fLine['iva'] = $impuesto->iva;
                 $fLine['recargo'] = $this->recargo ? $impuesto->recargo : $fLine['recargo'];
             }
