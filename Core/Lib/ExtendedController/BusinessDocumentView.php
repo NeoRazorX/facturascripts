@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 /**
  * Description of BusinessDocumentView
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BusinessDocumentView extends BaseView
 {

@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 /**
  * Description of BusinessDocumentController
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class BusinessDocumentController extends PanelController
 {

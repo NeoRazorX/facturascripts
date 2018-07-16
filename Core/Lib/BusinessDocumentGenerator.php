@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 /**
  * Description of BusinessDocumentGenerator
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BusinessDocumentGenerator
 {

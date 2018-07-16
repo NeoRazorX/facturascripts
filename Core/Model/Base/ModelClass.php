@@ -93,13 +93,16 @@ abstract class ModelClass extends ModelCore
     /**
      * Allows to use this model as source in CodeModel special model.
      * 
+     * @param string $fieldcode
+     * 
      * @return CodeModel[]
      */
-    public function codeModelAll()
+    public function codeModelAll(string $fieldcode = '')
     {
         $results = [];
+        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
 
-        $sql = 'SELECT DISTINCT ' . $this->primaryColumn() . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
+        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
             . 'FROM ' . $this->tableName() . ' ORDER BY 2 ASC';
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
             $results[] = new CodeModel($d);
@@ -112,14 +115,16 @@ abstract class ModelClass extends ModelCore
      * Allows to use this model as source in CodeModel special model.
      * 
      * @param string $query
-     * 
+     * @param string $fieldcode
+     *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query)
+    public function codeModelSearch(string $query, string $fieldcode = '')
     {
-        $fields = $this->primaryColumn() . '|' . $this->primaryDescriptionColumn();
+        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $fields = $field . '|' . $this->primaryDescriptionColumn();
         $where = [new DataBase\DataBaseWhere($fields, mb_strtolower($query), 'LIKE')];
-        return CodeModel::all($this->tableName(), $this->primaryColumn(), $this->primaryDescriptionColumn(), false, $where);
+        return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**

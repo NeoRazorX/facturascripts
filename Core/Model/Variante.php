@@ -105,6 +105,21 @@ class Variante extends Base\ModelClass
         $this->stockfis = 0.0;
     }
 
+    public function codeModelSearch(string $query, string $fieldcode = '')
+    {
+        $results = [];
+        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+
+        $sql = "SELECT v." . $field . " AS code, p.descripcion AS description FROM " . self::tableName() . " v LEFT JOIN "
+            . Producto::tableName() . " p ON v.idproducto = p.idproducto ORDER BY v." . $field . " asc";
+
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
+            $results[] = new CodeModel($d);
+        }
+
+        return $results;
+    }
+
     /**
      * Returns related product.
      *
@@ -140,6 +155,15 @@ class Variante extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'idvariante';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'referencia';
     }
 
     /**

@@ -203,7 +203,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
     protected function randomLineas(&$doc, $iddoc, $lineaClass, $regimeniva, $recargo, $modStock = 0)
     {
         $imp = new Model\Impuesto();
-        $articulos = $this->randomArticulos();
+        $productos = $this->randomProductos();
 
         /// 1 out of 15 times we use negative quantities
         $modcantidad = 1;
@@ -225,12 +225,12 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
                 $lin->recargo = $this->impuestos[0]->recargo;
             }
 
-            if (isset($articulos[$numlineas]) && $articulos[$numlineas]->sevende) {
-                $lin->referencia = $articulos[$numlineas]->referencia;
-                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                $lin->iva = $imp->get($articulos[$numlineas]->codimpuesto)->iva;
+            if (isset($productos[$numlineas]) && $productos[$numlineas]->sevende) {
+                $lin->referencia = $productos[$numlineas]->referencia;
+                $lin->descripcion = $productos[$numlineas]->descripcion;
+                $lin->pvpunitario = $productos[$numlineas]->pvp;
+                $lin->codimpuesto = $productos[$numlineas]->codimpuesto;
+                $lin->iva = $imp->get($productos[$numlineas]->codimpuesto)->iva;
                 $lin->recargo = 0;
             }
 

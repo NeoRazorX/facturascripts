@@ -27,7 +27,7 @@
         </column>
         <column name="reference" order="110">
             <widget type="autocomplete" fieldname="referencia">
-                <values source="Variante" fieldcode="code" fieldtitle="description"></values>
+                <values source="Variante" fieldcode="referencia"></values>
             </widget>
         </column>
         <column name="description" order="120">

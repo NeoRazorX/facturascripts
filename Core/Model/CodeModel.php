@@ -92,7 +92,7 @@ class CodeModel
         if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
             $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
             $model = new $modelClass();
-            return $model->codeModelAll();
+            return $model->codeModelAll($fieldCode);
         }
 
         if (self::$dataBase === null) {
@@ -126,7 +126,7 @@ class CodeModel
         if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
             $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
             $model = new $modelClass();
-            return $model->codeModelSearch($query);
+            return $model->codeModelSearch($query, $fieldCode);
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
@@ -146,6 +146,17 @@ class CodeModel
      */
     public function get($tableName, $fieldCode, $code, $fieldDescription)
     {
+        /// is a table or a model?
+        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
+            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+            $model = new $modelClass();
+            if ($model->loadFromCode($code)) {
+                return new self(['code' => $model->primaryColumnValue(), 'description' => $model->primaryDescription()]);
+            }
+
+            return new self();
+        }
+
         if (self::$dataBase === null) {
             self::$dataBase = new Base\DataBase();
         }

@@ -321,7 +321,7 @@ abstract class AbstractRandom
      */
     protected function randomProductos()
     {
-        return $this->randomModel('\FacturaScripts\Dinamic\Model\Producto', 'articulos');
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Producto', 'productos');
     }
 
     /**

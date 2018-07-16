@@ -84,7 +84,7 @@ class InfoStateInitialData
      */
     protected function getProductData()
     {
-        $result['model'] = 'Articulo';
+        $result['model'] = 'Producto';
         $result['icon'] = 'fa-cube';
         $result['group'] = 'products';
         $result['values'] = [
