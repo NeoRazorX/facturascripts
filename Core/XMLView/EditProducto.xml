@@ -73,6 +73,9 @@
             <column name="bloqueado" title="blocked" order="130">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
+            <column name="ventasinstock" title="sale-no-stock" order="140">
+                <widget type="checkbox" fieldname="ventasinstock"/>
+            </column>
         </group>
         <group name="observations" numcolumns="12">
             <column name="observations" order="100">
