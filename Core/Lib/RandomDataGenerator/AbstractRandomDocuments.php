@@ -98,32 +98,19 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
         $doc->fecha = $this->fecha();
         $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
         $doc->codpago = $this->formasPago[0]->codpago;
-        $doc->codalmacen = (mt_rand(0, 2) == 0) ? $this->almacenes[0]->codalmacen : AppSettings::get('default', 'codalmacen');
-        $doc->idempresa = AppSettings::get('default', 'idempresa');
+        $doc->codalmacen = (mt_rand(0, 2) == 0) ? $this->almacenes[0]->codalmacen : $doc->codalmacen;
+        $doc->codserie = (mt_rand(0, 2) == 0) ? $this->series[0]->codserie : $doc->codserie;
+        $doc->codagente = mt_rand(0, 4) ? $this->agentes[0]->codagente : null;
 
+        $doc->coddivisa = (mt_rand(0, 2) == 0) ? $this->divisas[0]->coddivisa : $doc->coddivisa;
         foreach ($this->divisas as $div) {
-            if ($div->coddivisa == AppSettings::get('default', 'coddivisa')) {
-                $doc->coddivisa = $div->coddivisa;
+            if ($div->coddivisa == $doc->coddivisa) {
                 $doc->tasaconv = $div->tasaconv;
                 break;
             }
         }
 
         if (mt_rand(0, 2) == 0) {
-            $doc->coddivisa = $this->divisas[0]->coddivisa;
-            $doc->tasaconv = $this->divisas[0]->tasaconv;
-        }
-
-        $doc->codserie = AppSettings::get('default', 'codserie');
-        if (!isset($doc->codserie) || $doc->codserie == "---null---") {
-            $doc->codserie = 'A';
-            $doc->irpf = 0;
-        }
-        if (mt_rand(0, 2) == 0) {
-            if ($this->series[0]->codserie != 'R') {
-                $doc->codserie = $this->series[0]->codserie;
-            }
-
             $doc->observaciones = $this->observaciones($doc->fecha);
         }
 
@@ -132,8 +119,6 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
         } elseif (isset($doc->numproveedor) && mt_rand(0, 4) == 0) {
             $doc->numproveedor = mt_rand(10, 99999);
         }
-
-        $doc->codagente = mt_rand(0, 4) ? $this->agentes[0]->codagente : null;
     }
 
     /**
@@ -205,11 +190,8 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
         $imp = new Model\Impuesto();
         $productos = $this->randomProductos();
 
-        /// 1 out of 15 times we use negative quantities
-        $modcantidad = 1;
-        if (mt_rand(0, 4) == 0) {
-            $modcantidad = -1;
-        }
+        /// 1 out of 5 times we use negative quantities
+        $modcantidad = (mt_rand(0, 4) == 0) ? -1 : 1;
 
         $numlineas = (int) $this->cantidad(0, 10, 200);
         while ($numlineas > 0) {
@@ -229,18 +211,22 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
                 $lin->referencia = $productos[$numlineas]->referencia;
                 $lin->descripcion = $productos[$numlineas]->descripcion;
                 $lin->pvpunitario = $productos[$numlineas]->precio;
-                $lin->codimpuesto = $productos[$numlineas]->codimpuesto;
-                $lin->iva = $imp->get($productos[$numlineas]->codimpuesto)->iva;
-                $lin->recargo = 0;
+
+                $impuesto = $imp->get($productos[$numlineas]->codimpuesto);
+                if ($impuesto) {
+                    $lin->codimpuesto = $impuesto->codimpuesto;
+                    $lin->iva = $impuesto->iva;
+                    $lin->recargo = $recargo ? $impuesto->recargo : 0.0;
+                }
             }
 
             $lin->irpf = $doc->irpf;
 
             if ($regimeniva == 'Exento') {
                 $lin->codimpuesto = null;
-                $lin->iva = 0;
-                $lin->recargo = 0;
-                $doc->irpf = $lin->irpf = 0;
+                $lin->iva = 0.0;
+                $lin->recargo = 0.0;
+                $doc->irpf = $lin->irpf = 0.0;
             }
 
             if (mt_rand(0, 4) == 0) {
