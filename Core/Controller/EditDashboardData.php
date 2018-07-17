@@ -134,6 +134,8 @@ class EditDashboardData extends ExtendedController\EditController
     private function getPropertiesFields()
     {
         $model = $this->getModel();
+        if($model->component===NULL)
+                $model->component=$_REQUEST['component'];
         $component = 'FacturaScripts\\Dinamic\\Lib\\Dashboard\\'
             . $model->component
             . DashboardLib\BaseComponent::SUFIX_COMPONENTS;
@@ -170,4 +172,5 @@ class EditDashboardData extends ExtendedController\EditController
             }
         }
     }
+    
 }
