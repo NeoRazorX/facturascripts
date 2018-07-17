@@ -65,7 +65,6 @@ abstract class PanelController extends BaseController
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-
         $this->hasData = false;
         $this->setTabsPosition('left');
     }
@@ -138,6 +137,7 @@ abstract class PanelController extends BaseController
             // check if we are processing the main view
             if ($viewName == $mainViewName) {
                 $this->hasData = $view->count > 0;
+                $this->title .= isset($view->model) ? ' ' . $view->model->primaryDescription() : '';
                 continue;
             }
 
