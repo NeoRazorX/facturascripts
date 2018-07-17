@@ -366,7 +366,6 @@ class DocumentStitcher extends Base\Controller
     {
         // Values from lines
         $lineDestiny->cantidad = $lineSource->cantidad;
-        $lineDestiny->codcombinacion = $lineSource->codcombinacion;
         $lineDestiny->codimpuesto = $lineSource->codimpuesto;
         $lineDestiny->descripcion = $lineSource->descripcion;
         $lineDestiny->iva = $lineSource->iva;
