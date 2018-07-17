@@ -174,7 +174,7 @@ class Producto extends Base\ModelClass
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = false;
+        $this->ventasinstock = AppSettings::get('default', 'ventasinstock');
     }
 
     /**
