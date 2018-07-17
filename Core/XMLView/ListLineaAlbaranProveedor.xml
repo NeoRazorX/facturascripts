@@ -46,7 +46,7 @@
         <column name="quantity" order="150" display="right">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="pvp" order="160" display="right">
+        <column name="price" order="160" display="right">
             <widget type="money" fieldname="pvpunitario" />
         </column>
         <column name="discount" order="160" display="right">
