@@ -67,6 +67,13 @@ class Contacto extends Base\Contact
     public $codagente;
 
     /**
+     * Associated client to this contact. Client model.
+     *
+     * @var string
+     */
+    public $codcliente;
+
+    /**
      * Contact country.
      *
      * @var string
@@ -172,6 +179,19 @@ class Contacto extends Base\Contact
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Cliente();
+        return parent::install();
+    }
+
+    /**
      * Generates a new login key for the user. It also updates lastactivity
      * ans last IP.
      *
@@ -200,7 +220,7 @@ class Contacto extends Base\Contact
 
     /**
      * Returns the name of the column used to describe this item.
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()

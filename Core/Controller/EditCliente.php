@@ -64,7 +64,7 @@ class EditCliente extends ExtendedController\PanelController
     public function calcCustomerInvoicePending($view)
     {
         $where = [
-            new DataBaseWhere('codcliente', $view->model->codcliente),
+            new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
             new DataBaseWhere('pagada', false)
         ];
 
@@ -116,6 +116,7 @@ class EditCliente extends ExtendedController\PanelController
         $this->addEditListView('EditDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
         $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
+        $this->addListView('ListContacto', 'Contacto', 'contacts', 'fa-address-book');
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
@@ -155,6 +156,7 @@ class EditCliente extends ExtendedController\PanelController
 
             case 'EditDireccionCliente':
             case 'EditCuentaBancoCliente':
+            case 'ListContacto':
                 $limit = 0;
             /// no break
             case 'ListFacturaCliente':

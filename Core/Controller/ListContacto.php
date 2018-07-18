@@ -48,7 +48,7 @@ class ListContacto extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListContacto', 'Contacto');
+        $this->addView('ListContacto', 'Contacto', 'contacts');
         $this->addSearchFields('ListContacto', ['nombre', 'apellidos', 'email']);
         $this->addOrderBy('ListContacto', ['email'], 'email');
         $this->addOrderBy('ListContacto', ['nombre'], 'name');
