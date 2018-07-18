@@ -22,7 +22,7 @@
         <null>NO</null>
     </column>
     <column>
-        <name>idtransferhead</name>
+        <name>idtrans</name>
         <type>integer</type>
         <null>NO</null>
     </column>
@@ -45,6 +45,6 @@
     </constraint>
     <constraint>
         <name>ca_lineastransferenciasstock_transferenciasstock</name>
-        <type>FOREIGN KEY (idtransferhead) REFERENCES transferenciasstock (idtransferhead) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idtrans) REFERENCES transferenciasstock (idtrans) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>
