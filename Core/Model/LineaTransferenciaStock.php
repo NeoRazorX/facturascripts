@@ -71,6 +71,7 @@ class LineaTransferenciaStock extends Base\ModelClass
     public function install()
     {
         new TransferenciaStock();
+        new Variante();
         return parent::install();
     }
 
