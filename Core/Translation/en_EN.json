@@ -242,6 +242,7 @@
     "generated-accounting-entries": "%quantity% accounting entries generated.",
     "generated-accounts": "%quantity% accounts generated.",
     "generated-agents": "%quantity% generated agents.",
+    "generated-contacts": "%quantity% generated contacts.",
     "generated-customer-delivery-notes": "%quantity% generated customer delivery notes.",
     "generated-customer-estimations": "%quantity% generated customer estimations.",
     "generated-customer-groups": "%quantity% generated customer groups.",
@@ -821,5 +822,9 @@
     "no-codes-received": "No codes received",
     "no-modelname-data-received-or-not-supported": "No modelname data received or modelname not supported",
     "document-generated-successfully": "Document <a href='%url%' target='_blank'>%code%</a> generated successfully",
-    "document-not-generated": "Document not generated"
+    "document-not-generated": "Document not generated",
+    "contacts": "Contacts",
+    "points": "Points",
+    "verified": "Verified",
+    "allow-marketing": "Allow marketing"
 }
