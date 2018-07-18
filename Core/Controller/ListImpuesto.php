@@ -69,6 +69,9 @@ class ListImpuesto extends ExtendedController\ListController
         $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-area', 'fa-usd');
         $this->addSearchFields('ListImpuestoZona', ['codpais']);
 
+        $this->addOrderBy('ListImpuestoZona', ['codimpuesto'], 'tax');
         $this->addOrderBy('ListImpuestoZona', ['codpais'], 'country');
+        $this->addOrderBy('ListImpuestoZona', ['codisopro'], 'province');
+        $this->addOrderBy('ListImpuestoZona', ['codimpuestosel'], 'applied-tax');
     }
 }
