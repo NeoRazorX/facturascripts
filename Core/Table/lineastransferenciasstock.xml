@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineastransferenciasstock.xml
+    Author     : Cristo M. Estévez Hernández
+    Description:
+        Structure for the lineastransferenciasstock table.
+-->
+<table>
+    <column>
+        <name>idlinea</name>
+        <type>integer</type>
+        <default>nextval('lineastransferenciasstock_idlinea_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idproducto</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idvariante</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idtransferhead</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>cantidad</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>lineastransferenciasstock_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineastransferenciasstock_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineastransferenciasstock_variantes</name>
+        <type>FOREIGN KEY (idvariante) REFERENCES variantes (idvariante) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineastransferenciasstock_transferenciasstock</name>
+        <type>FOREIGN KEY (idtransferhead) REFERENCES transferenciasstock (idtransferhead) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

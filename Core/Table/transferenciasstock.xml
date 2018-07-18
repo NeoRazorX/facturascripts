@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cabeceratransferencias.xml
+    Author     : Cristo M. Estévez Hernández
+    Description:
+        Structure for the transferenciasstock table.
+-->
+<table>
+    <column>
+        <name>idtransferhead</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('transferenciasstock_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>codalmacenorigen</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codalmacendestino</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>timestamp</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>usuario</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>cabeceratransferenciasstock_pkey</name>
+        <type>PRIMARY KEY (idtransferhead)</type>
+    </constraint>
+    <constraint>
+        <name>ca_transferenciasstockorigen_almacenes</name>
+        <type>FOREIGN KEY (codalmacenorigen) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_transferenciasstockdestino_almacenes</name>
+        <type>FOREIGN KEY (codalmacendestino) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_transferenciasstock_users</name>
+        <type>FOREIGN KEY (usuario) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>
