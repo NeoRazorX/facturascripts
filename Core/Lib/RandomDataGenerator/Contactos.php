@@ -82,31 +82,31 @@ class Contactos extends AbstractRandomPeople
      */
     protected function fillContacto(&$contacto)
     {
-        $agentes = $this->randomAgentes();
-        $totalAgentes = count($agentes)-1;
-        $randomAgente = (int) $this->cantidad(0, $totalAgentes, $totalAgentes);
-        $clientes = $this->randomClientes();
-        $totalClientes = count($clientes)-1;
-        $randomCliente= (int) $this->cantidad(0, $totalClientes, $totalClientes);
+        $agentes = [];
+        $this->shuffle($agentes, new Model\Agente());
+        $clientes = [];
+        $this->shuffle($clientes, new Model\Cliente());
         $paises = [];
         $this->shuffle($paises, new Model\Pais());
-        $timeStamp = random_int(0, 1) > 0 ? random_int(time()/2, time()) : time();
 
-        $contacto->admitemarketing = random_int(0, 100 > 50);
+        $timeStamp = random_int(0, 1) > 0 ? random_int(time()/2, time()) : time();
+        $randomIp = random_int(0, 255) . '.' . random_int(0, 255) . '.' . random_int(0, 255) . '.' . random_int(0, 255);
+
+        $contacto->admitemarketing = random_int(0, 1) > 0;
         $contacto->apellidos = random_int(0, 1) > 0 ? $this->apellidos() : null;
         $contacto->cargo = random_int(0, 1) > 0 ? $this->cargo() : null;
         $contacto->cifnif = random_int(0, 1) > 0 ? $this->cif() : null;
         $contacto->ciudad = random_int(0, 1) > 0 ? $this->ciudad() : null;
-        $contacto->codagente = $agentes[$randomAgente]->codagente;
-        $contacto->codcliente = $clientes[$randomCliente]->codcliente;
-        $contacto->codpais = random_int(0, 100 > 50) === 0 ? $paises[0]->codpais : AppSettings::get('default', 'codpais');
+        $contacto->codagente = random_int(0, 1) > 0 ? $agentes[0]->codpais : null;
+        $contacto->codcliente = random_int(0, 1) > 0 ? $clientes[0]->codcliente : null;
+        $contacto->codpais = random_int(0, 1) > 0 ? $paises[0]->codpais : AppSettings::get('default', 'codpais');
         $contacto->codpostal = (string) random_int(1234, 99999);
         $contacto->direccion = random_int(0, 1) > 0 ? $this->direccion() : null;
         $contacto->email = $this->email();
         $contacto->empresa = random_int(0, 1) > 0 ? $this->empresa() : null;
         $contacto->fechaalta = $this->fecha();
         $contacto->lastactivity = date('d-m-Y H:i:s', $timeStamp);
-        $contacto->lastip = random_int(0, 1) > 0 ?  : '::1';
+        $contacto->lastip = random_int(0, 1) > 0 ? $randomIp : '::1';
         $contacto->logkey = Utils::randomString(99);
         $contacto->nombre = $this->nombre();
         $contacto->observaciones = random_int(0, 1) > 0 ? $this->observaciones() : null;
