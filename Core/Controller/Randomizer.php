@@ -114,6 +114,11 @@ class Randomizer extends Base\Controller
                 $txt = 'generated-customers';
                 break;
 
+            case 'contactos':
+                $app = new RandomDataGenerator\Contactos();
+                $txt = 'generated-contacts';
+                break;
+
             case 'cuentas':
                 $app = new RandomDataGenerator\Cuentas();
                 $txt = 'generated-accounts';
@@ -193,6 +198,7 @@ class Randomizer extends Base\Controller
             'albaranesprov' => '\FacturaScripts\Dinamic\Model\AlbaranProveedor',
             'asientos' => '\FacturaScripts\Dinamic\Model\Asiento',
             'clientes' => '\FacturaScripts\Dinamic\Model\Cliente',
+            'contactos' => '\FacturaScripts\Dinamic\Model\Contacto',
             'cuentas' => '\FacturaScripts\Dinamic\Model\Cuenta',
             'grupos' => '\FacturaScripts\Dinamic\Model\GrupoClientes',
             'fabricantes' => '\FacturaScripts\Dinamic\Model\Fabricante',
