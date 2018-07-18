@@ -7,7 +7,7 @@
 -->
 <table>
     <column>
-        <name>idtransferhead</name>
+        <name>idtrans</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('transferenciasstock_id_seq'::regclass)</default>
@@ -33,8 +33,8 @@
         <null>NO</null>
     </column>
     <constraint>
-        <name>cabeceratransferenciasstock_pkey</name>
-        <type>PRIMARY KEY (idtransferhead)</type>
+        <name>transferenciasstock_pkey</name>
+        <type>PRIMARY KEY (idtrans)</type>
     </constraint>
     <constraint>
         <name>ca_transferenciasstockorigen_almacenes</name>

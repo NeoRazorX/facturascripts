@@ -69,8 +69,8 @@ class EditTransferenciaStock extends ExtendedController\PanelController
                 break;
 
             case 'EditLineaTransferenciaStock':
-                $idtransferencia = $this->getViewModelValue('EditLineaTransferenciaStock', 'idtransferhead');
-                $where = [new DataBaseWhere('idtransferhead', $idtransferencia)];
+                $idtransferencia = $this->getViewModelValue('EditLineaTransferenciaStock', 'idtrans');
+                $where = [new DataBaseWhere('idtrans', $idtransferencia)];
                 $view->loadData('', $where, [], 0, 0);
                 break;
         }

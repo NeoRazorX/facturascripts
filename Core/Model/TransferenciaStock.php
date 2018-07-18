@@ -33,7 +33,7 @@ class TransferenciaStock extends Base\ModelClass
      *
      * @var int
      */
-    public $idtransferhead;
+    public $idtrans;
 
     /**
      * Warehouse of origin. Varchar (4).
@@ -64,22 +64,13 @@ class TransferenciaStock extends Base\ModelClass
     public $usuario;
 
     /**
-     * 
-     * @return string
-     */
-    public function install()
-    {
-        new LineaTransferenciaStock();
-    }
-
-    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
     public static function primaryColumn()
     {
-        return 'idtransferhead';
+        return 'idtrans';
     }
 
     /**
