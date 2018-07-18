@@ -28,28 +28,29 @@
             <column name="id" numcolumns="2" order="10">
                 <widget type="text" fieldname="id" icon="fa-usd" required="true" />
             </column>
-            <column name="code" numcolumns="2" order="20">
-                <widget type="text" fieldname="codimpuesto" required="true" />
+            <column name="tax" numcolumns="2" order="20">
+                <widget type="select" fieldname="codimpuesto"  required="true">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
             </column>
-            <column name="country" numcolumns="6" order="30">
-                <widget type="select" fieldname="codpais" icon="fa-globe" required="true">
+            <column name="country" numcolumns="2" order="30">
+                <widget type="autocomplete" fieldname="codpais" icon="fa-globe" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="province" numcolumns="6" order="40">
-                <widget type="select" fieldname="codisopro">
+            <column name="province" numcolumns="2" order="40">
+                <widget type="autocomplete" fieldname="codisopro">
                     <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
                 </widget>
             </column>
-            <column name="tax" numcolumns="6" order="50">
+            <column name="applied-tax" numcolumns="2" order="50">
                 <widget type="select" fieldname="codimpuestosel">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="priority" numcolumns="6" order="60">
+            <column name="priority" numcolumns="2" order="60">
                 <widget type="number" fieldname="prioridad" required="true" />
             </column>
         </group>
     </columns>
 </view>
-
