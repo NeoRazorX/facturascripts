@@ -34,12 +34,12 @@
                 </widget>
             </column>
             <column name="country" numcolumns="2" order="30">
-                <widget type="select" fieldname="codpais" icon="fa-globe" required="true">
+                <widget type="autocomplete" fieldname="codpais" icon="fa-globe" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="province" numcolumns="2" order="40">
-                <widget type="select" fieldname="codisopro">
+                <widget type="autocomplete" fieldname="codisopro">
                     <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
                 </widget>
             </column>
