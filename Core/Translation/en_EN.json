@@ -817,9 +817,13 @@
     "can-not-save-finished-cronjob": "Can't save finished cron job for %pluginName% with name %jobname%",
     "randomizer-generating-more-items": "Generating more items in few seconds, press refresh button to stop it.",
     "group-lines": "Group lines",
-    "document-stitcher": "Document stitcher",
+    "group-or-split": "Group or split",
     "no-codes-received": "No codes received",
     "no-modelname-data-received-or-not-supported": "No modelname data received or modelname not supported",
     "document-generated-successfully": "Document <a href='%url%' target='_blank'>%code%</a> generated successfully",
-    "document-not-generated": "Document not generated"
+    "document-not-generated": "Document not generated",
+    "document-not-available": "Document not available",
+    "document-status-not-available": "Document status not available",
+    "approve-quantity": "Approve quantity",
+    "approve": "Approve"
 }
