@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model;
 
 /**
- * Generate random data for the customers (clientes) file
+ * Generate random data for the contact
  *
  * @author Rafael San José <info@rsanjoseo.com>
  */
@@ -31,7 +31,7 @@ class Contactos extends AbstractRandomPeople
 {
 
     /**
-     * Clientes constructor.
+     * Contactos constructor.
      */
     public function __construct()
     {
@@ -76,7 +76,7 @@ class Contactos extends AbstractRandomPeople
     }
 
     /**
-     * Rellena un cliente con datos aleatorios.
+     * Fill with random data a contact.
      *
      * @param Model\Contacto $contacto
      */
