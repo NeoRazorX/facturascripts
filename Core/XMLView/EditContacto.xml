@@ -43,14 +43,19 @@
             <column name="company" numcolumns="3" order="150">
                 <widget type="text" fieldname="empresa" />
             </column>
-            <column name="position" numcolumns="3" order="160">
+            <column name="position" numcolumns="2" order="160">
                 <widget type="text" fieldname="cargo" />
             </column>
-            <column name="phone" numcolumns="3" order="170">
+            <column name="phone" numcolumns="2" order="170">
                 <widget type="text" fieldname="telefono1" icon="fa-phone" />
             </column>
-            <column name="phone2" numcolumns="3" order="180">
+            <column name="phone2" numcolumns="2" order="180">
                 <widget type="text" fieldname="telefono2" icon="fa-mobile" />
+            </column>
+            <column name="customer" numcolumns="3" order="190">
+                <widget type="select" fieldname="codcliente">
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                </widget>
             </column>
         </group>
         <group name="address" title="address" numcolumns="12">
