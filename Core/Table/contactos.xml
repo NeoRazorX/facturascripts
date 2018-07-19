@@ -47,9 +47,18 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>domenvio</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>domfacturacion</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>email</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>empresa</name>
