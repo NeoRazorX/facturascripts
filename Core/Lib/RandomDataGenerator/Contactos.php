@@ -97,8 +97,8 @@ class Contactos extends AbstractRandomPeople
         $contacto->cargo = random_int(0, 1) > 0 ? $this->cargo() : null;
         $contacto->cifnif = random_int(0, 1) > 0 ? $this->cif() : null;
         $contacto->ciudad = random_int(0, 1) > 0 ? $this->ciudad() : null;
-        $contacto->codagente = random_int(0, 1) > 0 ? $agentes[0]->codpais : null;
-        $contacto->codcliente = random_int(0, 1) > 0 ? $clientes[0]->codcliente : null;
+        $contacto->codagente = random_int(0, 1) > 0 ? $agentes[0]->codagente ?? null : null;
+        $contacto->codcliente = random_int(0, 1) > 0 ? $clientes[0]->codcliente ?? null : null;
         $contacto->codpais = random_int(0, 1) > 0 ? $paises[0]->codpais : AppSettings::get('default', 'codpais');
         $contacto->codpostal = (string) random_int(1234, 99999);
         $contacto->direccion = random_int(0, 1) > 0 ? $this->direccion() : null;
