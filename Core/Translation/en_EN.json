@@ -242,6 +242,7 @@
     "generated-accounting-entries": "%quantity% accounting entries generated.",
     "generated-accounts": "%quantity% accounts generated.",
     "generated-agents": "%quantity% generated agents.",
+    "generated-contacts": "%quantity% generated contacts.",
     "generated-customer-delivery-notes": "%quantity% generated customer delivery notes.",
     "generated-customer-estimations": "%quantity% generated customer estimations.",
     "generated-customer-groups": "%quantity% generated customer groups.",
@@ -825,5 +826,10 @@
     "document-not-available": "Document not available",
     "document-status-not-available": "Document status not available",
     "approve-quantity": "Approve quantity",
-    "approve": "Approve"
+    "approve": "Approve",
+    "contacts": "Contacts",
+    "points": "Points",
+    "verified": "Verified",
+    "allow-marketing": "Allow marketing",
+    "apache-module-not-found": "You don't have the Apache %module% module installed or enabled."
 }

@@ -55,7 +55,7 @@ class LineaTransferenciaStock extends Base\ModelClass
      *
      * @var int
      */
-    public $idtransferhead;
+    public $idtrans;
 
     /**
      * Quantity of product transfered
@@ -71,6 +71,8 @@ class LineaTransferenciaStock extends Base\ModelClass
     public function install()
     {
         new TransferenciaStock();
+        new Variante();
+        return parent::install();
     }
 
     /**

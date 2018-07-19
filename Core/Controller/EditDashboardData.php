@@ -19,6 +19,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Lib\Dashboard as DashboardLib;
 use FacturaScripts\Core\Model\User;
@@ -134,8 +135,11 @@ class EditDashboardData extends ExtendedController\EditController
     private function getPropertiesFields()
     {
         $model = $this->getModel();
+        if ($model->component === NULL)
+            $model->component = $_REQUEST['component'];
+
         $component = 'FacturaScripts\\Dinamic\\Lib\\Dashboard\\'
-            . $model->component
+            . ($model->component ?? 'Messages')
             . DashboardLib\BaseComponent::SUFIX_COMPONENTS;
 
         return $component::getPropertiesFields();

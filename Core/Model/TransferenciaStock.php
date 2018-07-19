@@ -33,7 +33,7 @@ class TransferenciaStock extends Base\ModelClass
      *
      * @var int
      */
-    public $idtransferhead;
+    public $idtrans;
 
     /**
      * Warehouse of origin. Varchar (4).
@@ -64,12 +64,14 @@ class TransferenciaStock extends Base\ModelClass
     public $usuario;
 
     /**
-     * 
-     * @return string
+     * * Reset the values of all model properties.
+     *
+     * @return void
      */
-    public function install()
+    public function clear()
     {
-        new LineaTransferenciaStock();
+        parent::clear();
+        $this->fecha = date('d-m-Y H:i:s');
     }
 
     /**
@@ -79,7 +81,7 @@ class TransferenciaStock extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idtransferhead';
+        return 'idtrans';
     }
 
     /**
@@ -90,5 +92,20 @@ class TransferenciaStock extends Base\ModelClass
     public static function tableName()
     {
         return 'transferenciasstock';
+    }
+
+    /**
+     * If warehouse oirigin is diferent warehouse destination return true. If not, return false.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if ($this->codalmacenorigen == $this->codalmacendestino) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-origin-can´t-equal-than-warehouse-destination'));
+            return false;
+        }
+
+        return parent::test();
     }
 }
