@@ -179,8 +179,11 @@ abstract class AbstractRandomPeople extends AbstractRandom
             'ninja', 'infiltrator', 'info', 'compras', 'ventas', 'administracion', 'contacto',
             'contact', 'invoices', 'mail',
         ];
+        $domain = [
+            'facturascripts.com', 'gmail.com', 'hotmail.com', 'yahoo.com',
+        ];
 
-        return $this->getOneItem($nicks) . '.' . mt_rand(2, 9999) . '@facturascripts.com';
+        return $this->getOneItem($nicks) . '.' . mt_rand(2, 99999) . '@' . $this->getOneItem($domain);
     }
 
     /**
