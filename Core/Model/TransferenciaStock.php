@@ -64,6 +64,17 @@ class TransferenciaStock extends Base\ModelClass
     public $usuario;
 
     /**
+     * * Reset the values of all model properties.
+     *
+     * @return void
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->fecha = date('d-m-Y H:i:s');
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -81,5 +92,20 @@ class TransferenciaStock extends Base\ModelClass
     public static function tableName()
     {
         return 'transferenciasstock';
+    }
+
+    /**
+     * If warehouse oirigin is diferent warehouse destination return true. If not, return false.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if ($this->codalmacenorigen == $this->codalmacendestino) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-origin-can´t-equal-than-warehouse-destination'));
+            return false;
+        }
+
+        return parent::test();
     }
 }
