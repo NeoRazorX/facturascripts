@@ -55,5 +55,8 @@ class ListTransferenciaStock extends ExtendedController\ListController
         $this->addOrderBy('ListTransferenciaStock', ['codalmacendestino'], 'warehouse-destination');
         $this->addOrderBy('ListTransferenciaStock', ['fecha'], 'date');
         $this->addOrderBy('ListTransferenciaStock', ['usuario'], 'user');
+
+        $this->addFilterDatePicker('ListTransferenciaStock', 'fecha', 'date', 'fecha');
+        $this->addFilterAutocomplete('ListTransferenciaStock', 'usuario', 'user', 'usuario', 'users', 'nick', 'nick');
     }
 }
