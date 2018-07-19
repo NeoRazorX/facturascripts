@@ -309,6 +309,13 @@ class AppInstaller
             }
         }
 
+        foreach (['mod_rewrite'] as $module) {
+            if (function_exists('apache_get_modules') && !in_array($module, apache_get_modules())) {
+                $this->miniLog->critical($this->i18n->trans('apache-module-not-found', ['%module%' => $module]));
+                $errors = true;
+            }
+        }
+
         if (!is_writable(FS_FOLDER)) {
             $this->miniLog->critical($this->i18n->trans('folder-not-writable'));
             $errors = true;
