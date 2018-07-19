@@ -75,9 +75,16 @@ class FormaPago extends Base\ModelClass
     public $imprimir;
 
     /**
-     * It serves to generate the due date of the invoices.
+     * Type of expiration. varchar(10)
      *
      * @var string
+     */
+    public $tipovencimiento;
+
+    /**
+     * Quantity of expiration
+     *
+     * @var int
      */
     public $vencimiento;
 
@@ -129,7 +136,7 @@ class FormaPago extends Base\ModelClass
         $this->codcuenta = '';
         $this->domiciliado = false;
         $this->imprimir = true;
-        $this->vencimiento = '+1 day';
+        $this->vencimiento = 0;
     }
 
     /**
@@ -172,10 +179,8 @@ class FormaPago extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
 
         /// we check the expiration validity
-        $fecha1 = date('d-m-Y');
-        $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
-        if (strtotime($fecha1) > strtotime($fecha2)) {
-            self::$miniLog->alert(self::$i18n->trans('expiration-invalid'));
+        if ($this->vencimiento < 0) {
+            self::$miniLog->alert(self::$i18n->trans('number-expiration-invalid'));
             return false;
         }
 
