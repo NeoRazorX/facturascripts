@@ -826,5 +826,6 @@
     "contacts": "Contacts",
     "points": "Points",
     "verified": "Verified",
-    "allow-marketing": "Allow marketing"
+    "allow-marketing": "Allow marketing",
+    "apache-module-not-found": "You don't have the Apache %module% module installed or enabled."
 }
