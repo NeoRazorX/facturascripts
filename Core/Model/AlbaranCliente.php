@@ -41,13 +41,6 @@ class AlbaranCliente extends Base\SalesDocument
     public $idalbaran;
 
     /**
-     * ID of the related invoice, if any.
-     *
-     * @var int
-     */
-    public $idfactura;
-
-    /**
      * Returns the lines associated with the delivery note.
      *
      * @return LineaAlbaranCliente[]

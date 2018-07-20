@@ -31,13 +31,6 @@ class PresupuestoProveedor extends Base\PurchaseDocument
     use Base\ModelTrait;
 
     /**
-     * Related delivery note ID.
-     *
-     * @var int
-     */
-    public $idalbaran;
-
-    /**
      * Primary key.
      *
      * @var int

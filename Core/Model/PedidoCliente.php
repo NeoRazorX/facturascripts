@@ -31,13 +31,6 @@ class PedidoCliente extends Base\SalesDocument
     use Base\ModelTrait;
 
     /**
-     * Related delivery note ID.
-     *
-     * @var integer
-     */
-    public $idalbaran;
-
-    /**
      * Primary key.
      *
      * @var integer

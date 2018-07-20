@@ -38,13 +38,6 @@ class PresupuestoCliente extends Base\SalesDocument
     public $idpresupuesto;
 
     /**
-     * Related order ID, if any.
-     *
-     * @var integer
-     */
-    public $idpedido;
-
-    /**
      * Date on which the validity of the estimation ends.
      *
      * @var string
