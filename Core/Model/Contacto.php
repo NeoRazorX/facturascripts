@@ -95,20 +95,6 @@ class Contacto extends Base\Contact
     public $direccion;
 
     /**
-     * True -> this address is the main one for shipments.
-     *
-     * @var bool
-     */
-    public $domenvio;
-
-    /**
-     * True -> this address is the main one for billing.
-     *
-     * @var bool
-     */
-    public $domfacturacion;
-
-    /**
      * Contact company.
      *
      * @var string
@@ -178,8 +164,6 @@ class Contacto extends Base\Contact
         parent::clear();
         $this->admitemarketing = false;
         $this->codpais = AppSettings::get('default', 'codpais');
-        $this->domenvio = false;
-        $this->domfacturacion = false;
         $this->puntos = 0;
         $this->verificado = false;
     }
