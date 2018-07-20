@@ -187,9 +187,7 @@ abstract class SalesDocument extends BusinessDocument
             $this->idcontactofact = $dir->idcontacto;
         }
 
-        if ($dir = $subjects[0]->getDefaultShippingAddress()) {
-            $this->idcontactoenv = $dir->idcontacto;
-        }
+        $this->idcontactoenv = $subjects[0]->getDefaultShippingAddress()->idcontacto;
 
         return true;
     }

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
 /**
@@ -111,7 +110,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
         }
 
         if (mt_rand(0, 2) == 0) {
-            $doc->observaciones = $this->observaciones($doc->fecha);
+            $doc->observaciones = $this->observaciones();
         }
 
         if (isset($doc->numero2) && mt_rand(0, 4) == 0) {
@@ -163,15 +162,18 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
         $doc->codejercicio = $eje->codejercicio;
 
         $regimeniva = 'Exento';
-        if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
+        if (isset($clientes[$num])) {
             $doc->setSubject([$clientes[$num]]);
             $regimeniva = $clientes[$num]->regimeniva;
-        } else {
-            /// Every once in a while, generate one without the client, to check if it breaks ;-)
-            $doc->nombrecliente = $this->nombre() . ' ' . $this->apellidos();
-            $doc->cifnif = mt_rand(1111, 999999999) . 'J';
         }
 
+        /**
+        /// Every once in a while, generate one without the client, to check if it breaks ;-)
+        $doc->nombrecliente = $this->nombre() . ' ' . $this->apellidos();
+        $doc->cifnif = mt_rand(1111, 999999999) . 'J';
+        // TODO: Needs a idcontactoenv placeholder
+        $this->miniLog->critical("Client without idcontactoenv because don't have codcliente");
+        */
         return $regimeniva;
     }
 
