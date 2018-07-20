@@ -98,8 +98,15 @@
             <column name="email" numcolumns="3" order="130">
                 <widget type="email" fieldname="email" icon="fa-envelope" />
             </column>
-            <column name="website" numcolumns="3" order="140">
-                <widget type="url" fieldname="web" />
+            <column name="default-billing-address" numcolumns="6" order="140">
+                <widget type="select" fieldname="idcontactofact">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="default-shipping-address" numcolumns="6" order="150">
+                <widget type="select" fieldname="idcontactoenv">
+                    <values></values>
+                </widget>
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
