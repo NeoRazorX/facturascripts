@@ -117,10 +117,6 @@
         <type>integer</type>
     </column>
     <column>
-        <name>idpedido</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idpresupuesto</name>
         <type>serial</type>
         <null>NO</null>
@@ -205,10 +201,6 @@
     <constraint>
         <name>ca_presupuestoscli_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_presupuestoscli_pedidos</name>
-        <type>FOREIGN KEY (idpedido) REFERENCES pedidoscli (idpedido) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_presupuestoscli2</name>

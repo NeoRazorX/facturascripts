@@ -99,10 +99,6 @@
         <type>time without time zone</type>
     </column>
     <column>
-        <name>idalbaran</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idcontactoenv</name>
         <type>integer</type>
         <null>NO</null>
@@ -205,10 +201,6 @@
     <constraint>
         <name>ca_pedidoscli_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_pedidoscli_albaranes</name>
-        <type>FOREIGN KEY (idalbaran) REFERENCES albaranescli (idalbaran) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_pedidoscli2</name>
