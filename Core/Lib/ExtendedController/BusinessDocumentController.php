@@ -213,10 +213,11 @@ abstract class BusinessDocumentController extends PanelController
         /// gets data form and separate date, hour, codcliente, codproveedor and lines data
         $data = $this->getFormData();
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
-        if (!empty($codcliente)) {
-            $idContactoEnv = $this->getContactoIdBy($codcliente, 'idcontactoenv');
-            $idContactoFact = $this->getContactoIdBy($codcliente, 'idcontactofact');
+        if (empty($codcliente)) {
+            return false;
         }
+        $idContactoEnv = $this->getContactoIdBy($codcliente, 'idcontactoenv');
+        $idContactoFact = $this->getContactoIdBy($codcliente, 'idcontactofact');
 
         $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
         $fecha = isset($data['fecha']) ? $data['fecha'] : $view->model->fecha;
