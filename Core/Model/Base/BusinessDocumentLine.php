@@ -158,7 +158,6 @@ abstract class BusinessDocumentLine extends ModelClass
         parent::__construct($data);
         $this->actualizastockAnt = isset($this->actualizastock) ? $this->actualizastock : 0;
         $this->cantidadAnt = isset($this->cantidad) ? $this->cantidad : 0;
-        $this->servido = $this->cantidadAnt; // TODO
     }
 
     /**
