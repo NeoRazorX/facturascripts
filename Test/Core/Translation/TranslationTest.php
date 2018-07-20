@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -114,7 +114,7 @@ class TranslationTest extends TestCase
      */
     private function scanFolder(string $folderPath): array
     {
-        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..', 'updater.php']);
     }
 
     /**

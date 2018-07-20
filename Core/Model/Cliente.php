@@ -53,6 +53,20 @@ class Cliente extends Base\ComercialContact
     public $diaspago;
 
     /**
+     * Default contact for sending documentation
+     *
+     * @var integer
+     */
+    public $idcontactofact;
+
+    /**
+     * Default contact for the shipment of products
+     *
+     * @var integer
+     */
+    public $idcontactoenv;
+
+    /**
      * True -> equivalence surcharge is applied to the client.
      *
      * @var boolean
@@ -71,12 +85,11 @@ class Cliente extends Base\ComercialContact
     /**
      * Returns an array with the addresses associated with the client.
      *
-     * @return DireccionCliente[]
+     * @return Contacto[]
      */
     public function getDirecciones()
     {
-        $dirModel = new DireccionCliente();
-
+        $dirModel = new Contacto();
         return $dirModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
     }
 
@@ -89,10 +102,11 @@ class Cliente extends Base\ComercialContact
      */
     public function install()
     {
+        /// we need exits Contacto before, but we can't check it because it would create a cyclic check
         /// we need to check model GrupoClientes before
         new GrupoClientes();
 
-        return '';
+        return parent::install();
     }
 
     /**

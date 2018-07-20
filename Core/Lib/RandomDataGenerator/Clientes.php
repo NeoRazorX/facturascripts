@@ -79,10 +79,6 @@ class Clientes extends AbstractRandomPeople
                     break;
                 }
 
-                /// añadimos direcciones
-                $numDirs = mt_rand(0, 3);
-                $this->direccionesCliente($cliente, $numDirs);
-
                 /// Añadimos cuentas bancarias
                 $numCuentas = mt_rand(0, 3);
                 $this->cuentasBancoCliente($cliente, $numCuentas);
@@ -117,35 +113,6 @@ class Clientes extends AbstractRandomPeople
             $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
 
             if (!$cuenta->save()) {
-                break;
-            }
-
-            --$max;
-        }
-    }
-
-    /**
-     * Rellena direcciones de un cliente con datos aleatorios.
-     *
-     * @param Model\Cliente $cliente
-     * @param int           $max
-     */
-    protected function direccionesCliente($cliente, $max = 3)
-    {
-        while ($max > 0) {
-            $dir = new Model\DireccionCliente();
-            $dir->codcliente = $cliente->codcliente;
-            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
-
-            $dir->provincia = $this->provincia();
-            $dir->ciudad = $this->ciudad();
-            $dir->direccion = $this->direccion();
-            $dir->codpostal = (string) mt_rand(1234, 99999);
-            $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
-            $dir->domenvio = (mt_rand(0, 1) === 1);
-            $dir->domfacturacion = (mt_rand(0, 1) === 1);
-            $dir->descripcion = 'Dirección #' . $max;
-            if (!$dir->save()) {
                 break;
             }
 

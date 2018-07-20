@@ -66,6 +66,14 @@
         <type>date</type>
     </column>
     <column>
+        <name>idcontactofact</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idcontactoenv</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
         <null>NO</null>

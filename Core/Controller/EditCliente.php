@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model\TotalModel;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Lib\IDFiscal;
 use FacturaScripts\Core\Lib\RegimenIVA;
 
@@ -48,7 +49,7 @@ class EditCliente extends ExtendedController\PanelController
             new DataBaseWhere('editable', true)
         ];
 
-        $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
+        $totalModel = TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total']);
@@ -68,7 +69,7 @@ class EditCliente extends ExtendedController\PanelController
             new DataBaseWhere('pagada', false)
         ];
 
-        $totalModel = Model\TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
+        $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);
@@ -93,7 +94,7 @@ class EditCliente extends ExtendedController\PanelController
     /**
      * Create and configure main view
      */
-    private function addMainView()
+    private function createViewCustomers()
     {
         $this->addEditView('EditCliente', 'Cliente', 'customer');
 
@@ -111,9 +112,8 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addMainView();
+        $this->createViewCustomers();
 
-        $this->addEditListView('EditDireccionCliente', 'DireccionCliente', 'addresses', 'fa-road');
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
         $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
         $this->addListView('ListContacto', 'Contacto', 'contacts', 'fa-address-book');
@@ -142,8 +142,20 @@ class EditCliente extends ExtendedController\PanelController
         $limit = FS_ITEM_LIMIT;
         switch ($viewName) {
             case 'EditCliente':
-                $code = $this->request->get('code');
-                $view->loadData($code);
+                $codcliente = $this->request->get('code');
+                $view->loadData($codcliente);
+
+                /// Search for client contacts
+                $where = [new DataBaseWhere('codcliente', $codcliente)];
+                $contacts = CodeModel::all('contactos', 'idcontacto', 'CONCAT(nombre, \' \', apellidos)', true, $where);
+
+                /// Load values option to default billing address from client contacts list
+                $columnBilling = $this->views['EditCliente']->columnForName('default-billing-address');
+                $columnBilling->widget->setValuesFromCodeModel($contacts);
+
+                /// Load values option to default shipping address from client contacts list
+                $columnShipping = $this->views['EditCliente']->columnForName('default-shipping-address');
+                $columnShipping->widget->setValuesFromCodeModel($contacts);
                 break;
 
             case 'ListCliente':
@@ -154,7 +166,6 @@ class EditCliente extends ExtendedController\PanelController
                 }
                 break;
 
-            case 'EditDireccionCliente':
             case 'EditCuentaBancoCliente':
             case 'ListContacto':
                 $limit = 0;
