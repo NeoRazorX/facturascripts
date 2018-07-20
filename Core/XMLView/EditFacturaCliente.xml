@@ -66,11 +66,6 @@
                 </widget>
             </column>
         </group>
-        <group name="shippingaddr" title="shipping-address" numcolumns="12">
-            <column name="addressship" title="address" numcolumns="5" order="120">
-                <widget type="text" fieldname="direccionenv" />
-            </column>
-        </group>
         <group name="codattributes" title="attributes" numcolumns="12">
             <column name="warehouse" numcolumns="3">
                 <widget type="select" fieldname="codalmacen">

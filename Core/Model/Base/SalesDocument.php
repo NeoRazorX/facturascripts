@@ -93,13 +93,6 @@ abstract class SalesDocument extends BusinessDocument
     public $direccion;
 
     /**
-     * Address of the shipping address.
-     *
-     * @var string
-     */
-    public $direccionenv;
-
-    /**
      * Customer name.
      *
      * @var string
@@ -190,7 +183,6 @@ abstract class SalesDocument extends BusinessDocument
         $this->codigoenv = Utils::noHtml($this->codigoenv);
         $this->codpostal = Utils::noHtml($this->codpostal);
         $this->direccion = Utils::noHtml($this->direccion);
-        $this->direccionenv = Utils::noHtml($this->direccionenv);
         $this->nombrecliente = Utils::noHtml($this->nombrecliente);
         $this->numero2 = Utils::noHtml($this->numero2);
         $this->provincia = Utils::noHtml($this->provincia);
