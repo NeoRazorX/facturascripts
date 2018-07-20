@@ -106,7 +106,7 @@ class Cliente extends Base\ComercialContact
         /// we need to check model GrupoClientes before
         new GrupoClientes();
 
-        return '';
+        return parent::install();
     }
 
     /**

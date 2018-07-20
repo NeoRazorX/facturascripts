@@ -131,12 +131,4 @@
         <name>ca_clientes_grupos</name>
         <type>FOREIGN KEY (codgrupo) REFERENCES gruposclientes (codgrupo) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
-    <constraint>
-        <name>ca_clientes_contactos_fact</name>
-        <type>FOREIGN KEY (idcontactofact) REFERENCES contactos (idcontacto) ON DELETE SET NULL ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_clientes_contactos_env</name>
-        <type>FOREIGN KEY (idcontactoenv) REFERENCES contactos (idcontacto) ON DELETE SET NULL ON UPDATE CASCADE</type>
-    </constraint>
 </table>
