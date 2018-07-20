@@ -57,7 +57,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterCheckbox('ListContacto', 'admitemarketing', 'allow-marketing', 'admitemarketing');
     }
 
-    private function createViewCustomers()
+    private function createViewCustomers($valuesGroup)
     {
         $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
@@ -65,18 +65,17 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListCliente', ['nombre'], 'name', 1);
         $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');
 
-        $selectValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
-        $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $selectValues);
+        $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $valuesGroup);
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
     }
 
-    private function createViewGroups()
+    private function createViewGroups($valuesGroup)
     {
         $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         $this->addOrderBy('ListGrupoClientes', ['codgrupo'], 'code');
         $this->addOrderBy('ListGrupoClientes', ['nombre'], 'name', 1);
-        $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $selectValues);
+        $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $valuesGroup);
     }
 
     /**
@@ -84,9 +83,11 @@ class ListCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->createViewCustomers();     /// Add Customers View
-        $this->createViewContacts();      /// Add Contacts View
-        $this->createViewGroups();        /// Add Customers Groups View
+        $valuesGroup = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
+
+        $this->createViewCustomers($valuesGroup);
+        $this->createViewContacts();
+        $this->createViewGroups($valuesGroup);
     }
 
     /**
