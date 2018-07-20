@@ -20,44 +20,19 @@ if (php_sapi_name() !== "cli") {
     die("Please use command line: php updater.php");
 }
 
+/// scan json files
 chdir(__DIR__);
+$files = [];
+foreach (scandir(__DIR__, SCANDIR_SORT_ASCENDING) as $filename) {
+    if (is_file($filename) && substr($filename, -5) === '.json') {
+        $files[] = $filename;
+    }
+}
 
-/**
- * Downloads translations file from facturascripts.com
- * 
- * @param string $filename
- */
-function downloadJson(string $filename): string
-{
+/// download json from facturascripts.com
+foreach ($files as $filename) {
     $url = "https://beta.facturascripts.com/EditLanguage?action=json&code=";
-    return file_get_contents($url . substr($filename, 0, -5));
-}
-
-/**
- * Scans .json files in current folder.
- * 
- * @return array
- */
-function scanFolder(): array
-{
-    $scan = scandir(__DIR__, SCANDIR_SORT_ASCENDING);
-    if (!is_array($scan)) {
-        return [];
-    }
-
-    $files = [];
-    foreach ($scan as $filename) {
-        if (is_file($filename) && substr($filename, -5) === '.json') {
-            $files[] = $filename;
-        }
-    }
-
-    return $files;
-}
-
-/// main process
-foreach (scanFolder() as $filename) {
-    $json = downloadJson($filename);
+    $json = file_get_contents($url . substr($filename, 0, -5));
     if (empty($json) || strlen($json) < 10) {
         echo "Skip " . $filename . "\n";
         continue;
