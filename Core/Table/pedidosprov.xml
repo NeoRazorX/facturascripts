@@ -66,10 +66,6 @@
         <type>time without time zone</type>
     </column>
     <column>
-        <name>idalbaran</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idempresa</name>
         <type>integer</type>
     </column>
@@ -148,10 +144,6 @@
     <constraint>
         <name>ca_pedidosprov_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_pedidosprov_albaranes</name>
-        <type>FOREIGN KEY (idalbaran) REFERENCES albaranesprov (idalbaran) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_pedidosprov2</name>
