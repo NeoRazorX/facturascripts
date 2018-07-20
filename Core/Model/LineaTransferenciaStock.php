@@ -23,6 +23,7 @@ namespace FacturaScripts\Core\Model;
  * Transfers stock lines.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class LineaTransferenciaStock extends Base\ModelClass
 {
@@ -93,5 +94,43 @@ class LineaTransferenciaStock extends Base\ModelClass
     public static function tableName()
     {
         return 'lineastransferenciasstock';
+    }
+
+    /**
+     * Updates stock according to line data and $codalmacen warehouse.
+     *
+     * @param string $codalmacen
+     *
+     * @return boolean
+     */
+    public function transferStock(string $source, string $destination)
+    {
+        if ($this->actualizastock === $this->actualizastockAnt && $this->cantidad === $this->cantidadAnt) {
+            return true;
+        }
+
+        $variante = new Variante();
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if (!empty($this->referencia) && $variante->loadFromCode('', $where)) {
+            $producto = $variante->getProducto();
+            if ($producto->nostock) {
+                return true;
+            }
+
+            $stock = new Stock();
+            if (!$stock->loadFromCode('', [new DataBaseWhere('codalmacen', $codalmacen), new DataBaseWhere('referencia', $this->referencia)])) {
+                $stock->codalmacen = $codalmacen;
+                $stock->idproducto = $producto->idproducto;
+                $stock->referencia = $this->referencia;
+            }
+
+            $this->applyStockChanges($this->actualizastockAnt, $this->cantidadAnt * -1, $stock);
+            $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
+            $this->actualizastockAnt = $this->actualizastock;
+            $this->cantidadAnt = $this->cantidad;
+            return $stock->save();
+        }
+
+        return true;
     }
 }
