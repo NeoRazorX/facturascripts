@@ -76,12 +76,6 @@
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="default-shipping-address" numcolumns="4" order="150">
-                <widget type="checkbox" fieldname="domenvio" />
-            </column>
-            <column name="default-billing-address" numcolumns="4" order="160">
-                <widget type="checkbox" fieldname="domfacturacion" />
-            </column>
         </group>
         <group name="other" numcolumns="6">
             <column name="create-date" numcolumns="4" order="100">

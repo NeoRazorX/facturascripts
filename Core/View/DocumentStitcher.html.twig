@@ -25,21 +25,6 @@
 
 {% extends "Master/MenuTemplate.html.twig" %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        $(document).ready(function () {
-            // set/unset all delete checkbox
-            {% for iddoc,doc in fsc.docs %}
-            $(".listActionCB{{ doc.codigo }}").click(function () {
-                var checked = $(this).prop("checked");
-                $(".listAction{{ doc.codigo }}").prop("checked", checked);
-            });
-            {% endfor %}
-        });
-    </script>
-{% endblock %}
-
 {% block body %}
     {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
@@ -55,7 +40,16 @@
             <input type="hidden" name="model" value="{{ fsc.modelName }}" />
             <div class="row text-right">
                 <div class="col">
-                    <button type="submit" class="btn btn-primary" name="action" value="submit">{{ i18n.trans('continue') }}</button>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-files-o" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for destinyDoc in fsc.approveTo %}
+                                <button class="dropdown-item" id="action" name="action" value="{{ destinyDoc.generadoc }}">{{ destinyDoc.generadoc }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -67,17 +61,14 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title"><a href="{{ doc.url }}" target="_blank">{{ doc.codigo }}</a> {{ doc.fecha }}</h5>
+                                <input type="hidden" id="doc" name="doc[]" value="{{ doc.primaryColumnValue() }}"/>
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
                                             <th>{{ i18n.trans('reference') }}</th>
                                             <th>{{ i18n.trans('description') }}</th>
                                             <th>{{ i18n.trans('quantity') }}</th>
-                                            <th class="text-right">
-                                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                                    <input class="form-check-input listActionCB{{ doc.codigo }}" type="checkbox" />
-                                                </div>
-                                            </th>
+                                            <th>{{ i18n.trans('approve-quantity') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -92,9 +83,10 @@
                                             <td class="text-right">
                                                 {{ lineDoc.cantidad }}
                                             </td>
-                                            <td class="text-right cancelClickable">
-                                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                                    <input class="form-check-input listAction{{ doc.codigo }}" type="checkbox" name="code[]" value="{{ lineDoc.primaryColumnValue() }}" />
+                                            <td>
+                                                <div class="form-group">
+                                                    <input class="form-control" type="hidden" id="prevline" name="prevline[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}"/>
+                                                    <input class="form-control" type="number" id="line" name="line[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}" max="{{ lineDoc.cantidad }}" required="" />
                                                 </div>
                                             </td>
                                         </tr>
@@ -115,7 +107,16 @@
             </div>
             <div class="row text-right">
                 <div class="col">
-                    <button type="submit" class="btn btn-primary" name="action" value="submit">{{ i18n.trans('continue') }}</button>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-files-o" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for approve in fsc.approveTo %}
+                                <button class="dropdown-item" id="action" name="action" value="{{ approve.generadoc }}">{{ approve.generadoc }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

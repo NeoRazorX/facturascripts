@@ -37,32 +37,11 @@ abstract class SalesDocument extends BusinessDocument
     public $apartado;
 
     /**
-     * Post box of the shipping address.
-     *
-     * @var string
-     */
-    public $apartadoenv;
-
-    /**
-     * Last name of the shipping address.
-     *
-     * @var string
-     */
-    public $apellidosenv;
-
-    /**
      * Customer's city
      *
      * @var string
      */
     public $ciudad;
-
-    /**
-     * City of the shipping address.
-     *
-     * @var string
-     */
-    public $ciudadenv;
 
     /**
      * Employee who created this document. Agent model.
@@ -79,13 +58,6 @@ abstract class SalesDocument extends BusinessDocument
     public $codcliente;
 
     /**
-     * ID of the customer's address. Customer_address model.
-     *
-     * @var int
-     */
-    public $coddir;
-
-    /**
      * Shipping tracking code.
      *
      * @var string
@@ -100,25 +72,11 @@ abstract class SalesDocument extends BusinessDocument
     public $codpais;
 
     /**
-     * Country code of the shipping address.
-     *
-     * @var string
-     */
-    public $codpaisenv;
-
-    /**
      * Customer's postal code.
      *
      * @var string
      */
     public $codpostal;
-
-    /**
-     * Postal code of the shipping address.
-     *
-     * @var string
-     */
-    public $codpostalenv;
 
     /**
      * Shipping code for the shipment.
@@ -135,25 +93,11 @@ abstract class SalesDocument extends BusinessDocument
     public $direccion;
 
     /**
-     * Address of the shipping address.
-     *
-     * @var string
-     */
-    public $direccionenv;
-
-    /**
      * Customer name.
      *
      * @var string
      */
     public $nombrecliente;
-
-    /**
-     * Name of the shipping address.
-     *
-     * @var string
-     */
-    public $nombreenv;
 
     /**
      * Optional number available to the user.
@@ -177,13 +121,6 @@ abstract class SalesDocument extends BusinessDocument
     public $provincia;
 
     /**
-     * Province of the shipping address.
-     *
-     * @var string
-     */
-    public $provinciaenv;
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -193,6 +130,11 @@ abstract class SalesDocument extends BusinessDocument
         $this->porcomision = 0.0;
     }
 
+    /**
+     * Returns an array with the column for identify the subject(s),
+     *
+     * @return array
+     */
     public function getSubjectColumns()
     {
         return ['codcliente'];
@@ -215,7 +157,6 @@ abstract class SalesDocument extends BusinessDocument
         $this->nombrecliente = $subjects[0]->razonsocial;
         $this->cifnif = $subjects[0]->cifnif;
         foreach ($subjects[0]->getDirecciones() as $dir) {
-            $this->coddir = $dir->id;
             $this->codpais = $dir->codpais;
             $this->provincia = $dir->provincia;
             $this->ciudad = $dir->ciudad;
@@ -238,20 +179,13 @@ abstract class SalesDocument extends BusinessDocument
     public function test()
     {
         $this->apartado = Utils::noHtml($this->apartado);
-        $this->apartadoenv = Utils::noHtml($this->apartadoenv);
-        $this->apellidosenv = Utils::noHtml($this->apellidosenv);
         $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->ciudadenv = Utils::noHtml($this->ciudadenv);
         $this->codigoenv = Utils::noHtml($this->codigoenv);
         $this->codpostal = Utils::noHtml($this->codpostal);
-        $this->codpostalenv = Utils::noHtml($this->codpostalenv);
         $this->direccion = Utils::noHtml($this->direccion);
-        $this->direccionenv = Utils::noHtml($this->direccionenv);
         $this->nombrecliente = Utils::noHtml($this->nombrecliente);
-        $this->nombreenv = Utils::noHtml($this->nombreenv);
         $this->numero2 = Utils::noHtml($this->numero2);
         $this->provincia = Utils::noHtml($this->provincia);
-        $this->provinciaenv = Utils::noHtml($this->provinciaenv);
 
         return parent::test();
     }
