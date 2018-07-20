@@ -101,6 +101,16 @@
         <default>nextval('albaranescli_idalbaran_seq'::regclass)</default>
     </column>
     <column>
+        <name>idcontactoenv</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idcontactofact</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>idempresa</name>
         <type>integer</type>
     </column>
@@ -123,6 +133,10 @@
         <type>double precision</type>
         <null>NO</null>
         <default>0</default>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>nombrecliente</name>
@@ -204,5 +218,17 @@
     <constraint>
         <name>uniq_codigo_albaranescli2</name>
         <type>UNIQUE (codigo,idempresa)</type>
+    </constraint>
+    <constraint>
+        <name>ca_albaranescli_contactos_env</name>
+        <type>FOREIGN KEY (idcontactoenv) REFERENCES contactos (idcontacto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_albaranescli_contactos_fact</name>
+        <type>FOREIGN KEY (idcontactofact) REFERENCES contactos (idcontacto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_albaranescli_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -77,6 +77,8 @@ class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
         if ($viewName === 'EditAlbaranCliente') {
             $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
             $view->loadData($idalbaran);
+
+            $this->loadCustomContactsWidget($viewName);
         }
 
         parent::loadData($viewName, $view);

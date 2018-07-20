@@ -93,6 +93,27 @@ abstract class SalesDocument extends BusinessDocument
     public $direccion;
 
     /**
+     * ID of contact for shippment.
+     *
+     * @var int
+     */
+    public $idcontactoenv;
+
+    /**
+     * ID of contact for invoice.
+     *
+     * @var int
+     */
+    public $idcontactofact;
+
+    /**
+     * User who created this document. User model.
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
      * Customer name.
      *
      * @var string

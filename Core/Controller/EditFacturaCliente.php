@@ -82,6 +82,8 @@ class EditFacturaCliente extends ExtendedController\BusinessDocumentController
             case 'EditFacturaCliente':
                 $idfactura = $this->getViewModelValue('Document', 'idfactura');
                 $view->loadData($idfactura);
+
+                $this->loadCustomContactsWidget($viewName);
                 break;
             case 'EditAsiento':
                 $where = array();

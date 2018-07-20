@@ -78,6 +78,8 @@ class EditPresupuestoCliente extends ExtendedController\BusinessDocumentControll
         if ($viewName === 'EditPresupuestoCliente') {
             $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
             $view->loadData($idpresupuesto);
+
+            $this->loadCustomContactsWidget($viewName);
         }
 
         parent::loadData($viewName, $view);

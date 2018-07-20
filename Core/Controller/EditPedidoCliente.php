@@ -78,6 +78,8 @@ class EditPedidoCliente extends ExtendedController\BusinessDocumentController
         if ($viewName === 'EditPedidoCliente') {
             $idpedido = $this->getViewModelValue('Document', 'idpedido');
             $view->loadData($idpedido);
+
+            $this->loadCustomContactsWidget($viewName);
         }
 
         parent::loadData($viewName, $view);
