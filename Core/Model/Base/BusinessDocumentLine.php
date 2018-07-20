@@ -168,7 +168,7 @@ abstract class BusinessDocumentLine extends ModelClass
         parent::clear();
         $this->actualizastock = 0;
         $this->cantidad = 0.0;
-        $this->servida = 0.0;
+        $this->servido = 0.0;
         $this->descripcion = '';
         $this->dtopor = 0.0;
         $this->irpf = 0.0;
