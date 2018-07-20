@@ -468,28 +468,19 @@ abstract class BusinessDocumentController extends PanelController
      * Load custom contacts data for additional address details.
      *
      * @param string $viewName
-     * @param string $field
      */
-    protected function loadCustomContactsWidget($viewName, $field = 'codcliente')
+    protected function loadCustomContactsWidget($viewName)
     {
-        $commonWhere = [new DataBaseWhere($field, $this->views[$viewName]->model->{$field})];
-
-        // Fill billingaddr select widget with contacts
-        $billingAddresses = [];
-        $billingWhere = array_merge([new DataBaseWhere('idcontactofact', null, 'IS NOT')], $commonWhere);
-        foreach ($this->codeModel->all('contactos', $field, 'nombre', false, $billingWhere) as $code) {
-            $billingAddresses[] = ['value' => $code->code, 'title' => $code->description];
+        $cliente = new Cliente();
+        $cliente->loadFromCode($this->views[$viewName]->model->codcliente);
+        $addresses = [];
+        foreach ($cliente->getDirecciones() as $contacto) {
+            $addresses[] = ['value' => $contacto->idcontacto, 'title' => $contacto->nombre];
         }
         $columnBilling = $this->views[$viewName]->columnForName('billingaddr');
-        $columnBilling->widget->setValuesFromArray($billingAddresses, false);
+        $columnBilling->widget->setValuesFromArray($addresses, false);
 
-        // Fill shippingaddr select widget with contacts
-        $shippingAddresses = [];
-        $shippingWhere = array_merge([new DataBaseWhere('idcontactoenv', null, 'IS NOT')], $commonWhere);
-        foreach ($this->codeModel->all('contactos', $field, 'nombre', false, $shippingWhere) as $code) {
-            $shippingAddresses[] = ['value' => $code->code, 'title' => $code->description];
-        }
         $columnShipping = $this->views[$viewName]->columnForName('shippingaddr');
-        $columnShipping->widget->setValuesFromArray($shippingAddresses, false);
+        $columnShipping->widget->setValuesFromArray($addresses, false);
     }
 }

@@ -39,6 +39,13 @@ class Contacto extends Base\Contact
     public $admitemarketing;
 
     /**
+     * Post office box of the address.
+     *
+     * @var string
+     */
+    public $apartado;
+
+    /**
      * Last name.
      *
      * @var string
