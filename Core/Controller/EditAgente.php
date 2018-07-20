@@ -55,7 +55,6 @@ class EditAgente extends ExtendedController\PanelController
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
         $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
-        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fa-cubes');
     }
 
     /**
