@@ -282,6 +282,19 @@ class Contacto extends Base\Contact
     }
 
     /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListCliente?active=List');
+    }
+
+    /**
      * Verifies the login key.
      *
      * @param string $value
