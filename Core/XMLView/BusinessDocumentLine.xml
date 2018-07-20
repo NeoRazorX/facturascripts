@@ -36,6 +36,9 @@
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>
+        <column name="served" order="135" display="right">
+            <widget type="number" fieldname="servido" />
+        </column>
         <column name="price" display="right" order="140">
             <widget type="money" fieldname="pvpunitario" />
         </column>

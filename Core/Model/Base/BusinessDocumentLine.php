@@ -52,6 +52,13 @@ abstract class BusinessDocumentLine extends ModelClass
     public $cantidad;
 
     /**
+     * Served.
+     *
+     * @var float|int
+     */
+    public $servido;
+
+    /**
      *
      * @var float|int
      */
@@ -151,6 +158,7 @@ abstract class BusinessDocumentLine extends ModelClass
         parent::__construct($data);
         $this->actualizastockAnt = isset($this->actualizastock) ? $this->actualizastock : 0;
         $this->cantidadAnt = isset($this->cantidad) ? $this->cantidad : 0;
+        $this->servido = $this->cantidadAnt; // TODO
     }
 
     /**
@@ -161,6 +169,7 @@ abstract class BusinessDocumentLine extends ModelClass
         parent::clear();
         $this->actualizastock = 0;
         $this->cantidad = 0.0;
+        $this->servida = 0.0;
         $this->descripcion = '';
         $this->dtopor = 0.0;
         $this->irpf = 0.0;
