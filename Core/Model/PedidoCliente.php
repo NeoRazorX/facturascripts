@@ -78,10 +78,9 @@ class PedidoCliente extends Base\SalesDocument
 
     public function install()
     {
-        parent::install();
+        $sql = parent::install();
         new AlbaranCliente();
-
-        return '';
+        return $sql;
     }
 
     /**

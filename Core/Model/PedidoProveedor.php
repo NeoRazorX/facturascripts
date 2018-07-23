@@ -71,10 +71,9 @@ class PedidoProveedor extends Base\PurchaseDocument
 
     public function install()
     {
-        parent::install();
+        $sql = parent::install();
         new AlbaranProveedor();
-
-        return '';
+        return $sql;
     }
 
     /**

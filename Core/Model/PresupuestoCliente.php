@@ -87,10 +87,9 @@ class PresupuestoCliente extends Base\SalesDocument
 
     public function install()
     {
-        parent::install();
+        $sql = parent::install();
         new PedidoCliente();
-
-        return '';
+        return $sql;
     }
 
     /**
