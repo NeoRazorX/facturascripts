@@ -136,12 +136,10 @@ class Clientes extends AbstractRandomPeople
             $dir = new Model\Contacto();
             $dir->codcliente = $cliente->codcliente;
             $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
-
             $dir->provincia = $this->provincia();
             $dir->ciudad = $this->ciudad();
             $dir->direccion = $this->direccion();
             $dir->codpostal = (string) mt_rand(1234, 99999);
-
             $dir->nombre = 'Dirección facturación/envío #' . $max;
             $dir->observaciones = 'Dirección facturación/envío #' . $max;
 
@@ -149,21 +147,25 @@ class Clientes extends AbstractRandomPeople
                 break;
             }
 
-            switch ($max) {
+            $option = mt_rand(0, 2);
+            switch ($option) {
                 case 1:
                     $cliente->idcontactofact = $dir->idcontacto;
                     $cliente->idcontactoenv = $dir->idcontacto;
                     break;
+
                 case 2:
                     $dir->nombre = 'Dirección envío #' . $max;
                     $dir->observaciones = 'Dirección envío';
                     $cliente->idcontactoenv = $dir->idcontacto;
                     break;
+
                 default:
                     $dir->nombre = 'Dirección #' . $max;
                     $dir->observaciones = 'Dirección';
                     break;
             }
+
             if (!$cliente->save() || !$dir->save()) {
                 break;
             }

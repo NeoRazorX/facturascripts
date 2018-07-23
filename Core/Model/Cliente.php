@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -87,34 +87,33 @@ class Cliente extends Base\ComercialContact
      *
      * @return Contacto[]
      */
-    public function getDirecciones()
+    public function getAdressess()
     {
-        $dirModel = new Contacto();
-        return $dirModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
+        $contactModel = new Contacto();
+        return $contactModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
     }
 
     /**
-     * Return the default shipping address.
+     * Return the default billing or shipping address.
      *
-     * @return null|Contacto
+     * @return Contacto
      */
-    public function getDefaultShippingAddress()
+    public function getDefaultAddress($type = 'billing')
     {
-        $dirModel = new Contacto();
-        $address = $dirModel->all([new DataBaseWhere('idcontacto', $this->idcontactoenv)], [], 0, 1);
-        return $address[0] ?? null;
-    }
+        $contact = new Contacto();
+        switch ($type) {
+            case 'billing':
+                $where = [new DataBaseWhere('idcontacto', $this->idcontactofact)];
+                $contact->loadFromCode('', $where);
+                break;
 
-    /**
-     * Return the default billing address.
-     *
-     * @return null|Contacto
-     */
-    public function getDefaultBillingAddress()
-    {
-        $dirModel = new Contacto();
-        $address = $dirModel->all([new DataBaseWhere('idcontacto', $this->idcontactofact)], [], 0, 1);
-        return $address[0] ?? null;
+            case 'shipping':
+                $where = [new DataBaseWhere('idcontacto', $this->idcontactoenv)];
+                $contact->loadFromCode('', $where);
+                break;
+        }
+
+        return $contact;
     }
 
     /**
