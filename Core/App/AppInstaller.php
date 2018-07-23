@@ -297,12 +297,7 @@ class AppInstaller
             $errors = true;
         }
 
-        if (!function_exists('mb_substr')) {
-            $this->miniLog->critical($this->i18n->trans('mb-string-not-fount'));
-            $errors = true;
-        }
-
-        foreach (['bcmath', 'curl', 'simplexml', 'openssl', 'zip'] as $extension) {
+        foreach (['bcmath', 'curl', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
             if (!extension_loaded($extension)) {
                 $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => $extension]));
                 $errors = true;
