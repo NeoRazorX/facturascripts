@@ -16,18 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Test\Core\Base\Utils;
 
 use FacturaScripts\Core\Base\IntegrityCheck;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class to test integrity files of FacturaScripts Core
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
+class IntegrityCheckTest extends TestCase
 {
+
     /**
      * @var IntegrityCheck
      */
@@ -91,12 +92,10 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
     public function testGetFileHash()
     {
         $this->assertNotEmpty(
-            $this->object::getFileHash(),
-            'Is not a string "' . print_r($this->object::getFileHash() . '"', true)
+            $this->object::getFileHash(), 'Is not a string "' . print_r($this->object::getFileHash() . '"', true)
         );
         $this->assertNotEmpty(
-            $this->object::getFileHash($this->object::INTEGRITY_USER_FILE),
-            'Is not a string "' . print_r($this->object::getFileHash($this->object::INTEGRITY_USER_FILE) . '"', true)
+            $this->object::getFileHash($this->object::INTEGRITY_USER_FILE), 'Is not a string "' . print_r($this->object::getFileHash($this->object::INTEGRITY_USER_FILE) . '"', true)
         );
     }
 
@@ -117,8 +116,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
 
         // Must be equals
         $this->assertEmpty(
-            $list,
-            'Integrity check test not passed. A false positive on development width IDE files? '
+            $list, 'Integrity check test not passed. A false positive on development width IDE files? '
             . print_r($this->object::compareIntegrity(), true)
         );
 
@@ -128,8 +126,7 @@ class IntegrityCheckTest extends \PHPUnit_Framework_TestCase
             unlink(\FS_FOLDER . '/MyFiles/integrity-validation.json');
         }
         $this->assertNotEmpty(
-            $this->object::compareIntegrity(),
-            'Integrity check test not passed: "' . print_r($this->object::compareIntegrity(), true) . '"'
+            $this->object::compareIntegrity(), 'Integrity check test not passed: "' . print_r($this->object::compareIntegrity(), true) . '"'
         );
         if (\file_exists(\FS_FOLDER . '/DummyFile')) {
             unlink(\FS_FOLDER . '/DummyFile');
