@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,6 +32,13 @@ class FormaPago extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     * Code of the associated bank account.
+     *
+     * @var string
+     */
+    public $codcuenta;
+
+    /**
      * Primary key. Varchar (10).
      *
      * @var string
@@ -46,25 +53,18 @@ class FormaPago extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Paid -> mark the invoices generated as paid.
-     *
-     * @var string
-     */
-    public $genrecibos;
-
-    /**
-     * Code of the associated bank account.
-     *
-     * @var string
-     */
-    public $codcuenta;
-
-    /**
      * To indicate if it is necessary to show the bank account of the client.
      *
      * @var bool
      */
     public $domiciliado;
+
+    /**
+     * Paid -> mark the invoices generated as paid.
+     *
+     * @var string
+     */
+    public $genrecibos;
 
     /**
      * True (default) -> display the data in sales documents,
@@ -75,6 +75,13 @@ class FormaPago extends Base\ModelClass
     public $imprimir;
 
     /**
+     * Expiration period.
+     *
+     * @var int
+     */
+    public $plazovencimiento;
+
+    /**
      * Type of expiration. varchar(10)
      *
      * @var string
@@ -82,61 +89,16 @@ class FormaPago extends Base\ModelClass
     public $tipovencimiento;
 
     /**
-     * Quantity of expiration
-     *
-     * @var int
-     */
-    public $vencimiento;
-
-    /**
-     * From a date returns the new due date based on this form of payment.
-     * If $diasDePago is provided, they will be used for the new date.
-     *
-     * @param string $fechaInicio
-     * @param string $diasDePago  dias de pago específicos para el cliente (separados por comas).
-     *
-     * @return string
-     */
-    public function calcularVencimiento($fechaInicio, $diasDePago = '')
-    {
-        $fecha = $this->calcularVencimiento2($fechaInicio);
-
-        /// we validate the days of payment
-        $arrayDias = [];
-        foreach (str_getcsv($diasDePago) as $d) {
-            if ((int) $d >= 1 && (int) $d <= 31) {
-                $arrayDias[] = (int) $d;
-            }
-        }
-
-        if ($arrayDias !== null) {
-            foreach ($arrayDias as $i => $diaDePago) {
-                if ($i === 0) {
-                    $fecha = $this->calcularVencimiento2($fechaInicio, $diaDePago);
-                } else {
-                    /// If there are several days of payment, we choose the closest date
-                    $fechaTemp = $this->calcularVencimiento2($fechaInicio, $diaDePago);
-                    if (strtotime($fechaTemp) < strtotime($fecha)) {
-                        $fecha = $fechaTemp;
-                    }
-                }
-            }
-        }
-
-        return $fecha;
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
-        $this->genrecibos = 'Emitidos';
-        $this->codcuenta = '';
         $this->domiciliado = false;
+        $this->genrecibos = 'Emitidos';
         $this->imprimir = true;
-        $this->vencimiento = 0;
+        $this->plazovencimiento = 0;
+        $this->tipovencimiento = 'days';
     }
 
     /**
@@ -179,44 +141,11 @@ class FormaPago extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
 
         /// we check the expiration validity
-        if ($this->vencimiento < 0) {
+        if ($this->plazovencimiento < 0) {
             self::$miniLog->alert(self::$i18n->trans('number-expiration-invalid'));
             return false;
         }
 
         return parent::test();
-    }
-
-    /**
-     * Aux recursive function to calcularVencimiento()
-     *
-     * @param string $fechaInicio
-     * @param int    $diaDePago
-     *
-     * @return string
-     */
-    private function calcularVencimiento2($fechaInicio, $diaDePago = 0)
-    {
-        if ($diaDePago === 0) {
-            return date('d-m-Y', strtotime($fechaInicio . ' ' . $this->vencimiento));
-        }
-
-        $fecha = date('d-m-Y', strtotime($fechaInicio . ' ' . $this->vencimiento));
-        $tmpDia = date('d', strtotime($fecha));
-        $tmpMes = date('m', strtotime($fecha));
-        $tmpAnyo = date('Y', strtotime($fecha));
-
-        if ($tmpDia > $diaDePago) {
-            /// we calculate the collection day for the following month
-            $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
-            $tmpMes = date('m', strtotime($fecha));
-            $tmpAnyo = date('Y', strtotime($fecha));
-        }
-
-        /// now we choose a day, but what fits in the month, can not be February 31
-        $tmpDia = min([$diaDePago, (int) date('t', strtotime($fecha))]);
-
-        /// and finally we generated the date
-        return date('d-m-Y', strtotime($tmpDia . '-' . $tmpMes . '-' . $tmpAnyo));
     }
 }

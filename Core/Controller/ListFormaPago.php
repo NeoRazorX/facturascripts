@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,6 @@ class ListFormaPago extends ExtendedController\ListController
         /* Payment Methods */
         $this->addView('ListFormaPago', 'FormaPago', 'payment-methods', 'fa-credit-card');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
-
         $this->addOrderBy('ListFormaPago', ['codpago'], 'code');
         $this->addOrderBy('ListFormaPago', ['descripcion'], 'description');
 
@@ -62,7 +61,6 @@ class ListFormaPago extends ExtendedController\ListController
         /* Bank accounts */
         $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fa-university');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
-
         $this->addOrderBy('ListCuentaBanco', ['codcuenta'], 'code');
         $this->addOrderBy('ListCuentaBanco', ['descripcion'], 'description');
     }

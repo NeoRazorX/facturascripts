@@ -7,6 +7,10 @@
 -->
 <table>
     <column>
+        <name>codcuenta</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>codpago</name>
         <type>character varying(10)</type>
         <null>NO</null>
@@ -17,17 +21,13 @@
         <null>NO</null>
     </column>
     <column>
+        <name>domiciliado</name>
+        <type>boolean</type>
+    </column>
+    <column>
         <name>genrecibos</name>
         <type>character varying(10)</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>domiciliado</name>
-        <type>boolean</type>
     </column>
     <column>
         <name>imprimir</name>
@@ -35,12 +35,12 @@
         <default>true</default>
     </column>
     <column>
-        <name>tipovencimiento</name>
-        <type>character varying(10)</type>
+        <name>plazovencimiento</name>
+        <type>integer</type>
     </column>
     <column>
-        <name>vencimiento</name>
-        <type>integer</type>
+        <name>tipovencimiento</name>
+        <type>character varying(10)</type>
     </column>
     <constraint>
         <name>formaspago_pkey</name>
