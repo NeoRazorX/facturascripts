@@ -160,6 +160,7 @@ abstract class ComercialContact extends Contact
     {
         parent::clear();
         $this->codpago = AppSettings::get('default', 'codpago');
+        $this->irpf = 0;
         $this->debaja = false;
         $this->regimeniva = self::$regimenIVA->defaultValue();
         $this->tipoidfiscal = self::$idFiscal->defaultValue();

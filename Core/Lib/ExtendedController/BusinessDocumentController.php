@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -170,6 +171,11 @@ abstract class BusinessDocumentController extends PanelController
         }
     }
 
+    /**
+     * Recalculate the document total based on lines.
+     *
+     * @return bool
+     */
     protected function recalculateDocumentAction(): bool
     {
         $this->setTemplate(false);
@@ -189,6 +195,11 @@ abstract class BusinessDocumentController extends PanelController
         return false;
     }
 
+    /**
+     * Saves the document.
+     *
+     * @return bool
+     */
     protected function saveDocumentAction(): bool
     {
         $this->setTemplate(false);
@@ -202,6 +213,12 @@ abstract class BusinessDocumentController extends PanelController
         /// gets data form and separate date, hour, codcliente, codproveedor and lines data
         $data = $this->getFormData();
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
+        if (empty($codcliente)) {
+            return false;
+        }
+        $idContactoEnv = $this->getContactoIdBy($codcliente, 'idcontactoenv');
+        $idContactoFact = $this->getContactoIdBy($codcliente, 'idcontactofact');
+
         $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
         $fecha = isset($data['fecha']) ? $data['fecha'] : $view->model->fecha;
         $hora = isset($data['hora']) ? $data['hora'] : $view->model->hora;
@@ -214,6 +231,8 @@ abstract class BusinessDocumentController extends PanelController
 
         /// save
         $data['codcliente'] = $codcliente;
+        $data['idcontactoenv'] = $idContactoEnv;
+        $data['idcontactofact'] = $idContactoFact;
         $data['codproveedor'] = $codproveedor;
         $data['fecha'] = $fecha;
         $data['hora'] = $hora;
@@ -222,6 +241,43 @@ abstract class BusinessDocumentController extends PanelController
         return false;
     }
 
+    /**
+     * Return contact ID based on parameters
+     *
+     * @param string $code code of codcliente or codproveedor
+     * @param string $field 'idcontactoenv', 'idcontactofact' or empty to ignore
+     * @param string $codType 'codcliente' or 'codproveedor'
+     *
+     * @return null|int
+     */
+    private function getContactoIdBy($code, $field = '', $codType = 'codcliente')
+    {
+        $where = [new Base\DataBase\DataBaseWhere($codType, $code)];
+        switch ($field) {
+            case 'idcontactoenv':
+            case 'idcontactofact':
+                $where[] = new Base\DataBase\DataBaseWhere($field, null, 'IS NOT');
+                break;
+            default:
+                return null;
+        }
+
+        $cliente = new Cliente();
+        if ($cliente->loadFromCode('', $where)) {
+            return $cliente->{$field} ?? null;
+        }
+        return null;
+    }
+
+    /**
+     * Saves the document data.
+     *
+     * @param BusinessDocumentView $view
+     * @param array $data
+     * @param array $newLines
+     *
+     * @return string
+     */
     protected function saveDocumentResult(BusinessDocumentView &$view, array &$data, array &$newLines): string
     {
         if (!$view->model->setDate($data['fecha'], $data['hora'])) {
@@ -232,6 +288,8 @@ abstract class BusinessDocumentController extends PanelController
         $result = 'OK';
         if (in_array('codcliente', $view->model->getSubjectColumns())) {
             $result = $this->setCustomer($view, $data['codcliente'], $data['new_cliente'], $data['new_cifnif']);
+            $view->model->idcontactoenv = $data['idcontactoenv'];
+            $view->model->idcontactofact = $data['idcontactofact'];
         }
         if (in_array('codproveedor', $view->model->getSubjectColumns())) {
             $result = $this->setSupplier($view, $data['codproveedor'], $data['new_proveedor'], $data['new_cifnif']);
@@ -260,6 +318,14 @@ abstract class BusinessDocumentController extends PanelController
         return $result;
     }
 
+    /**
+     * Save the lines of the document.
+     *
+     * @param BusinessDocumentView $view
+     * @param array $newLines
+     *
+     * @return string
+     */
     protected function saveLines(BusinessDocumentView &$view, array &$newLines): string
     {
         $result = 'OK';
@@ -309,6 +375,16 @@ abstract class BusinessDocumentController extends PanelController
         return $result;
     }
 
+    /**
+     * Set customer data to document, based on codcliente.
+     *
+     * @param BusinessDocumentView $view
+     * @param string $codcliente
+     * @param string $newCliente
+     * @param string $newCifnif
+     *
+     * @return string
+     */
     protected function setCustomer(BusinessDocumentView &$view, string $codcliente, string $newCliente = '', string $newCifnif = ''): string
     {
         if ($view->model->codcliente === $codcliente && !empty($view->model->codcliente)) {
@@ -332,6 +408,16 @@ abstract class BusinessDocumentController extends PanelController
         return 'ERROR: NO CUSTOMER';
     }
 
+    /**
+     * Set supplier data to document, based on codproveedor.
+     *
+     * @param BusinessDocumentView $view
+     * @param string $codproveedor
+     * @param string $newProveedor
+     * @param string $newCifnif
+     *
+     * @return string
+     */
     protected function setSupplier(BusinessDocumentView &$view, string $codproveedor, string $newProveedor = '', string $newCifnif = ''): string
     {
         if ($view->model->codproveedor === $codproveedor && !empty($view->model->codproveedor)) {
@@ -377,5 +463,25 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         return false;
+    }
+
+    /**
+     * Load custom contacts data for additional address details.
+     *
+     * @param string $viewName
+     */
+    protected function loadCustomContactsWidget($viewName)
+    {
+        $cliente = new Cliente();
+        $cliente->loadFromCode($this->views[$viewName]->model->codcliente);
+        $addresses = [];
+        foreach ($cliente->getDirecciones() as $contacto) {
+            $addresses[] = ['value' => $contacto->idcontacto, 'title' => $contacto->nombre];
+        }
+        $columnBilling = $this->views[$viewName]->columnForName('billingaddr');
+        $columnBilling->widget->setValuesFromArray($addresses, false);
+
+        $columnShipping = $this->views[$viewName]->columnForName('shippingaddr');
+        $columnShipping->widget->setValuesFromArray($addresses, false);
     }
 }

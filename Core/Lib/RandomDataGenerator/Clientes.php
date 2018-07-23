@@ -79,6 +79,10 @@ class Clientes extends AbstractRandomPeople
                     break;
                 }
 
+                /// añadimos direcciones
+                $numDirs = mt_rand(1, 3);
+                $this->direccionesCliente($cliente, $numDirs);
+
                 /// Añadimos cuentas bancarias
                 $numCuentas = mt_rand(0, 3);
                 $this->cuentasBancoCliente($cliente, $numCuentas);
@@ -113,6 +117,54 @@ class Clientes extends AbstractRandomPeople
             $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
 
             if (!$cuenta->save()) {
+                break;
+            }
+
+            --$max;
+        }
+    }
+
+    /**
+     * Rellena direcciones de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int           $max
+     */
+    protected function direccionesCliente($cliente, $max = 3)
+    {
+        while ($max > 0) {
+            $dir = new Model\Contacto();
+            $dir->codcliente = $cliente->codcliente;
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
+
+            $dir->provincia = $this->provincia();
+            $dir->ciudad = $this->ciudad();
+            $dir->direccion = $this->direccion();
+            $dir->codpostal = (string) mt_rand(1234, 99999);
+
+            $dir->nombre = 'Dirección facturación/envío #' . $max;
+            $dir->observaciones = 'Dirección facturación/envío #' . $max;
+
+            if (!$dir->save()) {
+                break;
+            }
+
+            switch ($max) {
+                case 1:
+                    $cliente->idcontactofact = $dir->idcontacto;
+                    $cliente->idcontactoenv = $dir->idcontacto;
+                    break;
+                case 2:
+                    $dir->nombre = 'Dirección envío #' . $max;
+                    $dir->observaciones = 'Dirección envío';
+                    $cliente->idcontactoenv = $dir->idcontacto;
+                    break;
+                default:
+                    $dir->nombre = 'Dirección #' . $max;
+                    $dir->observaciones = 'Dirección';
+                    break;
+            }
+            if (!$cliente->save() || !$dir->save()) {
                 break;
             }
 

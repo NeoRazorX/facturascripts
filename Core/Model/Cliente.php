@@ -94,6 +94,30 @@ class Cliente extends Base\ComercialContact
     }
 
     /**
+     * Return the default shipping address.
+     *
+     * @return null|Contacto
+     */
+    public function getDefaultShippingAddress()
+    {
+        $dirModel = new Contacto();
+        $address = $dirModel->all([new DataBaseWhere('idcontacto', $this->idcontactoenv)], [], 0, 1);
+        return $address[0] ?? null;
+    }
+
+    /**
+     * Return the default billing address.
+     *
+     * @return null|Contacto
+     */
+    public function getDefaultBillingAddress()
+    {
+        $dirModel = new Contacto();
+        $address = $dirModel->all([new DataBaseWhere('idcontacto', $this->idcontactofact)], [], 0, 1);
+        return $address[0] ?? null;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
