@@ -93,6 +93,27 @@ abstract class SalesDocument extends BusinessDocument
     public $direccion;
 
     /**
+     * ID of contact for shippment.
+     *
+     * @var int
+     */
+    public $idcontactoenv;
+
+    /**
+     * ID of contact for invoice.
+     *
+     * @var int
+     */
+    public $idcontactofact;
+
+    /**
+     * User who created this document. User model.
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
      * Customer name.
      *
      * @var string
@@ -156,17 +177,17 @@ abstract class SalesDocument extends BusinessDocument
         $this->codcliente = $subjects[0]->codcliente;
         $this->nombrecliente = $subjects[0]->razonsocial;
         $this->cifnif = $subjects[0]->cifnif;
-        foreach ($subjects[0]->getDirecciones() as $dir) {
+        if ($dir = $subjects[0]->getDefaultBillingAddress()) {
             $this->codpais = $dir->codpais;
             $this->provincia = $dir->provincia;
             $this->ciudad = $dir->ciudad;
             $this->direccion = $dir->direccion;
             $this->codpostal = $dir->codpostal;
             $this->apartado = $dir->apartado;
-            if ($dir->domfacturacion) {
-                break;
-            }
+            $this->idcontactofact = $dir->idcontacto;
         }
+
+        $this->idcontactoenv = $subjects[0]->getDefaultShippingAddress()->idcontacto;
 
         return true;
     }

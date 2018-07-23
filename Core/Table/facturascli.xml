@@ -113,6 +113,16 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idcontactoenv</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idcontactofact</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>idempresa</name>
         <type>integer</type>
     </column>
@@ -139,6 +149,10 @@
         <name>neto</name>
         <type>double precision</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>nombrecliente</name>
@@ -228,5 +242,9 @@
     <constraint>
         <name>uniq_codigo_facturascli2</name>
         <type>UNIQUE (codigo,idempresa)</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturascli_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

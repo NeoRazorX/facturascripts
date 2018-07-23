@@ -39,6 +39,18 @@
                 <widget type="text" fieldname="numero2" />
             </column>
         </group>
+        <group name="addresses" title="addresses" numcolumns="12">
+            <column name="billingaddr" title="billing-address" numcolumns="6">
+                <widget type="select" fieldname="idcontacto" required="true">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="shippingaddr" title="shipping-address" numcolumns="6">
+                <widget type="select" fieldname="idcontacto" required="true">
+                    <values></values>
+                </widget>
+            </column>
+        </group>
         <group name="billingaddr" title="billing-address" numcolumns="12">
             <column name="customer" title="name-or-business-name" numcolumns="4" order="100">
                 <widget type="text" fieldname="nombrecliente" required="true" />
