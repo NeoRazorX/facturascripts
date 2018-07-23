@@ -244,14 +244,6 @@
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
     <constraint>
-        <name>ca_facturascli_contactos_env</name>
-        <type>FOREIGN KEY (idcontactoenv) REFERENCES contactos (idcontacto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_facturascli_contactos_fact</name>
-        <type>FOREIGN KEY (idcontactofact) REFERENCES contactos (idcontacto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
         <name>ca_facturascli_users</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
