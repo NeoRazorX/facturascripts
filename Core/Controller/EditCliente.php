@@ -92,31 +92,16 @@ class EditCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Create and configure main view
-     */
-    private function createViewCustomers()
-    {
-        $this->addEditView('EditCliente', 'Cliente', 'customer');
-
-        /// Load values option to Fiscal ID select input
-        $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
-
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
-    }
-
-    /**
      * Create views
      */
     protected function createViews()
     {
-        $this->createViewCustomers();
+        $this->createViewCustomer();
 
+        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
         $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
-        $this->addListView('ListContacto', 'Contacto', 'contacts', 'fa-address-book');
+
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
@@ -129,6 +114,22 @@ class EditCliente extends ExtendedController\PanelController
         $this->views['ListPedidoCliente']->disableColumn('customer', true);
         $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
         $this->views['ListLineaFacturaCliente']->disableColumn('order', true);
+    }
+
+    /**
+     * Create and configure main view
+     */
+    protected function createViewCustomer()
+    {
+        $this->addEditView('EditCliente', 'Cliente', 'customer');
+
+        /// Load values option to Fiscal ID select input
+        $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
+        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
+
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
     }
 
     /**

@@ -30,16 +30,41 @@ use FacturaScripts\Core\Lib\ExtendedController;
 class ListCliente extends ExtendedController\ListController
 {
 
-    private function createViewContacts()
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
     {
-        $this->addView('ListContacto', 'Contacto', 'contacts', 'fa-address-book');
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'customers';
+        $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'sales';
+
+        return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $valuesGroup = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
+
+        $this->createViewCustomers($valuesGroup);
+        $this->createViewContacts();
+        $this->createViewGroups($valuesGroup);
+    }
+
+    protected function createViewContacts()
+    {
+        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
         $this->addSearchFields('ListContacto', ['nombre', 'apellidos', 'email']);
         $this->addOrderBy('ListContacto', ['email'], 'email');
         $this->addOrderBy('ListContacto', ['nombre'], 'name');
         $this->addOrderBy('ListContacto', ['empresa'], 'company');
         $this->addOrderBy('ListContacto', ['lastactivity'], 'last-activity', 2);
-
-        $this->addFilterAutocomplete('ListContacto', 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
 
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
         $this->addFilterSelect('ListContacto', 'cargo', 'position', 'cargo', $cargoValues);
@@ -57,7 +82,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterCheckbox('ListContacto', 'admitemarketing', 'allow-marketing', 'admitemarketing');
     }
 
-    private function createViewCustomers($valuesGroup)
+    private function createViewCustomers(array $valuesGroup)
     {
         $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
@@ -69,39 +94,12 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
     }
 
-    private function createViewGroups($valuesGroup)
+    private function createViewGroups(array $valuesGroup)
     {
         $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         $this->addOrderBy('ListGrupoClientes', ['codgrupo'], 'code');
         $this->addOrderBy('ListGrupoClientes', ['nombre'], 'name', 1);
         $this->addFilterSelect('ListGrupoClientes', 'parent', 'parent', 'parent', $valuesGroup);
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $valuesGroup = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
-
-        $this->createViewCustomers($valuesGroup);
-        $this->createViewContacts();
-        $this->createViewGroups($valuesGroup);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fa-users';
-        $pagedata['menu'] = 'sales';
-
-        return $pagedata;
     }
 }
