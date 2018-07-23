@@ -59,12 +59,12 @@ class Proveedor extends Base\ComercialContact
     /**
      * Returns the addresses associated with the provider.
      *
-     * @return DireccionProveedor[]
+     * @return Contacto[]
      */
     public function getAdressess()
     {
-        $dirModel = new DireccionProveedor();
-        return $dirModel->all([new DataBaseWhere('codproveedor', $this->codproveedor)]);
+        $contactModel = new Contacto();
+        return $contactModel->all([new DataBaseWhere('codproveedor', $this->codcliente)]);
     }
 
     /**

@@ -74,7 +74,7 @@ class Contacto extends Base\Contact
     public $codagente;
 
     /**
-     * Associated client to this contact. Client model.
+     * Associated customer to this contact. Customer model.
      *
      * @var string
      */
@@ -93,6 +93,13 @@ class Contacto extends Base\Contact
      * @var string
      */
     public $codpostal;
+
+    /**
+     * Associated supplier to this contact. Supplier model.
+     *
+     * @var string
+     */
+    public $codproveedor;
 
     /**
      * Address of the contact.
@@ -195,6 +202,7 @@ class Contacto extends Base\Contact
     public function install()
     {
         new Cliente();
+        new Proveedor();
         return parent::install();
     }
 

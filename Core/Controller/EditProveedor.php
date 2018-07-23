@@ -114,7 +114,7 @@ class EditProveedor extends ExtendedController\PanelController
     {
         $this->addMainView();
 
-        $this->addEditListView('EditDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
+        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-university');
         $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fa-files-o');
@@ -143,7 +143,7 @@ class EditProveedor extends ExtendedController\PanelController
                 $view->loadData($code);
                 break;
 
-            case 'EditDireccionProveedor':
+            case 'ListContacto':
             case 'EditCuentaBancoProveedor':
                 $limit = 0;
             /// no break

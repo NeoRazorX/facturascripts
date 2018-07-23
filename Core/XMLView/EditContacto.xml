@@ -40,7 +40,7 @@
             <column name="cifnif" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" />
             </column>
-            <column name="company" numcolumns="3" order="150">
+            <column name="company" numcolumns="2" order="150">
                 <widget type="text" fieldname="empresa" />
             </column>
             <column name="position" numcolumns="2" order="160">
@@ -52,9 +52,14 @@
             <column name="phone2" numcolumns="2" order="180">
                 <widget type="text" fieldname="telefono2" icon="fa-mobile" />
             </column>
-            <column name="customer" numcolumns="3" order="190">
-                <widget type="select" fieldname="codcliente">
+            <column name="customer" numcolumns="2" order="190">
+                <widget type="autocomplete" fieldname="codcliente">
                     <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="supplier" numcolumns="2" order="200">
+                <widget type="autocomplete" fieldname="codproveedor">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>

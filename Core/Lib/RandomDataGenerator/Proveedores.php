@@ -123,29 +123,19 @@ class Proveedores extends AbstractRandomPeople
     protected function direccionesProveedor($proveedor, $max = 3)
     {
         while ($max) {
-            $dir = new Model\DireccionProveedor();
+            $dir = new Model\Contacto();
             $dir->codproveedor = $proveedor->codproveedor;
-            $dir->codpais = AppSettings::get('default', 'codpais');
-
-            if (mt_rand(0, 2) == 0) {
-                $dir->codpais = $this->paises[0]->codpais;
-            }
-
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
             $dir->provincia = $this->provincia();
             $dir->ciudad = $this->ciudad();
             $dir->direccion = $this->direccion();
             $dir->codpostal = (string) mt_rand(1234, 99999);
+            $dir->nombre = 'Dirección #' . $max;
 
-            if (mt_rand(0, 3) == 0) {
-                $dir->apartado = (string) mt_rand(1234, 99999);
+            if (!$dir->save()) {
+                break;
             }
 
-            if (mt_rand(0, 1) == 0) {
-                $dir->direccionppal = false;
-            }
-
-            $dir->descripcion = 'Dirección #' . $max;
-            $dir->save();
             --$max;
         }
     }

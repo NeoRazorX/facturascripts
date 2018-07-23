@@ -47,6 +47,10 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>direccion</name>
         <type>character varying(100)</type>
     </column>
@@ -130,5 +134,9 @@
     <constraint>
         <name>ca_contactos_clientes</name>
         <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_contactos_proveedores</name>
+        <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

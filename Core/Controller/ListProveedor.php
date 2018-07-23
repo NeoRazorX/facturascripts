@@ -62,19 +62,26 @@ class ListProveedor extends ExtendedController\ListController
 
     private function createViewAdresses()
     {
-        $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
-        $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
-        $this->addOrderBy('ListDireccionProveedor', ['codproveedor'], 'supplier');
-        $this->addOrderBy('ListDireccionProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListDireccionProveedor', ['codpostal'], 'postalcode');
+        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
+        $this->addSearchFields('ListContacto', ['nombre', 'apellidos', 'email']);
+        $this->addOrderBy('ListContacto', ['email'], 'email');
+        $this->addOrderBy('ListContacto', ['nombre'], 'name');
+        $this->addOrderBy('ListContacto', ['empresa'], 'company');
+        $this->addOrderBy('ListContacto', ['lastactivity'], 'last-activity', 2);
 
-        $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
-        $this->addFilterSelect('ListDireccionProveedor', 'ciudad', 'city', 'ciudad', $cities);
+        $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
+        $this->addFilterSelect('ListContacto', 'cargo', 'position', 'cargo', $cargoValues);
 
-        $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
-        $this->addFilterSelect('ListDireccionProveedor', 'provincia', 'province', 'provincia', $provinces);
+        $counties = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect('ListContacto', 'codpais', 'country', 'codpais', $counties);
 
-        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
-        $this->addFilterSelect('ListDireccionProveedor', 'codpais', 'country', 'codpais', $countries);
+        $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
+        $this->addFilterSelect('ListContacto', 'provincia', 'province', 'provincia', $provinces);
+
+        $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListContacto', 'ciudad', 'city', 'ciudad', $cities);
+
+        $this->addFilterCheckbox('ListContacto', 'verificado', 'verified', 'verificado');
+        $this->addFilterCheckbox('ListContacto', 'admitemarketing', 'allow-marketing', 'admitemarketing');
     }
 }
