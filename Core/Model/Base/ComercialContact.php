@@ -20,8 +20,8 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\IDFiscal;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\IDFiscal;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * Description of ComercialContact
@@ -136,7 +136,7 @@ abstract class ComercialContact extends Contact
      *
      * @return mixed
      */
-    abstract public function getAdressess();
+    abstract public function getAdresses();
 
     /**
      * ComercialContact constructor.

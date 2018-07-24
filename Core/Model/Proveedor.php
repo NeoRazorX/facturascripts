@@ -61,7 +61,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return Contacto[]
      */
-    public function getAdressess()
+    public function getAdresses()
     {
         $contactModel = new Contacto();
         return $contactModel->all([new DataBaseWhere('codproveedor', $this->codcliente)]);

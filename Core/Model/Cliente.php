@@ -87,7 +87,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return Contacto[]
      */
-    public function getAdressess()
+    public function getAdresses()
     {
         $contactModel = new Contacto();
         return $contactModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
