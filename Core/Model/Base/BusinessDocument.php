@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
-use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
  * Description of BusinessDocument
@@ -124,13 +124,14 @@ abstract class BusinessDocument extends ModelClass
     public $idempresa;
 
     /**
-     * Document state, from EstadoDocumento model.
+     * Document status, from EstadoDocumento model.
      *
      * @var int
      */
     public $idestado;
 
     /**
+     * Previous document status.
      *
      * @var int
      */
@@ -227,16 +228,9 @@ abstract class BusinessDocument extends ModelClass
     abstract public function getNewLine(array $data = []);
 
     /**
-     * Returns an array with the column for identify the subject(s),
-     * 
-     * @return BusinessDocumentLine
+     * Sets subject for this document.
      */
-    abstract public function getSubjectColumns();
-
-    /**
-     * Sets subjects for this document.
-     */
-    abstract public function setSubject($subjects);
+    abstract public function setSubject($subject);
 
     /**
      * Updates subjects data in this document.
@@ -277,20 +271,24 @@ abstract class BusinessDocument extends ModelClass
         $this->totalrecargo = 0.0;
 
         if (!isset(self::$estados)) {
-            $estadoDocModel = new EstadoDocumento();
-            self::$estados = $estadoDocModel->all([], [], 0, 0);
+            $statusModel = new EstadoDocumento();
+            self::$estados = $statusModel->all([], [], 0, 0);
         }
 
         /// select default status
-        foreach (self::$estados as $estado) {
-            if ($estado->tipodoc === $this->modelClassName() && $estado->predeterminado) {
-                $this->idestado = $estado->idestado;
-                $this->editable = $estado->editable;
+        foreach (self::$estados as $status) {
+            if ($status->tipodoc === $this->modelClassName() && $status->predeterminado) {
+                $this->idestado = $status->idestado;
+                $this->editable = $status->editable;
                 break;
             }
         }
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function delete()
     {
         $lines = $this->getLines();
@@ -310,11 +308,11 @@ abstract class BusinessDocument extends ModelClass
      * 
      * @return EstadoDocumento
      */
-    public function getState()
+    public function getStatus()
     {
-        foreach (self::$estados as $state) {
-            if ($state->idestado === $this->idestado) {
-                return $state;
+        foreach (self::$estados as $status) {
+            if ($status->idestado === $this->idestado) {
+                return $status;
             }
         }
 
@@ -332,8 +330,7 @@ abstract class BusinessDocument extends ModelClass
     {
         new Serie();
         new Ejercicio();
-
-        return '';
+        return parent::install();
     }
 
     /**
@@ -377,7 +374,7 @@ abstract class BusinessDocument extends ModelClass
 
         if ($this->test()) {
             if ($this->exists()) {
-                return $this->checkState() ? $this->saveUpdate() : false;
+                return $this->checkStatus() ? $this->saveUpdate() : false;
             }
 
             return $this->saveInsert();
@@ -428,30 +425,30 @@ abstract class BusinessDocument extends ModelClass
             return false;
         }
 
-        $estadoDoc = new EstadoDocumento();
-        if ($estadoDoc->loadFromCode($this->idestado)) {
-            $this->editable = $estadoDoc->editable;
+        $statusModel = new EstadoDocumento();
+        if ($statusModel->loadFromCode($this->idestado)) {
+            $this->editable = $statusModel->editable;
         }
 
         return parent::test();
     }
 
-    private function checkState()
+    private function checkStatus()
     {
         if ($this->idestado == $this->idestadoAnt) {
             return true;
         }
 
-        $state = $this->getState();
+        $status = $this->getStatus();
         foreach ($this->getLines() as $line) {
-            $line->actualizastock = $state->actualizastock;
+            $line->actualizastock = $status->actualizastock;
             $line->save();
             $line->updateStock($this->codalmacen);
         }
 
-        if (!empty($state->generadoc)) {
+        if (!empty($status->generadoc)) {
             $docGenerator = new BusinessDocumentGenerator();
-            if (!$docGenerator->generate($this, $state->generadoc)) {
+            if (!$docGenerator->generate($this, $status->generadoc)) {
                 return false;
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,31 +52,21 @@ abstract class PurchaseDocument extends BusinessDocument
     public $numproveedor;
 
     /**
-     * Returns an array with the column for identify the subject(s),
-     *
-     * @return array
-     */
-    public function getSubjectColumns()
-    {
-        return ['codproveedor'];
-    }
-
-    /**
      * Assign the supplier to the document.
      * 
-     * @param Proveedor[] $subjects
+     * @param Proveedor $subject
      *
      * @return boolean
      */
-    public function setSubject($subjects)
+    public function setSubject($subject)
     {
-        if (!isset($subjects[0]->codproveedor)) {
+        if (!isset($subject->codproveedor)) {
             return false;
         }
 
-        $this->codproveedor = $subjects[0]->codproveedor;
-        $this->nombre = $subjects[0]->razonsocial;
-        $this->cifnif = $subjects[0]->cifnif;
+        $this->codproveedor = $subject->codproveedor;
+        $this->nombre = $subject->razonsocial;
+        $this->cifnif = $subject->cifnif;
         return true;
     }
 
@@ -109,6 +99,6 @@ abstract class PurchaseDocument extends BusinessDocument
             return false;
         }
 
-        return $this->setSubject([$proveedor]);
+        return $this->setSubject($proveedor);
     }
 }

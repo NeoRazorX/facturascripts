@@ -63,8 +63,8 @@ class PresupuestoProveedor extends Base\PurchaseDocument
         $newLine = new LineaPresupuestoProveedor($data);
         $newLine->idpresupuesto = $this->idpresupuesto;
 
-        $state = $this->getState();
-        $newLine->actualizastock = $state->actualizastock;
+        $status = $this->getStatus();
+        $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
     }

@@ -79,8 +79,8 @@ class PresupuestoCliente extends Base\SalesDocument
         $newLine = new LineaPresupuestoCliente($data);
         $newLine->idpresupuesto = $this->idpresupuesto;
 
-        $state = $this->getState();
-        $newLine->actualizastock = $state->actualizastock;
+        $status = $this->getStatus();
+        $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
     }

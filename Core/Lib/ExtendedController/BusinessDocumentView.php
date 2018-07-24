@@ -37,7 +37,7 @@ class BusinessDocumentView extends BaseView
      *
      * @var array
      */
-    public $documentStates;
+    public $documentStatus;
 
     /**
      * Line columns from xmlview.
@@ -64,7 +64,7 @@ class BusinessDocumentView extends BaseView
     public function __construct(string $title, string $modelName, string $lineXMLView, string $userNick)
     {
         parent::__construct($title, $modelName);
-        $this->documentStates = [];
+        $this->documentStatus = [];
 
         // Loads the view configuration for the user
         $this->pageOption->getForUser($lineXMLView, $userNick);
@@ -79,7 +79,7 @@ class BusinessDocumentView extends BaseView
         // Loads document states
         $estadoDocModel = new EstadoDocumento();
         $modelClass = explode('\\', $modelName);
-        $this->documentStates = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
+        $this->documentStatus = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
     }
 
     /**

@@ -68,8 +68,8 @@ class FacturaProveedor extends Base\PurchaseDocument
         $newLine = new LineaFacturaProveedor($data);
         $newLine->idfactura = $this->idfactura;
 
-        $state = $this->getState();
-        $newLine->actualizastock = $state->actualizastock;
+        $status = $this->getStatus();
+        $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
     }

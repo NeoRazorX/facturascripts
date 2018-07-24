@@ -63,8 +63,8 @@ class PedidoProveedor extends Base\PurchaseDocument
         $newLine = new LineaPedidoProveedor($data);
         $newLine->idpedido = $this->idpedido;
 
-        $state = $this->getState();
-        $newLine->actualizastock = $state->actualizastock;
+        $status = $this->getStatus();
+        $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
     }

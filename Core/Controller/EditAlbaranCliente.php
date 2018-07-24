@@ -25,7 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
+class EditAlbaranCliente extends ExtendedController\SalesDocumentController
 {
 
     /**
@@ -50,7 +50,6 @@ class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
     protected function createViews()
     {
         parent::createViews();
-
         $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $modelName;
         $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
@@ -77,7 +76,6 @@ class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
         if ($viewName === 'EditAlbaranCliente') {
             $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
             $view->loadData($idalbaran);
-
             $this->loadCustomContactsWidget($viewName);
         }
 

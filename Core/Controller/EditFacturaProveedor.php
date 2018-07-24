@@ -28,7 +28,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
-class EditFacturaProveedor extends ExtendedController\BusinessDocumentController
+class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
 {
 
     /**

@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
+class EditPedidoProveedor extends ExtendedController\PurchaseDocumentController
 {
 
     /**

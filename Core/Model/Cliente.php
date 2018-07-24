@@ -102,13 +102,13 @@ class Cliente extends Base\ComercialContact
     {
         $contact = new Contacto();
         switch ($type) {
-            case 'billing':
-                $where = [new DataBaseWhere('idcontacto', $this->idcontactofact)];
+            case 'shipping':
+                $where = [new DataBaseWhere('idcontacto', $this->idcontactoenv)];
                 $contact->loadFromCode('', $where);
                 break;
 
-            case 'shipping':
-                $where = [new DataBaseWhere('idcontacto', $this->idcontactoenv)];
+            default:
+                $where = [new DataBaseWhere('idcontacto', $this->idcontactofact)];
                 $contact->loadFromCode('', $where);
                 break;
         }

@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the AlbaranCliente model
+ * Controller to edit a single item from the AlbaranProveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
+class EditAlbaranProveedor extends ExtendedController\PurchaseDocumentController
 {
 
     /**

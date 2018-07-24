@@ -101,12 +101,10 @@
     <column>
         <name>idcontactoenv</name>
         <type>integer</type>
-        <null>NO</null>
     </column>
     <column>
         <name>idcontactofact</name>
         <type>integer</type>
-        <null>NO</null>
     </column>
     <column>
         <name>idempresa</name>
