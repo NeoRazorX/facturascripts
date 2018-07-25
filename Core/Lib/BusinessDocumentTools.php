@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
@@ -146,6 +147,14 @@ class BusinessDocumentTools
         }
     }
 
+    private function getDefaultTax()
+    {
+        $codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $impuesto = new Impuesto();
+        $impuesto->loadFromCode($codimpuesto);
+        return $impuesto;
+    }
+
     /**
      * Returns subtotals by tax.
      *
@@ -197,17 +206,8 @@ class BusinessDocumentTools
 
     private function recalculateLine(array $fLine, BusinessDocument $doc)
     {
-        if (!empty($fLine['referencia']) && empty($fLine['descripcion'])) {
+        if (!isset($fLine['cantidad'])) {
             $this->setProductData($fLine);
-        } elseif (empty($fLine['iva'])) {
-            $impuestoModel = new Impuesto();
-            foreach ($impuestoModel->all() as $imp) {
-                if ($imp->isDefault()) {
-                    $fLine['iva'] = $imp->iva;
-                    $fLine['recargo'] = $this->recargo ? $imp->recargo : $fLine['recargo'];
-                    break;
-                }
-            }
         }
 
         $newLine = $doc->getNewLine();
@@ -222,7 +222,6 @@ class BusinessDocumentTools
         $newLine->iva = (float) $fLine['iva'];
         $newLine->recargo = (float) $fLine['recargo'];
         $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
-
         if ($this->siniva) {
             $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
         }
@@ -232,6 +231,7 @@ class BusinessDocumentTools
 
     private function setProductData(array &$fLine)
     {
+        $impuesto = $this->getDefaultTax();
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $fLine['referencia'])];
         if ($variante->loadFromCode('', $where)) {
@@ -240,11 +240,15 @@ class BusinessDocumentTools
             $fLine['cantidad'] = 1;
             $fLine['pvpunitario'] = $variante->precio;
 
-            $impuesto = new Impuesto();
             if ($impuesto->loadFromCode($producto->codimpuesto)) {
                 $fLine['iva'] = $impuesto->iva;
                 $fLine['recargo'] = $this->recargo ? $impuesto->recargo : $fLine['recargo'];
             }
+        } else {
+            $fLine['referencia'] = '';
+            $fLine['cantidad'] = 1;
+            $fLine['iva'] = $impuesto->iva;
+            $fLine['recargo'] = $this->recargo ? $impuesto->recargo : $fLine['recargo'];
         }
     }
 }
