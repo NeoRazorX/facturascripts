@@ -277,6 +277,14 @@ class Contacto extends Base\Contact
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 
+        /// transform empty values in null
+        $fields = ['codagente', 'codcliente', 'codpais', 'codproveedor'];
+        foreach ($fields as $field) {
+            if (empty($this->{$field})) {
+                $this->{$field} = null;
+            }
+        }
+
         return parent::test();
     }
 
