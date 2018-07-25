@@ -136,7 +136,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
-            $doc->setSubject([$proveedores[$num]]);
+            $doc->setSubject($proveedores[$num]);
             $regimeniva = $proveedores[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without provider, to check if it breaks ;-)
@@ -163,7 +163,7 @@ abstract class AbstractRandomDocuments extends AbstractRandomPeople
 
         $regimeniva = 'Exento';
         if (isset($clientes[$num])) {
-            $doc->setSubject([$clientes[$num]]);
+            $doc->setSubject($clientes[$num]);
             $regimeniva = $clientes[$num]->regimeniva;
         }
 
