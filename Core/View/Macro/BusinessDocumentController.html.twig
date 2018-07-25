@@ -48,7 +48,7 @@
                 {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model, fsc.getNewSubjectUrl()) }}
             {% endif %}
             {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
-            {{ macros.stateSelect(model, view, context.i18n) }}
+            {{ macros.statusSelect(model, view, context.i18n) }}
             <div class="col">
                 <div class="input-group">
                     <span class="input-group-prepend">
@@ -182,36 +182,36 @@
     </div>
 {% endmacro %}
 
-{% macro stateSelect(model, view, i18n) %}
+{% macro statusSelect(model, view, i18n) %}
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {% for state in view.documentStates %}
-                {% if model.idestado == state.idestado %}
-                    {% if state.editable %}
-                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+            {% for status in view.documentStatus %}
+                {% if model.idestado == status.idestado %}
+                    {% if status.editable %}
+                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                     {% else %}
-                        <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                     {% endif %}
                 {% endif %}
             {% endfor %}
         </button>
         <div class="dropdown-menu">
-            {% for state in view.documentStates %}
-                {% if model.idestado == state.idestado %}
+            {% for status in view.documentStatus %}
+                {% if model.idestado == status.idestado %}
                     <a class="dropdown-item active" href="#">
-                        {% if state.editable %}
-                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% if status.editable %}
+                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}
-                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% endif %}
                     </a>
                 {% else %}
-                    <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ state.idestado }}');
+                    <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
                             documentSave();">
-                        {% if state.editable %}
-                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                        {% if status.editable %}
+                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}
-                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ state.nombre }}
+                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% endif %}
                     </a>
                 {% endif %}

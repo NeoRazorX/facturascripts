@@ -30,28 +30,26 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col text-right">
+            <div class="col">
                 <h1 class="h3">
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }} {{ fsc.modelName }}
                 </h1>
             </div>
-        </div>
-        <form name="fs_install" method="post" class="form">
-            <input type="hidden" name="model" value="{{ fsc.modelName }}" />
-            <div class="row text-right">
-                <div class="col">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-files-o" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for destinyDoc in fsc.approveTo %}
-                                <button class="dropdown-item" id="action" name="action" value="{{ destinyDoc.generadoc }}">{{ destinyDoc.generadoc }}</button>
-                            {% endfor %}
-                        </div>
+            <div class="col text-right">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-files-o" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for destinyDoc in fsc.approveTo %}
+                            <button class="dropdown-item" id="action" name="action" value="{{ destinyDoc.generadoc }}">{{ destinyDoc.generadoc }}</button>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
+        </div>
+        <form name="fs_install" method="post" class="form">
+            <input type="hidden" name="model" value="{{ fsc.modelName }}" />
             <div class="row">
                 <div class="col">&nbsp;</div>
             </div>
@@ -72,29 +70,29 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for lineDoc in fsc.linesDocs[iddoc] %}
-                                        <tr>
-                                            <td>
-                                                {{ lineDoc.referencia }}
-                                            </td>
-                                            <td>
-                                                {{ lineDoc.descripcion }}
-                                            </td>
-                                            <td class="text-right">
-                                                {{ lineDoc.cantidad }}
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input class="form-control" type="hidden" id="prevline" name="prevline[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}"/>
-                                                    <input class="form-control" type="number" id="line" name="line[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}" max="{{ lineDoc.cantidad }}" required="" />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    {% else %}
-                                        <tr class="table-warning">
-                                            <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
-                                        </tr>
-                                    {% endfor %}
+                                        {% for lineDoc in fsc.linesDocs[iddoc] %}
+                                            <tr>
+                                                <td>
+                                                    {{ lineDoc.referencia }}
+                                                </td>
+                                                <td>
+                                                    {{ lineDoc.descripcion }}
+                                                </td>
+                                                <td class="text-right">
+                                                    {{ lineDoc.cantidad }}
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input class="form-control" type="hidden" id="prevline" name="prevline[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}"/>
+                                                        <input class="form-control" type="number" id="line" name="line[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}" max="{{ lineDoc.cantidad }}" required="" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr class="table-warning">
+                                                <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
+                                            </tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
