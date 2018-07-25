@@ -55,6 +55,7 @@ class EditAtributo extends ExtendedController\PanelController
     {
         $this->addEditView('EditAtributo', 'Atributo', 'attribute');
         $this->addEditListView('EditAtributoValor', 'AtributoValor', 'attribute-values');
+        $this->setTabsPosition('bottom');
     }
 
     /**
