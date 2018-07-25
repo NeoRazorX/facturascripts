@@ -61,8 +61,8 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total', 'total');
 
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListPresupuestoCliente', 'idestado', 'state', 'idestado', $stateValues);
+        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListPresupuestoCliente', 'idestado', 'state', 'idestado', $statusValues);
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);

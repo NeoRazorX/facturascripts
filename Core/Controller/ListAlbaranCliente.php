@@ -61,8 +61,8 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListAlbaranCliente', 'total', 'total', 'total');
 
         $where = [new DataBaseWhere('tipodoc', 'AlbaranCliente')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListAlbaranCliente', 'idestado', 'state', 'idestado', $stateValues);
+        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListAlbaranCliente', 'idestado', 'state', 'idestado', $statusValues);
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);

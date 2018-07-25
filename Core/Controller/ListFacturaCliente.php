@@ -61,8 +61,8 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addFilterNumber('ListFacturaCliente', 'total', 'total', 'total');
 
         $where = [new DataBaseWhere('tipodoc', 'FacturaCliente')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListFacturaCliente', 'idestado', 'state', 'idestado', $stateValues);
+        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListFacturaCliente', 'idestado', 'state', 'idestado', $statusValues);
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);

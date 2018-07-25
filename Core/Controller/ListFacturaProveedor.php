@@ -61,8 +61,8 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addFilterNumber('ListFacturaProveedor', 'total', 'total', 'total');
 
         $where = [new DataBaseWhere('tipodoc', 'FacturaProveedor')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListFacturaProveedor', 'idestado', 'state', 'idestado', $stateValues);
+        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListFacturaProveedor', 'idestado', 'state', 'idestado', $statusValues);
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);

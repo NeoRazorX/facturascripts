@@ -60,8 +60,8 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total', 'total');
 
         $where = [new DataBaseWhere('tipodoc', 'AlbaranProveedor')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListAlbaranProveedor', 'idestado', 'state', 'idestado', $stateValues);
+        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
+        $this->addFilterSelect('ListAlbaranProveedor', 'idestado', 'state', 'idestado', $statusValues);
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
