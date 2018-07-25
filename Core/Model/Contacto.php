@@ -102,6 +102,13 @@ class Contacto extends Base\Contact
     public $codproveedor;
 
     /**
+     * Description of the contact.
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
      * Address of the contact.
      *
      * @var string
@@ -240,7 +247,7 @@ class Contacto extends Base\Contact
      */
     public function primaryDescriptionColumn()
     {
-        return 'email';
+        return 'descripcion';
     }
 
     /**
@@ -270,6 +277,7 @@ class Contacto extends Base\Contact
      */
     public function test()
     {
+        $this->descripcion = Utils::noHtml($this->descripcion);
         $this->apellidos = Utils::noHtml($this->apellidos);
         $this->cargo = Utils::noHtml($this->cargo);
         $this->ciudad = Utils::noHtml($this->ciudad);

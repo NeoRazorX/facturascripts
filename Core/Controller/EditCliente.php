@@ -148,7 +148,7 @@ class EditCliente extends ExtendedController\PanelController
 
                 /// Search for client contacts
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
-                $contacts = CodeModel::all('contactos', 'idcontacto', 'CONCAT(nombre, \' \', apellidos)', true, $where);
+                $contacts = CodeModel::all('contactos', 'idcontacto', 'descripcion', true, $where);
 
                 /// Load values option to default billing address from client contacts list
                 $columnBilling = $this->views['EditCliente']->columnForName('default-billing-address');
