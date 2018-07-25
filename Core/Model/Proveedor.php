@@ -55,6 +55,16 @@ class Proveedor extends Base\ComercialContact
         $this->acreedor = false;
         $this->codimpuestoportes = AppSettings::get('default', 'codimpuesto');
     }
+    
+    public function codeModelSearch(string $query, string $fieldcode = '')
+    {
+        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $fields = $field . '|' . $this->primaryDescriptionColumn();
+        $where = [
+            new DataBaseWhere('cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2', mb_strtolower($query), 'LIKE')
+        ];
+        return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
+    }
 
     /**
      * Returns the addresses associated with the provider.

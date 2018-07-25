@@ -51,7 +51,7 @@ class ListProveedor extends ExtendedController\ListController
     {
         /* Supplier */
         $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fa-users');
-        $this->addSearchFields('ListProveedor', ['nombre', 'razonsocial', 'codproveedor', 'email']);
+        $this->addSearchFields('ListProveedor', ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
         $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
         $this->addOrderBy('ListProveedor', ['fecha'], 'date');

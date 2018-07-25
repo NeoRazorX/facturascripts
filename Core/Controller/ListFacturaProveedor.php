@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,7 +73,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
-        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
+        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox('ListFacturaProveedor', 'paid', 'paid', 'pagada');
         $this->addFilterCheckbox('ListFacturaProveedor', 'femail', 'email-not-sent', 'femail', false, null);
 

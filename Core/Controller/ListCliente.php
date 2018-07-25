@@ -85,7 +85,7 @@ class ListCliente extends ExtendedController\ListController
     private function createViewCustomers(array $valuesGroup)
     {
         $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
-        $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
+        $this->addSearchFields('ListCliente', ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy('ListCliente', ['codcliente'], 'code');
         $this->addOrderBy('ListCliente', ['nombre'], 'name', 1);
         $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');

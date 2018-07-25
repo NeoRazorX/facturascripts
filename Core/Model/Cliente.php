@@ -82,6 +82,16 @@ class Cliente extends Base\ComercialContact
         $this->recargo = false;
     }
 
+    public function codeModelSearch(string $query, string $fieldcode = '')
+    {
+        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $fields = $field . '|' . $this->primaryDescriptionColumn();
+        $where = [
+            new DataBaseWhere('cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2', mb_strtolower($query), 'LIKE')
+        ];
+        return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
+    }
+
     /**
      * Returns an array with the addresses associated with the client.
      *
