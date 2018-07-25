@@ -94,6 +94,10 @@ class AppController extends App
         $this->pageName = $pageName;
     }
 
+    /**
+     * 
+     * @param string $nick
+     */
     public function close(string $nick = '')
     {
         $nick = (false !== $this->user) ? $this->user->nick : '';
