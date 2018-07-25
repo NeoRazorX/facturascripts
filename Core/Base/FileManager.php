@@ -32,6 +32,11 @@ class FileManager
 {
 
     /**
+     * Folders to exclude in scanFolder.
+     */
+    const EXCLUDE_FOLDERS = ['.', '..', '.DS_Store', '.well-known'];
+
+    /**
      * Recursive delete directory.
      *
      * @param string $folder
@@ -237,7 +242,7 @@ class FileManager
      *
      * @return array
      */
-    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = ['.', '..', '.DS_Store']): array
+    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = self::EXCLUDE_FOLDERS): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (!is_array($scan)) {
