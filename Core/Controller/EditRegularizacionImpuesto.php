@@ -102,7 +102,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
         $where = [
             new DataBaseWhere('codejercicio', $data['codejercicio']),
-            new DataBaseWhere($fields, mb_strtolower($data['term']), 'LIKE')
+            new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
         ];
 
         foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {

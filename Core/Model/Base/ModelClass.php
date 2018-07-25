@@ -123,7 +123,7 @@ abstract class ModelClass extends ModelCore
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
-        $where = [new DataBase\DataBaseWhere($fields, mb_strtolower($query), 'LIKE')];
+        $where = [new DataBase\DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 

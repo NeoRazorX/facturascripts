@@ -55,13 +55,13 @@ class Proveedor extends Base\ComercialContact
         $this->acreedor = false;
         $this->codimpuestoportes = AppSettings::get('default', 'codimpuesto');
     }
-    
+
     public function codeModelSearch(string $query, string $fieldcode = '')
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
-        $fields = $field . '|' . $this->primaryDescriptionColumn();
+        $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
         $where = [
-            new DataBaseWhere('cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2', mb_strtolower($query), 'LIKE')
+            new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')
         ];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }

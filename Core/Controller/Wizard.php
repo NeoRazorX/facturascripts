@@ -139,7 +139,7 @@ class Wizard extends Controller
             return $this->addPagesToRole($role->codrole);
         }
 
-        $role->codrole = \mb_strtolower($this->i18n->trans('agents'));
+        $role->codrole = \mb_strtolower($this->i18n->trans('agents'), 'UTF8');
         $role->descripcion = $this->i18n->trans('agents');
         if ($role->save()) {
             return $this->addPagesToRole($role->codrole);

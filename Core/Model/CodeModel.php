@@ -130,7 +130,7 @@ class CodeModel
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
-        $where = [new DataBaseWhere($fields, mb_strtolower($query), 'LIKE')];
+        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
