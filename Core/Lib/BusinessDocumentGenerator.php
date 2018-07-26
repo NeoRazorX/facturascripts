@@ -18,15 +18,18 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 
 /**
  * Description of BusinessDocumentGenerator
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class BusinessDocumentGenerator
 {
+
     /**
      * New document generated.
      *
@@ -62,6 +65,7 @@ class BusinessDocumentGenerator
 
         return false;
     }
+
     /**
      * Clone the lines from the prototype document, to previous generated document.
      * Requires a previous call to generate method.
@@ -102,32 +106,61 @@ class BusinessDocumentGenerator
     private function cloneLines(BusinessDocument $prototype, $newDoc, $auxData = [])
     {
         $sameType = \get_class($prototype) === \get_class($newDoc);
+        $docTrans = new \FacturaScripts\Dinamic\Model\DocTransformation();
 
-        foreach ($prototype->getLines() as $line) {
-            $arrayLine = [];
-            foreach ($line->getModelFields() as $field => $value) {
-                $arrayLine[$field] = $line->{$field};
-                /// Remove idlinea if are different document types
-                if (!$sameType && $field === 'idlinea') {
-                    unset($arrayLine[$field]);
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            foreach ($prototype->getLines() as $line) {
+                $docTrans->clear();
+
+                $arrayLine = [];
+                foreach ($line->getModelFields() as $field => $value) {
+                    $arrayLine[$field] = $line->{$field};
+                    /// Remove idlinea if are different document types
+                    if (!$sameType && $field === 'idlinea') {
+                        unset($arrayLine[$field]);
+                    }
                 }
+
+                /// Fix quantity value if needed
+                if (!empty($auxData) && isset($auxData[$line->idlinea])) {
+                    $arrayLine['cantidad'] = $auxData[$line->idlinea];
+                }
+
+                if ($arrayLine['cantidad'] == 0) {
+                    continue;
+                }
+
+                $newLine = $newDoc->getNewLine($arrayLine);
+                if (!$newLine->save()) {
+                    break;
+                }
+
+                $docTrans->model1 = $line->modelClassName();
+                $docTrans->iddoc1 = $prototype->primaryColumn();
+                $docTrans->idlinea1 = $line->primaryColumn();
+                $docTrans->model2 = $newLine->modelClassName();
+                $docTrans->iddoc2 = $newDoc->primaryColumn();
+                $docTrans->idlinea2 = $newLine->primaryColumn();
+                if (!$docTrans->save()) {
+                    break;
+                }
+
+                $newLine->updateStock($newDoc->codalmacen);
             }
 
-            /// Fix quantity value if needed
-            if (!empty($auxData) && isset($auxData[$line->idlinea])) {
-                $arrayLine['cantidad'] = $auxData[$line->idlinea];
-            }
-
-            if ($arrayLine['cantidad'] == 0) {
-                continue;
-            }
-
-            $newLine = $newDoc->getNewLine($arrayLine);
-            if (!$newLine->save()) {
+            // confirm data
+            $this->dataBase->commit();
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
                 return false;
             }
-
-            $newLine->updateStock($newDoc->codalmacen);
         }
 
         return true;

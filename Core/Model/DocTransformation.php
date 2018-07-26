@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
  * A model to manage the transformations of documents. For example aprobe order to delibery note.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class DocTransformation extends Base\ModelClass
 {
@@ -41,6 +42,20 @@ class DocTransformation extends Base\ModelClass
      * @var int
      */
     public $iddoc1;
+
+    /**
+     * id of the line in document 1
+     *
+     * @var int
+     */
+    public $idlinea1;
+
+    /**
+     * id of the line in document 2
+     *
+     * @var int
+     */
+    public $idlinea2;
 
     /**
      * Name of model1. Varchar(30)
