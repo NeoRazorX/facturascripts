@@ -2,6 +2,7 @@
 <!--
     Document   : doctransformations.xml
     Author     : Cristo M. Estévez Hernández
+    Author     : Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
     Description:
         Structure for the doctransformations table.
 -->
@@ -16,6 +17,18 @@
         <name>iddoc1</name>
         <type>integer</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>idlinea1</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>idlinea2</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>model1</name>
