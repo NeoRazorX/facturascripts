@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 
@@ -106,13 +107,14 @@ class BusinessDocumentGenerator
     private function cloneLines(BusinessDocument $prototype, $newDoc, $auxData = [])
     {
         $sameType = \get_class($prototype) === \get_class($newDoc);
-        $docTrans = new \FacturaScripts\Dinamic\Model\DocTransformation();
 
         // start transaction
-        $this->dataBase->beginTransaction();
+        $database = new DataBase();
+        $database->beginTransaction();
 
         // main save process
         try {
+            $docTrans = new DocTransformation();
             foreach ($prototype->getLines() as $line) {
                 $docTrans->clear();
 
@@ -153,12 +155,12 @@ class BusinessDocumentGenerator
             }
 
             // confirm data
-            $this->dataBase->commit();
+            $database->commit();
         } catch (\Exception $e) {
             $this->miniLog->alert($e->getMessage());
         } finally {
-            if ($this->dataBase->inTransaction()) {
-                $this->dataBase->rollback();
+            if ($database->inTransaction()) {
+                $database->rollback();
                 return false;
             }
         }
