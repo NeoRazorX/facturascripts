@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\DocTransformation;
 
 /**
  * Description of BusinessDocumentGenerator
@@ -37,6 +37,24 @@ class BusinessDocumentGenerator
      * @var mixed
      */
     private $newDoc;
+
+    /**
+     * Clone the lines from the prototype document, to previous generated document.
+     * Requires a previous call to generate method.
+     *
+     * @param BusinessDocument $prototype
+     * @param array            $auxData
+     *
+     * @return bool
+     */
+    public function addLinesFrom(BusinessDocument $prototype, $auxData = [])
+    {
+        if ($this->newDoc === null) {
+            return false;
+        }
+
+        return $this->cloneLines($prototype, $this->newDoc, $auxData);
+    }
 
     /**
      * Generates a new document from a prototype document.
@@ -68,24 +86,6 @@ class BusinessDocumentGenerator
     }
 
     /**
-     * Clone the lines from the prototype document, to previous generated document.
-     * Requires a previous call to generate method.
-     *
-     * @param BusinessDocument $prototype
-     * @param array            $auxData
-     *
-     * @return bool
-     */
-    public function addLinesFrom(BusinessDocument $prototype, $auxData = [])
-    {
-        if ($this->newDoc === null) {
-            return false;
-        }
-
-        return $this->cloneLines($prototype, $this->newDoc, $auxData);
-    }
-
-    /**
      * Return the new generated doc.
      *
      * @return mixed
@@ -112,59 +112,49 @@ class BusinessDocumentGenerator
         $database = new DataBase();
         $database->beginTransaction();
 
-        // main save process
-        try {
-            $docTrans = new DocTransformation();
-            foreach ($prototype->getLines() as $line) {
-                $docTrans->clear();
+        $docTrans = new DocTransformation();
+        foreach ($prototype->getLines() as $line) {
+            $docTrans->clear();
 
-                $arrayLine = [];
-                foreach ($line->getModelFields() as $field => $value) {
-                    $arrayLine[$field] = $line->{$field};
-                    /// Remove idlinea if are different document types
-                    if (!$sameType && $field === 'idlinea') {
-                        unset($arrayLine[$field]);
-                    }
+            $arrayLine = [];
+            foreach ($line->getModelFields() as $field => $value) {
+                $arrayLine[$field] = $line->{$field};
+                /// Remove idlinea if are different document types
+                if (!$sameType && $field === 'idlinea') {
+                    unset($arrayLine[$field]);
                 }
-
-                /// Fix quantity value if needed
-                if (!empty($auxData) && isset($auxData[$line->idlinea])) {
-                    $arrayLine['cantidad'] = $auxData[$line->idlinea];
-                }
-
-                if ($arrayLine['cantidad'] == 0) {
-                    continue;
-                }
-
-                $newLine = $newDoc->getNewLine($arrayLine);
-                if (!$newLine->save()) {
-                    break;
-                }
-
-                $docTrans->model1 = $line->modelClassName();
-                $docTrans->iddoc1 = $prototype->primaryColumn();
-                $docTrans->idlinea1 = $line->primaryColumn();
-                $docTrans->model2 = $newLine->modelClassName();
-                $docTrans->iddoc2 = $newDoc->primaryColumn();
-                $docTrans->idlinea2 = $newLine->primaryColumn();
-                if (!$docTrans->save()) {
-                    break;
-                }
-
-                $newLine->updateStock($newDoc->codalmacen);
             }
 
-            // confirm data
-            $database->commit();
-        } catch (\Exception $e) {
-            $this->miniLog->alert($e->getMessage());
-        } finally {
-            if ($database->inTransaction()) {
+            /// Fix quantity value if needed
+            if (!empty($auxData) && isset($auxData[$line->idlinea])) {
+                $arrayLine['cantidad'] = $auxData[$line->idlinea];
+            }
+
+            if ($arrayLine['cantidad'] == 0) {
+                continue;
+            }
+
+            $newLine = $newDoc->getNewLine($arrayLine);
+            if (!$newLine->save()) {
+                break;
+            }
+
+            $docTrans->model1 = $prototype->modelClassName();
+            $docTrans->iddoc1 = $prototype->primaryColumnValue();
+            $docTrans->idlinea1 = $line->primaryColumnValue();
+            $docTrans->model2 = $newDoc->modelClassName();
+            $docTrans->iddoc2 = $newDoc->primaryColumnValue();
+            $docTrans->idlinea2 = $newLine->primaryColumnValue();
+            if (!$docTrans->save()) {
                 $database->rollback();
                 return false;
             }
+
+            $newLine->updateStock($newDoc->codalmacen);
         }
 
+        // confirm data
+        $database->commit();
         return true;
     }
 }
