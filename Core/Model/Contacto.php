@@ -286,7 +286,7 @@ class Contacto extends Base\Contact
         $this->provincia = Utils::noHtml($this->provincia);
 
         /// transform empty values in null
-        $fields = ['codagente', 'codcliente', 'codpais', 'codproveedor'];
+        $fields = ['codagente', 'codcliente', 'codpais', 'codproveedor', 'lastactivity'];
         foreach ($fields as $field) {
             if (empty($this->{$field})) {
                 $this->{$field} = null;
