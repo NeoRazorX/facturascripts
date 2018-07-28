@@ -138,13 +138,12 @@ class AppInstaller
     {
         // Check each needed folder to deploy
         foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
-            if (!file_exists($folder) && !mkdir($folder) && !is_dir($folder)) {
+            if (!FileManager::createFolder($folder)) {
                 $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['%folder%' => $folder]));
                 return false;
             }
         }
 
-        chmod('Plugins', (int) octdec(777));
         $pluginManager = new PluginManager();
         $hiddenPlugins = \explode(',', $this->request->request->get('hidden_plugins', ''));
         foreach ($hiddenPlugins as $pluginName) {
