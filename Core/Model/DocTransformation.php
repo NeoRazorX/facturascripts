@@ -44,6 +44,13 @@ class DocTransformation extends Base\ModelClass
     public $iddoc1;
 
     /**
+     * id of document 2
+     *
+     * @var int
+     */
+    public $iddoc2;
+
+    /**
      * id of the line in document 1
      *
      * @var int
@@ -63,13 +70,6 @@ class DocTransformation extends Base\ModelClass
      * @var string
      */
     public $model1;
-
-    /**
-     * id of document 2
-     *
-     * @var int
-     */
-    public $iddoc2;
 
     /**
      * Name of model2. Varchar(30)

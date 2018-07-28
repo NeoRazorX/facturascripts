@@ -19,25 +19,23 @@
         <null>NO</null>
     </column>
     <column>
+        <name>iddoc2</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>idlinea1</name>
         <type>integer</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>idlinea2</name>
         <type>integer</type>
         <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>model1</name>
         <type>character varying(30)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>iddoc2</name>
-        <type>integer</type>
         <null>NO</null>
     </column>
     <column>
