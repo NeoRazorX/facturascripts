@@ -39,7 +39,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-notes';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;

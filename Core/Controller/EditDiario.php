@@ -47,7 +47,7 @@ class EditDiario extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'journal';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa fa-book';
+        $pagedata['icon'] = 'fas fa-book';
         $pagedata['showonmenu'] = false;
         return $pagedata;
     }

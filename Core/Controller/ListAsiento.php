@@ -72,7 +72,7 @@ class ListAsiento extends ExtendedController\ListController
         $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
 
         /// journals
-        $this->addView('ListDiario', 'Diario', 'journals', 'fa fa-book');
+        $this->addView('ListDiario', 'Diario', 'journals', 'fas fa-book');
         $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
 
         $this->addOrderBy('ListDiario', ['iddiario'], 'code');

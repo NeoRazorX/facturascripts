@@ -37,7 +37,7 @@ class ListLogMessage extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'logs';
-        $pagedata['icon'] = 'fa-file-text-o';
+        $pagedata['icon'] = 'fa-file-alt';
         $pagedata['menu'] = 'admin';
         $pagedata['submenu'] = 'control-panel';
 
@@ -49,7 +49,7 @@ class ListLogMessage extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListLogMessage', 'LogMessage', 'logs', 'fa-file-text-o');
+        $this->addView('ListLogMessage', 'LogMessage', 'logs', 'fa-file-alt');
         $this->addSearchFields('ListLogMessage', ['message', 'uri']);
 
         $this->addOrderBy('ListLogMessage', ['time'], 'date', 2);

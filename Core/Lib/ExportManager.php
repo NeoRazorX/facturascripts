@@ -51,8 +51,8 @@ class ExportManager
         if (self::$options === null) {
             self::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
-                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o'],
+                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel'],
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive'],
                 'MAIL' => ['description' => 'email', 'icon' => 'fa-envelope'],
             ];
         }

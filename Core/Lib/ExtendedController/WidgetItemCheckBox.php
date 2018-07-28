@@ -68,7 +68,7 @@ class WidgetItemCheckBox extends WidgetItem
     {
         $checked = is_bool($value) ? $value : !is_null($value);
         if ($checked) {
-            return '<i class="fa fa-check" aria-hidden="true" ' . $this->getTextOptionsHTML($checked) . '></i>';
+            return '<i class="fas fa-check" aria-hidden="true" ' . $this->getTextOptionsHTML($checked) . '></i>';
         }
 
         return '-';

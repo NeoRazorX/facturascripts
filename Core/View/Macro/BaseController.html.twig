@@ -58,15 +58,15 @@
                     <div class="d-xs-none"><br/></div>
                         {% if keyValue is not empty %}
                         <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
-                            <i class="fa fa-trash fa-fw" aria-hidden="true"></i>
+                            <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                     <div class="btn-group">
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                            <i class="fa fa-undo fa-fw" aria-hidden="true"></i>
+                            <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
                         </button>
                         <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                            <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
+                            <i class="far fa-save fa-fw" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
 
     {% set newModel = view.newEmptyModel() %}
     <a class="btn btn-success btn-block" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
-        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+        <i class="fas fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
     </a>
     <br/>
     <div id="new-{{ context.indexView }}" class="collapse">
@@ -159,7 +159,7 @@
                         {% if view.count > 0 %}
                             {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
                             <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
-                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                <i class="fas fa-trash" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
                             </a>
                         {% endif %}
@@ -169,11 +169,11 @@
 
                     <div class="col text-right">
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                            <i class="fa fa-undo" aria-hidden="true"></i>
+                            <i class="fas fa-undo" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">&nbsp;{{ undo }}</span>
                         </button>
                         <button class="btn btn-sm btn-primary" id="submit-{{ formName }}" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                            <i class="far fa-save" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>
                     </div>
                 </div>
@@ -292,10 +292,10 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" {{ popoverTitle(cancel_title, 'bottom') }}>
-                                <i class="fa fa-ban" aria-hidden="true"></i>&nbsp; {{ cancel }}
+                                <i class="fas fa-ban" aria-hidden="true"></i>&nbsp; {{ cancel }}
                             </button>
                             <button type="submit" class="btn btn-sm btn-primary" {{ popoverTitle(accept_title, 'bottom') }}>
-                                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ accept }}
+                                <i class="far fa-save" aria-hidden="true"></i>&nbsp; {{ accept }}
                             </button>
                         </div>
                     </form>
