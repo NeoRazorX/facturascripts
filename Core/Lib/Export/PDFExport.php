@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Dinamic\Model\Contacto;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -351,7 +352,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->insertParalellTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
 
-        if (isset($model->direccionenv) && $model->direccionenv !== '') {
+        if (isset($model->idcontactoenv)) {
             $this->insertBusinessDocShipping($model);
         }
     }
@@ -366,25 +367,28 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
-        $tableData = [
-            ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($model->nombreenv)],
-            ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($model->apellidosenv)],
-            ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccionenv)],
-            ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv],
-            ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv],
-            ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudadenv)],
-            ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provinciaenv)],
-        ];
+        $contacto = new Contacto();
+        if ($contacto->loadFromCode($model->idcontactoenv)) {
+            $tableData = [
+                ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($contacto->nombre)],
+                ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($contacto->apellidos)],
+                ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($contacto->direccion)],
+                ['key' => $this->i18n->trans('post-office-box'), 'value' => $contacto->apartado],
+                ['key' => $this->i18n->trans('zip-code'), 'value' => $contacto->codpostal],
+                ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($contacto->ciudad)],
+                ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($contacto->provincia)],
+            ];
 
-        $tableOptions = [
-            'width' => $this->tableWidth,
-            'showHeadings' => 0,
-            'shaded' => 0,
-            'lineCol' => [1, 1, 1],
-            'cols' => [],
-        ];
-        $this->insertParalellTable($tableData, '', $tableOptions);
-        $this->pdf->ezText('');
+            $tableOptions = [
+                'width' => $this->tableWidth,
+                'showHeadings' => 0,
+                'shaded' => 0,
+                'lineCol' => [1, 1, 1],
+                'cols' => [],
+            ];
+            $this->insertParalellTable($tableData, '', $tableOptions);
+            $this->pdf->ezText('');
+        }
     }
 
     /**
