@@ -47,23 +47,6 @@
                 </widget>
             </column>
         </group>
-        <group name="accounts" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" order="10">
-                <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="codsubcuentaven" title="subaccount-sales" order="20">
-                <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="codsubcuentairpf" title="subaccount-irpf" order="30">
-                <widget type="autocomplete" fieldname="codsubcuentairpf">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-        </group>
         <group name="descripcion" numcolumns="12">
             <column name="description" order="100">
                 <widget type="textarea" fieldname="descripcion" required="true" />
@@ -97,6 +80,23 @@
         <group name="observations" numcolumns="12">
             <column name="observations" order="100">
                 <widget type="textarea" fieldname="observaciones" />
+            </column>
+        </group>
+        <group name="accounts" title="accounting" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" order="100">
+                <widget type="autocomplete" fieldname="codsubcuentacom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="codsubcuentaven" title="subaccount-sales" order="110">
+                <widget type="autocomplete" fieldname="codsubcuentaven">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="codsubcuentairpf" title="subaccount-irpf" order="120">
+                <widget type="autocomplete" fieldname="codsubcuentairpf">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
     </columns>
