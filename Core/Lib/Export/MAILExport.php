@@ -34,9 +34,9 @@ class MAILExport extends PDFExport
      */
     protected $sendParams = [];
 
-    public function generateDocumentPage($model)
+    public function generateBusinessDocPage($model)
     {
-        parent::generateDocumentPage($model);
+        parent::generateBusinessDocPage($model);
         $this->sendParams['modelClassName'] = $model->modelClassName();
         $this->sendParams['modelCode'] = $model->primaryColumnValue();
     }

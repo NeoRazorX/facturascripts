@@ -89,7 +89,7 @@ class BusinessDocumentView extends BaseView
      */
     public function export(&$exportManager)
     {
-        $exportManager->generateDocumentPage($this->model);
+        $exportManager->generateBusinessDocPage($this->model);
     }
 
     /**
