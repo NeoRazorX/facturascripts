@@ -46,7 +46,7 @@
                 </widget>
             </column>
             <column name="shippingaddr" title="shipping-address" numcolumns="6">
-                <widget type="select" fieldname="idcontacto" required="true">
+                <widget type="select" fieldname="idcontactoenv" required="true">
                     <values></values>
                 </widget>
             </column>
