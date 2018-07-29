@@ -390,7 +390,7 @@ class PDFExport extends PDFDocument implements ExportInterface
     /**
      * Combine address if the parameters don´t empty
      *
-     * @param BusinessDocument $model
+     * @param BusinessDocument|Contacto $model
      *
      * @return string
      */

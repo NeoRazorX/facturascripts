@@ -30,15 +30,34 @@ namespace FacturaScripts\Core\Base;
  */
 class FileManager
 {
+
     /**
      * Default permissions to create new folders
      */
-    const DEFAULT_FOLDER_PERMS = 0770;
+    const DEFAULT_FOLDER_PERMS = 0755;
 
     /**
      * Folders to exclude in scanFolder.
      */
     const EXCLUDE_FOLDERS = ['.', '..', '.DS_Store', '.well-known'];
+
+    /**
+     * Create the folder.
+     *
+     * @param string $folder    Path to folder to create
+     * @param bool   $recursive If needs to be created recursively
+     * @param int    $mode      Perms mode in octal format
+     *
+     * @return bool
+     */
+    public static function createFolder(string $folder, $recursive = false, $mode = self::DEFAULT_FOLDER_PERMS): bool
+    {
+        if (!file_exists($folder) && !@mkdir($folder, $mode, $recursive) && !is_dir($folder)) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Recursive delete directory.
@@ -272,23 +291,5 @@ class FileManager
         }
 
         return $result;
-    }
-
-    /**
-     * Create the folder.
-     *
-     * @param string $folder    Path to folder to create
-     * @param bool   $recursive If needs to be created recursively
-     * @param int    $mode      Perms mode in octal format
-     *
-     * @return bool
-     */
-    public static function createFolder(string $folder, $recursive = false, $mode = self::DEFAULT_FOLDER_PERMS): bool
-    {
-        if (!file_exists($folder) && !@mkdir($folder, $mode, $recursive) && !is_dir($folder)) {
-            return false;
-        }
-
-        return true;
     }
 }
