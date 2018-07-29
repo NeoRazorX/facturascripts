@@ -422,12 +422,17 @@ class DataBase
         /// add the sql query to the history
         self::$miniLog->sql($sql);
         $result = self::$engine->select(self::$link, $sql);
-        if (empty($result)) {
-            self::$miniLog->critical(self::$engine->errorMessage(self::$link));
-            return [];
+        if (!empty($result)) {
+            return $result;
         }
 
-        return $result;
+        /// some error?
+        $error = self::$engine->errorMessage(self::$link);
+        if (!empty($error)) {
+            self::$miniLog->critical($error);
+        }
+
+        return [];
     }
 
     /**
