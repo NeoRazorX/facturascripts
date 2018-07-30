@@ -40,7 +40,7 @@
                     {% set active = (indexView == fsc.active) ? ' active' : '' %}
                     {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
                     <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                        <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
+                        <i class="fas {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
                         &nbsp;{{ view.title }}
                     </a>
                 {% endfor %}

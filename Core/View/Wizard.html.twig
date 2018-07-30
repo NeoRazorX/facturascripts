@@ -5,7 +5,6 @@
     {% import 'Macro/Forms.html.twig' as forms %}
 
     {% set ciudad = fsc.empresa ? fsc.empresa.ciudad : '' %}
-    {% set coddivisa = appSettings.get('default','coddivisa','EUR') %}
     {% set codpais = appSettings.get('default','codpais','ESP') %}
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
@@ -13,9 +12,9 @@
         <div class="row">
             <div class="col-12">
                 <h1>
-                    <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
+                    <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                 </h1>
                 <hr/>
@@ -61,7 +60,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
+                        <i class="far fa-save fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans('save') }}
                     </button>
                 </div>

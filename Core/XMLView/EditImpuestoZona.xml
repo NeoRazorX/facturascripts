@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" numcolumns="2" order="10">
-                <widget type="text" fieldname="id" icon="fa-usd" required="true" />
+                <widget type="text" fieldname="id" icon="fa-dollar-sign" required="true" />
             </column>
             <column name="tax" numcolumns="2" order="20">
                 <widget type="select" fieldname="codimpuesto"  required="true">

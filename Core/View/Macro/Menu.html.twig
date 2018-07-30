@@ -43,7 +43,7 @@
         {# Child level submenu #}
         <li class="dropdown-submenu">
             <a class="dropdown-item{{ active }}" href="#">
-                <i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
+                <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
                 &nbsp; {{ menuItem.title | capitalize }}
             </a>
             <ul class="dropdown-menu" aria-labelledby="{{ menuId }}">
@@ -55,7 +55,7 @@
         {% if item.menu is empty %}
             <li>
                 <a class="dropdown-item{{ extraClass }}" href="{{ item.url }}">
-                    <i class="fa {{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp; {{ item.title | capitalize }}
+                    <i class="fas {{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp; {{ item.title | capitalize }}
                 </a>
             </li>
         {% else %}

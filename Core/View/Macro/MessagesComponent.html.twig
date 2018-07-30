@@ -1,10 +1,10 @@
 {% macro run(component, i18n) %}
     <div class="card-header">
-        <span><i class="fa fa-info-circle mr-2"></i>{{ i18n.trans('messages-component-title') }}</span>
+        <span><i class="fas fa-info-circle mr-2"></i>{{ i18n.trans('messages-component-title') }}</span>
         <div class="btn-group btn-group-sm float-right" role="group" aria-label="Options">
-            <a href="{{ component.url(NULL) }}&component=Messages" class="btn btn-outline-secondary btn-options" role="button"><i class="fa fa-plus btn-options"></i></a>
-            <a class="btn btn-outline-secondary btn-options" role="button" data-toggle="collapse" data-target=".message-filter"><i class="fa fa-filter btn-options"></i></a>
-            <a class="btn btn-outline-secondary btn-options card-close" role="button" data-toggle="collapse" href="#messages"><i class="fa btn-options"></i></a>
+            <a href="{{ component.url(NULL) }}&component=Messages" class="btn btn-outline-secondary btn-options" role="button"><i class="fas fa-plus btn-options"></i></a>
+            <a class="btn btn-outline-secondary btn-options" role="button" data-toggle="collapse" data-target=".message-filter"><i class="fas fa-filter btn-options"></i></a>
+            <a class="btn btn-outline-secondary btn-options card-close" role="button" data-toggle="collapse" href="#messages"><i class="fasbtn-options"></i></a>
         </div>
     </div>
 
@@ -37,10 +37,10 @@
                             <p>{{ message.properties['description'] }}</p>
                         </div>
                         <div class="card-footer bg-{{ color }} text-white">
-                            <a href="{{ component.url(message.id) }}" class="btn btn-light btn-sm"><i class="fa fa-edit" aria-hidden="true"></i></a>
+                            <a href="{{ component.url(message.id) }}" class="btn btn-light btn-sm"><i class="fas fa-edit" aria-hidden="true"></i></a>
 
                             {% if message.properties['link'] is not empty %}
-                                <a href="{{ message.properties['link'] }}" target="_blank" class="btn btn-light btn-sm"><i class="fa fa-link" aria-hidden="true"></i></a>
+                                <a href="{{ message.properties['link'] }}" target="_blank" class="btn btn-light btn-sm"><i class="fas fa-link" aria-hidden="true"></i></a>
                                 {% endif %}
 
                             <small class="float-right">{{ message.displaydate }}</small>

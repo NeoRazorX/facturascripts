@@ -44,10 +44,10 @@
                     closeButton: false,
                     buttons: {
                         cancel: {
-                            label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+                            label: '<i class="fas fa-times"></i> {{ i18n.trans("cancel") }}'
                         },
                         confirm: {
-                            label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
+                            label: '<i class="fas fa-check"></i> {{ i18n.trans("confirm") }}',
                             className: 'btn-danger'
                         }
                     },
@@ -142,25 +142,25 @@
                 </nav>
                 <div class="btn-group">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
                         <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
-                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                            <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
                         <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
                 <div class="btn-group">
                     <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
-                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        <i class="fas fa-plus" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
                     </a>
                     <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url }}');" {{ popoverTitle(options_title, 'bottom') }}>
-                        <i class="fa fa-wrench" aria-hidden="true"></i>
+                        <i class="fas fa-wrench" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
                     </a>
                     {# Adds print and export options #}
@@ -169,7 +169,7 @@
             </div>
             <div class="col-md-5 text-right">
                 <h1 class="h3 d-none d-md-inline-block">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                    <i class="fas {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
                 <br class="d-md-none"/>
             </div>
@@ -184,7 +184,7 @@
                 <li class="nav-item" {{ popoverTitle(view.title, 'bottom') }}>
                     {% set active = (indexView == fsc.active) ? 'active' : '' %}
                     <a href="#{{ indexView }}" class="nav-link {{ active }}" data-toggle="tab" role="tab" aria-controls="{{ indexView }}">
-                        <i class="fa {{ fsc.getSettings(indexView, 'icon') }}" aria-hidden="true"></i>
+                        <i class="fas {{ fsc.getSettings(indexView, 'icon') }}" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
                         {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
                     </a>
@@ -212,7 +212,7 @@
                                                    placeholder="{{ i18n.trans('search') }}" autofocus=""/>
                                             <span class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
-                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                    <i class="fas fa-search" aria-hidden="true"></i>
                                                 </button>
                                             </span>
                                         </div>
@@ -252,7 +252,7 @@
                                         {% else %}
                                             <a class="btn btn-light" href="{{ item.url }}">
                                                 {% if item.icon %}
-                                                    <i class="fa {{ item.icon }}" aria-hidden="true"></i>
+                                                    <i class="fas {{ item.icon }}" aria-hidden="true"></i>
                                                 {% else %}
                                                     <span>{{ item.page }}</span>
                                                 {% endif %}
@@ -266,7 +266,7 @@
                             <div class="col-2 text-right">
                                 {% if view.getCursor() is not empty %}
                                     <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
                                     </a>
                                 {% endif %}
                             </div>

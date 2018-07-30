@@ -48,7 +48,7 @@ class EditImpuesto extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'tax';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-plus-square-o';
+        $pagedata['icon'] = 'fa-plus-square';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

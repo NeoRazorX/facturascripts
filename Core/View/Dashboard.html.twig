@@ -63,22 +63,22 @@
         <div class="col-sm-7 col-6">
             <div class="btn-group d-xs-none">
                 <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                    <i class="fas fa-sync" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['name'] == fsc.user.homepage %}
                 <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
-                    <i class="fa fa-bookmark" aria-hidden="true"></i>
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
                 <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                    <i class="far fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% endif %}
             </div>
         </div>
         <div class="col-sm-5 col-6 text-right">
             <h1 style="margin-top: 0px; margin-bottom: 0px;">
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                <i class="fas {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
             </h1>
         </div>
     </div>

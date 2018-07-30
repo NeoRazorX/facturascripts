@@ -72,7 +72,7 @@ class EditDashboardData extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'dashboard-card';
         $pagedata['menu'] = 'reports';
-        $pagedata['icon'] = 'fa-dashboard';
+        $pagedata['icon'] = 'fa-tachometer-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
