@@ -162,7 +162,7 @@ class BusinessDocumentTools
      *
      * @return array
      */
-    private function getSubtotals($lines)
+    public function getSubtotals($lines)
     {
         $irpf = 0.0;
         $subtotals = [];
@@ -225,6 +225,11 @@ class BusinessDocumentTools
         if ($this->siniva) {
             $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
         }
+
+        $impuesto = new Impuesto();
+        $where = [new DataBaseWhere('iva', (int) $newLine->iva)];
+        $impuesto->loadFromCode('', $where);
+        $newLine->codimpuesto = $impuesto->codimpuesto;
 
         return $newLine;
     }
