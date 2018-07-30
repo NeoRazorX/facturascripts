@@ -35,26 +35,24 @@
                         </div>
                     </div>
                 </div>
-            {% endif %}
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        {{ forms.simpleSelect('coddivisa', 'coddivisa', coddivisa, fsc.getSelectValues('Divisa'), i18n.trans('currency'), 'fa-money') }}
+                <div class="row">
+                    <div class="col-12">
+                        <br/>
                     </div>
                 </div>
-                <div class="col-sm-6">
+            {% endif %}
+            <div class="row">
+                <div class="col-sm-4">
                     <div class="form-group">
                         {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fa-globe') }}
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <div class="form-group">
                         {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <div class="form-group">
                         {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
                     </div>

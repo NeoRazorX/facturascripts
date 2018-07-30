@@ -39,6 +39,12 @@ class Wizard extends Controller
 
     /**
      *
+     * @var AppSettings
+     */
+    private $appSettings;
+
+    /**
+     *
      * @var bool
      */
     public $showChangePasswd = false;
@@ -89,46 +95,21 @@ class Wizard extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->appSettings = new AppSettings();
 
         // Show message if user and password are admin
         if ($this->user->nick === 'admin' && $this->user->verifyPassword('admin')) {
             $this->showChangePasswd = true;
         }
 
-        $this->preSetAppSettings();
+        $pass = $this->request->request->get('password', '');
+        if ('' !== $pass && !$this->saveNewPassword($pass)) {
+            return;
+        }
 
-        $coddivisa = $this->request->request->get('coddivisa', '');
         $codpais = $this->request->request->get('codpais', '');
-        if ($codpais !== '') {
-            if ($codpais !== AppSettings::get('default', 'codpais', '')) {
-                $this->preSetAppSettings($codpais);
-            }
-            $appSettings = new AppSettings();
-            $appSettings->set('default', 'coddivisa', $coddivisa);
-            $appSettings->set('default', 'codpais', $codpais);
-            $appSettings->set('default', 'homepage', 'AdminPlugins');
-            $appSettings->save();
-            $this->initModels();
-            $this->saveAddress($appSettings, $codpais);
-
-            /// change user homepage
-            $this->user->homepage = 'AdminPlugins';
-            $this->user->save();
-
-            /// change default log values to enabled
-            $this->enableLogs();
-
-            /// add the default role for agents
-            $this->addDefaultRoleAccess();
-
-            /// clear routes
-            $appRouter = new AppRouter();
-            $appRouter->clear();
-
-            if ($this->checkNewPassword()) {
-                /// redir to EditSettings
-                $this->response->headers->set('Refresh', '0; EditSettings');
-            }
+        if ('' !== $codpais) {
+            $this->saveStep1($codpais);
         }
     }
 
@@ -212,16 +193,38 @@ class Wizard extends Controller
     }
 
     /**
+     * Set default AppSettings based on codpais
+     *
+     * @param string $codpais
+     */
+    private function preSetAppSettings(string $codpais)
+    {
+        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
+        if (!file_exists($filePath)) {
+            return;
+        }
+
+        $fileContent = file_get_contents($filePath);
+        $defaultValues = json_decode($fileContent, true) ?? [];
+        foreach ($defaultValues as $group => $values) {
+            foreach ($values as $key => $value) {
+                $this->appSettings->set($group, $key, $value);
+            }
+        }
+        
+        $this->appSettings->save();
+    }
+
+    /**
      * Save company default address.
      *
-     * @param AppSettings $appSettings
-     * @param string      $codpais
+     * @param string $codpais
      */
-    private function saveAddress(&$appSettings, $codpais)
+    private function saveAddress($codpais)
     {
         $this->empresa->codpais = $codpais;
-        $this->empresa->provincia = $this->request->request->get('provincia');
-        $this->empresa->ciudad = $this->request->request->get('ciudad');
+        $this->empresa->provincia = $this->request->request->get('provincia', '');
+        $this->empresa->ciudad = $this->request->request->get('ciudad', '');
         $this->empresa->save();
 
         $almacenModel = new Model\Almacen();
@@ -231,8 +234,9 @@ class Wizard extends Controller
             $almacen->ciudad = $this->empresa->ciudad;
             $almacen->save();
 
-            $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
-            $appSettings->save();
+            $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+            $this->appSettings->set('default', 'idempresa', $this->empresa->idempresa);
+            $this->appSettings->save();
             break;
         }
     }
@@ -242,14 +246,13 @@ class Wizard extends Controller
      *
      * @return bool Returns true if success, otherwise return false.
      */
-    private function checkNewPassword(): bool
+    private function saveNewPassword(string $pass): bool
     {
-        $pass = $this->request->request->get('password', '');
-        $repeatPass = $this->request->request->get('repassword', '');
         if ($pass === '') {
             return true;
         }
 
+        $repeatPass = $this->request->request->get('repassword', '');
         if ($pass !== $repeatPass) {
             $this->miniLog->warning($this->i18n->trans('different-passwords', ['%userNick%' => $this->user->nick]));
             return false;
@@ -259,26 +262,30 @@ class Wizard extends Controller
         return $this->user->save();
     }
 
-    /**
-     * Set default AppSettings based on codpais
-     *
-     * @param string $codPais
-     */
-    private function preSetAppSettings($codPais = FS_CODPAIS)
+    private function saveStep1(string $codpais)
     {
-        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codPais . '/default.json';
-        if (file_exists($filePath) && $fileContent = file_get_contents($filePath)) {
-            $defaultValues = json_decode($fileContent, true) ?? [];
-            $defAppSettings = new AppSettings();
-            foreach ($defaultValues as $group => $values) {
-                foreach ($values as $key => $value) {
-                    $defAppSettings->set($group, $key, $value);
-                }
-            }
-            $defAppSettings->save();
-            $this->miniLog->notice($this->i18n->trans('loaded-default-appsettings', ['%codPais%' => $codPais]));
-        } else {
-            $this->miniLog->alert($this->i18n->trans('not-available-default-appsettings', ['%codPais%' => $codPais]));
-        }
+        $this->preSetAppSettings($codpais);
+        $this->appSettings->set('default', 'codpais', $codpais);
+        $this->appSettings->set('default', 'homepage', 'AdminPlugins');
+        $this->appSettings->save();
+        $this->initModels();
+        $this->saveAddress($codpais);
+
+        /// change user homepage
+        $this->user->homepage = 'AdminPlugins';
+        $this->user->save();
+
+        /// change default log values to enabled
+        $this->enableLogs();
+
+        /// add the default role for agents
+        $this->addDefaultRoleAccess();
+
+        /// clear routes
+        $appRouter = new AppRouter();
+        $appRouter->clear();
+
+        /// redir to EditSettings
+        $this->response->headers->set('Refresh', '0; EditSettings');
     }
 }

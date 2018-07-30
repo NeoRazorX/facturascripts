@@ -1,17 +1,8 @@
 {
-  "default": {
-    "codpais": "ESP",
-    "coddivisa": "EUR",
-    "idempresa": "1",
-    "codalmacen": "ALG",
-    "codserie": "A",
-    "codpago": "CONT",
-    "codimpuesto": "IVA21",
-    "decimals": "2",
-    "decimal_separator": ",",
-    "thousands_separator": ".",
-    "currency_position": "right",
-    "homepage": "Dashboard",
-    "item_limit": "100"
-  }
+    "default": {
+        "coddivisa": "EUR",
+        "codserie": "A",
+        "codpago": "CONT",
+        "codimpuesto": "IVA21"
+    }
 }
