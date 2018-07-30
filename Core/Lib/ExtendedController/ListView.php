@@ -34,8 +34,8 @@ class ListView extends BaseView implements DataViewInterface
     /**
      * Order constants
      */
-    const ICON_ASC = 'fa-sort-amount-asc';
-    const ICON_DESC = 'fa-sort-amount-desc';
+    const ICON_ASC = 'fa-sort-amount-down';
+    const ICON_DESC = 'fa-sort-amount-up';
 
     /**
      * Cursor with data from the model display
