@@ -8,32 +8,32 @@
 </style>
 
     <div class="card-header">
-        <i class="fa fa-tasks"></i>&nbsp; {{ i18n.trans('tasks-component-title') }}
+        <i class="fas fa-tasks"></i>&nbsp; {{ i18n.trans('tasks-component-title') }}
         <div class="btn-group btn-group-sm float-right" role="group" aria-label="Options">
-            <a href="{{ component.url(NULL) }}&component=Tasks"  class="btn btn-outline-secondary btn-options" role="button"><i class="fa fa-plus btn-options"></i></a>
-            <a class="btn btn-outline-secondary btn-options card-close" role="button" data-toggle="collapse" href="#tasks"><i class="fa btn-options"></i></a>
+            <a href="{{ component.url(NULL) }}&component=Tasks"  class="btn btn-outline-secondary btn-options" role="button"><i class="fas fa-plus btn-options"></i></a>
+            <a class="btn btn-outline-secondary btn-options card-close" role="button" data-toggle="collapse" href="#tasks"><i class="fasbtn-options"></i></a>
         </div>
     </div>
 
     <div class="card-body show" id="tasks">
-        <h5><i class="fa fa-bell text-warning"></i>&nbsp; {{ i18n.trans('tasks-personal-title') }}</h5>
+        <h5><i class="fas fa-bell text-warning"></i>&nbsp; {{ i18n.trans('tasks-personal-title') }}</h5>
         <ul class="list-group list-group-sortable">
         {% for task in component.tasks %}
             {% set color = task.properties['color'] %}
             <li class="list-group-item task-border-{{ color }}">
                 <span>{{ task.properties['description'] }}</span>
-                <a href="{{ component.url(task.id) }}"><i class="fa fa-edit text-secondary float-right" aria-hidden="true"></i></a>
+                <a href="{{ component.url(task.id) }}"><i class="fas fa-edit text-secondary float-right" aria-hidden="true"></i></a>
             </li>
         {% endfor %}
         </ul>
 
-        <h5><i class="fa fa-check text-success mt-4"></i>&nbsp; {{ i18n.trans('tasks-completed-title') }}</h5>
+        <h5><i class="fas fa-check text-success mt-4"></i>&nbsp; {{ i18n.trans('tasks-completed-title') }}</h5>
         <ul class="list-group list-group-sortable task-completed">
         {% for task in component.completed %}
             {% set color = task.properties['color'] %}
             <li class="list-group-item task-border-{{ color }}">
                 <span>{{ task.properties['description'] }}</span>
-                <a href="{{ component.url(task.id) }}"><i class="fa fa-edit text-secondary float-right" aria-hidden="true"></i></a>
+                <a href="{{ component.url(task.id) }}"><i class="fas fa-edit text-secondary float-right" aria-hidden="true"></i></a>
             </li>
         {% endfor %}
         </ul>

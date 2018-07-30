@@ -53,13 +53,13 @@
                 <div class="input-group">
                     <span class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-money fa-fw" aria-hidden="true"></i>
+                            <i class="fas fa-money-bill-alt fa-fw" aria-hidden="true"></i>
                         </span>
                     </span>
                     <input type="text" id="doc_total" name="total" value="{{ model.total }}" class="form-control text-right" disabled="" />
                     <div class="input-group-append">
                         <button type="button" class="btn btn-primary" onclick="documentSave();">
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            <i class="far fa-save" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
         <div class="form-row">
             <div class="col">
                 <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary');">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <i class="fas fa-trash" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ context.i18n.trans('delete') }}</span>
                 </a>
             </div>
@@ -89,7 +89,7 @@
             {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
             <div class="col text-right">
                 <button type="button" class="btn btn-sm btn-primary" onclick="documentSave();">
-                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
+                    <i class="far fa-save" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
                 </button>
             </div>
         </div>
@@ -120,7 +120,7 @@
             <div class="input-group">
                 <span class="input-group-prepend">
                     <span class="input-group-text">
-                        <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+                        <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i>
                     </span>
                 </span>
             {% endif %}
@@ -145,7 +145,7 @@
         <div class="input-group">
             <span class="input-group-prepend">
                 <span class="input-group-text">
-                    <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
                 </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
@@ -154,7 +154,7 @@
                    placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-append">
                 <a href="{{ newUrl }}" target="_blank" class="btn btn-success">
-                    <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+                    <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
                 </a>
             </span>
         </div>
@@ -166,7 +166,7 @@
         <div class="input-group">
             <span class="input-group-prepend">
                 <span class="input-group-text">
-                    <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
                 </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
@@ -175,7 +175,7 @@
                    placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-append">
                 <a href="{{ newUrl }}" target="_blank" class="btn btn-success">
-                    <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+                    <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
                 </a>
             </span>
         </div>
@@ -188,9 +188,9 @@
             {% for status in view.documentStatus %}
                 {% if model.idestado == status.idestado %}
                     {% if status.editable %}
-                        <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                        <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                     {% else %}
-                        <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                        <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -200,18 +200,18 @@
                 {% if model.idestado == status.idestado %}
                     <a class="dropdown-item active" href="#">
                         {% if status.editable %}
-                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                            <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}
-                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                            <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% endif %}
                     </a>
                 {% else %}
                     <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
                             documentSave();">
                         {% if status.editable %}
-                            <i class="fa fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                            <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}
-                            <i class="fa fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                            <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% endif %}
                     </a>
                 {% endif %}
@@ -219,7 +219,7 @@
             {% if model.exists() %}
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="DocumentStitcher?model={{ model.modelClassName() }}&codes={{ model.primaryColumnValue() }}">
-                    <i class="fa fa-copy fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-or-split') }}
+                    <i class="fas fa-copy fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-or-split') }}
                 </a>
             {% endif %}
         </div>

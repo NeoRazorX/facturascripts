@@ -69,7 +69,7 @@ class EditApiKey extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditApiKey', 'ApiKey', 'api-key', 'fa-key');
-        $this->addEditListView('EditApiAccess', 'ApiAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('EditApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
     }
 
     /**

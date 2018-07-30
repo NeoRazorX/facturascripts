@@ -52,7 +52,7 @@
             </widget>
         </column>
         <column name="ammount" numcolumns="2" display="right" order="200">
-            <widget type="money" fieldname="importe" icon="fa-money" readonly="readonly" />
+            <widget type="money" fieldname="importe" icon="fa-money-bill-alt" readonly="readonly" />
         </column>
     </columns>
 </view>

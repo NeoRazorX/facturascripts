@@ -42,7 +42,7 @@ class EditAtributo extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attribute';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-sliders';
+        $pagedata['icon'] = 'fa-sliders-h';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

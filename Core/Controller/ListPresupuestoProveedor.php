@@ -40,7 +40,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimations';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -51,7 +51,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fa-files-o');
+        $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fa-copy');
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListPresupuestoProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);

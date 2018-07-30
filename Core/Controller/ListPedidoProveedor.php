@@ -40,7 +40,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'orders';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -51,7 +51,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fa-files-o');
+        $this->addView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fa-copy');
         $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListPedidoProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListPedidoProveedor', ['fecha'], 'date', 2);

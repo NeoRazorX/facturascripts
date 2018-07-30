@@ -36,10 +36,10 @@
                     closeButton: false,
                     buttons: {
                         cancel: {
-                            label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
+                            label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
                         },
                         confirm: {
-                            label: "<i class='fa fa-check'></i> {{ i18n.trans('delete') }}",
+                            label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
                             className: 'btn-danger'
                         }
                     },
@@ -71,22 +71,22 @@
             <div class="col-5">
                 <div class="btn-group d-xs-none">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
                         <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE">
-                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                            <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
                         <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE">
-                            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
                 {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
                     <div class="btn-group d-xs-none">
                         <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            <i class="fas fa-plus" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
                         </button>
                     </div>
@@ -94,7 +94,7 @@
             </div>
             <div class="col text-right">
                 <h1 class="h3">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                    <i class="fas {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
             </div>
         </div>
@@ -125,17 +125,17 @@
                             <span class="btn-group d-xs-none">
                                 {% if plugin.enabled %}
                                     <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
-                                        <i class="fa fa-close" aria-hidden="true"></i>
+                                        <i class="fas fa-times" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
                                     </a>
                                 {% elseif plugin.compatible %}
                                     <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
-                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                        <i class="fas fa-check" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
                                     </a>
                                     {% if not constant('FS_DISABLE_RM_PLUGINS') %}
                                         <a class="btn btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                            <i class="fas fa-trash" aria-hidden="true"></i>
                                             <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
                                         </a>
                                     {% endif %}

@@ -102,10 +102,10 @@ class EditCliente extends ExtendedController\PanelController
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
         $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
 
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-copy');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-copy');
         $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fa-cubes');
 
         /// Disable columns

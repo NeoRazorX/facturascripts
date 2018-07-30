@@ -51,10 +51,10 @@ class EditAgente extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditAgente', 'Agente', 'agent');
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-copy');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-copy');
     }
 
     /**

@@ -179,7 +179,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         }
 
         if (strpos($this->icon, 'fa-') === 0) {
-            return '<i class="fa ' . $this->icon . '" aria-hidden="true">&nbsp;&nbsp;</i></span>';
+            return '<i class="fas ' . $this->icon . '" aria-hidden="true">&nbsp;&nbsp;</i></span>';
         }
 
         return '<i aria-hidden="true">' . $this->icon . '</i>&nbsp;&nbsp;</span>';

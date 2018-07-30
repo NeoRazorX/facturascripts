@@ -46,7 +46,7 @@ class EditDivisa extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'currency';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-money';
+        $pagedata['icon'] = 'fa-money-bill-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
