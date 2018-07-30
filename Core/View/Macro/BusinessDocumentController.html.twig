@@ -33,7 +33,7 @@
 
     <script type="text/javascript">
         documentLineData = {{ view.getLineData() | raw }};
-        documentUrl = '{{ model.url('edit') | raw }}';
+                documentUrl = '{{ model.url('edit') | raw }}';
     </script>
 
     <form name="f_document_primary" action="#" method="post">
@@ -66,13 +66,21 @@
             </div>
         </div>
         <br/>
-        {% if model.editable == false and model.exists() %}
-            <div class="row">
-                <div class="col-12">
+        <div class="row">
+            {% if model.editable == false and model.exists() %}
+                <div class="col">
                     <div class="alert alert-info text-center">{{ context.i18n.trans('non-editable-document') }}</div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+            {% for childrenDoc in model.childrenDocuments() %}
+                <div class="col">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-share-square" aria-hidden="true"></i> {{ childrenDoc.modelClassName() }}
+                        <a href="{{ childrenDoc.url() }}">{{ childrenDoc.primaryDescription() }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
         <div id="document-lines"></div>
         <br/>
         <div class="form-row">

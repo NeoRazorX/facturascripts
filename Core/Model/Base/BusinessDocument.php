@@ -19,7 +19,9 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -248,6 +250,37 @@ abstract class BusinessDocument extends ModelClass
     }
 
     /**
+     * 
+     * @return array
+     */
+    public function childrenDocuments()
+    {
+        $children = [];
+
+        $keys = [];
+        $docTransformation = new DocTransformation();
+        $where = [
+            new DataBaseWhere('model1', $this->modelClassName()),
+            new DataBaseWhere('iddoc1', $this->primaryColumnValue())
+        ];
+        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+            $key = $docTrans->model2 . '|' . $docTrans->iddoc2;
+            if (in_array($key, $keys, true)) {
+                continue;
+            }
+
+            $newModelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $docTrans->model2;
+            $newModel = new $newModelClass();
+            if ($newModel->loadFromCode($docTrans->iddoc2)) {
+                $children[] = $newModel;
+                $keys[] = $key;
+            }
+        }
+
+        return $children;
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -349,6 +382,33 @@ abstract class BusinessDocument extends ModelClass
         }
 
         return false;
+    }
+
+    public function parentDocuments()
+    {
+        $parents = [];
+
+        $keys = [];
+        $docTransformation = new DocTransformation();
+        $where = [
+            new DataBaseWhere('model2', $this->modelClassName()),
+            new DataBaseWhere('iddoc2', $this->primaryColumnValue())
+        ];
+        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+            $key = $docTrans->model1 . '|' . $docTrans->iddoc1;
+            if (in_array($key, $keys, true)) {
+                continue;
+            }
+
+            $newModelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $docTrans->model1;
+            $newModel = new $newModelClass();
+            if ($newModel->loadFromCode($docTrans->iddoc1)) {
+                $parents[] = $newModel;
+                $keys[] = $key;
+            }
+        }
+
+        return $parents;
     }
 
     /**
