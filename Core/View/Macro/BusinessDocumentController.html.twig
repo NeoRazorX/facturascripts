@@ -67,6 +67,14 @@
         </div>
         <br/>
         <div class="row">
+            {% for parentDoc in model.parentDocuments() %}
+                <div class="col">
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-backward" aria-hidden="true"></i> {{ parentDoc.modelClassName() }}
+                        <a href="{{ parentDoc.url() }}">{{ parentDoc.primaryDescription() }}</a>
+                    </div>
+                </div>
+            {% endfor %}
             {% if model.editable == false and model.exists() %}
                 <div class="col">
                     <div class="alert alert-info text-center">{{ context.i18n.trans('non-editable-document') }}</div>
@@ -74,8 +82,8 @@
             {% endif %}
             {% for childrenDoc in model.childrenDocuments() %}
                 <div class="col">
-                    <div class="alert alert-info text-center">
-                        <i class="fas fa-share-square" aria-hidden="true"></i> {{ childrenDoc.modelClassName() }}
+                    <div class="alert alert-success text-center">
+                        <i class="fas fa-forward" aria-hidden="true"></i> {{ childrenDoc.modelClassName() }}
                         <a href="{{ childrenDoc.url() }}">{{ childrenDoc.primaryDescription() }}</a>
                     </div>
                 </div>
