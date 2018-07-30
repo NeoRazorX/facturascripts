@@ -49,9 +49,8 @@ class ListEjercicio extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEjercicio', 'Ejercicio');
+        $this->addView('ListEjercicio', 'Ejercicio', 'exercises', 'fa-calendar');
         $this->addSearchFields('ListEjercicio', ['nombre', 'codejercicio']);
-
         $this->addOrderBy('ListEjercicio', ['fechainicio'], 'start-date', 2);
         $this->addOrderBy('ListEjercicio', ['codejercicio'], 'code');
         $this->addOrderBy('ListEjercicio', ['nombre'], 'name');

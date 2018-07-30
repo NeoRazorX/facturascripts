@@ -36,7 +36,7 @@
                 <widget type="text" fieldname="codiso" icon="fa-globe" />
             </column>
         </group>
-        <group name="other" numcolumns="6" title="other-data" icon="fa-area-chart">
+        <group name="other" numcolumns="6" title="other-data" icon="fa-chart-area">
             <column name="name" order="120">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>

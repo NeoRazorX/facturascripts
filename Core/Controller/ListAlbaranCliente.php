@@ -39,7 +39,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-notes';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fa-copy';
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
@@ -51,7 +51,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     protected function createViews()
     {
         // Delivery notes
-        $this->addView('ListAlbaranCliente', 'AlbaranCliente');
+        $this->addView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
         $this->addOrderBy('ListAlbaranCliente', ['codigo'], 'code');
         $this->addOrderBy('ListAlbaranCliente', ['fecha'], 'date', 2);

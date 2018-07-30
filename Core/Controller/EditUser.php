@@ -55,7 +55,7 @@ class EditUser extends ExtendedController\PanelController
     {
         /// Add all views
         $this->addEditView('EditUser', 'User', 'user', 'fa-user');
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fa-address-card-o');
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fa-address-card');
 
         /// Load values for input selects
         $this->loadHomepageValues();

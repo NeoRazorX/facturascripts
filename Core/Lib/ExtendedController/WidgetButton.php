@@ -276,7 +276,7 @@ class WidgetButton implements VisualItemInterface
      */
     private function getIconHTML(): string
     {
-        return empty($this->icon) ? '' : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
+        return empty($this->icon) ? '' : '<i class="fas ' . $this->icon . '"></i>&nbsp;&nbsp;';
     }
 
     /**

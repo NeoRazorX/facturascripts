@@ -40,7 +40,7 @@ class ListFacturaCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoices';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fa-copy';
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
@@ -51,7 +51,7 @@ class ListFacturaCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
+        $this->addView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');
         $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
         $this->addOrderBy('ListFacturaCliente', ['codigo'], 'code');
         $this->addOrderBy('ListFacturaCliente', ['fecha'], 'date', 2);

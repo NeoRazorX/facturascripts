@@ -23,7 +23,7 @@
                         <input type="text" name="query" value="{{ fsc.query }}" class="form-control" autocomplete="off" autofocus=""/>
                         <span class="input-group-append">
                             <button type="submit" class="btn btn-info">
-                                <i class="fa fa-search" aria-hidden="true"></i>
+                                <i class="fas fa-search" aria-hidden="true"></i>
                             </button>
                         </span>
                     </div>
@@ -36,7 +36,7 @@
                 {% if fsc.results['pages'] is not empty  %}
                 <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
                     <span class='badge badge-secondary float-right'>{{ fsc.results['pages']|length }}</span>
-                    <i class="fa fa-mouse-pointer fa-fw"></i>
+                    <i class="fas fa-mouse-pointer fa-fw"></i>
                     {{ i18n.trans('pages') | capitalize }}
                 </a>
                 {% endif %}
@@ -64,7 +64,7 @@
                                         </td>
                                         <td class="text-right">
                                             {% if page.icon %}
-                                            <i class="fa {{ page.icon }}"></i>
+                                            <i class="fas {{ page.icon }}"></i>
                                             {% endif %}
                                         </td>
                                         <td>{{ i18n.trans(page.title) | capitalize }}</td>

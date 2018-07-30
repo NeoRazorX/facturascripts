@@ -289,7 +289,7 @@ abstract class WidgetItem implements VisualItemInterface
 
         $html = '<div class="input-group"><span class="input-group-prepend"><span class="input-group-text">';
         if (strpos($this->icon, 'fa-') === 0) {
-            return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span></span>';
+            return $html . '<i class="fas ' . $this->icon . '" aria-hidden="true"></i></span></span>';
         }
 
         return $html . '<i aria-hidden="true">' . $this->icon . '</i></span></span>';

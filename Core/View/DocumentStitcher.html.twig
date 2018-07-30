@@ -32,13 +32,13 @@
         <div class="row">
             <div class="col">
                 <h1 class="h3">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }} {{ fsc.modelName }}
+                    <i class="fas {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }} {{ fsc.modelName }}
                 </h1>
             </div>
             <div class="col text-right">
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-files-o" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
+                        <i class="far fa-copy" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         {% for destinyDoc in fsc.approveTo %}
@@ -107,7 +107,7 @@
                 <div class="col">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-files-o" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
+                            <i class="far fa-copy" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for approve in fsc.approveTo %}

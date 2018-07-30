@@ -56,9 +56,9 @@ class AppSettings
     /**
      * Return the value of property in group.
      *
-     * @param string      $group
-     * @param string      $property
-     * @param mixed       $default
+     * @param string $group
+     * @param string $property
+     * @param mixed  $default
      *
      * @return mixed
      */

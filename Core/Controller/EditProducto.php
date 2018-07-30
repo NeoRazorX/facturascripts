@@ -52,7 +52,7 @@ class EditProducto extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
-        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-fork');
+        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-branch');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
 
         $this->loadCustomStockWidget();

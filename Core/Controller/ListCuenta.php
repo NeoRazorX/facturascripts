@@ -70,7 +70,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addOrderBy('ListCuenta', ['codejercicio desc, descripcion'], 'description');
 
         /* Special account */
-        $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fa-newspaper-o');
+        $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fa-newspaper');
         $this->setSettings('ListCuentaEspecial', 'insert', false);
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuentaesp']);
 
