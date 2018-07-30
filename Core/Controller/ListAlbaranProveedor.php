@@ -50,7 +50,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAlbaranProveedor', 'AlbaranProveedor');
+        $this->addView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fa-copy');
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListAlbaranProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListAlbaranProveedor', ['fecha'], 'date', 2);

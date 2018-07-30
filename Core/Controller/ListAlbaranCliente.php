@@ -51,7 +51,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     protected function createViews()
     {
         // Delivery notes
-        $this->addView('ListAlbaranCliente', 'AlbaranCliente');
+        $this->addView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
         $this->addOrderBy('ListAlbaranCliente', ['codigo'], 'code');
         $this->addOrderBy('ListAlbaranCliente', ['fecha'], 'date', 2);
