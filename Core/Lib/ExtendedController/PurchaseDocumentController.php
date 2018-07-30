@@ -28,17 +28,41 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 abstract class PurchaseDocumentController extends BusinessDocumentController
 {
 
+    /**
+     * 
+     * @return string
+     */
     public function getNewSubjectUrl()
     {
         $proveedor = new Proveedor();
         return $proveedor->url('new') . '?action=insert';
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function getSubjectColumns()
     {
         return ['codproveedor'];
     }
 
+    /**
+     * 
+     * @param mixed $view
+     */
+    protected function loadCustomContactsWidget(&$view)
+    {
+        ;
+    }
+
+    /**
+     * 
+     * @param mixed $view
+     * @param array $formData
+     * 
+     * @return string
+     */
     protected function setSubject(&$view, $formData)
     {
         if ($view->model->codproveedor === $formData['codproveedor'] && !empty($view->model->codproveedor)) {

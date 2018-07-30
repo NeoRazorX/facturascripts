@@ -53,10 +53,6 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
     protected function createViews()
     {
         parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'invoice');
         $this->addListView('EditAsiento', 'asiento', 'accounting-entries', 'fa-balance-scale');
     }
 
@@ -79,18 +75,16 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditFacturaProveedor':
-                $idfactura = $this->getViewModelValue('Document', 'idfactura');
-                $view->loadData($idfactura);
-                break;
             case 'EditAsiento':
-                $where = array();
-                $where[] = new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasiento'));
-                $where[] = new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasientop'), '=', 'OR');
+                $where = [
+                    new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasiento')),
+                    new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasientop'), '=', 'OR')
+                ];
                 $view->loadData('', $where);
                 break;
-        }
 
-        parent::loadData($viewName, $view);
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }

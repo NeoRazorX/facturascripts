@@ -28,12 +28,20 @@ use FacturaScripts\Dinamic\Model\Cliente;
 abstract class SalesDocumentController extends BusinessDocumentController
 {
 
+    /**
+     * 
+     * @return string
+     */
     public function getNewSubjectUrl()
     {
         $cliente = new Cliente();
         return $cliente->url('new') . '?action=insert';
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function getSubjectColumns()
     {
         return ['codcliente'];
@@ -42,12 +50,12 @@ abstract class SalesDocumentController extends BusinessDocumentController
     /**
      * Load custom contacts data for additional address details.
      *
-     * @param string $viewName
+     * @param mixed $view
      */
-    protected function loadCustomContactsWidget($viewName)
+    protected function loadCustomContactsWidget(&$view)
     {
         $cliente = new Cliente();
-        if (!$cliente->loadFromCode($this->views[$viewName]->model->codcliente)) {
+        if (!$cliente->loadFromCode($view->model->codcliente)) {
             return;
         }
 
@@ -57,14 +65,20 @@ abstract class SalesDocumentController extends BusinessDocumentController
         }
 
         /// billing address
-        $columnBilling = $this->views[$viewName]->columnForName('billingaddr');
+        $columnBilling = $view->columnForName('billingaddr');
         $columnBilling->widget->setValuesFromArray($addresses, false);
 
         /// shipping address
-        $columnShipping = $this->views[$viewName]->columnForName('shippingaddr');
+        $columnShipping = $view->columnForName('shippingaddr');
         $columnShipping->widget->setValuesFromArray($addresses, false);
     }
 
+    /**
+     * 
+     * @param mixed $view
+     * @param array $formData
+     * @return string
+     */
     protected function setSubject(&$view, $formData)
     {
         if ($view->model->codcliente === $formData['codcliente'] && !empty($view->model->codcliente)) {

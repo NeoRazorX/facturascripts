@@ -21,31 +21,29 @@
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
-  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
 -->
 
 <view>
     <columns>
-        <group name="data" numcolumns="12">
+        <group name="supplier" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idalbaran" required="true" />
+                <widget type="text" fieldname="idpresupuesto" required="true" />
             </column>
-            <column name="numsupplier" numcolumns="3" order="140">
-                <widget type="text" fieldname="numproveedor" />
-            </column>
-            <column name="date" title="date" numcolumns="2" order="110">
+            <column name="date" title="date" numcolumns="2" order="100">
                 <widget type="datepicker" fieldname="fecha" required="true" />
             </column>
-            <column name="hour" title="hour" numcolumns="2" order="120">
+            <column name="hour" title="hour" numcolumns="2" order="110">
                 <widget type="text" fieldname="hora" required="true" />
             </column>
-        </group>
-        <group name="supplier" title="supplier" numcolumns="12">
-            <column name="cifnif" title="cifnif" numcolumns="4" order="120">
-                <widget type="text" fieldname="cifnif" />
+            <column name="numsupplier" numcolumns="3" order="120">
+                <widget type="text" fieldname="numproveedor" />
             </column>
-            <column name="supplier" title="name-or-business-name" numcolumns="3" order="110">
+            <column name="supplier" numcolumns="3" order="130">
                 <widget type="text" fieldname="nombre" required="true" />
+            </column>
+            <column name="cifnif" title="cifnif" numcolumns="2" order="140">
+                <widget type="text" fieldname="cifnif" />
             </column>
         </group>
         <group name="codattributes" title="attributes" numcolumns="12">

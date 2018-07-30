@@ -46,18 +46,6 @@ class EditPresupuestoProveedor extends ExtendedController\PurchaseDocumentContro
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
-    }
-
-    /**
      * Return the document class name.
      *
      * @return string
@@ -65,21 +53,5 @@ class EditPresupuestoProveedor extends ExtendedController\PurchaseDocumentContro
     protected function getModelClassName()
     {
         return 'PresupuestoProveedor';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditPresupuestoProveedor') {
-            $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
-            $view->loadData($idpresupuesto);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

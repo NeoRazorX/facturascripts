@@ -46,18 +46,6 @@ class EditPedidoProveedor extends ExtendedController\PurchaseDocumentController
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
-    }
-
-    /**
      * Return the document class name.
      *
      * @return string
@@ -65,21 +53,5 @@ class EditPedidoProveedor extends ExtendedController\PurchaseDocumentController
     protected function getModelClassName()
     {
         return 'PedidoProveedor';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditPedidoProveedor') {
-            $idpedido = $this->getViewModelValue('Document', 'idpedido');
-            $view->loadData($idpedido);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

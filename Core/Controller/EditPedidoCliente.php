@@ -46,18 +46,6 @@ class EditPedidoCliente extends ExtendedController\SalesDocumentController
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail');
-    }
-
-    /**
      * Return the document class name.
      *
      * @return string
@@ -65,23 +53,5 @@ class EditPedidoCliente extends ExtendedController\SalesDocumentController
     protected function getModelClassName()
     {
         return 'PedidoCliente';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditPedidoCliente') {
-            $idpedido = $this->getViewModelValue('Document', 'idpedido');
-            $view->loadData($idpedido);
-
-            $this->loadCustomContactsWidget($viewName);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

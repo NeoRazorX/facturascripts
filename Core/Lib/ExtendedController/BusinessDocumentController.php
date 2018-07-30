@@ -46,16 +46,21 @@ abstract class BusinessDocumentController extends PanelController
      * @return string
      */
     abstract protected function getModelClassName();
-    
+
     /**
      * Retuns an url to create a new subject.
      */
     abstract public function getNewSubjectUrl();
-    
+
     /**
      * Returns an array of columns needed for subject.
      */
     abstract public function getSubjectColumns();
+
+    /**
+     * 
+     */
+    abstract protected function loadCustomContactsWidget(&$view);
 
     /**
      * Sets subject for this document.
@@ -87,7 +92,7 @@ abstract class BusinessDocumentController extends PanelController
     public function getSelectValues($modelName)
     {
         $values = [];
-        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $modelName = self::MODEL_NAMESPACE . $modelName;
         $model = new $modelName();
 
         $order = [$model->primaryDescriptionColumn() => 'ASC'];
@@ -103,10 +108,16 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function createViews()
     {
-        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $this->getModelClassName();
-        $view = new BusinessDocumentView('new', $modelName, $this->getLineXMLView(), $this->user->nick);
+        /// doc tab
+        $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
+        $view = new BusinessDocumentView('new', $fullModelName, $this->getLineXMLView(), $this->user->nick);
         $this->addView('Document', $view, 'fa-file');
 
+        /// edita tab
+        $viewName = 'Edit' . $this->getModelClassName();
+        $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fa-edit');
+
+        /// template
         $this->setTemplate('Master/BusinessDocumentController');
     }
 
@@ -178,8 +189,19 @@ abstract class BusinessDocumentController extends PanelController
     protected function loadData($viewName, $view)
     {
         $iddoc = $this->request->get('code', '');
-        if ($viewName === 'Document' && !empty($iddoc)) {
-            $view->loadData($iddoc);
+        if (empty($iddoc)) {
+            return;
+        }
+
+        $editViewName = 'Edit' . $this->getModelClassName();
+        switch ($viewName) {
+            case $editViewName:
+                $view->loadData($iddoc);
+                $this->loadCustomContactsWidget($view);
+                return;
+
+            case 'Document':
+                return $view->loadData($iddoc);
         }
     }
 

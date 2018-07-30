@@ -45,17 +45,6 @@ class EditAlbaranCliente extends ExtendedController\SalesDocumentController
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
-    }
-
-    /**
      * Return the document class name.
      *
      * @return string
@@ -63,22 +52,5 @@ class EditAlbaranCliente extends ExtendedController\SalesDocumentController
     protected function getModelClassName()
     {
         return 'AlbaranCliente';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditAlbaranCliente') {
-            $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
-            $view->loadData($idalbaran);
-            $this->loadCustomContactsWidget($viewName);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }
