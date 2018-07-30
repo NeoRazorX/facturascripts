@@ -95,9 +95,14 @@ class Wizard extends Controller
             $this->showChangePasswd = true;
         }
 
+        $this->preSetAppSettings();
+
         $coddivisa = $this->request->request->get('coddivisa', '');
         $codpais = $this->request->request->get('codpais', '');
         if ($codpais !== '') {
+            if ($codpais !== AppSettings::get('default', 'codpais', '')) {
+                $this->preSetAppSettings($codpais);
+            }
             $appSettings = new AppSettings();
             $appSettings->set('default', 'coddivisa', $coddivisa);
             $appSettings->set('default', 'codpais', $codpais);
@@ -252,5 +257,28 @@ class Wizard extends Controller
 
         $this->user->setPassword($pass);
         return $this->user->save();
+    }
+
+    /**
+     * Set default AppSettings based on codpais
+     *
+     * @param string $codPais
+     */
+    private function preSetAppSettings($codPais = FS_CODPAIS)
+    {
+        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codPais . '/default.json';
+        if (file_exists($filePath) && $fileContent = file_get_contents($filePath)) {
+            $defaultValues = json_decode($fileContent, true) ?? [];
+            $defAppSettings = new AppSettings();
+            foreach ($defaultValues as $group => $values) {
+                foreach ($values as $key => $value) {
+                    $defAppSettings->set($group, $key, $value);
+                }
+            }
+            $defAppSettings->save();
+            $this->miniLog->notice($this->i18n->trans('loaded-default-appsettings', ['%codPais%' => $codPais]));
+        } else {
+            $this->miniLog->alert($this->i18n->trans('not-available-default-appsettings', ['%codPais%' => $codPais]));
+        }
     }
 }
