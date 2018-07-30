@@ -94,7 +94,6 @@ class ListLogMessage extends ExtendedController\ListController
                             $this->miniLog->alert('cant-delete-item', ['%modelName%' => 'LogMessage', '%code%' => $log->primaryColumnValue()]);
                             break;
                         }
-
                     }
                     // confirm data
                     $this->dataBase->commit();
