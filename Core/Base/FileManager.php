@@ -218,7 +218,7 @@ class FileManager
     {
         $notwritable = [];
         foreach (static::scanFolder(FS_FOLDER, true) as $folder) {
-            if (!is_writable($folder)) {
+            if (is_dir($folder) && !is_writable($folder)) {
                 $notwritable[] = $folder;
             }
         }
