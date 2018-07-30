@@ -228,8 +228,10 @@ class BusinessDocumentTools
 
         $impuesto = new Impuesto();
         $where = [new DataBaseWhere('iva', (int) $newLine->iva)];
-        $impuesto->loadFromCode('', $where);
-        $newLine->codimpuesto = $impuesto->codimpuesto;
+        $newLine->codimpuesto = null;
+        if ($impuesto->loadFromCode('', $where)) {
+            $newLine->codimpuesto = $impuesto->codimpuesto;
+        }
 
         return $newLine;
     }
