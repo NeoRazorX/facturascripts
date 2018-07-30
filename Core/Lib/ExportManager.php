@@ -135,9 +135,9 @@ class ExportManager
      *
      * @param mixed $model
      */
-    public function generateDocumentPage($model)
+    public function generateBusinessDocPage($model)
     {
-        self::$engine->generateDocumentPage($model);
+        self::$engine->generateBusinessDocPage($model);
     }
 
     /**

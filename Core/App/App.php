@@ -102,6 +102,13 @@ abstract class App
     protected $uri;
 
     /**
+     * Selects and runs the corresponding controller.
+     *
+     * @return bool
+     */
+    abstract public function run();
+
+    /**
      * Initializes the app.
      *
      * @param string $uri
@@ -158,13 +165,6 @@ abstract class App
     }
 
     /**
-     * Selects and runs the corresponding controller.
-     *
-     * @return bool
-     */
-    abstract public function run();
-
-    /**
      * Returns the data into the standard output.
      */
     public function render()
@@ -195,6 +195,9 @@ abstract class App
         return $this->ipFilter->isBanned($this->request->getClientIp());
     }
 
+    /**
+     * Initialize plugins.
+     */
     private function loadPlugins()
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {

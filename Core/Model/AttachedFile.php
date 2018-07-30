@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\FileManager;
 use finfo;
 
 /**
@@ -197,8 +198,9 @@ class AttachedFile extends Base\ModelClass
 
         $this->filename = $this->path;
         $path = 'MyFiles' . DIRECTORY_SEPARATOR . date('Y' . DIRECTORY_SEPARATOR . 'm', strtotime($this->date));
-        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $path)) {
-            mkdir(FS_FOLDER . DIRECTORY_SEPARATOR . $path, 0777, true);
+        if (!FileManager::createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . $path, true)) {
+            self::$miniLog->critical(self::$i18n->trans('cant-create-folder', ['%folderName%' => FS_FOLDER . DIRECTORY_SEPARATOR . $path]));
+            return false;
         }
 
         $basePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';

@@ -31,28 +31,7 @@ class MiniLog
      *
      * @var array
      */
-    private static $dataLog;
-
-    /**
-     * MiniLog constructor.
-     */
-    public function __construct()
-    {
-        if (self::$dataLog === null) {
-            self::$dataLog = [];
-        }
-    }
-
-    /**
-     * System is unusable.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function emergency($message, array $context = [])
-    {
-        $this->log('emergency', $message, $context);
-    }
+    private static $dataLog = [];
 
     /**
      * Action must be taken immediately.
@@ -69,6 +48,14 @@ class MiniLog
     }
 
     /**
+     * Clean the log.
+     */
+    public function clear()
+    {
+        self::$dataLog = [];
+    }
+
+    /**
      * Critical conditions.
      *
      * Example: Application component unavailable, unexpected exception.
@@ -82,6 +69,28 @@ class MiniLog
     }
 
     /**
+     * Detailed debug information.
+     *
+     * @param string $message
+     * @param array  $context
+     */
+    public function debug($message, array $context = [])
+    {
+        $this->log('debug', $message, $context);
+    }
+
+    /**
+     * System is unusable.
+     *
+     * @param string $message
+     * @param array  $context
+     */
+    public function emergency($message, array $context = [])
+    {
+        $this->log('emergency', $message, $context);
+    }
+
+    /**
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
@@ -91,6 +100,60 @@ class MiniLog
     public function error($message, array $context = [])
     {
         $this->log('error', $message, $context);
+    }
+
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     *
+     * @param string $message
+     * @param array  $context
+     */
+    public function info($message, array $context = [])
+    {
+        $this->log('info', $message, $context);
+    }
+
+    /**
+     * Normal but significant events.
+     *
+     * @param string $message
+     * @param array  $context
+     */
+    public function notice($message, array $context = [])
+    {
+        $this->log('notice', $message, $context);
+    }
+
+    /**
+     * Returns specified level messages or all.
+     *
+     * @param array $levels
+     *
+     * @return array
+     */
+    public function read(array $levels = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'])
+    {
+        $messages = [];
+        foreach (self::$dataLog as $data) {
+            if (in_array($data['level'], $levels, false) && $data['message'] !== '') {
+                $messages[] = $data;
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * SQL history.
+     *
+     * @param string $message
+     * @param array  $context
+     */
+    public function sql($message, array $context = [])
+    {
+        $this->log('sql', $message, $context);
     }
 
     /**
@@ -108,93 +171,19 @@ class MiniLog
     }
 
     /**
-     * Normal but significant events.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function notice($message, array $context = [])
-    {
-        $this->log('notice', $message, $context);
-    }
-
-    /**
-     * Interesting events.
-     *
-     * Example: User logs in, SQL logs.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function info($message, array $context = [])
-    {
-        $this->log('info', $message, $context);
-    }
-
-    /**
-     * Detailed debug information.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function debug($message, array $context = [])
-    {
-        $this->log('debug', $message, $context);
-    }
-
-    /**
-     * SQL history.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function sql($message, array $context = [])
-    {
-        $this->log('sql', $message, $context);
-    }
-
-    /**
      * Logs with an arbitrary level.
      *
      * @param string $level
      * @param string $message
      * @param array  $context
      */
-    public function log($level, $message, array $context = [])
+    private function log($level, $message, array $context = [])
     {
         self::$dataLog[] = [
-            'time' => time(),
+            'context' => $context,
             'level' => $level,
             'message' => $message,
-            'context' => $context,
+            'time' => time(),
         ];
-    }
-
-    /**
-     * Returns specified level messages or all.
-     *
-     * @param array $levels
-     *
-     * @return array
-     */
-    public function read(array $levels = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'])
-    {
-        $messages = [];
-
-        foreach (self::$dataLog as $data) {
-            if (in_array($data['level'], $levels, false) && $data['message'] !== '') {
-                $messages[] = $data;
-            }
-        }
-
-        return $messages;
-    }
-
-    /**
-     * Clean the log.
-     */
-    public function clear()
-    {
-        self::$dataLog = [];
     }
 }

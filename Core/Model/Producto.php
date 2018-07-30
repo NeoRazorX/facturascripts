@@ -82,6 +82,13 @@ class Producto extends Base\ModelClass
     public $codsubcuentairpfcom;
 
     /**
+     * Sub-account code for sales.
+     *
+     * @var string
+     */
+    public $codsubcuentaven;
+
+    /**
      * Description of the product.
      *
      * @var string

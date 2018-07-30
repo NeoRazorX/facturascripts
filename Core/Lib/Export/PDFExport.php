@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Dinamic\Model\Contacto;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -35,26 +36,11 @@ class PDFExport extends PDFDocument implements ExportInterface
     const LIST_LIMIT = 500;
 
     /**
-     * Return the full document.
-     *
-     * @return mixed
-     */
-    public function getDoc()
-    {
-        if ($this->pdf === null) {
-            $this->newPage();
-            $this->pdf->ezText('');
-        }
-
-        return $this->pdf->ezStream(['Content-Disposition' => 'doc_' . mt_rand(1, 999999) . '.pdf']);
-    }
-
-    /**
      * Adds a new page with the document data.
      *
      * @param BusinessDocument $model
      */
-    public function generateDocumentPage($model)
+    public function generateBusinessDocPage($model)
     {
         $this->newPage();
         $this->insertHeader($model->idempresa);
@@ -174,6 +160,21 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->insertHeader();
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         $this->insertFooter();
+    }
+
+    /**
+     * Return the full document.
+     *
+     * @return mixed
+     */
+    public function getDoc()
+    {
+        if ($this->pdf === null) {
+            $this->newPage();
+            $this->pdf->ezText('');
+        }
+
+        return $this->pdf->ezStream(['Content-Disposition' => 'doc_' . mt_rand(1, 999999) . '.pdf']);
     }
 
     /**
@@ -337,7 +338,7 @@ class PDFExport extends PDFDocument implements ExportInterface
             ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif],
         ];
 
-        if (isset($model->direccion)) {
+        if (!empty($model->direccion)) {
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
         }
 
@@ -351,7 +352,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->insertParalellTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
 
-        if (isset($model->direccionenv) && $model->direccionenv !== '') {
+        if (!empty($model->idcontactoenv)) {
             $this->insertBusinessDocShipping($model);
         }
     }
@@ -366,31 +367,30 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
-        $tableData = [
-            ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($model->nombreenv)],
-            ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($model->apellidosenv)],
-            ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccionenv)],
-            ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv],
-            ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv],
-            ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudadenv)],
-            ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provinciaenv)],
-        ];
+        $contacto = new Contacto();
+        if ($contacto->loadFromCode($model->idcontactoenv)) {
+            $name = Base\Utils::fixHtml($contacto->nombre) . ' ' . Base\Utils::fixHtml($contacto->apellidos);
+            $tableData = [
+                ['key' => $this->i18n->trans('name'), 'value' => $name],
+                ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($contacto)],
+            ];
 
-        $tableOptions = [
-            'width' => $this->tableWidth,
-            'showHeadings' => 0,
-            'shaded' => 0,
-            'lineCol' => [1, 1, 1],
-            'cols' => [],
-        ];
-        $this->insertParalellTable($tableData, '', $tableOptions);
-        $this->pdf->ezText('');
+            $tableOptions = [
+                'width' => $this->tableWidth,
+                'showHeadings' => 0,
+                'shaded' => 0,
+                'lineCol' => [1, 1, 1],
+                'cols' => [],
+            ];
+            $this->insertParalellTable($tableData, '', $tableOptions);
+            $this->pdf->ezText('');
+        }
     }
 
     /**
      * Combine address if the parameters don´t empty
      *
-     * @param BusinessDocument $model
+     * @param BusinessDocument|Contacto $model
      *
      * @return string
      */

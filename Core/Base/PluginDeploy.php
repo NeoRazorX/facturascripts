@@ -145,7 +145,7 @@ class PluginDeploy
      */
     private function createFolder(string $folder): bool
     {
-        if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
+        if (!FileManager::createFolder($folder, true)) {
             $this->minilog->critical($this->i18n->trans('cant-create-folder', ['%folderName%' => $folder]));
             return false;
         }
