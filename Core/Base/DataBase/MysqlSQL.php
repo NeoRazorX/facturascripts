@@ -210,10 +210,11 @@ class MysqlSQL implements DataBaseSQL
      * @param string $tableName
      * @param array  $columns
      * @param array  $constraints
+     * @param bool   $checkExists
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints)
+    public function sqlCreateTable($tableName, $columns, $constraints, $checkExists = false)
     {
         $fields = '';
         foreach ($columns as $col) {
@@ -222,7 +223,9 @@ class MysqlSQL implements DataBaseSQL
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
-        return 'CREATE TABLE ' . $tableName . ' (' . $sql
+        $exists = $checkExists ? ' IF NOT EXISTS ' : '';
+
+        return 'CREATE TABLE ' . $exists . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
             . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
     }
@@ -344,5 +347,19 @@ class MysqlSQL implements DataBaseSQL
     public function sqlSequenceExists($seqName)
     {
         return $seqName;
+    }
+
+    /**
+     * SQL statement to drop a given table
+     *
+     * @param string $tableName
+     * @param bool   $checkExists
+     *
+     * @return string
+     */
+    public function sqlDropTable($tableName, $checkExists = false)
+    {
+        $exists = $checkExists ? ' IF EXISTS ' : '';
+        return 'DROP TABLE ' . $exists . ' ' . $tableName . ';';
     }
 }

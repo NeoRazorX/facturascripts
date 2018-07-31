@@ -38,6 +38,8 @@ interface DataBaseSQL
 
     /**
      * SQL statement to get the last value of a sequence or ID
+     *
+     * @return string
      */
     public function sqlLastValue();
 
@@ -45,6 +47,8 @@ interface DataBaseSQL
      * SQL statement to get the columns in a table
      *
      * @param string $tableName
+     *
+     * @return string
      */
     public function sqlColumns($tableName);
 
@@ -52,6 +56,8 @@ interface DataBaseSQL
      * SQL statement to get the table constraints
      *
      * @param string $tableName
+     *
+     * @return string
      */
     public function sqlConstraints($tableName);
 
@@ -59,6 +65,8 @@ interface DataBaseSQL
      * SQL statement to get the table extended constraints
      *
      * @param string $tableName
+     *
+     * @return string
      */
     public function sqlConstraintsExtended($tableName);
 
@@ -66,6 +74,8 @@ interface DataBaseSQL
      * Generates the SQL to establish the given restrictions.
      *
      * @param array $xmlCons
+     *
+     * @return string
      */
     public function sqlTableConstraints($xmlCons);
 
@@ -73,6 +83,8 @@ interface DataBaseSQL
      * SQL statement to get a given table's indexes
      *
      * @param string $tableName
+     *
+     * @return string
      */
     public function sqlIndexes($tableName);
 
@@ -82,14 +94,19 @@ interface DataBaseSQL
      * @param string $tableName
      * @param array  $columns
      * @param array  $constraints
+     * @param bool $checkExists
+     *
+     * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints);
+    public function sqlCreateTable($tableName, $columns, $constraints, $checkExists = false);
 
     /**
      * SQL statement to add a given table column
      *
      * @param string $tableName
      * @param array  $colData
+     *
+     * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData);
 
@@ -98,6 +115,8 @@ interface DataBaseSQL
      *
      * @param string $tableName
      * @param array  $colData
+     *
+     * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData);
 
@@ -106,6 +125,8 @@ interface DataBaseSQL
      *
      * @param string $tableName
      * @param array  $colData
+     *
+     * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData);
 
@@ -114,6 +135,8 @@ interface DataBaseSQL
      *
      * @param string $tableName
      * @param array  $colData
+     *
+     * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData);
 
@@ -122,6 +145,8 @@ interface DataBaseSQL
      *
      * @param string $tableName
      * @param array  $colData
+     *
+     * @return string
      */
     public function sqlDropConstraint($tableName, $colData);
 
@@ -131,6 +156,8 @@ interface DataBaseSQL
      * @param string $tableName
      * @param string $constraintName
      * @param string $sql
+     *
+     * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql);
 
@@ -138,6 +165,18 @@ interface DataBaseSQL
      * SQL statement to create a sequence
      *
      * @param string $seqName
+     *
+     * @return string
      */
     public function sqlSequenceExists($seqName);
+
+    /**
+     * SQL statement to drop a given table
+     *
+     * @param string $tableName
+     * @param bool $checkExists
+     *
+     * @return string
+     */
+    public function sqlDropTable($tableName, $checkExists = false);
 }

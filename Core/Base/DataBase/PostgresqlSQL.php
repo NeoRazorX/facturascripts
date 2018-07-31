@@ -165,10 +165,11 @@ class PostgresqlSQL implements DataBaseSQL
      * @param string $tableName
      * @param array  $columns
      * @param array  $constraints
+     * @param bool   $checkExists
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints)
+    public function sqlCreateTable($tableName, $columns, $constraints, $checkExists = false)
     {
         $serials = ['serial', 'bigserial'];
         $fields = '';
@@ -188,7 +189,9 @@ class PostgresqlSQL implements DataBaseSQL
             }
         }
 
-        $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
+        $exists = $checkExists ? ' IF NOT EXISTS ' : '';
+
+        $sql = 'CREATE TABLE ' . $exists . $tableName . ' (' . substr($fields, 2)
             . $this->sqlTableConstraints($constraints) . ');';
 
         return $sql;
@@ -301,5 +304,19 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlSequenceExists($seqName)
     {
         return "SELECT '" . $seqName . "' FROM pg_class where relname = '" . $seqName . "';";
+    }
+
+    /**
+     * SQL statement to drop a given table
+     *
+     * @param string $tableName
+     * @param bool   $checkExists
+     *
+     * @return string
+     */
+    public function sqlDropTable($tableName, $checkExists = false)
+    {
+        $exists = $checkExists ? ' IF EXISTS ' : '';
+        return 'DROP TABLE ' . $exists . ' ' . $tableName . ';';
     }
 }
