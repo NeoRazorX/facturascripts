@@ -176,7 +176,7 @@ class PostgresqlSQL implements DataBaseSQL
         foreach ($columns as $col) {
             $fields .= ', ' . $col['name'] . ' ' . $col['type'];
 
-            if ($col['null'] === 'NO') {
+            if (isset($col['null']) && $col['null'] === 'NO') {
                 $fields .= ' NOT NULL';
             }
 
