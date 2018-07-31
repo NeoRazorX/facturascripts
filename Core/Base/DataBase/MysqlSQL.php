@@ -223,9 +223,9 @@ class MysqlSQL implements DataBaseSQL
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
-        $exists = $checkExists ? ' IF NOT EXISTS ' : '';
+        $exists = $checkExists ? ' IF NOT EXISTS ' : ' ';
 
-        return 'CREATE TABLE ' . $exists . $tableName . ' (' . $sql
+        return 'CREATE TABLE' . $exists . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
             . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
     }
@@ -359,7 +359,7 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlDropTable($tableName, $checkExists = false)
     {
-        $exists = $checkExists ? ' IF EXISTS ' : '';
-        return 'DROP TABLE ' . $exists . ' ' . $tableName . ';';
+        $exists = $checkExists ? ' IF EXISTS ' : ' ';
+        return 'DROP TABLE' . $exists . $tableName . ';';
     }
 }

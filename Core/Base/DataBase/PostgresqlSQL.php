@@ -189,9 +189,9 @@ class PostgresqlSQL implements DataBaseSQL
             }
         }
 
-        $exists = $checkExists ? ' IF NOT EXISTS ' : '';
+        $exists = $checkExists ? ' IF NOT EXISTS ' : ' ';
 
-        $sql = 'CREATE TABLE ' . $exists . $tableName . ' (' . substr($fields, 2)
+        $sql = 'CREATE TABLE' . $exists . $tableName . ' (' . substr($fields, 2)
             . $this->sqlTableConstraints($constraints) . ');';
 
         return $sql;
@@ -316,7 +316,7 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlDropTable($tableName, $checkExists = false)
     {
-        $exists = $checkExists ? ' IF EXISTS ' : '';
-        return 'DROP TABLE ' . $exists . ' ' . $tableName . ';';
+        $exists = $checkExists ? ' IF EXISTS ' : ' ';
+        return 'DROP TABLE' . $exists . $tableName . ';';
     }
 }
