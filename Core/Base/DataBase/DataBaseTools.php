@@ -118,7 +118,7 @@ class DataBaseTools
      * @param array  $xmlCols
      * @param array  $xmlCons
      *
-     * @return bool
+     * @return string
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)
     {
