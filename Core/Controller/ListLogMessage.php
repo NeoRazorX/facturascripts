@@ -74,43 +74,47 @@ class ListLogMessage extends ExtendedController\ListController
     {
         switch ($action) {
             case 'delete-selected-filters':
-                // start transaction
-                $this->dataBase->beginTransaction();
-
-                // main save process
-                try {
-                    $logMessage = new LogMessage();
-                    $where = $this->getWhere();
-//                    if (empty($where)) {
-//                        $this->miniLog->alert('must-apply-some-filter');
-//                        return false;
-//                    }
-                    $allFilteredLogs = $logMessage->all($where, [], 0, 0);
-                    $counter = 0;
-                    foreach ($allFilteredLogs as $log) {
-                        if ($log->delete()) {
-                            $counter++;
-                        } else {
-                            $this->miniLog->alert('cant-delete-item', ['%modelName%' => 'LogMessage', '%code%' => $log->primaryColumnValue()]);
-                            break;
-                        }
-                    }
-                    // confirm data
-                    $this->dataBase->commit();
-                    if ($counter > 0) {
-                        $this->miniLog->notice('total-items-deleted', ['%total%' => $counter]);
-                    }
-                } catch (\Exception $e) {
-                    $this->miniLog->alert($e->getMessage());
-                } finally {
-                    if ($this->dataBase->inTransaction()) {
-                        $this->dataBase->rollback();
-                    }
-                }
+                $this->deleteWithFilters();
                 return true;
 
             default:
                 return parent::execPreviousAction($action);
+        }
+    }
+
+    /**
+     * Delete logs based on active filters.
+     */
+    private function deleteWithFilters()
+    {
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        // main save process
+        try {
+            $logMessage = new LogMessage();
+            $where = $this->getWhere();
+            $allFilteredLogs = $logMessage->all($where, [], 0, 0);
+            $counter = 0;
+            foreach ($allFilteredLogs as $log) {
+                if ($log->delete()) {
+                    $counter++;
+                } else {
+                    $this->miniLog->alert('cant-delete-item', ['%modelName%' => 'LogMessage', '%code%' => $log->primaryColumnValue()]);
+                    break;
+                }
+            }
+            // confirm data
+            $this->dataBase->commit();
+            if ($counter > 0) {
+                $this->miniLog->notice('total-items-deleted', ['%total%' => $counter]);
+            }
+        } catch (\Exception $e) {
+            $this->miniLog->alert($e->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
         }
     }
 }
