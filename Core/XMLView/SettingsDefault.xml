@@ -69,7 +69,7 @@
         </group>
         <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fa-info-circle fa-lg">
             <column name="decimals" numcolumns="3" order="100">
-                <widget type="select" fieldname="decimals" required="true" icon="fa-sort-numeric-asc">
+                <widget type="select" fieldname="decimals" required="true" icon="fa-sort-numeric-up">
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
