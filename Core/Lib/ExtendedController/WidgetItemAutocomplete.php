@@ -80,7 +80,7 @@ class WidgetItemAutocomplete extends WidgetItem
         } else {
             $html .= '<span class="input-group-prepend">'
                 . '<button type="button" class="btn btn-warning" onclick="$(\'#' . $this->fieldName . 'Autocomplete, #' . $this->fieldName . 'Autocomplete2\').val(\'\');">'
-                . '<i class="fas fa-remove" aria-hidden="true"></i>'
+                . '<i class="fas fa-times" aria-hidden="true"></i>'
                 . '</button>'
                 . '</span>';
         }
