@@ -99,7 +99,7 @@ class EditCliente extends ExtendedController\PanelController
         $this->createViewCustomer();
 
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
-        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
+        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-piggy-bank');
         $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
 
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');

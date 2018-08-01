@@ -115,7 +115,7 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addMainView();
 
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
-        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-piggy-bank');
         $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fa-copy');
         $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fa-copy');
         $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fa-copy');

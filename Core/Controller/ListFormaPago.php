@@ -59,7 +59,7 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print', 'imprimir');
 
         /* Bank accounts */
-        $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fa-university');
+        $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fa-piggy-bank');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
         $this->addOrderBy('ListCuentaBanco', ['codcuenta'], 'code');
         $this->addOrderBy('ListCuentaBanco', ['descripcion'], 'description');
