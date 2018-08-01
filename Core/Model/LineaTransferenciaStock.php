@@ -90,6 +90,17 @@ class LineaTransferenciaStock extends Base\ModelClass
         $this->cantidad = 0.0;
     }
 
+    public function delete()
+    {
+        if (parent::delete()) {
+            $this->cantidad = 0.0;
+            $this->updateStock();
+            return true;
+        }
+
+        return false;
+    }
+
     public function getTransference()
     {
         $transf = new TransferenciaStock();
@@ -114,6 +125,24 @@ class LineaTransferenciaStock extends Base\ModelClass
         new TransferenciaStock();
         new Variante();
         return parent::install();
+    }
+
+    /**
+     * 
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
+     * 
+     * @return boolean
+     */
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    {
+        if (parent::loadFromCode($cod, $where, $orderby)) {
+            $this->cantidadAnt = $this->cantidad;
+            return true;
+        }
+
+        return false;
     }
 
     /**
