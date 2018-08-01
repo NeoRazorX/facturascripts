@@ -260,6 +260,17 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
+     * Returns the filter identificate by key
+     *
+     * @param string $key
+     * @return ListFilter
+     */
+    public function getFilter($key)
+    {
+        return $this->filters[$key];
+    }
+
+    /**
      * Returns the list of defined Order By
      *
      * @return array
