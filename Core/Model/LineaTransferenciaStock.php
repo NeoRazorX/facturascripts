@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 //use FacturaScripts\Dinamic\Model\Stock;
 
 /**
@@ -114,7 +115,6 @@ class LineaTransferenciaStock extends Base\ModelClass
 
         $variante = new Variante();
         if (!$variante->loadFromCode('', [new DataBaseWhere('idproducto', $product), new DataBaseWhere('idvariante', $variant)])) {
-            self::$miniLog->error($this->i18n->trans('product-not-found'));
             return false;
         }
         $referencia = $variante->referencia;

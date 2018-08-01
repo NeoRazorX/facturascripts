@@ -75,6 +75,12 @@ class EditTransferenciaStock extends ExtendedController\PanelController
             $idproducto = $data['idproducto'];
             $idvariante = $data['idvariante'];
             $cantidad = $data['cantidad'];
+
+            $variante = new Variante();
+            if (!$variante->loadFromCode('', [new DataBaseWhere('idproducto', $idproducto), new DataBaseWhere('idvariante', $idvariante)])) {
+                self::$miniLog->error($this->i18n->trans('product-not-found'));
+                return false;
+            }
         }
 
         $lineaStock = New LineaTransferenciaStock();
