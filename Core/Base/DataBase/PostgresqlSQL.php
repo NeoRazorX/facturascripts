@@ -109,7 +109,6 @@ class PostgresqlSQL implements DataBaseSQL
             . ' ON ccu.constraint_schema = tc.constraint_schema'
             . ' AND ccu.constraint_catalog = tc.constraint_catalog'
             . ' AND ccu.constraint_name = tc.constraint_name'
-            . ' AND ccu.column_name = kcu.column_name'
             . ' LEFT JOIN information_schema.referential_constraints rc'
             . ' ON rc.constraint_schema = tc.constraint_schema'
             . ' AND rc.constraint_catalog = tc.constraint_catalog'
