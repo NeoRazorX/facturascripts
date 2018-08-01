@@ -150,8 +150,9 @@ class CodeModel
         if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
             $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
             $model = new $modelClass();
-            if ($model->loadFromCode($code)) {
-                return new self(['code' => $model->primaryColumnValue(), 'description' => $model->primaryDescription()]);
+            $where = [new DataBaseWhere($fieldCode, $code)];
+            if ($model->loadFromCode('', $where)) {
+                return new self(['code' => $model->{$fieldCode}, 'description' => $model->primaryDescription()]);
             }
 
             return new self();
