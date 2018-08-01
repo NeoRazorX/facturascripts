@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
  * The quantity in inventory of an item in a particular warehouse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class Stock extends Base\ModelClass
 {
@@ -228,6 +229,40 @@ class Stock extends Base\ModelClass
         }
 
         return parent::url($type, 'ListProducto?active=List');
+    }
+
+    /**
+     * Transfer $qty unities of stock to $toWarehouse
+     *
+     * @param string $toWarehouse destination warehouse
+     * @param float $qty quantity to move
+     *
+     * @return true if ok
+     */
+    public function transferTo(string $toWarehouse, float $qty): float
+    {
+        $this->database->beginTransaction();
+        try {
+            $destination = new Stock();
+            if ($destination->loadFromCode('', [new DataBaseWhere('codalmacen', $toWarehouse), new DataBaseWhere('referencia', $this->referencia)])) {
+                $destination->cantidad += $qty;
+                $destination->disponible += $qty;
+            } else {
+                $destination->codalmacen = $toWarehouse;
+                $destination->idproducto = $this->idproducto;
+                $destination->referencia = $this->referencia;
+                $destination->cantidad = $qty;
+                $destination->disponible = $qty;
+            }
+            $destination->save();
+            $this->cantidad -= $qty;
+            $this->disponbie -= $qty;
+            $this->save();
+        } catch (Exception $ex) {
+            self::$miniLog->error($e->getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**

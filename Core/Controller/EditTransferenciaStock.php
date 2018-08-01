@@ -118,7 +118,6 @@ class EditTransferenciaStock extends ExtendedController\PanelController
                 foreach ($lines as $line) {
                     $lineaStock->updateStock($destino, $origen, $line->idproducto, $line->idvariante, $line->cantidad);
                 }
-
                 break;
             case 'save':
                 $lineaStock->updateStock($origen, $destino, $idproducto, $idvariante, $cantidad);

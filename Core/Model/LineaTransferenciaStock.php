@@ -101,6 +101,34 @@ class LineaTransferenciaStock extends Base\ModelClass
     }
 
     /**
+     * Removed this row from the database table.
+     *
+     * @return boolean
+     */
+    public function delete()
+    {
+        $headTrans = New TransferenciaStock();
+        if (!$headTrans->loadFromCode($this->idtrans)) {
+            return false;
+        }
+        $variante = new Variante();
+        if (!$variante->loadFromCode('', [new DataBaseWhere('idproducto', $this->idproducto), new DataBaseWhere('idvariante', $this->idvariante)])) {
+            return false;
+        }
+        $stock = New Stock();
+        if (!$stock->loadFromCode('', [new DataBaseWhere('codalmacen', $headTrans->codalmacendestino), new DataBaseWhere('referencia', $variante->referencia)])) {
+            return false;
+        }
+
+        $stock->transferTo($headTrans->codalmacenorigen, $this->cantidad);
+        if (parent::delete()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Updates stock according to line data and $codalmacen warehouse.
      *
      * @param string $codalmacen
