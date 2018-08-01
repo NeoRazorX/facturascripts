@@ -71,6 +71,11 @@ class EditTransferenciaStock extends ExtendedController\PanelController
         }
 
         $data = $this->request->request->all();
+        if (isset($data['idproducto'])) {
+            $idproducto = $data['idproducto'];
+            $idvariante = $data['idvariante'];
+            $cantidad = $data['cantidad'];
+        }
 
         $lineaStock = New LineaTransferenciaStock();
         $lineFound = isset($data['idlinea']) && $lineaStock->loadFromCode($data['idlinea']);
@@ -85,10 +90,6 @@ class EditTransferenciaStock extends ExtendedController\PanelController
             } else {
                 $cantidad = $data['cantidad'] - $lineaStock->cantidad;
             }
-        } else if (isset($data['idproducto'])) {
-            $idproducto = $data['idproducto'];
-            $idvariante = $data['idvariante'];
-            $cantidad = $data['cantidad'];
         }
 
         if (isset($cantidad) && ($cantidad < 0)) {
@@ -101,7 +102,7 @@ class EditTransferenciaStock extends ExtendedController\PanelController
         switch ($action) {
             case 'delete':
                 // if $idproducto exists, we can delete a line
-                if (isset($idproducto)) {
+                if (isset($idproducto) && isset($idvariante) && isset($cantidad)) {
                     $lineaStock->updateStock($destino, $origen, $idproducto, $idvariante, $cantidad);
                     break;
                 }
