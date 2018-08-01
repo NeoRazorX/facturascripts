@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * The quantity in inventory of an item in a particular warehouse.
  *
@@ -162,6 +164,31 @@ class Stock extends Base\ModelClass
     public static function tableName()
     {
         return 'stocks';
+    }
+
+    /**
+     * Transfer $qty unities of stock to $toWarehouse
+     *
+     * @param string $toWarehouse destination warehouse
+     * @param float  $qty quantity to move
+     *
+     * @return bool
+     */
+    public function transferTo(string $toWarehouse, float $qty): bool
+    {
+        $destination = new Stock();
+        $where = [new DataBaseWhere('codalmacen', $toWarehouse), new DataBaseWhere('referencia', $this->referencia)];
+        if ($destination->loadFromCode('', $where)) {
+            $destination->cantidad += $qty;
+        } else {
+            $destination->codalmacen = $toWarehouse;
+            $destination->idproducto = $this->idproducto;
+            $destination->referencia = $this->referencia;
+            $destination->cantidad = $qty;
+        }
+
+        $this->cantidad -= $qty;
+        return ($destination->save() && $this->save());
     }
 
     /**

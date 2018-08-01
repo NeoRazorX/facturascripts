@@ -17,11 +17,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>idvariante</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>idtrans</name>
         <type>integer</type>
         <null>NO</null>
@@ -30,6 +25,10 @@
         <name>cantidad</name>
         <type>integer</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
     </column>
     <constraint>
         <name>lineastransferenciasstock_pkey</name>
@@ -40,11 +39,11 @@
         <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_lineastransferenciasstock_variantes</name>
-        <type>FOREIGN KEY (idvariante) REFERENCES variantes (idvariante) ON DELETE CASCADE ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
         <name>ca_lineastransferenciasstock_transferenciasstock</name>
         <type>FOREIGN KEY (idtrans) REFERENCES transferenciasstock (idtrans) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineastransferenciasstock_variantes</name>
+        <type>FOREIGN KEY (referencia) REFERENCES variantes (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

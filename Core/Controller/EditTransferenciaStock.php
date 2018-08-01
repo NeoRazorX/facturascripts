@@ -52,6 +52,15 @@ class EditTransferenciaStock extends ExtendedController\PanelController
     {
         $this->addEditView('EditTransferenciaStock', 'TransferenciaStock', 'transfer-head');
         $this->addEditListView('EditLineaTransferenciaStock', 'LineaTransferenciaStock', 'lines-transfer');
+
+        /// tabs on bottom
+        $this->setTabsPosition('bottom');
+    }
+
+    protected function insertAction()
+    {
+        parent::insertAction();
+        $this->views[$this->active]->model->usuario = $this->user->nick;
     }
 
     /**
@@ -69,7 +78,7 @@ class EditTransferenciaStock extends ExtendedController\PanelController
                 break;
 
             case 'EditLineaTransferenciaStock':
-                $idtransferencia = $this->getViewModelValue('EditLineaTransferenciaStock', 'idtrans');
+                $idtransferencia = $this->getViewModelValue('EditTransferenciaStock', 'idtrans');
                 $where = [new DataBaseWhere('idtrans', $idtransferencia)];
                 $view->loadData('', $where, [], 0, 0);
                 break;
