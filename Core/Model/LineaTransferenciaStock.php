@@ -19,10 +19,15 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
+//use FacturaScripts\Dinamic\Model\Stock;
+
 /**
  * Transfers stock lines.
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class LineaTransferenciaStock extends Base\ModelClass
 {
@@ -93,5 +98,86 @@ class LineaTransferenciaStock extends Base\ModelClass
     public static function tableName()
     {
         return 'lineastransferenciasstock';
+    }
+
+    /**
+     * Removed this row from the database table.
+     *
+     * @return boolean
+     */
+    public function delete()
+    {
+        $headTrans = New TransferenciaStock();
+        if (!$headTrans->loadFromCode($this->idtrans)) {
+            return false;
+        }
+        $variante = new Variante();
+        if (!$variante->loadFromCode('', [new DataBaseWhere('idproducto', $this->idproducto), new DataBaseWhere('idvariante', $this->idvariante)])) {
+            return false;
+        }
+        $stock = New Stock();
+        if (!$stock->loadFromCode('', [new DataBaseWhere('codalmacen', $headTrans->codalmacendestino), new DataBaseWhere('referencia', $variante->referencia)])) {
+            return false;
+        }
+
+        $stock->transferTo($headTrans->codalmacenorigen, $this->cantidad);
+        if (parent::delete()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Updates stock according to line data and $codalmacen warehouse.
+     *
+     * @param string $codalmacen
+     *
+     * @return boolean
+     */
+    public function updateStock(string $codalmacenori, $codalmacendes, $product, $variant, $qty)
+    {
+        if ($qty == 0) {
+            return true;
+        }
+
+        $variante = new Variante();
+        if (!$variante->loadFromCode('', [new DataBaseWhere('idproducto', $product), new DataBaseWhere('idvariante', $variant)])) {
+            return false;
+        }
+        $referencia = $variante->referencia;
+
+        $origen = new Stock();
+        $destino = new Stock();
+
+        $origenExists = $origen->loadFromCode('', [new DataBaseWhere('codalmacen', $codalmacenori), new DataBaseWhere('referencia', $referencia)]);
+        $destinoExists = $destino->loadFromCode('', [new DataBaseWhere('codalmacen', $codalmacendes), new DataBaseWhere('referencia', $referencia)]);
+
+        if ($origenExists) {
+            $origen->cantidad -= $qty;
+            $origen->disponible -= $qty;
+        } else {
+            $origen->codalmacen = $codalmacenori;
+            $origen->idproducto = $product;
+            $origen->referencia = $referencia;
+            $origen->cantidad = -$qty;
+            $origen->disponible = -$qty;
+        }
+
+        if ($destinoExists) {
+            $destino->cantidad += $qty;
+            $destino->disponible += $qty;
+        } else {
+            $destino->codalmacen = $codalmacendes;
+            $destino->idproducto = $product;
+            $destino->referencia = $referencia;
+            $destino->cantidad = +$qty;
+            $destino->disponible = +$qty;
+        }
+
+        $origen->save();
+        $destino->save();
+
+        return true;
     }
 }

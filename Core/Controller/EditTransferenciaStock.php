@@ -20,11 +20,14 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\TransferenciaStock;
+use FacturaScripts\Dinamic\Model\LineaTransferenciaStock;
 
 /**
  * Controller to edit a transfer of stock
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class EditTransferenciaStock extends ExtendedController\PanelController
 {
@@ -55,6 +58,76 @@ class EditTransferenciaStock extends ExtendedController\PanelController
     }
 
     /**
+     * Run the controller before actions
+     *
+     * @param string $action
+     */
+    protected function execPreviousAction($action)
+    {
+        $code = $this->request->get('code');
+        $headTrans = New TransferenciaStock();
+        if (!isset($code) || !$headTrans->loadFromCode($code)) {
+            return parent::execPreviousAction($action);
+        }
+
+        $data = $this->request->request->all();
+        if (isset($data['idproducto'])) {
+            $idproducto = $data['idproducto'];
+            $idvariante = $data['idvariante'];
+            $cantidad = $data['cantidad'];
+
+            $variante = new Variante();
+            if (!$variante->loadFromCode('', [new DataBaseWhere('idproducto', $idproducto), new DataBaseWhere('idvariante', $idvariante)])) {
+                self::$miniLog->error($this->i18n->trans('product-not-found'));
+                return false;
+            }
+        }
+
+        $lineaStock = New LineaTransferenciaStock();
+        $lineFound = isset($data['idlinea']) && $lineaStock->loadFromCode($data['idlinea']);
+
+        $origen = $headTrans->codalmacenorigen;
+        $destino = $headTrans->codalmacendestino;
+        if ($lineFound) {
+            $idproducto = $lineaStock->idproducto;
+            $idvariante = $lineaStock->idvariante;
+            if ($action == 'delete') {
+                $cantidad = $lineaStock->cantidad;
+            } else {
+                $cantidad = $data['cantidad'] - $lineaStock->cantidad;
+            }
+        }
+
+        if (isset($cantidad) && ($cantidad < 0)) {
+            $cantidad = -$cantidad;
+            $tmp = $origen;
+            $origen = $destino;
+            $destino = $tmp;
+        }
+
+        switch ($action) {
+            case 'delete':
+                // if $idproducto exists, we can delete a line
+                if (isset($idproducto) && isset($idvariante) && isset($cantidad)) {
+                    $lineaStock->updateStock($destino, $origen, $idproducto, $idvariante, $cantidad);
+                    break;
+                }
+
+                // If we delete the document, first delete each line
+                $lines = $lineaStock->all([new DataBaseWhere('idtrans', $code)]);
+                foreach ($lines as $line) {
+                    $lineaStock->updateStock($destino, $origen, $line->idproducto, $line->idvariante, $line->cantidad);
+                }
+                break;
+            case 'save':
+                $lineaStock->updateStock($origen, $destino, $idproducto, $idvariante, $cantidad);
+                break;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    /**
      * Load view data procedure
      *
      * @param string                      $viewName
@@ -69,7 +142,7 @@ class EditTransferenciaStock extends ExtendedController\PanelController
                 break;
 
             case 'EditLineaTransferenciaStock':
-                $idtransferencia = $this->getViewModelValue('EditLineaTransferenciaStock', 'idtrans');
+                $idtransferencia = $this->getViewModelValue('EditTransferenciaStock', 'idtrans');
                 $where = [new DataBaseWhere('idtrans', $idtransferencia)];
                 $view->loadData('', $where, [], 0, 0);
                 break;

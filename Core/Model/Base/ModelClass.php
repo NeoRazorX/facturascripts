@@ -316,7 +316,7 @@ abstract class ModelClass extends ModelCore
             if ($key == $this->primaryColumn()) {
                 continue;
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
-                self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
+                $this->miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
                 return false;
             }
         }
