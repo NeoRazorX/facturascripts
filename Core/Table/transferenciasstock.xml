@@ -28,6 +28,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>observaciones</name>
+        <type>text</type>
+    </column>
+    <column>
         <name>usuario</name>
         <type>character varying(50)</type>
         <null>NO</null>
