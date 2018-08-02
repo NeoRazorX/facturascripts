@@ -109,7 +109,6 @@ class PostgresqlSQL implements DataBaseSQL
             . ' ON ccu.constraint_schema = tc.constraint_schema'
             . ' AND ccu.constraint_catalog = tc.constraint_catalog'
             . ' AND ccu.constraint_name = tc.constraint_name'
-            . ' AND ccu.column_name = kcu.column_name'
             . ' LEFT JOIN information_schema.referential_constraints rc'
             . ' ON rc.constraint_schema = tc.constraint_schema'
             . ' AND rc.constraint_catalog = tc.constraint_catalog'
@@ -175,7 +174,7 @@ class PostgresqlSQL implements DataBaseSQL
         foreach ($columns as $col) {
             $fields .= ', ' . $col['name'] . ' ' . $col['type'];
 
-            if ($col['null'] === 'NO') {
+            if (isset($col['null']) && $col['null'] === 'NO') {
                 $fields .= ' NOT NULL';
             }
 
@@ -184,7 +183,7 @@ class PostgresqlSQL implements DataBaseSQL
             }
 
             if ($col['default'] !== '') {
-                $fields .= ' DEFAULT ' . $col['default'];
+                $fields .= ' DEFAULT ' . (is_null($col['default']) ? 'NULL' : $col['default']);
             }
         }
 
@@ -301,5 +300,19 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlSequenceExists($seqName)
     {
         return "SELECT '" . $seqName . "' FROM pg_class where relname = '" . $seqName . "';";
+    }
+
+    /**
+     * SQL statement to drop a given table
+     *
+     * @param string $tableName
+     * @param bool   $checkExists
+     *
+     * @return string
+     */
+    public function sqlDropTable($tableName, $checkExists = false)
+    {
+        $exists = $checkExists ? ' IF EXISTS ' : ' ';
+        return 'DROP TABLE' . $exists . $tableName . ';';
     }
 }

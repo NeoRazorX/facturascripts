@@ -345,4 +345,18 @@ class MysqlSQL implements DataBaseSQL
     {
         return $seqName;
     }
+
+    /**
+     * SQL statement to drop a given table
+     *
+     * @param string $tableName
+     * @param bool   $checkExists
+     *
+     * @return string
+     */
+    public function sqlDropTable($tableName, $checkExists = false)
+    {
+        $exists = $checkExists ? ' IF EXISTS ' : ' ';
+        return 'DROP TABLE' . $exists . $tableName . ';';
+    }
 }
