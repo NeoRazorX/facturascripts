@@ -28,10 +28,14 @@
             <widget type="number" fieldname="idtrans" onclick="EditTransferenciaStock"/>
         </column>
         <column name="codwarehouseorigin" order="110" title="warehouse-origin">
-            <widget type="text" fieldname="codalmacenorigen" />
+            <widget type="select" fieldname="codalmacenorigen" required="true">
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="codwarehousedestination" order="120" title="warehouse-destination">
-            <widget type="text" fieldname="codalmacendestino" />
+            <widget type="select" fieldname="codalmacendestino" required="true">
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="date" order="130">
             <widget type="text" fieldname="fecha" />

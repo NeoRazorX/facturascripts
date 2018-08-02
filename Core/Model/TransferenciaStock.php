@@ -108,4 +108,16 @@ class TransferenciaStock extends Base\ModelClass
 
         return parent::test();
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     * 
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListAlmacen?active=List');
+    }
 }

@@ -49,13 +49,24 @@ class ListAlmacen extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAlmacen', 'Almacen');
+        /// warehouse
+        $this->addView('ListAlmacen', 'Almacen', 'warehouses', 'fa-building');
         $this->addSearchFields('ListAlmacen', ['nombre', 'codalmacen']);
-
         $this->addOrderBy('ListAlmacen', ['codalmacen'], 'code');
         $this->addOrderBy('ListAlmacen', ['nombre'], 'name');
 
         $selectValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
         $this->addFilterSelect('ListAlmacen', 'idempresa', 'company', 'idempresa', $selectValues);
+
+        /// transferences
+        $this->addView('ListTransferenciaStock', 'TransferenciaStock', 'stock-transfers', 'fa-exchange-alt');
+        $this->addSearchFields('ListTransferenciaStock', ['codalmacenorigen', 'codalmacendestino', 'fecha', 'usuario']);
+        $this->addOrderBy('ListTransferenciaStock', ['codalmacenorigen'], 'warehouse-origin');
+        $this->addOrderBy('ListTransferenciaStock', ['codalmacendestino'], 'warehouse-destination');
+        $this->addOrderBy('ListTransferenciaStock', ['fecha'], 'date');
+        $this->addOrderBy('ListTransferenciaStock', ['usuario'], 'user');
+
+        $this->addFilterDatePicker('ListTransferenciaStock', 'fecha', 'date', 'fecha');
+        $this->addFilterAutocomplete('ListTransferenciaStock', 'usuario', 'user', 'usuario', 'users', 'nick', 'nick');
     }
 }
