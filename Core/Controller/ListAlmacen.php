@@ -61,8 +61,8 @@ class ListAlmacen extends ExtendedController\ListController
         /// transferences
         $this->addView('ListTransferenciaStock', 'TransferenciaStock', 'stock-transfers', 'fa-exchange-alt');
         $this->addSearchFields('ListTransferenciaStock', ['observaciones']);
-        $this->addOrderBy('ListTransferenciaStock', ['codalmacenorigen'], 'warehouse-origin');
-        $this->addOrderBy('ListTransferenciaStock', ['codalmacendestino'], 'warehouse-destination');
+        $this->addOrderBy('ListTransferenciaStock', ['codalmacenorigen'], 'origin-warehouse');
+        $this->addOrderBy('ListTransferenciaStock', ['codalmacendestino'], 'destination-warehouse');
         $this->addOrderBy('ListTransferenciaStock', ['fecha'], 'date');
         $this->addOrderBy('ListTransferenciaStock', ['usuario'], 'user');
 
