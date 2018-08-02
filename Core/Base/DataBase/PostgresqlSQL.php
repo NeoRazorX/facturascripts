@@ -164,11 +164,10 @@ class PostgresqlSQL implements DataBaseSQL
      * @param string $tableName
      * @param array  $columns
      * @param array  $constraints
-     * @param bool   $checkExists
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints, $checkExists = false)
+    public function sqlCreateTable($tableName, $columns, $constraints)
     {
         $serials = ['serial', 'bigserial'];
         $fields = '';
@@ -184,13 +183,11 @@ class PostgresqlSQL implements DataBaseSQL
             }
 
             if ($col['default'] !== '') {
-                $fields .= ' DEFAULT ' . $col['default'];
+                $fields .= ' DEFAULT ' . (is_null($col['default']) ? 'NULL' : $col['default']);
             }
         }
 
-        $exists = $checkExists ? ' IF NOT EXISTS ' : ' ';
-
-        $sql = 'CREATE TABLE' . $exists . $tableName . ' (' . substr($fields, 2)
+        $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
             . $this->sqlTableConstraints($constraints) . ');';
 
         return $sql;

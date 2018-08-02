@@ -210,11 +210,10 @@ class MysqlSQL implements DataBaseSQL
      * @param string $tableName
      * @param array  $columns
      * @param array  $constraints
-     * @param bool   $checkExists
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints, $checkExists = false)
+    public function sqlCreateTable($tableName, $columns, $constraints)
     {
         $fields = '';
         foreach ($columns as $col) {
@@ -223,9 +222,7 @@ class MysqlSQL implements DataBaseSQL
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
-        $exists = $checkExists ? ' IF NOT EXISTS ' : ' ';
-
-        return 'CREATE TABLE' . $exists . $tableName . ' (' . $sql
+        return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
             . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
     }

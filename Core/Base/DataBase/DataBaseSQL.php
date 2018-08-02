@@ -94,11 +94,10 @@ interface DataBaseSQL
      * @param string $tableName
      * @param array  $columns
      * @param array  $constraints
-     * @param bool $checkExists
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints, $checkExists = false);
+    public function sqlCreateTable($tableName, $columns, $constraints);
 
     /**
      * SQL statement to add a given table column
