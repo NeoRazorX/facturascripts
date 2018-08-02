@@ -54,8 +54,6 @@ class EditProducto extends ExtendedController\PanelController
         $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
         $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-branch');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
-
-        $this->loadCustomStockWidget();
     }
 
     /**
@@ -64,7 +62,8 @@ class EditProducto extends ExtendedController\PanelController
     protected function loadCustomStockWidget()
     {
         $references = [];
-        $where = [new DataBaseWhere('idproducto', $this->request->get('code'))];
+        $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
+        $where = [new DataBaseWhere('idproducto', $idproducto)];
         foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
             $references[] = ['value' => $code->code, 'title' => $code->description];
         }
@@ -87,6 +86,8 @@ class EditProducto extends ExtendedController\PanelController
                 $view->loadData($code);
                 if ($view->model->nostock) {
                     unset($this->views['EditStock']);
+                } else {
+                    $this->loadCustomStockWidget();
                 }
                 break;
 
