@@ -46,6 +46,9 @@
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
             </column>
+            <column name="observations" order="150" numcolumns="12">
+                <widget type="textarea" fieldname="observaciones" title="observations"/>
+            </column>
         </group>
     </columns>
 </view>
