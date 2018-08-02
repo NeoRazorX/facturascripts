@@ -73,7 +73,7 @@
             <column name="bloqueado" title="blocked" order="130">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
-            <column name="ventasinstock" title="sale-no-stock" order="140">
+            <column name="ventasinstock" title="allow-sale-without-stock" order="140">
                 <widget type="checkbox" fieldname="ventasinstock"/>
             </column>
         </group>

@@ -63,7 +63,7 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="ventasinstock" title="sale-no-stock" numcolumns="3" order="140">
+            <column name="ventasinstock" title="allow-sale-without-stock" numcolumns="3" order="140">
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
