@@ -30,12 +30,12 @@
         <column name="date" order="110">
             <widget type="text" fieldname="fecha" />
         </column>
-        <column name="codwarehouseorigin" title="warehouse-origin" order="120">
+        <column name="codwarehouseorigin" title="origin-warehouse" order="120">
             <widget type="select" fieldname="codalmacenorigen" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="codwarehousedestination" title="warehouse-destination" order="130">
+        <column name="codwarehousedestination" title="destination-warehouse" order="130">
             <widget type="select" fieldname="codalmacendestino" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
