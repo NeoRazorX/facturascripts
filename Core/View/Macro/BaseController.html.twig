@@ -343,8 +343,9 @@
                 {% set cardColor = panel.color ? ' border-' ~ panel.color : '' %}
                 {% set textColor = panel.color ? ' text-' ~ panel.color : '' %}
                 {% set customClass = panel.class ? panel.class : '' %}
+                {% set numcolumns = panel.numcolumns ? '-' ~ panel.numcolumns : '' %}
 
-                <div class="col">
+                <div class="col{{ numcolumns }}">
                     <div id="{{ panel.name }}" name="{{ panel.name }}" class="card {{ customClass ~ cardColor }}">
                         {% if panel.title is not empty %}
                             <div class="card-header {{ textColor }}">
