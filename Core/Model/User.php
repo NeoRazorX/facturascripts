@@ -265,6 +265,12 @@ class User extends Base\ModelClass
             return true;
         }
 
+        // To ensure that any user of facturascripts_2015 can login and rehash its password
+        if (sha1($value) === $this->password) {
+            $this->setPassword($value);
+            return true;
+        }
+
         return false;
     }
 
