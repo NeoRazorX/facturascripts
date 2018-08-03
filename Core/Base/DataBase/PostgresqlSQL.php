@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PostgresqlSQL implements DataBaseSQL
 {
+
     /**
      * Returns the needed SQL to convert a column to integer
      *
@@ -40,13 +40,81 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL to get last ID assigned when performing an INSERT in the database
+     * Returns the SQL needed to add a constraint to a table
+     *
+     * @param string $tableName
+     * @param string $constraintName
+     * @param string $sql
      *
      * @return string
      */
-    public function sqlLastValue()
+    public function sqlAddConstraint($tableName, $constraintName, $sql)
     {
-        return 'SELECT lastval() as num;';
+        return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
+    }
+
+    /**
+     * Returns the SQL needed to add a column to a table
+     *
+     * @param string $tableName
+     * @param array  $colData
+     *
+     * @return string
+     */
+    public function sqlAlterAddColumn($tableName, $colData)
+    {
+        $sql = 'ALTER TABLE ' . $tableName . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
+
+        if ($colData['default'] !== '') {
+            $sql .= ' DEFAULT ' . $colData['default'];
+        }
+
+        if ($colData['null'] === 'NO') {
+            $sql .= ' NOT NULL';
+        }
+
+        return $sql . ';';
+    }
+
+    /**
+     * Returns the needed SQL to alter a column default constraint
+     *
+     * @param string $tableName
+     * @param array  $colData
+     *
+     * @return string
+     */
+    public function sqlAlterConstraintDefault($tableName, $colData)
+    {
+        $action = ($colData['default'] !== '') ? ' SET DEFAULT ' . $colData['default'] : ' DROP DEFAULT';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
+    }
+
+    /**
+     * SQL statement to alter a null constraint in a table column
+     *
+     * @param string $tableName
+     * @param array  $colData
+     *
+     * @return string
+     */
+    public function sqlAlterConstraintNull($tableName, $colData)
+    {
+        $action = ($colData['null'] === 'YES') ? ' DROP ' : ' SET ';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';
+    }
+
+    /**
+     * Returns the SQL needed to alter a column in a table
+     *
+     * @param string $tableName
+     * @param array  $colData
+     *
+     * @return string
+     */
+    public function sqlAlterModifyColumn($tableName, $colData)
+    {
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $colData['type'] . ';';
     }
 
     /**
@@ -121,44 +189,6 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Generates the needed SQL to establish the given constraints
-     *
-     * @param array $xmlCons
-     *
-     * @return string
-     */
-    public function sqlTableConstraints($xmlCons)
-    {
-        $sql = '';
-
-        foreach ($xmlCons as $res) {
-            $value = strtolower($res['constraint']);
-            if (false !== strpos($value, 'primary key')) {
-                $sql .= ', ' . $res['constraint'];
-                continue;
-            }
-
-            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
-                $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
-            }
-        }
-
-        return $sql;
-    }
-
-    /**
-     * Returns the SQL needed to get the list of indexes in a table
-     *
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function sqlIndexes($tableName)
-    {
-        return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
-    }
-
-    /**
      * Returns the SQL needed to create a table with the given structure
      *
      * @param string $tableName
@@ -194,76 +224,6 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to add a column to a table
-     *
-     * @param string $tableName
-     * @param array  $colData
-     *
-     * @return string
-     */
-    public function sqlAlterAddColumn($tableName, $colData)
-    {
-        $sql = 'ALTER TABLE ' . $tableName
-            . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
-
-        if ($colData['default'] !== '') {
-            $sql .= ' DEFAULT ' . $colData['default'];
-        }
-
-        if ($colData['null'] === 'NO') {
-            $sql .= ' NOT NULL';
-        }
-
-        return $sql . ';';
-    }
-
-    /**
-     * Returns the SQL needed to alter a column in a table
-     *
-     * @param string $tableName
-     * @param array  $colData
-     *
-     * @return string
-     */
-    public function sqlAlterModifyColumn($tableName, $colData)
-    {
-        $sql = 'ALTER TABLE ' . $tableName
-            . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $colData['type'];
-
-        return $sql . ';';
-    }
-
-    /**
-     * Returns the needed SQL to alter a column default constraint
-     *
-     * @param string $tableName
-     * @param array  $colData
-     *
-     * @return string
-     */
-    public function sqlAlterConstraintDefault($tableName, $colData)
-    {
-        $action = ($colData['default'] !== '') ? ' SET DEFAULT ' . $colData['default'] : ' DROP DEFAULT';
-
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
-    }
-
-    /**
-     * SQL statement to alter a null constraint in a table column
-     *
-     * @param string $tableName
-     * @param array  $colData
-     *
-     * @return string
-     */
-    public function sqlAlterConstraintNull($tableName, $colData)
-    {
-        $action = ($colData['null'] === 'YES') ? ' DROP ' : ' SET ';
-
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';
-    }
-
-    /**
      * Returns the SQL needed to remove a constraint from a table
      *
      * @param string $tableName
@@ -277,17 +237,37 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to add a constraint to a table
+     * SQL statement to drop a given table
      *
      * @param string $tableName
-     * @param string $constraintName
-     * @param string $sql
      *
      * @return string
      */
-    public function sqlAddConstraint($tableName, $constraintName, $sql)
+    public function sqlDropTable($tableName)
     {
-        return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
+        return 'DROP TABLE IF EXISTS ' . $tableName . ';';
+    }
+
+    /**
+     * Returns the SQL needed to get the list of indexes in a table
+     *
+     * @param string $tableName
+     *
+     * @return string
+     */
+    public function sqlIndexes($tableName)
+    {
+        return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
+    }
+
+    /**
+     * Returns the SQL to get last ID assigned when performing an INSERT in the database
+     *
+     * @return string
+     */
+    public function sqlLastValue()
+    {
+        return 'SELECT lastval() as num;';
     }
 
     /**
@@ -303,16 +283,28 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to drop a given table
+     * Generates the needed SQL to establish the given constraints
      *
-     * @param string $tableName
-     * @param bool   $checkExists
+     * @param array $xmlCons
      *
      * @return string
      */
-    public function sqlDropTable($tableName, $checkExists = false)
+    public function sqlTableConstraints($xmlCons)
     {
-        $exists = $checkExists ? ' IF EXISTS ' : ' ';
-        return 'DROP TABLE' . $exists . $tableName . ';';
+        $sql = '';
+
+        foreach ($xmlCons as $res) {
+            $value = strtolower($res['constraint']);
+            if (false !== strpos($value, 'primary key')) {
+                $sql .= ', ' . $res['constraint'];
+                continue;
+            }
+
+            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+                $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
+            }
+        }
+
+        return $sql;
     }
 }

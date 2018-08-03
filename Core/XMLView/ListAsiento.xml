@@ -51,10 +51,10 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="editable">
+        <row type="status">
             <option color="table-info" fieldname="importe">&lt;0</option>
             <option color="table-success" fieldname="importe">&gt;1000</option>
-            <option color="table-warning">1</option>
+            <option color="table-warning" fieldname="editable">1</option>
         </row>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">

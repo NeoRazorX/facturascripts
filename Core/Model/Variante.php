@@ -112,7 +112,9 @@ class Variante extends Base\ModelClass
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description FROM " . self::tableName() . " v"
             . " LEFT JOIN " . Producto::tableName() . " p ON v.idproducto = p.idproducto"
-            . " WHERE LOWER(v.referencia) LIKE '" . $query . "%' OR LOWER(p.descripcion) LIKE '%" . $query . "%'"
+            . " WHERE LOWER(v.referencia) LIKE '" . $query . "%'"
+            . " OR v.codbarras = '" . $query . "'"
+            . " OR LOWER(p.descripcion) LIKE '%" . $query . "%'"
             . " ORDER BY v." . $field . " asc";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
