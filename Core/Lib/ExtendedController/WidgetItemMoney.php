@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\DivisaTools;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetItemMoney extends WidgetItem
+class WidgetItemMoney extends WidgetItemNumberBase
 {
 
     /**
@@ -42,24 +42,12 @@ class WidgetItemMoney extends WidgetItem
     {
         parent::__construct();
 
+        $this->decimal = FS_NF0;
         $this->type = 'money';
 
         if (!isset(self::$divisaTools)) {
             self::$divisaTools = new DivisaTools();
         }
-    }
-
-    /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getEditHTML($value)
-    {
-        $specialAttributes = $this->specialAttributes();
-        return $this->standardEditHTMLWidget($value, $specialAttributes);
     }
 
     /**
@@ -76,6 +64,21 @@ class WidgetItemMoney extends WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
-        return '<span' . $style . '>' . self::$divisaTools->format($value) . '</span>';
+        return '<span' . $style . '>' . self::$divisaTools->format($value, $this->decimal) . '</span>';
+    }
+
+    /**
+     * Loads the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement $column
+     */
+    public function loadFromXML($column)
+    {
+        parent::loadFromXML($column);
+
+        if (empty($this->decimal)) {
+            $widgetAtributes = $column->widget->attributes();
+            $this->decimal = isset($widgetAtributes->decimal) ? (int) $widgetAtributes->decimal : FS_NF0;
+        }
     }
 }
