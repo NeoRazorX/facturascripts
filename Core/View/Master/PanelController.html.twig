@@ -90,7 +90,8 @@
                         });
                     },
                     select: function (event, ui) {
-                        $('#' + field + 'Autocomplete').val(ui.item.key);
+                        formData = $('form.form[name=' + formName + ']');
+                        formData.find('#' + field + 'Autocomplete').val(ui.item.key);
                         ui.item.value = ui.item.value.split(' | ')[1];
                     }
                 });
