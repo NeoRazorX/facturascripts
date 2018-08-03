@@ -162,6 +162,9 @@ abstract class App
     {
         new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick, $this->uri);
         $this->dataBase->close();
+        if (FS_DEBUG) {
+            $this->cache->clear();
+        }
     }
 
     /**

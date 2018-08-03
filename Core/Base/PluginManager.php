@@ -235,7 +235,7 @@ class PluginManager
         $plugins = [];
 
         foreach (FileManager::scanFolder(self::PLUGIN_PATH, false) as $folder) {
-            $iniPath = self::PLUGIN_PATH . $folder . '/facturascripts.ini';
+            $iniPath = self::PLUGIN_PATH . $folder . DIRECTORY_SEPARATOR . 'facturascripts.ini';
             $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);
         }
