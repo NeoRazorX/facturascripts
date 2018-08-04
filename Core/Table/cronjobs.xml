@@ -7,22 +7,27 @@
 -->
 <table>
     <column>
+        <name>date</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>done</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('cronjobs_id_seq'::regclass)</default>
     </column>
     <column>
-        <name>pluginname</name>
+        <name>jobname</name>
         <type>character varying(50)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>date</name>
-        <type>timestamp</type>
-    </column>
-    <column>
-        <name>jobname</name>
+        <name>pluginname</name>
         <type>character varying(50)</type>
         <null>NO</null>
     </column>

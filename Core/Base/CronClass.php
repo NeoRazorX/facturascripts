@@ -91,19 +91,25 @@ abstract class CronClass
     public function isTimeForJob($pluginName, $jobName, $period = '1 day')
     {
         $cronJob = new CronJob();
-        $previousExec = date('d-m-Y H:i:s', strtotime('-' . $period));
         $where = [
             new DataBaseWhere('pluginname', $pluginName),
             new DataBaseWhere('jobname', $jobName),
-            new DataBaseWhere('date', $previousExec, '<=')
         ];
 
-        // if we find this job executed, is not time to do now
-        if ($cronJob->loadFromCode('', $where)) {
-            return false;
+        /// if we can't find it, then is the first time
+        if (!$cronJob->loadFromCode('', $where)) {
+            return true;
         }
 
-        return true;
+        /// last time was before period
+        if (strtotime($cronJob->date) < strtotime('-' . $period)) {
+            /// updates date and return true (if no error)
+            $cronJob->date = date('d-m-Y H:i:s');
+            $cronJob->done = false;
+            return $cronJob->save();
+        }
+
+        return false;
     }
 
     /**
@@ -112,7 +118,7 @@ abstract class CronClass
      * @param string $pluginName
      * @param string $jobName
      */
-    public function jobDone($pluginName, $jobName = null)
+    public function jobDone($pluginName, $jobName)
     {
         $cronJob = new CronJob();
         $where = [
@@ -126,8 +132,9 @@ abstract class CronClass
         }
 
         $cronJob->date = date('d-m-Y H:i:s');
+        $cronJob->done = true;
         if (!$cronJob->save()) {
-            self::$miniLog->error('can-not-save-finished-cronjob', ['%pluginName%' => $pluginName, '%jobName%' => $jobName ?? '']);
+            self::$miniLog->error(self::$i18n->trans('record-save-error'));
         }
     }
 }

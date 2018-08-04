@@ -38,6 +38,12 @@ class CronJob extends Base\ModelClass
     public $date;
 
     /**
+     *
+     * @var bool
+     */
+    public $done;
+
+    /**
      * Primary key.
      *
      * @var int
@@ -65,6 +71,7 @@ class CronJob extends Base\ModelClass
     {
         parent::clear();
         $this->date = date('d-m-Y H:i:s');
+        $this->done = false;
     }
 
     /**
