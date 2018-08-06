@@ -25,6 +25,7 @@ use FacturaScripts\Core\Model\LogMessage;
  * Controller to list the items in the LogMessage model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListLogMessage extends ExtendedController\ListController
 {
@@ -49,6 +50,34 @@ class ListLogMessage extends ExtendedController\ListController
      * Load views
      */
     protected function createViews()
+    {
+        $this->createLogMessageView();
+        $this->createCronJobView();
+    }
+
+    /**
+     * Create view to view all information about crons.
+     *
+     * @return void
+     */
+    private function createCronJobView()
+    {
+        $this->addView('ListCronJob', 'CronJob', 'crons', 'fa-file-alt');
+        $this->addSearchFields('ListCronJob', ['jobname', 'pluginname']);
+
+        $this->addOrderBy('ListCronJob', ['jobname'], 'jobname');
+        $this->addOrderBy('ListCronJob', ['pluginname'], 'pluginname');
+        $this->addOrderBy('ListCronJob', ['date'], 'date');
+
+        $this->addFilterDatePicker('ListCronJob', 'date', 'date', 'date');
+    }
+
+    /**
+     * Create view to get information about all logs.
+     *
+     * @return void
+     */
+    private function createLogMessageView()
     {
         $this->addView('ListLogMessage', 'LogMessage', 'logs', 'fa-file-alt');
         $this->addSearchFields('ListLogMessage', ['message', 'uri']);
