@@ -67,7 +67,7 @@ class AppCron extends App
             $cronClass = "FacturaScripts\\Plugins\\{$pluginName}\\Cron";
             if (class_exists($cronClass)) {
                 $this->miniLog->notice($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
-                $cron = new $cronClass();
+                $cron = new $cronClass($pluginName);
                 $cron->run();
             }
         }
