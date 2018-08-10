@@ -76,7 +76,7 @@ abstract class CronClass
      * 
      * @param string $pluginName
      */
-    public function __construct($pluginName)
+    public function __construct(string $pluginName)
     {
         $this->pluginName = $pluginName;
         if (!isset(self::$cache)) {
@@ -96,7 +96,7 @@ abstract class CronClass
      *
      * @return bool
      */
-    public function isTimeForJob($jobName, $period = '1 day')
+    public function isTimeForJob(string $jobName, string $period = '1 day')
     {
         $cronJob = new CronJob();
         $where = [
@@ -125,7 +125,7 @@ abstract class CronClass
      *
      * @param string $jobName
      */
-    public function jobDone($jobName)
+    public function jobDone(string $jobName)
     {
         $cronJob = new CronJob();
         $where = [

@@ -67,7 +67,7 @@ class EmailTools
         $search = [
             '[[title]]',
             '[[company]]',
-            '[[text]]',
+            '[[body]]',
             '[[footer]]',
         ];
         $replace = [
