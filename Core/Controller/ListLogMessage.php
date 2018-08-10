@@ -62,7 +62,7 @@ class ListLogMessage extends ExtendedController\ListController
      */
     private function createCronJobView()
     {
-        $this->addView('ListCronJob', 'CronJob', 'crons', 'fa-file-alt');
+        $this->addView('ListCronJob', 'CronJob', 'crons', 'fa-cogs');
         $this->addSearchFields('ListCronJob', ['jobname', 'pluginname']);
         $this->addOrderBy('ListCronJob', ['jobname'], 'jobname');
         $this->addOrderBy('ListCronJob', ['pluginname'], 'pluginname');
