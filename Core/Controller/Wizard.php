@@ -50,6 +50,13 @@ class Wizard extends Controller
     public $showChangePasswd = false;
 
     /**
+     * Check if the user must introduce the email.
+     *
+     * @var boolean
+     */
+    public $showIntroduceEmail = true;
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -102,12 +109,16 @@ class Wizard extends Controller
             $this->showChangePasswd = true;
         }
 
+        if ($this->user->email !== '') {
+            $this->showIntroduceEmail = false;
+        }
+
         $pass = $this->request->request->get('password', '');
         if ('' !== $pass && !$this->saveNewPassword($pass)) {
             return;
         }
-
-        if (!$this->saveEmail()) {
+        $email = $this->request->request->get('email', '');
+        if ('' !== $email && !$this->saveEmail()) {
             return;
         }
 
