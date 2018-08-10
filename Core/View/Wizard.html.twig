@@ -40,6 +40,13 @@
                     </div>
                 </div>
             {% endif %}
+            <div class="row bg-warning">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        {{ forms.simpleInput('email', 'email', '', 'email', i18n.trans('specify-email'), 'fa-at', 'required') }}
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">

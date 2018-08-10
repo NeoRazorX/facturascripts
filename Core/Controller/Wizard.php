@@ -107,6 +107,10 @@ class Wizard extends Controller
             return;
         }
 
+        if (!$this->saveEmail()) {
+            return;
+        }
+
         $codpais = $this->request->request->get('codpais', '');
         if ('' !== $codpais) {
             $this->saveStep1($codpais);
@@ -239,6 +243,12 @@ class Wizard extends Controller
             $this->appSettings->save();
             break;
         }
+    }
+
+    private function saveEmail() : bool
+    {
+        $this->user->email = $this->request->request->get('email', '');
+        return $this->user->save();
     }
 
     /**
