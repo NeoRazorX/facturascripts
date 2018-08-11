@@ -54,7 +54,7 @@ class Wizard extends Controller
      *
      * @var boolean
      */
-    public $showIntroduceEmail = true;
+    public $showIntroduceEmail = false;
 
     /**
      * Returns basic page attributes
@@ -109,16 +109,17 @@ class Wizard extends Controller
             $this->showChangePasswd = true;
         }
 
-        if ($this->user->email !== '') {
-            $this->showIntroduceEmail = false;
+        if (empty($this->user->email)) {
+            $this->showIntroduceEmail = true;
         }
 
         $pass = $this->request->request->get('password', '');
         if ('' !== $pass && !$this->saveNewPassword($pass)) {
             return;
         }
+
         $email = $this->request->request->get('email', '');
-        if ('' !== $email && !$this->saveEmail()) {
+        if ('' !== $email && !$this->saveEmail($email)) {
             return;
         }
 
@@ -226,7 +227,7 @@ class Wizard extends Controller
                 $this->appSettings->set($group, $key, $value);
             }
         }
-        
+
         $this->appSettings->save();
     }
 
@@ -235,7 +236,7 @@ class Wizard extends Controller
      *
      * @param string $codpais
      */
-    private function saveAddress($codpais)
+    private function saveAddress(string $codpais)
     {
         $this->empresa->codpais = $codpais;
         $this->empresa->provincia = $this->request->request->get('provincia', '');
@@ -256,9 +257,20 @@ class Wizard extends Controller
         }
     }
 
-    private function saveEmail() : bool
+    /**
+     * 
+     * @param string $email
+     *
+     * @return bool
+     */
+    private function saveEmail(string $email): bool
     {
-        $this->user->email = $this->request->request->get('email', '');
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->miniLog->warning($this->i18n->trans('not-valid-email', ['%email%' => $email]));
+            return false;
+        }
+
+        $this->user->email = $email;
         return $this->user->save();
     }
 

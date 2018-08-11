@@ -25,7 +25,7 @@
                 <div class="row bg-warning">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fa-key') }}
+                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fa-key', {'autofocus': ''}) }}
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -41,13 +41,13 @@
                 </div>
             {% endif %}
             {% if fsc.showIntroduceEmail %}
-            <div class="row bg-warning">
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        {{ forms.simpleInput('email', 'email', '', 'email', i18n.trans('specify-email'), 'fa-at', 'required') }}
+                <div class="row bg-warning">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            {{ forms.simpleInput('email', 'email', fs.user.email, 'email', i18n.trans('email'), 'fa-at', 'required') }}
+                        </div>
                     </div>
                 </div>
-            </div>
             {% endif %}
             <div class="row">
                 <div class="col-sm-4">
