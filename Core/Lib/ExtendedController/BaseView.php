@@ -39,6 +39,12 @@ abstract class BaseView
     public $count;
 
     /**
+     *
+     * @var string
+     */
+    public $icon;
+
+    /**
      * Contains the translator.
      *
      * @var Base\Translator
@@ -67,6 +73,12 @@ abstract class BaseView
     protected $pageOption;
 
     /**
+     *
+     * @var string
+     */
+    public $template;
+
+    /**
      * View title
      *
      * @var string
@@ -83,15 +95,17 @@ abstract class BaseView
      *
      * @param string $title
      * @param string $modelName
+     * @param string $icon
      */
-    public function __construct(string $title, string $modelName)
+    public function __construct(string $title, string $modelName, string $icon)
     {
         static::$i18n = new Base\Translator();
-
         $this->count = 0;
-        $this->title = static::$i18n->trans($title);
+        $this->icon = $icon;
         $this->model = class_exists($modelName) ? new $modelName() : null;
         $this->pageOption = new PageOption();
+        $this->template = 'Master/BaseView.html.twig';
+        $this->title = static::$i18n->trans($title);
     }
 
     /**

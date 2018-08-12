@@ -111,7 +111,7 @@ abstract class BusinessDocumentController extends PanelController
         /// doc tab
         $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
         $view = new BusinessDocumentView('new', $fullModelName, $this->getLineXMLView(), $this->user->nick);
-        $this->addView('Document', $view, 'fa-file');
+        $this->addCustomView('Document', $view);
 
         /// edita tab
         $viewName = 'Edit' . $this->getModelClassName();

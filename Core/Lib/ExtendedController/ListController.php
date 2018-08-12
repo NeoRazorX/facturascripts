@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Lib\Pagination;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,13 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ListController extends BaseController
 {
-
-    /**
-     * Tools to work with numbers.
-     *
-     * @var Base\NumberTools
-     */
-    public $numberTools;
 
     /**
      * First row to select from the database.
@@ -66,55 +60,9 @@ abstract class ListController extends BaseController
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-
         $this->setTemplate('Master/ListController');
-
-        $this->numberTools = new Base\NumberTools();
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
-    }
-
-    /**
-     * Returns an array for JS of URLs for the elements in a view.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getStringURLs(string $type): string
-    {
-        $result = '';
-        $sep = '';
-        foreach ($this->views as $viewName => $view) {
-            $result .= $sep . $viewName . ': "' . $view->getURL($type) . '"';
-            $sep = ', ';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Creates an array with the available "jumps" to paginate the model data with the specified view.
-     *
-     * @param string $viewName
-     *
-     * @return array
-     */
-    public function pagination(string $viewName)
-    {
-        $offset = $this->getOffSet($viewName);
-        $count = $this->views[$viewName]->count;
-        $url = $this->views[$viewName]->getURL('list');
-
-        $extra = $this->getParams($viewName);
-        if (strpos($url, '?') === false) {
-            $url .= $extra;
-        } elseif (!empty($extra)) {
-            $url .= '&' . substr($extra, 1);
-        }
-
-        $paginationObj = new Base\Pagination($url);
-        return $paginationObj->getPages($count, $offset);
     }
 
     /**
@@ -311,13 +259,8 @@ abstract class ListController extends BaseController
     protected function addView($viewName, $modelName, $viewTitle = '', $icon = 'fa-search')
     {
         $title = empty($viewTitle) ? $this->title : $viewTitle;
-        $this->views[$viewName] = new ListView($title, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->setSettings($viewName, 'icon', $icon);
-        $this->setSettings($viewName, 'insert', true);
-        $this->setSettings($viewName, 'megasearch', true);
-        if (empty($this->active)) {
-            $this->active = $viewName;
-        }
+        $view = new ListView($title, self::MODEL_NAMESPACE . $modelName, $icon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -489,7 +432,7 @@ abstract class ListController extends BaseController
      */
     protected function loadData($viewName, $where, $offset)
     {
-        $this->views[$viewName]->loadData(false, $where, [], $offset, Base\Pagination::FS_ITEM_LIMIT);
+        $this->views[$viewName]->loadData(false, $where, [], $offset, Pagination::FS_ITEM_LIMIT);
     }
 
     /**
@@ -524,7 +467,7 @@ abstract class ListController extends BaseController
 
             $fields = $listView->getSearchIn();
             $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
-            $listView->loadData(false, $where, [], 0, Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData(false, $where, [], 0, Pagination::FS_ITEM_LIMIT);
 
             $cols = $this->getTextColumns($listView, 6);
             $json[$viewName]['columns'] = $cols;

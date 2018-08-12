@@ -19,7 +19,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -29,7 +29,7 @@
     <head>
         {% block meta %}
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <title>{{ i18n.trans(fsc.title) | capitalize }}</title>
+            <title>{{ fsc.title | capitalize }}</title>
             <meta name="description" content="{{ i18n.trans('meta-description') }}" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta name="generator" content="FacturaScripts" />
@@ -133,10 +133,12 @@
                     </div>
                 </div>
             {% endblock %}
-        {% block bodyHeaderOptions %}{% endblock %}
-    {% block body %}{% endblock %}
-    <br/>
-    {{ debugBarRender.render()|raw }}
-</body>
-{% endblock %}
+            {% block bodyHeaderOptions %}
+            {% endblock %}
+            {% block body %}
+            {% endblock %}
+            <br/>
+            {{ debugBarRender.render()|raw }}
+        </body>
+    {% endblock %}
 </html>

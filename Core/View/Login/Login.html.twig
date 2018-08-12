@@ -1,54 +1,54 @@
 {% extends "Master/MicroTemplate.html.twig" %}
 
 {% block fullBody %}
-<body class="bg-dark">
-    {% block messages %}
-    {{ parent() }}
-    {% endblock %}
-    {% block body %}
-    <form action="" method="post" class="form">
-        <div class="container">
-            <div class="row justify-content-md-center">
-                <div class="col-md-6">
-                    <br/>
-                    <div class="card">
-                        <a href="index.php">
-                            <img class="card-img-top" src="{{ asset('Dinamic/Assets/Images/horizontal-logo.png') }}" alt="FacturaScripts"/>
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ i18n.trans('login') }}</h5>
-                            <p class="card-text">{{ i18n.trans('login-text') }}</p>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <span class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                                        </span>
-                                    </span>
-                                    <input type="text" name="fsNick" class="form-control" maxlength="50" placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off" autofocus=""/>
+    <body class="bg-dark">
+        {% block messages %}
+            {{ parent() }}
+        {% endblock %}
+        {% block body %}
+            <form action="" method="post" class="form">
+                <div class="container">
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-6">
+                            <br/>
+                            <div class="card">
+                                <a href="index.php">
+                                    <img class="card-img-top" src="{{ asset('Dinamic/Assets/Images/horizontal-logo.png') }}" alt="FacturaScripts"/>
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ i18n.trans('login') }}</h5>
+                                    <p class="card-text">{{ i18n.trans('login-text') }}</p>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
+                                                </span>
+                                            </span>
+                                            <input type="text" name="fsNick" class="form-control" maxlength="50" placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off" autofocus=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-key fa-fw" aria-hidden="true"></i>
+                                                </span>
+                                            </span>
+                                            <input type="password" name="fsPassword" class="form-control" maxlength="50" placeholder="{{ i18n.trans('password') }}" required="" autocomplete="off"/>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-block btn-primary">
+                                        {{ i18n.trans('login') }}
+                                    </button>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <span class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-key fa-fw" aria-hidden="true"></i>
-                                        </span>
-                                    </span>
-                                    <input type="password" name="fsPassword" class="form-control" maxlength="50" placeholder="{{ i18n.trans('password') }}" required="" autocomplete="off"/>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-block btn-primary">
-                                {{ i18n.trans('login') }}
-                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </form>
-    <br/><br/><br/>
-    {% endblock %}
-    {{ debugBarRender.render()|raw }}
-</body>
+            </form>
+            <br/><br/><br/>
+        {% endblock %}
+        {{ debugBarRender.render()|raw }}
+    </body>
 {% endblock %}

@@ -58,11 +58,11 @@ class EditUser extends ExtendedController\PanelController
         $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fa-address-card');
 
         /// Load values for input selects
-        $this->loadHomepageValues();
-        $this->loadLanguageValues();
+        //$this->loadHomepageValues();
+        //$this->loadLanguageValues();
 
         /// Disable column
-        $this->views['EditRoleUser']->disableColumn('user', true);
+        //$this->views['EditRoleUser']->disableColumn('user', true);
     }
 
     protected function editAction()

@@ -59,15 +59,15 @@ class BusinessDocumentView extends BaseView
      * @param string $title
      * @param string $modelName
      * @param string $lineXMLView
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct(string $title, string $modelName, string $lineXMLView, string $userNick)
+    public function __construct(string $title, string $modelName, string $lineXMLView, string $icon)
     {
-        parent::__construct($title, $modelName);
+        parent::__construct($title, $modelName, $icon);
         $this->documentStatus = [];
 
         // Loads the view configuration for the user
-        $this->pageOption->getForUser($lineXMLView, $userNick);
+        //$this->pageOption->getForUser($lineXMLView, $userNick);
 
         $this->lineOptions = [];
         foreach ($this->pageOption->columns['root']->columns as $col) {

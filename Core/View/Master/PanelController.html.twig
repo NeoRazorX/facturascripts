@@ -6,7 +6,7 @@
      * in different formats.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -28,173 +28,59 @@
 
 {% block css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/extendedcontroller.css') }}" />
-    <link rel="stylesheet" href="{{ asset('node_modules/summernote/dist/summernote-bs4.css') }}"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
-    <script src="{{ asset('Dinamic/Assets/JS/PanelController.js') }}"></script>
-    <script type="text/javascript">
-        tabActive = '{{ fsc.active }}';
-        settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-                url = '{{ fsc.getURL('new') }}';
-
-        function deleteRecord(formName, action = 'delete') {
-            bootbox.confirm({
-                title: "{{ i18n.trans('confirm-delete')|raw }}",
-                message: "{{ i18n.trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
-                    },
-                    confirm: {
-                        label: "<i class='fas fa-check'></i> {{ i18n.trans('confirm') }}",
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        execActionForm(action, formName);
-                    }
-                }
-            });
-        }
-        $(document).ready(function () {
-            // autocomplete filters
-            $('.autocomplete').each(function () {
-                var field = $(this).attr('data-field');
-                var source = $(this).attr('data-source');
-                var fieldcode = $(this).attr('data-fieldcode');
-                var fieldtitle = $(this).attr('data-fieldtitle');
-                var formName = $(this).closest('form').attr('name');
-                $(this).autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            method: 'POST',
-                            url: '{{ fsc.url() }}',
-                            data: getAutocompleteData(formName, field, source, fieldcode, fieldtitle, request.term),
-                            dataType: 'json',
-                            success: function (results) {
-                                var values = [];
-                                results.forEach(function (element) {
-                                    values.push({key: element.key, value: element.key + " | " + element.value});
-                                });
-                                response(values);
-                            },
-                            error: function (msg) {
-                                alert(msg.status + ' ' + msg.statusText);
-                            }
-                        });
-                    },
-                    select: function (event, ui) {
-                        formData = $('form.form[name=' + formName + ']');
-                        formData.find('#' + field + 'Autocomplete').val(ui.item.key);
-                        ui.item.value = ui.item.value.split(' | ')[1];
-                    }
-                });
-            });
-            // html widgets
-            $('.html-editor').summernote();
-        });
-    </script>
 {% endblock %}
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
-
-    {# -- Calculate texts according to language -- #}
-    {% set all = i18n.trans('all') %}
-    {% set refresh_title = i18n.trans('refresh') %}
-    {% set options = i18n.trans('options') %}
-    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
-    {% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
-
-    {# -- Calculate common values -- #}
-    {% set list_url = fsc.getURL('list') %}
-    {% set edit_url = fsc.getURL('edit') %}
-
-    {# -- Visual macros -- #}
-    {% from 'Macro/Utils.html.twig' import exportData as exportData %}
-    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-
-    {# -- Header Row -- #}
-    <div class="container-fluid" style="margin-bottom: 10px;">
+    {% set pageData = fsc.getPageData() %}
+    {% set first_view = fsc.views | first %}
+    <div class="container-fluid d-print-none">
         <div class="row">
             <div class="col-md-7">
                 <nav aria-label="breadcrumb">
-                    {% set pageData = fsc.getPageData() %}
                     <ol class="breadcrumb d-md-none">
-                        <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.menu) }}</a></li>
-                            {% if pageData.submenu %}
-                            <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.submenu) }}</a></li>
-                            {% endif %}
-                        <li class="breadcrumb-item"><a href="#">{{ title }}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ fsc.getPrimaryDescription() | raw }}</li>
+                        <li class="breadcrumb-item">
+                            <a href="#">{{ i18n.trans(pageData.menu) }}</a>
+                        </li>
+                        {% if pageData.submenu %}
+                            <li class="breadcrumb-item">
+                                <a href="#">{{ i18n.trans(pageData.submenu) }}</a>
+                            </li>
+                        {% endif %}
+                        <li class="breadcrumb-item">
+                            <a href="#">{{ title }}</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            {{ fsc.getPrimaryDescription() | raw }}
+                        </li>
                     </ol>
                 </nav>
                 <div class="btn-group">
-                    <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
+                    <a href="{{ first_view.url('list') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-arrow-left" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">&nbsp;{{ all }} </span>
+                        <span class="d-none d-md-inline-block">&nbsp;{{ i18n.trans('all') }} </span>
                     </a>
-                    <a href="{{ edit_url }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
+                    <a href="{{ first_view.url('edit') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
-                </div>
-                <div class="btn-group">
-                    <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
-                        <i class="fas fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
-                    </a>
-                    <div class="btn-group">
-                        {% set first_view = fsc.views | first %}
-                        <a href="EditPageOption?code={{ first_view.getViewName() }}&url={{ edit_url | url_encode }}" class="btn btn-sm btn-secondary">
-                            <i class="fas fa-wrench" aria-hidden="true"></i>
-                            <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <div class="dropdown-menu">
-                            {% for view in fsc.views %}
-                                {% if fsc.viewClass(view) != 'HtmlView' %}
-                                    <a class="dropdown-item" href="EditPageOption?code={{ view.getViewName() }}&url={{ edit_url | url_encode }}">
-                                        <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
-                                    </a>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% if fsc.hasData %}
-                        {# -- Adds print and export options -- #}
-                        {{ exportData(fsc, i18n, 'edit') }}
-                    {% endif %}
                 </div>
             </div>
             <div class="col-md-5 text-right">
                 <h1 class="h3 d-none d-md-inline-block">
-                    <i class="fas {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
-                    {{ title }} <small class="text-info d-none d-lg-inline-block">{{ fsc.getPrimaryDescription() | raw }}</small>
+                    <i class="fas {{ pageData.icon }}" aria-hidden="true"></i> {{ fsc.title }}
+                    <small class="text-info d-none d-lg-inline-block">{{ fsc.getPrimaryDescription() | raw }}</small>
                 </h1>
             </div>
         </div>
-    </div>
-    <div class="d-none">
-        <form action="#" method="post" name="insertForm">
-            <input type="hidden" name="action" value="insert"/>
-        </form>
     </div>
 {% endblock %}
 
 {% block body %}
     {{ parent() }}
-    {# -- Visual macros -- #}
-    {% import 'Macro/BaseController.html.twig' as BaseController %}
-
-    {# -- Data Row -- #}
     <div class="container-fluid">
         <div class="row">
             {# -- Left Panel -- #}
@@ -203,11 +89,9 @@
                     <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
                         {% for indexView, view in fsc.views %}
                             {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                            {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                            <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
                                 {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
-                                <i class="fas {{ fsc.getSettings(indexView, 'icon') }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i>
-                                &nbsp;{{ view.title }}
+                                <i class="fas {{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
                             </a>
                         {% endfor %}
                     </div>
@@ -219,10 +103,9 @@
                 <div class="nav nav-tabs d-lg-none" role="tablist">
                     {% for indexView, view in fsc.views %}
                         {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                        {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
-                        <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab2" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                        <a class="nav-link{{ active }}" id="{{ indexView }}-tab2" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
                             {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
-                            <i class="fas {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
+                            <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
                         </a>
                     {% endfor %}
                 </div>
@@ -230,46 +113,11 @@
                     {% for indexView, view in fsc.views %}
                         {% set active = (indexView == fsc.active) ? ' show active' : '' %}
                         <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
-                            {% if viewType in ['EditView','EditListView'] %}
-                                {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-                            {% endif %}
-
-                            <div class="card">
-                                <div class="card-header d-lg-none">{{ view.title }}</div>
-                                <div class="card-body">
-                                    {% set viewType = fsc.viewClass(view) %}
-                                    {% if viewType == 'ListView' %}
-                                        <a href="{{ view.getURL('new') | raw }}" class="btn btn-sm btn-success">
-                                            <i class="fas fa-plus" aria-hidden="true"></i>
-                                            <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans('new') }}</span>
-                                        </a>
-                                        <a href="{{ view.getURL('list') | raw }}" class="btn btn-sm btn-light float-right">
-                                            <span class="d-none d-sm-inline-block">{{ i18n.trans('all') }}&nbsp;</span>
-                                            <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                                        </a>
-                                        {{ BaseController.columnsForListView(_context, view) }}
-                                    {% elseif viewType == 'EditView' %}
-                                        {# Statistical buttons bar #}
-                                        {{ BaseController.rowStatisticsForEditView(_context, view) }}
-
-                                        {# Main Form #}
-                                        {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
-                                    {% elseif viewType == 'EditListView' %}
-                                        {{ BaseController.columnsForEditListView(_context, view) }}
-                                    {% elseif viewType == 'HtmlView' %}
-                                        <div>{% include view.fileName ignore missing %}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% if viewType in ['ListView','EditView','EditListView'] %}
-                                {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                                {{ BaseController.modalFormFromColumns(_context, view) }}
-                            {% endif %}
+                            {{ include(view.template) }}
                         </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
     </div>
-    <br/>
 {% endblock %}

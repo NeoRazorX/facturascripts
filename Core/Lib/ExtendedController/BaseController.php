@@ -54,22 +54,18 @@ abstract class BaseController extends Base\Controller
     public $exportManager;
 
     /**
-     * List of views displayed by the controller.
+     * Tools to work with numbers.
      *
-     * @var mixed
+     * @var Base\NumberTools
      */
-    public $views;
+    public $numberTools;
 
     /**
-     * List of configuration options for each of the views.
-     * [
-     *   'keyView1' => ['icon' => 'fa-icon1', 'active' => TRUE],
-     *   'keyView2' => ['icon' => 'fa-icon2', 'active' => TRUE]
-     * ]
+     * List of views displayed by the controller.
      *
-     * @var array
+     * @var BaseView[]
      */
-    private $settings;
+    public $views;
 
     /**
      * Inserts the views to display.
@@ -91,54 +87,16 @@ abstract class BaseController extends Base\Controller
         $this->active = $this->request->get('active', '');
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
+        $this->numberTools = new Base\NumberTools();
         $this->views = [];
-        $this->settings = [];
     }
-
-    /**
-     * Returns the configuration value for the indicated view.
-     *
-     * @param string|null $viewName
-     * @param string|null $property
-     *
-     * @return mixed
-     */
-    public function getSettings($viewName, $property)
+    
+    public function addCustomView($viewName, $view)
     {
-        if (empty($viewName)) {
-            return $this->settings;
+        $this->views[$viewName] = $view;
+        if (empty($this->active)) {
+            $this->active = $viewName;
         }
-
-        if (empty($property)) {
-            return $this->settings[$viewName];
-        }
-
-        return $this->settings[$viewName][$property];
-    }
-
-    /**
-     * Set value for setting of a view
-     *
-     * @param string $viewName
-     * @param string $property
-     * @param mixed $value
-     */
-    public function setSettings($viewName, $property, $value)
-    {
-        $this->settings[$viewName][$property] = $value;
-    }
-
-    /**
-     * Returns the configuration property value for a specified $field.
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        return isset($model->{$field}) ? $model->{$field} : null;
     }
 
     /**
@@ -150,7 +108,6 @@ abstract class BaseController extends Base\Controller
     protected function autocompleteAction(): array
     {
         $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'formname']);
-
         if ($data['source'] == '') {
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }

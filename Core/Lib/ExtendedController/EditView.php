@@ -36,14 +36,14 @@ class EditView extends BaseView implements DataViewInterface
      * @param string $title
      * @param string $modelName
      * @param string $viewName
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct($title, $modelName, $viewName, $icon)
     {
-        parent::__construct($title, $modelName);
+        parent::__construct($title, $modelName, $icon);
 
         // Loads the view configuration for the user
-        $this->pageOption->getForUser($viewName, $userNick);
+        ///$this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**

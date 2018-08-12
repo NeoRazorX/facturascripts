@@ -106,22 +106,17 @@ class ListView extends BaseView implements DataViewInterface
      *
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct($title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName);
-
+        parent::__construct($title, $modelName, $icon);
         $this->cursor = [];
         $this->divisaTools = new DivisaTools();
         $this->filters = [];
         $this->orderby = [];
         $this->selectedOrderBy = '';
         $this->searchIn = [];
-
-        // Carga configuración de la vista para el usuario
-        $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**

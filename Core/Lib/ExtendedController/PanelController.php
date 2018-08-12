@@ -137,12 +137,11 @@ abstract class PanelController extends BaseController
             // check if we are processing the main view
             if ($viewName == $mainViewName) {
                 $this->hasData = $view->count > 0;
-                $this->title .= isset($view->model) ? ' ' . $view->model->primaryDescription() : '';
                 continue;
             }
 
             // check if the view should be active
-            $this->setSettings($viewName, 'active', $this->hasData);
+            //$this->setSettings($viewName, 'active', $this->hasData);
         }
 
         // General operations with the loaded data
@@ -197,8 +196,8 @@ abstract class PanelController extends BaseController
      */
     protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
+        $view = new EditListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -211,8 +210,8 @@ abstract class PanelController extends BaseController
      */
     protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
+        $view = new EditView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -228,8 +227,8 @@ abstract class PanelController extends BaseController
     {
         $parent = $this->views[$parentView];
         if (isset($parent)) {
-            $view = new GridView($parent, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-            $this->addView($viewName, $view, $viewIcon);
+            $view = new GridView($parent, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+            $this->addCustomView($viewName, $view);
         }
     }
 
@@ -244,8 +243,8 @@ abstract class PanelController extends BaseController
      */
     protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fa-html5')
     {
-        $view = new HtmlView($viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName);
-        $this->addView($viewName, $view, $viewIcon);
+        $view = new HtmlView($viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -260,25 +259,6 @@ abstract class PanelController extends BaseController
     {
         $view = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
-    }
-
-    /**
-     * Adds a view to the controller and loads its data.
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     * @param string   $icon
-     */
-    protected function addView($viewName, $view, $icon)
-    {
-        $this->views[$viewName] = $view;
-        $this->setSettings($viewName, 'active', true);
-        $this->setSettings($viewName, 'icon', $icon);
-        $this->setSettings($viewName, 'insert', true);
-
-        if (empty($this->active)) {
-            $this->active = $viewName;
-        }
     }
 
     /**
