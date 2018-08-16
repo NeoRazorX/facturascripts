@@ -59,6 +59,12 @@ abstract class CronClass
     protected static $miniLog;
 
     /**
+     *
+     * @var string
+     */
+    private $pluginName;
+
+    /**
      * Select and execute the relevant controller for the cron.
      *
      * @return mixed
@@ -67,9 +73,12 @@ abstract class CronClass
 
     /**
      * CronClass constructor.
+     * 
+     * @param string $pluginName
      */
-    public function __construct()
+    public function __construct(string $pluginName)
     {
+        $this->pluginName = $pluginName;
         if (!isset(self::$cache)) {
             self::$cache = new Cache();
             self::$dataBase = new DataBase();
@@ -82,17 +91,16 @@ abstract class CronClass
      * Returns true if this cron job can be executed (never executed or more than period),
      * false otherwise.
      *
-     * @param string $pluginName
      * @param string $jobName
      * @param string $period
      *
      * @return bool
      */
-    public function isTimeForJob($pluginName, $jobName, $period = '1 day')
+    public function isTimeForJob(string $jobName, string $period = '1 day')
     {
         $cronJob = new CronJob();
         $where = [
-            new DataBaseWhere('pluginname', $pluginName),
+            new DataBaseWhere('pluginname', $this->pluginName),
             new DataBaseWhere('jobname', $jobName),
         ];
 
@@ -101,7 +109,7 @@ abstract class CronClass
             return true;
         }
 
-        /// last time was before period
+        /// last time was before period?
         if (strtotime($cronJob->date) < strtotime('-' . $period)) {
             /// updates date and return true (if no error)
             $cronJob->date = date('d-m-Y H:i:s');
@@ -115,19 +123,18 @@ abstract class CronClass
     /**
      * Updates when this job is executed.
      *
-     * @param string $pluginName
      * @param string $jobName
      */
-    public function jobDone($pluginName, $jobName)
+    public function jobDone(string $jobName)
     {
         $cronJob = new CronJob();
         $where = [
-            new DataBaseWhere('pluginname', $pluginName),
+            new DataBaseWhere('pluginname', $this->pluginName),
             new DataBaseWhere('jobname', $jobName)
         ];
 
         if (!$cronJob->loadFromCode('', $where)) {
-            $cronJob->pluginname = $pluginName;
+            $cronJob->pluginname = $this->pluginName;
             $cronJob->jobname = $jobName;
         }
 
