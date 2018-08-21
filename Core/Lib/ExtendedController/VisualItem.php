@@ -29,6 +29,13 @@ abstract class VisualItem
 {
 
     /**
+     * Additional bootstrap/css class
+     *
+     * @var string
+     */
+    public $class;
+
+    /**
      * Translation engine
      *
      * @var Base\Translator
@@ -87,6 +94,7 @@ abstract class VisualItem
         $this->order = 100;
         $this->title = '';
         $this->titleURL = '';
+        $this->class = '';
     }
 
     /**
@@ -101,7 +109,9 @@ abstract class VisualItem
         $html = $this->i18n->trans($value);
 
         if (!empty($this->titleURL)) {
-            $target = ($this->titleURL[0] !== '?') ? "target='_blank'" : '';
+            $target = ($this->titleURL[0] !== '?')
+                ? "target='_blank'"
+                : '';
             $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
         }
 
@@ -120,6 +130,7 @@ abstract class VisualItem
         $this->titleURL = (string) $items['titleURL'];
         $this->numColumns = (int) $items['numColumns'];
         $this->order = (int) $items['order'];
+        $this->class = (string) $items['class'];
     }
 
     /**
@@ -135,6 +146,7 @@ abstract class VisualItem
         }
         $this->title = (string) $items_atributes->title;
         $this->titleURL = (string) $items_atributes->titleurl;
+        $this->class = (string) $items_atributes->class;
 
         if (!empty($items_atributes->numcolumns)) {
             $this->numColumns = (int) $items_atributes->numcolumns;
