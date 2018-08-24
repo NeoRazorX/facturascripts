@@ -22,12 +22,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
- * LisFilter definition for its use in ListController.
+ * Base Filter definition for use widgets filter.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ListFilter
+class BaseFilter
 {
 
     /**
@@ -51,7 +51,7 @@ class ListFilter
     public $type;
 
     /**
-     * ListFilter constructor.
+     * BaseFilter constructor.
      *
      * @param string $type
      * @param array  $options
@@ -220,9 +220,9 @@ class ListFilter
      * @param string $value
      * @param array  $where
      *
-     * @return ListFilter
+     * @return BaseFilter
      */
-    public static function newAutocompleteFilter($label, $field, $table, $fieldcode, $fieldtitle, $value, $where = []): ListFilter
+    public static function newAutocompleteFilter($label, $field, $table, $fieldcode, $fieldtitle, $value, $where = []): BaseFilter
     {
         $options = [
             'label' => $label,
@@ -246,9 +246,9 @@ class ListFilter
      * @param bool   $inverse
      * @param mixed  $matchValue
      *
-     * @return ListFilter
+     * @return BaseFilter
      */
-    public static function newCheckboxFilter($field, $value, $label, $inverse, $matchValue): ListFilter
+    public static function newCheckboxFilter($field, $value, $label, $inverse, $matchValue): BaseFilter
     {
         $options = [
             'field' => $field,
@@ -269,9 +269,9 @@ class ListFilter
      * @param array  $values
      * @param string $value
      *
-     * @return ListFilter
+     * @return BaseFilter
      */
-    public static function newSelectFilter($label, $field, $values, $value): ListFilter
+    public static function newSelectFilter($label, $field, $values, $value): BaseFilter
     {
         $options = [
             'field' => $field,
@@ -289,9 +289,9 @@ class ListFilter
      * @param string $type    ('text' | 'datepicker' | 'number')
      * @param array  $options (['field', 'label', 'valueFrom', 'operatorFrom', 'valueTo', 'operatorTo'])
      *
-     * @return ListFilter
+     * @return BaseFilter
      */
-    public static function newStandardFilter($type, $options): ListFilter
+    public static function newStandardFilter($type, $options): BaseFilter
     {
         if ($type === 'number') {
             $options['valueFrom'] = self::checkNumberValue($options['valueFrom']);

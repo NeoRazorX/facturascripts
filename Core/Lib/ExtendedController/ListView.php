@@ -53,7 +53,7 @@ class ListView extends BaseView implements DataViewInterface
     /**
      * Filter configuration preset by the user
      *
-     * @var ListFilter[]
+     * @var BaseFilter[]
      */
     private $filters;
 
@@ -128,9 +128,9 @@ class ListView extends BaseView implements DataViewInterface
      * Defines a new option to filter the data with
      *
      * @param string     $key
-     * @param ListFilter $filter
+     * @param BaseFilter $filter
      */
-    public function addFilter(string $key, ListFilter $filter)
+    public function addFilter(string $key, BaseFilter $filter)
     {
         $this->filters[$key] = $filter;
     }
@@ -252,7 +252,7 @@ class ListView extends BaseView implements DataViewInterface
     /**
      * Returns the list of defined filters
      *
-     * @return ListFilter[]
+     * @return BaseFilter[]
      */
     public function getFilters()
     {
@@ -263,7 +263,7 @@ class ListView extends BaseView implements DataViewInterface
      * Returns the filter identificate by key
      *
      * @param string $key
-     * @return ListFilter
+     * @return BaseFilter
      */
     public function getFilter($key)
     {
