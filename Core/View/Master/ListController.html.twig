@@ -33,7 +33,7 @@
     <script type="text/javascript">
         tabActive = '{{ fsc.active }}';
         settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-        urls = { {{ fsc.getStringURLs('new') | raw }} };
+                urls = { {{ fsc.getStringURLs('new') | raw }} };
 
         function deleteFromList() {
             var deleteCodes = getLineCodes();
@@ -117,7 +117,7 @@
     {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
     {% from 'Macro/Utils.html.twig' import exportData as exportData %}
     {% import 'Macro/BaseController.html.twig' as BaseController %}
-    {% import 'Macro/ListFilter.html.twig' as ListFilter %}
+    {% import 'Macro/BaseFilter.html.twig' as BaseFilter %}
 
     {# Page Header #}
     <div class="container-fluid d-print-none">
@@ -222,18 +222,18 @@
                                 {# Aditionals filters #}
                                 {% for key1, filter in view.getFilters() %}
                                     {% if filter.type == 'autocomplete' %}
-                                        {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
+                                        {{ BaseFilter.filterAutocomplete(_context, key1, filter) }}
                                     {% elseif filter.type == 'select' %}
-                                        {{ ListFilter.filterSelect(_context, key1, filter) }}
+                                        {{ BaseFilter.filterSelect(_context, key1, filter) }}
                                     {% elseif filter.type == 'checkbox' %}
-                                        {{ ListFilter.filterCheckbox(_context, key1, filter) }}
+                                        {{ BaseFilter.filterCheckbox(_context, key1, filter) }}
                                     {% else %}
-                                        {{ ListFilter.filterText(_context, key1, filter) }}
+                                        {{ BaseFilter.filterText(_context, key1, filter) }}
                                     {% endif %}
                                 {% endfor %}
 
                                 {# Order by selector #}
-                                {{ ListFilter.buttonOrderBy(_context, view) }}
+                                {{ BaseFilter.buttonOrderBy(_context, view) }}
                             </div>
                         </div>
                     </form>
