@@ -6,7 +6,7 @@
      * in different formats.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -19,111 +19,64 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
 
 {% extends "Master/PanelController.html.twig" %}
 
-{% block body %}
-{# -- Visual macros -- #}
-{% import 'Macro/BaseController.html.twig' as BaseController %}
+{% block css %}
+    {{ parent() }}
+{% endblock %}
 
-{# -- Main Body -- #}
-<div class="container-fluid">
-    {# -- Data Row -- #}
-    <div class="row">
-        {# -- First View Panel -- #}
-        <div class="col-12">
-            {% set indexView = fsc.views|keys|first %}
-            {% set view = fsc.views[indexView] %}
-            {% if viewType in ['EditView','EditListView'] %}
-                {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="container-fluid">
+        <div class="row">
+            {# -- Left Panel -- #}
+            {% if fsc.views | length > 1 %}
+                <div class="col-sm-2 d-none d-lg-inline-block">
+                    <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
+                        {% for indexView, view in fsc.views %}
+                            {% set active = (indexView == fsc.active) ? ' active' : '' %}
+                            <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                                {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
+                                <i class="fas {{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
             {% endif %}
 
-            <div class="card">
-                <div class="card-body">
-                    {% set viewType = fsc.viewClass(view) %}
-                    {% if viewType == 'ListView' %}
-                        {{ BaseController.columnsForListView(_context, view) }}
-                    {% elseif viewType == 'EditView' %}
-                        {# Statistical buttons bar #}
-                        {{ BaseController.rowStatisticsForEditView(_context, view) }}
-
-                        {# Main Form #}
-                        {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
-                    {% elseif viewType == 'EditListView' %}
-                        {{ BaseController.columnsForEditListView(_context, view) }}
-                    {% elseif viewType == 'HtmlView' %}
-                    <div>{% include view.fileName ignore missing %}</div>
-                    {% endif %}
+            {# -- Right Panel -- #}
+            <div class="col">
+                <div class="nav nav-tabs d-lg-none" role="tablist">
+                    {% for indexView, view in fsc.views %}
+                        {% set active = (indexView == fsc.active) ? ' active' : '' %}
+                        <a class="nav-link{{ active }}" id="{{ indexView }}-tab2" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                            {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
+                            <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
+                        </a>
+                    {% endfor %}
+                </div>
+                <div class="tab-content" id="mainTabsContent">
+                    {% for indexView, view in fsc.views %}
+                        {% set active = (indexView == fsc.active) ? ' show active' : '' %}
+                        <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                            {{ include(view.template) }}
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-            {% if viewType in ['ListView','EditView','EditListView'] %}
-                {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                {{ BaseController.modalFormFromColumns(_context, view) }}
-            {% endif %}
-
-            {% if fsc.views|length > 1 %}
-            <br/>
-            <div class="nav nav-tabs" id="optionsindex" role="tablist">
-                {% for indexView, view in fsc.views %}
-                {% set active = (loop.index == 2) ? ' active' : '' %}
-                {% if loop.index > 1 %}
-                {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
-                <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fas {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
-                    &nbsp;{{ view.title }}
-                </a>
-                {% endif %}
-                {% endfor %}
-            </div>
-            <div class="tab-content" id="optionsindex-tabContent">
-                {% for indexView, view in fsc.views %}
-                    {% set active = (loop.index == 2) ? ' show active' : '' %}
-                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
-                        {% set viewType = fsc.viewClass(view) %}
-                        {% if viewType == 'ListView' %}
-                            {{ BaseController.columnsForListView(_context, view) }}
-                        {% else %}
-                        <br/>
-                        {% endif %}
-
-                        {% if viewType == 'EditView' %}
-                            {# Information Cards Header #}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                            {# Statistical buttons bar #}
-                            {{ BaseController.rowStatisticsForEditView(_context, view) }}
-
-                            {# Main Form #}
-                            {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
-                        {% endif %}
-
-                        {% if viewType == 'EditListView' %}
-                            {# Information Cards Header #}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                            {# Main Form #}
-                            {{ BaseController.columnsForEditListView(_context, view) }}
-                        {% endif %}
-
-                        {% if viewType == 'HtmlView' %}
-                        <div>{% include view.fileName ignore missing %}</div>
-                        {% endif %}
-
-                        {# Information Cards Footer and actions #}
-                        {% if viewType in ['ListView','EditView','EditListView'] %}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                            {{ BaseController.modalFormFromColumns(_context, view) }}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
     </div>
-</div>
-<br/>
 {% endblock %}

@@ -70,30 +70,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Descriptive identifier for humans of the main data editing record.
-     *
-     * @return string
-     */
-    public function getPrimaryDescription()
-    {
-        $viewName = array_keys($this->views)[0];
-        return $this->views[$viewName]->model->primaryDescription();
-    }
-
-    /**
-     * Returns the url for a specified type.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getURL($type)
-    {
-        $view = array_values($this->views)[0];
-        return $view->getURL($type);
-    }
-
-    /**
      * Return the value for a field in the model of the view.
      *
      * @param string $viewName
@@ -174,19 +150,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Returns the view class.
-     *
-     * @param string $view
-     *
-     * @return string
-     */
-    public function viewClass($view)
-    {
-        $result = explode('\\', get_class($view));
-        return end($result);
-    }
-
-    /**
      * Adds a EditList type view to the controller.
      *
      * @param string $viewName
@@ -258,7 +221,7 @@ abstract class PanelController extends BaseController
     protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
         $view = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
+        $this->addCustomView($viewName, $view, $viewIcon);
     }
 
     /**

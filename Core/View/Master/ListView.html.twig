@@ -6,6 +6,19 @@
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="container-fluid">
         <div class="row">
+            <div class="col">
+                <div class="btn-group">
+                    <a href="{{ currentView.model.url('new') }}" class="btn btn-success">
+                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                    </a>
+                    <button type="button" class="btn btn-danger">
+                        <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="btn-group">
+                    {{ macros.printButton(fsc, currentView, i18n) }}
+                </div>
+            </div>
             {{ macros.searchControl(currentView, i18n) }}
             <div>
                 <div class="col">
@@ -29,6 +42,11 @@
         <tbody>
             {% for model in currentView.cursor %}
                 <tr class="clickableRow" data-href="{{ model.url() }}">
+                    <td class="cancelClickable">
+                        <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                            <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                        </div>
+                    </td>
                     {% for field in model.getModelFields() %}
                         <td>{{ attribute(model, field.name) }}</td>
                     {% endfor %}
@@ -41,6 +59,22 @@
         </tbody>
     </table>
 </div>
+
+{% macro printButton(fsc, currentView, i18n) %}
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+        </button>
+        <div class="dropdown-menu">
+            {% for key, option in fsc.exportManager.options() %}
+                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                    {{ i18n.trans(option.description) }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
 
 {% macro searchControl(currentView, i18n) %}
     <div class="col">

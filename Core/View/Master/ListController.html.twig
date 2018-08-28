@@ -65,20 +65,22 @@
                 </div>
                 <div class="btn-group">
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ i18n.trans('options') }}
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-menu">
+                            {% for viewName, view in fsc.views %}
+                            <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
+                                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-5 text-right">
                 <h1 class="h3 d-none d-md-inline-block">
-                    <i class="fas {{ pageData.icon }}" aria-hidden="true"></i> {{ fsc.title }}
+                    {{ fsc.title }} <i class="fas {{ pageData.icon }}" aria-hidden="true"></i>
                 </h1>
                 <br class="d-md-none"/>
             </div>

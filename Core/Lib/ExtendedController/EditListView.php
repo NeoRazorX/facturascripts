@@ -27,36 +27,8 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditListView extends BaseView implements DataViewInterface
+class EditListView extends BaseView
 {
-
-    /**
-     * Cursor with the display model's data
-     *
-     * @var array
-     */
-    private $cursor;
-
-    /**
-     * Stores the offset for the cursor
-     *
-     * @var int
-     */
-    private $offset;
-
-    /**
-     * Stores the order for the cursor
-     *
-     * @var array
-     */
-    private $order;
-
-    /**
-     * Store the parameters for the cursor's WHERE clause
-     *
-     * @var DataBaseWhere[]
-     */
-    private $where;
 
     /**
      * Class constructor and initialization
@@ -70,10 +42,6 @@ class EditListView extends BaseView implements DataViewInterface
     {
         parent::__construct($title, $modelName, $icon);
 
-        $this->order = [$this->model->primaryColumn() => 'ASC'];
-        $this->offset = 0;
-        $this->where = [];
-
         // Load the view configuration for the user
         ///$this->pageOption->getForUser($viewName, $userNick);
     }
@@ -86,10 +54,7 @@ class EditListView extends BaseView implements DataViewInterface
      */
     public function disableColumn($columnName, $disabled)
     {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
+        
     }
 
     /**
@@ -104,47 +69,6 @@ class EditListView extends BaseView implements DataViewInterface
                 $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
             );
         }
-    }
-
-    /**
-     * Column list and its configuration
-     * (Array of ColumnItem)
-     *
-     * @return GroupItem[]
-     */
-    public function getColumns()
-    {
-        return $this->pageOption->columns;
-    }
-
-    /**
-     * Returns the list of read data in the Model format
-     *
-     * @return array
-     */
-    public function getCursor()
-    {
-        return $this->cursor;
-    }
-
-    /**
-     * Returns True if have less than 5 columns, else returns False.
-     */
-    public function isBasicEditList()
-    {
-        if (count($this->pageOption->columns) !== 1) {
-            return false;
-        }
-
-        $maxColumns = 5;
-        $group = reset($this->pageOption->columns);
-        foreach ($group->columns as $col) {
-            if ($col->display !== 'none') {
-                --$maxColumns;
-            }
-        }
-
-        return $maxColumns > 0;
     }
 
     /**
@@ -168,22 +92,5 @@ class EditListView extends BaseView implements DataViewInterface
         // We save the values where and offset for the export
         $this->offset = $offset;
         $this->where = $where;
-    }
-
-    /**
-     * Prepares the fields for an empty model
-     *
-     * @return mixed
-     */
-    public function newEmptyModel()
-    {
-        $class = $this->model->modelName();
-        $result = new $class();
-
-        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
-            $result->{$field} = $value;
-        }
-
-        return $result;
     }
 }

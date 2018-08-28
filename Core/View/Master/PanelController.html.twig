@@ -37,7 +37,7 @@
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
-    {% set first_view = fsc.views | first %}
+    {% set firstView = fsc.views | first %}
     <div class="container-fluid d-print-none">
         <div class="row">
             <div class="col-md-7">
@@ -60,11 +60,11 @@
                     </ol>
                 </nav>
                 <div class="btn-group">
-                    <a href="{{ first_view.url('list') }}" class="btn btn-sm btn-outline-secondary">
+                    <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-arrow-left" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">&nbsp;{{ i18n.trans('all') }} </span>
                     </a>
-                    <a href="{{ first_view.url('edit') }}" class="btn btn-sm btn-outline-secondary">
+                    <a href="{{ firstView.model.url('edit') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                 </div>
@@ -72,7 +72,7 @@
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">
                     {{ fsc.title }}<br/>
-                    <small class="text-info d-none d-lg-inline-block">{{ fsc.getPrimaryDescription() | raw }}</small>
+                    <small class="text-info d-none d-lg-inline-block">{{ firstView.model.primaryDescription() | raw }}</small>
                 </h1>
             </div>
             <div class="col-md-1 text-center">

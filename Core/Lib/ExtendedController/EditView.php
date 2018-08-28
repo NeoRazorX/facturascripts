@@ -27,7 +27,7 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditView extends BaseView implements DataViewInterface
+class EditView extends BaseView
 {
 
     /**
@@ -47,20 +47,6 @@ class EditView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Establishes the column edit state
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
-    }
-
-    /**
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
@@ -68,36 +54,6 @@ class EditView extends BaseView implements DataViewInterface
     public function export(&$exportManager)
     {
         $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
-    }
-
-    /**
-     * Returns the column configuration
-     *
-     * @return GroupItem[]
-     */
-    public function getColumns()
-    {
-        return $this->pageOption->columns;
-    }
-
-    /**
-     * Returns the text for the data panel header
-     *
-     * @return string
-     */
-    public function getPanelHeader()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Returns the text for the data panel footer
-     *
-     * @return string
-     */
-    public function getPanelFooter()
-    {
-        return '';
     }
 
     /**
@@ -127,11 +83,5 @@ class EditView extends BaseView implements DataViewInterface
 
         $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
-
-        /// if not a new reg. we lock primary key
-        $column = $this->columnForField($fieldName);
-        if (!empty($column)) {
-            $column->widget->readOnly = ($this->count > 0);
-        }
     }
 }
