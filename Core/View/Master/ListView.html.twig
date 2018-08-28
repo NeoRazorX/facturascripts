@@ -7,10 +7,40 @@
     <div class="container-fluid">
         <div class="row">
             {{ macros.searchControl(currentView, i18n) }}
+            <div>
+                <div class="col">
+                    <button type="button" class="btn btn-light">
+                        <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
+                    </button>
+                </div>
+            </div>
             {{ macros.sortButton(currentView) }}
         </div>
     </div>
 </form>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for model in currentView.cursor %}
+                <tr class="clickableRow" data-href="{{ model.url() }}">
+                    {% for field in model.getModelFields() %}
+                        <td>{{ attribute(model, field.name) }}</td>
+                    {% endfor %}
+                </tr>
+            {% else %}
+                <tr class="table-warning">
+                    <td>{{ i18n.trans('no-data') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% macro searchControl(currentView, i18n) %}
     <div class="col">
@@ -28,7 +58,7 @@
 {% endmacro %}
 
 {% macro sortButton(currentView) %}
-    <div class="col">
+    <div class="col text-right">
         <div class="form-group">
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
