@@ -227,7 +227,7 @@ abstract class ListController extends BaseController
     protected function addSearchFields(string $viewName, array $fields)
     {
         foreach ($fields as $field) {
-            $this->views[$viewName]->searchOptions[] = $field;
+            $this->views[$viewName]->searchFields[] = $field;
         }
     }
 

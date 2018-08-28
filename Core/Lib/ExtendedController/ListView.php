@@ -68,7 +68,7 @@ class ListView extends BaseView
      *
      * @var array
      */
-    public $searchOptions;
+    public $searchFields;
 
     /**
      * ListView constructor and initialization.
@@ -83,7 +83,7 @@ class ListView extends BaseView
         $this->divisaTools = new DivisaTools();
         $this->filters = [];
         $this->orderOptions = [];
-        $this->searchOptions = [];
+        $this->searchFields = [];
         $this->template = 'Master/ListView.html.twig';
     }
 

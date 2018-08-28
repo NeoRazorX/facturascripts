@@ -19,7 +19,9 @@
                     {{ macros.printButton(fsc, currentView, i18n) }}
                 </div>
             </div>
-            {{ macros.searchControl(currentView, i18n) }}
+            {% if currentView.searchFields is not empty %}
+                {{ macros.searchControl(currentView, i18n) }}
+            {% endif %}
             <div>
                 <div class="col">
                     <button type="button" class="btn btn-light">
@@ -27,7 +29,9 @@
                     </button>
                 </div>
             </div>
-            {{ macros.sortButton(currentView) }}
+            {% if currentView.orderOptions is not empty %}
+                {{ macros.sortButton(currentView) }}
+            {% endif %}
         </div>
     </div>
 </form>
