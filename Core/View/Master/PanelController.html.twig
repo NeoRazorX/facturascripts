@@ -90,9 +90,9 @@
             {% if fsc.views | length > 1 %}
                 <div class="col-sm-2 d-none d-lg-inline-block">
                     <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
-                        {% for indexView, view in fsc.views %}
-                            {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                            <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                        {% for viewName, view in fsc.views %}
+                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                            <a class="nav-link{{ active }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
                                 <i class="fas {{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
                             </a>
@@ -103,19 +103,22 @@
 
             {# -- Right Panel -- #}
             <div class="col">
-                <div class="nav nav-tabs d-lg-none" role="tablist">
-                    {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                        <a class="nav-link{{ active }}" id="{{ indexView }}-tab2" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                            {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
-                            <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
-                        </a>
-                    {% endfor %}
-                </div>
+                {% if fsc.views | length > 1 %}
+                    <div class="nav nav-tabs d-lg-none" role="tablist">
+                        {% for viewName, view in fsc.views %}
+                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                            <a class="nav-link{{ active }}" id="{{ viewName }}-tab2" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                                {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
+                                <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="tab-content" id="mainTabsContent">
-                    {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? ' show active' : '' %}
-                        <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                    {% for viewName, view in fsc.views %}
+                        {% set active = (viewName == fsc.active) ? ' show active' : '' %}
+                        <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel" aria-labelledby="{{ viewName }}-tab">
+                            {% do fsc.setCurrentView(viewName) %}
                             {{ include(view.template) }}
                         </div>
                     {% endfor %}

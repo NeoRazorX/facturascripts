@@ -42,6 +42,7 @@ class EditView extends BaseView
     public function __construct($name, $title, $modelName, $viewName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
+        $this->template = 'Master/EditView.html.twig';
 
         // Loads the view configuration for the user
         ///$this->pageOption->getForUser($viewName, $userNick);

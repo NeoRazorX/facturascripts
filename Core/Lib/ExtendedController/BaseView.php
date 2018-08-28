@@ -172,6 +172,56 @@ abstract class BaseView
     }
 
     /**
+     * Gets the column by the given field name
+     *
+     * @param string $fieldName
+     *
+     * @return ColumnItem
+     */
+    public function columnForField(string $fieldName)
+    {
+        $result = null;
+        foreach ($this->pageOption->columns as $group) {
+            foreach ($group->columns as $column) {
+                if ($column->widget->fieldName === $fieldName) {
+                    $result = $column;
+                    break;
+                }
+            }
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Gets the column by the column name
+     *
+     * @param string $columnName
+     *
+     * @return ColumnItem
+     */
+    public function columnForName(string $columnName)
+    {
+        $result = null;
+        foreach ($this->pageOption->columns as $group) {
+            foreach ($group->columns as $key => $column) {
+                if ($key === $columnName) {
+                    $result = $column;
+                    break;
+                }
+            }
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns the name.
      *
      * @return string

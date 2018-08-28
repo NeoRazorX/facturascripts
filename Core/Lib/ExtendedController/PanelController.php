@@ -151,7 +151,7 @@ abstract class PanelController extends BaseController
      */
     protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+        $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
         $this->addCustomView($viewName, $view);
     }
 
@@ -165,7 +165,7 @@ abstract class PanelController extends BaseController
      */
     protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+        $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
         $this->addCustomView($viewName, $view);
     }
 
@@ -198,7 +198,7 @@ abstract class PanelController extends BaseController
      */
     protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fa-html5')
     {
-        $view = new HtmlView($viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
+        $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
     }
 
@@ -212,8 +212,8 @@ abstract class PanelController extends BaseController
      */
     protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addCustomView($viewName, $view, $viewIcon);
+        $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**

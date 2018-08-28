@@ -90,9 +90,8 @@ class ListBalance extends ExtendedController\ListController
      *
      * @param string $viewName
      * @param array $where
-     * @param int $offset
      */
-    protected function loadData($viewName, $where, $offset)
+    protected function loadData($viewName, $where)
     {
         switch ($viewName) {
             case 'ListBalance-1':
@@ -110,7 +109,9 @@ class ListBalance extends ExtendedController\ListController
             case 'ListBalance-4':
                 $where[] = new DataBaseWhere('naturaleza', 'IG');
                 break;
+
+            default:
+                parent::loadData($viewName, $where, $offset);
         }
-        parent::loadData($viewName, $where, $offset);
     }
 }
