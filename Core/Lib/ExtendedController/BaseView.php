@@ -66,6 +66,12 @@ abstract class BaseView
     public $model;
 
     /**
+     *
+     * @var string
+     */
+    private $name;
+
+    /**
      * Stores the new code from the save() procedure, to use in loadData().
      *
      * @var string
@@ -86,7 +92,7 @@ abstract class BaseView
     public $order;
 
     /**
-     * Columns and filters configuration
+     * Columns configuration
      *
      * @var PageOption
      */
@@ -131,11 +137,12 @@ abstract class BaseView
     /**
      * Construct and initialize the class
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct(string $title, string $modelName, string $icon)
+    public function __construct(string $name, string $title, string $modelName, string $icon)
     {
         if (!isset(static::$i18n)) {
             static::$i18n = new Base\Translator();
@@ -145,6 +152,7 @@ abstract class BaseView
         $this->cursor = [];
         $this->icon = $icon;
         $this->model = class_exists($modelName) ? new $modelName() : null;
+        $this->name = $name;
         $this->offset = 0;
         $this->order = [];
         $this->pageOption = new PageOption();
@@ -161,5 +169,15 @@ abstract class BaseView
     {
         $this->model->clear();
         $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return string
+     */
+    public function getViewName()
+    {
+        return $this->name;
     }
 }

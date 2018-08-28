@@ -33,14 +33,15 @@ class EditView extends BaseView
     /**
      * EditView constructor and initialization.
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
      * @param string $viewName
      * @param string $icon
      */
-    public function __construct($title, $modelName, $viewName, $icon)
+    public function __construct($name, $title, $modelName, $viewName, $icon)
     {
-        parent::__construct($title, $modelName, $icon);
+        parent::__construct($name, $title, $modelName, $icon);
 
         // Loads the view configuration for the user
         ///$this->pageOption->getForUser($viewName, $userNick);

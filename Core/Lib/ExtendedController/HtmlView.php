@@ -30,24 +30,18 @@ class HtmlView extends BaseView
 {
 
     /**
-     * Filename
-     *
-     * @var string
-     */
-    public $fileName;
-
-    /**
      * HtmlView constructor and initialization.
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
      * @param string $fileName
      * @param string $icon
      */
-    public function __construct($title, $modelName, $fileName, $icon)
+    public function __construct($name, $title, $modelName, $fileName, $icon)
     {
-        parent::__construct($title, $modelName, $icon);
-        $this->fileName = $fileName . '.html.twig';
+        parent::__construct($name, $title, $modelName, $icon);
+        $this->template = $fileName . '.html.twig';
     }
 
     /**
@@ -57,6 +51,11 @@ class HtmlView extends BaseView
      */
     public function export(&$exportManager)
     {
-        /// TODO: complete this method
+        ;
+    }
+    
+    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        ;
     }
 }

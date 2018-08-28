@@ -106,7 +106,7 @@
         {% for viewName, view in fsc.views %}
             {% set active = (viewName == fsc.active) ? ' active' : '' %}
             <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
-                {% do fsc.setCurrent(viewName) %}
+                {% do fsc.setCurrentView(viewName) %}
                 {{ include(view.template) }}
             </div>
         {% endfor %}

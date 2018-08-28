@@ -73,13 +73,14 @@ class ListView extends BaseView
     /**
      * ListView constructor and initialization.
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct($title, $modelName, $icon)
+    public function __construct($name, $title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName, $icon);
+        parent::__construct($name, $title, $modelName, $icon);
         $this->divisaTools = new DivisaTools();
         $this->filters = [];
         $this->orderOptions = [];
@@ -174,6 +175,10 @@ class ListView extends BaseView
      */
     public function setSelectedOrderBy($orderKey)
     {
+        if (!isset($this->orderOptions[$orderKey])) {
+            return;
+        }
+
         $option = $this->orderOptions[$orderKey];
         foreach ($option['fields'] as $field) {
             $this->order[$field] = $option['type'];

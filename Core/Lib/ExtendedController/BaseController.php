@@ -80,6 +80,14 @@ abstract class BaseController extends Base\Controller
     abstract protected function createViews();
 
     /**
+     * Loads the data to display.
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    abstract protected function loadData($viewName, $view);
+
+    /**
      * Initializes all the objects and properties.
      *
      * @param Base\Cache      $cache
@@ -98,6 +106,11 @@ abstract class BaseController extends Base\Controller
         $this->views = [];
     }
 
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
     public function addCustomView($viewName, $view)
     {
         $this->views[$viewName] = $view;
@@ -106,12 +119,20 @@ abstract class BaseController extends Base\Controller
         }
     }
 
-    public function getCurrent()
+    /**
+     * 
+     * @return BaseView
+     */
+    public function getCurrentView()
     {
         return $this->views[$this->current];
     }
 
-    public function setCurrent($viewName)
+    /**
+     * 
+     * @param string $viewName
+     */
+    public function setCurrentView($viewName)
     {
         $this->current = $viewName;
     }
@@ -141,6 +162,7 @@ abstract class BaseController extends Base\Controller
      *
      * @param string $viewName
      * @param string $fieldName
+     *
      * @return array
      */
     protected function getAutocompleteValues(string $viewName, string $fieldName): array
@@ -155,6 +177,10 @@ abstract class BaseController extends Base\Controller
         return $result;
     }
 
+    /**
+     * 
+     * @return array
+     */
     protected function getFormData(): array
     {
         $data = $this->request->request->all();

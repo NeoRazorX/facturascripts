@@ -46,14 +46,6 @@ abstract class PanelController extends BaseController
     public $tabsPosition;
 
     /**
-     * Loads the data to display.
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     */
-    abstract protected function loadData($viewName, $view);
-
-    /**
      * Starts all the objects and properties.
      *
      * @param Base\Cache      $cache
