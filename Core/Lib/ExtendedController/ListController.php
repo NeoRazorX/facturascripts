@@ -35,20 +35,6 @@ abstract class ListController extends BaseController
 {
 
     /**
-     * First row to select from the database.
-     *
-     * @var int
-     */
-    protected $offset;
-
-    /**
-     * This string contains the text sent as a query parameter, used to filter the model data.
-     *
-     * @var string
-     */
-    public $query;
-
-    /**
      * Initializes all the objects and properties.
      *
      * @param Base\Cache      $cache
@@ -61,8 +47,6 @@ abstract class ListController extends BaseController
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
         $this->setTemplate('Master/ListController');
-        $this->offset = (int) $this->request->get('offset', 0);
-        $this->query = $this->request->get('query', '');
     }
 
     /**
@@ -88,21 +72,18 @@ abstract class ListController extends BaseController
         }
 
         // Load data for every view
-        foreach (array_keys($this->views) as $viewName) {
-            $where = [];
-            $orderKey = '';
-
-            // If processing the selected view, calculate order and filters
+        foreach ($this->views as $viewName => $view) {
+            // If processing the selected view, then adds query, offset and filters
             if ($this->active == $viewName) {
+                $offset = (int) $this->request->get('offset', 0);
                 $orderKey = $this->request->get('order', '');
-                $where = $this->getWhere();
+                $order = isset($view->orderOptions[$orderKey]) ? $view->orderOptions[$orderKey] : [];
+
+                $view->loadData(false, [], $order, $offset);
+                continue;
             }
 
-            // Set selected order by
-            $this->views[$viewName]->setSelectedOrderBy($orderKey);
-
-            // Load data using filter and order
-            $this->loadData($viewName, $where, $this->getOffSet($viewName));
+            $view->loadData(false, []);
         }
 
         // Operations with data, after execute action
@@ -126,7 +107,7 @@ abstract class ListController extends BaseController
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
         $fcode = empty($fieldcode) ? $field : $fieldcode;
         $ftitle = empty($fieldtitle) ? $fcode : $fieldtitle;
-        $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where));
+        $this->views[$viewName]->filters[$key] = ListFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where);
     }
 
     /**
@@ -142,7 +123,7 @@ abstract class ListController extends BaseController
     protected function addFilterCheckbox($viewName, $key, $label, $field, $inverse = false, $matchValue = true)
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$viewName]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
+        $this->views[$viewName]->filters[$key] = ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue);
     }
 
     /**
@@ -178,7 +159,7 @@ abstract class ListController extends BaseController
             'operatorTo' => $this->request->get($key . '-to-operator', '<='),
         ];
 
-        $this->views[$viewName]->addFilter($key, ListFilter::newStandardFilter($type, $config));
+        $this->views[$viewName]->filters[$key] = ListFilter::newStandardFilter($type, $config);
     }
 
     /**
@@ -206,7 +187,7 @@ abstract class ListController extends BaseController
     protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$viewName]->addFilter($key, ListFilter::newSelectFilter($label, $field, $values, $value));
+        $this->views[$viewName]->filters[$key] = ListFilter::newSelectFilter($label, $field, $values, $value);
     }
 
     /**
@@ -245,7 +226,9 @@ abstract class ListController extends BaseController
      */
     protected function addSearchFields(string $viewName, array $fields)
     {
-        $this->views[$viewName]->addSearchIn($fields);
+        foreach ($fields as $field) {
+            $this->views[$viewName]->searchOptions[] = $field;
+        }
     }
 
     /**
@@ -340,44 +323,6 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Returns the offset value for the specified view.
-     *
-     * @param string $viewName
-     *
-     * @return int
-     */
-    private function getOffSet($viewName)
-    {
-        return ($viewName === $this->active) ? $this->offset : 0;
-    }
-
-    /**
-     * Returns a string with the parameters in the controller call url.
-     *
-     * @param string $viewName
-     *
-     * @return string
-     */
-    private function getParams($viewName)
-    {
-        $result = '';
-        if ($viewName === $this->active) {
-            $join = '?';
-            if (!empty($this->query)) {
-                $result = $join . 'query=' . $this->query;
-                $join = '&';
-            }
-
-            foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-                $result .= $filter->getParams($key, $join);
-                $join = '&';
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Returns columns title for megaSearchAction function.
      *
      * @param ListView $view
@@ -400,39 +345,6 @@ abstract class ListController extends BaseController
         }
 
         return $result;
-    }
-
-    /**
-     * Establishes the WHERE clause according to the defined filters.
-     *
-     * @return DataBaseWhere[]
-     */
-    protected function getWhere()
-    {
-        $result = [];
-
-        if ($this->query !== '') {
-            $fields = $this->views[$this->active]->getSearchIn();
-            $result[] = new DataBaseWhere($fields, Base\Utils::noHtml($this->query), 'LIKE');
-        }
-
-        foreach ($this->views[$this->active]->getFilters() as $filter) {
-            $filter->getDataBaseWhere($result);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Load data of list view
-     *
-     * @param string $viewName
-     * @param array  $where
-     * @param int    $offset
-     */
-    protected function loadData($viewName, $where, $offset)
-    {
-        $this->views[$viewName]->loadData(false, $where, [], $offset, Pagination::FS_ITEM_LIMIT);
     }
 
     /**
@@ -459,7 +371,7 @@ abstract class ListController extends BaseController
             if (!isset($json[$viewName])) {
                 $json[$viewName] = [
                     'title' => $listView->title,
-                    'icon' => $this->getSettings($viewName, 'icon'),
+                    'icon' => $listView->icon,
                     'columns' => [],
                     'results' => [],
                 ];

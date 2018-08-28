@@ -47,6 +47,13 @@ abstract class BaseController extends Base\Controller
     public $codeModel;
 
     /**
+     * Indicates current view, when drawing.
+     *
+     * @var string
+     */
+    private $current;
+
+    /**
      * Object to export data.
      *
      * @var ExportManager
@@ -90,13 +97,23 @@ abstract class BaseController extends Base\Controller
         $this->numberTools = new Base\NumberTools();
         $this->views = [];
     }
-    
+
     public function addCustomView($viewName, $view)
     {
         $this->views[$viewName] = $view;
         if (empty($this->active)) {
             $this->active = $viewName;
         }
+    }
+
+    public function getCurrent()
+    {
+        return $this->views[$this->current];
+    }
+
+    public function setCurrent($viewName)
+    {
+        $this->current = $viewName;
     }
 
     /**

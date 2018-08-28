@@ -69,11 +69,14 @@
                     </a>
                 </div>
             </div>
-            <div class="col-md-5 text-right">
-                <h1 class="h3 d-none d-md-inline-block">
-                    <i class="fas {{ pageData.icon }}" aria-hidden="true"></i> {{ fsc.title }}
+            <div class="col-md-4 text-right">
+                <h1 class="h4 d-none d-md-inline-block">
+                    {{ fsc.title }}<br/>
                     <small class="text-info d-none d-lg-inline-block">{{ fsc.getPrimaryDescription() | raw }}</small>
                 </h1>
+            </div>
+            <div class="col-md-1 text-center">
+                <i class="fas {{ pageData.icon }} fa-3x" aria-hidden="true"></i>
             </div>
         </div>
     </div>

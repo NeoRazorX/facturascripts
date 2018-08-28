@@ -1,0 +1,50 @@
+{% import _self as macros %}
+{% set currentView = fsc.getCurrent() %}
+
+<br/>
+<form action="" method="post">
+    <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
+    <div class="container-fluid">
+        <div class="row">
+            {{ macros.searchControl(currentView, i18n) }}
+            {{ macros.sortButton(currentView) }}
+        </div>
+    </div>
+</form>
+
+{% macro searchControl(currentView, i18n) %}
+    <div class="col">
+        <div class="form-group">
+            <div class="input-group">
+                <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}"/>
+                <span class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sortButton(currentView) %}
+    <div class="col">
+        <div class="form-group">
+            <div class="btn-group">
+                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="fas {{ currentView.orderOptions[currentView.orderKey]['icon'] }} fa-fw" aria-hidden="true"></i>
+                    {{ currentView.orderOptions[currentView.orderKey]['label'] }}
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
+                    {% for key, orderby in currentView.orderOptions %}
+                        {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
+                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="setOrder('{{ key }}')">
+                            <i class="fas {{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

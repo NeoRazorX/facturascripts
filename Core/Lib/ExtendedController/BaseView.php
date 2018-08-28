@@ -39,6 +39,13 @@ abstract class BaseView
     public $count;
 
     /**
+     * Cursor with data from the model display
+     *
+     * @var array
+     */
+    public $cursor;
+
+    /**
      *
      * @var string
      */
@@ -66,11 +73,30 @@ abstract class BaseView
     public $newCode;
 
     /**
+     * Stores the offset for the cursor
+     *
+     * @var int
+     */
+    public $offset;
+
+    /**
+     *
+     * @var array
+     */
+    public $order;
+
+    /**
      * Columns and filters configuration
      *
      * @var PageOption
      */
     protected $pageOption;
+
+    /**
+     *
+     * @var array
+     */
+    public $settings;
 
     /**
      *
@@ -86,9 +112,21 @@ abstract class BaseView
     public $title;
 
     /**
+     * Stores the where parameters for the cursor
+     *
+     * @var DataBaseWhere[]
+     */
+    protected $where;
+
+    /**
      * Method to export the view data.
      */
     abstract public function export(&$exportManager);
+
+    /**
+     * Loads view data.
+     */
+    abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
      * Construct and initialize the class
@@ -99,13 +137,21 @@ abstract class BaseView
      */
     public function __construct(string $title, string $modelName, string $icon)
     {
-        static::$i18n = new Base\Translator();
+        if (!isset(static::$i18n)) {
+            static::$i18n = new Base\Translator();
+        }
+
         $this->count = 0;
+        $this->cursor = [];
         $this->icon = $icon;
         $this->model = class_exists($modelName) ? new $modelName() : null;
+        $this->offset = 0;
+        $this->order = [];
         $this->pageOption = new PageOption();
+        $this->settings = [];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);
+        $this->where = [];
     }
 
     /**
@@ -115,116 +161,5 @@ abstract class BaseView
     {
         $this->model->clear();
         $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
-    }
-
-    /**
-     * Gets the column by the given field name
-     *
-     * @param string $fieldName
-     *
-     * @return ColumnItem
-     */
-    public function columnForField(string $fieldName)
-    {
-        $result = null;
-        foreach ($this->pageOption->columns as $group) {
-            foreach ($group->columns as $column) {
-                if ($column->widget->fieldName === $fieldName) {
-                    $result = $column;
-                    break;
-                }
-            }
-            if (!empty($result)) {
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Gets the column by the column name
-     *
-     * @param string $columnName
-     *
-     * @return ColumnItem
-     */
-    public function columnForName(string $columnName)
-    {
-        $result = null;
-        foreach ($this->pageOption->columns as $group) {
-            foreach ($group->columns as $key => $column) {
-                if ($key === $columnName) {
-                    $result = $column;
-                    break;
-                }
-            }
-            if (!empty($result)) {
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns the list of modal forms
-     *
-     * @return array
-     */
-    public function getModals()
-    {
-        return $this->pageOption->modals;
-    }
-
-    /**
-     * If it exists, return the specified row type
-     *
-     * @param string $key
-     *
-     * @return RowItem
-     */
-    public function getRow(string $key)
-    {
-        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
-    }
-
-    /**
-     * Returns the url for the requested model type
-     *
-     * @param string $type (edit / list / auto)
-     *
-     * @return string
-     */
-    public function getURL(string $type)
-    {
-        return empty($this->model) ? '' : $this->model->url($type);
-    }
-
-    /**
-     * Returns the name.
-     *
-     * @return string
-     */
-    public function getViewName()
-    {
-        return $this->pageOption->name;
-    }
-
-    /**
-     * Verifies the structure and loads into the model the given data array
-     *
-     * @param array $data
-     */
-    public function loadFromData(array &$data)
-    {
-        $fieldKey = $this->model->primaryColumn();
-        $fieldValue = $data[$fieldKey];
-        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
-            $this->model->loadFromCode($fieldValue);
-        }
-
-        $this->model->checkArrayData($data);
-        $this->model->loadFromData($data, ['action', 'active']);
     }
 }
