@@ -42,113 +42,20 @@ class APIModel extends APIResourceClass
     private $model;
 
     /**
-     * Convert $text to plural
+     * Process the GET request. Overwrite this function to implement is functionality.
      *
-     * TODO: The conversion to the plural is language dependent.
-     *
-     * @param $text
-     * @return string
+     * @return bool
      */
-    private function pluralize($text): string
+    public function doDELETE(): bool
     {
-        /// Conversion to plural
-        if (substr($text, -1) === 's') {
-            return strtolower($text);
-        }
-        if (substr($text, -3) === 'ser' || substr($text, -4) === 'tion') {
-            return strtolower($text) . 's';
-        }
-        if (\in_array(substr($text, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
-            return strtolower($text) . 's';
-        }
-        return strtolower($text) . 'es';
-    }
-
-    /**
-     * Load resource map from a folder
-     *
-     * @param string $folder
-     *
-     * @return array
-     */
-    private function getResourcesFromFolder($folder): array
-    {
-        $resources = [];
-        foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
-            if (substr($fName, -4) === '.php') {
-                $modelName = substr($fName, 0, -4);
-                $plural = $this->pluralize($modelName);
-                $resources[$plural] = $this->setResource($modelName);
-            }
-        }
-        return $resources;
-    }
-
-    /**
-     * Returns an associative array with the resources, where the index is
-     * the public name of the resource.
-     *
-     * @return array
-     */
-    public function getResources(): array
-    {
-        return $this->getResourcesFromFolder('Model');
-    }
-
-    /**
-     * This method is equivalent to $this->request->get($key, $default),
-     * but always return an array, as expected for some parameters like operation, filter or sort.
-     *
-     * @param string $key
-     * @param string $default
-     *
-     * @return array
-     */
-    private function getRequestArray($key, $default = ''): array
-    {
-        $array = $this->request->get($key, $default);
-
-        return \is_array($array) ? $array : []; /// if is string has bad format
-    }
-
-    /**
-     * Returns the where clauses.
-     *
-     * @param array $filter
-     * @param array $operation
-     * @param string $defaultOperation
-     *
-     * @return DataBaseWhere[]
-     */
-    private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
-    {
-        $where = [];
-        foreach ($filter as $key => $value) {
-            if (!isset($operation[$key])) {
-                $operation[$key] = $defaultOperation;
-            }
-            $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
-        }
-        return $where;
-    }
-
-    protected function listAll(): bool
-    {
-        if ($this->method === 'GET') {
-            $offset = (int) $this->request->get('offset', 0);
-            $limit = (int) $this->request->get('limit', 50);
-            $operation = $this->getRequestArray('operation');
-            $filter = $this->getRequestArray('filter');
-            $order = $this->getRequestArray('sort');
-            $where = $this->getWhereValues($filter, $operation);
-
-            $data = $this->model->all($where, $order, $offset, $limit);
-
-            $this->returnResult($data);
+        if ($this->model->loadFromCode($this->params[0])) {
+            $data = (array) $this->model;
+            $this->model->delete();
+            $this->setOk('record-deleted', $data);
             return true;
         }
 
-        $this->setError('List all only in GET method');
+        $this->setError($this->params[0] . ' not found');
         return false;
     }
 
@@ -187,48 +94,6 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * Load the model and replace the past data in the loaded model.
-     * Returns true if the record already exists in the model, and false if not.
-     * If the id is passed as data and parameter, verify that both match, 
-     * returning error if there is inconsistency.
-     * 
-     * @return bool true if the resource exists in the model
-     */
-    private function getResource(): bool
-    {
-        $cod = $this->model->primaryColumn();
-
-        // If editing, retrieve the current data
-        $exist = $this->model->loadFromCode($this->params[0]);
-        $this->model->{$cod} = $this->params[0];
-
-        // Retrieve the past data, and replace the changes
-        $values = $this->request->request->all();
-        $values[$cod] = $this->params[0];
-        foreach ($values as $key => $value) {
-            $this->model->{$key} = $value;
-        }
-
-        return $exist;
-    }
-
-    private function saveResource(): bool
-    {
-        $this->fixTypes();
-        if ($this->model->save()) {
-            $this->setOk('data-saved', (array) $this->model);
-            return true;
-        }
-
-        foreach ($this->miniLog->read() as $message) {
-            $this->params[] = $message['message'];
-        }
-
-        $this->setError('bad-request', $this->request->request->all());
-        return false;
-    }
-
-    /**
      * Process the POST (create) request. Overwrite this function to implement is functionality.
      *
      * @return bool
@@ -259,21 +124,14 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * Process the GET request. Overwrite this function to implement is functionality.
+     * Returns an associative array with the resources, where the index is
+     * the public name of the resource.
      *
-     * @return bool
+     * @return array
      */
-    public function doDELETE(): bool
+    public function getResources(): array
     {
-        if ($this->model->loadFromCode($this->params[0])) {
-            $data = (array) $this->model;
-            $this->model->delete();
-            $this->setOk('record-deleted', $data);
-            return true;
-        }
-
-        $this->setError($this->params[0] . ' not found');
-        return false;
+        return $this->getResourcesFromFolder('Model');
     }
 
     /**
@@ -325,5 +183,147 @@ class APIModel extends APIResourceClass
                 $this->model->{$key} = (int) $this->model->{$key};
             }
         }
+    }
+
+    /**
+     * Load resource map from a folder
+     *
+     * @param string $folder
+     *
+     * @return array
+     */
+    private function getResourcesFromFolder($folder): array
+    {
+        $resources = [];
+        foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
+            if (substr($fName, -4) === '.php') {
+                $modelName = substr($fName, 0, -4);
+                $plural = $this->pluralize($modelName);
+                $resources[$plural] = $this->setResource($modelName);
+            }
+        }
+        return $resources;
+    }
+
+    /**
+     * This method is equivalent to $this->request->get($key, $default),
+     * but always return an array, as expected for some parameters like operation, filter or sort.
+     *
+     * @param string $key
+     * @param string $default
+     *
+     * @return array
+     */
+    private function getRequestArray($key, $default = ''): array
+    {
+        $array = $this->request->get($key, $default);
+
+        return \is_array($array) ? $array : []; /// if is string has bad format
+    }
+
+    /**
+     * Returns the where clauses.
+     *
+     * @param array $filter
+     * @param array $operation
+     * @param string $defaultOperation
+     *
+     * @return DataBaseWhere[]
+     */
+    private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
+    {
+        $where = [];
+        foreach ($filter as $key => $value) {
+            if (!isset($operation[$key])) {
+                $operation[$key] = $defaultOperation;
+            }
+            $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
+        }
+        return $where;
+    }
+
+    /**
+     * Load the model and replace the past data in the loaded model.
+     * Returns true if the record already exists in the model, and false if not.
+     * If the id is passed as data and parameter, verify that both match, 
+     * returning error if there is inconsistency.
+     * 
+     * @return bool true if the resource exists in the model
+     */
+    private function getResource(): bool
+    {
+        $cod = $this->model->primaryColumn();
+
+        // If editing, retrieve the current data
+        $exist = $this->model->loadFromCode($this->params[0]);
+        $this->model->{$cod} = $this->params[0];
+
+        // Retrieve the past data, and replace the changes
+        $values = $this->request->request->all();
+        $values[$cod] = $this->params[0];
+        foreach ($values as $key => $value) {
+            $this->model->{$key} = $value;
+        }
+
+        return $exist;
+    }
+
+    protected function listAll(): bool
+    {
+        if ($this->method === 'GET') {
+            $offset = (int) $this->request->get('offset', 0);
+            $limit = (int) $this->request->get('limit', 50);
+            $operation = $this->getRequestArray('operation');
+            $filter = $this->getRequestArray('filter');
+            $order = $this->getRequestArray('sort');
+            $where = $this->getWhereValues($filter, $operation);
+
+            $data = $this->model->all($where, $order, $offset, $limit);
+
+            $this->returnResult($data);
+            return true;
+        }
+
+        $this->setError('List all only in GET method');
+        return false;
+    }
+
+    /**
+     * Convert $text to plural
+     *
+     * TODO: The conversion to the plural is language dependent.
+     *
+     * @param $text
+     * @return string
+     */
+    private function pluralize($text): string
+    {
+        /// Conversion to plural
+        if (substr($text, -1) === 's') {
+            return strtolower($text);
+        }
+        if (substr($text, -3) === 'ser' || substr($text, -4) === 'tion') {
+            return strtolower($text) . 's';
+        }
+        if (\in_array(substr($text, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
+            return strtolower($text) . 's';
+        }
+        return strtolower($text) . 'es';
+    }
+
+    private function saveResource(): bool
+    {
+        $this->fixTypes();
+        if ($this->model->save()) {
+            $this->setOk('data-saved', (array) $this->model);
+            return true;
+        }
+
+        foreach ($this->miniLog->read() as $message) {
+            $this->params[] = $message['message'];
+        }
+
+        $this->setError('bad-request', $this->request->request->all());
+        return false;
     }
 }
