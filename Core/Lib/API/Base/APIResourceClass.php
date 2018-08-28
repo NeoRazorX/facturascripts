@@ -170,9 +170,12 @@ abstract class APIResourceClass
                 case 'DELETE':
                     return $this->doDELETE();
             }
+
+            $this->miniLog->error("Unknown method {$this->method} in {$name}");
             $this->setError("Unknown method {$this->method} in {$name}");
             return false;
         } catch (\Exception $ex) {
+            $this->miniLog->error('API-ERROR' . Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->setError('API-ERROR', null, Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
