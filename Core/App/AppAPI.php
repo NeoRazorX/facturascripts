@@ -41,6 +41,45 @@ class AppAPI extends App
     protected $apiKey;
 
     /**
+     * Returns true if the token has the requested access to the resource.
+     *
+     * @return bool
+     */
+    public function isAllowed(): bool
+    {
+        $resource = $this->getUriParam(2);
+        if ($resource === '') {
+            return true;
+        }
+
+        $apiAccess = new ApiAccess();
+        $where = [
+            new DataBaseWhere('idapikey', $this->apiKey->id),
+            new DataBaseWhere('resource', $resource)
+        ];
+        if ($apiAccess->loadFromCode('', $where)) {
+            $method = $this->request->getMethod();
+            if ($method == 'DELETE' && $apiAccess->allowdelete) {
+                return true;
+            }
+
+            if ($method == 'GET' && $apiAccess->allowget) {
+                return true;
+            }
+
+            if ($method == 'POST' && $apiAccess->allowpost) {
+                return true;
+            }
+
+            if ($method == 'PUT' && $apiAccess->allowput) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Runs the API.
      *
      * @return bool
@@ -104,45 +143,6 @@ class AppAPI extends App
     }
 
     /**
-     * Returns true if the token has the requested access to the resource.
-     *
-     * @return bool
-     */
-    public function isAllowed(): bool
-    {
-        $resource = $this->getUriParam(2);
-        if ($resource === '') {
-            return true;
-        }
-
-        $apiAccess = new ApiAccess();
-        $where = [
-            new DataBaseWhere('idapikey', $this->apiKey->id),
-            new DataBaseWhere('resource', $resource)
-        ];
-        if ($apiAccess->loadFromCode('', $where)) {
-            $method = $this->request->getMethod();
-            if ($method == 'DELETE' && $apiAccess->allowdelete) {
-                return true;
-            }
-
-            if ($method == 'GET' && $apiAccess->allowget) {
-                return true;
-            }
-
-            if ($method == 'POST' && $apiAccess->allowpost) {
-                return true;
-            }
-
-            if ($method == 'PUT' && $apiAccess->allowput) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Expose resource.
      *
      * @param array $map
@@ -156,6 +156,18 @@ class AppAPI extends App
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Return an array with the error message, and the corresponding status.
+     *
+     * @param string $text
+     * @param int    $status
+     */
+    protected function fatalError(string $text, int $status)
+    {
+        $this->response->setStatusCode($status);
+        $this->response->setContent(json_encode(['error' => $text]));
     }
 
     /**
@@ -255,17 +267,5 @@ class AppAPI extends App
 
         $this->fatalError('API-VERSION-NOT-FOUND', Response::HTTP_NOT_FOUND);
         return true;
-    }
-
-    /**
-     * Return an array with the error message, and the corresponding status.
-     *
-     * @param string $text
-     * @param int    $status
-     */
-    protected function fatalError(string $text, int $status)
-    {
-        $this->response->setStatusCode($status);
-        $this->response->setContent(json_encode(['error' => $text]));
     }
 }
