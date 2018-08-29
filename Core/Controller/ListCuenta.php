@@ -65,6 +65,9 @@ class ListCuenta extends ExtendedController\ListController
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp']);
 
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'exercise', 'codejercicio', $exerciseValues);
+        
+        $specialAccountsValues = $this->codeModel->all('cuentaespecial', 'codcuentaesp', 'descripcion');
+        $this->addFilterSelect('ListCuenta', 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccountsValues);
 
         $this->addOrderBy('ListCuenta', ['codejercicio desc, codcuenta'], 'code');
         $this->addOrderBy('ListCuenta', ['codejercicio desc, descripcion'], 'description');
