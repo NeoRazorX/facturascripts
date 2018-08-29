@@ -55,7 +55,7 @@ class EditListView extends BaseView
      */
     public function disableColumn($columnName, $disabled)
     {
-        
+        ;
     }
 
     /**
