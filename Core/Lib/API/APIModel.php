@@ -55,7 +55,6 @@ class APIModel extends APIResourceClass
             return true;
         }
 
-        $this->miniLog->error($this->params[0] . ' not found');
         $this->setError($this->params[0] . ' not found');
         return false;
     }
@@ -87,11 +86,10 @@ class APIModel extends APIResourceClass
                 $this->returnResult($data);
                 return true;
             }
-            $this->miniLog->error($this->params[0] . ' not found');
             $this->setError($this->params[0] . ' not found');
             return false;
         }
-        $this->miniLog->error('Error getting data');
+
         $this->setError('Error getting data');
         return false;
     }
@@ -104,7 +102,6 @@ class APIModel extends APIResourceClass
     public function doPOST(): bool
     {
         if ($this->getResource()) {
-            $this->miniLog->error('existing-record', (array) $this->model);
             $this->setError('existing-record', (array) $this->model);
             return false;
         }
@@ -120,7 +117,6 @@ class APIModel extends APIResourceClass
     public function doPUT(): bool
     {
         if (!$this->getResource()) {
-            $this->miniLog->error('not-existing-record', (array) $this->model);
             $this->setError('not-existing-record', (array) $this->model);
             return false;
         }
@@ -151,7 +147,7 @@ class APIModel extends APIResourceClass
         try {
             $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $name;
             $this->model = new $modelName();
-
+            $this->method = $this->request->getMethod();
             if (count($this->params) === 0) {
                 $this->method = $this->request->getMethod();
                 return $this->listAll();
@@ -159,7 +155,6 @@ class APIModel extends APIResourceClass
 
             return parent::processResource($name);
         } catch (\Exception $ex) {
-            $this->miniLog->error('api-error' . Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->setError('api-error', null, Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
@@ -290,7 +285,6 @@ class APIModel extends APIResourceClass
             return true;
         }
 
-        $this->miniLog->error('List all only in GET method');
         $this->setError('List all only in GET method');
         return false;
     }
@@ -330,7 +324,6 @@ class APIModel extends APIResourceClass
             $this->params[] = $message['message'];
         }
 
-        $this->miniLog->error('bad-request', $this->request->request->all());
         $this->setError('bad-request', $this->request->request->all());
         return false;
     }
