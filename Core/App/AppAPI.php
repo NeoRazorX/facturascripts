@@ -91,31 +91,26 @@ class AppAPI extends App
         $this->response->headers->set('Content-Type', 'application/json');
 
         if ($this->isDisabled()) {
-            $this->miniLog->error('API-DISABLED' . Response::HTTP_NOT_FOUND);
             $this->fatalError('API-DISABLED', Response::HTTP_NOT_FOUND);
             return false;
         }
 
         if (!$this->dataBase->connected()) {
-            $this->miniLog->error('DB-ERROR' . Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->fatalError('DB-ERROR', Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         }
 
         if ($this->isIPBanned()) {
-            $this->miniLog->error('IP-BANNED' . Response::HTTP_FORBIDDEN);
             $this->fatalError('IP-BANNED', Response::HTTP_FORBIDDEN);
             return false;
         }
 
         if (!$this->checkAuthToken()) {
-            $this->miniLog->error('AUTH-TOKEN-INVALID' . Response::HTTP_FORBIDDEN);
             $this->fatalError('AUTH-TOKEN-INVALID', Response::HTTP_FORBIDDEN);
             return false;
         }
 
         if (!$this->isAllowed()) {
-            $this->miniLog->error('FORBIDDEN' . Response::HTTP_FORBIDDEN);
             $this->fatalError('FORBIDDEN', Response::HTTP_FORBIDDEN);
             return false;
         }
@@ -171,6 +166,9 @@ class AppAPI extends App
      */
     protected function fatalError(string $text, int $status)
     {
+        foreach ($this->miniLog->read(["error"]) as $error) {
+            $text .= ' ' . $error['message'];
+        }
         $this->response->setStatusCode($status);
         $this->response->setContent(json_encode(['error' => $text]));
     }
@@ -246,7 +244,6 @@ class AppAPI extends App
         }
 
         if (!isset($map[$resourceName]['API'])) {
-            $this->miniLog->error('invalid-resource' . Response::HTTP_BAD_REQUEST);
             $this->fatalError('invalid-resource', Response::HTTP_BAD_REQUEST);
             return false;
         }
@@ -256,7 +253,6 @@ class AppAPI extends App
             return $APIClass->processResource($map[$resourceName]['Name']);
         }
 
-        $this->miniLog->error('database-error' . Response::HTTP_INTERNAL_SERVER_ERROR);
         $this->fatalError('database-error', Response::HTTP_INTERNAL_SERVER_ERROR);
         return false;
     }
@@ -272,7 +268,6 @@ class AppAPI extends App
             return $this->selectResource();
         }
 
-        $this->miniLog->error('API-VERSION-NOT-FOUND' . Response::HTTP_NOT_FOUND);
         $this->fatalError('API-VERSION-NOT-FOUND', Response::HTTP_NOT_FOUND);
         return true;
     }

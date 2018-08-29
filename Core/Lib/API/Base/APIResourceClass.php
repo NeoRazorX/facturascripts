@@ -236,6 +236,11 @@ abstract class APIResourceClass
     protected function setError(string $message, array $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
         $this->response->setStatusCode($status);
+
+        foreach ($this->miniLog->read(["error"]) as $error) {
+            $message .= ' ' . $error['message'];
+        }
+
         $res = array();
         $res['error'] = $message;
         if ($data !== null) {
