@@ -61,12 +61,28 @@
                 </nav>
                 <div class="btn-group">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-outline-secondary">
-                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">&nbsp;{{ i18n.trans('all') }} </span>
+                        <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('all') }} </span>
                     </a>
                     <a href="{{ firstView.model.url('edit') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
+                </div>
+                <div class="btn-group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-md-inline-block">{{ i18n.trans('print') }} </span>
+                        </button>
+                        <div class="dropdown-menu">
+                            {% for key, option in fsc.exportManager.options() %}
+                                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                                    {{ i18n.trans(option.description) }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 text-right">
@@ -84,6 +100,7 @@
 
 {% block body %}
     {{ parent() }}
+    {% set firstView = fsc.views | first %}
     <div class="container-fluid">
         <div class="row">
             {# -- Left Panel -- #}
@@ -93,7 +110,9 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             <a class="nav-link{{ active }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
+                                {% if view.count >= 1 and viewName != firstView.getViewName() %}
+                                    <span class='badge badge-secondary float-right'>{{ view.count }}</span>
+                                {% endif %}
                                 <i class="fas {{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
                             </a>
                         {% endfor %}

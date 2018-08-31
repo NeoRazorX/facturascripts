@@ -20,6 +20,8 @@
     </div>
 </form>
 
+<br/>
+
 {% for counter, model in currentView.cursor %}
     {% set formName = currentView.getViewName() ~ counter %}
     <form id="{{ formName }}" method="post">
