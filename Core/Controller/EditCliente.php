@@ -125,11 +125,11 @@ class EditCliente extends ExtendedController\PanelController
 
         /// Load values option to Fiscal ID select input
         $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
+        ///$columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
 
         /// Load values option to VAT Type select input
         $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
+        ///$columnVATType->widget->setValuesFromArray(RegimenIVA::all());
     }
 
     /**
@@ -152,11 +152,11 @@ class EditCliente extends ExtendedController\PanelController
 
                 /// Load values option to default billing address from client contacts list
                 $columnBilling = $this->views['EditCliente']->columnForName('default-billing-address');
-                $columnBilling->widget->setValuesFromCodeModel($contacts);
+                ///$columnBilling->widget->setValuesFromCodeModel($contacts);
 
                 /// Load values option to default shipping address from client contacts list
                 $columnShipping = $this->views['EditCliente']->columnForName('default-shipping-address');
-                $columnShipping->widget->setValuesFromCodeModel($contacts);
+                ///$columnShipping->widget->setValuesFromCodeModel($contacts);
                 break;
 
             case 'ListCliente':

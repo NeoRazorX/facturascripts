@@ -1,0 +1,53 @@
+{% import _self as macros %}
+{% set currentView = fsc.getCurrentView() %}
+
+{% set formName = currentView.getViewName() ~ 'New' %}
+<form id="{{ formName }}" method="post">
+    <div class="card bg-light">
+        <div class="card-header">
+            {{ i18n.trans('new') }}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 text-right">
+                    <button class="btn btn-sm btn-success" type="submit">
+                        <i class="far fa-save fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% for counter, model in currentView.cursor %}
+    {% set formName = currentView.getViewName() ~ counter %}
+    <form id="{{ formName }}" method="post">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <a class="btn btn-sm btn-danger" onclick="editListViewDeleteRecord();" href="#">
+                            <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
+                        </a>
+                    </div>
+                    <div class="col-8 text-right">
+                        <button class="btn btn-sm btn btn-secondary" type="reset">
+                            <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
+                        </button>
+                        <button class="btn btn-sm btn-primary" type="submit">
+                            <i class="far fa-save fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% else %}
+    <div class="alert alert-warning">
+        {{ i18n.trans('no-data') }}
+    </div>
+{% endfor %}

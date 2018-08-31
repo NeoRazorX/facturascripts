@@ -42,20 +42,10 @@ class EditListView extends BaseView
     public function __construct($name, $title, $modelName, $viewName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
+        $this->template = 'Master/EditListView.html.twig';
 
         // Load the view configuration for the user
         ///$this->pageOption->getForUser($viewName, $userNick);
-    }
-
-    /**
-     * Establishes the column's edit state
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        ;
     }
 
     /**

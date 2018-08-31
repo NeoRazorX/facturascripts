@@ -222,6 +222,17 @@ abstract class BaseView
     }
 
     /**
+     * Establishes the column's edit state
+     *
+     * @param string $columnName
+     * @param bool   $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        ;
+    }
+
+    /**
      * Returns the name.
      *
      * @return string
