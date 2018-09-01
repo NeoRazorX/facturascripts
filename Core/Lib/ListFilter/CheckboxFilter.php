@@ -38,7 +38,7 @@ class CheckboxFilter extends BaseFilter
      */
     public $operation;
 
-    public function __construct($key, $field, $label, $operation = '=', $matchValue = true)
+    public function __construct($key, $field = '', $label = '', $operation = '=', $matchValue = true)
     {
         parent::__construct($key, $field, $label);
         $this->operation = $operation;

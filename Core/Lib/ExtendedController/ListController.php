@@ -108,7 +108,7 @@ abstract class ListController extends BaseController
      * @param string $operation  (operation to perform with match value)
      * @param mixed  $matchValue (Value to match)
      */
-    protected function addFilterCheckbox($viewName, $key, $label, $field, $operation = '=', $matchValue = true)
+    protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true)
     {
         $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue);
         $this->views[$viewName]->filters[$key] = $filter;
@@ -121,33 +121,12 @@ abstract class ListController extends BaseController
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
+     * @param string $operation (Operation to perform)
      */
-    protected function addFilterDatePicker($viewName, $key, $label, $field)
+    protected function addFilterDatePicker($viewName, $key, $label = '', $field = '', $operation = '>=')
     {
-        
-    }
-
-    /**
-     * Adds a filter to a type of field to the ListView.
-     *
-     * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
-     * @param string $type
-     */
-    private function addFilterFromType($viewName, $key, $label, $field, $type)
-    {
-        $config = [
-            'field' => $field,
-            'label' => $label,
-            'valueFrom' => ($viewName == $this->active) ? $this->request->get($key . '-from', '') : '',
-            'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
-            'valueTo' => ($viewName == $this->active) ? $this->request->get($key . '-to', '') : '',
-            'operatorTo' => $this->request->get($key . '-to-operator', '<='),
-        ];
-
-        $this->views[$viewName]->filters[$key] = ListFilter\BaseFilter::newStandardFilter($type, $config);
+        $filter = new ListFilter\DateFilter($key, $field, $label, $operation);
+        $this->views[$viewName]->filters[$key] = $filter;
     }
 
     /**
@@ -157,10 +136,12 @@ abstract class ListController extends BaseController
      * @param string $key       (Filter identifier)
      * @param string $label     (Human reader description)
      * @param string $field     (Field of the table to apply filter)
+     * @param string $operation (Operation to perform)
      */
-    protected function addFilterNumber($viewName, $key, $label, $field)
+    protected function addFilterNumber($viewName, $key, $label = '', $field = '', $operation = '>=')
     {
-        
+        $filter = new ListFilter\NumberFilter($key, $field, $label, $operation);
+        $this->views[$viewName]->filters[$key] = $filter;
     }
 
     /**
@@ -176,19 +157,6 @@ abstract class ListController extends BaseController
     {
         $filter = new ListFilter\SelectFilter($key, $field, $label, $values);
         $this->views[$viewName]->filters[$key] = $filter;
-    }
-
-    /**
-     * Adds a text type filter to the ListView.
-     *
-     * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
-     */
-    protected function addFilterText($viewName, $key, $label, $field)
-    {
-        
     }
 
     /**

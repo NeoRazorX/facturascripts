@@ -58,7 +58,11 @@ class SelectFilter extends BaseFilter
     {
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
         foreach ($this->values as $data) {
-            $html .= '<option value="' . $data->code . '">' . $data->description . '</option>';
+            if (is_array($data)) {
+                $html .= '<option value="' . $data['code'] . '">' . $data['description'] . '</option>';
+            } else {
+                $html .= '<option value="' . $data->code . '">' . $data->description . '</option>';
+            }
         }
 
         return $html;
