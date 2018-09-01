@@ -18,58 +18,54 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Base\Translator;
-
 /**
- * Description of BaseFilter
+ * Description of AutocompleteFilter
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BaseFilter
+class AutocompleteFilter extends BaseFilter
 {
 
     /**
      *
      * @var string
      */
-    public $field;
-
-    /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
+    public $fieldcode;
 
     /**
      *
      * @var string
      */
-    public $key;
+    public $fieldtitle;
 
     /**
      *
      * @var string
      */
-    public $label;
+    public $table;
 
     /**
      *
-     * @var mixed
+     * @var array
      */
-    public $value;
+    public $where;
 
-    abstract public function getDataBaseWhere(array &$where);
-
-    abstract public function render();
-
-    public function __construct($key, $field = '', $label = '')
+    public function __construct($key, $field, $label, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
+        parent::__construct($key, $field, $label);
+        $this->table = $table;
+        $this->fieldcode = empty($fieldcode) ? $this->field : $fieldcode;
+        $this->fieldtitle = empty($fieldtitle) ? $this->fieldcode : $fieldtitle;
+        $this->where = $where;
+    }
 
-        $this->key = $key;
-        $this->field = empty($field) ? $this->key : $field;
-        $this->label = empty($label) ? $this->field : $label;
+    public function getDataBaseWhere(array &$where)
+    {
+        return $where;
+    }
+    
+    public function render()
+    {
+        return '';
     }
 }

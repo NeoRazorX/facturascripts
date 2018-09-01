@@ -90,15 +90,11 @@ abstract class ListController extends BaseController
      * @param string $table      (Table to search)
      * @param string $fieldcode  (Primary column of the table to search and match)
      * @param string $fieldtitle (Column to show name or description)
-     * @param array  $where      (Estra where conditions)
+     * @param array  $where      (Extra where conditions)
      */
     protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
-        $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $fcode = empty($fieldcode) ? $field : $fieldcode;
-        $ftitle = empty($fieldtitle) ? $fcode : $fieldtitle;
-
-        $filter = ListFilter\BaseFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where);
+        $filter = new ListFilter\AutocompleteFilter($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
         $this->views[$viewName]->filters[$key] = $filter;
     }
 
@@ -109,14 +105,12 @@ abstract class ListController extends BaseController
      * @param string $key        (Filter identifier)
      * @param string $label      (Human reader description)
      * @param string $field      (Field of the model to apply filter)
-     * @param bool   $inverse    (If you need to invert the selected value)
+     * @param string $operation  (operation to perform with match value)
      * @param mixed  $matchValue (Value to match)
      */
-    protected function addFilterCheckbox($viewName, $key, $label, $field, $inverse = false, $matchValue = true)
+    protected function addFilterCheckbox($viewName, $key, $label, $field, $operation = '=', $matchValue = true)
     {
-        $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-
-        $filter = ListFilter\BaseFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue);
+        $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue);
         $this->views[$viewName]->filters[$key] = $filter;
     }
 
@@ -130,7 +124,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterDatePicker($viewName, $key, $label, $field)
     {
-        $this->addFilterFromType($viewName, $key, $label, $field, 'datepicker');
+        
     }
 
     /**
@@ -166,7 +160,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterNumber($viewName, $key, $label, $field)
     {
-        $this->addFilterFromType($viewName, $key, $label, $field, 'number');
+        
     }
 
     /**
@@ -180,9 +174,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
-        $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-
-        $filter = ListFilter\BaseFilter::newSelectFilter($label, $field, $values, $value);
+        $filter = new ListFilter\SelectFilter($key, $field, $label, $values);
         $this->views[$viewName]->filters[$key] = $filter;
     }
 
@@ -196,7 +188,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterText($viewName, $key, $label, $field)
     {
-        $this->addFilterFromType($viewName, $key, $label, $field, 'text');
+        
     }
 
     /**

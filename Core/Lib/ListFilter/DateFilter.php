@@ -18,58 +18,20 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Base\Translator;
-
 /**
- * Description of BaseFilter
+ * Description of DateFilter
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BaseFilter
+class DateFilter extends BaseFilter
 {
-
-    /**
-     *
-     * @var string
-     */
-    public $field;
-
-    /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
-     *
-     * @var string
-     */
-    public $key;
-
-    /**
-     *
-     * @var string
-     */
-    public $label;
-
-    /**
-     *
-     * @var mixed
-     */
-    public $value;
-
-    abstract public function getDataBaseWhere(array &$where);
-
-    abstract public function render();
-
-    public function __construct($key, $field = '', $label = '')
+    public function getDataBaseWhere(array &$where)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
-        $this->key = $key;
-        $this->field = empty($field) ? $this->key : $field;
-        $this->label = empty($label) ? $this->field : $label;
+        return $where;
+    }
+    
+    public function render()
+    {
+        return '';
     }
 }

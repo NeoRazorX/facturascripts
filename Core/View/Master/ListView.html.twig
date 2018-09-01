@@ -6,6 +6,9 @@
         $("#formListView" + viewName + " :input[name=\"order\"]").val(value);
         $("#formListView" + viewName).submit();
     }
+    function listViewShowFilters(viewName) {
+        $("#formListView" + viewName + "Filters").toggle();
+    }
 </script>
 
 <br/>
@@ -31,12 +34,10 @@
                 {{ macros.searchControl(currentView, i18n) }}
             {% endif %}
             {% if currentView.filters is not empty %}
-                <div>
-                    <div class="col">
-                        <button type="button" class="btn btn-light">
-                            <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
-                        </button>
-                    </div>
+                <div class="col">
+                    <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ currentView.getViewName() }}');">
+                        <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
+                    </button>
                 </div>
             {% endif %}
             {% if currentView.orderOptions is empty %}
@@ -46,6 +47,11 @@
             {% else %}
                 {{ macros.sortButton(currentView) }}
             {% endif %}
+        </div>
+        <div id="formListView{{ currentView.getViewName() }}Filters" class="row" style="display: none;">
+            {% for filterName, filter in currentView.filters %}
+                {{ filter.render() | raw }}
+            {% endfor %}
         </div>
     </div>
     <div class="table-responsive">
