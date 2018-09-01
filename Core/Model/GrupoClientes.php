@@ -45,6 +45,13 @@ class GrupoClientes extends Base\ModelClass
     public $codtarifa;
 
     /**
+     * Accounting code.
+     *
+     * @var string
+     */
+    public $codsubcuenta;
+
+    /**
      * Group name.
      *
      * @var string
