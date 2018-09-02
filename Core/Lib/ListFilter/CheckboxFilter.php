@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Description of CheckboxFilter
  *
@@ -47,6 +49,10 @@ class CheckboxFilter extends BaseFilter
 
     public function getDataBaseWhere(array &$where)
     {
+        if ('TRUE' === $this->value) {
+            $where[] = new DataBaseWhere($this->key, $this->matchValue, $this->operation);
+        }
+
         return $where;
     }
 

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
+use FacturaScripts\Core\Model\CodeModel;
+
 /**
  * Description of AutocompleteFilter
  *
@@ -61,11 +63,47 @@ class AutocompleteFilter extends BaseFilter
 
     public function getDataBaseWhere(array &$where)
     {
+        if ('' !== $this->value && null !== $this->value) {
+            $where[] = new DataBaseWhere($this->key, $this->value);
+        }
+
         return $where;
     }
-    
+
     public function render()
     {
-        return '';
+        $label = static::$i18n->trans($this->label);
+        $html = '<div class="col-sm-2">'
+            . '<input type="hidden" id="' . $this->name() . 'Autocomplete" name="' . $this->name() . '" value="' . $this->value . '"/>'
+            . '<div class="form-group">'
+            . '<div class="input-group">';
+
+        if ('' !== $this->value && null !== $this->value) {
+            $html .= '<span class="input-group-prepend" title="' . $label . '">'
+                . '<span class="input-group-text">'
+                . '<i class="far fa-keyboard" aria-hidden="true"></i>'
+                . '</span>'
+                . '</span>';
+        } else {
+            $html .= '<span class="input-group-prepend" title="' . $label . '">'
+                . '<button class="btn btn-warning" type="button" onclick="">'
+                . '<i class = "fas fa-times" aria-hidden = "true"></i>'
+                . '</button>'
+                . '</span>';
+        }
+
+        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control autocomplete" data-field="' . $this->field . '" data-source="' . $this->table . '"
+            data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off"/>
+            </div>
+            </div>'
+            . '</div>';
+
+        return $html;
+    }
+
+    protected function getDescription()
+    {
+        $codeModel = new CodeModel();
+        return $codeModel->getDescription($this->table, $this->fieldcode, $this->value, $this->fieldtitle);
     }
 }
