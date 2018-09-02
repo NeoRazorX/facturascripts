@@ -121,7 +121,8 @@
             {% endif %}
 
             {# -- Right Panel -- #}
-            <div class="col">
+            {% set rightPanelClass = (fsc.views | length > 1) ? 'col-sm-10' : 'col' %}
+            <div class="{{ rightPanelClass }}">
                 {% if fsc.views | length > 1 %}
                     <div class="nav nav-tabs d-lg-none" role="tablist">
                         {% for viewName, view in fsc.views %}

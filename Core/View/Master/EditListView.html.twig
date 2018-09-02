@@ -1,8 +1,16 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
 
+<script type="text/javascript">
+    function EditListViewSetOffset(viewName, value) {
+        $("#formListView" + viewName + " :input[name=\"offset\"]").val(value);
+        $("#formListView" + viewName).submit();
+    }
+</script>
+
 {% set formName = currentView.getViewName() ~ 'New' %}
 <form id="{{ formName }}" method="post">
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card bg-light">
         <div class="card-header">
             {{ i18n.trans('new') }}
@@ -25,6 +33,7 @@
 {% for counter, model in currentView.cursor %}
     {% set formName = currentView.getViewName() ~ counter %}
     <form id="{{ formName }}" method="post">
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <div class="card">
             <div class="card-body">
                 <div class="row">

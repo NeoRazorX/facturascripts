@@ -272,7 +272,7 @@ abstract class BusinessDocumentLine extends ModelClass
             return 'Edit' . $name;
         }
 
-        return parent::url($type, 'List' . $name . '?active=List');
+        return parent::url($type, 'List' . $name . '?activetab=List');
     }
 
     /**

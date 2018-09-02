@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Lib\ExportManager;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -53,8 +54,18 @@ class HtmlView extends BaseView
     {
         ;
     }
-    
-    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
+
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        ;
+    }
+
+    /**
+     * Process need request data.
+     *
+     * @param Request $request
+     */
+    public function processRequest($request)
     {
         ;
     }

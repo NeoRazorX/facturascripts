@@ -2,6 +2,10 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <script type="text/javascript">
+    function listViewSetOffset(viewName, value) {
+        $("#formListView" + viewName + " :input[name=\"offset\"]").val(value);
+        $("#formListView" + viewName).submit();
+    }
     function listViewSetOrder(viewName, value) {
         $("#formListView" + viewName + " :input[name=\"order\"]").val(value);
         $("#formListView" + viewName).submit();
@@ -14,6 +18,8 @@
 <br/>
 
 <form id="formListView{{ currentView.getViewName() }}" method="post">
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="container-fluid">
         <div class="row">
@@ -83,6 +89,18 @@
     </div>
 </form>
 
+<div class="text-center">
+    <div class="btn-group">
+        {% for page in currentView.getPagination() %}
+            {% if page.active %}
+                <button type="button" class="btn btn-light active" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+            {% else %}
+                <button type="button" class="btn btn-light" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
 {% macro printButton(fsc, currentView, i18n) %}
     <div class="dropdown">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -126,7 +144,7 @@
                 <div class="dropdown-menu dropdown-menu-right">
                     {% for key, orderby in currentView.orderOptions %}
                         {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
-                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}')">
+                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
                             <i class="fas {{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
                         </a>
                     {% endfor %}

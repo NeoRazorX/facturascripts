@@ -73,6 +73,10 @@ abstract class ListController extends BaseController
 
         // Load data for every view
         foreach ($this->views as $viewName => $view) {
+            if ($this->active == $viewName) {
+                $view->processRequest($this->request);
+            }
+
             $this->loadData($viewName, $view);
         }
 
@@ -304,19 +308,14 @@ abstract class ListController extends BaseController
         return $result;
     }
 
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
     protected function loadData($viewName, $view)
     {
-        // If processing the selected view, then adds query, offset and filters
-        if ($this->active == $viewName) {
-            $view->query = $this->request->request->get('query', '');
-            $offset = (int) $this->request->request->get('offset', 0);
-            $view->setSelectedOrderBy($this->request->request->get('order', ''));
-
-            $view->loadData(false, [], [], $offset);
-            return;
-        }
-
-        $view->loadData(false, []);
+        $view->loadData();
     }
 
     /**

@@ -89,6 +89,6 @@ class Role extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return parent::url($type, 'ListUser?active=List');
+        return parent::url($type, 'ListUser?activetab=List');
     }
 }

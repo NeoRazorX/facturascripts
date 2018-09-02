@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExportManager;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ListController
@@ -64,6 +65,12 @@ class ListView extends BaseView
     public $orderOptions;
 
     /**
+     *
+     * @var string
+     */
+    public $query;
+
+    /**
      * List of fields where to search in when a search is made
      *
      * @var array
@@ -84,6 +91,7 @@ class ListView extends BaseView
         $this->divisaTools = new DivisaTools();
         $this->filters = [];
         $this->orderOptions = [];
+        $this->query = '';
         $this->searchFields = [];
         $this->template = 'Master/ListView.html.twig';
     }
@@ -152,20 +160,31 @@ class ListView extends BaseView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
+        $this->offset = ($offset < 0) ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
         $this->count = is_null($this->model) ? 0 : $this->model->count($where);
 
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
+            $this->cursor = $this->model->all($where, $this->order, $this->offset, $limit);
         }
 
-        /// store values where & offset for exportation
-        $this->offset = $offset;
         $this->where = $where;
+    }
+
+    /**
+     * Process need request data.
+     *
+     * @param Request $request
+     */
+    public function processRequest($request)
+    {
+        $this->query = $request->request->get('query', '');
+        $this->offset = (int) $request->request->get('offset', 0);
+        $this->setSelectedOrderBy($request->request->get('order', ''));
     }
 
     /**
@@ -173,7 +192,7 @@ class ListView extends BaseView
      *
      * @param string $orderKey
      */
-    public function setSelectedOrderBy($orderKey)
+    protected function setSelectedOrderBy($orderKey)
     {
         if (!isset($this->orderOptions[$orderKey])) {
             return;

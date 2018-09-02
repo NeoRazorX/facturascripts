@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -85,5 +86,15 @@ class EditView extends BaseView
 
         $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
+    }
+
+    /**
+     * Process need request data.
+     *
+     * @param Request $request
+     */
+    public function processRequest($request)
+    {
+        ;
     }
 }

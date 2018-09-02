@@ -225,6 +225,6 @@ class Variante extends Base\ModelClass
             return 'EditProducto';
         }
 
-        return parent::url($type, 'ListProducto?active=List');
+        return parent::url($type, 'ListProducto?activetab=List');
     }
 }

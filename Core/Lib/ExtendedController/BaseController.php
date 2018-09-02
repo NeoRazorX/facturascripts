@@ -99,7 +99,7 @@ abstract class BaseController extends Base\Controller
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->active = $this->request->get('active', '');
+        $this->active = $this->request->get('activetab', '');
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->numberTools = new Base\NumberTools();

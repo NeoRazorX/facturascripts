@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -83,5 +84,15 @@ class EditListView extends BaseView
         // We save the values where and offset for the export
         $this->offset = $offset;
         $this->where = $where;
+    }
+
+    /**
+     * Process need request data.
+     *
+     * @param Request $request
+     */
+    public function processRequest($request)
+    {
+        
     }
 }

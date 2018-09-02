@@ -135,6 +135,11 @@ abstract class BaseView
     abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
+     * Process request data needed.
+     */
+    abstract public function processRequest($request);
+
+    /**
      * Construct and initialize the class
      *
      * @param string $name
@@ -230,6 +235,42 @@ abstract class BaseView
     public function disableColumn($columnName, $disabled)
     {
         ;
+    }
+
+    public function getPagination()
+    {
+        $pages = [];
+        $key1 = $key2 = 0;
+        $current = 1;
+
+        /// add all pages
+        while ($key2 < $this->count) {
+            $pages[$key1] = [
+                'active' => ($key2 == $this->offset),
+                'num' => $key1 + 1,
+                'offset' => $key1 * FS_ITEM_LIMIT,
+            ];
+            if ($key2 == $this->offset) {
+                $current = $key1;
+            }
+            $key1++;
+            $key2 += FS_ITEM_LIMIT;
+        }
+
+        /// now descarting pages
+        foreach (array_keys($pages) as $key2) {
+            $middle = intval($key1 / 2);
+
+            /**
+             * We discard everything except the first page, the last one, the middle one,
+             * the current one, the 5 previous and 5 following ones.
+             */
+            if (($key2 > 1 && $key2 < $current - 5 && $key2 != $middle) || ( $key2 > $current + 5 && $key2 < $key1 - 1 && $key2 != $middle)) {
+                unset($pages[$key2]);
+            }
+        }
+
+        return (count($pages) > 1) ? $pages : [];
     }
 
     /**

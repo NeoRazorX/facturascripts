@@ -100,6 +100,10 @@ abstract class PanelController extends BaseController
         // Load the model data for each view
         $mainViewName = array_keys($this->views)[0];
         foreach ($this->views as $viewName => $view) {
+            if ($this->active == $viewName) {
+                $view->processRequest($this->request);
+            }
+
             $this->loadData($viewName, $view);
 
             // check if we are processing the main view

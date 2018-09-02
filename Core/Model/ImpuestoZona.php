@@ -111,6 +111,6 @@ class ImpuestoZona extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return parent::url($type, 'ListImpuesto?active=List');
+        return parent::url($type, 'ListImpuesto?activetab=List');
     }
 }

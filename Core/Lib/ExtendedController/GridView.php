@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of GridView
@@ -358,5 +359,15 @@ class GridView extends BaseView
         }
 
         return $result;
+    }
+
+    /**
+     * Process need request data.
+     *
+     * @param Request $request
+     */
+    public function processRequest($request)
+    {
+        ;
     }
 }
