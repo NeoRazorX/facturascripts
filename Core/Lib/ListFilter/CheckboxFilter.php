@@ -57,7 +57,7 @@ class CheckboxFilter extends BaseFilter
             . '<div class="form-group">'
             . '<div class="form-check mb-2 mb-sm-0">'
             . '<label class="form-check-label">'
-            . '<input class="form-check-input" type="checkbox" name="' . $this->key . '" value="TRUE" ' . $extra . 'onchange="this.form.submit()"/>'
+            . '<input class="form-check-input" type="checkbox" name="' . $this->name() . '" value="TRUE" ' . $extra . 'onchange="this.form.submit()"/>'
             . static::$i18n->trans($this->label)
             . '</label>'
             . '</div>'

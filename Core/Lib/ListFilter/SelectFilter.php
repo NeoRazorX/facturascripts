@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Description of SelectFilter
  *
@@ -40,6 +42,10 @@ class SelectFilter extends BaseFilter
 
     public function getDataBaseWhere(array &$where)
     {
+        if ('' !== $this->value && null !== $this->value) {
+            $where[] = new DataBaseWhere($this->key, $this->value);
+        }
+
         return $where;
     }
 
@@ -47,7 +53,7 @@ class SelectFilter extends BaseFilter
     {
         return '<div class="col-sm-2">'
             . '<div class="form-group">'
-            . '<select name="' . $this->key . '" class="form-control" onchange="this.form.submit()">'
+            . '<select name="' . $this->name() . '" class="form-control" onchange="this.form.submit()">'
             . $this->getHtmlOptions()
             . '</select>'
             . '</div>'
@@ -59,10 +65,13 @@ class SelectFilter extends BaseFilter
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
         foreach ($this->values as $data) {
             if (is_array($data)) {
-                $html .= '<option value="' . $data['code'] . '">' . $data['description'] . '</option>';
-            } else {
-                $html .= '<option value="' . $data->code . '">' . $data->description . '</option>';
+                $extra = ('' != $this->value && $data['code'] == $this->value) ? ' selected=""' : '';
+                $html .= '<option value="' . $data['code'] . '"' . $extra . '>' . $data['description'] . '</option>';
+                continue;
             }
+
+            $extra = ('' != $this->value && $data->code == $this->value) ? ' selected=""' : '';
+            $html .= '<option value="' . $data->code . '"' . $extra . '>' . $data->description . '</option>';
         }
 
         return $html;

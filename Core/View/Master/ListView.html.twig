@@ -54,7 +54,8 @@
                 {{ macros.sortButton(currentView) }}
             {% endif %}
         </div>
-        <div id="formListView{{ currentView.getViewName() }}Filters" class="row" style="display: none;">
+        {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
+        <div id="formListView{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
             {% for filterName, filter in currentView.filters %}
                 {{ filter.render() | raw }}
             {% endfor %}

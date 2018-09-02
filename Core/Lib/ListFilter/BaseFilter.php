@@ -62,6 +62,12 @@ abstract class BaseFilter
 
     abstract public function render();
 
+    /**
+     * 
+     * @param string $key
+     * @param string $field
+     * @param string $label
+     */
     public function __construct($key, $field = '', $label = '')
     {
         if (!isset(static::$i18n)) {
@@ -71,5 +77,14 @@ abstract class BaseFilter
         $this->key = $key;
         $this->field = empty($field) ? $this->key : $field;
         $this->label = empty($label) ? $this->field : $label;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function name()
+    {
+        return 'filter' . $this->key;
     }
 }

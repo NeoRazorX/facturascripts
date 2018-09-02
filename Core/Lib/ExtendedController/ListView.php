@@ -20,7 +20,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -47,7 +49,7 @@ class ListView extends BaseView
     /**
      * Filter configuration preset by the user
      *
-     * @var ListFilter[]
+     * @var BaseFilter[]
      */
     public $filters;
 
@@ -78,6 +80,12 @@ class ListView extends BaseView
     public $searchFields;
 
     /**
+     *
+     * @var bool
+     */
+    public $showFilters;
+
+    /**
      * ListView constructor and initialization.
      *
      * @param string $name
@@ -93,6 +101,7 @@ class ListView extends BaseView
         $this->orderOptions = [];
         $this->query = '';
         $this->searchFields = [];
+        $this->showFilters = false;
         $this->template = 'Master/ListView.html.twig';
     }
 
@@ -164,15 +173,17 @@ class ListView extends BaseView
     {
         $this->offset = ($offset < 0) ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-        $this->count = is_null($this->model) ? 0 : $this->model->count($where);
+
+        $finalWhere = empty($where) ? $this->where : $where;
+        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
 
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $this->order, $this->offset, $limit);
+            $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
         }
 
-        $this->where = $where;
+        $this->where = $finalWhere;
     }
 
     /**
@@ -182,9 +193,23 @@ class ListView extends BaseView
      */
     public function processRequest($request)
     {
-        $this->query = $request->request->get('query', '');
         $this->offset = (int) $request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
+
+        /// query
+        $this->query = $request->request->get('query', '');
+        if ('' !== $this->query) {
+            $fields = implode('|', $this->searchFields);
+            $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'LIKE');
+        }
+
+        /// filters
+        foreach ($this->filters as $filter) {
+            $filter->value = $request->request->get($filter->name());
+            $filter->getDataBaseWhere($this->where);
+        }
+
+        $this->showFilters = !empty($this->where);
     }
 
     /**

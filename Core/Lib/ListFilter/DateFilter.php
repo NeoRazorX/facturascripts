@@ -47,7 +47,7 @@ class DateFilter extends BaseFilter
     {
         return '<div class="col-sm-2">'
             . '<div class="form-group">'
-            . '<input type="text" name="' . $this->key . '" value="' . $this->value . '" class="form-control datepicker" placeholder="'
+            . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control datepicker" placeholder="'
             . static::$i18n->trans($this->label) . '" autocomplete="off"/>'
             . '</div>'
             . '</div>';
