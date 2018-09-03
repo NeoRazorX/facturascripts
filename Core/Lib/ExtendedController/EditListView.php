@@ -73,17 +73,21 @@ class EditListView extends BaseView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
+        $this->offset = ($offset < 0) ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-        $this->count = $this->model->count($where);
+
+        $finalWhere = empty($where) ? $this->where : $where;
+        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
+
+        /// needed when megasearch force data reload
+        $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
+            $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
         }
 
-        // We save the values where and offset for the export
-        $this->offset = $offset;
-        $this->where = $where;
+        $this->where = $finalWhere;
     }
 
     /**
@@ -93,6 +97,6 @@ class EditListView extends BaseView
      */
     public function processRequest($request)
     {
-        
+        $this->offset = (int) $request->request->get('offset', 0);
     }
 }

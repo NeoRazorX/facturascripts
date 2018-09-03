@@ -8,10 +8,18 @@
 -->
 <table>
     <column>
+        <name>columns</name>
+        <type>text</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('pages_options_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>modals</name>
+        <type>text</type>
     </column>
     <column>
         <name>name</name>
@@ -23,19 +31,7 @@
         <type>character varying(50)</type>
     </column>
     <column>
-        <name>columns</name>
-        <type>text</type>
-    </column>
-    <column>
         <name>rows</name>
-        <type>text</type>
-    </column>
-    <column>
-        <name>modals</name>
-        <type>text</type>
-    </column>
-    <column>
-        <name>filters</name>
         <type>text</type>
     </column>
     <constraint>

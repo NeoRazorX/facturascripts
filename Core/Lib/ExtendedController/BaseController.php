@@ -113,6 +113,7 @@ abstract class BaseController extends Base\Controller
      */
     public function addCustomView($viewName, $view)
     {
+        $view->loadPageOptions($this->user);
         $this->views[$viewName] = $view;
         if (empty($this->active)) {
             $this->active = $viewName;
@@ -135,6 +136,18 @@ abstract class BaseController extends Base\Controller
     public function setCurrentView($viewName)
     {
         $this->current = $viewName;
+    }
+
+    /**
+     * Set value for setting of a view
+     *
+     * @param string $viewName
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function setSettings($viewName, $property, $value)
+    {
+        $this->miniLog->warning('$this->setSettings() is obsolete.');
     }
 
     /**

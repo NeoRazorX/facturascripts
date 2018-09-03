@@ -23,9 +23,10 @@ use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Visual configuration of the FacturaScripts views,
- * each PageOption corresponds to a controller.
+ * each PageOption corresponds to a view or tab.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PageOption extends Base\ModelClass
 {
@@ -39,13 +40,6 @@ class PageOption extends Base\ModelClass
      * @var array
      */
     public $columns;
-
-    /**
-     * Defining custom filters
-     *
-     * @var array
-     */
-    public $filters;
 
     /**
      * Identifier
@@ -90,7 +84,6 @@ class PageOption extends Base\ModelClass
         parent::clear();
         $this->columns = [];
         $this->modals = [];
-        $this->filters = [];
         $this->rows = [];
     }
 
@@ -132,7 +125,7 @@ class PageOption extends Base\ModelClass
         new Page();
         new User();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -182,7 +175,6 @@ class PageOption extends Base\ModelClass
         return [
             'columns' => json_encode($this->columns),
             'modals' => json_encode($this->modals),
-            'filters' => json_encode($this->filters),
             'rows' => json_encode($this->rows),
         ];
     }

@@ -3,12 +3,12 @@
 
 <script type="text/javascript">
     function EditListViewSetOffset(viewName, value) {
-        $("#formListView" + viewName + " :input[name=\"offset\"]").val(value);
-        $("#formListView" + viewName).submit();
+        $("#form" + viewName + "Offset :input[name=\"offset\"]").val(value);
+        $("#form" + viewName + "Offset").submit();
     }
 </script>
 
-{% set formName = currentView.getViewName() ~ 'New' %}
+{% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
 <form id="{{ formName }}" method="post">
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card bg-light">
@@ -31,7 +31,7 @@
 <br/>
 
 {% for counter, model in currentView.cursor %}
-    {% set formName = currentView.getViewName() ~ counter %}
+    {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
     <form id="{{ formName }}" method="post">
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <div class="card">
@@ -62,3 +62,26 @@
         {{ i18n.trans('no-data') }}
     </div>
 {% endfor %}
+
+<br/>
+
+{% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}
+<form id="{{ formName }}" method="post">
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
+    <div class="text-center">
+        <div class="btn-group">
+            {% for page in currentView.getPagination() %}
+                {% if page.active %}
+                    <button type="button" class="btn btn-light active" onclick="EditListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                        {{ page.num }}
+                    </button>
+                {% else %}
+                    <button type="button" class="btn btn-light" onclick="EditListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                        {{ page.num }}
+                    </button>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</form>

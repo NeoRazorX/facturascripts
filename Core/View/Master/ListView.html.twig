@@ -3,21 +3,21 @@
 
 <script type="text/javascript">
     function listViewSetOffset(viewName, value) {
-        $("#formListView" + viewName + " :input[name=\"offset\"]").val(value);
-        $("#formListView" + viewName).submit();
+        $("#form" + viewName + " :input[name=\"offset\"]").val(value);
+        $("#form" + viewName).submit();
     }
     function listViewSetOrder(viewName, value) {
-        $("#formListView" + viewName + " :input[name=\"order\"]").val(value);
-        $("#formListView" + viewName).submit();
+        $("#form" + viewName + " :input[name=\"order\"]").val(value);
+        $("#form" + viewName).submit();
     }
     function listViewShowFilters(viewName) {
-        $("#formListView" + viewName + "Filters").toggle();
+        $("#form" + viewName + "Filters").toggle();
     }
 </script>
 
 <br/>
 
-<form id="formListView{{ currentView.getViewName() }}" method="post">
+<form id="form{{ currentView.getViewName() }}" method="post">
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
@@ -55,7 +55,7 @@
             {% endif %}
         </div>
         {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-        <div id="formListView{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
+        <div id="form{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
             {% for filterName, filter in currentView.filters %}
                 {{ filter.render() | raw }}
             {% endfor %}

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
+use FacturaScripts\Core\Model\User;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -281,5 +282,14 @@ abstract class BaseView
     public function getViewName()
     {
         return $this->name;
+    }
+
+    /**
+     * 
+     * @param User|false $user
+     */
+    public function loadPageOptions($user)
+    {
+        
     }
 }
