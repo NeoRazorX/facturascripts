@@ -13,6 +13,13 @@
     function listViewShowFilters(viewName) {
         $("#form" + viewName + "Filters").toggle();
     }
+    $(document).ready(function () {
+        // set/unset all delete checkbox
+        $(".listActionCB").click(function () {
+            var checked = $(this).prop("checked");
+            $(".listAction").prop("checked", checked);
+        });
+    });
 </script>
 
 <br/>
@@ -65,7 +72,18 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-
+                    <th>
+                        <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                            <input class="form-check-input listActionCB" type="checkbox" />
+                        </div>
+                    </th>
+                    {% for column in currentView.getColumns() %}
+                        {% if (column.display != 'none') and (column.level <= fsc.user.level) %}
+                            <th class="text-{{ column.display }}">
+                                {{ i18n.trans(column.title) | raw }}
+                            </th>
+                        {% endif %}
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
@@ -76,8 +94,11 @@
                                 <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
                             </div>
                         </td>
-                        {% for field in model.getModelFields() %}
-                            <td>{{ attribute(model, field.name) }}</td>
+                        {% for column in currentView.getColumns() %}
+                            {% if (column.display != 'none') and (column.level <= fsc.user.level) %}
+                                {% set value = attribute(model, column.widget.fieldName) %}
+                                <td class="text-{{ column.display }}">{{ column.getListHTML(value) | raw }}</td>
+                            {% endif %}
                         {% endfor %}
                     </tr>
                 {% else %}

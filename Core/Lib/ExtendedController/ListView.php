@@ -160,6 +160,17 @@ class ListView extends BaseView
         }
     }
 
+    public function getColumns()
+    {
+        $keys = array_keys($this->pageOption->columns);
+        if (empty($keys)) {
+            return [];
+        }
+
+        $key = $keys[0];
+        return $this->pageOption->columns[$key]->columns;
+    }
+
     /**
      * Loads the data in the cursor property, according to the where filter specified.
      *

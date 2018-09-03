@@ -19,9 +19,12 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Lib\Widget\GroupItem;
+use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -238,6 +241,16 @@ abstract class BaseView
         ;
     }
 
+    /**
+     * Returns the column configuration
+     *
+     * @return GroupItem[]
+     */
+    public function getColumns()
+    {
+        return $this->pageOption->columns;
+    }
+
     public function getPagination()
     {
         $pages = [];
@@ -290,6 +303,26 @@ abstract class BaseView
      */
     public function loadPageOptions($user)
     {
-        
+        $orderby = ['nick' => 'ASC'];
+        $viewName = explode('-', $this->name)[0];
+        $where = [
+            new DataBaseWhere('name', $viewName),
+        ];
+
+        if (!is_bool($user)) {
+            $where = [
+                new DataBaseWhere('nick', $user->nick),
+                new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+                new DataBaseWhere('name', $viewName),
+            ];
+        }
+
+        if ($this->pageOption->loadFromCode('', $where, $orderby)) {
+            VisualItemLoadEngine::loadJSON($this->pageOption->columns, $this->pageOption->modals, $this->pageOption->rows, $this->pageOption);
+        } elseif (!is_bool($user)) {
+            VisualItemLoadEngine::installXML($viewName, $this->pageOption);
+        }
+
+        VisualItemLoadEngine::applyDynamicSelectValues($this->pageOption);
     }
 }

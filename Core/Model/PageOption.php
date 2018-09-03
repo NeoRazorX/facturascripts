@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Lib\ExtendedController;
-
 /**
  * Visual configuration of the FacturaScripts views,
  * each PageOption corresponds to a view or tab.
@@ -95,22 +92,7 @@ class PageOption extends Base\ModelClass
      */
     public function getForUser(string $name, string $nick)
     {
-        $viewName = explode('-', $name)[0];
-        $where = $this->getPageFilter($viewName, $nick);
-        $orderby = ['nick' => 'ASC'];
-
-        // Load data from database, if not exist install xmlview
-        if (!$this->loadFromCode('', $where, $orderby)) {
-            $this->name = $viewName;
-
-            if (!ExtendedController\VisualItemLoadEngine::installXML($viewName, $this)) {
-                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $viewName . '.xml']));
-                return;
-            }
-        }
-
-        /// Apply values to dynamic Select widgets
-        ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
+        self::$miniLog->warning('getForUser() is now obsolete.');
     }
 
     /**
@@ -139,10 +121,9 @@ class PageOption extends Base\ModelClass
         array_push($exclude, 'columns', 'modals', 'filters', 'rows', 'code', 'action');
         parent::loadFromData($data, $exclude);
 
-        $columns = json_decode($data['columns'], true);
-        $modals = json_decode($data['modals'], true);
-        $rows = json_decode($data['rows'], true);
-        ExtendedController\VisualItemLoadEngine::loadJSON($columns, $modals, $rows, $this);
+        $this->columns = json_decode($data['columns'], true);
+        $this->modals = json_decode($data['modals'], true);
+        $this->rows = json_decode($data['rows'], true);
     }
 
     /**
@@ -176,24 +157,6 @@ class PageOption extends Base\ModelClass
             'columns' => json_encode($this->columns),
             'modals' => json_encode($this->modals),
             'rows' => json_encode($this->rows),
-        ];
-    }
-
-    /**
-     * Returns the where filter to locate the view configuration
-     *
-     * @param string $name
-     * @param string $nick
-     *
-     * @return Database\DataBaseWhere[]
-     */
-    private function getPageFilter(string $name, string $nick)
-    {
-        return [
-            new DataBase\DataBaseWhere('nick', $nick),
-            new DataBase\DataBaseWhere('name', $name),
-            new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            new DataBase\DataBaseWhere('name', $name),
         ];
     }
 

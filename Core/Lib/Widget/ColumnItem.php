@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Lib\ExtendedController;
+namespace FacturaScripts\Core\Lib\Widget;
 
 /**
  * Description of ColumnItem
@@ -136,24 +136,6 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             default:
                 $html = $this->standardHTMLColumn($header, $value, $data);
                 break;
-        }
-
-        return $html;
-    }
-
-    /**
-     * Generates HTML code for the element's header display
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getHeaderHTML($value)
-    {
-        $html = parent::getHeaderHTML($value);
-
-        if (!empty($this->description)) {
-            $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
         }
 
         return $html;

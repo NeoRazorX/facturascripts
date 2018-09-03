@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Lib\ExtendedController;
+namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Model;
 
@@ -72,7 +72,6 @@ class VisualItemLoadEngine
         self::getXMLGroupsColumns($xml->columns, $model->columns);
         self::getXMLGroupsColumns($xml->modals, $model->modals);
         self::getXMLRows($xml->rows, $model->rows);
-
         return true;
     }
 
@@ -130,7 +129,6 @@ class VisualItemLoadEngine
         if (!isset($columns->group)) {
             $groupItem = GroupItem::newFromXML($columns);
             $target[$groupItem->name] = $groupItem;
-
             return;
         }
 
