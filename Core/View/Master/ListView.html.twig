@@ -103,7 +103,7 @@
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td>{{ i18n.trans('no-data') }}</td>
+                        <td colspan="{{ currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

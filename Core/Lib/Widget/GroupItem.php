@@ -31,7 +31,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
      *
      * @var ColumnItem[]
      */
-    public $columns;
+    public $columns = [];
 
     /**
      * Icon used as the value or accompaining the group title
@@ -39,17 +39,6 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * @var string
      */
     public $icon;
-
-    /**
-     * Class construct and initialization
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->icon = null;
-        $this->columns = [];
-    }
 
     /**
      * Check and apply special operations on the group

@@ -71,6 +71,20 @@
                 <div class="btn-group">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ i18n.trans('options') }}
+                        </button>
+                        <div class="dropdown-menu">
+                            {% for viewName, view in fsc.views %}
+                                <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                                    <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-md-inline-block">{{ i18n.trans('print') }} </span>
                         </button>

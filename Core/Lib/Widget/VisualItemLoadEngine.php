@@ -23,7 +23,8 @@ use FacturaScripts\Core\Model;
 /**
  * Description of VisualItemLoadEngine
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class VisualItemLoadEngine
 {
@@ -59,6 +60,8 @@ class VisualItemLoadEngine
      */
     public static function installXML($name, &$model)
     {
+        $model->name = $name;
+
         $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
         if (FS_DEBUG && !file_exists($fileName)) {
             $fileName = FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
@@ -68,6 +71,16 @@ class VisualItemLoadEngine
         if ($xml === false) {
             return false;
         }
+
+        /// turns xml into an array
+        $array = static::xmlToArray($xml);
+        foreach (['columns', 'modals', 'rows'] as $col) {
+            if (!isset($array[$col])) {
+                $array[$col] = [];
+            }
+        }
+
+        //self::loadArray($array['columns'], $array['modals'], $array['rows'], $model);
 
         self::getXMLGroupsColumns($xml->columns, $model->columns);
         self::getXMLGroupsColumns($xml->modals, $model->modals);
@@ -83,7 +96,7 @@ class VisualItemLoadEngine
      * @param string (JSON)    $rows
      * @param Model\PageOption $model
      */
-    public static function loadJSON($columns, $modals, $rows, &$model)
+    public static function loadArray($columns, $modals, $rows, &$model)
     {
         self::getJSONGroupsColumns($columns, $model->columns);
         self::getJSONGroupsColumns($modals, $model->modals);
@@ -153,5 +166,74 @@ class VisualItemLoadEngine
                 $target[$rowItem->type] = $rowItem;
             }
         }
+    }
+
+    /**
+     * Turns an xml into an array.
+     *
+     * @param \SimpleXMLElement $xml
+     *
+     * @return array
+     */
+    private static function xmlToArray($xml): array
+    {
+        $array = [];
+        $attributes = $xml->attributes();
+        $children = $xml->children();
+
+        if (empty($attributes)) {
+            /// childs
+            foreach ($children as $tag => $child) {
+                $childAttr = $child->attributes();
+                $name = static::xmlToArrayAux($tag, $childAttr);
+                if ('' === $name) {
+                    $array[$tag] = static::xmlToArray($child);
+                    continue;
+                }
+
+                $array[$name] = static::xmlToArray($child);
+            }
+
+            return $array;
+        }
+
+        /// attributes
+        foreach ($attributes as $name => $value) {
+            $array[$name] = (string) $value;
+        }
+
+        /// childs
+        $tags = [];
+        foreach ($children as $tag => $child) {
+            if (!isset($array[$tag])) {
+                $array[$tag] = static::xmlToArray($child);
+            } elseif (in_array($tag, $tags)) {
+                $array[$tag][] = static::xmlToArray($child);
+            } else {
+                $array[$tag] = [$array[$tag], static::xmlToArray($child)];
+                $tags[] = $tag;
+            }
+        }
+
+        /// text
+        $text = (string) $xml;
+        if ('' !== trim($text)) {
+            $array['text'] = $text;
+        }
+
+        return $array;
+    }
+
+    private static function xmlToArrayAux($tag, $attributes)
+    {
+        if ($tag === 'column' && isset($attributes->name)) {
+            return (string) $attributes->name;
+        }
+
+        if ($tag === 'row' && isset($attributes->type)) {
+            return (string) $attributes->type;
+        }
+
+        return '';
     }
 }

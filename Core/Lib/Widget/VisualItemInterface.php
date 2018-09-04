@@ -27,13 +27,6 @@ interface VisualItemInterface
 {
 
     /**
-     * Generates the HTML code to display the header for the visual element
-     *
-     * @param string $value
-     */
-    public function getHeaderHTML($value);
-
-    /**
      * Loads the attributes structure from a JSON file
      *
      * @param array $items

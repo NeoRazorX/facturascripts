@@ -189,20 +189,15 @@ abstract class BaseView
      */
     public function columnForField(string $fieldName)
     {
-        $result = null;
         foreach ($this->pageOption->columns as $group) {
             foreach ($group->columns as $column) {
                 if ($column->widget->fieldName === $fieldName) {
-                    $result = $column;
-                    break;
+                    return $column;
                 }
-            }
-            if (!empty($result)) {
-                break;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -214,20 +209,15 @@ abstract class BaseView
      */
     public function columnForName(string $columnName)
     {
-        $result = null;
         foreach ($this->pageOption->columns as $group) {
             foreach ($group->columns as $key => $column) {
                 if ($key === $columnName) {
-                    $result = $column;
-                    break;
+                    return $column;
                 }
-            }
-            if (!empty($result)) {
-                break;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -236,9 +226,12 @@ abstract class BaseView
      * @param string $columnName
      * @param bool   $disabled
      */
-    public function disableColumn($columnName, $disabled)
+    public function disableColumn($columnName, $disabled = true)
     {
-        ;
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->display = $disabled ? 'none' : 'left';
+        }
     }
 
     /**
@@ -311,6 +304,7 @@ abstract class BaseView
 
         if (!is_bool($user)) {
             $where = [
+                new DataBaseWhere('name', $viewName),
                 new DataBaseWhere('nick', $user->nick),
                 new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
                 new DataBaseWhere('name', $viewName),
@@ -318,7 +312,7 @@ abstract class BaseView
         }
 
         if ($this->pageOption->loadFromCode('', $where, $orderby)) {
-            VisualItemLoadEngine::loadJSON($this->pageOption->columns, $this->pageOption->modals, $this->pageOption->rows, $this->pageOption);
+            VisualItemLoadEngine::loadArray($this->pageOption->columns, $this->pageOption->modals, $this->pageOption->rows, $this->pageOption);
         } elseif (!is_bool($user)) {
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
