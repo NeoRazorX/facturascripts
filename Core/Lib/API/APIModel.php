@@ -134,22 +134,17 @@ class APIModel extends APIResourceClass
 
     protected function listAll(): bool
     {
-        if ($this->method === 'GET') {
-            $offset = (int) $this->request->get('offset', 0);
-            $limit = (int) $this->request->get('limit', 50);
-            $operation = $this->getRequestArray('operation');
-            $filter = $this->getRequestArray('filter');
-            $order = $this->getRequestArray('sort');
-            $where = $this->getWhereValues($filter, $operation);
+        $offset = (int) $this->request->get('offset', 0);
+        $limit = (int) $this->request->get('limit', 50);
+        $operation = $this->getRequestArray('operation');
+        $filter = $this->getRequestArray('filter');
+        $order = $this->getRequestArray('sort');
+        $where = $this->getWhereValues($filter, $operation);
 
-            $data = $this->model->all($where, $order, $offset, $limit);
+        $data = $this->model->all($where, $order, $offset, $limit);
 
-            $this->returnResult($data);
-            return true;
-        }
-
-        $this->setError('List all only in GET method');
-        return false;
+        $this->returnResult($data);
+        return true;
     }
 
     /**
@@ -159,6 +154,10 @@ class APIModel extends APIResourceClass
      */
     public function doGET(): bool
     {
+        if (empty($this->params)) {
+            return $this->listAll();
+        }
+
         if ($this->params[0] === 'schema') {
             $data = [];
             foreach ($this->model->getModelFields() as $key => $value) {
@@ -197,14 +196,18 @@ class APIModel extends APIResourceClass
     private function getResource(): bool
     {
         $cod = $this->model->primaryColumn();
+        $code = $this->params[0] ?? null;
+        $method = $this->request->getMethod();
 
         // If editing, retrieve the current data
-        $exist = $this->model->loadFromCode($this->params[0]);
-        $this->model->{$cod} = $this->params[0];
+        $exist = $this->model->loadFromCode($code);
 
         // Retrieve the past data, and replace the changes
         $values = $this->request->request->all();
-        $values[$cod] = $this->params[0];
+        if ($method !== 'POST') {
+            $this->model->{$cod} = $code;
+            $values[$cod] = $code;
+        }
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -288,11 +291,6 @@ class APIModel extends APIResourceClass
         try {
             $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $name;
             $this->model = new $modelName();
-
-            if (count($this->params) === 0) {
-                $this->method = $this->request->getMethod();
-                return $this->listAll();
-            }
 
             return parent::processResource($name);
         } catch (\Exception $ex) {
