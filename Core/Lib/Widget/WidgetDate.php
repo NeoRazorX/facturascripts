@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
@@ -15,23 +15,19 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Initial description for the controller EditFabricante
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
--->
+ */
+namespace FacturaScripts\Core\Lib\Widget;
 
-<view>
-    <columns>
-        <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codfabricante" icon="fa-object-group" required="true" />
-            </column>
-            <column name="name" numcolumns="10" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
-            </column>
-        </group>
-    </columns>
-</view>
-
+/**
+ * Description of WidgetDate
+ *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ */
+class WidgetDate extends BaseWidget
+{
+    protected function inputHtml()
+    {
+        $requiredHtml = $this->required ? ' required=""' : '';
+        return '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '" class="form-control datepicker"' . $requiredHtml . '/>';
+    }
+}

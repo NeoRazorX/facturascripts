@@ -48,6 +48,12 @@ class BaseWidget
 
     /**
      *
+     * @var string
+     */
+    public $onclick;
+
+    /**
+     *
      * @var array
      */
     public $options = [];
@@ -82,6 +88,7 @@ class BaseWidget
 
         $this->fieldname = $data['fieldname'];
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
+        $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
         $this->required = isset($data['required']);
         $this->loadOptions($data['children']);
     }
@@ -98,9 +105,7 @@ class BaseWidget
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $requiredHtml = $this->required ? ' required=""' : '';
-
-        $inputHtml = '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '" class="form-control"' . $requiredHtml . '/>';
+        $inputHtml = $this->inputHtml();
         $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
 
         if (empty($this->icon)) {
@@ -134,17 +139,32 @@ class BaseWidget
     {
         $this->setValue($model);
         $class = 'text-' . $display;
-        return '<td class="' . $this->tableCellClass($class) . '">' . $this->show() . '</td>';
+        return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($this->show()) . '</td>';
     }
 
+    /**
+     * 
+     * @param string $color
+     *
+     * @return string
+     */
     protected function colorToClass($color)
     {
         switch ($color) {
+            case 'blue':
+                return 'text-info';
+
+            case 'danger':
+            case 'info':
+            case 'primary':
+            case 'warning':
+                return 'table-' . $color;
+
             case 'red':
                 return 'table-danger';
         }
 
-        return '';
+        return $color;
     }
 
     /**
@@ -163,6 +183,16 @@ class BaseWidget
 
     /**
      * 
+     * @return string
+     */
+    protected function inputHtml()
+    {
+        $requiredHtml = $this->required ? ' required=""' : '';
+        return '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '" class="form-control"' . $requiredHtml . '/>';
+    }
+
+    /**
+     * 
      * @param array $children
      */
     protected function loadOptions($children)
@@ -173,6 +203,21 @@ class BaseWidget
                 $this->options[] = $child;
             }
         }
+    }
+
+    /**
+     * 
+     * @param string $inside
+     *
+     * @return string
+     */
+    protected function onclickHtml($inside)
+    {
+        if (empty($this->onclick)) {
+            return $inside;
+        }
+
+        return '<a href="' . $this->onclick . '">' . $inside . '</a>';
     }
 
     /**
