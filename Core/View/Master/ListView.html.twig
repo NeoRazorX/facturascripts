@@ -84,7 +84,9 @@
             </thead>
             <tbody>
                 {% for model in currentView.cursor %}
-                    <tr class="clickableRow" data-href="{{ model.url() }}">
+                    {% set rowStatus = currentView.getRow('status') %}
+                    {% set trClass = rowStatus.trClass(model) %}
+                    <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
                         <td class="cancelClickable">
                             <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
                                 <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />

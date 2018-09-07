@@ -89,9 +89,12 @@ class VisualItemLoadEngine
         static::getGroupsColumns($columns, $model->columns);
         static::getGroupsColumns($modals, $model->modals);
 
-        foreach ($rows as $item) {
-            //$rowItem = RowItem::newFromJSON($item);
-            //$model->rows[$rowItem->type] = $rowItem;
+        foreach ($rows as $name => $item) {
+            $className = '\\FacturaScripts\\Core\\Lib\\Widget\\Row' . ucfirst($name);
+            if (class_exists($className)) {
+                $rowItem = new $className($item);
+                $model->rows[$name] = $rowItem;
+            }
         }
     }
 
@@ -164,6 +167,13 @@ class VisualItemLoadEngine
         return $array;
     }
 
+    /**
+     * 
+     * @param string            $tag
+     * @param \SimpleXMLElement $attributes
+     *
+     * @return string
+     */
     private static function xmlToArrayAux($tag, $attributes)
     {
         if (isset($attributes->name)) {

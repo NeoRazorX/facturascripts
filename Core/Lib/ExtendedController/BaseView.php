@@ -244,6 +244,10 @@ abstract class BaseView
         return $this->pageOption->columns;
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function getPagination()
     {
         $pages = [];
@@ -278,6 +282,18 @@ abstract class BaseView
         }
 
         return (count($pages) > 1) ? $pages : [];
+    }
+
+    /**
+     * If it exists, return the specified row type
+     *
+     * @param string $key
+     *
+     * @return RowItem
+     */
+    public function getRow(string $key)
+    {
+        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
     }
 
     /**

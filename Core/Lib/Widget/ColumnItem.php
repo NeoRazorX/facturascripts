@@ -136,6 +136,13 @@ class ColumnItem
         return $user->level < $this->level;
     }
 
+    /**
+     * 
+     * @param object $model
+     * @param User   $user
+     *
+     * @return string
+     */
     public function tableCell($model, $user)
     {
         if ($this->hiddeTo($user)) {
@@ -145,6 +152,12 @@ class ColumnItem
         return $this->widget->tableCell($model, $this->display);
     }
 
+    /**
+     * 
+     * @param User $user
+     *
+     * @return string
+     */
     public function tableHeader($user)
     {
         if ($this->hiddeTo($user)) {

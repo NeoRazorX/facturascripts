@@ -217,7 +217,7 @@ class BaseWidget
             return $inside;
         }
 
-        return '<a href="' . $this->onclick . '">' . $inside . '</a>';
+        return '<a href="' . $this->onclick . '?code=' . rawurlencode($this->value) . '" class="cancelClickable">' . $inside . '</a>';
     }
 
     /**
@@ -256,7 +256,7 @@ class BaseWidget
                     break;
 
                 case '>':
-                    $mathValue = substr($opt['text'], 1) ?: '';
+                    $matchValue = substr($opt['text'], 1) ?: '';
                     $apply = ((float) $this->value > (float) $matchValue);
                     break;
 
