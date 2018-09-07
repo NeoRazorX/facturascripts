@@ -83,6 +83,12 @@ class ColumnItem
     public $title;
 
     /**
+     *
+     * @var string
+     */
+    public $titleurl;
+
+    /**
      * Field display object configuration
      *
      * @var BaseWidget
@@ -106,6 +112,7 @@ class ColumnItem
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int) $data['order'] : 0;
         $this->title = isset($data['title']) ? $data['title'] : $this->name;
+        $this->titleurl = isset($data['titleurl']) ? $data['titleurl'] : '';
         $this->loadWidget($data['children']);
     }
 
@@ -164,7 +171,13 @@ class ColumnItem
             return '';
         }
 
-        return '<th class="text-' . $this->display . '">' . static::$i18n->trans($this->title) . '</th>';
+        if (empty($this->titleurl)) {
+            return '<th class="text-' . $this->display . '">' . static::$i18n->trans($this->title) . '</th>';
+        }
+
+        return '<th class="text-' . $this->display . '">'
+            . '<a href="' . $this->titleurl . '">' . static::$i18n->trans($this->title) . '</a>'
+            . '</th>';
     }
 
     /**
