@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib\Widget;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class RowItem implements VisualItemInterface
+abstract class RowItem
 {
 
     /**

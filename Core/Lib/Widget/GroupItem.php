@@ -18,12 +18,16 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Model\User;
+
 /**
  * Description of GroupItem
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class GroupItem extends VisualItem implements VisualItemInterface
+class GroupItem
 {
 
     /**
@@ -34,6 +38,12 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public $columns = [];
 
     /**
+     *
+     * @var Translator
+     */
+    protected static $i18n;
+
+    /**
      * Icon used as the value or accompaining the group title
      *
      * @var string
@@ -41,102 +51,74 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public $icon;
 
     /**
-     * Check and apply special operations on the group
+     *
+     * @var string
      */
-    public function applySpecialOperations()
+    public $name;
+
+    /**
+     *
+     * @var int
+     */
+    public $numcolumns;
+
+    /**
+     *
+     * @var int
+     */
+    public $order;
+
+    /**
+     *
+     * @var string
+     */
+    public $title;
+
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct($data)
     {
-        foreach ($this->columns as $column) {
-            $column->applySpecialOperations();
+        if (!isset(static::$i18n)) {
+            static::$i18n = new Translator();
         }
+
+        $this->icon = isset($data['icon']) ? $data['icon'] : '';
+        $this->name = $data['name'];
+        $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
+        $this->order = isset($data['order']) ? (int) $data['order'] : 0;
+        $this->title = isset($data['title']) ? $data['title'] : '';
+        $this->loadColumns($data['children']);
     }
 
     /**
-     * Generates the HTML code to display the visual element's header
-     *
-     * @param string $value
+     * 
+     * @param object    $model
+     * @param User|bool $user
      *
      * @return string
      */
-    public function getHeaderHTML($value)
+    public function edit($model, $user = false)
     {
-        return $this->getIconHTML() . parent::getHeaderHTML($value);
-    }
+        $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
+        $html = '<div class="' . $divClass . '"><div class="form-row">';
 
-    /**
-     * Loads the attributes structure from a JSON file
-     *
-     * @param array $group
-     */
-    public function loadFromJSON($group)
-    {
-        parent::loadFromJSON($group);
-        $this->icon = (string) $group['icon'];
-
-        foreach ($group['columns'] as $column) {
-            $columnItem = ColumnItem::newFromJSON($column);
-            $this->columns[$columnItem->name] = $columnItem;
+        if (!empty($this->title)) {
+            $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
+            $html .= '<legend>' . $icon . static::$i18n->trans($this->title) . '</legend>';
         }
-        uasort($this->columns, ['self', 'sortColumns']);
-    }
 
-    /**
-     * Loads the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement $group
-     */
-    public function loadFromXML($group)
-    {
-        parent::loadFromXML($group);
-
-        $group_atributes = $group->attributes();
-        $this->icon = (string) $group_atributes->icon;
-        $this->loadFromXMLColumns($group);
-    }
-
-    /**
-     * Loads the groups from the columns
-     *
-     * @param \SimpleXMLElement $group
-     */
-    public function loadFromXMLColumns($group)
-    {
-        if (isset($group->column)) {
-            foreach ($group->column as $column) {
-                $columnItem = ColumnItem::newFromXML($column);
-                $this->columns[$columnItem->name] = $columnItem;
+        foreach ($this->columns as $col) {
+            if ($col->hiddeTo($user)) {
+                continue;
             }
-            uasort($this->columns, ['self', 'sortColumns']);
+
+            $html .= $col->edit($model);
         }
-    }
 
-    /**
-     * Create and load the group structure from the database
-     *
-     * @param array $group
-     *
-     * @return GroupItem
-     */
-    public static function newFromJSON($group)
-    {
-        $result = new self();
-        $result->loadFromJSON($group);
-
-        return $result;
-    }
-
-    /**
-     * Create and load the group structure from a XML file
-     *
-     * @param \SimpleXMLElement $group
-     *
-     * @return GroupItem
-     */
-    public static function newFromXML($group)
-    {
-        $result = new self();
-        $result->loadFromXML($group);
-
-        return $result;
+        $html .= '</div><br/></div>';
+        return $html;
     }
 
     /**
@@ -157,20 +139,20 @@ class GroupItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Returns the HTML code to display an icon
-     *
-     * @return string
+     * 
+     * @param array $children
      */
-    private function getIconHTML()
+    protected function loadColumns($children)
     {
-        if (empty($this->icon)) {
-            return '';
+        foreach ($children as $child) {
+            if ($child['tag'] !== 'column') {
+                continue;
+            }
+
+            $columnItem = new ColumnItem($child);
+            $this->columns[$columnItem->name] = $columnItem;
         }
 
-        if (strpos($this->icon, 'fa-') === 0) {
-            return '<i class="fas ' . $this->icon . '" aria-hidden="true">&nbsp;&nbsp;</i></span>';
-        }
-
-        return '<i aria-hidden="true">' . $this->icon . '</i>&nbsp;&nbsp;</span>';
+        uasort($this->columns, ['self', 'sortColumns']);
     }
 }

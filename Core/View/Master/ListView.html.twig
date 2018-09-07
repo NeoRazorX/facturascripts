@@ -78,11 +78,7 @@
                         </div>
                     </th>
                     {% for column in currentView.getColumns() %}
-                        {% if (column.display != 'none') and (column.level <= fsc.user.level) %}
-                            <th class="text-{{ column.display }}">
-                                {{ i18n.trans(column.title) | raw }}
-                            </th>
-                        {% endif %}
+                        {{ column.tableHeader(fsc.user) | raw }}
                     {% endfor %}
                 </tr>
             </thead>
@@ -95,15 +91,12 @@
                             </div>
                         </td>
                         {% for column in currentView.getColumns() %}
-                            {% if (column.display != 'none') and (column.level <= fsc.user.level) %}
-                                {% set value = attribute(model, column.widget.fieldName) %}
-                                <td class="text-{{ column.display }}">{{ column.getListHTML(value) | raw }}</td>
-                            {% endif %}
+                            {{ column.tableCell(model, fsc.user) | raw }}
                         {% endfor %}
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="{{ currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
+                        <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

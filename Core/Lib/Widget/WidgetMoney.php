@@ -18,39 +18,39 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Base\DivisaTools;
+
 /**
- * Visual elements interface
+ * Description of WidgetMoney
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-interface VisualItemInterface
+class WidgetMoney extends BaseWidget
 {
 
     /**
-     * Loads the attributes structure from a JSON file
      *
-     * @param array $items
+     * @var DivisaTools
      */
-    public function loadFromJSON($items);
+    protected static $divisaTools;
 
-    /**
-     * Loads the attributes structure from a XML file
-     *
-     * @param \SimpleXMLElement $items
-     */
-    public function loadFromXML($items);
+    public function __construct($data)
+    {
+        if (!isset(static::$divisaTools)) {
+            static::$divisaTools = new DivisaTools();
+        }
 
-    /**
-     * Create and load element structure from JSON file
-     *
-     * @param array $item
-     */
-    public static function newFromJSON($item);
+        parent::__construct($data);
+    }
 
-    /**
-     * Create and load element structure from XML file
-     *
-     * @param \SimpleXMLElement $item
-     */
-    public static function newFromXML($item);
+    protected function setValue($model)
+    {
+        parent::setValue($model);
+        static::$divisaTools->findDivisa($model);
+    }
+
+    protected function show()
+    {
+        return is_null($this->value) ? '-' : static::$divisaTools->format($this->value);
+    }
 }

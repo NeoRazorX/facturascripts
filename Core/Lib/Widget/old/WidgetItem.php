@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Lib\Widget;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-abstract class WidgetItem implements VisualItemInterface
+abstract class WidgetItem
 {
 
     /**

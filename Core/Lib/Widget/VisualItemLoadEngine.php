@@ -30,27 +30,6 @@ class VisualItemLoadEngine
 {
 
     /**
-     * Load the list of values for a dynamic select type widget with
-     * a database model or a range of values
-     *
-     * @param Model\PageOption $model
-     */
-    public static function applyDynamicSelectValues(&$model)
-    {
-        // Apply values to dynamic Select widgets
-        foreach ($model->columns as $group) {
-            $group->applySpecialOperations();
-        }
-
-        // Apply values to dynamic Select widgets for modals forms
-        if (!empty($model->modals)) {
-            foreach ($model->modals as $group) {
-                $group->applySpecialOperations();
-            }
-        }
-    }
-
-    /**
      * Add to the configuration of a controller
      *
      * @param string           $name
@@ -74,97 +53,74 @@ class VisualItemLoadEngine
 
         /// turns xml into an array
         $array = static::xmlToArray($xml);
-        foreach (['columns', 'modals', 'rows'] as $col) {
-            if (!isset($array[$col])) {
-                $array[$col] = [];
+        $columns = [];
+        $modals = [];
+        $rows = [];
+        foreach ($array['children'] as $value) {
+            switch ($value['tag']) {
+                case 'columns':
+                    $columns = $value['children'];
+                    break;
+
+                case 'modals':
+                    $modals = $value['children'];
+                    break;
+
+                case 'rows':
+                    $rows = $value['children'];
+                    break;
             }
         }
 
-        //self::loadArray($array['columns'], $array['modals'], $array['rows'], $model);
-
-        self::getXMLGroupsColumns($xml->columns, $model->columns);
-        self::getXMLGroupsColumns($xml->modals, $model->modals);
-        self::getXMLRows($xml->rows, $model->rows);
+        self::loadArray($columns, $modals, $rows, $model);
         return true;
     }
 
     /**
      * Load the column structure from the JSON
      *
-     * @param string (JSON)    $columns
-     * @param string (JSON)    $modals
-     * @param string (JSON)    $rows
+     * @param array            $columns
+     * @param array            $modals
+     * @param array            $rows
      * @param Model\PageOption $model
      */
     public static function loadArray($columns, $modals, $rows, &$model)
     {
-        self::getJSONGroupsColumns($columns, $model->columns);
-        self::getJSONGroupsColumns($modals, $model->modals);
+        static::getGroupsColumns($columns, $model->columns);
+        static::getGroupsColumns($modals, $model->modals);
 
-        if (!empty($rows)) {
-            foreach ($rows as $item) {
-                $rowItem = RowItem::newFromJSON($item);
-                $model->rows[$rowItem->type] = $rowItem;
-            }
+        foreach ($rows as $item) {
+            //$rowItem = RowItem::newFromJSON($item);
+            //$model->rows[$rowItem->type] = $rowItem;
         }
     }
 
     /**
      * Load the column structure from the JSON
      *
-     * @param string $columns
-     * @param array  $target
+     * @param array $columns
+     * @param array $target
      */
-    private static function getJSONGroupsColumns($columns, &$target)
+    private static function getGroupsColumns($columns, &$target)
     {
-        if (!empty($columns)) {
-            foreach ($columns as $item) {
-                $groupItem = GroupItem::newFromJSON($item);
+        $newGroupArray = [
+            'name' => 'main',
+            'children' => [],
+        ];
+
+        foreach ($columns as $item) {
+            if ($item['tag'] === 'group') {
+                $groupItem = new GroupItem($item);
                 $target[$groupItem->name] = $groupItem;
+            } else {
+                $newGroupArray['children'][] = $item;
             }
         }
-    }
 
-    /**
-     * Load the column structure from the XML
-     *
-     * @param \SimpleXMLElement $columns
-     * @param array             $target
-     */
-    private static function getXMLGroupsColumns($columns, &$target)
-    {
-        // if group dont have elements
-        if ($columns->count() === 0) {
-            return;
-        }
-
-        // if have elements but dont have groups
-        if (!isset($columns->group)) {
-            $groupItem = GroupItem::newFromXML($columns);
+        /// is there are loose columns, then we put it on a new group
+        if (!empty($newGroupArray['children'])) {
+            $groupItem = new GroupItem($newGroupArray);
             $target[$groupItem->name] = $groupItem;
-            return;
-        }
-
-        // exists columns grouped
-        foreach ($columns->group as $group) {
-            $groupItem = GroupItem::newFromXML($group);
-            $target[$groupItem->name] = $groupItem;
-        }
-    }
-
-    /**
-     * Load the special conditions for the rows from XML file
-     *
-     * @param \SimpleXMLElement $rows
-     * @param array             $target
-     */
-    private static function getXMLRows($rows, &$target)
-    {
-        if (!empty($rows)) {
-            foreach ($rows->row as $row) {
-                $rowItem = RowItem::newFromXML($row);
-                $target[$rowItem->type] = $rowItem;
-            }
         }
     }
 
@@ -177,42 +133,26 @@ class VisualItemLoadEngine
      */
     private static function xmlToArray($xml): array
     {
-        $array = [];
-        $attributes = $xml->attributes();
-        $children = $xml->children();
-
-        if (empty($attributes)) {
-            /// childs
-            foreach ($children as $tag => $child) {
-                $childAttr = $child->attributes();
-                $name = static::xmlToArrayAux($tag, $childAttr);
-                if ('' === $name) {
-                    $array[$tag] = static::xmlToArray($child);
-                    continue;
-                }
-
-                $array[$name] = static::xmlToArray($child);
-            }
-
-            return $array;
-        }
+        $array = [
+            'tag' => $xml->getName(),
+            'children' => [],
+        ];
 
         /// attributes
-        foreach ($attributes as $name => $value) {
+        foreach ($xml->attributes() as $name => $value) {
             $array[$name] = (string) $value;
         }
 
         /// childs
-        $tags = [];
-        foreach ($children as $tag => $child) {
-            if (!isset($array[$tag])) {
-                $array[$tag] = static::xmlToArray($child);
-            } elseif (in_array($tag, $tags)) {
-                $array[$tag][] = static::xmlToArray($child);
-            } else {
-                $array[$tag] = [$array[$tag], static::xmlToArray($child)];
-                $tags[] = $tag;
+        foreach ($xml->children() as $tag => $child) {
+            $childAttr = $child->attributes();
+            $name = static::xmlToArrayAux($tag, $childAttr);
+            if ('' === $name) {
+                $array['children'][] = static::xmlToArray($child);
+                continue;
             }
+
+            $array['children'][$name] = static::xmlToArray($child);
         }
 
         /// text
@@ -226,7 +166,7 @@ class VisualItemLoadEngine
 
     private static function xmlToArrayAux($tag, $attributes)
     {
-        if ($tag === 'column' && isset($attributes->name)) {
+        if (isset($attributes->name)) {
             return (string) $attributes->name;
         }
 

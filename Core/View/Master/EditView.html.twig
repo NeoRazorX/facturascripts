@@ -6,6 +6,11 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
+                {% for group in currentView.getColumns() %}
+                    {{ group.edit(currentView.model, fsc.user) | raw }}
+                {% endfor %}
+            </div>
+            <div class="row">
                 <div class="col-4">
                     <a class="btn btn-sm btn-danger" onclick="editViewDeleteRecord();" href="#">
                         <i class="fas fa-trash fa-fw" aria-hidden="true"></i>

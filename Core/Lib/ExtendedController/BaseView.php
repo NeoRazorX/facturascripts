@@ -316,7 +316,5 @@ abstract class BaseView
         } elseif (!is_bool($user)) {
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
-
-        VisualItemLoadEngine::applyDynamicSelectValues($this->pageOption);
     }
 }

@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
@@ -39,12 +38,6 @@ class ListView extends BaseView
      */
     const ICON_ASC = 'fa-sort-amount-up';
     const ICON_DESC = 'fa-sort-amount-down';
-
-    /**
-     *
-     * @var DivisaTools
-     */
-    public $divisaTools;
 
     /**
      * Filter configuration preset by the user
@@ -96,7 +89,6 @@ class ListView extends BaseView
     public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->divisaTools = new DivisaTools();
         $this->filters = [];
         $this->orderOptions = [];
         $this->query = '';

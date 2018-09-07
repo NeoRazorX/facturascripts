@@ -33,7 +33,7 @@ abstract class VisualItem
      *
      * @var Base\Translator
      */
-    protected $i18n;
+    protected static $i18n;
 
     /**
      * Column identifier
@@ -81,7 +81,10 @@ abstract class VisualItem
      */
     public function __construct()
     {
-        $this->i18n = new Base\Translator();
+        if (isset(static::$i18n)) {
+            static::$i18n = new Base\Translator();
+        }
+
         $this->name = 'root';
         $this->numColumns = 0;
         $this->order = 100;
