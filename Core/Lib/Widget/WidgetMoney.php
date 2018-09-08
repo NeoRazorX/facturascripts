@@ -34,6 +34,10 @@ class WidgetMoney extends BaseWidget
      */
     protected static $divisaTools;
 
+    /**
+     * 
+     * @param array $data
+     */
     public function __construct($data)
     {
         if (!isset(static::$divisaTools)) {
@@ -43,14 +47,38 @@ class WidgetMoney extends BaseWidget
         parent::__construct($data);
     }
 
+    /**
+     * 
+     * @param object $model
+     */
     protected function setValue($model)
     {
         parent::setValue($model);
         static::$divisaTools->findDivisa($model);
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function show()
     {
         return is_null($this->value) ? '-' : static::$divisaTools->format($this->value);
+    }
+
+    /**
+     * 
+     * @param string $initialClass
+     * @param string $alternativeClass
+     */
+    protected function tableCellClass($initialClass = '', $alternativeClass = '')
+    {
+        if (0 == $this->value) {
+            $alternativeClass = 'text-warning';
+        } elseif ($this->value < 0) {
+            $alternativeClass = 'text-danger';
+        }
+
+        return parent::tableCellClass($initialClass, $alternativeClass);
     }
 }

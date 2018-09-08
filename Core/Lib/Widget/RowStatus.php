@@ -94,19 +94,17 @@ class RowStatus
     protected function colorToClass($color)
     {
         switch ($color) {
-            case 'blue':
-                return 'text-info';
-
             case 'danger':
+            case 'dark':
             case 'info':
+            case 'light':
             case 'primary':
+            case 'secondary':
+            case 'success':
             case 'warning':
                 return 'table-' . $color;
-
-            case 'red':
-                return 'table-danger';
         }
 
-        return $color;
+        return '';
     }
 }

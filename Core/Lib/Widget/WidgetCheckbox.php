@@ -26,6 +26,14 @@ namespace FacturaScripts\Core\Lib\Widget;
 class WidgetCheckbox extends BaseWidget
 {
 
+    /**
+     * 
+     * @param object $model
+     * @param string $title
+     * @param string $description
+     *
+     * @return string
+     */
     public function edit($model, $title = '', $description = '')
     {
         $this->setValue($model);
@@ -43,11 +51,19 @@ class WidgetCheckbox extends BaseWidget
             . '</div>';
     }
 
+    /**
+     * 
+     * @param object $model
+     */
     protected function setValue($model)
     {
         $this->value = isset($model->{$this->fieldname}) ? (bool) $model->{$this->fieldname} : false;
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function show()
     {
         if (is_null($this->value)) {
@@ -55,5 +71,23 @@ class WidgetCheckbox extends BaseWidget
         }
 
         return $this->value ? static::$i18n->trans('yes') : static::$i18n->trans('no');
+    }
+
+    /**
+     * 
+     * @param string $initialClass
+     * @param string $alternativeClass
+     *
+     * @return string
+     */
+    protected function tableCellClass($initialClass = '', $alternativeClass = '')
+    {
+        if (false === $this->value) {
+            $alternativeClass = 'text-danger';
+        } elseif (true === $this->value) {
+            $alternativeClass = 'text-success';
+        }
+
+        return parent::tableCellClass($initialClass, $alternativeClass);
     }
 }

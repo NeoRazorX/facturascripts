@@ -151,20 +151,18 @@ class BaseWidget
     protected function colorToClass($color)
     {
         switch ($color) {
-            case 'blue':
-                return 'text-info';
-
             case 'danger':
+            case 'dark':
             case 'info':
+            case 'light':
             case 'primary':
+            case 'secondary':
+            case 'success':
             case 'warning':
-                return 'table-' . $color;
-
-            case 'red':
-                return 'table-danger';
+                return 'text-' . $color;
         }
 
-        return $color;
+        return '';
     }
 
     /**
@@ -240,13 +238,13 @@ class BaseWidget
 
     /**
      * 
-     * @param string $class
+     * @param string $initialClass
+     * @param string $alternativeClass
      *
      * @return string
      */
-    protected function tableCellClass($initialClass = '')
+    protected function tableCellClass($initialClass = '', $alternativeClass = '')
     {
-        $extraClass = '';
         foreach ($this->options as $opt) {
             $apply = false;
             switch ($opt['text'][0]) {
@@ -266,13 +264,14 @@ class BaseWidget
             }
 
             if ($apply) {
-                $extraClass .= $this->colorToClass($opt['color']);
+                $alternativeClass = $this->colorToClass($opt['color']);
+                break;
             }
         }
 
         $class = [$initialClass];
-        if (!empty($extraClass)) {
-            $class[] = $extraClass;
+        if (!empty($alternativeClass)) {
+            $class[] = $alternativeClass;
         } elseif (is_null($this->value)) {
             $class[] = 'table-warning';
         }

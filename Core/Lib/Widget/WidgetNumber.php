@@ -34,6 +34,10 @@ class WidgetNumber extends BaseWidget
      */
     protected static $numberTools;
 
+    /**
+     * 
+     * @param array $data
+     */
     public function __construct($data)
     {
         if (!isset(static::$numberTools)) {
@@ -43,8 +47,28 @@ class WidgetNumber extends BaseWidget
         parent::__construct($data);
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function show()
     {
         return is_null($this->value) ? '-' : static::$numberTools->format($this->value);
+    }
+
+    /**
+     * 
+     * @param string $initialClass
+     * @param string $alternativeClass
+     */
+    protected function tableCellClass($initialClass = '', $alternativeClass = '')
+    {
+        if (0 == $this->value) {
+            $alternativeClass = 'text-warning';
+        } elseif ($this->value < 0) {
+            $alternativeClass = 'text-danger';
+        }
+
+        return parent::tableCellClass($initialClass, $alternativeClass);
     }
 }

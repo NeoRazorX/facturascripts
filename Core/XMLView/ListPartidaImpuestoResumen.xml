@@ -38,7 +38,7 @@
         </column>
         <column name="tax-base" display="right" order="130">
             <widget type="money" fieldname="baseimponible">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="pct-vat" display="right" order="140">
@@ -46,7 +46,7 @@
         </column>
         <column name="vat" display="right" order="150">
             <widget type="money" fieldname="cuotaiva">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="surcharge" display="right" order="160">
@@ -54,12 +54,12 @@
         </column>
         <column name="surcharge" display="right" order="160">
             <widget type="money" fieldname="cuotarecargo">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="total" display="right" order="170">
             <widget type="money" fieldname="total">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
     </columns>

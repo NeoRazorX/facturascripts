@@ -72,10 +72,10 @@
     </columns>
     <rows>
         <row type="status" fieldname="actualizastock">
-            <option color="table-warning">-2</option>
-            <option color="table-danger">-1</option>
-            <option color="table-success">1</option>
-            <option color="table-warning">2</option>
+            <option color="warning">-2</option>
+            <option color="danger">-1</option>
+            <option color="success">1</option>
+            <option color="warning">2</option>
         </row>
     </rows>
 </view>

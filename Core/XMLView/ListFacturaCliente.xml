@@ -41,7 +41,7 @@
         </column>
         <column name="amount" order="130" display="right">
             <widget type="money" fieldname="total">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="date" order="130" display="right">
@@ -53,8 +53,8 @@
     </columns>
     <rows>
         <row type="status" fieldname="pagada">
-            <option color="table-warning">0</option>
-            <option color="table-success">1</option>
+            <option color="warning">0</option>
+            <option color="success">1</option>
         </row>
     </rows>
 </view>

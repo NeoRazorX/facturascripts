@@ -33,7 +33,7 @@
         </column>
         <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva">
-                <option color="red">0</option>
+                <option color="danger">0</option>
             </widget>
         </column>
     </columns>

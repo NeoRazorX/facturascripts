@@ -58,8 +58,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="table-success" fieldname="stockfis">&gt;0</option>
-            <option color="table-warning" fieldname="stockfis">&lt;1</option>
+            <option color="success" fieldname="stockfis">&gt;0</option>
+            <option color="warning" fieldname="stockfis">&lt;1</option>
         </row>
     </rows>
 </view>
