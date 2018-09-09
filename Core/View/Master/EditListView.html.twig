@@ -17,10 +17,15 @@
         </div>
         <div class="card-body">
             <div class="row">
+                {% for group in currentView.getColumns() %}
+                    {{ group.edit(currentView.model, fsc.user) | raw }}
+                {% endfor %}
+            </div>
+            <div class="row">
                 <div class="col-12 text-right">
                     <button class="btn btn-sm btn-success" type="submit">
-                        <i class="far fa-save fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">{{ i18n.trans('new') }}</span>
                     </button>
                 </div>
             </div>
@@ -36,6 +41,11 @@
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <div class="card">
             <div class="card-body">
+                <div class="row">
+                    {% for group in currentView.getColumns() %}
+                        {{ group.edit(model, fsc.user) | raw }}
+                    {% endfor %}
+                </div>
                 <div class="row">
                     <div class="col-4">
                         <a class="btn btn-sm btn-danger" onclick="editListViewDeleteRecord();" href="#">
