@@ -147,7 +147,7 @@ abstract class BaseController extends Base\Controller
      */
     public function setSettings($viewName, $property, $value)
     {
-        $this->miniLog->warning('$this->setSettings() is obsolete.');
+        $this->views[$viewName]->settings[$property] = $value;
     }
 
     /**

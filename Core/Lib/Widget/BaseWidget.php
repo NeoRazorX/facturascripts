@@ -211,7 +211,7 @@ class BaseWidget
      */
     protected function onclickHtml($inside)
     {
-        if (empty($this->onclick)) {
+        if (empty($this->onclick) || is_null($this->value)) {
             return $inside;
         }
 

@@ -31,22 +31,60 @@ class WidgetSelect extends BaseWidget
 
     /**
      *
+     * @var CodeModel
+     */
+    protected static $codeModel;
+
+    /**
+     *
+     * @var string
+     */
+    protected $fieldcode;
+
+    /**
+     *
+     * @var string
+     */
+    protected $fieldtitle;
+
+    /**
+     *
+     * @var string
+     */
+    protected $source;
+
+    /**
+     *
      * @var array
      */
     public $values = [];
 
+    /**
+     * 
+     * @param array $data
+     */
     public function __construct($data)
     {
         parent::__construct($data);
+
+        if (!isset(static::$codeModel)) {
+            static::$codeModel = new CodeModel();
+        }
+
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
                 continue;
             }
 
             if (isset($child['source'])) {
-                $codeModel = new CodeModel();
-                $values = $codeModel->all($child['source'], $child['fieldcode'], $child['fieldtitle'], !$this->required);
+                $this->fieldcode = $child['fieldcode'];
+                $this->fieldtitle = $child['fieldtitle'];
+                $this->source = $child['source'];
+                $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
                 $this->setValuesFromCodeModel($values);
+            } elseif (isset($child['title'])) {
+                $this->setValuesFromArray($data['children'], true, !$this->required);
+                break;
             }
         }
     }
@@ -59,13 +97,21 @@ class WidgetSelect extends BaseWidget
      *
      * @param array $values
      * @param bool  $translate
+     * @param bool  $addEmpty
      */
-    public function setValuesFromArray($values, $translate = true)
+    public function setValuesFromArray($values, $translate = true, $addEmpty = false)
     {
         $this->values = [];
+        if ($addEmpty) {
+            $this->values[] = ['value' => null, 'title' => '------'];
+        }
+
         foreach ($values as $value) {
             if (is_array($value)) {
-                $this->values[] = ['title' => $value['title'], 'value' => $value['value']];
+                $this->values[] = [
+                    'title' => $value['title'],
+                    'value' => isset($value['value']) ? $value['value'] : $value['text'],
+                ];
                 continue;
             }
 
@@ -90,11 +136,14 @@ class WidgetSelect extends BaseWidget
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            $title = $translate ? static::$i18n->trans($codeModel->description) : $codeModel->description;
             $this->values[] = [
                 'value' => $codeModel->code,
-                'title' => $title
+                'title' => $codeModel->description,
             ];
+        }
+
+        if ($translate) {
+            $this->applyTranslations();
         }
     }
 
@@ -129,19 +178,33 @@ class WidgetSelect extends BaseWidget
         return $html;
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function show()
     {
         if (is_null($this->value)) {
             return '-';
         }
 
+        $selected = null;
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)
             if ($option['value'] == $this->value) {
-                return $option['title'];
+                $selected = $option['title'];
             }
         }
 
-        return $this->value;
+        if (null === $selected) {
+            // value is not in $this->values
+            $selected = static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
+            $this->values[] = [
+                'value' => $this->value,
+                'title' => $selected,
+            ];
+        }
+
+        return $selected;
     }
 }
