@@ -155,7 +155,7 @@ class GridView extends BaseView
      */
     private function getItemForColumn($column): array
     {
-        $item = ['data' => $column->widget->fieldName];
+        $item = ['data' => $column->widget->fieldname];
         switch ($column->widget->type) {
             case 'autocomplete':
                 $item['type'] = 'autocomplete';
@@ -349,8 +349,8 @@ class GridView extends BaseView
             if (!isset($data[$primaryKey])) {
                 foreach ($this->pageOption->columns as $group) {
                     foreach ($group->columns as $col) {
-                        if (!isset($data[$col->widget->fieldName])) {
-                            $data[$col->widget->fieldName] = null;   // TODO: maybe the widget can have a default value method instead of null
+                        if (!isset($data[$col->widget->fieldname])) {
+                            $data[$col->widget->fieldname] = null;   // TODO: maybe the widget can have a default value method instead of null
                         }
                     }
                 }

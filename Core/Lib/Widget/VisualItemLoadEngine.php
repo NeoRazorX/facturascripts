@@ -30,6 +30,22 @@ class VisualItemLoadEngine
 {
 
     /**
+     * 
+     * @param array $columns
+     * @param Model\User|false $user
+     */
+    public static function disableHidden(&$columns, $user)
+    {
+        foreach ($columns as $key1 => $group) {
+            foreach ($group->columns as $key2 => $col) {
+                if ($col->hiddeTo($user)) {
+                    unset($columns[$key1]->columns[$key2]);
+                }
+            }
+        }
+    }
+
+    /**
      * Add to the configuration of a controller
      *
      * @param string           $name

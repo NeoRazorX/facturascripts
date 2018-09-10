@@ -44,9 +44,6 @@ class EditListView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/EditListView.html.twig';
-
-        // Load the view configuration for the user
-        ///$this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**

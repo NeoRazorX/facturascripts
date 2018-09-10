@@ -130,7 +130,7 @@ class ColumnItem
 
     /**
      * 
-     * @param User $user
+     * @param User|false $user
      *
      * @return boolean
      */
@@ -138,6 +138,8 @@ class ColumnItem
     {
         if ($this->display === 'none') {
             return true;
+        } elseif (false === $user) {
+            return false;
         }
 
         return $user->level < $this->level;
@@ -146,31 +148,20 @@ class ColumnItem
     /**
      * 
      * @param object $model
-     * @param User   $user
      *
      * @return string
      */
-    public function tableCell($model, $user)
+    public function tableCell($model)
     {
-        if ($this->hiddeTo($user)) {
-            return '';
-        }
-
         return $this->widget->tableCell($model, $this->display);
     }
 
     /**
      * 
-     * @param User $user
-     *
      * @return string
      */
-    public function tableHeader($user)
+    public function tableHeader()
     {
-        if ($this->hiddeTo($user)) {
-            return '';
-        }
-
         if (empty($this->titleurl)) {
             return '<th class="text-' . $this->display . '">' . static::$i18n->trans($this->title) . '</th>';
         }

@@ -107,7 +107,7 @@ class BusinessDocumentView extends BaseView
 
         foreach ($this->lineOptions as $col) {
             $item = [
-                'data' => $col->widget->fieldName,
+                'data' => $col->widget->fieldname,
                 'type' => $col->widget->type,
             ];
 
@@ -172,7 +172,7 @@ class BusinessDocumentView extends BaseView
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
             foreach ($this->lineOptions as $col) {
-                $line[$col->widget->fieldName] = isset($data[$col->widget->fieldName]) ? $data[$col->widget->fieldName] : null;
+                $line[$col->widget->fieldname] = isset($data[$col->widget->fieldname]) ? $data[$col->widget->fieldname] : null;
             }
             $newLines[] = $line;
             $order--;

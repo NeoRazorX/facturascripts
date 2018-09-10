@@ -18,7 +18,7 @@
         <div class="card-body">
             <div class="row">
                 {% for group in currentView.getColumns() %}
-                    {{ group.edit(currentView.model, fsc.user) | raw }}
+                    {{ group.edit(currentView.model) | raw }}
                 {% endfor %}
             </div>
             <div class="row">
@@ -43,7 +43,7 @@
             <div class="card-body">
                 <div class="row">
                     {% for group in currentView.getColumns() %}
-                        {{ group.edit(model, fsc.user) | raw }}
+                        {{ group.edit(model) | raw }}
                     {% endfor %}
                 </div>
                 <div class="row">

@@ -299,7 +299,7 @@ abstract class ListController extends BaseController
                 continue;
             }
 
-            $result[] = $col->widget->fieldName;
+            $result[] = $col->widget->fieldname;
             if (count($result) === $maxColumns) {
                 break;
             }

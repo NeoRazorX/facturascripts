@@ -44,9 +44,6 @@ class EditView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/EditView.html.twig';
-
-        // Loads the view configuration for the user
-        ///$this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
@@ -79,7 +76,7 @@ class EditView extends BaseView
             foreach ($code as $fieldName => $value) {
                 $where[] = new DataBaseWhere($fieldName, $value);
             }
-            $this->model->loadFromCode('', $where);
+            $this->model->loadFromCode('', $where, $order);
         } else {
             $this->model->loadFromCode($code);
         }

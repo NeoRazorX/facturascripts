@@ -125,7 +125,7 @@
                         </div>
                     </th>
                     {% for column in currentView.getColumns() %}
-                        {{ column.tableHeader(fsc.user) | raw }}
+                        {{ column.tableHeader() | raw }}
                     {% endfor %}
                 </tr>
             </thead>
@@ -140,7 +140,7 @@
                             </div>
                         </td>
                         {% for column in currentView.getColumns() %}
-                            {{ column.tableCell(model, fsc.user) | raw }}
+                            {{ column.tableCell(model) | raw }}
                         {% endfor %}
                     </tr>
                 {% else %}

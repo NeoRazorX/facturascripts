@@ -138,6 +138,18 @@ class BaseWidget
     /**
      * 
      * @param object $model
+     *
+     * @return string
+     */
+    public function plainText($model)
+    {
+        $this->setValue($model);
+        return $this->show();
+    }
+
+    /**
+     * 
+     * @param object $model
      * @param string $display
      *
      * @return string

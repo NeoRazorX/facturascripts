@@ -191,7 +191,7 @@ abstract class BaseView
     {
         foreach ($this->pageOption->columns as $group) {
             foreach ($group->columns as $column) {
-                if ($column->widget->fieldName === $fieldName) {
+                if ($column->widget->fieldname === $fieldName) {
                     return $column;
                 }
             }
@@ -332,5 +332,8 @@ abstract class BaseView
         } elseif (!is_bool($user)) {
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
+
+        VisualItemLoadEngine::disableHidden($this->pageOption->columns, $user);
+        VisualItemLoadEngine::disableHidden($this->pageOption->modals, $user);
     }
 }

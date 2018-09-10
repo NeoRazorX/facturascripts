@@ -91,8 +91,8 @@ class CSVExport implements ExportInterface
 
         /// Get the columns
         foreach ($columns as $col) {
-            $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-            $sheetHeaders[$col->widget->fieldName] = 'string';
+            $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
+            $sheetHeaders[$col->widget->fieldname] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);

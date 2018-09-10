@@ -153,7 +153,7 @@ class EditDashboardData extends ExtendedController\EditController
         $fields = array_keys($this->getModel()->properties);
         $group = $this->views['EditDashboardData']->getColumns()['options']->columns;
         foreach ($group as $column) {
-            if (in_array($column->widget->fieldName, $fields, false)) {
+            if (in_array($column->widget->fieldname, $fields, false)) {
                 continue;
             }
 

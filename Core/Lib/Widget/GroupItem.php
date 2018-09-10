@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Model\User;
 
 /**
  * Description of GroupItem
@@ -95,11 +94,10 @@ class GroupItem
     /**
      * 
      * @param object    $model
-     * @param User|bool $user
      *
      * @return string
      */
-    public function edit($model, $user = false)
+    public function edit($model)
     {
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
         $html = '<div class="' . $divClass . '"><div class="form-row">';
@@ -110,10 +108,6 @@ class GroupItem
         }
 
         foreach ($this->columns as $col) {
-            if ($col->hiddeTo($user)) {
-                continue;
-            }
-
             $html .= $col->edit($model);
         }
 
