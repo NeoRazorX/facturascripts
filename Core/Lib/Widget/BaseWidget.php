@@ -62,6 +62,12 @@ class BaseWidget
      *
      * @var bool
      */
+    public $readonly;
+
+    /**
+     *
+     * @var bool
+     */
     public $required;
 
     /**
@@ -89,6 +95,7 @@ class BaseWidget
         $this->fieldname = $data['fieldname'];
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
         $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
+        $this->readonly = isset($data['readonly']);
         $this->required = isset($data['required']);
         $this->loadOptions($data['children']);
     }
@@ -189,8 +196,20 @@ class BaseWidget
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
-        $requiredHtml = $this->required ? ' required=""' : '';
-        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value . '" class="' . $class . '"' . $requiredHtml . '/>';
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
+            . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function inputHtmlExtraParams()
+    {
+        $params = $this->readonly ? ' readonly=""' : '';
+        $params .= $this->required ? ' required=""' : '';
+
+        return $params;
     }
 
     /**

@@ -185,8 +185,7 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $requiredHtml = $this->required ? ' required=""' : '';
-        $html = '<select name="' . $this->fieldname . '" class="form-control"' . $requiredHtml . '>';
+        $html = '<select name="' . $this->fieldname . '" class="form-control"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)
             $selected = ($option['value'] == $this->value) ? ' selected="selected" ' : '';

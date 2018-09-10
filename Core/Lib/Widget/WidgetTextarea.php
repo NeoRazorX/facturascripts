@@ -30,7 +30,7 @@ class WidgetTextarea extends BaseWidget
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $inputHtml = '<textarea name="' . $this->fieldname . '" class="form-control">' . $this->value . '</textarea>';
+        $inputHtml = '<textarea name="' . $this->fieldname . '" class="form-control"' . $this->inputHtmlExtraParams() . '>' . $this->value . '</textarea>';
         $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
 
         return '<div class="form-group">'
