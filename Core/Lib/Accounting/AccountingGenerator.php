@@ -71,6 +71,7 @@ class AccountingGenerator
     protected function getEntry()
     {
         return [
+            'id' => NULL,
             'date' => date('d-m-Y'),
             'document' => '',
             'concept' => '',
@@ -121,7 +122,8 @@ class AccountingGenerator
     {
         $detail = new Model\Partida();
         $entry = new Model\Asiento();
-        $entry->fecha = $data['fecha'];
+        $entry->idasiento = $data['id'];
+        $entry->fecha = $data['date'];
         $entry->documento = $data['document'];
         $entry->concepto = $data['concept'];
         $entry->editable = $data['editable'];

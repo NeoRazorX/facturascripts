@@ -39,6 +39,13 @@ class InvoiceToAccounting extends AccountingGenerator
     protected $document;
 
     /**
+     * Document Subtotals Lines array
+     *
+     * @var array
+     */
+    protected $subtotals;
+
+    /**
      * Accounting exercise model
      *
      * @var Model\Ejercicio
@@ -60,6 +67,13 @@ class InvoiceToAccounting extends AccountingGenerator
     protected $subaccount;
 
     /**
+     * VAT model
+     *
+     * @var Model\Impuesto
+     */
+    protected $vat;
+
+    /**
      * Class constructor
      */
     public function __construct()
@@ -67,9 +81,12 @@ class InvoiceToAccounting extends AccountingGenerator
         parent::__construct();
 
         $this->document = NULL;
+        $this->subtotals = [];
+
         $this->exercise = new Model\Ejercicio();
         $this->account = new Model\Cuenta();
         $this->subaccount = new Model\Subcuenta();
+        $this->vat = new Model\Impuesto();
     }
 
     /**
@@ -97,6 +114,30 @@ class InvoiceToAccounting extends AccountingGenerator
             }
         }
         return $subaccount;
+    }
+
+    protected function getInvoiceLinesAccounts(string $type, string $default): array
+    {
+        $docTable = $this->document->tableName();
+        $sql = 'SELECT COALESCE(productos.codsubcuentaven, familias.codsubcuentaven) codsubcuenta, SUM(lineas.pvptotal) total'
+            . ' FROM ' . $docTable . ' doc'
+            . ' LEFT JOIN lineas' . $docTable . ' lineas ON lineas.idfactura = doc.idfactura'
+            . ' LEFT JOIN productos ON productos.referencia = lineas.referencia'
+            . ' LEFT JOIN familias ON familias.codfamilia = productos.codfamilia'
+            . ' WHERE doc.idfactura = ' . $this->document->idfactura
+            . ' GROUP BY 1';
+
+        $data = $this->dataBase->select($sql);
+        if (empty($data)) {
+            return []; /// TODO: document dont have lines.
+        }
+
+        foreach ($data as $line) {
+            if (empty($line['codsubcuenta'])) {
+                $line['codsubcuenta'] = $this->getPrefixAccount($type, $default);
+            }
+        }
+        return $data;
     }
 
     /**
@@ -150,6 +191,9 @@ class InvoiceToAccounting extends AccountingGenerator
         if ($model->loadFromCode($idDocument)) {
             $this->document = $model;
             $this->exercise->loadFromCode($this->document->codejercicio);
+
+            $tools = new BusinessDocumentTools();
+            $this->subtotals = $tools->getSubtotals($this->document->getLines());
             return true;
         }
 
@@ -182,6 +226,7 @@ class InvoiceToAccounting extends AccountingGenerator
         /// Set Entry Basic Data
         $entry = $this->getEntry();
         array_replace($entry, [
+            'id' => $this->document->idasiento,
             'date' => $this->document->fecha,
             'document' => $this->document->codigo,
             'concept' => $this->i18n->trans('account-sales', ['document' => $this->document->codigo, 'customer' => $this->document->nombrecliente]),
@@ -198,35 +243,34 @@ class InvoiceToAccounting extends AccountingGenerator
         ]);
 
         // Add VAT Lines
-        $tools = new BusinessDocumentTools();
-        $vat = new Model\Impuesto();
-        $lines = $this->document->getLines();
         $index = 1;
-
-        foreach ($tools->getSubtotals($lines) as $key => $subtotal) {
-            $vat->loadFromCode($key);
+        foreach ($this->subtotals as $key => $subtotal) {
+            $this->vat->loadFromCode($key);
 
             $entry['lines'][] = $this->getLine(true);
             array_replace($entry['lines'][$index], [
-                'subaccount' => $this->getVatAccount($vat->codimpuesto, 'IVAREP', '4770'),
-                'credit' => $subtotal['totaliva'] + $subtotal['totalrecargo'],
+                'subaccount' => $this->getVatAccount($this->vat->codimpuesto, 'IVAREP', '4770'),
+                'credit' => $subtotal['totaliva'] + $subtotal['totalrecargo']
             ]);
             array_replace($entry['lines'][$index]['VAT'], [
                 'document' => $this->document->codigo,
                 'vat-id' => $this->document->cifnif,
                 'tax-base' => $subtotal['neto'],
-                'pct-vat' => $vat->iva,
-                'surcharge' => $vat->recargo
+                'pct-vat' => $this->vat->iva,
+                'surcharge' => $this->vat->recargo
             ]);
             ++$index;
         }
 
         // Add Sell Lines
-//        $where = new DataBase\DataBaseWhere('idfactura', $idDocument);
-//        ESTOY AQUI!!!
-//        Mejor crear un model view que recoja los datos
-//        $linesModel = new Model\LineaFacturaCliente();
-//        $lines = $linesModel->all($where, $order, $idDocument, $limit);
+        foreach ($this->getInvoiceLinesAccounts('VENTAS', '7000') as $line) {
+            $entry['lines'][] = $this->getLine();
+            array_replace($entry['lines'][$index], [
+                'subaccount' => $line['codsubcuenta'],
+                'credit' => $line['total']
+            ]);
+            ++$index;
+        }
 
         return $this->AccountEntry($entry);
     }
@@ -239,18 +283,58 @@ class InvoiceToAccounting extends AccountingGenerator
      */
     public function AccountPurchase(int $idDocument): bool
     {
-        $document = new Model\FacturaProveedor();
-        $document->loadFromCode($idDocument);
+        if (!$this->setDocument(new Model\FacturaProveedor(), $idDocument)) {
+            return false; /// document dont exists, nothing to do
+        }
 
+        /// Set Entry Basic Data
         $entry = $this->getEntry();
         array_replace($entry, [
-            'date' => $document->fecha,
-            'document' => $document->codigo,
-            'concept' => $this->i18n->trans('account-purchase', ['document' => $document->codigo, 'supplier' => $document->nombre]),
+            'id' => $this->document->idasiento,
+            'date' => $this->document->fecha,
+            'document' => $this->document->codigo,
+            'concept' => $this->i18n->trans('account-purchase', ['document' => $this->document->codigo, 'supplier' => $this->document->nombrecliente]),
             'editable' => false
         ]);
 
+        // Add Purchase Line
+        $subAccount = $this->getPurchaseAccount() ?? $this->calculatePurchaseAccount();
 
+        $entry['lines'][] = $this->getLine();
+        array_replace($entry['lines'][0], [
+            'subaccount' => $subAccount,
+            'credit' => $this->document->total,
+        ]);
+
+        // Add VAT Lines
+        $index = 1;
+        foreach ($this->subtotals as $key => $subtotal) {
+            $this->vat->loadFromCode($key);
+
+            $entry['lines'][] = $this->getLine(true);
+            array_replace($entry['lines'][$index], [
+                'subaccount' => $this->getVatAccount($this->vat->codimpuesto, 'IVASUP', '4720'),
+                'debit' => $subtotal['totaliva'] + $subtotal['totalrecargo']
+            ]);
+            array_replace($entry['lines'][$index]['VAT'], [
+                'document' => $this->document->codigo,
+                'vat-id' => $this->document->cifnif,
+                'tax-base' => $subtotal['neto'],
+                'pct-vat' => $this->vat->iva,
+                'surcharge' => $this->vat->recargo
+            ]);
+            ++$index;
+        }
+
+        // Add Buy Lines
+        foreach ($this->getInvoiceLinesAccounts('COMPRA', '6000') as $line) {
+            $entry['lines'][] = $this->getLine();
+            array_replace($entry['lines'][$index], [
+                'subaccount' => $line['codsubcuenta'],
+                'debit' => $line['total']
+            ]);
+            ++$index;
+        }
 
         return $this->AccountEntry($entry);
     }
