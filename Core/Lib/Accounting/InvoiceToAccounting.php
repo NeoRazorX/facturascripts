@@ -32,11 +32,45 @@ class InvoiceToAccounting extends AccountingGenerator
 {
 
     /**
-     * Document to process
+     * Document Model with data to process
      *
-     * @var FacturaCliente|FacturaProveedor
+     * @var Model\Base\BusinessDocument
      */
     protected $document;
+
+    /**
+     * Accounting exercise model
+     *
+     * @var Model\Ejercicio
+     */
+    protected $exercise;
+
+    /**
+     * Accounting plan model
+     *
+     * @var Model\Cuenta
+     */
+    protected $account;
+
+    /**
+     * Subaccounting plan model
+     *
+     * @var Model\Subcuenta
+     */
+    protected $subaccount;
+
+    /**
+     * Class constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->document = NULL;
+        $this->exercise = new Model\Ejercicio();
+        $this->account = new Model\Cuenta();
+        $this->subaccount = new Model\Subcuenta();
+    }
 
     /**
      * Search Customer Account into customer data and customer group data
@@ -52,8 +86,7 @@ class InvoiceToAccounting extends AccountingGenerator
 
         $data = $this->dataBase->select($sql);
         if (empty($data)) {
-            /// TODO: Client document dont exists. This case should never happen.
-            return '';
+            return ''; /// TODO: Client document dont exists. This case should never happen.
         }
 
         $subaccount = $data[0]['codsubcuenta'];
@@ -67,19 +100,60 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * Search prefis account for customers into exercise and account plan
+     * Search prefix account for customers/purchases into exercise and account plan
      *
+     * @param string $type
+     * @param string $default
      * @return string
      */
-    protected function getCustomerPrefixAccount(): string
+    protected function getPrefixAccount(string $type, string $default): string
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->document->codejercicio),
-            new DataBaseWhere('codcuentaesp', 'CLIENT')
+            new DataBaseWhere('codcuentaesp', $type)
         ];
-        $account = new Model\Cuenta();
-        $account->loadFromCode('', $where);
-        return $account->codcuenta ?? '4300';
+        $this->account->loadFromCode('', $where);
+        return $this->account->codcuenta ?? $default;
+    }
+
+    /**
+     * Search VAT Account for VAT Code into exercise and account plan
+     *
+     * @return string
+     */
+    protected function getVatAccount(string $vat, string $type, string $default): string
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $this->document->codejercicio),
+            new DataBaseWhere('codimpuesto', $vat),
+            new DataBaseWhere('codcuentaesp', $type)
+        ];
+
+        if ($this->subaccount->loadFromCode('', $where)) {
+            return $this->subaccount->codsubcuenta;
+        }
+
+        /// Calculate subaccount from account plan or default account
+        $prefix = $this->getPrefixAccount($type, $default);
+        return $this->fillToLength($this->exercise->longsubcuenta, $prefix);
+    }
+
+    /**
+     * Search document and inicializate auxiliar model class
+     *
+     * @param Model\Base\BusinessDocument $model
+     * @param int $idDocument
+     * @return bool
+     */
+    protected function setDocument(Model\Base\BusinessDocument $model, int $idDocument): bool
+    {
+        if ($model->loadFromCode($idDocument)) {
+            $this->document = $model;
+            $this->exercise->loadFromCode($this->document->codejercicio);
+            return true;
+        }
+
+        return false; /// document dont exists
     }
 
     /**
@@ -89,17 +163,8 @@ class InvoiceToAccounting extends AccountingGenerator
      */
     protected function calculateCustomerAccount(): string
     {
-        $prefix = $this->getCustomerPrefixAccount();
-        $exercise = new Model\Ejercicio();
-        $exercise->loadFromCode($this->document->codejercicio);
-
-        $count = $exercise->longsubcuenta - strlen($prefix) - strlen($this->document->codcliente);
-        if ($count < 0) {
-            /// TODO: customer code its to long
-            return '';
-        }
-
-        return $prefix . str_repeat('0', $count) . $this->document->codcliente;
+        $prefix = $this->getPrefixAccount('CLIENT', '4300');
+        return $this->fillToLength($this->exercise->longsubcuenta, $this->document->codcliente, $prefix);
     }
 
     /**
@@ -110,10 +175,8 @@ class InvoiceToAccounting extends AccountingGenerator
      */
     public function AccountSales(int $idDocument): bool
     {
-        $this->document = new Model\FacturaCliente();
-        if (!$this->document->loadFromCode($idDocument)) {
-            /// TODO: document dont exists
-            return false;
+        if (!$this->setDocument(new Model\FacturaCliente(), $idDocument)) {
+            return false; /// document dont exists, nothing to do
         }
 
         /// Set Entry Basic Data
@@ -138,14 +201,14 @@ class InvoiceToAccounting extends AccountingGenerator
         $tools = new BusinessDocumentTools();
         $vat = new Model\Impuesto();
         $lines = $this->document->getLines();
+        $index = 1;
 
         foreach ($tools->getSubtotals($lines) as $key => $subtotal) {
-            $index = count($entry['lines']);
             $vat->loadFromCode($key);
 
             $entry['lines'][] = $this->getLine(true);
             array_replace($entry['lines'][$index], [
-                'subaccount' => '477',
+                'subaccount' => $this->getVatAccount($vat->codimpuesto, 'IVAREP', '4770'),
                 'credit' => $subtotal['totaliva'] + $subtotal['totalrecargo'],
             ]);
             array_replace($entry['lines'][$index]['VAT'], [
@@ -155,6 +218,7 @@ class InvoiceToAccounting extends AccountingGenerator
                 'pct-vat' => $vat->iva,
                 'surcharge' => $vat->recargo
             ]);
+            ++$index;
         }
 
         // Add Sell Lines

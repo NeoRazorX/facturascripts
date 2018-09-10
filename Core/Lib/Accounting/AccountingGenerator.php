@@ -44,6 +44,12 @@ class AccountingGenerator
      * @var Translator
      */
     protected $i18n;
+
+    /**
+     * Manage the log of all controllers, models and database.
+     *
+     * @var MiniLog
+     */
     protected $miniLog;
 
     /**
@@ -164,5 +170,16 @@ class AccountingGenerator
             }
         }
         return true;
+    }
+
+    public function fillToLength(int $length, string $value, string $prefix = ''): string
+    {
+        $value2 = trim($value);
+        $count = $length - strlen($prefix) - strlen($value2);
+        if ($count < 0) {
+            return $prefix . $value2;
+        }
+
+        return $prefix . str_repeat('0', $count) . $value2;
     }
 }
