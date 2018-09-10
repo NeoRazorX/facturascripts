@@ -112,6 +112,15 @@ class DivisaTools extends NumberTools
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function getSymbol()
+    {
+        return (string) self::$selectedDivisa->simbolo;
+    }
+
+    /**
      * Return format mask for edit grid
      *
      * @param int $decimals

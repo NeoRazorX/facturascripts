@@ -49,9 +49,21 @@ class WidgetNumber extends BaseWidget
 
     /**
      * 
+     * @param string $type
+     * @param string $extraClass
+     *
      * @return string
      */
-    public function show()
+    protected function inputHtml($type = 'number', $extraClass = '')
+    {
+        return parent::inputHtml($type, $extraClass);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function show()
     {
         return is_null($this->value) ? '-' : static::$numberTools->format($this->value);
     }

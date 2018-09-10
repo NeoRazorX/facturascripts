@@ -19,11 +19,11 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
- * Description of WidgetDate
+ * Description of WidgetPassword
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class WidgetDate extends BaseWidget
+class WidgetPassword extends BaseWidget
 {
 
     /**
@@ -33,7 +33,7 @@ class WidgetDate extends BaseWidget
      *
      * @return string
      */
-    protected function inputHtml($type = 'text', $extraClass = 'datepicker')
+    protected function inputHtml($type = 'password', $extraClass = '')
     {
         return parent::inputHtml($type, $extraClass);
     }

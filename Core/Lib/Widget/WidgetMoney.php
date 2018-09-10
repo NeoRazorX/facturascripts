@@ -55,6 +55,19 @@ class WidgetMoney extends BaseWidget
     {
         parent::setValue($model);
         static::$divisaTools->findDivisa($model);
+
+        if ('' === $this->icon) {
+            $simbol = static::$divisaTools->getSymbol();
+            switch ($simbol) {
+                case '€':
+                    $this->icon = 'fa-euro-sign';
+                    break;
+
+                default:
+                    $this->icon = 'fa-dollar-sign';
+                    break;
+            }
+        }
     }
 
     /**

@@ -90,10 +90,10 @@
         </group>
         <group name="other" numcolumns="6">
             <column name="create-date" numcolumns="4" order="100">
-                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+                <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
             <column name="last-activity" numcolumns="4" order="110">
-                <widget type="datepicker" fieldname="lastactivity" readonly="true" />
+                <widget type="date" fieldname="lastactivity" readonly="true" />
             </column>
             <column name="points" numcolumns="4" order="120">
                 <widget type="number" fieldname="puntos" />

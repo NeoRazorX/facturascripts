@@ -181,12 +181,16 @@ class BaseWidget
 
     /**
      * 
+     * @param string $type
+     * @param string $extraClass
+     *
      * @return string
      */
-    protected function inputHtml()
+    protected function inputHtml($type = 'text', $extraClass = '')
     {
+        $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
         $requiredHtml = $this->required ? ' required=""' : '';
-        return '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '" class="form-control"' . $requiredHtml . '/>';
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value . '" class="' . $class . '"' . $requiredHtml . '/>';
     }
 
     /**
@@ -224,7 +228,13 @@ class BaseWidget
      */
     protected function setValue($model)
     {
-        $this->value = isset($model->{$this->fieldname}) ? $model->{$this->fieldname} : null;
+        if (isset($model->{$this->fieldname})) {
+            $this->value = $model->{$this->fieldname};
+        } elseif (isset($model->properties) && isset($model->properties[$this->fieldname])) {
+            $this->value = $model->properties[$this->fieldname];
+        } else {
+            $this->value = null;
+        }
     }
 
     /**

@@ -80,7 +80,7 @@
         </group>
         <group name="management" columns="12" icon="fa-cog" title="advanced">
             <column name="startdate" numcolumns="2" order="100">
-                <widget type="datepicker" fieldname="fechaalta"/>
+                <widget type="date" fieldname="fechaalta"/>
             </column>
             <column name="surcharge" numcolumns="1" order="110">
                 <widget type="checkbox" fieldname="recequivalencia"/>

@@ -57,7 +57,12 @@ class WidgetCheckbox extends BaseWidget
      */
     protected function setValue($model)
     {
-        $this->value = isset($model->{$this->fieldname}) ? (bool) $model->{$this->fieldname} : false;
+        parent::setValue($model);
+        if ($this->value === 'true') {
+            $this->value = true;
+        } else {
+            $this->value = (bool) $this->value;
+        }
     }
 
     /**

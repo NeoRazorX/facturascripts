@@ -32,10 +32,10 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="start-date" numcolumns="2" order="120">
-                <widget type="datepicker" fieldname="fechainicio" />
+                <widget type="date" fieldname="fechainicio" />
             </column>
             <column name="end-date" numcolumns="2" order="130">
-                <widget type="datepicker" fieldname="fechafin" />
+                <widget type="date" fieldname="fechafin" />
             </column>
             <column name="account-length" numcolumns="2" order="140">
                 <widget type="text" fieldname="longsubcuenta" required="true" />

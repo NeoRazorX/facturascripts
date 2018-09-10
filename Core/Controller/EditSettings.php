@@ -34,27 +34,6 @@ class EditSettings extends ExtendedController\PanelController
     const KEY_SETTINGS = 'Settings';
 
     /**
-     * Returns the configuration property value for a specified $field
-     *
-     * @param ModelClass $model
-     * @param string     $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        if (isset($model->{$field})) {
-            return $model->{$field};
-        }
-
-        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
-            return $model->properties[$field];
-        }
-
-        return null;
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -68,26 +47,6 @@ class EditSettings extends ExtendedController\PanelController
         $pagedata['submenu'] = 'control-panel';
 
         return $pagedata;
-    }
-
-    /**
-     * Returns the url for a specified $type
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getURL($type)
-    {
-        switch ($type) {
-            case 'list':
-                return 'AdminPlugins';
-
-            case 'edit':
-                return 'EditSettings';
-        }
-
-        return FS_ROUTE;
     }
 
     /**
