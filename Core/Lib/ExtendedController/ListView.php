@@ -36,8 +36,8 @@ class ListView extends BaseView
     /**
      * Order constants
      */
-    const ICON_ASC = 'fa-arrow-down';
-    const ICON_DESC = 'fa-arrow-up';
+    const ICON_ASC = 'fa-arrow-up';
+    const ICON_DESC = 'fa-arrow-down';
 
     /**
      * Filter configuration preset by the user
@@ -152,6 +152,10 @@ class ListView extends BaseView
         }
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function getColumns()
     {
         $keys = array_keys($this->pageOption->columns);
@@ -226,6 +230,7 @@ class ListView extends BaseView
             return;
         }
 
+        $this->order = [];
         $option = $this->orderOptions[$orderKey];
         foreach ($option['fields'] as $field) {
             $this->order[$field] = $option['type'];

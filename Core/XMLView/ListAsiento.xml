@@ -47,7 +47,7 @@
             </widget>
         </column>
         <column name="date" display="right" order="150">
-            <widget type="text" fieldname="fecha" />
+            <widget type="date" fieldname="fecha" />
         </column>
     </columns>
     <rows>

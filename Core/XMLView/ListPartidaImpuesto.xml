@@ -55,7 +55,7 @@
             <widget type="text" fieldname="documento" />
         </column>
         <column name="date" order="140" display="none">
-            <widget type="text" fieldname="fecha" />
+            <widget type="date" fieldname="fecha" />
         </column>
         <column name="subaccount" order="150" display="none">
             <widget type="text" fieldname="codcontrapartida" />

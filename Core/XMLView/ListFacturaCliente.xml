@@ -45,7 +45,7 @@
             </widget>
         </column>
         <column name="date" order="130" display="right">
-            <widget type="text" fieldname="fecha" />
+            <widget type="date" fieldname="fecha" />
         </column>
         <column name="email-sent" order="140" display="center">
             <widget type="checkbox" fieldname="femail" />

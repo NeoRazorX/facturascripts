@@ -28,7 +28,7 @@
             <widget type="number" fieldname="idtrans" onclick="EditTransferenciaStock"/>
         </column>
         <column name="date" order="110">
-            <widget type="text" fieldname="fecha" />
+            <widget type="date" fieldname="fecha" />
         </column>
         <column name="codwarehouseorigin" title="origin-warehouse" order="120">
             <widget type="select" fieldname="codalmacenorigen" required="true">

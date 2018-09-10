@@ -37,4 +37,21 @@ class WidgetDate extends BaseWidget
     {
         return parent::inputHtml($type, $extraClass);
     }
+
+    /**
+     * 
+     * @param string $initialClass
+     * @param string $alternativeClass
+     *
+     * @return string
+     */
+    protected function tableCellClass($initialClass = '', $alternativeClass = '')
+    {
+        /// is today? is the future?
+        if (strtotime($this->value) >= strtotime(date('Y-m-d'))) {
+            $alternativeClass = 'font-weight-bold';
+        }
+
+        return parent::tableCellClass($initialClass, $alternativeClass);
+    }
 }
