@@ -24,6 +24,10 @@
         <name>parent</name>
         <type>character varying(6)</type>
     </column>
+    <column>
+        <name>codsubcuenta</name>
+        <type>character varying(15)</type>
+    </column>
     <constraint>
         <name>gruposclientes_pkey</name>
         <type>PRIMARY KEY (codgrupo)</type>
