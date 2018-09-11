@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
+use FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting;
 
 /**
  * Invoice of a client.
@@ -58,9 +59,9 @@ class FacturaCliente extends Base\SalesDocument
 
     /**
      * Returns a new line for the document.
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return LineaFacturaCliente
      */
     public function getNewLine(array $data = [])
@@ -106,5 +107,42 @@ class FacturaCliente extends Base\SalesDocument
     public static function tableName()
     {
         return 'facturascli';
+    }
+
+    /**
+     * Generates the accounting entry for the document
+     *
+     * @return bool
+     */
+    private function AccountingDocument()
+    {
+        $accounting = new InvoiceToAccounting($this);
+        return $accounting->AccountSales();
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = array())
+    {
+        $this->AccountingDocument();
+        return parent::saveInsert($values);
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = array())
+    {
+        $this->AccountingDocument();
+        return parent::saveUpdate($values);
     }
 }

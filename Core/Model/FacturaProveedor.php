@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
+use FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting;
 
 /**
  * Invoice from a supplier.
@@ -58,9 +59,9 @@ class FacturaProveedor extends Base\PurchaseDocument
 
     /**
      * Returns a new line for the document.
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return LineaFacturaProveedor
      */
     public function getNewLine(array $data = [])
@@ -106,5 +107,42 @@ class FacturaProveedor extends Base\PurchaseDocument
     public static function tableName()
     {
         return 'facturasprov';
+    }
+
+    /**
+     * Generates the accounting entry for the document
+     *
+     * @return bool
+     */
+    private function AccountingDocument()
+    {
+        $accounting = new InvoiceToAccounting($this);
+        return $accounting->AccountPurchase();
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = array())
+    {
+        $this->AccountingDocument();
+        return parent::saveInsert($values);
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = array())
+    {
+        $this->AccountingDocument();
+        return parent::saveUpdate($values);
     }
 }
