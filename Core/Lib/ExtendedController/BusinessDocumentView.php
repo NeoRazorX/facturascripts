@@ -37,49 +37,45 @@ class BusinessDocumentView extends BaseView
      *
      * @var array
      */
-    public $documentStatus;
+    public $documentStatus = [];
 
     /**
      * Line columns from xmlview.
      *
      * @var array
      */
-    private $lineOptions;
+    private $lineOptions = [];
 
     /**
      * Lines of document, the body.
      *
      * @var BusinessDocumentLine[]
      */
-    public $lines;
+    public $lines = [];
 
     /**
-     * DocumentView constructor and initialization.
-     *
+     * 
+     * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $lineXMLView
      * @param string $icon
      */
-    public function __construct(string $title, string $modelName, string $lineXMLView, string $icon)
+    public function __construct($name, $title, $modelName, $icon = 'fa-file-alt')
     {
-        parent::__construct($title, $modelName, $icon);
-        $this->documentStatus = [];
-
-        // Loads the view configuration for the user
-        //$this->pageOption->getForUser($lineXMLView, $userNick);
-
-        $this->lineOptions = [];
-        foreach ($this->pageOption->columns['root']->columns as $col) {
-            $this->lineOptions[] = $col;
+        parent::__construct($name, $title, $modelName, $icon);
+        foreach ($this->getColumns() as $group) {
+            foreach ($group->columns as $col) {
+                $this->lineOptions[] = $col;
+            }
         }
-
-        $this->lines = [];
 
         // Loads document states
         $estadoDocModel = new EstadoDocumento();
         $modelClass = explode('\\', $modelName);
         $this->documentStatus = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
+
+        // custom template
+        $this->template = 'Master/BusinessDocumentView.html.twig';
     }
 
     /**
@@ -140,12 +136,14 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * Load the data in the cursor property, according to the where filter specified.
-     * Adds an empty row/model at the end of the loaded data.
-     *
-     * @param string $code
+     * 
+     * @param type $code
+     * @param type $where
+     * @param type $order
+     * @param type $offset
+     * @param type $limit
      */
-    public function loadData(string $code)
+    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -179,5 +177,10 @@ class BusinessDocumentView extends BaseView
         }
 
         return $newLines;
+    }
+
+    public function processRequest($request)
+    {
+        ;
     }
 }

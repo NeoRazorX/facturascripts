@@ -151,7 +151,7 @@ abstract class BaseView
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct(string $name, string $title, string $modelName, string $icon)
+    public function __construct($name, $title, $modelName, $icon)
     {
         if (!isset(static::$i18n)) {
             static::$i18n = new Base\Translator();

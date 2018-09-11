@@ -58,21 +58,18 @@ class GridView extends BaseView
      * EditView constructor and initialization.
      *
      * @param BaseView $parent
+     * @param string   $name
      * @param string   $title
      * @param string   $modelName
-     * @param string   $viewName
      * @param string   $icon
      */
-    public function __construct(&$parent, $title, $modelName, $viewName, $icon)
+    public function __construct(&$parent, $name, $title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName, $icon);
+        parent::__construct($name, $title, $modelName, $icon);
 
         // Join the parent view
         $this->parentView = $parent;
         $this->parentModel = $parent->model;
-
-        // Loads the view configuration for the user
-        //$this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
@@ -190,7 +187,7 @@ class GridView extends BaseView
      *
      * @return array
      */
-    private function getColumns(): array
+    private function getGridColumns(): array
     {
         $data = [
             'headers' => [],
@@ -216,16 +213,10 @@ class GridView extends BaseView
         return $data;
     }
 
-    /**
-     * Load the data in the cursor property, according to the where filter specified.
-     *
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     */
-    public function loadData($where = [], $order = [])
+    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         // load columns configuration
-        $this->gridData = $this->getColumns();
+        $this->gridData = $this->getGridColumns();
 
         // load model data
         $this->gridData['rows'] = [];

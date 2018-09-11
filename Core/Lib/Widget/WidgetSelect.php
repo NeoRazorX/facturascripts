@@ -78,7 +78,7 @@ class WidgetSelect extends BaseWidget
 
             if (isset($child['source'])) {
                 $this->fieldcode = $child['fieldcode'];
-                $this->fieldtitle = $child['fieldtitle'];
+                $this->fieldtitle = isset($child['fieldtitle']) ? $child['fieldtitle'] : $this->fieldcode;
                 $this->source = $child['source'];
                 $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
                 $this->setValuesFromCodeModel($values);

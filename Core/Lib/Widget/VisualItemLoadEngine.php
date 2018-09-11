@@ -62,6 +62,10 @@ class VisualItemLoadEngine
             $fileName = FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
         }
 
+        if (!file_exists($fileName)) {
+            return false;
+        }
+
         $xml = simplexml_load_string(file_get_contents($fileName));
         if ($xml === false) {
             return false;

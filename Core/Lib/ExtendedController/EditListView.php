@@ -37,10 +37,9 @@ class EditListView extends BaseView
      * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $viewName, $icon)
+    public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/EditListView.html.twig';

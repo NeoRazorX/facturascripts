@@ -110,7 +110,7 @@ abstract class BusinessDocumentController extends PanelController
     {
         /// doc tab
         $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
-        $view = new BusinessDocumentView('new', $fullModelName, $this->getLineXMLView(), $this->user->nick);
+        $view = new BusinessDocumentView($this->getLineXMLView(), 'new', $fullModelName);
         $this->addCustomView('Document', $view);
 
         /// edita tab
@@ -118,7 +118,8 @@ abstract class BusinessDocumentController extends PanelController
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fa-edit');
 
         /// template
-        $this->setTemplate('Master/BusinessDocumentController');
+        ///$this->setTemplate('Master/BusinessDocumentController');
+        $this->setTabsPosition('top');
     }
 
     /**

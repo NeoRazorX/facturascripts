@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
 
 /**
  * Controller to edit a single item from the PresupuestoProveedor model
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditPresupuestoProveedor extends ExtendedController\PurchaseDocumentController
+class EditPresupuestoProveedor extends PurchaseDocumentController
 {
 
     /**

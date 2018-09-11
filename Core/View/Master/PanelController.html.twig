@@ -52,10 +52,10 @@
                             </li>
                         {% endif %}
                         <li class="breadcrumb-item">
-                            <a href="#">{{ title }}</a>
+                            <a href="#">{{ fsc.title }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            {{ fsc.getPrimaryDescription() | raw }}
+                            {{ firstView.model.primaryDescription() | raw }}
                         </li>
                     </ol>
                 </nav>
@@ -113,7 +113,6 @@
 {% endblock %}
 
 {% block body %}
-    {{ parent() }}
     {% set firstView = fsc.views | first %}
     <div class="container-fluid">
         <div class="row">

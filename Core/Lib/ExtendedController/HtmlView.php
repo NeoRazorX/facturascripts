@@ -55,6 +55,14 @@ class HtmlView extends BaseView
         ;
     }
 
+    /**
+     * 
+     * @param string $code
+     * @param array  $where
+     * @param array  $order
+     * @param int    $offset
+     * @param int    $limit
+     */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         ;

@@ -37,10 +37,9 @@ class EditView extends BaseView
      * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $viewName, $icon)
+    public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/EditView.html.twig';
@@ -71,16 +70,7 @@ class EditView extends BaseView
             $code = $this->newCode;
         }
 
-        if (is_array($code)) {
-            $where = [];
-            foreach ($code as $fieldName => $value) {
-                $where[] = new DataBaseWhere($fieldName, $value);
-            }
-            $this->model->loadFromCode('', $where, $order);
-        } else {
-            $this->model->loadFromCode($code);
-        }
-
+        $this->model->loadFromCode($code, $where, $order);
         $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
     }

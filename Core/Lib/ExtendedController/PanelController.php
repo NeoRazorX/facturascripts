@@ -155,7 +155,7 @@ abstract class PanelController extends BaseController
      */
     protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+        $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);
     }
 
@@ -169,7 +169,7 @@ abstract class PanelController extends BaseController
      */
     protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+        $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);
     }
 
@@ -186,7 +186,7 @@ abstract class PanelController extends BaseController
     {
         $parent = $this->views[$parentView];
         if (isset($parent)) {
-            $view = new GridView($parent, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $viewIcon);
+            $view = new GridView($parent, $viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
             $this->addCustomView($viewName, $view);
         }
     }
