@@ -81,13 +81,13 @@ class AccountingGenerator
     protected function getEntry()
     {
         return [
-            'id' => NULL,
+            'id' => null,
             'date' => date($this->dataBase->dateStyle()),
             'document' => '',
             'concept' => '',
             'editable' => true,
-            'journal' => NULL,
-            'channel' => NULL,
+            'journal' => null,
+            'channel' => null,
             'total' => 0.00,
             'lines' => []
         ];
@@ -122,8 +122,8 @@ class AccountingGenerator
     {
         $result = [
             'subaccount' => '',
-            'offsetting' => NULL,
-            'description' => NULL,
+            'offsetting' => null,
+            'description' => null,
             'debit' => 0.00,
             'credit' => 0.00,
             'VAT' => []
@@ -176,7 +176,7 @@ class AccountingGenerator
             $detail->idasiento = $entry->idasiento;
 
             foreach ($data['lines'] as $line) {
-                $detail->idpartida = NULL;
+                $detail->idpartida = null;
                 $detail->codsubcuenta = $line['subaccount'];
                 $detail->codcontrapartida = $line['offsetting'];
                 $detail->concepto = $line['description'] ?? $entry->concepto;

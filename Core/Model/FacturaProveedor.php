@@ -114,10 +114,10 @@ class FacturaProveedor extends Base\PurchaseDocument
      *
      * @return bool
      */
-    private function AccountingDocument()
+    private function accountingDocument()
     {
         $accounting = new InvoiceToAccounting($this);
-        return $accounting->AccountPurchase();
+        return $accounting->accountPurchase();
     }
 
     /**
@@ -129,7 +129,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      */
     protected function saveInsert(array $values = array())
     {
-        $this->AccountingDocument();
+        $this->accountingDocument();
         return parent::saveInsert($values);
     }
 
@@ -142,7 +142,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      */
     protected function saveUpdate(array $values = array())
     {
-        $this->AccountingDocument();
+        $this->accountingDocument();
         return parent::saveUpdate($values);
     }
 }

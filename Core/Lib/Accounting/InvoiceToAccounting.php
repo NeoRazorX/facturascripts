@@ -90,7 +90,7 @@ class InvoiceToAccounting extends AccountingGenerator
     /**
      * Search Customer Account into customer data and customer group data
      *
-     * @return string|NULL
+     * @return string|null
      */
     protected function getCustomerAccount()
     {
@@ -101,7 +101,7 @@ class InvoiceToAccounting extends AccountingGenerator
 
         $data = $this->dataBase->select($sql);
         if (empty($data)) {
-            return NULL; /// Client document dont exists. This case should never happen.
+            return null; /// Client document dont exists. This case should never happen.
         }
 
         $subaccount = $data[0]['codsubcuenta'];
@@ -109,7 +109,7 @@ class InvoiceToAccounting extends AccountingGenerator
             if (!empty($data[0]['parent'])) {
                 /// TODO: Search in the upper levels of the customer group's family tree.
             }
-            return NULL;
+            return null;
         }
         return $subaccount;
     }
@@ -117,7 +117,7 @@ class InvoiceToAccounting extends AccountingGenerator
     /**
      * Search Customer Account into customer data and customer group data
      *
-     * @return string|NULL
+     * @return string|null
      */
     protected function getPurchaseAccount()
     {
@@ -126,11 +126,11 @@ class InvoiceToAccounting extends AccountingGenerator
 
         $data = $this->dataBase->select($sql);
         if (empty($data)) {
-            return NULL; /// Purchase document dont exists. This case should never happen.
+            return null; /// Purchase document dont exists. This case should never happen.
         }
 
         $subaccount = $data[0]['codsubcuenta'];
-        return empty($subaccount) ? NULL : $subaccount;
+        return empty($subaccount) ? null : $subaccount;
     }
 
     protected function getInvoiceLinesAccounts(string $type, string $default): array
@@ -207,7 +207,7 @@ class InvoiceToAccounting extends AccountingGenerator
      *
      * @return bool
      */
-    public function AccountSales(): bool
+    public function accountSales(): bool
     {
         if (empty($this->subtotals)) {
             return false; /// document dont have lines, nothing to do
@@ -271,7 +271,7 @@ class InvoiceToAccounting extends AccountingGenerator
      *
      * @return bool
      */
-    public function AccountPurchase(): bool
+    public function accountPurchase(): bool
     {
         if (empty($this->subtotals)) {
             return false; /// document dont have lines, nothing to do

@@ -114,10 +114,10 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return bool
      */
-    private function AccountingDocument()
+    private function accountingDocument()
     {
         $accounting = new InvoiceToAccounting($this);
-        return $accounting->AccountSales();
+        return $accounting->accountSales();
     }
 
     /**
@@ -129,7 +129,7 @@ class FacturaCliente extends Base\SalesDocument
      */
     protected function saveInsert(array $values = array())
     {
-        $this->AccountingDocument();
+        $this->accountingDocument();
         return parent::saveInsert($values);
     }
 
@@ -142,7 +142,7 @@ class FacturaCliente extends Base\SalesDocument
      */
     protected function saveUpdate(array $values = array())
     {
-        $this->AccountingDocument();
+        $this->accountingDocument();
         return parent::saveUpdate($values);
     }
 }
