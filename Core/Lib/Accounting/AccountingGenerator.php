@@ -147,7 +147,7 @@ class AccountingGenerator
      *
      * @param array $data
      */
-    protected function AccountEntry(array &$data): bool
+    protected function accountEntry(array &$data): bool
     {
         $detail = new Model\Partida();
         $entry = new Model\Asiento();

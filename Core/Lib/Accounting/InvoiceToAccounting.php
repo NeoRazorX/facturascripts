@@ -259,7 +259,7 @@ class InvoiceToAccounting extends AccountingGenerator
         }
 
         /// Generate Account Entry and set id into sale document
-        if ($this->AccountEntry($entry)) {
+        if ($this->accountEntry($entry)) {
             $this->document->idasiento = $entry['id'];
             return true;
         }
@@ -323,7 +323,7 @@ class InvoiceToAccounting extends AccountingGenerator
         }
 
         /// Generate Account Entry and set id into sale document
-        if ($this->AccountEntry($entry)) {
+        if ($this->accountEntry($entry)) {
             $this->document->idasiento = $entry['id'];
             return true;
         }
