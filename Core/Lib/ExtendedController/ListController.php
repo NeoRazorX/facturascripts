@@ -178,7 +178,7 @@ abstract class ListController extends BaseController
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
         $fcode = empty($fieldcode) ? $field : $fieldcode;
         $ftitle = empty($fieldtitle) ? $fcode : $fieldtitle;
-        $this->views[$viewName]->addFilter($key, ListFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where));
+        $this->views[$viewName]->addFilter($key, BaseFilter::newAutocompleteFilter($label, $field, $table, $fcode, $ftitle, $value, $where));
     }
 
     /**
@@ -194,7 +194,7 @@ abstract class ListController extends BaseController
     protected function addFilterCheckbox($viewName, $key, $label, $field, $inverse = false, $matchValue = true)
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$viewName]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
+        $this->views[$viewName]->addFilter($key, BaseFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
     }
 
     /**
@@ -230,7 +230,7 @@ abstract class ListController extends BaseController
             'operatorTo' => $this->request->get($key . '-to-operator', '<='),
         ];
 
-        $this->views[$viewName]->addFilter($key, ListFilter::newStandardFilter($type, $config));
+        $this->views[$viewName]->addFilter($key, BaseFilter::newStandardFilter($type, $config));
     }
 
     /**
@@ -258,7 +258,7 @@ abstract class ListController extends BaseController
     protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
         $value = ($viewName == $this->active) ? $this->request->get($key, '') : '';
-        $this->views[$viewName]->addFilter($key, ListFilter::newSelectFilter($label, $field, $values, $value));
+        $this->views[$viewName]->addFilter($key, BaseFilter::newSelectFilter($label, $field, $values, $value));
     }
 
     /**
