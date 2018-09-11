@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Dinamic\Model;
@@ -30,6 +31,13 @@ use FacturaScripts\Dinamic\Model;
  */
 class AccountingGenerator
 {
+
+    /**
+     * Accounting plan model
+     *
+     * @var Model\Cuenta
+     */
+    private $account;
 
     /**
      * It provides direct access to the database.
@@ -60,6 +68,8 @@ class AccountingGenerator
         $this->dataBase = new DataBase();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
+
+        $this->account = new Model\Cuenta();
     }
 
     /**
@@ -72,14 +82,33 @@ class AccountingGenerator
     {
         return [
             'id' => NULL,
-            'date' => date('d-m-Y'),
+            'date' => date($this->dataBase->dateStyle()),
             'document' => '',
             'concept' => '',
             'editable' => true,
             'journal' => NULL,
             'channel' => NULL,
+            'total' => 0.00,
             'lines' => []
         ];
+    }
+
+    /**
+     * Search prefix account for indicate type into exercise and account plan
+     *
+     * @param string $exercise
+     * @param string $type
+     * @param string $default
+     * @return string
+     */
+    protected function getPrefixAccount(string $exercise, string $type, string $default): string
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $exercise),
+            new DataBaseWhere('codcuentaesp', $type)
+        ];
+        $this->account->loadFromCode('', $where);
+        return $this->account->codcuenta ?? $default;
     }
 
     /**
@@ -118,7 +147,7 @@ class AccountingGenerator
      *
      * @param array $data
      */
-    protected function AccountEntry(array $data): bool
+    protected function AccountEntry(array &$data): bool
     {
         $detail = new Model\Partida();
         $entry = new Model\Asiento();
@@ -127,15 +156,23 @@ class AccountingGenerator
         $entry->documento = $data['document'];
         $entry->concepto = $data['concept'];
         $entry->editable = $data['editable'];
+        $entry->importe = $data['total'];
 
         $inTransaction = $this->dataBase->inTransaction();
         try {
             $this->dataBase->beginTransaction();
 
+            if (!empty($entry->idasiento)) {
+                if (!$entry->delete()) {
+                    return false;
+                }
+            }
+
             if (!$entry->save()) {
                 return false;
             }
 
+            $data['id'] = $entry->idasiento;
             $detail->idasiento = $entry->idasiento;
 
             foreach ($data['lines'] as $line) {
@@ -178,7 +215,7 @@ class AccountingGenerator
     {
         $value2 = trim($value);
         $count = $length - strlen($prefix) - strlen($value2);
-        if ($count < 0) {
+        if ($count < 1) {
             return $prefix . $value2;
         }
 

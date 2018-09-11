@@ -53,13 +53,6 @@ class InvoiceToAccounting extends AccountingGenerator
     protected $exercise;
 
     /**
-     * Accounting plan model
-     *
-     * @var Model\Cuenta
-     */
-    protected $account;
-
-    /**
      * Subaccounting plan model
      *
      * @var Model\Subcuenta
@@ -74,17 +67,22 @@ class InvoiceToAccounting extends AccountingGenerator
     protected $vat;
 
     /**
-     * Class constructor
+     * Class constructor and inicializate auxiliar model class
+     *
+     * @param Model\FacturaCli|Model\FacturaProv $model
      */
-    public function __construct()
+    public function __construct(&$model)
     {
         parent::__construct();
 
-        $this->document = NULL;
-        $this->subtotals = [];
+        $this->document = $model;
+
+        $tools = new BusinessDocumentTools();
+        $this->subtotals = $tools->getSubtotals($this->document->getLines());
 
         $this->exercise = new Model\Ejercicio();
-        $this->account = new Model\Cuenta();
+        $this->exercise->loadFromCode($this->document->codejercicio);
+
         $this->subaccount = new Model\Subcuenta();
         $this->vat = new Model\Impuesto();
     }
@@ -92,28 +90,47 @@ class InvoiceToAccounting extends AccountingGenerator
     /**
      * Search Customer Account into customer data and customer group data
      *
-     * @return string
+     * @return string|NULL
      */
     protected function getCustomerAccount()
     {
-        $sql = 'SELECT COALESCE(clientes.codsubcuenta, gruposclientes.codsubcuenta) codsubcuenta, gruposclientes.parent,'
+        $sql = 'SELECT COALESCE(clientes.codsubcuenta, gruposclientes.codsubcuenta) codsubcuenta, gruposclientes.parent'
             . ' FROM clientes'
             . ' LEFT JOIN gruposclientes ON gruposclientes.codgrupo = clientes.codgrupo'
             . ' WHERE clientes.codcliente = ' . $this->dataBase->var2str($this->document->codcliente);
 
         $data = $this->dataBase->select($sql);
         if (empty($data)) {
-            return ''; /// TODO: Client document dont exists. This case should never happen.
+            return NULL; /// Client document dont exists. This case should never happen.
         }
 
         $subaccount = $data[0]['codsubcuenta'];
         if (empty($subaccount)) {
-            $parent = $data[0]['parent'];
-            if (!empty($parent)) {
+            if (!empty($data[0]['parent'])) {
                 /// TODO: Search in the upper levels of the customer group's family tree.
             }
+            return NULL;
         }
         return $subaccount;
+    }
+
+    /**
+     * Search Customer Account into customer data and customer group data
+     *
+     * @return string|NULL
+     */
+    protected function getPurchaseAccount()
+    {
+        $sql = 'SELECT codsubcuenta FROM proveedores'
+            . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->document->codproveedor);
+
+        $data = $this->dataBase->select($sql);
+        if (empty($data)) {
+            return NULL; /// Purchase document dont exists. This case should never happen.
+        }
+
+        $subaccount = $data[0]['codsubcuenta'];
+        return empty($subaccount) ? NULL : $subaccount;
     }
 
     protected function getInvoiceLinesAccounts(string $type, string $default): array
@@ -129,32 +146,16 @@ class InvoiceToAccounting extends AccountingGenerator
 
         $data = $this->dataBase->select($sql);
         if (empty($data)) {
-            return []; /// TODO: document dont have lines.
+            return []; /// document dont have lines. This case should never happen
         }
 
-        foreach ($data as $line) {
+        foreach ($data as $key => $line) {
             if (empty($line['codsubcuenta'])) {
-                $line['codsubcuenta'] = $this->getPrefixAccount($type, $default);
+                $prefix = $this->getPrefixAccount($this->document->codejercicio, $type, $default);
+                $data[$key]['codsubcuenta'] = $this->fillToLength($this->exercise->longsubcuenta, '', $prefix);
             }
         }
         return $data;
-    }
-
-    /**
-     * Search prefix account for customers/purchases into exercise and account plan
-     *
-     * @param string $type
-     * @param string $default
-     * @return string
-     */
-    protected function getPrefixAccount(string $type, string $default): string
-    {
-        $where = [
-            new DataBaseWhere('codejercicio', $this->document->codejercicio),
-            new DataBaseWhere('codcuentaesp', $type)
-        ];
-        $this->account->loadFromCode('', $where);
-        return $this->account->codcuenta ?? $default;
     }
 
     /**
@@ -175,29 +176,8 @@ class InvoiceToAccounting extends AccountingGenerator
         }
 
         /// Calculate subaccount from account plan or default account
-        $prefix = $this->getPrefixAccount($type, $default);
-        return $this->fillToLength($this->exercise->longsubcuenta, $prefix);
-    }
-
-    /**
-     * Search document and inicializate auxiliar model class
-     *
-     * @param Model\Base\BusinessDocument $model
-     * @param int $idDocument
-     * @return bool
-     */
-    protected function setDocument(Model\Base\BusinessDocument $model, int $idDocument): bool
-    {
-        if ($model->loadFromCode($idDocument)) {
-            $this->document = $model;
-            $this->exercise->loadFromCode($this->document->codejercicio);
-
-            $tools = new BusinessDocumentTools();
-            $this->subtotals = $tools->getSubtotals($this->document->getLines());
-            return true;
-        }
-
-        return false; /// document dont exists
+        $prefix = $this->getPrefixAccount($this->document->codejercicio, $type, $default);
+        return $this->fillToLength($this->exercise->longsubcuenta, '', $prefix);
     }
 
     /**
@@ -207,135 +187,146 @@ class InvoiceToAccounting extends AccountingGenerator
      */
     protected function calculateCustomerAccount(): string
     {
-        $prefix = $this->getPrefixAccount('CLIENT', '4300');
+        $prefix = $this->getPrefixAccount($this->document->codejercicio, 'CLIENT', '4300');
         return $this->fillToLength($this->exercise->longsubcuenta, $this->document->codcliente, $prefix);
+    }
+
+    /**
+     * Calculate purchase account from purchase code
+     *
+     * @return string
+     */
+    protected function calculatePurchaseAccount(): string
+    {
+        $prefix = $this->getPrefixAccount($this->document->codejercicio, 'PROVEE', '4000');
+        return $this->fillToLength($this->exercise->longsubcuenta, $this->document->codproveedor, $prefix);
     }
 
     /**
      * Generate the accounting entry for a sales document
      *
-     * @param int $idDocument
      * @return bool
      */
-    public function AccountSales(int $idDocument): bool
+    public function AccountSales(): bool
     {
-        if (!$this->setDocument(new Model\FacturaCliente(), $idDocument)) {
-            return false; /// document dont exists, nothing to do
+        if (empty($this->subtotals)) {
+            return false; /// document dont have lines, nothing to do
         }
 
         /// Set Entry Basic Data
-        $entry = $this->getEntry();
-        array_replace($entry, [
+        $entry = array_replace($this->getEntry(), [
             'id' => $this->document->idasiento,
             'date' => $this->document->fecha,
             'document' => $this->document->codigo,
             'concept' => $this->i18n->trans('account-sales', ['document' => $this->document->codigo, 'customer' => $this->document->nombrecliente]),
-            'editable' => false
+            'editable' => false,
+            'total' => $this->document->total
         ]);
 
         // Add Customer Line
-        $subAccount = $this->getCustumerAccount() ?? $this->calculateCustumerAccount();
+        $subAccount = $this->getCustomerAccount() ?? $this->calculateCustomerAccount();
 
-        $entry['lines'][] = $this->getLine();
-        array_replace($entry['lines'][0], [
+        $entry['lines'][] = array_replace($this->getLine(), [
             'subaccount' => $subAccount,
             'debit' => $this->document->total,
         ]);
 
-        // Add VAT Lines
-        $index = 1;
+        // Add VAT Lines.
         foreach ($this->subtotals as $key => $subtotal) {
             $this->vat->loadFromCode($key);
 
-            $entry['lines'][] = $this->getLine(true);
-            array_replace($entry['lines'][$index], [
+            $entry['lines'][] = array_replace($this->getLine(true), [
                 'subaccount' => $this->getVatAccount($this->vat->codimpuesto, 'IVAREP', '4770'),
-                'credit' => $subtotal['totaliva'] + $subtotal['totalrecargo']
+                'offsetting' => $subAccount,
+                'credit' => $subtotal['totaliva'] + $subtotal['totalrecargo'],
+                'VAT' => [
+                    'document' => $this->document->codigo,
+                    'vat-id' => $this->document->cifnif,
+                    'tax-base' => $subtotal['neto'],
+                    'pct-vat' => $this->vat->iva,
+                    'surcharge' => $this->vat->recargo
+                ]
             ]);
-            array_replace($entry['lines'][$index]['VAT'], [
-                'document' => $this->document->codigo,
-                'vat-id' => $this->document->cifnif,
-                'tax-base' => $subtotal['neto'],
-                'pct-vat' => $this->vat->iva,
-                'surcharge' => $this->vat->recargo
-            ]);
-            ++$index;
         }
 
         // Add Sell Lines
         foreach ($this->getInvoiceLinesAccounts('VENTAS', '7000') as $line) {
-            $entry['lines'][] = $this->getLine();
-            array_replace($entry['lines'][$index], [
+            $entry['lines'][] = array_replace($this->getLine(), [
                 'subaccount' => $line['codsubcuenta'],
+                'offsetting' => $subAccount,
                 'credit' => $line['total']
             ]);
-            ++$index;
         }
 
-        return $this->AccountEntry($entry);
+        /// Generate Account Entry and set id into sale document
+        if ($this->AccountEntry($entry)) {
+            $this->document->idasiento = $entry['id'];
+            return true;
+        }
+        return false;
     }
 
     /**
      * Generate the accounting entry for a purchase document
      *
-     * @param int $idDocument
      * @return bool
      */
-    public function AccountPurchase(int $idDocument): bool
+    public function AccountPurchase(): bool
     {
-        if (!$this->setDocument(new Model\FacturaProveedor(), $idDocument)) {
-            return false; /// document dont exists, nothing to do
+        if (empty($this->subtotals)) {
+            return false; /// document dont have lines, nothing to do
         }
 
         /// Set Entry Basic Data
-        $entry = $this->getEntry();
-        array_replace($entry, [
+        $entry = array_replace($this->getEntry(), [
             'id' => $this->document->idasiento,
             'date' => $this->document->fecha,
             'document' => $this->document->codigo,
-            'concept' => $this->i18n->trans('account-purchase', ['document' => $this->document->codigo, 'supplier' => $this->document->nombrecliente]),
-            'editable' => false
+            'concept' => $this->i18n->trans('account-purchase', ['document' => $this->document->codigo, 'supplier' => $this->document->nombre]),
+            'editable' => false,
+            'total' => $this->document->total
         ]);
 
         // Add Purchase Line
         $subAccount = $this->getPurchaseAccount() ?? $this->calculatePurchaseAccount();
 
-        $entry['lines'][] = $this->getLine();
-        array_replace($entry['lines'][0], [
+        $entry['lines'][] = array_replace($this->getLine(), [
             'subaccount' => $subAccount,
             'credit' => $this->document->total,
         ]);
 
-        // Add VAT Lines
-        $index = 1;
+        // Add VAT Lines.
         foreach ($this->subtotals as $key => $subtotal) {
             $this->vat->loadFromCode($key);
 
-            $entry['lines'][] = $this->getLine(true);
-            array_replace($entry['lines'][$index], [
+            $entry['lines'][] = array_replace($this->getLine(true), [
                 'subaccount' => $this->getVatAccount($this->vat->codimpuesto, 'IVASUP', '4720'),
-                'debit' => $subtotal['totaliva'] + $subtotal['totalrecargo']
+                'offsetting' => $subAccount,
+                'debit' => $subtotal['totaliva'] + $subtotal['totalrecargo'],
+                'VAT' => [
+                    'document' => $this->document->codigo,
+                    'vat-id' => $this->document->cifnif,
+                    'tax-base' => $subtotal['neto'],
+                    'pct-vat' => $this->vat->iva,
+                    'surcharge' => $this->vat->recargo
+                ]
             ]);
-            array_replace($entry['lines'][$index]['VAT'], [
-                'document' => $this->document->codigo,
-                'vat-id' => $this->document->cifnif,
-                'tax-base' => $subtotal['neto'],
-                'pct-vat' => $this->vat->iva,
-                'surcharge' => $this->vat->recargo
-            ]);
-            ++$index;
         }
 
-        // Add Buy Lines
+        // Add Sell Lines
         foreach ($this->getInvoiceLinesAccounts('COMPRA', '6000') as $line) {
-            $entry['lines'][] = $this->getLine();
-            array_replace($entry['lines'][$index], [
+            $entry['lines'][] = array_replace($this->getLine(), [
                 'subaccount' => $line['codsubcuenta'],
+                'offsetting' => $subAccount,
                 'debit' => $line['total']
             ]);
-            ++$index;
         }
 
-        return $this->AccountEntry($entry);
+        /// Generate Account Entry and set id into sale document
+        if ($this->AccountEntry($entry)) {
+            $this->document->idasiento = $entry['id'];
+            return true;
+        }
+        return false;
     }
 }
