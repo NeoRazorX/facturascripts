@@ -46,16 +46,24 @@
                 {{ filter.render() | raw }}
             {% endfor %}
         </div>
+        <div class="row">
+            <div class="col-12">
+                {% set row = currentView.getRow('header') %}
+                {{ row.render() | raw }}
+            </div>
+        </div>
     </div>
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>
-                        <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                            <input class="form-check-input listActionCB" type="checkbox" />
-                        </div>
-                    </th>
+                    {% if currentView.cursor | length > 0 %}
+                        <th>
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listActionCB" type="checkbox" />
+                            </div>
+                        </th>
+                    {% endif %}
                     {% for column in currentView.getColumns() %}
                         {{ column.tableHeader() | raw }}
                     {% endfor %}
@@ -82,6 +90,14 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                {% set row = currentView.getRow('footer') %}
+                {{ row.render() | raw }}
+            </div>
+        </div>
     </div>
 </form>
 

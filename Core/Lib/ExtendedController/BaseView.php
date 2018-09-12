@@ -306,7 +306,7 @@ abstract class BaseView
      *
      * @param string $key
      *
-     * @return RowItem
+     * @return mixed
      */
     public function getRow(string $key)
     {
