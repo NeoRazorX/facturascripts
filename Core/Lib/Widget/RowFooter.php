@@ -55,9 +55,12 @@ class RowFooter
 
     /**
      * 
+     * @param string $viewName
+     * @param string $formName
+     *
      * @return string
      */
-    public function render()
+    public function render($viewName, $formName = '')
     {
         $html = '';
         foreach ($this->children as $child) {
@@ -66,6 +69,13 @@ class RowFooter
             }
 
             $html .= $this->renderGroup($child);
+        }
+
+        if (empty($formName)) {
+            return '<form method="post">'
+                . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
+                . $html
+                . '</form>';
         }
 
         return $html;
@@ -82,7 +92,17 @@ class RowFooter
         $color = isset($button['color']) ? $button['color'] : 'light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
-        $onclick = isset($button['action']) ? ' onclick="alert(\'' . $button['action'] . '\');"' : '';
+
+        $onclick = '';
+        switch ($button['type']) {
+            case 'action':
+                $onclick = ' onclick="alert(\'' . $button['action'] . '\');"';
+                break;
+
+            case 'modal':
+                $onclick = ' data-toggle="modal" data-target="#modal' . $button['action'] . '"';
+                break;
+        }
 
         return '<button type="button" class="btn btn-' . $color . '"' . $onclick . '>' . $icon . $label . '</button>';
     }

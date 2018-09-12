@@ -58,7 +58,7 @@
     <modals>
         <group name="import-accounting" title="import-accounting-plan" icon="fa-file">
             <column name="accounting-file" numcolumns="12">
-                <widget type="filechooser" fieldname="accountingfile" required="true" />
+                <widget type="file" fieldname="accountingfile" required="true" />
             </column>
         </group>
     </modals>

@@ -1,6 +1,10 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
 
+{# -- Row header -- #}
+{% set row = currentView.getRow('header') %}
+{{ row.render(currentView.getViewName()) | raw }}
+
 <form id="formEditView{{ currentView.getViewName() }}" method="post">
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card">
@@ -31,3 +35,14 @@
         </div>
     </div>
 </form>
+
+<br/>
+
+{# -- Row footer -- #}
+{% set row = currentView.getRow('footer') %}
+{{ row.render(currentView.getViewName()) | raw }}
+
+{# -- Modals -- #}
+{% for group in currentView.getModals() %}
+    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+{% endfor %}

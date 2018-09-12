@@ -262,6 +262,16 @@ abstract class BaseView
     }
 
     /**
+     * Returns the modal configuration
+     *
+     * @return GroupItem[]
+     */
+    public function getModals()
+    {
+        return $this->pageOption->modals;
+    }
+
+    /**
      * 
      * @return array
      */

@@ -36,6 +36,7 @@
     <div class="container-fluid d-print-none">
         <div class="row">
             <div class="col-md-7">
+                {# -- Page data for small devices -- #}
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb d-md-none">
                         <li class="breadcrumb-item">
@@ -63,6 +64,7 @@
                         </a>
                     {% endif %}
                 </div>
+                {# -- Options button -- #}
                 <div class="btn-group">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -90,6 +92,7 @@
 
 {% block body %}
     {{ parent() }}
+    {# -- Tabs -- #}
     <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
         {% for viewName, view in fsc.views %}
             <li class="nav-item">

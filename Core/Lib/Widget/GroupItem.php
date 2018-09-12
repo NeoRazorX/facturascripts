@@ -30,6 +30,12 @@ class GroupItem
 {
 
     /**
+     *
+     * @var string
+     */
+    public $class;
+
+    /**
      * Define the columns that the group includes
      *
      * @var ColumnItem[]
@@ -83,6 +89,7 @@ class GroupItem
             static::$i18n = new Translator();
         }
 
+        $this->class = isset($data['class']) ? $data['class'] : '';
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
         $this->name = $data['name'];
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
@@ -112,6 +119,49 @@ class GroupItem
         }
 
         $html .= '</div><br/></div>';
+        return $html;
+    }
+
+    /**
+     * 
+     * @param object $model
+     * @param string $viewName
+     *
+     * @return string
+     */
+    public function modal($model, $viewName)
+    {
+        $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
+        $html = '<form method="post"><input type="hidden" name="activetab" value="' . $viewName . '"/>'
+            . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
+            . '<div class="modal-dialog ' . $this->class . '" role="document">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title">' . $icon . static::$i18n->trans($this->title) . '</h5>'
+            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<span aria-hidden="true">&times;</span>'
+            . '</button>'
+            . '</div>'
+            . '<div class="modal-body">';
+
+        foreach ($this->columns as $col) {
+            $html .= $col->edit($model);
+        }
+
+        $html .= '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . static::$i18n->trans('cancel')
+            . '</button>'
+            . '<button type="submit" name="action" value="' . $this->name . '" class="btn btn-primary">'
+            . static::$i18n->trans('accept')
+            . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</form>';
+
         return $html;
     }
 
