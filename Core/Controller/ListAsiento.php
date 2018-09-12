@@ -64,6 +64,8 @@ class ListAsiento extends ExtendedController\ListController
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
 
+        $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal');
+
         /// concepts
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);

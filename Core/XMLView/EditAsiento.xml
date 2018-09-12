@@ -51,6 +51,9 @@
                 <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
             </widget>
         </column>
+        <column name="channel" numcolumns="1" order="150">
+            <widget type="number" decimal="0" step="1" fieldname="canal" />
+        </column>
         <column name="ammount" numcolumns="2" display="right" order="200">
             <widget type="money" fieldname="importe" icon="fa-money-bill-alt" readonly="readonly" />
         </column>
