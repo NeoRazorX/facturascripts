@@ -34,12 +34,25 @@ class SelectFilter extends BaseFilter
      */
     public $values;
 
+    /**
+     * 
+     * @param string $key
+     * @param string $field
+     * @param string $label
+     * @param array  $values
+     */
     public function __construct($key, $field, $label, $values = [])
     {
         parent::__construct($key, $field, $label);
         $this->values = $values;
     }
 
+    /**
+     * 
+     * @param array $where
+     *
+     * @return array
+     */
     public function getDataBaseWhere(array &$where)
     {
         if ('' !== $this->value && null !== $this->value) {
@@ -49,6 +62,10 @@ class SelectFilter extends BaseFilter
         return $where;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function render()
     {
         return '<div class="col-sm-2">'
@@ -60,6 +77,10 @@ class SelectFilter extends BaseFilter
             . '</div>';
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getHtmlOptions()
     {
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';

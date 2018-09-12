@@ -34,12 +34,25 @@ class NumberFilter extends BaseFilter
      */
     public $operation;
 
+    /**
+     * 
+     * @param string $key
+     * @param string $field
+     * @param string $label
+     * @param string $operation
+     */
     public function __construct($key, $field = '', $label = '', $operation = '>=')
     {
         parent::__construct($key, $field, $label);
         $this->operation = $operation;
     }
 
+    /**
+     * 
+     * @param array $where
+     *
+     * @return array
+     */
     public function getDataBaseWhere(array &$where)
     {
         if ('' !== $this->value && null !== $this->value) {
@@ -49,6 +62,10 @@ class NumberFilter extends BaseFilter
         return $where;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function render()
     {
         return '<div class="col-sm-2">'

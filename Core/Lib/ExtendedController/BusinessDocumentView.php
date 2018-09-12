@@ -76,6 +76,9 @@ class BusinessDocumentView extends BaseView
 
         // custom template
         $this->template = 'Master/BusinessDocumentView.html.twig';
+        static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
+        static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentController.js';
     }
 
     /**

@@ -40,6 +40,14 @@ class CheckboxFilter extends BaseFilter
      */
     public $operation;
 
+    /**
+     * 
+     * @param string $key
+     * @param string $field
+     * @param string $label
+     * @param string $operation
+     * @param mixed  $matchValue
+     */
     public function __construct($key, $field = '', $label = '', $operation = '=', $matchValue = true)
     {
         parent::__construct($key, $field, $label);
@@ -47,6 +55,12 @@ class CheckboxFilter extends BaseFilter
         $this->matchValue = $matchValue;
     }
 
+    /**
+     * 
+     * @param array $where
+     *
+     * @return array
+     */
     public function getDataBaseWhere(array &$where)
     {
         if ('TRUE' === $this->value) {
@@ -56,6 +70,10 @@ class CheckboxFilter extends BaseFilter
         return $where;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function render()
     {
         $extra = is_null($this->value) ? '' : ' checked=""';

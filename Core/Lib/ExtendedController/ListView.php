@@ -95,6 +95,7 @@ class ListView extends BaseView
         $this->searchFields = [];
         $this->showFilters = false;
         $this->template = 'Master/ListView.html.twig';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListView.js';
     }
 
     /**

@@ -30,6 +30,12 @@ abstract class BaseFilter
 
     /**
      *
+     * @var array
+     */
+    protected static $assets = [];
+
+    /**
+     *
      * @var string
      */
     public $field;
@@ -77,6 +83,15 @@ abstract class BaseFilter
         $this->key = $key;
         $this->field = empty($field) ? $this->key : $field;
         $this->label = empty($label) ? $this->field : $label;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getAssets()
+    {
+        return static::$assets;
     }
 
     /**

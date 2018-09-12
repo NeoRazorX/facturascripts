@@ -1,13 +1,9 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
 
-<link rel="stylesheet" href="{{ asset('node_modules/handsontable/dist/handsontable.full.min.css') }}" />
-
-<script src="{{ asset('node_modules/handsontable/dist/handsontable.full.min.js') }}"></script>
-<script src="{{ asset('Dinamic/Assets/JS/BusinessDocumentController.js') }}"></script>
 <script type="text/javascript">
     documentLineData = {{ currentView.getLineData() | raw }};
-            documentUrl = '{{ currentView.model.url('edit') | raw }}';
+    documentUrl = '{{ currentView.model.url('edit') | raw }}';
 </script>
 
 <form name="f_document_primary" action="#" method="post">

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\CodeModel;
 
@@ -168,6 +169,14 @@ abstract class BaseController extends Base\Controller
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
+    }
+
+    /**
+     * 
+     */
+    protected function finalStep()
+    {
+        AssetManager::merge($this->assets, BaseView::getAssets());
     }
 
     /**

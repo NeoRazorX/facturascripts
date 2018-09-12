@@ -20,11 +20,13 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Core\Lib\Widget\BaseWidget;
+use FacturaScripts\Core\Lib\Widget\GroupItem;
+use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Lib\Widget\GroupItem;
-use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -34,6 +36,12 @@ use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
  */
 abstract class BaseView
 {
+
+    /**
+     *
+     * @var array
+     */
+    protected static $assets = [];
 
     /**
      * Total count of read rows.
@@ -232,6 +240,15 @@ abstract class BaseView
         if (!empty($column)) {
             $column->display = $disabled ? 'none' : 'left';
         }
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getAssets()
+    {
+        return array_merge_recursive(static::$assets, BaseFilter::getAssets(), BaseWidget::getAssets());
     }
 
     /**

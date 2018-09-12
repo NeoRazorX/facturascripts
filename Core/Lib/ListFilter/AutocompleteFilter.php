@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
+use FacturaScripts\Core\Lib\ListFilter\DataBaseWhere;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
@@ -52,6 +53,16 @@ class AutocompleteFilter extends BaseFilter
      */
     public $where;
 
+    /**
+     * 
+     * @param string $key
+     * @param string $field
+     * @param string $label
+     * @param string $table
+     * @param string $fieldcode
+     * @param string $fieldtitle
+     * @param array  $where
+     */
     public function __construct($key, $field, $label, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
         parent::__construct($key, $field, $label);
@@ -59,8 +70,15 @@ class AutocompleteFilter extends BaseFilter
         $this->fieldcode = empty($fieldcode) ? $this->field : $fieldcode;
         $this->fieldtitle = empty($fieldtitle) ? $this->fieldcode : $fieldtitle;
         $this->where = $where;
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js';
     }
 
+    /**
+     * 
+     * @param array $where
+     *
+     * @return array
+     */
     public function getDataBaseWhere(array &$where)
     {
         if ('' !== $this->value && null !== $this->value) {
@@ -70,6 +88,10 @@ class AutocompleteFilter extends BaseFilter
         return $where;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function render()
     {
         $label = static::$i18n->trans($this->label);
@@ -92,15 +114,20 @@ class AutocompleteFilter extends BaseFilter
                 . '</span>';
         }
 
-        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control autocomplete" data-field="' . $this->field . '" data-source="' . $this->table . '"
-            data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off"/>
-            </div>
-            </div>'
+        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'
+            . ' data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
+            . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off"/>'
+            . '</div>'
+            . '</div>'
             . '</div>';
 
         return $html;
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getDescription()
     {
         $codeModel = new CodeModel();

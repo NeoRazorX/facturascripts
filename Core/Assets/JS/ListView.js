@@ -1,6 +1,6 @@
-/*
+/*!
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -15,37 +15,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-/* 
-    Created on : 09-oct-2017
-    Author     : Artex Trading sa <jcuello@artextrading.com>
-*/
 
-.card-header {
-    padding: .5rem 1.25rem;
-    font-size: 120%;
-    font-weight: bold;
+function listViewSetOffset(viewName, value) {
+    $("#form" + viewName + " :input[name=\"offset\"]").val(value);
+    $("#form" + viewName).submit();
 }
 
-.cust-text {
-    overflow: hidden;
-    font-size: 80%;
+function listViewSetOrder(viewName, value) {
+    $("#form" + viewName + " :input[name=\"order\"]").val(value);
+    $("#form" + viewName).submit();
 }
 
-legend {
-    font-size: 120%;
-    font-weight: bold;
+function listViewShowFilters(viewName) {
+    $("#form" + viewName + "Filters").toggle();
 }
 
-label {
-    font-weight: 500;
-}
-
-select[required],
-input[required] {
-    background: aliceblue;
-}
-
-input:invalid,
-input:required:invalid {
-    border: 1px solid red;
-}
+$(document).ready(function () {
+    // set/unset all delete checkbox
+    $(".listActionCB").click(function () {
+        var checked = $(this).prop("checked");
+        $(".listAction").prop("checked", checked);
+    });
+});

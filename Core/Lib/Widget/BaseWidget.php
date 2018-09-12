@@ -30,6 +30,12 @@ class BaseWidget
 
     /**
      *
+     * @var array
+     */
+    protected static $assets = [];
+
+    /**
+     *
      * @var string
      */
     public $fieldname;
@@ -133,6 +139,15 @@ class BaseWidget
             . '</div>'
             . $descriptionHtml
             . '</div>';
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function getAssets()
+    {
+        return static::$assets;
     }
 
     /**
