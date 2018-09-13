@@ -41,7 +41,7 @@ class RowFooter
     protected static $i18n;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -54,7 +54,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      * @param string $jsFunction
      *
@@ -82,7 +82,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param string $button
      * @param string $viewName
      * @param string $jsFunction
@@ -115,7 +115,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -138,14 +138,14 @@ class RowFooter
     protected function renderCardHeader($group)
     {
         if (isset($group['header'])) {
-            return '<div class="card-footer">' . static::$i18n->trans($group['header']) . '</div>';
+            return '<div class="card-header">' . static::$i18n->trans($group['header']) . '</div>';
         }
 
         return '';
     }
 
     /**
-     * 
+     *
      * @param string $group
      * @param string $viewName
      * @param string $jsFunction
