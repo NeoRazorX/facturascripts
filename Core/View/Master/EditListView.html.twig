@@ -75,6 +75,15 @@
     </div>
 {% endfor %}
 
+{% set row = currentView.getRow('footer') %}
+{% if row is not empty %}
+    <div class="row">
+        <div class="col-12">
+            {{ row.render() | raw }}
+        </div>
+    </div>
+{% endif %}
+
 <br/>
 
 {% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}

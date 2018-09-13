@@ -32,3 +32,13 @@
         </div>
     </div>
 </form>
+
+{% set row = currentView.getRow('footer') %}
+{% if row is not empty %}
+    <br>
+    <div class="row">
+        <div class="col-12">
+            {{ row.render() | raw }}
+        </div>
+    </div>
+{% endif %}
