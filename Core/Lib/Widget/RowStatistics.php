@@ -21,11 +21,11 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Description of RowActions
+ * Description of RowStatistics
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class RowActions
+class RowStatistics
 {
 
     /**
@@ -83,17 +83,10 @@ class RowActions
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
 
-        if (!isset($button['type']) || !isset($button['action'])) {
+        if (!isset($button['type'])) {
             return '';
         }
 
-        if ($button['type'] === 'modal') {
-            return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
-                . $button['action'] . '">' . $icon . $label . '</button>';
-        }
-
-        /// type action
-        return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
-            . $color . '">' . $icon . $label . '</button>';
+        return ' <button type="button" class="btn btn-' . $color . '">' . $icon . $label . '</button>';
     }
 }

@@ -34,13 +34,17 @@
             {% if currentView.searchFields is not empty %}
                 {{ macros.searchControl(currentView, i18n) }}
             {% endif %}
-            {% if currentView.filters is not empty %}
-                <div class="col">
+            <div class="col">
+                {# -- Filters button -- #}
+                {% if currentView.filters is not empty %}
                     <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ currentView.getViewName() }}');">
                         <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
                     </button>
-                </div>
-            {% endif %}
+                {% endif %}
+                {# -- Row statistics -- #}
+                {% set row = currentView.getRow('statistics') %}
+                {{ row.render() | raw }}
+            </div>
             {% if currentView.orderOptions is empty %}
                 <div class="col">
                     <br/><br/>

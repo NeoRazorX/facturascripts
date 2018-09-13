@@ -11,6 +11,13 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
+                <div class="col-12 text-right">
+                    {# -- Row statistics -- #}
+                    {% set row = currentView.getRow('statistics') %}
+                    {{ row.render() | raw }}
+                </div>
+            </div>
+            <div class="row">
                 {% for group in currentView.getColumns() %}
                     {{ group.edit(currentView.model) | raw }}
                 {% endfor %}

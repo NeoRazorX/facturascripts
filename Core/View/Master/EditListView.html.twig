@@ -39,7 +39,11 @@
     </div>
 </form>
 
-<br/>
+<div>
+    {# -- Row statistics -- #}
+    {% set row = currentView.getRow('statistics') %}
+    {{ row.render() | raw }}
+</div>
 
 {# -- Forms -- #}
 {% for counter, model in currentView.cursor %}
