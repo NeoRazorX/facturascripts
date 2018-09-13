@@ -56,11 +56,11 @@ class RowFooter
     /**
      * 
      * @param string $viewName
-     * @param string $formName
+     * @param string $jsFunction
      *
      * @return string
      */
-    public function render($viewName, $formName = '')
+    public function render($viewName, $jsFunction = '')
     {
         $html = '';
         foreach ($this->children as $child) {
@@ -68,10 +68,10 @@ class RowFooter
                 continue;
             }
 
-            $html .= $this->renderGroup($child);
+            $html .= $this->renderGroup($child, $viewName, $jsFunction);
         }
 
-        if (empty($formName)) {
+        if (empty($jsFunction)) {
             return '<form method="post">'
                 . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
                 . $html
@@ -83,28 +83,35 @@ class RowFooter
 
     /**
      * 
-     * @param array $button
+     * @param string $button
+     * @param string $viewName
+     * @param string $jsFunction
      *
      * @return string
      */
-    protected function renderButton($button)
+    protected function renderButton($button, $viewName, $jsFunction)
     {
         $color = isset($button['color']) ? $button['color'] : 'light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
 
-        $onclick = '';
-        switch ($button['type']) {
-            case 'action':
-                $onclick = ' onclick="alert(\'' . $button['action'] . '\');"';
-                break;
-
-            case 'modal':
-                $onclick = ' data-toggle="modal" data-target="#modal' . $button['action'] . '"';
-                break;
+        if (!isset($button['type'])) {
+            return '';
         }
 
-        return '<button type="button" class="btn btn-' . $color . '"' . $onclick . '>' . $icon . $label . '</button>';
+        if ($button['type'] === 'modal') {
+            return '<button type="button" class="btn btn-' . $color . '"data-toggle="modal" data-target="#modal'
+                . $button['action'] . '">' . $icon . $label . '</button>';
+        }
+
+        /// type action
+        if (empty($jsFunction)) {
+            return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
+                . $color . '">' . $icon . $label . '</button>';
+        }
+
+        return '<button type="button" class="btn btn-' . $color . '" onclick="' . $jsFunction
+            . '(\'' . $viewName . '\',\'' . $button['action'] . '\');">' . $icon . $label . '</button>';
     }
 
     /**
@@ -139,11 +146,13 @@ class RowFooter
 
     /**
      * 
-     * @param array $group
+     * @param string $group
+     * @param string $viewName
+     * @param string $jsFunction
      *
      * @return string
      */
-    protected function renderGroup($group)
+    protected function renderGroup($group, $viewName, $jsFunction)
     {
         $html = '<div class="card">'
             . $this->renderCardHeader($group)
@@ -154,7 +163,7 @@ class RowFooter
                 continue;
             }
 
-            $html .= $this->renderButton($child);
+            $html .= $this->renderButton($child, $viewName, $jsFunction);
         }
 
         $html .= '</div>'

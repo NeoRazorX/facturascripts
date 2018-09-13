@@ -5,6 +5,7 @@
 <br/>
 
 <form id="{{ formName }}" method="post">
+    <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
@@ -54,7 +55,7 @@
         <div class="row">
             <div class="col-12">
                 {% set row = currentView.getRow('header') %}
-                {{ row.render(currentView.getViewName(), formName) | raw }}
+                {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
             </div>
         </div>
     </div>
@@ -115,7 +116,7 @@
         <div class="row">
             <div class="col-12">
                 {% set row = currentView.getRow('footer') %}
-                {{ row.render(currentView.getViewName(), formName) | raw }}
+                {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
             </div>
         </div>
     </div>

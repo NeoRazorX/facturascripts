@@ -16,6 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+function listViewSetAction(viewName, value) {
+    $("#form" + viewName + " :input[name=\"action\"]").val(value);
+    $("#form" + viewName).submit();
+}
+
 function listViewSetOffset(viewName, value) {
     $("#form" + viewName + " :input[name=\"offset\"]").val(value);
     $("#form" + viewName).submit();
