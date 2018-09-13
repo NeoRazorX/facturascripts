@@ -105,13 +105,13 @@ class Settings extends Base\ModelClass
     }
 
     /**
-     * Returns no description.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
-    public function primaryDescription()
+    public static function tableName()
     {
-        return '';
+        return 'settings';
     }
 
     /**
@@ -136,15 +136,5 @@ class Settings extends Base\ModelClass
     protected function saveUpdate(array $values = [])
     {
         return parent::saveUpdate(['properties' => json_encode($this->properties)]);
-    }
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'settings';
     }
 }

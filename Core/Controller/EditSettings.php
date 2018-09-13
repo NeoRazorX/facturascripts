@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Lib\EmailTools;
-use FacturaScripts\Core\Model\Base\ModelClass;
 
 /**
  * Controller to edit main settings
@@ -50,7 +49,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Return a list of all XML view files on XMLView folder.
+     * Return a list of all XML settings files on XMLView folder.
      *
      * @return array
      */
@@ -74,11 +73,18 @@ class EditSettings extends ExtendedController\PanelController
         $modelName = 'Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
-            $title = strtolower(substr($name, 8));
+            $title = $this->getKeyFromViewName($name);
             $this->addEditView($name, $modelName, $title, $icon);
-        }
 
-        $this->testViews();
+            /// change icon
+            $groups = $this->views[$name]->getColumns();
+            foreach ($groups as $group) {
+                if (!empty($group->icon)) {
+                    $this->views[$name]->icon = $group->icon;
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -160,38 +166,6 @@ class EditSettings extends ExtendedController\PanelController
         if ($view->model->name === null) {
             $view->model->description = $view->model->name = strtolower(substr($viewName, 8));
             $view->model->save();
-        }
-    }
-
-    /**
-     * Test all view to show usefull errors.
-     */
-    private function testViews()
-    {
-        foreach ($this->views as $viewName => $view) {
-            if (!$view->model) {
-                continue;
-            }
-
-            $error = true;
-            foreach ($view->getColumns() as $group) {
-                if (!isset($group->columns)) {
-                    break;
-                }
-
-                foreach ($group->columns as $col) {
-                    if ($col->name === 'name') {
-                        $error = false;
-                        break;
-                    }
-                }
-
-                break;
-            }
-
-            if ($error) {
-                $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
-            }
         }
     }
 }

@@ -113,7 +113,7 @@ abstract class PanelController extends BaseController
             }
 
             // check if the view should be active
-            //$this->setSettings($viewName, 'active', $this->hasData);
+            $this->setSettings($viewName, 'active', $this->hasData);
         }
 
         // General operations with the loaded data
