@@ -243,7 +243,7 @@ abstract class BaseView
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public static function getAssets()
@@ -334,7 +334,24 @@ abstract class BaseView
     }
 
     /**
-     * 
+     * Verifies the structure and loads into the model the given data array
+     *
+     * @param array $data
+     */
+    public function loadFromData(array &$data)
+    {
+        $fieldKey = $this->model->primaryColumn();
+        $fieldValue = $data[$fieldKey];
+        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
+            $this->model->loadFromCode($fieldValue);
+        }
+
+        $this->model->checkArrayData($data);
+        $this->model->loadFromData($data, ['action', 'activetab']);
+    }
+
+    /**
+     *
      * @param User|false $user
      */
     public function loadPageOptions($user)
