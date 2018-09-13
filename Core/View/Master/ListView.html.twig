@@ -25,6 +25,11 @@
                     {{ macros.printButton(fsc, currentView, i18n) }}
                 </div>
             </div>
+            <div class="col">
+                {# -- Row actions -- #}
+                {% set row = currentView.getRow('actions') %}
+                {{ row.render() | raw }}
+            </div>
             {# -- Search field -- #}
             {% if currentView.searchFields is not empty %}
                 {{ macros.searchControl(currentView, i18n) }}

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Base\Translator;
+
 /**
  * Description of RowActions
  *
@@ -25,5 +27,73 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowActions
 {
-    //put your code here
+
+    /**
+     *
+     * @var array
+     */
+    protected $children;
+
+    /**
+     *
+     * @var Translator
+     */
+    protected static $i18n;
+
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        if (!isset(static::$i18n)) {
+            static::$i18n = new Translator();
+        }
+
+        $this->children = $data['children'];
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function render()
+    {
+        $html = '';
+        foreach ($this->children as $child) {
+            if ($child['tag'] !== 'button') {
+                continue;
+            }
+
+            $html .= $this->renderButton($child);
+        }
+
+        return $html;
+    }
+
+    /**
+     * 
+     * @param array $button
+     *
+     * @return string
+     */
+    protected function renderButton($button)
+    {
+        $color = isset($button['color']) ? $button['color'] : 'light';
+        $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
+        $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
+
+        if (!isset($button['type'])) {
+            return '';
+        }
+
+        if ($button['type'] === 'modal') {
+            return '<button type="button" class="btn btn-' . $color . '"data-toggle="modal" data-target="#modal'
+                . $button['action'] . '">' . $icon . $label . '</button>';
+        }
+
+        /// type action
+        return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
+            . $color . '">' . $icon . $label . '</button>';
+    }
 }
