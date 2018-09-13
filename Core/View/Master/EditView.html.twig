@@ -2,6 +2,7 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <form id="formEditView{{ currentView.getViewName() }}" method="post">
+    <input type="hidden" name="action" value="save">
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card">
         <div class="card-body">

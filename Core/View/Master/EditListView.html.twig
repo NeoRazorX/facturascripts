@@ -10,6 +10,7 @@
 
 {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
 <form id="{{ formName }}" method="post">
+    <input type="hidden" name="action" value="save">
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card bg-light">
         <div class="card-header">
