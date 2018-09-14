@@ -25,5 +25,34 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class WidgetText extends BaseWidget
 {
-    
+
+    /**
+     * Indicates the maximum length of characters.
+     * 0 -> indeterminate
+     *
+     * @var int
+     */
+    protected $maxlength;
+
+    /**
+     * Class constructor
+     *
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->maxlength = $data['maxlength'] ?? 0;
+    }
+
+    /**
+     * Add extra attributes to html input field
+     *
+     * @return string
+     */
+    protected function inputHtmlExtraParams()
+    {
+        $params = ($this->maxlength > 0) ? ' maxlength="' . $this->maxlength . '"' : '';
+        return $params . parent::inputHtmlExtraParams();
+    }
 }

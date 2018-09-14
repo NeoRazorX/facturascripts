@@ -35,7 +35,36 @@ class WidgetNumber extends BaseWidget
     protected static $numberTools;
 
     /**
-     * 
+     * Indicates the maximum length of characters.
+     * 0 -> indeterminate
+     *
+     * @var int
+     */
+    protected $maxlength;
+
+    /**
+     * Indicates the min value
+     *
+     * @var int
+     */
+    protected $min;
+
+    /**
+     * Indicates the max value
+     *
+     * @var int
+     */
+    protected $max;
+
+    /**
+     * Indicates the step value
+     *
+     * @var int
+     */
+    protected $step;
+
+    /**
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -45,10 +74,14 @@ class WidgetNumber extends BaseWidget
         }
 
         parent::__construct($data);
+        $this->maxlength = $data['maxlength'] ?? 0;
+        $this->min = $data['min'] ?? 0;
+        $this->max = $data['max'] ?? 0;
+        $this->step = $data['step'] ?? 0;
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $extraClass
      *
@@ -60,7 +93,20 @@ class WidgetNumber extends BaseWidget
     }
 
     /**
-     * 
+     * Add extra attributes to html input field
+     *
+     * @return string
+     */
+    protected function inputHtmlExtraParams()
+    {
+        $min = ($this->min > 0) ? ' min="' . $this->min . '"' : '';
+        $max = ($this->max > 0) ? ' max="' . $this->max . '"' : '';
+        $step = ($this->step > 0) ? ' step="' . $this->step . '"' : '';
+        return $min . $max . $step . parent::inputHtmlExtraParams();
+    }
+
+    /**
+     *
      * @return string
      */
     protected function show()
@@ -69,7 +115,7 @@ class WidgetNumber extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param string $initialClass
      * @param string $alternativeClass
      */
