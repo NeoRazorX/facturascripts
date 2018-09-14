@@ -123,10 +123,8 @@
     {# -- Row footer -- #}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
-                {% set row = currentView.getRow('footer') %}
-                {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
-            </div>
+            {% set row = currentView.getRow('footer') %}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
         </div>
     </div>
 </form>

@@ -41,7 +41,7 @@ class RowFooter
     protected static $i18n;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -54,7 +54,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      * @param string $jsFunction
      *
@@ -64,11 +64,9 @@ class RowFooter
     {
         $html = '';
         foreach ($this->children as $child) {
-            if ($child['tag'] !== 'group') {
-                continue;
+            if ($child['tag'] == 'group') {
+                $html .= $this->renderGroup($child, $viewName, $jsFunction);
             }
-
-            $html .= $this->renderGroup($child, $viewName, $jsFunction);
         }
 
         if (empty($jsFunction)) {
@@ -82,7 +80,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param string $button
      * @param string $viewName
      * @param string $jsFunction
@@ -115,7 +113,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -130,7 +128,7 @@ class RowFooter
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -138,14 +136,29 @@ class RowFooter
     protected function renderCardHeader($group)
     {
         if (isset($group['header'])) {
-            return '<div class="card-footer">' . static::$i18n->trans($group['header']) . '</div>';
+            return '<div class="card-header">' . static::$i18n->trans($group['header']) . '</div>';
         }
 
         return '';
     }
 
     /**
-     * 
+     *
+     * @param array $group
+     *
+     * @return string
+     */
+    protected function renderCardBody($group)
+    {
+        if (isset($group['body'])) {
+            return '<p><i>' . static::$i18n->trans($group['body']) . '</i></p>';
+        }
+
+        return '';
+    }
+
+    /**
+     *
      * @param string $group
      * @param string $viewName
      * @param string $jsFunction
@@ -154,20 +167,24 @@ class RowFooter
      */
     protected function renderGroup($group, $viewName, $jsFunction)
     {
-        $html = '<div class="card">'
+        $columns = isset($group['numcolumns']) ? 'col-' . $group['numcolumns'] : 'col-12';
+        $class = isset($group['class']) ? (' ' . $group['class']) : '';
+
+        $html = '<div class="' . $columns . '">'
+            . '<div name="' . $group['name'] . '" class="card' . $class . '">'
             . $this->renderCardHeader($group)
-            . '<div class="card-body">';
+            . '<div class="card-body">'
+            . $this->renderCardBody($group);
 
         foreach ($group['children'] as $child) {
-            if ($child['tag'] !== 'button') {
-                continue;
+            if ($child['tag'] == 'button') {
+                $html .= $this->renderButton($child, $viewName, $jsFunction);
             }
-
-            $html .= $this->renderButton($child, $viewName, $jsFunction);
         }
 
         $html .= '</div>'
             . $this->renderCardFooter($group)
+            . '</div>'
             . '</div>';
 
         return $html;
