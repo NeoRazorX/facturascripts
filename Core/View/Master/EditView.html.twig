@@ -14,7 +14,7 @@
                 <div class="col-12 text-right">
                     {# -- Row statistics -- #}
                     {% set row = currentView.getRow('statistics') %}
-                    {{ row.render() | raw }}
+                    {{ row.render(fsc) | raw }}
                 </div>
             </div>
             <div class="row">

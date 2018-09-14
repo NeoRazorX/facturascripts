@@ -38,11 +38,9 @@ class EditCliente extends ExtendedController\PanelController
     /**
      * Returns the sum of the customer's total delivery notes.
      *
-     * @param ExtendedController\EditView $view
-     *
      * @return string
      */
-    public function calcCustomerDeliveryNotes($view)
+    public function calcCustomerDeliveryNotes()
     {
         $where = [
             new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
@@ -58,11 +56,9 @@ class EditCliente extends ExtendedController\PanelController
     /**
      * Returns the sum of the client's total outstanding invoices.
      *
-     * @param ExtendedController\EditView $view
-     *
      * @return string
      */
-    public function calcCustomerInvoicePending($view)
+    public function calcCustomerInvoicePending()
     {
         $where = [
             new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),

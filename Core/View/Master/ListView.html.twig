@@ -43,7 +43,7 @@
                 {% endif %}
                 {# -- Row statistics -- #}
                 {% set row = currentView.getRow('statistics') %}
-                {{ row.render() | raw }}
+                {{ row.render(fsc) | raw }}
             </div>
             {% if currentView.orderOptions is empty %}
                 <div class="col">

@@ -42,7 +42,7 @@
 <div>
     {# -- Row statistics -- #}
     {% set row = currentView.getRow('statistics') %}
-    {{ row.render() | raw }}
+    {{ row.render(fsc) | raw }}
 </div>
 
 {# -- Forms -- #}
