@@ -64,11 +64,9 @@ class RowFooter
     {
         $html = '';
         foreach ($this->children as $child) {
-            if ($child['tag'] !== 'group') {
-                continue;
+            if ($child['tag'] === 'group') {
+                $html .= $this->renderGroup($child, $viewName, $jsFunction);
             }
-
-            $html .= $this->renderGroup($child, $viewName, $jsFunction);
         }
 
         if (empty($jsFunction)) {
@@ -137,8 +135,8 @@ class RowFooter
      */
     protected function renderCardHeader($group)
     {
-        if (isset($group['header'])) {
-            return '<div class="card-footer">' . static::$i18n->trans($group['header']) . '</div>';
+        if (isset($group['title'])) {
+            return '<div class="card-header">' . static::$i18n->trans($group['title']) . '</div>';
         }
 
         return '';
@@ -164,6 +162,10 @@ class RowFooter
             }
 
             $html .= $this->renderButton($child, $viewName, $jsFunction);
+        }
+
+        if (isset($group['label'])) {
+            $html .= '<p>' . static::$i18n->trans($group['label']) . '</p>';
         }
 
         $html .= '</div>'
