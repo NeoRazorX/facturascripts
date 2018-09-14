@@ -39,6 +39,27 @@ class Familia extends Base\ModelClass
     public $codfamilia;
 
     /**
+     * Sub-account code for purchases.
+     *
+     * @var string
+     */
+    public $codsubcuentacom;
+
+    /**
+     * Code for the shopping sub-account, but with IRPF.
+     *
+     * @var string
+     */
+    public $codsubcuentairpfcom;
+
+    /**
+     * Sub-account code for sales.
+     *
+     * @var string
+     */
+    public $codsubcuentaven;
+
+    /**
      * Family's description.
      *
      * @var string
