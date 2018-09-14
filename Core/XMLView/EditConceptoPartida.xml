@@ -35,7 +35,6 @@
             </column>
         </group>
     </columns>
-
     <rows>
         <row type="actions">
             <button type="action" label='help' color="primary" action="help" icon="fa-question-circle" onclick="showInfoCard" />

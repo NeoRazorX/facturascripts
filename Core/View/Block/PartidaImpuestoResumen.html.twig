@@ -8,21 +8,21 @@
 </style>
 
 <div class="item-data text-info">
-    <h4><i class="fas fa-map-signs mr-2"></i>{{ context.i18n.trans('previous-balance') }}</h4>
-    <h4>{{ context.fsc.getAmount('previousBalance') }}</h4>
+    <h4><i class="fas fa-map-signs mr-2"></i>{{ i18n.trans('previous-balance') }}</h4>
+    <h4>{{ fsc.getAmount('previousBalance') }}</h4>
 </div>
 
 <div class="item-data text-info">
-    <h4><i class="fas fa-sign-out mr-2"></i>{{ context.i18n.trans('sales') }}</h4>
-    <h4>{{ context.fsc.getAmount('sales') }}</h4>
+    <h4><i class="fas fa-sign-out mr-2"></i>{{ i18n.trans('sales') }}</h4>
+    <h4>{{ fsc.getAmount('sales') }}</h4>
 </div>
 
 <div class="item-data text-info">
-    <h4><i class="fas fa-sign-in mr-2"></i>{{ context.i18n.trans('purchases') }}</h4>
-    <h4>{{ context.fsc.getAmount('purchases') }}</h4>
+    <h4><i class="fas fa-sign-in mr-2"></i>{{ i18n.trans('purchases') }}</h4>
+    <h4>{{ fsc.getAmount('purchases') }}</h4>
 </div>
 
-<div class="item-data {% if context.fsc.total > 0 %}text-danger{% else %}text-primary{% endif %}">
-    <h4><i class="fas fa-list-alt mr-2"></i>{{ context.i18n.trans('result') }}</h4>
-    <h4>{{ context.fsc.getAmount('total') }}</h4>
+<div class="item-data {% if fsc.total > 0 %}text-danger{% else %}text-primary{% endif %}">
+    <h4><i class="fas fa-list-alt mr-2"></i>{{ i18n.trans('result') }}</h4>
+    <h4>{{ fsc.getAmount('total') }}</h4>
 </div>

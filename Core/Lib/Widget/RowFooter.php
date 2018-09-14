@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\Translator;
 
 /**
@@ -157,11 +158,14 @@ class RowFooter
             . '<div class="card-body">';
 
         foreach ($group['children'] as $child) {
-            if ($child['tag'] !== 'button') {
-                continue;
+            if ($child['tag'] === 'button') {
+                $html .= $this->renderButton($child, $viewName, $jsFunction);
             }
+        }
 
-            $html .= $this->renderButton($child, $viewName, $jsFunction);
+        if (isset($group['html'])) {
+            $webRender = new WebRender();
+            $html .= $webRender->render($group['html']);
         }
 
         if (isset($group['label'])) {
