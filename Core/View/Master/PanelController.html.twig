@@ -122,7 +122,8 @@
                     <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            <a class="nav-link{{ active }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                            {% set disable = view.settings.active ? '' : ' disabled' %}
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
                                     <span class='badge badge-secondary float-right'>{{ view.count }}</span>
                                 {% endif %}
@@ -136,17 +137,20 @@
             {# -- Right Panel -- #}
             {% set rightPanelClass = (fsc.views | length > 1) ? 'col-sm-10' : 'col' %}
             <div class="{{ rightPanelClass }}">
+                {# -- Tabs on top when screen is small -- #}
                 {% if fsc.views | length > 1 %}
                     <div class="nav nav-tabs d-lg-none" role="tablist">
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            <a class="nav-link{{ active }}" id="{{ viewName }}-tab2" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                            {% set disable = view.settings.active ? '' : ' disabled' %}
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
                                 <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
                             </a>
                         {% endfor %}
                     </div>
                 {% endif %}
+                {# -- Tab content -- #}
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
                         {% set active = (viewName == fsc.active) ? ' show active' : '' %}
