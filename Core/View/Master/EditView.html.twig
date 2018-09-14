@@ -25,17 +25,19 @@
                 {% endfor %}
             </div>
             <div class="row">
-                <div class="col">
+                {# -- Delete action -- #}
+                <div class="col-3">
                     <a class="btn btn-sm btn-danger" onclick="editViewDeleteRecord();" href="#">
                         <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                     </a>
                 </div>
-                <div class="col">
-                    {# -- Row actions -- #}
-                    {% set row = currentView.getRow('actions') %}
-                    {{ row.render() | raw }}
-                </div>
+
+                {# -- Row actions -- #}
+                {% set row = currentView.getRow('actions') %}
+                {{ row.render(currentView.getViewName()) | raw }}
+
+                {# -- Save and Reset actions -- #}
                 <div class="col text-right">
                     <button class="btn btn-sm btn btn-secondary" type="reset">
                         <i class="fas fa-undo fa-fw" aria-hidden="true"></i>

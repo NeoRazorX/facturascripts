@@ -42,7 +42,7 @@ class RowFooter
     protected static $i18n;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -50,12 +50,11 @@ class RowFooter
         if (!isset(static::$i18n)) {
             static::$i18n = new Translator();
         }
-
         $this->children = $data['children'];
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      * @param string $jsFunction
      *
@@ -69,19 +68,17 @@ class RowFooter
                 $html .= $this->renderGroup($child, $viewName, $jsFunction);
             }
         }
-
         if (empty($jsFunction)) {
             return '<form method="post">'
                 . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
                 . $html
                 . '</form>';
         }
-
         return $html;
     }
 
     /**
-     * 
+     *
      * @param string $button
      * @param string $viewName
      * @param string $jsFunction
@@ -93,28 +90,24 @@ class RowFooter
         $color = isset($button['color']) ? $button['color'] : 'light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
-
         if (!isset($button['type']) || !isset($button['action'])) {
             return '';
         }
-
         if ($button['type'] === 'modal') {
             return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '">' . $icon . $label . '</button>';
         }
-
         /// type action
         if (empty($jsFunction)) {
             return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
                 . $color . '">' . $icon . $label . '</button>';
         }
-
         return '<button type="button" class="btn btn-' . $color . '" onclick="' . $jsFunction
             . '(\'' . $viewName . '\',\'' . $button['action'] . '\');">' . $icon . $label . '</button>';
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -124,12 +117,11 @@ class RowFooter
         if (isset($group['footer'])) {
             return '<div class="card-footer">' . static::$i18n->trans($group['footer']) . '</div>';
         }
-
         return '';
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -139,12 +131,11 @@ class RowFooter
         if (isset($group['title'])) {
             return '<div class="card-header">' . static::$i18n->trans($group['title']) . '</div>';
         }
-
         return '';
     }
 
     /**
-     * 
+     *
      * @param string $group
      * @param string $viewName
      * @param string $jsFunction
@@ -159,27 +150,22 @@ class RowFooter
             . '<div class="card">'
             . $this->renderCardHeader($group)
             . '<div class="card-body">';
-
         foreach ($group['children'] as $child) {
             if ($child['tag'] === 'button') {
                 $html .= $this->renderButton($child, $viewName, $jsFunction);
             }
         }
-
         if (isset($group['html'])) {
             $webRender = new WebRender();
             $html .= $webRender->render($group['html']);
         }
-
         if (isset($group['label'])) {
             $html .= '<p>' . static::$i18n->trans($group['label']) . '</p>';
         }
-
         $html .= '</div>'
             . $this->renderCardFooter($group)
             . '</div>'
             . '</div>';
-
         return $html;
     }
 }

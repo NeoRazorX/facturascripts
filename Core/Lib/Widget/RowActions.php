@@ -41,7 +41,7 @@ class RowActions
     protected static $i18n;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -54,46 +54,58 @@ class RowActions
     }
 
     /**
-     * 
-     * @return string
-     */
-    public function render()
-    {
-        $html = '';
-        foreach ($this->children as $child) {
-            if ($child['tag'] !== 'button') {
-                continue;
-            }
-
-            $html .= $this->renderButton($child);
-        }
-
-        return $html;
-    }
-
-    /**
-     * 
-     * @param array $button
+     *
+     * @param string $button
+     * @param string $viewName
+     * @param string $jsFunction
      *
      * @return string
      */
-    protected function renderButton($button)
+    protected function renderButton($button, $viewName, $jsFunction)
     {
         $color = isset($button['color']) ? $button['color'] : 'light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
 
-        if (!isset($button['type']) || !isset($button['action'])) {
+        if (!isset($button['type'])) {
             return '';
         }
 
         if ($button['type'] === 'modal') {
-            return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
+            return '<button type="button" class="btn btn-' . $color . '"data-toggle="modal" data-target="#modal'
                 . $button['action'] . '">' . $icon . $label . '</button>';
         }
 
         /// type action
-        return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
-            . $color . '">' . $icon . $label . '</button>';
+        if (empty($jsFunction)) {
+            return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
+                . $color . '">' . $icon . $label . '</button>';
+        }
+
+        return '<button type="button" class="btn btn-' . $color . '" onclick="' . $jsFunction
+            . '(\'' . $viewName . '\',\'' . $button['action'] . '\');">' . $icon . $label . '</button>';
+    }
+
+    /**
+     *
+     * @param string $viewName
+     * @param string $jsFunction
+     *
+     * @return string
+     */
+    public function render($viewName, $jsFunction = '')
+    {
+        $html = '';
+        foreach ($this->children as $child) {
+            if ($child['tag'] == 'button') {
+                $onclick = $child['onclick'] ?? $jsFunction;
+                $html .= $this->renderButton($child, $viewName, $onclick);
+            }
+        }
+
+        if (!empty($html)) {
+            $html = '<div class="col d-flex justify-content-center">' . $html . '</div>';
+        }
+        return $html;
     }
 }
