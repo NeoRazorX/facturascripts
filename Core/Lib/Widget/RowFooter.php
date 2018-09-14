@@ -93,12 +93,12 @@ class RowFooter
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
 
-        if (!isset($button['type'])) {
+        if (!isset($button['type']) || !isset($button['action'])) {
             return '';
         }
 
         if ($button['type'] === 'modal') {
-            return '<button type="button" class="btn btn-' . $color . '"data-toggle="modal" data-target="#modal'
+            return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '">' . $icon . $label . '</button>';
         }
 
