@@ -128,8 +128,8 @@
     </columns>
     <rows>
         <row type="statistics">
-            <button type="calculate" icon="fa-copy" label="delivery-notes-button" function="calcCustomerDeliveryNotes" />
-            <button type="calculate" icon="fa-money-bill-alt" label="pending-invoices-button" function="calcCustomerInvoicePending" />
+            <datalabel icon="fa-copy" label="delivery-notes-button" function="calcCustomerDeliveryNotes" />
+            <datalabel icon="fa-money-bill-alt" label="pending-invoices-button" function="calcCustomerInvoicePending" />
         </row>
     </rows>
 </view>

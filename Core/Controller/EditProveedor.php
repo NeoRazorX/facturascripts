@@ -38,14 +38,12 @@ class EditProveedor extends ExtendedController\PanelController
     /**
      * Returns the sum of the customer's total delivery notes.
      *
-     * @param ExtendedController\EditView $view
-     *
      * @return string
      */
-    public function calcSupplierDeliveryNotes($view)
+    public function calcSupplierDeliveryNotes()
     {
         $where = [
-            new DataBaseWhere('codproveedor', $view->model->codproveedor),
+            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
             new DataBaseWhere('editable', true)
         ];
 
@@ -58,14 +56,12 @@ class EditProveedor extends ExtendedController\PanelController
     /**
      * Returns the sum of the client's total outstanding invoices.
      *
-     * @param ExtendedController\EditView $view
-     *
      * @return string
      */
-    public function calcSupplierInvoicePending($view)
+    public function calcSupplierInvoicePending()
     {
         $where = [
-            new DataBaseWhere('codproveedor', $view->model->codproveedor),
+            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
             new DataBaseWhere('pagada', false)
         ];
 

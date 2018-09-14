@@ -63,11 +63,9 @@ class RowStatistics
     {
         $html = '';
         foreach ($this->children as $child) {
-            if ($child['tag'] !== 'button') {
-                continue;
+            if ($child['tag'] === 'datalabel') {
+                $html .= $this->renderDatalabel($controller, $child);
             }
-
-            $html .= $this->renderButton($controller, $child);
         }
 
         return $html;
@@ -76,21 +74,21 @@ class RowStatistics
     /**
      * 
      * @param object $controller
-     * @param array  $button
+     * @param array  $data
      *
      * @return string
      */
-    protected function renderButton(&$controller, $button)
+    protected function renderDatalabel(&$controller, $data)
     {
-        $color = isset($button['color']) ? $button['color'] : 'light';
-        $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
-        $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
+        $color = isset($data['color']) ? $data['color'] : 'light';
+        $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
+        $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
 
-        if (!isset($button['function'])) {
+        if (!isset($data['function'])) {
             return ' ERROR';
         }
 
-        $value = method_exists($controller, $button['function']) ? $controller->{$button['function']}() : '-';
+        $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
         return ' <button type="button" class="btn btn-' . $color . '">' . $icon . $label . ' ' . $value . '</button>';
     }
 }

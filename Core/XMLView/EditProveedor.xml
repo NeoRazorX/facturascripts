@@ -114,8 +114,8 @@
     </columns>
     <rows>
         <row type="statistics">
-            <button type="calculate" icon="fa-copy" label="delivery-notes-button" action="calcSupplierDeliveryNotes" />
-            <button type="calculate" icon="fa-money-bill-alt" label="pending-invoices-button" action="calcSupplierInvoicePending" />
+            <datalabel icon="fa-copy" label="delivery-notes-button" function="calcSupplierDeliveryNotes" />
+            <datalabel icon="fa-money-bill-alt" label="pending-invoices-button" function="calcSupplierInvoicePending" />
         </row>
     </rows>
 </view>
