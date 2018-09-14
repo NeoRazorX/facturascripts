@@ -43,7 +43,7 @@
                 {% endif %}
                 {# -- Row statistics -- #}
                 {% set row = currentView.getRow('statistics') %}
-                {{ row.render() | raw }}
+                {{ row.render(fsc) | raw }}
             </div>
             {% if currentView.orderOptions is empty %}
                 <div class="col">
@@ -62,10 +62,8 @@
         </div>
         {# -- Row header -- #}
         <div class="row">
-            <div class="col-12">
-                {% set row = currentView.getRow('header') %}
-                {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
-            </div>
+            {% set row = currentView.getRow('header') %}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
         </div>
     </div>
     {# -- Table -- #}

@@ -157,7 +157,7 @@ class WebRender
      *
      * @return string
      */
-    public function render($template, $params)
+    public function render($template, $params = [])
     {
         $templateVars = [
             'i18n' => $this->i18n,

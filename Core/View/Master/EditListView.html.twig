@@ -9,8 +9,10 @@
 </script>
 
 {# -- Row header -- #}
-{% set row = currentView.getRow('header') %}
-{{ row.render(currentView.getViewName()) | raw }}
+<div class="row">
+    {% set row = currentView.getRow('header') %}
+    {{ row.render(currentView.getViewName()) | raw }}
+</div>
 
 {# -- New form -- #}
 {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
@@ -39,10 +41,10 @@
     </div>
 </form>
 
+{# -- Row statistics -- #}
 <div>
-    {# -- Row statistics -- #}
     {% set row = currentView.getRow('statistics') %}
-    {{ row.render() | raw }}
+    {{ row.render(fsc) | raw }}
 </div>
 
 {# -- Forms -- #}
@@ -117,8 +119,10 @@
 <br/>
 
 {# -- Row footer -- #}
-{% set row = currentView.getRow('footer') %}
-{{ row.render(currentView.getViewName()) | raw }}
+<div class="row">
+    {% set row = currentView.getRow('footer') %}
+    {{ row.render(currentView.getViewName()) | raw }}
+</div>
 
 {# -- Modals -- #}
 {% for group in currentView.getModals() %}

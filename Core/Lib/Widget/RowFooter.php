@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\Translator;
 
 /**
@@ -49,7 +50,6 @@ class RowFooter
         if (!isset(static::$i18n)) {
             static::$i18n = new Translator();
         }
-
         $this->children = $data['children'];
     }
 
@@ -64,18 +64,16 @@ class RowFooter
     {
         $html = '';
         foreach ($this->children as $child) {
-            if ($child['tag'] == 'group') {
+            if ($child['tag'] === 'group') {
                 $html .= $this->renderGroup($child, $viewName, $jsFunction);
             }
         }
-
         if (empty($jsFunction)) {
             return '<form method="post">'
                 . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
                 . $html
                 . '</form>';
         }
-
         return $html;
     }
 
@@ -92,22 +90,18 @@ class RowFooter
         $color = isset($button['color']) ? $button['color'] : 'light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
-
         if (!isset($button['type']) || !isset($button['action'])) {
             return '';
         }
-
         if ($button['type'] === 'modal') {
             return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '">' . $icon . $label . '</button>';
         }
-
         /// type action
         if (empty($jsFunction)) {
             return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
                 . $color . '">' . $icon . $label . '</button>';
         }
-
         return '<button type="button" class="btn btn-' . $color . '" onclick="' . $jsFunction
             . '(\'' . $viewName . '\',\'' . $button['action'] . '\');">' . $icon . $label . '</button>';
     }
@@ -123,7 +117,6 @@ class RowFooter
         if (isset($group['footer'])) {
             return '<div class="card-footer">' . static::$i18n->trans($group['footer']) . '</div>';
         }
-
         return '';
     }
 
@@ -135,25 +128,9 @@ class RowFooter
      */
     protected function renderCardHeader($group)
     {
-        if (isset($group['header'])) {
-            return '<div class="card-header">' . static::$i18n->trans($group['header']) . '</div>';
+        if (isset($group['title'])) {
+            return '<div class="card-header">' . static::$i18n->trans($group['title']) . '</div>';
         }
-
-        return '';
-    }
-
-    /**
-     *
-     * @param array $group
-     *
-     * @return string
-     */
-    protected function renderCardBody($group)
-    {
-        if (isset($group['body'])) {
-            return '<p><i>' . static::$i18n->trans($group['body']) . '</i></p>';
-        }
-
         return '';
     }
 
@@ -167,26 +144,28 @@ class RowFooter
      */
     protected function renderGroup($group, $viewName, $jsFunction)
     {
-        $columns = isset($group['numcolumns']) ? 'col-' . $group['numcolumns'] : 'col-12';
-        $class = isset($group['class']) ? (' ' . $group['class']) : '';
-
-        $html = '<div class="' . $columns . '">'
-            . '<div name="' . $group['name'] . '" class="card' . $class . '">'
+        $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
+        $class = isset($group['class']) ? ' ' . $group['class'] : '';
+        $html = '<div class="' . $colClass . $class . '">'
+            . '<div class="card">'
             . $this->renderCardHeader($group)
-            . '<div class="card-body">'
-            . $this->renderCardBody($group);
-
+            . '<div class="card-body">';
         foreach ($group['children'] as $child) {
-            if ($child['tag'] == 'button') {
+            if ($child['tag'] === 'button') {
                 $html .= $this->renderButton($child, $viewName, $jsFunction);
             }
         }
-
+        if (isset($group['html'])) {
+            $webRender = new WebRender();
+            $html .= $webRender->render($group['html']);
+        }
+        if (isset($group['label'])) {
+            $html .= '<p>' . static::$i18n->trans($group['label']) . '</p>';
+        }
         $html .= '</div>'
             . $this->renderCardFooter($group)
             . '</div>'
             . '</div>';
-
         return $html;
     }
 }

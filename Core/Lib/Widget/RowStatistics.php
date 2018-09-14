@@ -55,17 +55,17 @@ class RowStatistics
 
     /**
      * 
+     * @param object $controller
+     *
      * @return string
      */
-    public function render()
+    public function render(&$controller)
     {
         $html = '';
         foreach ($this->children as $child) {
-            if ($child['tag'] !== 'button') {
-                continue;
+            if ($child['tag'] === 'datalabel') {
+                $html .= $this->renderDatalabel($controller, $child);
             }
-
-            $html .= $this->renderButton($child);
         }
 
         return $html;
@@ -73,20 +73,23 @@ class RowStatistics
 
     /**
      * 
-     * @param array $button
+     * @param object $controller
+     * @param array  $data
      *
      * @return string
      */
-    protected function renderButton($button)
+    protected function renderDatalabel(&$controller, $data)
     {
-        $color = isset($button['color']) ? $button['color'] : 'light';
-        $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
-        $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
+        $color = isset($data['color']) ? $data['color'] : 'light';
+        $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
+        $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
+        $link = isset($data['link']) ? $data['link'] : '#';
 
-        if (!isset($button['type'])) {
-            return '';
+        if (!isset($data['function'])) {
+            return ' ERROR';
         }
 
-        return ' <button type="button" class="btn btn-' . $color . '">' . $icon . $label . '</button>';
+        $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
+        return ' <a href="' . $link . '" class="btn btn-' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
