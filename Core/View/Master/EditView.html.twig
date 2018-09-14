@@ -2,8 +2,10 @@
 {% set currentView = fsc.getCurrentView() %}
 
 {# -- Row header -- #}
-{% set row = currentView.getRow('header') %}
-{{ row.render(currentView.getViewName()) | raw }}
+<div class="row">
+    {% set row = currentView.getRow('header') %}
+    {{ row.render(currentView.getViewName()) | raw }}
+</div>
 
 <form id="formEditView{{ currentView.getViewName() }}" method="post">
     <input type="hidden" name="action" value="save">
@@ -52,8 +54,10 @@
 <br/>
 
 {# -- Row footer -- #}
-{% set row = currentView.getRow('footer') %}
-{{ row.render(currentView.getViewName()) | raw }}
+<div class="row">
+    {% set row = currentView.getRow('footer') %}
+    {{ row.render(currentView.getViewName()) | raw }}
+</div>
 
 {# -- Modals -- #}
 {% for group in currentView.getModals() %}

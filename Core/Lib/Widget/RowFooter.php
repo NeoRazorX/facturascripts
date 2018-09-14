@@ -153,7 +153,9 @@ class RowFooter
      */
     protected function renderGroup($group, $viewName, $jsFunction)
     {
-        $html = '<div class="card">'
+        $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
+        $html = '<div class="' . $colClass . '">'
+            . '<div class="card">'
             . $this->renderCardHeader($group)
             . '<div class="card-body">';
 
@@ -174,6 +176,7 @@ class RowFooter
 
         $html .= '</div>'
             . $this->renderCardFooter($group)
+            . '</div>'
             . '</div>';
 
         return $html;
