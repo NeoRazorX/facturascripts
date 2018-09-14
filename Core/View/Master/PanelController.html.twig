@@ -118,7 +118,7 @@
         <div class="row">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
-                <div class="col-sm-2 d-none d-lg-inline-block">
+                <div class="col-lg-2 d-none d-lg-inline-block">
                     <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
@@ -135,7 +135,7 @@
             {% endif %}
 
             {# -- Right Panel -- #}
-            {% set rightPanelClass = (fsc.views | length > 1) ? 'col-sm-10' : 'col' %}
+            {% set rightPanelClass = (fsc.views | length > 1) ? 'col-lg-10' : 'col' %}
             <div class="{{ rightPanelClass }}">
                 {# -- Tabs on top when screen is small -- #}
                 {% if fsc.views | length > 1 %}
