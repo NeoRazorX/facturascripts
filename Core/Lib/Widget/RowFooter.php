@@ -154,7 +154,8 @@ class RowFooter
     protected function renderGroup($group, $viewName, $jsFunction)
     {
         $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
-        $html = '<div class="' . $colClass . '">'
+        $class = isset($group['class']) ? ' ' . $group['class'] : '';
+        $html = '<div class="' . $colClass . $class . '">'
             . '<div class="card">'
             . $this->renderCardHeader($group)
             . '<div class="card-body">';

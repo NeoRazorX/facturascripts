@@ -83,12 +83,13 @@ class RowStatistics
         $color = isset($data['color']) ? $data['color'] : 'light';
         $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
+        $link = isset($data['link']) ? $data['link'] : '#';
 
         if (!isset($data['function'])) {
             return ' ERROR';
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <button type="button" class="btn btn-' . $color . '">' . $icon . $label . ' ' . $value . '</button>';
+        return ' <a href="' . $link . '" class="btn btn-' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
