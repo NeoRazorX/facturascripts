@@ -167,7 +167,7 @@ class RowFooter
      */
     protected function renderGroup($group, $viewName, $jsFunction)
     {
-        $columns = isset($group['numcolumns']) ? 'col-' . $group['numcolumns'] : 'col';
+        $columns = isset($group['numcolumns']) ? 'col-' . $group['numcolumns'] : 'col-12';
         $class = isset($group['class']) ? (' ' . $group['class']) : '';
 
         $html = '<div class="' . $columns . '">'
