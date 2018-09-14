@@ -356,9 +356,7 @@ class Partida extends Base\ModelClass
 
         $inTransaction = self::$dataBase->inTransaction();
         try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
+            self::$dataBase->beginTransaction();
 
             /// main insert
             if (!parent::saveInsert($values)) {
@@ -401,9 +399,7 @@ class Partida extends Base\ModelClass
 
         $inTransaction = self::$dataBase->inTransaction();
         try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
+            self::$dataBase->beginTransaction();
 
             /// main update
             if (!parent::saveUpdate($values)) {
@@ -444,9 +440,7 @@ class Partida extends Base\ModelClass
 
         $inTransaction = self::$dataBase->inTransaction();
         try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
+            self::$dataBase->beginTransaction();
 
             /// update account balance
             if (!$account->updateBalance($date, ($this->debe * -1), ($this->haber * -1))) {

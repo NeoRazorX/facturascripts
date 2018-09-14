@@ -169,9 +169,7 @@ class Asiento extends Base\ModelClass implements GridDocumentInterface
         /// Run main delete action
         $inTransaction = self::$dataBase->inTransaction();
         try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
+            self::$dataBase->beginTransaction();
 
             /// delete accounting entry and detail entries via FK
             if (!parent::delete()) {

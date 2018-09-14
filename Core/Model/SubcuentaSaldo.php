@@ -150,7 +150,7 @@ class SubcuentaSaldo extends Base\ModelClass
      * @param int   $month
      * @param float $debit
      * @param float $credit
-     * 
+     *
      * @return bool
      */
     public function updateBalance($month, $debit, $credit): bool

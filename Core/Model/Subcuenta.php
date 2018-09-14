@@ -256,9 +256,7 @@ class Subcuenta extends Base\ModelClass
 
         $inTransaction = self::$dataBase->inTransaction();
         try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
+            self::$dataBase->beginTransaction();
 
             if (!$detail->updateBalance($month, $debit, $credit)) {
                 return false;
