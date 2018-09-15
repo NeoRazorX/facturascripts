@@ -26,12 +26,24 @@ namespace FacturaScripts\Core\Lib\Widget;
 class WidgetAutocomplete extends WidgetSelect
 {
     
+    /**
+     * 
+     * @param array $data
+     */
     public function __construct($data)
     {
         parent::__construct($data);
         static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js';
     }
 
+    /**
+     * 
+     * @param object $model
+     * @param string $title
+     * @param string $description
+     *
+     * @return string
+     */
     public function edit($model, $title = '', $description = '')
     {
         $this->setValue($model);
@@ -53,6 +65,13 @@ class WidgetAutocomplete extends WidgetSelect
             . '</div>';
     }
 
+    /**
+     * 
+     * @param string $type
+     * @param string $extraClass
+     *
+     * @return string
+     */
     protected function inputHtml($type = 'text', $extraClass = 'widget-autocomplete')
     {
         $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;

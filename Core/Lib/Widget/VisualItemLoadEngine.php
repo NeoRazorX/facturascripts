@@ -31,7 +31,7 @@ class VisualItemLoadEngine
 
     /**
      * 
-     * @param array $columns
+     * @param array            $columns
      * @param Model\User|false $user
      */
     public static function disableHidden(&$columns, $user)

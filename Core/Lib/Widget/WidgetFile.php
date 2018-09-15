@@ -28,6 +28,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class WidgetFile extends BaseWidget
 {
 
+    /**
+     * 
+     * @param object $model
+     * @param string $title
+     * @param string $description
+     *
+     * @return string
+     */
     public function edit($model, $title = '', $description = '')
     {
         $description = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]) . ' ' . $description;

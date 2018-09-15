@@ -18,14 +18,12 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Translator;
-
 /**
  * Description of BaseWidget
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class BaseWidget
+class BaseWidget extends VisualItem
 {
 
     /**
@@ -39,12 +37,6 @@ class BaseWidget
      * @var string
      */
     public $fieldname;
-
-    /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
 
     /**
      *
@@ -78,12 +70,6 @@ class BaseWidget
 
     /**
      *
-     * @var int
-     */
-    protected static $uniqueId;
-
-    /**
-     *
      * @var mixed
      */
     protected $value;
@@ -94,10 +80,7 @@ class BaseWidget
      */
     public function __construct($data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
+        parent::__construct();
         $this->fieldname = $data['fieldname'];
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
         $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
@@ -174,43 +157,6 @@ class BaseWidget
         $this->setValue($model);
         $class = 'text-' . $display;
         return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($this->show()) . '</td>';
-    }
-
-    /**
-     * 
-     * @param string $color
-     *
-     * @return string
-     */
-    protected function colorToClass($color)
-    {
-        switch ($color) {
-            case 'danger':
-            case 'dark':
-            case 'info':
-            case 'light':
-            case 'primary':
-            case 'secondary':
-            case 'success':
-            case 'warning':
-                return 'text-' . $color;
-        }
-
-        return '';
-    }
-
-    /**
-     * 
-     * @return int
-     */
-    protected function getUniqueId()
-    {
-        if (!isset(static::$uniqueId)) {
-            static::$uniqueId = -1;
-        }
-
-        static::$uniqueId++;
-        return static::$uniqueId;
     }
 
     /**
@@ -320,7 +266,7 @@ class BaseWidget
             }
 
             if ($apply) {
-                $alternativeClass = $this->colorToClass($opt['color']);
+                $alternativeClass = $this->colorToClass($opt['color'], 'text-');
                 break;
             }
         }

@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\DivisaTools;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class WidgetMoney extends BaseWidget
+class WidgetMoney extends WidgetNumber
 {
 
     /**

@@ -173,7 +173,7 @@ abstract class BaseView
         $this->offset = 0;
         $this->order = [];
         $this->pageOption = new PageOption();
-        $this->settings = [];
+        $this->settings = ['active' => true];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);
         $this->where = [];

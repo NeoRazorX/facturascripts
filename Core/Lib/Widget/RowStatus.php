@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib\Widget;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class RowStatus
+class RowStatus extends VisualItem
 {
 
     /**
@@ -44,6 +44,7 @@ class RowStatus
      */
     public function __construct($data)
     {
+        parent::__construct();
         $this->fieldname = empty($data['fieldname']) ? '' : $data['fieldname'];
         $this->options = $data['children'];
     }
@@ -78,31 +79,8 @@ class RowStatus
             }
 
             if ($apply) {
-                return $this->colorToClass($opt['color']);
+                return $this->colorToClass($opt['color'], 'table-');
             }
-        }
-
-        return '';
-    }
-
-    /**
-     * 
-     * @param string $color
-     *
-     * @return string
-     */
-    protected function colorToClass($color)
-    {
-        switch ($color) {
-            case 'danger':
-            case 'dark':
-            case 'info':
-            case 'light':
-            case 'primary':
-            case 'secondary':
-            case 'success':
-            case 'warning':
-                return 'table-' . $color;
         }
 
         return '';

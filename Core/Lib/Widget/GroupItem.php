@@ -18,15 +18,13 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Translator;
-
 /**
  * Description of GroupItem
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class GroupItem
+class GroupItem extends VisualItem
 {
 
     /**
@@ -41,12 +39,6 @@ class GroupItem
      * @var ColumnItem[]
      */
     public $columns = [];
-
-    /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
 
     /**
      * Icon used as the value or accompaining the group title
@@ -85,10 +77,7 @@ class GroupItem
      */
     public function __construct($data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
+        parent::__construct();
         $this->class = isset($data['class']) ? $data['class'] : '';
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
         $this->name = $data['name'];
