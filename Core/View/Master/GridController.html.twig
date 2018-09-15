@@ -32,195 +32,74 @@
 {% extends "Master/PanelController.html.twig" %}
 
 {% block css %}
-{{ parent() }}
-{% set masterView = fsc.views|keys|first %}
-{% if fsc.views[masterView].count > 0 %}
-<link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css" />
-{% endif %}
+    {{ parent() }}
+    {% set masterView = fsc.views|first %}
+    {% if masterView.count > 0 %}
+        <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css" />
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}
-{{ parent() }}
-{% set masterView = fsc.views|keys|first %}
-{% if fsc.views[masterView].count > 0 %}
-<script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
-<script src="Core/Assets/JS/GridController.js"></script>
-<script type="text/javascript">
-    documentUrl = '{{ fsc.views[masterView].getURL('edit') | raw }}';
-</script>
-{% endif %}
+    {{ parent() }}
+    {% set masterView = fsc.views | first %}
+    {% if masterView.count > 0 %}
+        <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
+        <script src="Core/Assets/JS/GridController.js"></script>
+        <script type="text/javascript">
+            documentUrl = '{{ masterView.model.url('edit')|raw }}';
+        </script>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
-{# -- Visual macros -- #}
-{% import 'Macro/BaseController.html.twig' as BaseController %}
-{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+    {# -- Working Variables -- #}
+    {% set parentViewName = fsc.views|keys|first %}
+    {% set parentView = fsc.views[parentViewName] %}
 
-{# -- Working Variables -- #}
-{% set parentIndexView = fsc.views|keys|first %}
-{% set parentView = fsc.views[parentIndexView] %}
-{% set parentModel = parentView.model %}
-{% set isNewRecord = (parentView.count == 0) %}
-
-{# -- Main Body -- #}
-<div class="container-fluid">
-    {# -- Account View Panel -- #}
-    <div class="row">
-        <div class="col-12">
-            {% set indexView = parentIndexView %}       {# it's needed into BaseController into _context #}
-
-            {# Info header panels #}
-            {{ BaseController.rowCardsForEditView(_context, parentView, 'header') }}
-
-            {# Main Data #}
-            <div class="card">
-                <div class="card-body">
-                    {# Statistical buttons bar #}
-                    {{ BaseController.rowStatisticsForEditView(_context, parentView) }}
-
-                    {# Main Form #}
-                    {% if isNewRecord %}
-                    {{ BaseController.columnsForEditView(_context, parentView, parentModel, TRUE, TRUE) }}
-                    {% else %}
-                    <form name="{{ parentIndexView }}" action="{{ fsc.getURL('edit') }}" method="post" enctype="multipart/form-data" class="form" role="form">
-                        <input type="hidden" name="action" value="save">
-                        <input type="hidden" name="active" value="{{ parentIndexView }}">
-                        <div class="row">
-                        {{ BaseController.columnsForEditView(_context, parentView, parentModel, FALSE, FALSE) }}
-                        </div>
-                    </form>
-                    {% endif %}
-                </div>
-            </div>
-            {# Info footers panels and modals forms #}
-            {{ BaseController.rowCardsForEditView(_context, parentView, 'footer') }}
-            {{ BaseController.modalFormFromColumns(_context, parentView) }}
-        </div>
-    </div>
-
-    {# -- Detail data -- #}
-    {% if isNewRecord == FALSE %}
-    <div class="row mt-2">
-        <div class="col-12">
-            {# -- Tabs -- #}
-            {% if fsc.views.count > 1 %}
-            <div class="nav nav-tabs" id="optionsindex" role="tablist">
-                {% for indexView, view in fsc.views %}
-                {% if loop.index > 1 %}
-                {% set active = (loop.index == 2) ? ' active' : '' %}
-                <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fas {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
-                    &nbsp;{{ view.title }}
-                </a>
-                {% endif %}
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {# Data #}
-            <div class="tab-content" id="optionsindex-tabContent">
-            {% for indexView, view in fsc.views %}
-                {% if loop.index > 1 %}
-                {% set active = (loop.index == 2) ? ' show active' : '' %}
-                <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
-                    {% set viewType = fsc.viewClass(view) %}
-
-                    {# List #}
-                    {% if viewType == 'ListView' %}
-                        {{ BaseController.columnsForListView(_context, view) }}
-                    {% endif %}
-
-                    <div class="mb-2"></div>
-
-                    {# Grid #}
-                    {% if viewType == 'GridView' %}
-                        {# Information Cards Header #}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                        {# Grid zone #}
-                        <div class="row no-gutters">
-                            {# Prepare grid data & events #}
-                            <script type="text/javascript">
-                                documentLineData = {{ view.getGridData()|raw }};
-                            </script>
-                            {% block gridcard %}
-                            <div class="col">
-                                {# Grid data panel #}
-                                <div class="card">
-                                    <div class="body">
-                                        <div id="document-lines"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endblock %}
-                        </div>
-
-                        {# Buttons actions #}
-                        {% set keyValue = fsc.getFieldValue(parentModel, parentModel.primaryColumn()) %}
-                        {% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
-                        {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
-                        <div class="row mt-3">
-                            <div class="col">
-                                <div class="card">
-                                    <div class="card-body d-flex justify-content-between" style="padding: 1rem 0rem;">
-                                        <div class="col-2">
-                                            <a class="btn btn-sm btn-danger" id="delete-document" onclick="deleteRecord('{{ parentIndexView }}', 'delete-document');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
-                                               <i class="fas fa-trash" aria-hidden="true"></i>
-                                                <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
-                                            </a>
-                                        </div>
-
-                                        {{ BaseController.rowActionsForEditView(_context, view, parentIndexView) }}
-
-                                        <div class="col-2 text-right">
-                                            <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ parentIndexView }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
-                                                    <i class="far fa-save" aria-hidden="true"></i>&nbsp; {{ save }}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {# Edit #}
-                    {% if viewType == 'EditView' %}
-                        {# Information Cards Header #}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                        {# Statistical buttons bar #}
-                        {{ BaseController.rowStatisticsForEditView(_context, view) }}
-
-                        {# Main Form #}
-                        {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
-                    {% endif %}
-
-                    {# Edit Multiple #}
-                    {% if viewType == 'EditListView' %}
-                        {# Information Cards Header #}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                        {# Main Form #}
-                        {{ BaseController.columnsForEditListView(_context, view) }}
-                    {% endif %}
-
-                    {# Html #}
-                    {% if viewType == 'HtmlView' %}
-                    <div>{% include view.fileName ignore missing %}</div>
-                    {% endif %}
-
-                    {# Footer options #}
-                    {% if viewType in ['EditView','EditListView', 'GridView'] %}
-                        {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                        {{ BaseController.modalFormFromColumns(_context, view) }}
-                    {% endif %}
-                </div>
-                {% endif %}
-            {% endfor %}
+    {# -- Main Body -- #}
+    <div class="container-fluid">
+        {# -- Account View Panel -- #}
+        <div class="row">
+            <div class="col-12">
+                {# Main Data #}
+                {% do fsc.setCurrentView(parentViewName) %}
+                {{ include(parentView.template) }}
             </div>
         </div>
+
+        {# -- Detail data -- #}
+        {% if parentView.count > 0 %}
+            <div class="row mt-2">
+                <div class="col-12">
+                    {# -- Tabs -- #}
+                    {% if fsc.views.count > 1 %}
+                        <div id="mainTabs" class="nav nav-tabs d-lg-none" role="tablist">
+                            {% for viewName, view in fsc.views %}
+                                {% if loop.index > 1 %}
+                                    {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                                    {% set disable = view.settings.active ? '' : ' disabled' %}
+                                    <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                                        <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
+                                        &nbsp;{{ view.title }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {# -- Tab content -- #}
+                    <div class="tab-content" id="mainTabs-tabContent">
+                        {% for viewName, view in fsc.views %}
+                            {% if loop.index > 1 %}
+                                {% set active = (loop.index == 2) ? ' show active' : '' %}
+                                <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel" aria-labelledby="{{ viewName }}-tab">
+                                    {% do fsc.setCurrentView(viewName) %}
+                                    {{ include(view.template) }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
-<br/>
 {% endblock %}
