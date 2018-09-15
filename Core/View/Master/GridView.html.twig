@@ -58,7 +58,7 @@
                 {# -- Row actions -- #}
                 {% set row = currentView.getRow('actions') %}
                 {% if row is not empty %}
-                    <div class="col">
+                    <div class="col d-flex justify-content-center">
                         {{ row.render() | raw }}
                     </div>
                 {% endif %}
