@@ -44,7 +44,7 @@
         <input type="hidden" name="action" value="save">
         <input type="hidden" name="active" value="{{ context.indexView }}">
         {% for group in view.getColumns() %}
-            <div class="form-row {% if needTitle %}align-items-center{% endif %}">
+            <div class="form-row {{ group.class }}{% if needTitle %} align-items-center{% endif %}">
                 {% for column in group.columns %}
                     {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                     {% if column.display == 'none' %}
@@ -125,7 +125,7 @@
             {% endif %}
 
             {% for group in view.getColumns() %}
-                <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
+                <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }} {{ group.class }}">
                     <div class="form-row">
                         {% if group.title is not empty %}
                             <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
@@ -231,7 +231,7 @@
                         {% for column in view.getColumns() %}
                             {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
                                 {% set value = attribute(model, column.widget.fieldName) %}
-                                <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
+                                <td class="text-{{ column.display }} {{ column.class }}">{{ column.getListHTML(value)|raw }}</td>
                             {% endif %}
                         {% endfor %}
                         {% if actionCheckboxes %}
@@ -267,7 +267,7 @@
         {% set formName = context.indexView ~ '-' ~ group.name %}
 
         <div class="modal" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog {{ group.class }}" role="document">
                 <div class="modal-content">
                     <form name="{{ formName }}" action="{{ context.fsc.getURL('edit') }}" method="post" enctype="multipart/form-data" class="form" role="form">
                         <input type="hidden" name="action" value="{{ group.name }}">

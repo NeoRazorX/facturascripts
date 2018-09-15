@@ -309,7 +309,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     protected function getColumnClass()
     {
-        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
+        $result = ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
+        if (!empty($this->class)) {
+            $result .= ' ' . $this->class;
+        }
+        return $result;
     }
 
     /**
@@ -389,7 +393,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $input = $this->widget->getEditHTML($value);
         foreach ($this->widget->values as $optionValue) {
-            $checked = ($optionValue['value'] === $value) ? ' checked="checked"' : '';
+            $checked = ($optionValue['value'] === $value) ? ' checked="checked"'
+                    : '';
             ++$index;
             $values = [$index . '"', $optionValue['value'], $checked];
             $html .= '<div class="form-check">'
