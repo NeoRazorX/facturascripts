@@ -28,7 +28,7 @@
             <div class="col">
                 {# -- Row actions -- #}
                 {% set row = currentView.getRow('actions') %}
-                {{ row.render() | raw }}
+                {{ row.render(true) | raw }}
             </div>
             {# -- Search field -- #}
             {% if currentView.searchFields is not empty %}

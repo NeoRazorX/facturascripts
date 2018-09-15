@@ -18,14 +18,12 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Translator;
-
 /**
  * Description of RowActions
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class RowActions
+class RowActions extends VisualItem
 {
 
     /**
@@ -35,29 +33,22 @@ class RowActions
     protected $children;
 
     /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
      * 
      * @param array $data
      */
     public function __construct($data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
+        parent::__construct();
         $this->children = $data['children'];
     }
 
     /**
      * 
+     * @param bool $small
+     *
      * @return string
      */
-    public function render()
+    public function render($small = false)
     {
         $html = '';
         foreach ($this->children as $child) {
@@ -65,35 +56,9 @@ class RowActions
                 continue;
             }
 
-            $html .= $this->renderButton($child);
+            $html .= $this->renderRowButton($child, $small);
         }
 
         return $html;
-    }
-
-    /**
-     * 
-     * @param array $button
-     *
-     * @return string
-     */
-    protected function renderButton($button)
-    {
-        $color = isset($button['color']) ? $button['color'] : 'light';
-        $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
-        $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
-
-        if (!isset($button['type']) || !isset($button['action'])) {
-            return '';
-        }
-
-        if ($button['type'] === 'modal') {
-            return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
-                . $button['action'] . '">' . $icon . $label . '</button>';
-        }
-
-        /// type action
-        return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
-            . $color . '">' . $icon . $label . '</button>';
     }
 }

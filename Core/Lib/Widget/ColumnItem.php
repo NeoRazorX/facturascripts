@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\User;
 
 /**
@@ -27,7 +26,7 @@ use FacturaScripts\Core\Model\User;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class ColumnItem
+class ColumnItem extends VisualItem
 {
 
     /**
@@ -44,12 +43,6 @@ class ColumnItem
      * @var string
      */
     public $display;
-
-    /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
 
     /**
      * Indicates the security level of the column
@@ -101,10 +94,7 @@ class ColumnItem
      */
     public function __construct($data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
+        parent::__construct();
         $this->description = isset($data['description']) ? $data['description'] : '';
         $this->display = isset($data['display']) ? $data['display'] : 'left';
         $this->level = isset($data['level']) ? (int) $data['level'] : 1;

@@ -18,14 +18,12 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Translator;
-
 /**
  * Description of RowStatistics
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class RowStatistics
+class RowStatistics extends VisualItem
 {
 
     /**
@@ -35,21 +33,12 @@ class RowStatistics
     protected $children;
 
     /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
      * 
      * @param array $data
      */
     public function __construct($data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
+        parent::__construct();
         $this->children = $data['children'];
     }
 
@@ -80,7 +69,7 @@ class RowStatistics
      */
     protected function renderDatalabel(&$controller, $data)
     {
-        $color = isset($data['color']) ? $data['color'] : 'light';
+        $color = isset($data['color']) ? $this->colorToClass($data['color'], 'btn-') : 'btn-light';
         $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $link = isset($data['link']) ? $data['link'] : '#';
@@ -90,6 +79,6 @@ class RowStatistics
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <a href="' . $link . '" class="btn btn-' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
+        return ' <a href="' . $link . '" class="btn ' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
     }
 }

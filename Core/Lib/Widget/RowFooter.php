@@ -19,14 +19,13 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\App\WebRender;
-use FacturaScripts\Core\Base\Translator;
 
 /**
  * Description of RowFooter
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class RowFooter
+class RowFooter extends VisualItem
 {
 
     /**
@@ -36,21 +35,12 @@ class RowFooter
     protected $children;
 
     /**
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
      * 
      * @param array $data
      */
     public function __construct($data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
+        parent::__construct();
         $this->children = $data['children'];
     }
 
@@ -78,39 +68,6 @@ class RowFooter
         }
 
         return $html;
-    }
-
-    /**
-     * 
-     * @param string $button
-     * @param string $viewName
-     * @param string $jsFunction
-     *
-     * @return string
-     */
-    protected function renderButton($button, $viewName, $jsFunction)
-    {
-        $color = isset($button['color']) ? $button['color'] : 'light';
-        $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
-        $label = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
-
-        if (!isset($button['type']) || !isset($button['action'])) {
-            return '';
-        }
-
-        if ($button['type'] === 'modal') {
-            return '<button type="button" class="btn btn-' . $color . '" data-toggle="modal" data-target="#modal'
-                . $button['action'] . '">' . $icon . $label . '</button>';
-        }
-
-        /// type action
-        if (empty($jsFunction)) {
-            return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn btn-'
-                . $color . '">' . $icon . $label . '</button>';
-        }
-
-        return '<button type="button" class="btn btn-' . $color . '" onclick="' . $jsFunction
-            . '(\'' . $viewName . '\',\'' . $button['action'] . '\');">' . $icon . $label . '</button>';
     }
 
     /**
@@ -162,7 +119,7 @@ class RowFooter
 
         foreach ($group['children'] as $child) {
             if ($child['tag'] === 'button') {
-                $html .= $this->renderButton($child, $viewName, $jsFunction);
+                $html .= $this->renderRowButton($child, false, $viewName, $jsFunction);
             }
         }
 

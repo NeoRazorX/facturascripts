@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\NumberTools;
  * Description of WidgetNumber
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class WidgetNumber extends BaseWidget
 {
@@ -33,14 +34,6 @@ class WidgetNumber extends BaseWidget
      * @var NumberTools
      */
     protected static $numberTools;
-
-    /**
-     * Indicates the maximum length of characters.
-     * 0 -> indeterminate
-     *
-     * @var int
-     */
-    protected $maxlength;
 
     /**
      * Indicates the min value
@@ -74,7 +67,6 @@ class WidgetNumber extends BaseWidget
         }
 
         parent::__construct($data);
-        $this->maxlength = $data['maxlength'] ?? 0;
         $this->min = $data['min'] ?? 0;
         $this->max = $data['max'] ?? 0;
         $this->step = $data['step'] ?? 0;

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\Widget;
  * Description of WidgetText
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class WidgetText extends BaseWidget
 {
