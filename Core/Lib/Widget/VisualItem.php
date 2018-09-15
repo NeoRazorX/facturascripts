@@ -95,7 +95,8 @@ class VisualItem
      */
     protected function renderRowButton($button, $small = false, $viewName = '', $jsFunction = '')
     {
-        $color = isset($button['color']) ? $this->colorToClass($button['color'], 'btn-') : 'btn-light';
+        $cssClass = 'btn mr-1 ';
+        $cssClass .= isset($button['color']) ? $this->colorToClass($button['color'], 'btn-') : 'btn-light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $title = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
         $label = $small ? '' : $title;
@@ -105,22 +106,22 @@ class VisualItem
         }
 
         if ($button['type'] === 'modal') {
-            return '<button type="button" class="btn ' . $color . '" data-toggle="modal" data-target="#modal'
+            return '<button type="button" class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
         if ($button['type'] === 'js') {
-            return '<button type="button" class="btn ' . $color . '" onclick="' . $button['action']
+            return '<button type="button" class="' . $cssClass . '" onclick="' . $button['action']
                 . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
         /// type action
         if (empty($jsFunction)) {
-            return '<button type="submit" name="action" value="' . $button['action'] . '" class="btn '
-                . $color . '" title="' . $title . '">' . $icon . $label . '</button>';
+            return '<button type="submit" name="action" value="' . $button['action'] . '" class="'
+                . $cssClass . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
-        return '<button type="button" class="btn ' . $color . '" onclick="' . $jsFunction
+        return '<button type="button" class="' . $cssClass . '" onclick="' . $jsFunction
             . '(\'' . $viewName . '\',\'' . $button['action'] . '\');" title="' . $title . '">' . $icon . $label . '</button>';
     }
 }
