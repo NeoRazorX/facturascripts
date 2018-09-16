@@ -71,10 +71,10 @@
             <column name="create-date" numcolumns="3" order="110">
                 <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="blocked-date" numcolumns="3" order="120">
+            <column name="date-of-suspension" numcolumns="3" order="120">
                 <widget type="date" fieldname="fechabaja" />
             </column>
-            <column name="blocked" numcolumns="3" order="130">
+            <column name="suspended" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>

@@ -53,10 +53,8 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="debaja">
-            <option color="danger">1</option>
+        <row type="status">
+            <option fieldname="debaja" color="danger">1</option>
         </row>
     </rows>
-    <filters>
-    </filters>
 </view>
