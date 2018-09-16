@@ -16,28 +16,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var listViewDeleteCancel = "";
-var listViewDeleteConfirm = "";
-var listViewDeleteMessage = "";
-var listViewDeleteTitle = "";
+var editListViewDeleteCancel = "";
+var editListViewDeleteConfirm = "";
+var editListViewDeleteMessage = "";
+var editListViewDeleteTitle = "";
 
-function listViewDelete(viewName) {
+function editListViewDelete(viewName) {
     bootbox.confirm({
-        title: listViewDeleteTitle,
-        message: listViewDeleteMessage,
+        title: editListViewDeleteTitle,
+        message: editListViewDeleteMessage,
         closeButton: false,
         buttons: {
             cancel: {
-                label: '<i class="fas fa-times"></i> ' + listViewDeleteCancel
+                label: '<i class="fas fa-times"></i> ' + editListViewDeleteCancel
             },
             confirm: {
-                label: '<i class="fas fa-check"></i> ' + listViewDeleteConfirm,
+                label: '<i class="fas fa-check"></i> ' + editListViewDeleteConfirm,
                 className: "btn-danger"
             }
         },
         callback: function (result) {
             if (result) {
-                listViewSetAction(viewName, "delete");
+                editListViewSetAction(viewName, "delete");
             }
         }
     });
@@ -45,29 +45,12 @@ function listViewDelete(viewName) {
     return false;
 }
 
-function listViewSetAction(viewName, value) {
+function editListViewSetAction(viewName, value) {
     $("#form" + viewName + " :input[name=\"action\"]").val(value);
     $("#form" + viewName).submit();
 }
 
-function listViewSetOffset(viewName, value) {
+function editListViewSetOffset(viewName, value) {
     $("#form" + viewName + " :input[name=\"offset\"]").val(value);
     $("#form" + viewName).submit();
 }
-
-function listViewSetOrder(viewName, value) {
-    $("#form" + viewName + " :input[name=\"order\"]").val(value);
-    $("#form" + viewName).submit();
-}
-
-function listViewShowFilters(viewName) {
-    $("#form" + viewName + "Filters").toggle();
-}
-
-$(document).ready(function () {
-    // set/unset all delete checkbox
-    $(".listActionCB").click(function () {
-        var checked = $(this).prop("checked");
-        $(".listAction").prop("checked", checked);
-    });
-});

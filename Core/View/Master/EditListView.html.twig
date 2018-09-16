@@ -2,10 +2,10 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <script type="text/javascript">
-    function EditListViewSetOffset(viewName, value) {
-        $("#form" + viewName + "Offset :input[name=\"offset\"]").val(value);
-        $("#form" + viewName + "Offset").submit();
-    }
+    var editListViewDeleteCancel = "{{ i18n.trans('cancel') }}";
+    var editListViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
+    var editListViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";
+    var editListViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
 </script>
 
 {# -- Row header -- #}
@@ -62,10 +62,10 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <a class="btn btn-sm btn-danger" onclick="editListViewDeleteRecord();" href="#">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
                             <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
-                        </a>
+                        </button>
                     </div>  
                     <div class="col">
                         {# -- Row actions -- #}
