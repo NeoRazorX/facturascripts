@@ -16,6 +16,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+var listViewDeleteCancel = '';
+var listViewDeleteConfirm = '';
+var listViewDeleteMessage = '';
+var listViewDeleteTitle = '';
+
+function listViewDelete(viewName) {
+    bootbox.confirm({
+        title: listViewDeleteTitle,
+        message: listViewDeleteMessage,
+        closeButton: false,
+        buttons: {
+            cancel: {
+                label: '<i class="fas fa-times"></i> ' + listViewDeleteCancel,
+            },
+            confirm: {
+                label: '<i class="fas fa-check"></i> ' + listViewDeleteConfirm,
+                className: 'btn-danger'
+            }
+        },
+        callback: function (result) {
+            if (result) {
+                listViewSetAction(viewName, 'delete');
+            }
+        }
+    });
+
+    return false;
+}
+
 function listViewSetAction(viewName, value) {
     $("#form" + viewName + " :input[name=\"action\"]").val(value);
     $("#form" + viewName).submit();
