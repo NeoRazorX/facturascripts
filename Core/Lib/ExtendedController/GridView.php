@@ -26,7 +26,7 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Description of GridView
+ * View definition for its use in ExtendedControllers
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -55,7 +55,7 @@ class GridView extends BaseView
     private $gridData;
 
     /**
-     * EditView constructor and initialization.
+     * GridView constructor and initialization.
      *
      * @param BaseView $parent
      * @param string   $name
@@ -66,6 +66,8 @@ class GridView extends BaseView
     public function __construct(&$parent, $name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
+
+        $this->template = 'Master/GridView.html.twig';
 
         // Join the parent view
         $this->parentView = $parent;
@@ -195,7 +197,7 @@ class GridView extends BaseView
             'hidden' => []
         ];
 
-        $columns = $this->pageOption->columns['root']->columns;
+        $columns = $this->pageOption->columns['main']->columns;
         foreach ($columns as $col) {
             $item = $this->getItemForColumn($col);
             switch ($col->display) {
@@ -213,7 +215,16 @@ class GridView extends BaseView
         return $data;
     }
 
-    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
+    /**
+     * Load the data in the model property, according to the code specified.
+     *
+     * @param string          $code
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
+     */
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         // load columns configuration
         $this->gridData = $this->getGridColumns();
@@ -359,6 +370,6 @@ class GridView extends BaseView
      */
     public function processRequest($request)
     {
-        ;
+
     }
 }
