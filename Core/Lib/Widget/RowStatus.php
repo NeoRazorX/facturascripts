@@ -39,18 +39,18 @@ class RowStatus extends VisualItem
     public $options = [];
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->fieldname = empty($data['fieldname']) ? '' : $data['fieldname'];
         $this->options = $data['children'];
     }
 
     /**
-     * 
+     *
      * @param object $model
      *
      * @return string

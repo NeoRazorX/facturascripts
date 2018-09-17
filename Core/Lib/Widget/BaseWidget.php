@@ -75,12 +75,12 @@ class BaseWidget extends VisualItem
     protected $value;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->fieldname = $data['fieldname'];
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
         $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
@@ -90,7 +90,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param string $title
      * @param string $description
@@ -125,7 +125,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public static function getAssets()
@@ -134,7 +134,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      *
      * @return string
@@ -146,7 +146,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param string $display
      *
@@ -160,7 +160,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $extraClass
      *
@@ -174,19 +174,19 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function inputHtmlExtraParams()
     {
-        $params = $this->readonly ? ' readonly=""' : '';
+        $params .= $this->readonly ? ' readonly=""' : '';
         $params .= $this->required ? ' required=""' : '';
 
         return $params;
     }
 
     /**
-     * 
+     *
      * @param array $children
      */
     protected function loadOptions($children)
@@ -200,7 +200,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param string $inside
      *
      * @return string
@@ -215,7 +215,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      */
     protected function setValue($model)
@@ -230,7 +230,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function show()
@@ -239,7 +239,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param string $initialClass
      * @param string $alternativeClass
      *

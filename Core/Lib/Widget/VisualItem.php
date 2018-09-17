@@ -35,23 +35,40 @@ class VisualItem
     protected static $i18n;
 
     /**
+     * Identifies the object with a defined name in the view
+     *
+     * @var string
+     */
+    public $id;
+
+    /**
+     * Name defined in the view as key
+     *
+     * @var string
+     */
+    public $name;
+
+    /**
      *
      * @var int
      */
     protected static $uniqueId = -1;
 
     /**
-     * 
+     *
      */
-    public function __construct()
+    public function __construct($data)
     {
         if (!isset(static::$i18n)) {
             static::$i18n = new Translator();
         }
+
+        $this->id = $data['id'] ?? '';
+        $this->name = $data['name'] ?? '';
     }
 
     /**
-     * 
+     *
      * @param string $color
      * @param string $prefix
      *
@@ -75,7 +92,7 @@ class VisualItem
     }
 
     /**
-     * 
+     *
      * @return int
      */
     protected function getUniqueId()
@@ -85,7 +102,7 @@ class VisualItem
     }
 
     /**
-     * 
+     *
      * @param array  $button
      * @param bool   $small
      * @param string $viewName
@@ -95,33 +112,34 @@ class VisualItem
      */
     protected function renderRowButton($button, $small = false, $viewName = '', $jsFunction = '')
     {
-        $cssClass = 'btn mr-1 ';
+        $cssClass = 'btn btn-sm mr-1 ';
         $cssClass .= isset($button['color']) ? $this->colorToClass($button['color'], 'btn-') : 'btn-light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $title = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
         $label = $small ? '' : $title;
+        $id = isset($button['id']) ? ' id="' . $button['id'] . '"' : '';
 
         if (!isset($button['type']) || !isset($button['action'])) {
             return '';
         }
 
         if ($button['type'] === 'modal') {
-            return '<button type="button" class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
+            return '<button type="button"' . $id . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
         if ($button['type'] === 'js') {
-            return '<button type="button" class="' . $cssClass . '" onclick="' . $button['action']
+            return '<button type="button"' . $id . ' class="' . $cssClass . '" onclick="' . $button['action']
                 . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
         /// type action
         if (empty($jsFunction)) {
-            return '<button type="submit" name="action" value="' . $button['action'] . '" class="'
+            return '<button type="submit"' . $id . ' name="action" value="' . $button['action'] . '" class="'
                 . $cssClass . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
-        return '<button type="button" class="' . $cssClass . '" onclick="' . $jsFunction
+        return '<button type="button"' . $id . ' class="' . $cssClass . '" onclick="' . $jsFunction
             . '(\'' . $viewName . '\',\'' . $button['action'] . '\');" title="' . $title . '">' . $icon . $label . '</button>';
     }
 }
