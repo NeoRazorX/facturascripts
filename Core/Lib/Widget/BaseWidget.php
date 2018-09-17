@@ -191,7 +191,7 @@ class BaseWidget extends VisualItem
      */
     protected function inputHtmlExtraParams()
     {
-        $params .= $this->readonly ? ' readonly=""' : '';
+        $params = $this->readonly ? ' readonly=""' : '';
         $params .= $this->required ? ' required=""' : '';
 
         return $params;

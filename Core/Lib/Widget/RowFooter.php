@@ -112,8 +112,8 @@ class RowFooter extends VisualItem
     {
         $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
         $class = isset($group['class']) ? ' ' . $group['class'] : '';
-        $id = empty($group['id']) ? '' : ' id="' . $group['id'] . '"';
-        $html = '<div' . $id . ' class="' . $colClass . $class . '">'
+        $divID = empty($group['id']) ? '' : ' id="' . $group['id'] . '"';
+        $html = '<div' . $divID . ' class="' . $colClass . $class . '">'
             . '<div class="card">'
             . $this->renderCardHeader($group)
             . '<div class="card-body">';

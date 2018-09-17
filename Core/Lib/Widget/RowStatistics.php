@@ -73,13 +73,13 @@ class RowStatistics extends VisualItem
         $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $link = isset($data['link']) ? $data['link'] : '#';
-        $id = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
+        $divID = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
 
         if (!isset($data['function'])) {
             return ' ERROR';
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <a href="' . $link . '"' . $id . ' class="btn ' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
+        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
