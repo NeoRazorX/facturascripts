@@ -361,6 +361,10 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveInsert(array $values = [])
     {
+
+        EventManager::trigger('Model:' . $this->modelClassName() . ':saveInsert:before', $this);
+        EventManager::trigger('Model:' . $this->modelClassName() . ':save:before', $this);
+
         $insertFields = [];
         $insertValues = [];
         foreach ($this->getModelFields() as $field) {
@@ -397,6 +401,9 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveUpdate(array $values = [])
     {
+        EventManager::trigger('Model:' . $this->modelClassName() . ':saveUpdate:before', $this);
+        EventManager::trigger('Model:' . $this->modelClassName() . ':save:before', $this);
+
         $sql = 'UPDATE ' . static::tableName();
         $coma = ' SET';
 
