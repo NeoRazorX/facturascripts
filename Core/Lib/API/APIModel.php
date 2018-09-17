@@ -42,26 +42,148 @@ class APIModel extends APIResourceClass
     private $model;
 
     /**
-     * Convert $text to plural
+     * Process the GET request. Overwrite this function to implement is functionality.
      *
-     * TODO: The conversion to the plural is language dependent.
-     *
-     * @param $text
-     * @return string
+     * @return bool
      */
-    private function pluralize($text): string
+    public function doDELETE(): bool
     {
-        /// Conversion to plural
-        if (substr($text, -1) === 's') {
-            return strtolower($text);
+        if ($this->model->loadFromCode($this->params[0])) {
+            $data = (array) $this->model;
+            $this->model->delete();
+            $this->setOk('record-deleted', $data);
+            return true;
         }
-        if (substr($text, -3) === 'ser' || substr($text, -4) === 'tion') {
-            return strtolower($text) . 's';
+
+        $this->setError($this->params[0] . ' not found');
+        return false;
+    }
+
+    /**
+     * Process the GET request. Overwrite this function to implement is functionality.
+     *
+     * @return bool
+     */
+    public function doGET(): bool
+    {
+        if ($this->params[0] === 'schema') {
+            $data = [];
+            foreach ($this->model->getModelFields() as $key => $value) {
+                $data[$key] = [
+                    'type' => $value['type'],
+                    'default' => $value['default'],
+                    'is_nullable' => $value['is_nullable'],
+                ];
+            }
+            $this->returnResult($data);
+            return true;
         }
-        if (\in_array(substr($text, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
-            return strtolower($text) . 's';
+
+        $data = (array) $this->model->get($this->params[0]);
+        if (isset($data)) {
+            // Return "array(1) { [0]=> bool(false) }" if not found???
+            if (count($data) > 1 || !isset($data[0])) {
+                $this->returnResult($data);
+                return true;
+            }
+            $this->setError($this->params[0] . ' not found');
+            return false;
         }
-        return strtolower($text) . 'es';
+
+        $this->setError('Error getting data');
+        return false;
+    }
+
+    /**
+     * Process the POST (create) request. Overwrite this function to implement is functionality.
+     *
+     * @return bool
+     */
+    public function doPOST(): bool
+    {
+        if ($this->getResource()) {
+            $this->setError('existing-record', (array) $this->model);
+            return false;
+        }
+
+        return $this->saveResource();
+    }
+
+    /**
+     * Process the PUT (update) request. Overwrite this function to implement is functionality.
+     *
+     * @return bool
+     */
+    public function doPUT(): bool
+    {
+        if (!$this->getResource()) {
+            $this->setError('not-existing-record', (array) $this->model);
+            return false;
+        }
+
+        return $this->saveResource();
+    }
+
+    /**
+     * Returns an associative array with the resources, where the index is
+     * the public name of the resource.
+     *
+     * @return array
+     */
+    public function getResources(): array
+    {
+        return $this->getResourcesFromFolder('Model');
+    }
+
+    /**
+     * Process the model resource, allowing POST/PUT/DELETE/GET ALL actions
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function processResource(string $name): bool
+    {
+        try {
+            $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $name;
+            $this->model = new $modelName();
+            $this->method = $this->request->getMethod();
+            if (count($this->params) === 0) {
+                $this->method = $this->request->getMethod();
+                return $this->listAll();
+            }
+
+            return parent::processResource($name);
+        } catch (\Exception $ex) {
+            $this->setError('api-error', null, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return false;
+        }
+    }
+
+    /**
+     * API receive all data as string, with this we convert to correct data types.
+     *
+     * @return void
+     */
+    private function fixTypes()
+    {
+        foreach ($this->model->getModelFields() as $key => $value) {
+            $fieldType = $value['type'];
+            // Force to match type from supported types in XML table definitions
+            if (\is_bool($this->model->{$key})) {
+                if (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
+                    $this->model->{$key} = (bool) $this->model->{$key};
+                    continue;
+                }
+            }
+            if (\is_numeric($this->model->{$key})) {
+                if (\strpos($fieldType, 'double') === 0) {
+                    $this->model->{$key} = (double) $this->model->{$key};
+                    continue;
+                }
+                $this->model->{$key} = (int) $this->model->{$key};
+            }
+        }
     }
 
     /**
@@ -82,17 +204,6 @@ class APIModel extends APIResourceClass
             }
         }
         return $resources;
-    }
-
-    /**
-     * Returns an associative array with the resources, where the index is
-     * the public name of the resource.
-     *
-     * @return array
-     */
-    public function getResources(): array
-    {
-        return $this->getResourcesFromFolder('Model');
     }
 
     /**
@@ -132,60 +243,6 @@ class APIModel extends APIResourceClass
         return $where;
     }
 
-    protected function listAll(): bool
-    {
-        if ($this->method === 'GET') {
-            $offset = (int) $this->request->get('offset', 0);
-            $limit = (int) $this->request->get('limit', 50);
-            $operation = $this->getRequestArray('operation');
-            $filter = $this->getRequestArray('filter');
-            $order = $this->getRequestArray('sort');
-            $where = $this->getWhereValues($filter, $operation);
-
-            $data = $this->model->all($where, $order, $offset, $limit);
-
-            $this->returnResult($data);
-            return true;
-        }
-
-        $this->setError('List all only in GET method');
-        return false;
-    }
-
-    /**
-     * Process the GET request. Overwrite this function to implement is functionality.
-     *
-     * @return bool
-     */
-    public function doGET(): bool
-    {
-        if ($this->params[0] === 'schema') {
-            $data = [];
-            foreach ($this->model->getModelFields() as $key => $value) {
-                $data[$key] = [
-                    'type' => $value['type'],
-                    'default' => $value['default'],
-                    'is_nullable' => $value['is_nullable'],
-                ];
-            }
-            $this->returnResult($data);
-            return true;
-        }
-
-        $data = (array) $this->model->get($this->params[0]);
-        if (isset($data)) {
-            // Return "array(1) { [0]=> bool(false) }" if not found???
-            if (count($data) > 1 || !isset($data[0])) {
-                $this->returnResult($data);
-                return true;
-            }
-            $this->setError($this->params[0] . ' not found');
-            return false;
-        }
-        $this->setError('Error getting data');
-        return false;
-    }
-
     /**
      * Load the model and replace the past data in the loaded model.
      * Returns true if the record already exists in the model, and false if not.
@@ -212,6 +269,49 @@ class APIModel extends APIResourceClass
         return $exist;
     }
 
+    protected function listAll(): bool
+    {
+        if ($this->method === 'GET') {
+            $offset = (int) $this->request->get('offset', 0);
+            $limit = (int) $this->request->get('limit', 50);
+            $operation = $this->getRequestArray('operation');
+            $filter = $this->getRequestArray('filter');
+            $order = $this->getRequestArray('sort');
+            $where = $this->getWhereValues($filter, $operation);
+
+            $data = $this->model->all($where, $order, $offset, $limit);
+
+            $this->returnResult($data);
+            return true;
+        }
+
+        $this->setError('List all only in GET method');
+        return false;
+    }
+
+    /**
+     * Convert $text to plural
+     *
+     * TODO: The conversion to the plural is language dependent.
+     *
+     * @param $text
+     * @return string
+     */
+    private function pluralize($text): string
+    {
+        /// Conversion to plural
+        if (substr($text, -1) === 's') {
+            return strtolower($text);
+        }
+        if (substr($text, -3) === 'ser' || substr($text, -4) === 'tion') {
+            return strtolower($text) . 's';
+        }
+        if (\in_array(substr($text, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
+            return strtolower($text) . 's';
+        }
+        return strtolower($text) . 'es';
+    }
+
     private function saveResource(): bool
     {
         $this->fixTypes();
@@ -226,104 +326,5 @@ class APIModel extends APIResourceClass
 
         $this->setError('bad-request', $this->request->request->all());
         return false;
-    }
-
-    /**
-     * Process the POST (create) request. Overwrite this function to implement is functionality.
-     *
-     * @return bool
-     */
-    public function doPOST(): bool
-    {
-        if ($this->getResource()) {
-            $this->setError('existing-record', (array) $this->model);
-            return false;
-        }
-
-        return $this->saveResource();
-    }
-
-    /**
-     * Process the PUT (update) request. Overwrite this function to implement is functionality.
-     *
-     * @return bool
-     */
-    public function doPUT(): bool
-    {
-        if (!$this->getResource()) {
-            $this->setError('not-existing-record', (array) $this->model);
-            return false;
-        }
-
-        return $this->saveResource();
-    }
-
-    /**
-     * Process the GET request. Overwrite this function to implement is functionality.
-     *
-     * @return bool
-     */
-    public function doDELETE(): bool
-    {
-        if ($this->model->loadFromCode($this->params[0])) {
-            $data = (array) $this->model;
-            $this->model->delete();
-            $this->setOk('record-deleted', $data);
-            return true;
-        }
-
-        $this->setError($this->params[0] . ' not found');
-        return false;
-    }
-
-    /**
-     * Process the model resource, allowing POST/PUT/DELETE/GET ALL actions
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function processResource(string $name): bool
-    {
-        try {
-            $modelName = 'FacturaScripts\\Dinamic\\Model\\' . $name;
-            $this->model = new $modelName();
-
-            if (count($this->params) === 0) {
-                $this->method = $this->request->getMethod();
-                return $this->listAll();
-            }
-
-            return parent::processResource($name);
-        } catch (\Exception $ex) {
-            $this->setError('api-error', null, Response::HTTP_INTERNAL_SERVER_ERROR);
-            return false;
-        }
-    }
-
-    /**
-     * API receive all data as string, with this we convert to correct data types.
-     *
-     * @return void
-     */
-    private function fixTypes()
-    {
-        foreach ($this->model->getModelFields() as $key => $value) {
-            $fieldType = $value['type'];
-            // Force to match type from supported types in XML table definitions
-            if (\is_bool($this->model->{$key})) {
-                if (\in_array($fieldType, ['boolean', 'tinyint(1)'])) {
-                    $this->model->{$key} = (bool) $this->model->{$key};
-                    continue;
-                }
-            }
-            if (\is_numeric($this->model->{$key})) {
-                if (\strpos($fieldType, 'double') === 0) {
-                    $this->model->{$key} = (double) $this->model->{$key};
-                    continue;
-                }
-                $this->model->{$key} = (int) $this->model->{$key};
-            }
-        }
     }
 }

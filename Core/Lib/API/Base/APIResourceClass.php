@@ -32,12 +32,27 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class APIResourceClass
 {
     /**
+     * Translation engine.
+     *
+     * @var \FacturaScripts\Core\Base\Translator
+     */
+    protected $i18n;
+
+    /**
      * Contains the HTTP method (GET, PUT, PATCH, POST, DELETE).
      * PUT, PATCH and POST used in the same way.
      *
      * @var string $method
      */
     protected $method;
+
+    /**
+     * App log manager.
+     *
+     * @var \FacturaScripts\Core\Base\MiniLog
+     */
+    protected $miniLog;
+
     /**
      * HTTP response object.
      *
@@ -51,20 +66,6 @@ abstract class APIResourceClass
      * @var \Symfony\Component\HttpFoundation\Request
      */
     protected $request;
-
-    /**
-     * App log manager.
-     *
-     * @var \FacturaScripts\Core\Base\MiniLog
-     */
-    protected $miniLog;
-
-    /**
-     * Translation engine.
-     *
-     * @var \FacturaScripts\Core\Base\Translator
-     */
-    protected $i18n;
 
     /**
      * @var array params passed in the URI
@@ -87,6 +88,18 @@ abstract class APIResourceClass
         $this->miniLog = $miniLog;
         $this->i18n = $i18n;
         $this->params = $params;
+    }
+
+    /**
+     * Process the DELETE request. Overwrite this function to implement is functionality.
+     * It is not defined as abstract because descendants may not need this method if
+     * they overwrite processResource.
+     *
+     * @return bool
+     */
+    public function doDELETE(): bool
+    {
+        return true;
     }
 
     /**
@@ -126,16 +139,12 @@ abstract class APIResourceClass
     }
 
     /**
-     * Process the DELETE request. Overwrite this function to implement is functionality.
-     * It is not defined as abstract because descendants may not need this method if
-     * they overwrite processResource.
+     * Returns an associative array with the resources, where the index is
+     * the public name of the resource.
      *
-     * @return bool
+     * @return array
      */
-    public function doDELETE(): bool
-    {
-        return true;
-    }
+    abstract public function getResources(): array;
 
     /**
      * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
@@ -161,6 +170,7 @@ abstract class APIResourceClass
                 case 'DELETE':
                     return $this->doDELETE();
             }
+
             $this->setError("Unknown method {$this->method} in {$name}");
             return false;
         } catch (\Exception $ex) {
@@ -180,14 +190,6 @@ abstract class APIResourceClass
     {
         return ['API' => \get_class($this), 'Name' => $name];
     }
-
-    /**
-     * Returns an associative array with the resources, where the index is
-     * the public name of the resource.
-     *
-     * @return array
-     */
-    abstract public function getResources(): array;
 
     /**
      * Return the array with the result, and HTTP_OK status code.
@@ -232,6 +234,11 @@ abstract class APIResourceClass
     protected function setError(string $message, array $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
         $this->response->setStatusCode($status);
+
+        foreach ($this->miniLog->read(["error"]) as $error) {
+            $message .= ' ' . $error['message'];
+        }
+
         $res = array();
         $res['error'] = $message;
         if ($data !== null) {
