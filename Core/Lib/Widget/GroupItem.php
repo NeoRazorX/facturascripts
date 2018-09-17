@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Model\User;
+
 /**
  * Description of GroupItem
  *
@@ -89,11 +91,12 @@ class GroupItem extends VisualItem
 
     /**
      * 
-     * @param object    $model
+     * @param object     $model
+     * @param User|false $user
      *
      * @return string
      */
-    public function edit($model)
+    public function edit($model, $user)
     {
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
         $html = '<div class="' . $divClass . '"><div class="form-row">';
@@ -104,7 +107,7 @@ class GroupItem extends VisualItem
         }
 
         foreach ($this->columns as $col) {
-            $html .= $col->edit($model);
+            $html .= $col->edit($model, $user);
         }
 
         $html .= '</div><br/></div>';
@@ -113,12 +116,13 @@ class GroupItem extends VisualItem
 
     /**
      * 
-     * @param object $model
-     * @param string $viewName
+     * @param object     $model
+     * @param User|false $user
+     * @param string     $viewName
      *
      * @return string
      */
-    public function modal($model, $viewName)
+    public function modal($model, $user, $viewName)
     {
         $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
         $html = '<form method="post"><input type="hidden" name="activetab" value="' . $viewName . '"/>'
@@ -134,7 +138,7 @@ class GroupItem extends VisualItem
             . '<div class="modal-body">';
 
         foreach ($this->columns as $col) {
-            $html .= $col->edit($model);
+            $html .= $col->edit($model, $user);
         }
 
         $html .= '</div>'

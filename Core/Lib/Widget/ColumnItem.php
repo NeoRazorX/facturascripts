@@ -109,11 +109,16 @@ class ColumnItem extends VisualItem
     /**
      * 
      * @param object $model
+     * @param User|false $user
      *
      * @return string
      */
-    public function edit($model)
+    public function edit($model, $user)
     {
+        if ($this->hiddeTo($user)) {
+            return $this->widget->inputHidden($model);
+        }
+
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
         return '<div class="' . $divClass . '">' . $this->widget->edit($model, $this->title, $this->description) . '</div>';
     }
@@ -138,20 +143,27 @@ class ColumnItem extends VisualItem
     /**
      * 
      * @param object $model
+     * @param User|false $user
      *
      * @return string
      */
-    public function tableCell($model)
+    public function tableCell($model, $user)
     {
-        return $this->widget->tableCell($model, $this->display);
+        return $this->hiddeTo($user) ? '' : $this->widget->tableCell($model, $this->display);
     }
 
     /**
      * 
+     * @param User|false $user
+     *
      * @return string
      */
-    public function tableHeader()
+    public function tableHeader($user)
     {
+        if ($this->hiddeTo($user)) {
+            return '';
+        }
+
         if (empty($this->titleurl)) {
             return '<th class="text-' . $this->display . '">' . static::$i18n->trans($this->title) . '</th>';
         }

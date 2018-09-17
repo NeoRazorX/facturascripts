@@ -86,7 +86,7 @@
                         </th>
                     {% endif %}
                     {% for column in currentView.getColumns() %}
-                        {{ column.tableHeader() | raw }}
+                        {{ column.tableHeader(fsc.user) | raw }}
                     {% endfor %}
                 </tr>
             </thead>
@@ -101,7 +101,7 @@
                             </div>
                         </td>
                         {% for column in currentView.getColumns() %}
-                            {{ column.tableCell(model) | raw }}
+                            {{ column.tableCell(model, fsc.user) | raw }}
                         {% endfor %}
                     </tr>
                 {% else %}
@@ -136,7 +136,7 @@
 
 {# -- Modals -- #}
 {% for group in currentView.getModals() %}
-    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+    {{ group.modal(currentView.model, fsc.user, currentView.getViewName()) | raw }}
 {% endfor %}
 
 {# -- Macros -- #}

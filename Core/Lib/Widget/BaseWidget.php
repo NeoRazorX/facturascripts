@@ -139,6 +139,18 @@ class BaseWidget extends VisualItem
      *
      * @return string
      */
+    public function inputHidden($model)
+    {
+        $this->setValue($model);
+        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>';
+    }
+
+    /**
+     * 
+     * @param object $model
+     *
+     * @return string
+     */
     public function plainText($model)
     {
         $this->setValue($model);
