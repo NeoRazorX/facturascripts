@@ -83,5 +83,5 @@
 
 {# -- Modals -- #}
 {% for group in currentView.getModals() %}
-    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+    {{ group.modal(currentView.model, fsc.user, currentView.getViewName()) | raw }}
 {% endfor %}
