@@ -43,6 +43,7 @@ class EditListView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/EditListView.html.twig';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js';
     }
 
     /**

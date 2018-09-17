@@ -2,6 +2,13 @@
 {% set currentView = fsc.getCurrentView() %}
 {% set formName = 'form' ~ currentView.getViewName() %}
 
+<script type="text/javascript">
+    var listViewDeleteCancel = "{{ i18n.trans('cancel') }}";
+    var listViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
+    var listViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";
+    var listViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
+</script>
+
 <br/>
 
 <form id="{{ formName }}" method="post">
@@ -17,7 +24,7 @@
                     <a href="{{ currentView.model.url('new') }}" class="btn btn-success">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                     </a>
-                    <button type="button" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
                         <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -79,7 +86,7 @@
                         </th>
                     {% endif %}
                     {% for column in currentView.getColumns() %}
-                        {{ column.tableHeader() | raw }}
+                        {{ column.tableHeader(fsc.user) | raw }}
                     {% endfor %}
                 </tr>
             </thead>
@@ -94,7 +101,7 @@
                             </div>
                         </td>
                         {% for column in currentView.getColumns() %}
-                            {{ column.tableCell(model) | raw }}
+                            {{ column.tableCell(model, fsc.user) | raw }}
                         {% endfor %}
                     </tr>
                 {% else %}
@@ -129,7 +136,7 @@
 
 {# -- Modals -- #}
 {% for group in currentView.getModals() %}
-    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+    {{ group.modal(currentView.model, fsc.user, currentView.getViewName()) | raw }}
 {% endfor %}
 
 {# -- Macros -- #}

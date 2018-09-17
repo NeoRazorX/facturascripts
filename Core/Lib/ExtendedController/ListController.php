@@ -221,10 +221,15 @@ abstract class ListController extends BaseController
             return false;
         }
 
+        $codes = $this->request->request->get('code', '');
+        if (!is_array($codes)) {
+            $this->miniLog->warning($this->i18n->trans('no-data'));
+            return false;
+        }
+
         $model = $this->views[$this->active]->model;
-        $code = $this->request->get('code');
         $numDeletes = 0;
-        foreach (explode(',', $code) as $cod) {
+        foreach ($codes as $cod) {
             if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {

@@ -1,13 +1,40 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
 
+<script type="text/javascript">
+    function editViewDelete(viewName) {
+        bootbox.confirm({
+            title: "{{ i18n.trans('confirm-delete') }}",
+            message: "{{ i18n.trans('are-you-sure') }}",
+            closeButton: false,
+            buttons: {
+                cancel: {
+                    label: '<i class="fas fa-times"></i> {{ i18n.trans('cancel') }}'
+                },
+                confirm: {
+                    label: '<i class="fas fa-check"></i> {{ i18n.trans('confirm') }}',
+                    className: "btn-danger"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $("#form" + viewName + " :input[name=\"action\"]").val("delete");
+                    $("#form" + viewName).submit();
+                }
+            }
+        });
+
+        return false;
+    }
+</script>
+
 {# -- Row header -- #}
 <div class="row">
     {% set row = currentView.getRow('header') %}
     {{ row.render(currentView.getViewName()) | raw }}
 </div>
 
-<form id="formEditView{{ currentView.getViewName() }}" method="post">
+<form id="form{{ currentView.getViewName() }}" method="post">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card">
@@ -21,15 +48,15 @@
             </div>
             <div class="row">
                 {% for group in currentView.getColumns() %}
-                    {{ group.edit(currentView.model) | raw }}
+                    {{ group.edit(currentView.model, fsc.user) | raw }}
                 {% endfor %}
             </div>
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-sm btn-danger" onclick="editViewDeleteRecord();" href="#">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="editViewDelete('{{ currentView.getViewName() }}');">
                         <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
-                    </a>
+                    </button>
                 </div>
                 <div class="col">
                     {# -- Row actions -- #}
@@ -61,5 +88,5 @@
 
 {# -- Modals -- #}
 {% for group in currentView.getModals() %}
-    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+    {{ group.modal(currentView.model, fsc.user, currentView.getViewName()) | raw }}
 {% endfor %}
