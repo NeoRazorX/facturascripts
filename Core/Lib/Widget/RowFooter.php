@@ -35,17 +35,17 @@ class RowFooter extends VisualItem
     protected $children;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->children = $data['children'];
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      * @param string $jsFunction
      *
@@ -71,7 +71,7 @@ class RowFooter extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -86,7 +86,7 @@ class RowFooter extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param array $group
      *
      * @return string
@@ -101,7 +101,7 @@ class RowFooter extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param string $group
      * @param string $viewName
      * @param string $jsFunction
@@ -112,7 +112,8 @@ class RowFooter extends VisualItem
     {
         $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
         $class = isset($group['class']) ? ' ' . $group['class'] : '';
-        $html = '<div class="' . $colClass . $class . '">'
+        $id = empty($group['id']) ? '' : ' id="' . $group['id'] . '"';
+        $html = '<div' . $id . ' class="' . $colClass . $class . '">'
             . '<div class="card">'
             . $this->renderCardHeader($group)
             . '<div class="card-body">';

@@ -51,12 +51,6 @@ class GroupItem extends VisualItem
 
     /**
      *
-     * @var string
-     */
-    public $name;
-
-    /**
-     *
      * @var int
      */
     public $numcolumns;
@@ -74,15 +68,14 @@ class GroupItem extends VisualItem
     public $title;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->class = isset($data['class']) ? $data['class'] : '';
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
-        $this->name = $data['name'];
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int) $data['order'] : 0;
         $this->title = isset($data['title']) ? $data['title'] : '';
@@ -90,7 +83,7 @@ class GroupItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object     $model
      * @param User|false $user
      *
@@ -99,7 +92,8 @@ class GroupItem extends VisualItem
     public function edit($model, $user)
     {
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
-        $html = '<div class="' . $divClass . '"><div class="form-row">';
+        $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $html = '<div' . $divId . ' class="' . $divClass . '"><div class="form-row">';
 
         if (!empty($this->title)) {
             $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
@@ -115,7 +109,7 @@ class GroupItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object     $model
      * @param User|false $user
      * @param string     $viewName
@@ -176,7 +170,7 @@ class GroupItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param array $children
      */
     protected function loadColumns($children)

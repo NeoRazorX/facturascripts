@@ -53,12 +53,6 @@ class ColumnItem extends VisualItem
 
     /**
      *
-     * @var string
-     */
-    public $name;
-
-    /**
-     *
      * @var int
      */
     public $numcolumns;
@@ -89,16 +83,15 @@ class ColumnItem extends VisualItem
     public $widget;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->description = isset($data['description']) ? $data['description'] : '';
         $this->display = isset($data['display']) ? $data['display'] : 'left';
         $this->level = isset($data['level']) ? (int) $data['level'] : 1;
-        $this->name = $data['name'];
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int) $data['order'] : 0;
         $this->title = isset($data['title']) ? $data['title'] : $this->name;
@@ -107,7 +100,7 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param User|false $user
      *
@@ -120,11 +113,12 @@ class ColumnItem extends VisualItem
         }
 
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
-        return '<div class="' . $divClass . '">' . $this->widget->edit($model, $this->title, $this->description) . '</div>';
+        $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        return '<div' . $divID . ' class="' . $divClass . '">' . $this->widget->edit($model, $this->title, $this->description) . '</div>';
     }
 
     /**
-     * 
+     *
      * @param User|false $user
      *
      * @return boolean
@@ -141,7 +135,7 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param User|false $user
      *
@@ -153,7 +147,7 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param User|false $user
      *
      * @return string
@@ -174,7 +168,7 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param array $children
      */
     protected function loadWidget($children)

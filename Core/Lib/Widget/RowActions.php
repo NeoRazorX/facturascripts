@@ -33,17 +33,17 @@ class RowActions extends VisualItem
     protected $children;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->children = $data['children'];
     }
 
     /**
-     * 
+     *
      * @param bool $small
      *
      * @return string

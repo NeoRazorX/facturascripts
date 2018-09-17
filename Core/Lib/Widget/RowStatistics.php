@@ -33,17 +33,17 @@ class RowStatistics extends VisualItem
     protected $children;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
     {
-        parent::__construct();
+        parent::__construct($data);
         $this->children = $data['children'];
     }
 
     /**
-     * 
+     *
      * @param object $controller
      *
      * @return string
@@ -61,7 +61,7 @@ class RowStatistics extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $controller
      * @param array  $data
      *
@@ -73,12 +73,13 @@ class RowStatistics extends VisualItem
         $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $link = isset($data['link']) ? $data['link'] : '#';
+        $id = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
 
         if (!isset($data['function'])) {
             return ' ERROR';
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <a href="' . $link . '" class="btn ' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
+        return ' <a href="' . $link . '"' . $id . ' class="btn ' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
