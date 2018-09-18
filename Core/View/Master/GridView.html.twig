@@ -1,6 +1,5 @@
 {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 {% set currentView = fsc.getCurrentView() %}
-{% set parentModel = currentView.parentModel %}
 
 {# -- Row header -- #}
 {% set row = currentView.getRow('header') %}
@@ -38,7 +37,6 @@
 </div>
 
 {# Buttons actions #}
-{% set keyValue = fsc.getFieldValue(parentModel, parentModel.primaryColumn()) %}
 {% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
 {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
 <form id="formGridView{{ currentView.getViewName() }}" method="post">
@@ -50,10 +48,10 @@
             <div class="card-body d-flex justify-content-between" style="padding: 1rem 0rem;">
                 {# -- Delete action -- #}
                 <div class="col">
-                    <a class="btn btn-sm btn-danger" id="delete-document" onclick="deleteRecord('{{ parentIndexView }}', 'delete-document');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                    <button class="btn btn-sm btn-danger" type="button" id="delete-document" onclick="deleteRecord('{{ parentViewName }}', 'delete-document');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                         <i class="fas fa-trash" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
-                    </a>
+                    </button>
                 </div>
                 {# -- Row actions -- #}
                 {% set row = currentView.getRow('actions') %}
@@ -64,7 +62,7 @@
                 {% endif %}
                 {# -- DSave & Restore actions -- #}
                 <div class="col text-right">
-                    <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ parentIndexView }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
+                    <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ parentViewName }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
                         <i class="far fa-save" aria-hidden="true"></i>&nbsp; {{ save }}
                     </button>
                 </div>
