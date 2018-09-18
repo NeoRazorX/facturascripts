@@ -25,9 +25,18 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class WidgetAutocomplete extends WidgetSelect
 {
-    
+
     /**
-     * 
+     * Indicates whether a value should be selected strictly from the list
+     * of values or whether the user can enter a new or different value
+     * from the list. (Only for GridViews)
+     *
+     * @var bool
+     */
+    public $strict;
+
+    /**
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -37,7 +46,7 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param string $title
      * @param string $description
@@ -66,7 +75,7 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $extraClass
      *
@@ -79,5 +88,16 @@ class WidgetAutocomplete extends WidgetSelect
         return '<input type="' . $type . '" value="' . $selected . '" class="' . $class . '" data-field="' . $this->fieldname
             . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle
             . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
+    }
+
+    /**
+     * Set datasource data and Load data from Model into values array
+     */
+    protected function setSourceData(array $child, bool $loadData = true)
+    {
+        // The values are filled in automatically by the view controller
+        // according to the information entered by the user.
+        parent::setSourceData($child, false);
+        $this->strict = isset($child['strict']) ? ($child['strict'] == 'true') : true;
     }
 }

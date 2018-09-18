@@ -77,11 +77,8 @@ class WidgetSelect extends BaseWidget
             }
 
             if (isset($child['source'])) {
-                $this->fieldcode = $child['fieldcode'];
-                $this->fieldtitle = isset($child['fieldtitle']) ? $child['fieldtitle'] : $this->fieldcode;
-                $this->source = $child['source'];
-                $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
-                $this->setValuesFromCodeModel($values);
+                $this->setSourceData($child);
+                break;
             } elseif (isset($child['title'])) {
                 $this->setValuesFromArray($data['children'], true, !$this->required, 'text');
                 break;
@@ -104,6 +101,21 @@ class WidgetSelect extends BaseWidget
             'fieldcode' => $this->fieldcode,
             'fieldtitle' => $this->fieldtitle
         ];
+    }
+
+    /**
+     * Set datasource data and Load data from Model into values array
+     */
+    protected function setSourceData(array $child, bool $loadData = true)
+    {
+        $this->source = $child['source'];
+        $this->fieldcode = $child['fieldcode'];
+        $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
+
+        if ($loadData) {
+            $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
+            $this->setValuesFromCodeModel($values);
+        }
     }
 
     /**
