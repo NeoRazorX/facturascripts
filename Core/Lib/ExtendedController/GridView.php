@@ -97,20 +97,20 @@ class GridView extends BaseView
     /**
      * Configure autocomplete column with data to Grid component
      *
-     * @param array $values
+     * @param WidgetAutocomplete $widget
      *
      * @return array
      */
-    private function getAutocompleteSource($values): array
+    private function getAutocompleteSource($widget): array
     {
-        // Calculate url for grid controller
-        $url = $this->parentModel->url('edit');
+        $url = $this->parentModel->url('edit'); // Calculate url for grid controller
+        $datasource = $widget->getDataSource();
 
         return [
             'url' => $url,
-            'source' => $values['source'],
-            'field' => $values['fieldcode'],
-            'title' => $values['fieldtitle']
+            'source' => $datasource['source'],
+            'field' => $datasource['fieldcode'],
+            'title' => $datasource['fieldtitle']
         ];
     }
 
@@ -118,19 +118,19 @@ class GridView extends BaseView
      * Determines whether the user's selection should be strictly
      * a value from the list of values
      *
-     * @param array $values
+     * @param WidgetAutocomplete $widget
      *
      * @return bool
      */
-    private function getAutocompeteStrict($values): bool
+    private function getAutocompeteStrict($widget): bool
     {
-        return isset($values['strict']) ? $values['strict'] === 'true' : true;
+        return $widget->strict ?? true;
     }
 
     /**
      * Return array of values to select
      *
-     * @param WidgetItemSelect $widget
+     * @param WidgetSelect $widget
      */
     private function getSelectSource($widget): array
     {
@@ -154,15 +154,17 @@ class GridView extends BaseView
      */
     private function getItemForColumn($column): array
     {
-        $item = ['data' => $column->widget->fieldname];
-        switch ($column->widget->type) {
+        $item = [
+            'data' => $column->widget->fieldname,
+            'type' => $column->widget->getType()
+        ];
+        switch ($item['type']) {
             case 'autocomplete':
-                $item['type'] = 'autocomplete';
                 $item['visibleRows'] = 5;
                 $item['allowInvalid'] = true;
                 $item['trimDropdown'] = false;
-                $item['strict'] = $this->getAutocompeteStrict($column->widget->values[0]);
-                $item['data-source'] = $this->getAutocompleteSource($column->widget->values[0]);
+                $item['strict'] = $this->getAutocompeteStrict($column->widget);
+                $item['data-source'] = $this->getAutocompleteSource($column->widget);
                 break;
 
             case 'select':
@@ -174,10 +176,6 @@ class GridView extends BaseView
             case 'money':
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = Base\DivisaTools::gridMoneyFormat();
-                break;
-
-            default:
-                $item['type'] = $column->widget->type;
                 break;
         }
 
@@ -331,7 +329,7 @@ class GridView extends BaseView
             $dataBase->commit();
 
             // URL for refresh data
-            $result['url'] = $this->parentView->getURL('edit') . '&action=save-ok';
+            $result['url'] = $this->parentModel->url('edit') . '&action=save-ok';
         } catch (Exception $e) {
             $result['error'] = true;
             $result['message'] = $e->getMessage();
