@@ -368,6 +368,6 @@ class GridView extends BaseView
      */
     public function processRequest($request)
     {
-
+        ;
     }
 }

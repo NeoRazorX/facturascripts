@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Lib\Widget;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class WidgetPassword extends BaseWidget
+class WidgetPassword extends WidgetText
 {
 
     /**

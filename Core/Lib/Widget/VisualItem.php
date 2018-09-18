@@ -117,29 +117,29 @@ class VisualItem
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $title = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
         $label = $small ? '' : $title;
-        $id = isset($button['id']) ? ' id="' . $button['id'] . '"' : '';
+        $divID = isset($button['id']) ? ' id="' . $button['id'] . '"' : '';
 
         if (!isset($button['type']) || !isset($button['action'])) {
             return '';
         }
 
         if ($button['type'] === 'modal') {
-            return '<button type="button"' . $id . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
+            return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
         if ($button['type'] === 'js') {
-            return '<button type="button"' . $id . ' class="' . $cssClass . '" onclick="' . $button['action']
+            return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $button['action']
                 . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
         /// type action
         if (empty($jsFunction)) {
-            return '<button type="submit"' . $id . ' name="action" value="' . $button['action'] . '" class="'
+            return '<button type="submit"' . $divID . ' name="action" value="' . $button['action'] . '" class="'
                 . $cssClass . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
 
-        return '<button type="button"' . $id . ' class="' . $cssClass . '" onclick="' . $jsFunction
+        return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $jsFunction
             . '(\'' . $viewName . '\',\'' . $button['action'] . '\');" title="' . $title . '">' . $icon . $label . '</button>';
     }
 }
