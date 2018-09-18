@@ -60,7 +60,7 @@ class WidgetSelect extends BaseWidget
     protected $values = [];
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -90,6 +90,20 @@ class WidgetSelect extends BaseWidget
                 break;
             }
         }
+    }
+
+    /**
+     * Obtains the configuration of the datasource used in obtaining data
+     *
+     * @return array
+     */
+    public function getDataSource(): array
+    {
+        return [
+            'source' => $this->source,
+            'fieldcode' => $this->fieldcode,
+            'fieldtitle' => $this->fieldtitle
+        ];
     }
 
     /**
@@ -153,7 +167,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param int $start
      * @param int $end
      * @param int $step
@@ -177,7 +191,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $extraClass
      *
@@ -198,7 +212,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function show()

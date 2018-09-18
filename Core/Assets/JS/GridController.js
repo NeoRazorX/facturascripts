@@ -65,7 +65,7 @@ function assignSource(data) {
 
 /**
  * Configure source data for autocomplete columns
- * 
+ *
  * @param {Object} columns
  */
 function configureAutocompleteColumns(columns) {
@@ -234,7 +234,7 @@ function saveDocument(mainFormName) {
             lines: getGridData("order"),
             document: {}
         };
-        var mainForm = $("form[name=" + mainFormName + "]");
+        var mainForm = $("#form" + mainFormName);
         $.each(mainForm.serializeArray(), function (key, value) {
             data.document[value.name] = value.value;
         });

@@ -134,6 +134,17 @@ class BaseWidget extends VisualItem
     }
 
     /**
+     * Get the widget type
+     *
+     * @return string|false
+     */
+    public function getType()
+    {
+        $className = end(explode('\\', get_class($this)));
+        return strtolower(substr($className, 6));
+    }
+
+    /**
      *
      * @param object $model
      *
@@ -146,7 +157,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object $model
      *
      * @return string

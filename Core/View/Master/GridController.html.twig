@@ -59,14 +59,15 @@
     {# -- Main Body -- #}
     <div class="container-fluid">
         {# -- Account View Panel -- #}
-        <div class="row">
-            <div class="col-12">
-                {# Main Data #}
-                {% do fsc.setCurrentView(parentViewName) %}
-                {{ include(parentView.template) }}
+        {% block parentview %}
+            <div class="row">
+                <div class="col-12">
+                    {# Main Data #}
+                    {% do fsc.setCurrentView(parentViewName) %}
+                    {{ include(parentView.template) }}
+                </div>
             </div>
-        </div>
-
+        {% endblock %}
         {# -- Detail data -- #}
         {% if parentView.count > 0 %}
             <div class="row mt-2">
