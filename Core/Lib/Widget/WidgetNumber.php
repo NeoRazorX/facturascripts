@@ -52,7 +52,7 @@ class WidgetNumber extends BaseWidget
     /**
      * Indicates the step value
      *
-     * @var int
+     * @var string
      */
     protected $step;
 
@@ -69,7 +69,7 @@ class WidgetNumber extends BaseWidget
         parent::__construct($data);
         $this->min = $data['min'] ?? 0;
         $this->max = $data['max'] ?? 0;
-        $this->step = $data['step'] ?? 0;
+        $this->step = $data['step'] ?? 'any';
     }
 
     /**
@@ -91,9 +91,9 @@ class WidgetNumber extends BaseWidget
      */
     protected function inputHtmlExtraParams()
     {
+        $step = ' step="' . $this->step . '"';
         $min = ($this->min > 0) ? ' min="' . $this->min . '"' : '';
         $max = ($this->max > 0) ? ' max="' . $this->max . '"' : '';
-        $step = ($this->step > 0) ? ' step="' . $this->step . '"' : '';
         return $min . $max . $step . parent::inputHtmlExtraParams();
     }
 
