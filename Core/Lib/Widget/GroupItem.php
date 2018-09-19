@@ -105,7 +105,7 @@ class GroupItem extends VisualItem
             $html .= $col->edit($model, $user);
         }
 
-        $html .= '</div><br/></div>';
+        $html .= '</div></div>';
         return $html;
     }
 

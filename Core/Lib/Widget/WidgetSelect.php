@@ -56,6 +56,12 @@ class WidgetSelect extends BaseWidget
 
     /**
      *
+     * @var bool
+     */
+    protected $translate;
+
+    /**
+     *
      * @var array
      */
     protected $values = [];
@@ -66,10 +72,12 @@ class WidgetSelect extends BaseWidget
      */
     public function __construct($data)
     {
-        parent::__construct($data);
         if (!isset(static::$codeModel)) {
             static::$codeModel = new CodeModel();
         }
+
+        parent::__construct($data);
+        $this->translate = isset($data['translate']);
 
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
@@ -80,7 +88,7 @@ class WidgetSelect extends BaseWidget
                 $this->setSourceData($child);
                 break;
             } elseif (isset($child['title'])) {
-                $this->setValuesFromArray($data['children'], isset($data['translate']), !$this->required, 'text');
+                $this->setValuesFromArray($data['children'], $this->translate, !$this->required, 'text');
                 break;
             } elseif (isset($child['start'])) {
                 $this->setValuesFromRange($child['start'], $child['end'], $child['step']);
@@ -232,7 +240,7 @@ class WidgetSelect extends BaseWidget
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
         if ($loadData) {
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
-            $this->setValuesFromCodeModel($values, isset($child['translate']));
+            $this->setValuesFromCodeModel($values, $this->translate);
         }
     }
 

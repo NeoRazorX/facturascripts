@@ -50,8 +50,8 @@
     <modals>
         <group name="add-rol-access" icon="fa-user-plus">
             <column name="select-menu" title="menu">
-                <widget type="select" fieldname="menu">
-                    <values source="pages" fieldcode="menu" fieldtitle="menu" translate="true"></values>
+                <widget type="select" fieldname="menu" translate="true">
+                    <values source="pages" fieldcode="menu" fieldtitle="menu"></values>
                 </widget>
             </column>
         </group>
