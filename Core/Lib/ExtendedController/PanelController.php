@@ -246,7 +246,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Run the data edits.
+     * Runs the data edit action.
      *
      * @return bool
      */
@@ -332,7 +332,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * 
+     * Runs data insert action.
      */
     protected function insertAction()
     {

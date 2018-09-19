@@ -67,13 +67,13 @@ class HtmlView extends BaseView
     {
         ;
     }
-
+    
     /**
-     * Process need request data.
-     *
+     * 
      * @param Request $request
+     * @param string  $case
      */
-    public function processRequest($request)
+    public function processFormData($request, $case)
     {
         ;
     }
