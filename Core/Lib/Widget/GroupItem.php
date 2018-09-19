@@ -130,13 +130,15 @@ class GroupItem extends VisualItem
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
-            . '<div class="modal-body">';
+            . '<div class="modal-body">'
+            . '<div class="row">';
 
         foreach ($this->columns as $col) {
             $html .= $col->edit($model, $user);
         }
 
         $html .= '</div>'
+            . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
             . static::$i18n->trans('cancel')
