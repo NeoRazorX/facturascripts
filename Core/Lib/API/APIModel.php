@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\API;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;

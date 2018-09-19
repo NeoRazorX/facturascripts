@@ -19,8 +19,14 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Core\Lib\Widget\BaseWidget;
+use FacturaScripts\Core\Lib\Widget\GroupItem;
+use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
+use FacturaScripts\Core\Model\User;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -32,11 +38,30 @@ abstract class BaseView
 {
 
     /**
+     *
+     * @var array
+     */
+    protected static $assets = [];
+
+    /**
      * Total count of read rows.
      *
      * @var int
      */
     public $count;
+
+    /**
+     * Cursor with data from the model display
+     *
+     * @var array
+     */
+    public $cursor;
+
+    /**
+     *
+     * @var string
+     */
+    public $icon;
 
     /**
      * Contains the translator.
@@ -53,6 +78,12 @@ abstract class BaseView
     public $model;
 
     /**
+     *
+     * @var string
+     */
+    private $name;
+
+    /**
      * Stores the new code from the save() procedure, to use in loadData().
      *
      * @var string
@@ -60,11 +91,36 @@ abstract class BaseView
     public $newCode;
 
     /**
-     * Columns and filters configuration
+     * Stores the offset for the cursor
+     *
+     * @var int
+     */
+    public $offset;
+
+    /**
+     *
+     * @var array
+     */
+    public $order;
+
+    /**
+     * Columns configuration
      *
      * @var PageOption
      */
     protected $pageOption;
+
+    /**
+     *
+     * @var array
+     */
+    public $settings;
+
+    /**
+     *
+     * @var string
+     */
+    public $template;
 
     /**
      * View title
@@ -74,33 +130,58 @@ abstract class BaseView
     public $title;
 
     /**
+     * Stores the where parameters for the cursor
+     *
+     * @var DataBaseWhere[]
+     */
+    protected $where;
+
+    /**
      * Method to export the view data.
      */
     abstract public function export(&$exportManager);
 
     /**
-     * Construct and initialize the class
-     *
-     * @param string $title
-     * @param string $modelName
+     * Loads view data.
      */
-    public function __construct(string $title, string $modelName)
-    {
-        static::$i18n = new Base\Translator();
-
-        $this->count = 0;
-        $this->title = static::$i18n->trans($title);
-        $this->model = class_exists($modelName) ? new $modelName() : null;
-        $this->pageOption = new PageOption();
-    }
+    abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
-     * Clears the model and set new code for the PK.
+     * Process form data.
      */
-    public function clear()
+    abstract public function processFormData($request, $case);
+
+    /**
+     * Construct and initialize the class
+     *
+     * @param string $name
+     * @param string $title
+     * @param string $modelName
+     * @param string $icon
+     */
+    public function __construct($name, $title, $modelName, $icon)
     {
-        $this->model->clear();
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+        if (!isset(static::$i18n)) {
+            static::$i18n = new Base\Translator();
+        }
+
+        $this->count = 0;
+        $this->cursor = [];
+        $this->icon = $icon;
+        $this->model = class_exists($modelName) ? new $modelName() : null;
+        $this->name = $name;
+        $this->offset = 0;
+        $this->order = [];
+        $this->pageOption = new PageOption();
+        $this->settings = [
+            'active' => true,
+            'btnDelete' => true,
+            'btnNew' => true,
+            'btnPrint' => false,
+        ];
+        $this->template = 'Master/BaseView.html.twig';
+        $this->title = static::$i18n->trans($title);
+        $this->where = [];
     }
 
     /**
@@ -112,20 +193,15 @@ abstract class BaseView
      */
     public function columnForField(string $fieldName)
     {
-        $result = null;
         foreach ($this->pageOption->columns as $group) {
             foreach ($group->columns as $column) {
-                if ($column->widget->fieldName === $fieldName) {
-                    $result = $column;
-                    break;
+                if ($column->widget->fieldname === $fieldName) {
+                    return $column;
                 }
-            }
-            if (!empty($result)) {
-                break;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -137,26 +213,54 @@ abstract class BaseView
      */
     public function columnForName(string $columnName)
     {
-        $result = null;
         foreach ($this->pageOption->columns as $group) {
             foreach ($group->columns as $key => $column) {
                 if ($key === $columnName) {
-                    $result = $column;
-                    break;
+                    return $column;
                 }
-            }
-            if (!empty($result)) {
-                break;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
-     * Returns the list of modal forms
+     * Establishes the column's edit state
+     *
+     * @param string $columnName
+     * @param bool   $disabled
+     */
+    public function disableColumn($columnName, $disabled = true)
+    {
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->display = $disabled ? 'none' : 'left';
+        }
+    }
+
+    /**
      *
      * @return array
+     */
+    public static function getAssets()
+    {
+        return array_merge_recursive(static::$assets, BaseFilter::getAssets(), BaseWidget::getAssets());
+    }
+
+    /**
+     * Returns the column configuration
+     *
+     * @return GroupItem[]
+     */
+    public function getColumns()
+    {
+        return $this->pageOption->columns;
+    }
+
+    /**
+     * Returns the modal configuration
+     *
+     * @return GroupItem[]
      */
     public function getModals()
     {
@@ -164,27 +268,55 @@ abstract class BaseView
     }
 
     /**
+     * 
+     * @return array
+     */
+    public function getPagination()
+    {
+        $pages = [];
+        $key1 = $key2 = 0;
+        $current = 1;
+
+        /// add all pages
+        while ($key2 < $this->count) {
+            $pages[$key1] = [
+                'active' => ($key2 == $this->offset),
+                'num' => $key1 + 1,
+                'offset' => $key1 * FS_ITEM_LIMIT,
+            ];
+            if ($key2 == $this->offset) {
+                $current = $key1;
+            }
+            $key1++;
+            $key2 += FS_ITEM_LIMIT;
+        }
+
+        /// now descarting pages
+        foreach (array_keys($pages) as $key2) {
+            $middle = intval($key1 / 2);
+
+            /**
+             * We discard everything except the first page, the last one, the middle one,
+             * the current one, the 5 previous and 5 following ones.
+             */
+            if (($key2 > 1 && $key2 < $current - 5 && $key2 != $middle) || ( $key2 > $current + 5 && $key2 < $key1 - 1 && $key2 != $middle)) {
+                unset($pages[$key2]);
+            }
+        }
+
+        return (count($pages) > 1) ? $pages : [];
+    }
+
+    /**
      * If it exists, return the specified row type
      *
      * @param string $key
      *
-     * @return RowItem
+     * @return mixed
      */
     public function getRow(string $key)
     {
         return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
-    }
-
-    /**
-     * Returns the url for the requested model type
-     *
-     * @param string $type (edit / list / auto)
-     *
-     * @return string
-     */
-    public function getURL(string $type)
-    {
-        return empty($this->model) ? '' : $this->model->url($type);
     }
 
     /**
@@ -194,7 +326,7 @@ abstract class BaseView
      */
     public function getViewName()
     {
-        return $this->pageOption->name;
+        return $this->name;
     }
 
     /**
@@ -211,6 +343,34 @@ abstract class BaseView
         }
 
         $this->model->checkArrayData($data);
-        $this->model->loadFromData($data, ['action', 'active']);
+        $this->model->loadFromData($data, ['action', 'activetab']);
+    }
+
+    /**
+     *
+     * @param User|false $user
+     */
+    public function loadPageOptions($user)
+    {
+        $orderby = ['nick' => 'ASC'];
+        $viewName = explode('-', $this->name)[0];
+        $where = [
+            new DataBaseWhere('name', $viewName),
+        ];
+
+        if (!is_bool($user)) {
+            $where = [
+                new DataBaseWhere('name', $viewName),
+                new DataBaseWhere('nick', $user->nick),
+                new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+                new DataBaseWhere('name', $viewName),
+            ];
+        }
+
+        if ($this->pageOption->loadFromCode('', $where, $orderby)) {
+            VisualItemLoadEngine::loadArray($this->pageOption->columns, $this->pageOption->modals, $this->pageOption->rows, $this->pageOption);
+        } elseif (!is_bool($user)) {
+            VisualItemLoadEngine::installXML($viewName, $this->pageOption);
+        }
     }
 }

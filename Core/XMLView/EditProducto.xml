@@ -93,8 +93,8 @@
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentairpf" title="subaccount-irpf" order="120">
-                <widget type="autocomplete" fieldname="codsubcuentairpf">
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" order="120">
+                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>

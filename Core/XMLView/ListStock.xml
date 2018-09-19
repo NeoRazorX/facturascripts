@@ -56,9 +56,9 @@
     </columns>
     <rows>
         <row type="status" fieldname="cantidad">
-            <option color="table-danger">&lt;0</option>
-            <option color="table-success">&gt;1</option>
-            <option color="table-warning">&lt;1</option>
+            <option color="danger">&lt;0</option>
+            <option color="success">&gt;1</option>
+            <option color="warning">&lt;1</option>
         </row>
     </rows>
 </view>

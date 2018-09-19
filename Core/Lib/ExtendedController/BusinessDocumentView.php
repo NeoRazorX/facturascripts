@@ -37,49 +37,48 @@ class BusinessDocumentView extends BaseView
      *
      * @var array
      */
-    public $documentStatus;
+    public $documentStatus = [];
 
     /**
      * Line columns from xmlview.
      *
      * @var array
      */
-    private $lineOptions;
+    private $lineOptions = [];
 
     /**
      * Lines of document, the body.
      *
      * @var BusinessDocumentLine[]
      */
-    public $lines;
+    public $lines = [];
 
     /**
-     * DocumentView constructor and initialization.
-     *
+     * 
+     * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $lineXMLView
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct(string $title, string $modelName, string $lineXMLView, string $userNick)
+    public function __construct($name, $title, $modelName, $icon = 'fa-file-alt')
     {
-        parent::__construct($title, $modelName);
-        $this->documentStatus = [];
-
-        // Loads the view configuration for the user
-        $this->pageOption->getForUser($lineXMLView, $userNick);
-
-        $this->lineOptions = [];
-        foreach ($this->pageOption->columns['root']->columns as $col) {
-            $this->lineOptions[] = $col;
+        parent::__construct($name, $title, $modelName, $icon);
+        foreach ($this->getColumns() as $group) {
+            foreach ($group->columns as $col) {
+                $this->lineOptions[] = $col;
+            }
         }
-
-        $this->lines = [];
 
         // Loads document states
         $estadoDocModel = new EstadoDocumento();
         $modelClass = explode('\\', $modelName);
         $this->documentStatus = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
+
+        // custom template
+        $this->template = 'Master/BusinessDocumentView.html.twig';
+        static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
+        static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentController.js';
     }
 
     /**
@@ -107,7 +106,7 @@ class BusinessDocumentView extends BaseView
 
         foreach ($this->lineOptions as $col) {
             $item = [
-                'data' => $col->widget->fieldName,
+                'data' => $col->widget->fieldname,
                 'type' => $col->widget->type,
             ];
 
@@ -140,12 +139,14 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * Load the data in the cursor property, according to the where filter specified.
-     * Adds an empty row/model at the end of the loaded data.
-     *
-     * @param string $code
+     * 
+     * @param type $code
+     * @param type $where
+     * @param type $order
+     * @param type $offset
+     * @param type $limit
      */
-    public function loadData(string $code)
+    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -172,12 +173,22 @@ class BusinessDocumentView extends BaseView
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
             foreach ($this->lineOptions as $col) {
-                $line[$col->widget->fieldName] = isset($data[$col->widget->fieldName]) ? $data[$col->widget->fieldName] : null;
+                $line[$col->widget->fieldname] = isset($data[$col->widget->fieldname]) ? $data[$col->widget->fieldname] : null;
             }
             $newLines[] = $line;
             $order--;
         }
 
         return $newLines;
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
+    {
+        ;
     }
 }

@@ -96,6 +96,6 @@ class ConceptoPartida extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return parent::url($type, 'ListAsiento?active=' . $list);
+        return parent::url($type, 'ListAsiento?activetab=' . $list);
     }
 }

@@ -25,8 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Controller to edit data through the vertical panel
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class PanelController extends BaseController
 {
@@ -46,14 +46,6 @@ abstract class PanelController extends BaseController
     public $tabsPosition;
 
     /**
-     * Loads the data to display.
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     */
-    abstract protected function loadData($viewName, $view);
-
-    /**
      * Starts all the objects and properties.
      *
      * @param Base\Cache      $cache
@@ -67,30 +59,6 @@ abstract class PanelController extends BaseController
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
         $this->hasData = false;
         $this->setTabsPosition('left');
-    }
-
-    /**
-     * Descriptive identifier for humans of the main data editing record.
-     *
-     * @return string
-     */
-    public function getPrimaryDescription()
-    {
-        $viewName = array_keys($this->views)[0];
-        return $this->views[$viewName]->model->primaryDescription();
-    }
-
-    /**
-     * Returns the url for a specified type.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getURL($type)
-    {
-        $view = array_values($this->views)[0];
-        return $view->getURL($type);
     }
 
     /**
@@ -132,12 +100,15 @@ abstract class PanelController extends BaseController
         // Load the model data for each view
         $mainViewName = array_keys($this->views)[0];
         foreach ($this->views as $viewName => $view) {
+            if ($this->active == $viewName) {
+                $view->processFormData($this->request, 'load');
+            }
+
             $this->loadData($viewName, $view);
 
             // check if we are processing the main view
             if ($viewName == $mainViewName) {
                 $this->hasData = $view->count > 0;
-                $this->title .= isset($view->model) ? ' ' . $view->model->primaryDescription() : '';
                 continue;
             }
 
@@ -147,6 +118,9 @@ abstract class PanelController extends BaseController
 
         // General operations with the loaded data
         $this->execAfterAction($action);
+
+        // final operations, like assets merge
+        $this->finalStep();
     }
 
     /**
@@ -175,19 +149,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Returns the view class.
-     *
-     * @param string $view
-     *
-     * @return string
-     */
-    public function viewClass($view)
-    {
-        $result = explode('\\', get_class($view));
-        return end($result);
-    }
-
-    /**
      * Adds a EditList type view to the controller.
      *
      * @param string $viewName
@@ -197,8 +158,8 @@ abstract class PanelController extends BaseController
      */
     protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
+        $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -211,8 +172,8 @@ abstract class PanelController extends BaseController
      */
     protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
+        $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -228,8 +189,8 @@ abstract class PanelController extends BaseController
     {
         $parent = $this->views[$parentView];
         if (isset($parent)) {
-            $view = new GridView($parent, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-            $this->addView($viewName, $view, $viewIcon);
+            $view = new GridView($parent, $viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+            $this->addCustomView($viewName, $view);
         }
     }
 
@@ -244,8 +205,8 @@ abstract class PanelController extends BaseController
      */
     protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fa-html5')
     {
-        $view = new HtmlView($viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName);
-        $this->addView($viewName, $view, $viewIcon);
+        $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -258,27 +219,8 @@ abstract class PanelController extends BaseController
      */
     protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new ListView($viewTitle, self::MODEL_NAMESPACE . $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view, $viewIcon);
-    }
-
-    /**
-     * Adds a view to the controller and loads its data.
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     * @param string   $icon
-     */
-    protected function addView($viewName, $view, $icon)
-    {
-        $this->views[$viewName] = $view;
-        $this->setSettings($viewName, 'active', true);
-        $this->setSettings($viewName, 'icon', $icon);
-        $this->setSettings($viewName, 'insert', true);
-
-        if (empty($this->active)) {
-            $this->active = $viewName;
-        }
+        $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        $this->addCustomView($viewName, $view);
     }
 
     /**
@@ -294,7 +236,7 @@ abstract class PanelController extends BaseController
         }
 
         $model = $this->views[$this->active]->model;
-        $code = $this->request->get($model->primaryColumn(), '');
+        $code = $this->request->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
@@ -304,22 +246,20 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Run the data edits.
+     * Runs the data edit action.
      *
      * @return bool
      */
     protected function editAction()
     {
-        $data = $this->getFormData();
-        $this->views[$this->active]->loadFromData($data);
-
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
+        // loads form data
+        $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->save()) {
-            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
@@ -344,10 +284,6 @@ abstract class PanelController extends BaseController
                 }
                 $this->exportManager->show($this->response);
                 break;
-
-            case 'insert':
-                $this->insertAction();
-                break;
         }
     }
 
@@ -367,7 +303,7 @@ abstract class PanelController extends BaseController
                 $this->response->setContent(json_encode($results));
                 return false;
 
-            case 'save':
+            case 'edit':
                 $this->editAction();
                 break;
 
@@ -376,11 +312,15 @@ abstract class PanelController extends BaseController
                 $this->deleteAction();
                 break;
 
+            case 'insert':
+                $this->insertAction();
+                break;
+
             case 'save-document':
                 $viewName = $this->searchGridView();
                 if (!empty($viewName)) {
                     $this->setTemplate(false);
-                    $data = $this->getFormData();
+                    $data = $this->request->request->all();
                     $result = $this->views[$viewName]->saveData($data);
                     $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                     return false;
@@ -391,14 +331,37 @@ abstract class PanelController extends BaseController
         return true;
     }
 
+    /**
+     * Runs data insert action.
+     */
     protected function insertAction()
     {
-        $this->views[$this->active]->clear();
-        foreach ($this->request->query->all() as $field => $value) {
-            if ($field !== 'action') {
-                $this->views[$this->active]->model->{$field} = $value;
-            }
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
         }
+
+        // loads form data
+        $this->views[$this->active]->processFormData($this->request, 'edit');
+        if ($this->views[$this->active]->model->exists()) {
+            $this->miniLog->error($this->i18n->trans('record-save-error'));
+            return false;
+        }
+
+        /// empty primary key?
+        if (empty($this->views[$this->active]->model->primaryColumnValue())) {
+            $model = $this->views[$this->active]->model;
+            $this->views[$this->active]->model->{$model->primaryColumn()} = $model->newCode();
+        }
+
+        if ($this->views[$this->active]->model->save()) {
+            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return true;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        return false;
     }
 
     /**

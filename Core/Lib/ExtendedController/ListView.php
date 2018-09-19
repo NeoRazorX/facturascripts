@@ -19,8 +19,10 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ListController
@@ -28,111 +30,72 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListView extends BaseView implements DataViewInterface
+class ListView extends BaseView
 {
 
     /**
      * Order constants
      */
-    const ICON_ASC = 'fa-sort-amount-up';
-    const ICON_DESC = 'fa-sort-amount-down';
-
-    /**
-     * Cursor with data from the model display
-     *
-     * @var array
-     */
-    private $cursor;
-
-    /**
-     *
-     * @var DivisaTools
-     */
-    public $divisaTools;
+    const ICON_ASC = 'fa-arrow-up';
+    const ICON_DESC = 'fa-arrow-down';
 
     /**
      * Filter configuration preset by the user
      *
-     * @var ListFilter[]
+     * @var BaseFilter[]
      */
-    private $filters;
+    public $filters;
 
     /**
-     * Stores the offset for the cursor
      *
-     * @var int
+     * @var string
      */
-    private $offset;
+    public $orderKey;
 
     /**
-     * Stores the order for the cursor
-     *
-     * @var array
-     */
-    private $order;
-
-    /**
-     * List of fields available to order by
-     * Example: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
-     *          key = field_asc | field_desc
+     * List of fields available to order by.
      *
      * @var array
      */
-    private $orderby;
+    public $orderOptions;
+
+    /**
+     *
+     * @var string
+     */
+    public $query;
 
     /**
      * List of fields where to search in when a search is made
      *
      * @var array
      */
-    private $searchIn;
+    public $searchFields;
 
     /**
-     * Selected element in the Order By list
      *
-     * @var string
+     * @var bool
      */
-    public $selectedOrderBy;
-
-    /**
-     * Stores the where parameters for the cursor
-     *
-     * @var DataBaseWhere[]
-     */
-    private $where;
+    public $showFilters;
 
     /**
      * ListView constructor and initialization.
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct($name, $title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName);
-
-        $this->cursor = [];
-        $this->divisaTools = new DivisaTools();
+        parent::__construct($name, $title, $modelName, $icon);
         $this->filters = [];
-        $this->orderby = [];
-        $this->selectedOrderBy = '';
-        $this->searchIn = [];
-
-        // Carga configuración de la vista para el usuario
-        $this->pageOption->getForUser($viewName, $userNick);
-    }
-
-    /**
-     * Defines a new option to filter the data with
-     *
-     * @param string     $key
-     * @param ListFilter $filter
-     */
-    public function addFilter(string $key, ListFilter $filter)
-    {
-        $this->filters[$key] = $filter;
+        $this->orderOptions = [];
+        $this->query = '';
+        $this->searchFields = [];
+        $this->showFilters = false;
+        $this->template = 'Master/ListView.html.twig';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListView.js';
     }
 
     /**
@@ -142,13 +105,23 @@ class ListView extends BaseView implements DataViewInterface
      * @param string $label
      * @param int    $default (0 = None, 1 = ASC, 2 = DESC)
      */
-    public function addOrderBy($fields, $label, $default = 0)
+    public function addOrderBy(array $fields, $label, $default = 0)
     {
         $key1 = strtolower(implode('|', $fields)) . '_asc';
-        $key2 = strtolower(implode('|', $fields)) . '_desc';
+        $this->orderOptions[$key1] = [
+            'fields' => $fields,
+            'icon' => self::ICON_ASC,
+            'label' => static::$i18n->trans($label),
+            'type' => 'ASC',
+        ];
 
-        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
-        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'fields' => $fields, 'label' => static::$i18n->trans($label)];
+        $key2 = strtolower(implode('|', $fields)) . '_desc';
+        $this->orderOptions[$key2] = [
+            'fields' => $fields,
+            'icon' => self::ICON_DESC,
+            'label' => static::$i18n->trans($label),
+            'type' => 'DESC',
+        ];
 
         switch ($default) {
             case 1:
@@ -158,35 +131,11 @@ class ListView extends BaseView implements DataViewInterface
             case 2:
                 $this->setSelectedOrderBy($key2);
                 break;
-        }
-    }
 
-    /**
-     * Adds the given fields to the list of fields to search in
-     *
-     * @param array $fields
-     */
-    public function addSearchIn($fields)
-    {
-        if (is_array($fields)) {
-            // TODO: Error: Perhaps array_merge/array_replace can be used instead.
-            // Feel free to disable the inspection if '+' is intended.
-            //$this->searchIn = array_merge($this->searchIn, $fields);
-            $this->searchIn += $fields;
-        }
-    }
-
-    /**
-     * Establishes a column's display state
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled = true)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->display = $disabled ? 'none' : 'left';
+            default:
+                if (empty($this->order)) {
+                    $this->setSelectedOrderBy($key1);
+                }
         }
     }
 
@@ -205,28 +154,8 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Returns the link text for a given model
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    public function getClickEvent($data)
-    {
-        foreach ($this->getColumns() as $col) {
-            if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
-                return $col->widget->onClick . '?code=' . $data->{$col->widget->fieldName};
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * List of columns and its configuration
-     * (Array of ColumnItem)
-     *
-     * @return ColumnItem[]
+     * 
+     * @return array
      */
     public function getColumns()
     {
@@ -240,104 +169,7 @@ class ListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Returns the read data list in Model format
-     *
-     * @return array
-     */
-    public function getCursor()
-    {
-        return $this->cursor;
-    }
-
-    /**
-     * Returns the list of defined filters
-     *
-     * @return ListFilter[]
-     */
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    /**
-     * Returns the filter identificate by key
-     *
-     * @param string $key
-     * @return ListFilter
-     */
-    public function getFilter($key)
-    {
-        return $this->filters[$key];
-    }
-
-    /**
-     * Returns the list of defined Order By
-     *
-     * @return array
-     */
-    public function getOrderBy()
-    {
-        return $this->orderby;
-    }
-
-    /**
-     * Returns the field list for the search, in WhereDatabase format
-     *
-     * @return string
-     */
-    public function getSearchIn()
-    {
-        return implode('|', $this->searchIn);
-    }
-
-    /**
-     * Returns the indicated Order By in array format
-     *
-     * @param string $orderKey
-     *
-     * @return array
-     */
-    public function getSQLOrderBy($orderKey = '')
-    {
-        $result = [];
-        if (!empty($this->orderby)) {
-            if ($orderKey === '') {
-                $orderKey = array_keys($this->orderby)[0];
-            }
-
-            $direction = (substr($orderKey, -5) == '_desc') ? 'DESC' : 'ASC';
-            foreach ($this->orderby[$orderKey]['fields'] as $field) {
-                $result[$field] = $direction;
-            }
-        }
-        return $result;
-    }
-
-    public function getURL(string $type)
-    {
-        if (empty($this->where)) {
-            return parent::getURL($type);
-        }
-
-        $extra = '';
-        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
-            $extra .= ('' === $extra) ? '?' : '&';
-            $extra .= $field . '=' . $value;
-        }
-
-        switch ($type) {
-            /// removed list case to fix problem with listcontroller pagination
-            case 'new':
-                $extra .= ('' === $extra) ? '?action=insert' : '&action=insert';
-                return parent::getURL($type) . $extra;
-
-            default:
-                return parent::getURL($type);
-        }
-    }
-
-    /**
-     * Load the data in the cursor property, according to the where filter specified.
+     * Loads the data in the cursor property, according to the where filter specified.
      *
      * @param mixed           $code
      * @param DataBaseWhere[] $where
@@ -345,19 +177,52 @@ class ListView extends BaseView implements DataViewInterface
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
-        $this->order = empty($order) ? $this->getSQLOrderBy($this->selectedOrderBy) : $order;
-        $this->count = is_null($this->model) ? 0 : $this->model->count($where);
+        $this->offset = ($offset < 0) ? $this->offset : $offset;
+        $this->order = empty($order) ? $this->order : $order;
+
+        $finalWhere = empty($where) ? $this->where : $where;
+        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
+
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
+            $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
         }
 
-        /// store values where & offset for exportation
-        $this->offset = $offset;
-        $this->where = $where;
+        $this->where = $finalWhere;
+    }
+
+    /**
+     * Process form data needed.
+     *
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
+    {
+        if ($case !== 'load') {
+            return;
+        }
+
+        $this->offset = (int) $request->request->get('offset', 0);
+        $this->setSelectedOrderBy($request->request->get('order', ''));
+
+        /// query
+        $this->query = $request->request->get('query', '');
+        if ('' !== $this->query) {
+            $fields = implode('|', $this->searchFields);
+            $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'LIKE');
+        }
+
+        /// filters
+        foreach ($this->filters as $filter) {
+            $filter->value = $request->request->get($filter->name());
+            $filter->getDataBaseWhere($this->where);
+        }
+
+        $this->showFilters = !empty($this->where);
     }
 
     /**
@@ -365,15 +230,18 @@ class ListView extends BaseView implements DataViewInterface
      *
      * @param string $orderKey
      */
-    public function setSelectedOrderBy($orderKey)
+    protected function setSelectedOrderBy($orderKey)
     {
-        $keys = array_keys($this->orderby);
-        if (empty($orderKey) || !in_array($orderKey, $keys, false)) {
-            if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
-            }
-        } else {
-            $this->selectedOrderBy = $orderKey;
+        if (!isset($this->orderOptions[$orderKey])) {
+            return;
         }
+
+        $this->order = [];
+        $option = $this->orderOptions[$orderKey];
+        foreach ($option['fields'] as $field) {
+            $this->order[$field] = $option['type'];
+        }
+
+        $this->orderKey = $orderKey;
     }
 }

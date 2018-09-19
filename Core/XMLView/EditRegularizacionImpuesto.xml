@@ -42,10 +42,10 @@
                 </widget>
             </column>
             <column name="start-date" order="120">
-                <widget type="datepicker" fieldname="fechainicio" readonly="true" />
+                <widget type="date" fieldname="fechainicio" readonly="true" />
             </column>
             <column name="end-date" order="130">
-                <widget type="datepicker" fieldname="fechafin" readonly="true" />
+                <widget type="date" fieldname="fechafin" readonly="true" />
             </column>
         </group>
 

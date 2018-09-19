@@ -100,7 +100,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     protected function editAction()
     {
-        $data = $this->getFormData();
+        $data = $this->request->request->all();
         $this->views[$this->active]->loadFromData($data);
 
         $model = $this->views[$this->active]->model;
@@ -153,7 +153,7 @@ class EditDashboardData extends ExtendedController\EditController
         $fields = array_keys($this->getModel()->properties);
         $group = $this->views['EditDashboardData']->getColumns()['options']->columns;
         foreach ($group as $column) {
-            if (in_array($column->widget->fieldName, $fields, false)) {
+            if (in_array($column->widget->fieldname, $fields, false)) {
                 continue;
             }
 

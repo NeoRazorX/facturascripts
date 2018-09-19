@@ -1,0 +1,15 @@
+{% extends "Master/PanelController.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    {% set pageData = fsc.getPageData() %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-right">
+                <h1 class="h3">
+                    {{ fsc.title }}
+                    <i class="fas {{ pageData.icon }} fa-fw" aria-hidden="true"></i>
+                </h1>
+            </div>
+        </div>
+    </div>
+{% endblock %}

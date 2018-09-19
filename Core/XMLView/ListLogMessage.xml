@@ -48,13 +48,13 @@
     </columns>
     <rows>
         <row type="status" fieldname="level">
-            <option color="table-info">info</option>
-            <option color="table-success">notice</option>
-            <option color="table-warning">warning</option>
-            <option color="table-danger">error</option>
-            <option color="table-danger">critical</option>
-            <option color="table-danger">alert</option>
-            <option color="table-danger">emergency</option>
+            <option color="info">info</option>
+            <option color="success">notice</option>
+            <option color="warning">warning</option>
+            <option color="danger">error</option>
+            <option color="danger">critical</option>
+            <option color="danger">alert</option>
+            <option color="danger">emergency</option>
         </row>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">

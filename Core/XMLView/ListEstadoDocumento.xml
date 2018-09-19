@@ -28,7 +28,7 @@
             <widget type="text" fieldname="idestado" onclick="EditEstadoDocumento" />
         </column>
         <column name="doc-type" order="110">
-            <widget type="select" fieldname="tipodoc">
+            <widget type="select" fieldname="tipodoc" translate="true">
                 <values title="customer-estimation">PresupuestoCliente</values>
                 <values title="customer-order">PedidoCliente</values>
                 <values title="customer-delivery-note">AlbaranCliente</values>
@@ -49,7 +49,7 @@
             <widget type="checkbox" fieldname="editable"></widget>
         </column>
         <column name="update-stock" display="center" order="150">
-            <widget type="select" fieldname="actualizastock">
+            <widget type="select" fieldname="actualizastock" translate="true">
                 <values title="book">-2</values>
                 <values title="subtract">-1</values>
                 <values title="do-nothing">0</values>
@@ -58,7 +58,7 @@
             </widget>
         </column>
         <column name="generate-doc-type" display="right" order="160">
-            <widget type="select" fieldname="generadoc">
+            <widget type="select" fieldname="generadoc" translate="true">
                 <values title="customer-estimation">PresupuestoCliente</values>
                 <values title="customer-order">PedidoCliente</values>
                 <values title="customer-delivery-note">AlbaranCliente</values>
@@ -72,10 +72,10 @@
     </columns>
     <rows>
         <row type="status" fieldname="actualizastock">
-            <option color="table-warning">-2</option>
-            <option color="table-danger">-1</option>
-            <option color="table-success">1</option>
-            <option color="table-warning">2</option>
+            <option color="warning">-2</option>
+            <option color="danger">-1</option>
+            <option color="success">1</option>
+            <option color="warning">2</option>
         </row>
     </rows>
 </view>

@@ -40,11 +40,13 @@ class AssetManager
             'css' => [],
         ];
         $base = DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
+
         $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
         if (file_exists(FS_FOLDER . $jsFile)) {
             $assets['js'][] = FS_ROUTE . $jsFile;
         }
+
+        $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
         if (file_exists(FS_FOLDER . $cssFile)) {
             $assets['css'][] = FS_ROUTE . $cssFile;
         }
@@ -70,7 +72,14 @@ class AssetManager
         return $txt;
     }
 
-    public static function fixCombineContent(string $data, string $url): string
+    /**
+     * 
+     * @param string $data
+     * @param string $url
+     *
+     * @return string
+     */
+    protected static function fixCombineContent(string $data, string $url): string
     {
         // Replace relative paths
         $replace = [
@@ -81,11 +90,26 @@ class AssetManager
 
         // Remove comments
         $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-        
+
         // Remove space after colons
         $buffer = str_replace(': ', ':', $buffer);
-        
+
         // Remove whitespace
         return str_replace(["\r\n", "\r", "\n", "\t", '  ', '    ', '    '], '', $buffer);
+    }
+
+    public static function merge(&$assets1, $assets2)
+    {
+        foreach ($assets2 as $type => $subAssets2) {
+            if (!isset($assets1[$type])) {
+                $assets1[$type] = [];
+            }
+
+            foreach ($subAssets2 as $asset) {
+                if (!in_array($asset, $assets1[$type])) {
+                    $assets1[$type][] = $asset;
+                }
+            }
+        }
     }
 }

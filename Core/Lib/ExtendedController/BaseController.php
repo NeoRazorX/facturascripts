@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\CodeModel;
 
@@ -47,6 +48,13 @@ abstract class BaseController extends Base\Controller
     public $codeModel;
 
     /**
+     * Indicates current view, when drawing.
+     *
+     * @var string
+     */
+    private $current;
+
+    /**
      * Object to export data.
      *
      * @var ExportManager
@@ -54,27 +62,31 @@ abstract class BaseController extends Base\Controller
     public $exportManager;
 
     /**
-     * List of views displayed by the controller.
+     * Tools to work with numbers.
      *
-     * @var mixed
+     * @var Base\NumberTools
      */
-    public $views;
+    public $numberTools;
 
     /**
-     * List of configuration options for each of the views.
-     * [
-     *   'keyView1' => ['icon' => 'fa-icon1', 'active' => TRUE],
-     *   'keyView2' => ['icon' => 'fa-icon2', 'active' => TRUE]
-     * ]
+     * List of views displayed by the controller.
      *
-     * @var array
+     * @var BaseView[]
      */
-    private $settings;
+    public $views;
 
     /**
      * Inserts the views to display.
      */
     abstract protected function createViews();
+
+    /**
+     * Loads the data to display.
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    abstract protected function loadData($viewName, $view);
 
     /**
      * Initializes all the objects and properties.
@@ -88,32 +100,43 @@ abstract class BaseController extends Base\Controller
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->active = $this->request->get('active', '');
+        $this->active = $this->request->get('activetab', '');
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
+        $this->numberTools = new Base\NumberTools();
         $this->views = [];
-        $this->settings = [];
     }
 
     /**
-     * Returns the configuration value for the indicated view.
-     *
-     * @param string|null $viewName
-     * @param string|null $property
-     *
-     * @return mixed
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
      */
-    public function getSettings($viewName, $property)
+    public function addCustomView($viewName, $view)
     {
-        if (empty($viewName)) {
-            return $this->settings;
+        $view->loadPageOptions($this->user);
+        $this->views[$viewName] = $view;
+        if (empty($this->active)) {
+            $this->active = $viewName;
         }
+    }
 
-        if (empty($property)) {
-            return $this->settings[$viewName];
-        }
+    /**
+     * 
+     * @return BaseView
+     */
+    public function getCurrentView()
+    {
+        return $this->views[$this->current];
+    }
 
-        return $this->settings[$viewName][$property];
+    /**
+     * 
+     * @param string $viewName
+     */
+    public function setCurrentView($viewName)
+    {
+        $this->current = $viewName;
     }
 
     /**
@@ -121,24 +144,11 @@ abstract class BaseController extends Base\Controller
      *
      * @param string $viewName
      * @param string $property
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function setSettings($viewName, $property, $value)
     {
-        $this->settings[$viewName][$property] = $value;
-    }
-
-    /**
-     * Returns the configuration property value for a specified $field.
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        return isset($model->{$field}) ? $model->{$field} : null;
+        $this->views[$viewName]->settings[$property] = $value;
     }
 
     /**
@@ -150,7 +160,6 @@ abstract class BaseController extends Base\Controller
     protected function autocompleteAction(): array
     {
         $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'formname']);
-
         if ($data['source'] == '') {
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }
@@ -163,10 +172,19 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
+     * 
+     */
+    protected function finalStep()
+    {
+        AssetManager::merge($this->assets, BaseView::getAssets());
+    }
+
+    /**
      * Return values from Widget Values for autocomplete action
      *
      * @param string $viewName
      * @param string $fieldName
+     *
      * @return array
      */
     protected function getAutocompleteValues(string $viewName, string $fieldName): array
@@ -179,33 +197,6 @@ abstract class BaseController extends Base\Controller
             }
         }
         return $result;
-    }
-
-    protected function getFormData(): array
-    {
-        $data = $this->request->request->all();
-
-        /// get file uploads
-        foreach ($this->request->files->all() as $key => $uploadFile) {
-            if (is_null($uploadFile)) {
-                continue;
-            } elseif (!$uploadFile->isValid()) {
-                $this->miniLog->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            /// exclude php files
-            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $this->miniLog->error($this->i18n->trans('php-files-blocked'));
-                continue;
-            }
-
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $data[$key] = $uploadFile->getClientOriginalName();
-            }
-        }
-
-        return $data;
     }
 
     /**

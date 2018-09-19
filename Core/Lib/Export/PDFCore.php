@@ -117,17 +117,8 @@ class PDFCore
                 }
 
                 $value = $row->{$col};
-                if ($tableOptions['cols'][$col]['col-type'] === 'number') {
-                    $value = $this->numberTools->format($value);
-                } elseif ($tableOptions['cols'][$col]['col-type'] === 'money') {
-                    $this->divisaTools->findDivisa($row);
-                    $value = $this->divisaTools->format($value, FS_NF0, 'coddivisa');
-                } elseif (is_bool($value)) {
-                    $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
-                } elseif (null === $value) {
-                    $value = '';
-                } elseif ($tableOptions['cols'][$col]['col-type'] === 'text') {
-                    $value = Base\Utils::fixHtml($value);
+                if (isset($tableOptions['cols'][$col]['widget'])) {
+                    $value = $tableOptions['cols'][$col]['widget']->plainText($row);
                 }
 
                 $tableData[$key][$col] = $value;
@@ -262,12 +253,12 @@ class PDFCore
                 continue;
             }
 
-            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
-                $tableOptions['cols'][$col->widget->fieldName] = [
+            if (isset($col->widget->fieldname)) {
+                $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
+                $tableColsTitle[$col->widget->fieldname] = $this->i18n->trans($col->title);
+                $tableOptions['cols'][$col->widget->fieldname] = [
                     'justification' => $col->display,
-                    'col-type' => $col->widget->type,
+                    'widget' => $col->widget,
                 ];
             }
         }

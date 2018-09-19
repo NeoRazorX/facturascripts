@@ -23,9 +23,10 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Description of GridView
+ * View definition for its use in ExtendedControllers
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -54,24 +55,22 @@ class GridView extends BaseView
     private $gridData;
 
     /**
-     * EditView constructor and initialization.
+     * GridView constructor and initialization.
      *
      * @param BaseView $parent
+     * @param string   $name
      * @param string   $title
      * @param string   $modelName
-     * @param string   $viewName
-     * @param string   $userNick
+     * @param string   $icon
      */
-    public function __construct(&$parent, $title, $modelName, $viewName, $userNick)
+    public function __construct(&$parent, $name, $title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName);
+        parent::__construct($name, $title, $modelName, $icon);
+        $this->template = 'Master/GridView.html.twig';
 
         // Join the parent view
         $this->parentView = $parent;
         $this->parentModel = $parent->model;
-
-        // Loads the view configuration for the user
-        $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
@@ -97,40 +96,27 @@ class GridView extends BaseView
     /**
      * Configure autocomplete column with data to Grid component
      *
-     * @param array $values
+     * @param WidgetAutocomplete $widget
      *
      * @return array
      */
-    private function getAutocompleteSource($values): array
+    private function getAutocompleteSource($widget): array
     {
-        // Calculate url for grid controller
-        $url = $this->parentModel->url('edit');
+        $url = $this->parentModel->url('edit'); // Calculate url for grid controller
+        $datasource = $widget->getDataSource();
 
         return [
             'url' => $url,
-            'source' => $values['source'],
-            'field' => $values['fieldcode'],
-            'title' => $values['fieldtitle']
+            'source' => $datasource['source'],
+            'field' => $datasource['fieldcode'],
+            'title' => $datasource['fieldtitle']
         ];
-    }
-
-    /**
-     * Determines whether the user's selection should be strictly
-     * a value from the list of values
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    private function getAutocompeteStrict($values): bool
-    {
-        return isset($values['strict']) ? $values['strict'] === 'true' : true;
     }
 
     /**
      * Return array of values to select
      *
-     * @param WidgetItemSelect $widget
+     * @param WidgetSelect $widget
      */
     private function getSelectSource($widget): array
     {
@@ -154,15 +140,17 @@ class GridView extends BaseView
      */
     private function getItemForColumn($column): array
     {
-        $item = ['data' => $column->widget->fieldName];
-        switch ($column->widget->type) {
+        $item = [
+            'data' => $column->widget->fieldname,
+            'type' => $column->widget->getType()
+        ];
+        switch ($item['type']) {
             case 'autocomplete':
-                $item['type'] = 'autocomplete';
                 $item['visibleRows'] = 5;
                 $item['allowInvalid'] = true;
                 $item['trimDropdown'] = false;
-                $item['strict'] = $this->getAutocompeteStrict($column->widget->values[0]);
-                $item['data-source'] = $this->getAutocompleteSource($column->widget->values[0]);
+                $item['strict'] = $column->widget->strict;
+                $item['data-source'] = $this->getAutocompleteSource($column->widget);
                 break;
 
             case 'select':
@@ -175,10 +163,6 @@ class GridView extends BaseView
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = Base\DivisaTools::gridMoneyFormat();
                 break;
-
-            default:
-                $item['type'] = $column->widget->type;
-                break;
         }
 
         return $item;
@@ -189,7 +173,7 @@ class GridView extends BaseView
      *
      * @return array
      */
-    private function getColumns(): array
+    private function getGridColumns(): array
     {
         $data = [
             'headers' => [],
@@ -197,7 +181,7 @@ class GridView extends BaseView
             'hidden' => []
         ];
 
-        $columns = $this->pageOption->columns['root']->columns;
+        $columns = $this->pageOption->columns['main']->columns;
         foreach ($columns as $col) {
             $item = $this->getItemForColumn($col);
             switch ($col->display) {
@@ -216,15 +200,18 @@ class GridView extends BaseView
     }
 
     /**
-     * Load the data in the cursor property, according to the where filter specified.
+     * Load the data in the model property, according to the code specified.
      *
+     * @param string          $code
      * @param DataBaseWhere[] $where
      * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
-    public function loadData($where = [], $order = [])
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         // load columns configuration
-        $this->gridData = $this->getColumns();
+        $this->gridData = $this->getGridColumns();
 
         // load model data
         $this->gridData['rows'] = [];
@@ -328,7 +315,7 @@ class GridView extends BaseView
             $dataBase->commit();
 
             // URL for refresh data
-            $result['url'] = $this->parentView->getURL('edit') . '&action=save-ok';
+            $result['url'] = $this->parentModel->url('edit') . '&action=save-ok';
         } catch (Exception $e) {
             $result['error'] = true;
             $result['message'] = $e->getMessage();
@@ -348,8 +335,8 @@ class GridView extends BaseView
             if (!isset($data[$primaryKey])) {
                 foreach ($this->pageOption->columns as $group) {
                     foreach ($group->columns as $col) {
-                        if (!isset($data[$col->widget->fieldName])) {
-                            $data[$col->widget->fieldName] = null;   // TODO: maybe the widget can have a default value method instead of null
+                        if (!isset($data[$col->widget->fieldname])) {
+                            $data[$col->widget->fieldname] = null;   // TODO: maybe the widget can have a default value method instead of null
                         }
                     }
                 }
@@ -358,5 +345,15 @@ class GridView extends BaseView
         }
 
         return $result;
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
+    {
+        ;
     }
 }

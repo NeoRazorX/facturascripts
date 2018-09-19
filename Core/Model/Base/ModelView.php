@@ -147,6 +147,17 @@ abstract class ModelView
      */
     protected function getGroupBy(): string
     {
+        $fields = $this->getGroupFields();
+        return empty($fields) ? '' : ' GROUP BY ' . $fields;
+    }
+
+    /**
+     * Return Group By fields
+     *
+     * @return string
+     */
+    protected function getGroupFields(): string
+    {
         return '';
     }
 
@@ -194,9 +205,19 @@ abstract class ModelView
      */
     public function count(array $where = [])
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
+        $groupFields = $this->getGroupFields();
+        if (!empty($groupFields)) {
+            $groupFields .= ', ';
+        }
+
+        $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
+            . ' FROM ' . $this->getSQLFrom()
+            . DataBaseWhere::getSQLWhere($where)
+            . $this->getGroupBy();
+
         $data = self::$dataBase->select($sql);
-        return empty($data) ? 0 : $data[0]['total'];
+        $count = count($data);
+        return ($count == 1) ? $data[0]['count_total'] : $count;
     }
 
     /**
@@ -230,15 +251,11 @@ abstract class ModelView
         $result = [];
         if ($this->checkTables()) {
             $class = get_class($this);
-            $sqlWhere = DataBaseWhere::getSQLWhere($where);
-            $sqlOrderBy = $this->getOrderBy($order);
             $sql = 'SELECT ' . $this->fieldsList()
                 . ' FROM ' . $this->getSQLFrom()
-                . $sqlWhere
-                . ' '
+                . DataBaseWhere::getSQLWhere($where)
                 . $this->getGroupBy()
-                . ' '
-                . $sqlOrderBy;
+                . $this->getOrderBy($order);
             foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
                 $result[] = new $class($d);
             }

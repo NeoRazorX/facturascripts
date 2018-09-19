@@ -60,7 +60,7 @@
         </column>
         <column name="ammount" order="180" display="right">
             <widget type="money" fieldname="pvptotal">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="tax" order="190" display="right">

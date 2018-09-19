@@ -37,7 +37,7 @@
                 <widget type="text" fieldname="id" readonly="true" required="true" />
             </column>
             <column name="creation-date" numcolumns="4" order="100">
-                <widget type="datepicker" fieldname="creationdate" readonly="true" />
+                <widget type="date" fieldname="creationdate" readonly="true" />
             </column>
             <column name="user" numcolumns="4" order="110">
                 <widget type="select" fieldname="nick" icon="fa-user" required="true">
@@ -45,7 +45,7 @@
                 </widget>
             </column>
             <column name="display-date" numcolumns="4" order="120">
-                <widget type="datepicker" fieldname="displaydate" required="true" />
+                <widget type="date" fieldname="displaydate" required="true" />
             </column>
         </group>
         <group name="options" numcolumns="12">
@@ -61,7 +61,7 @@
                 </widget>
             </column>
             <column name="end-date" numcolumns="2" order="150">
-                <widget type="datepicker" fieldname="enddate" />
+                <widget type="date" fieldname="enddate" />
             </column>
             <column name="link" numcolumns="4" order="160">
                 <widget type="text" fieldname="link" />

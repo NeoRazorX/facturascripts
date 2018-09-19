@@ -86,31 +86,36 @@ class ListBalance extends ExtendedController\ListController
     }
 
     /**
-     * Load data for view
-     *
-     * @param string $viewName
-     * @param array $where
-     * @param int $offset
+     * 
+     * @param string                      $viewName
+     * @param ExtendedController\BaseView $view
      */
-    protected function loadData($viewName, $where, $offset)
+    protected function loadData($viewName, $view)
     {
+        $where = [];
         switch ($viewName) {
             case 'ListBalance-1':
                 $where[] = new DataBaseWhere('naturaleza', 'A');
+                $view->loadData(false, $where);
                 break;
 
             case 'ListBalance-2':
                 $where[] = new DataBaseWhere('naturaleza', 'P');
+                $view->loadData(false, $where);
                 break;
 
             case 'ListBalance-3':
                 $where[] = new DataBaseWhere('naturaleza', 'PG');
+                $view->loadData(false, $where);
                 break;
 
             case 'ListBalance-4':
                 $where[] = new DataBaseWhere('naturaleza', 'IG');
+                $view->loadData(false, $where);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
-        parent::loadData($viewName, $where, $offset);
     }
 }

@@ -43,18 +43,18 @@
         </column>
         <column name="amount" display="right" order="140">
             <widget type="money" fieldname="importe">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="date" display="right" order="150">
-            <widget type="text" fieldname="fecha" />
+            <widget type="date" fieldname="fecha" />
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="table-info" fieldname="importe">&lt;0</option>
-            <option color="table-success" fieldname="importe">&gt;1000</option>
-            <option color="table-warning" fieldname="editable">1</option>
+            <option color="info" fieldname="importe">&lt;0</option>
+            <option color="success" fieldname="importe">&gt;1000</option>
+            <option color="warning" fieldname="editable">1</option>
         </row>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">

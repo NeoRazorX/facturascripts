@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="doc-type" numcolumns="4" order="120">
-                <widget type="select" fieldname="tipodoc" required="true">
+                <widget type="select" fieldname="tipodoc" required="true" translate="true">
                     <values title="customer-estimation">PresupuestoCliente</values>
                     <values title="customer-order">PedidoCliente</values>
                     <values title="customer-delivery-note">AlbaranCliente</values>
@@ -44,7 +44,7 @@
                 </widget>
             </column>
             <column name="update-stock" order="130">
-                <widget type="select" fieldname="actualizastock">
+                <widget type="select" fieldname="actualizastock" translate="true">
                     <values title="book">-2</values>
                     <values title="subtract">-1</values>
                     <values title="do-nothing">0</values>
@@ -53,7 +53,7 @@
                 </widget>
             </column>
             <column name="generate-doc-type" numcolumns="4" order="140">
-                <widget type="select" fieldname="generadoc">
+                <widget type="select" fieldname="generadoc" translate="true">
                     <values title="customer-estimation">PresupuestoCliente</values>
                     <values title="customer-order">PedidoCliente</values>
                     <values title="customer-delivery-note">AlbaranCliente</values>

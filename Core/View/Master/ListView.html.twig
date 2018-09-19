@@ -1,0 +1,200 @@
+{% import _self as macros %}
+{% set currentView = fsc.getCurrentView() %}
+{% set formName = 'form' ~ currentView.getViewName() %}
+
+<script type="text/javascript">
+    var listViewDeleteCancel = "{{ i18n.trans('cancel') }}";
+    var listViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
+    var listViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";
+    var listViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
+</script>
+
+<br/>
+
+<form id="{{ formName }}" method="post">
+    <input type="hidden" name="action"/>
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
+    <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
+    <div class="container-fluid">
+        <div class="row">
+            {# -- Left buttons -- #}
+            <div class="col">
+                <div class="btn-group">
+                    {% if currentView.settings.btnNew %}
+                        <a href="{{ currentView.model.url('new') }}" class="btn btn-success">
+                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                    {% if currentView.settings.btnDelete %}
+                        <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
+                            <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
+                        </button>
+                    {% endif %}
+                </div>
+                {% if currentView.settings.btnPrint %}
+                    <div class="btn-group">
+                        {{ macros.printButton(fsc, currentView, i18n) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col">
+                {# -- Row actions -- #}
+                {% set row = currentView.getRow('actions') %}
+                {{ row.render(true) | raw }}
+            </div>
+            {# -- Search field -- #}
+            {% if currentView.searchFields is not empty %}
+                {{ macros.searchControl(currentView, i18n) }}
+            {% endif %}
+            <div class="col">
+                {# -- Filters button -- #}
+                {% if currentView.filters is not empty %}
+                    <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ currentView.getViewName() }}');">
+                        <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
+                    </button>
+                {% endif %}
+                {# -- Row statistics -- #}
+                {% set row = currentView.getRow('statistics') %}
+                {{ row.render(fsc) | raw }}
+            </div>
+            {% if currentView.orderOptions is empty %}
+                <div class="col">
+                    <br/><br/>
+                </div>
+            {% else %}
+                {{ macros.sortButton(currentView) }}
+            {% endif %}
+        </div>
+        {# -- Filters -- #}
+        {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
+        <div id="form{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
+            {% for filterName, filter in currentView.filters %}
+                {{ filter.render() | raw }}
+            {% endfor %}
+        </div>
+        {# -- Row header -- #}
+        <div class="row">
+            {% set row = currentView.getRow('header') %}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
+        </div>
+    </div>
+    {# -- Table -- #}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    {% if currentView.cursor | length > 0 %}
+                        <th>
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listActionCB" type="checkbox" />
+                            </div>
+                        </th>
+                    {% endif %}
+                    {% for column in currentView.getColumns() %}
+                        {{ column.tableHeader(fsc.user) | raw }}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in currentView.cursor %}
+                    {% set rowStatus = currentView.getRow('status') %}
+                    {% set trClass = rowStatus.trClass(model) %}
+                    <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
+                        <td class="cancelClickable">
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                            </div>
+                        </td>
+                        {% for column in currentView.getColumns() %}
+                            {{ column.tableCell(model, fsc.user) | raw }}
+                        {% endfor %}
+                    </tr>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {# -- Pagination -- #}
+    <div class="text-center">
+        <div class="btn-group">
+            {% for page in currentView.getPagination() %}
+                {% if page.active %}
+                    <button type="button" class="btn btn-light active" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+                {% else %}
+                    <button type="button" class="btn btn-light" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <br/>
+    {# -- Row footer -- #}
+    <div class="container-fluid">
+        <div class="row">
+            {% set row = currentView.getRow('footer') %}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
+        </div>
+    </div>
+</form>
+
+{# -- Modals -- #}
+{% for group in currentView.getModals() %}
+    {{ group.modal(currentView.model, fsc.user, currentView.getViewName()) | raw }}
+{% endfor %}
+
+{# -- Macros -- #}
+{% macro printButton(fsc, currentView, i18n) %}
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+        </button>
+        <div class="dropdown-menu">
+            {% for key, option in fsc.exportManager.options() %}
+                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                    {{ i18n.trans(option.description) }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro searchControl(currentView, i18n) %}
+    <div class="col">
+        <div class="form-group">
+            <div class="input-group">
+                <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}"/>
+                <span class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sortButton(currentView) %}
+    <div class="col text-right">
+        <div class="form-group">
+            <div class="btn-group">
+                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="fas {{ currentView.orderOptions[currentView.orderKey]['icon'] }} fa-fw" aria-hidden="true"></i>
+                    {{ currentView.orderOptions[currentView.orderKey]['label'] }}
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    {% for key, orderby in currentView.orderOptions %}
+                        {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
+                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
+                            <i class="fas {{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

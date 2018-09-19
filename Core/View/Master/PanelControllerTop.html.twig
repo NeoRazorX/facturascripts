@@ -6,7 +6,7 @@
      * in different formats.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -19,69 +19,53 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
 
 {% extends "Master/PanelController.html.twig" %}
 
+{% block css %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+{% endblock %}
+
 {% block body %}
-{# -- Visual macros -- #}
-{% import 'Macro/BaseController.html.twig' as BaseController %}
-
-{# -- Main Body -- #}
-<div class="container-fluid">
-    {# -- Data Row -- #}
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="nav nav-tabs" id="optionsindex" role="tablist">
-                {% for indexView, view in fsc.views %}
-                    {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                    {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
-                    <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                        <i class="fas {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
-                        &nbsp;{{ view.title }}
-                    </a>
-                {% endfor %}
-            </div>
-            <div class="tab-content" id="optionsindex-tabContent">
-                {% for indexView, view in fsc.views %}
-                    {% set active = (indexView == fsc.active) ? ' show active' : '' %}
-                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
-                        {% set viewType = fsc.viewClass(view) %}
-                        {% if viewType == 'ListView' %}
-                            {{ BaseController.columnsForListView(_context, view) }}
-                        {% else %}
-                            <br/>
-                        {% endif %}
-
-                        {% if viewType == 'EditView' %}
-                            {# Information Cards Header #}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                            {# Statistical buttons bar #}
-                            {{ BaseController.rowStatisticsForEditView(_context, view) }}
-
-                            {# Main Form #}
-                            {{ BaseController.columnsForEditView(_context, view, view.model, TRUE) }}
-                        {% elseif viewType == 'EditListView' %}
-                            {# Information Cards Header #}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
-
-                            {# Main Form #}
-                            {{ BaseController.columnsForEditListView(_context, view) }}
-                        {% elseif viewType == 'HtmlView' %}
-                            <div>{% include view.fileName ignore missing %}</div>
-                        {% else %}
-                            {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                            {{ BaseController.modalFormFromColumns(_context, view) }}
-                        {% endif %}
-                    </div>
-                {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+                    {% for viewName, view in fsc.views %}
+                        <li class="nav-item">
+                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                            {% set disable = view.settings.active ? '' : ' disabled' %}
+                            <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                                <i class="fas {{ view.icon }}" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
+                                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <br/>
+                <div class="tab-content" id="mainTabsContent">
+                    {% for viewName, view in fsc.views %}
+                        {% set active = (viewName == fsc.active) ? ' show active' : '' %}
+                        <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
+                            {% do fsc.setCurrentView(viewName) %}
+                            {{ include(view.template) }}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-</div>
-<br/>
 {% endblock %}

@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -27,69 +28,22 @@ use FacturaScripts\Core\Lib\ExportManager;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditListView extends BaseView implements DataViewInterface
+class EditListView extends BaseView
 {
-
-    /**
-     * Cursor with the display model's data
-     *
-     * @var array
-     */
-    private $cursor;
-
-    /**
-     * Stores the offset for the cursor
-     *
-     * @var int
-     */
-    private $offset;
-
-    /**
-     * Stores the order for the cursor
-     *
-     * @var array
-     */
-    private $order;
-
-    /**
-     * Store the parameters for the cursor's WHERE clause
-     *
-     * @var DataBaseWhere[]
-     */
-    private $where;
 
     /**
      * Class constructor and initialization
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct($name, $title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName);
-
-        $this->order = [$this->model->primaryColumn() => 'ASC'];
-        $this->offset = 0;
-        $this->where = [];
-
-        // Load the view configuration for the user
-        $this->pageOption->getForUser($viewName, $userNick);
-    }
-
-    /**
-     * Establishes the column's edit state
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
+        parent::__construct($name, $title, $modelName, $icon);
+        $this->template = 'Master/EditListView.html.twig';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js';
     }
 
     /**
@@ -107,47 +61,6 @@ class EditListView extends BaseView implements DataViewInterface
     }
 
     /**
-     * Column list and its configuration
-     * (Array of ColumnItem)
-     *
-     * @return GroupItem[]
-     */
-    public function getColumns()
-    {
-        return $this->pageOption->columns;
-    }
-
-    /**
-     * Returns the list of read data in the Model format
-     *
-     * @return array
-     */
-    public function getCursor()
-    {
-        return $this->cursor;
-    }
-
-    /**
-     * Returns True if have less than 5 columns, else returns False.
-     */
-    public function isBasicEditList()
-    {
-        if (count($this->pageOption->columns) !== 1) {
-            return false;
-        }
-
-        $maxColumns = 5;
-        $group = reset($this->pageOption->columns);
-        foreach ($group->columns as $col) {
-            if ($col->display !== 'none') {
-                --$maxColumns;
-            }
-        }
-
-        return $maxColumns > 0;
-    }
-
-    /**
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
@@ -157,33 +70,41 @@ class EditListView extends BaseView implements DataViewInterface
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
+        $this->offset = ($offset < 0) ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-        $this->count = $this->model->count($where);
+
+        $finalWhere = empty($where) ? $this->where : $where;
+        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
+
+        /// needed when megasearch force data reload
+        $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
+            $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
         }
 
-        // We save the values where and offset for the export
-        $this->offset = $offset;
-        $this->where = $where;
+        $this->where = $finalWhere;
     }
 
     /**
-     * Prepares the fields for an empty model
+     * Process form data needed.
      *
-     * @return mixed
+     * @param Request $request
+     * @param string  $case
      */
-    public function newEmptyModel()
+    public function processFormData($request, $case)
     {
-        $class = $this->model->modelName();
-        $result = new $class();
+        switch ($case) {
+            case 'edit':
+                foreach ($this->getColumns() as $group) {
+                    $group->processFormData($this->model, $request);
+                }
+                break;
 
-        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
-            $result->{$field} = $value;
+            case 'load':
+                $this->offset = (int) $request->request->get('offset', 0);
+                break;
         }
-
-        return $result;
     }
 }

@@ -48,16 +48,16 @@
         </column>
         <column name="stock" display="right" order="150">
             <widget type="number" fieldname="stockfis">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="table-info" fieldname="nostock">1</option>
-            <option color="table-danger" fieldname="bloqueado">1</option>
-            <option color="table-success" fieldname="stockfis">&gt;0</option>
-            <option color="table-warning" fieldname="stockfis">&lt;1</option>
+            <option color="info" fieldname="nostock">1</option>
+            <option color="danger" fieldname="bloqueado">1</option>
+            <option color="success" fieldname="stockfis">&gt;0</option>
+            <option color="warning" fieldname="stockfis">&lt;1</option>
         </row>
     </rows>
 </view>

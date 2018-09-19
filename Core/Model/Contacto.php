@@ -306,7 +306,7 @@ class Contacto extends Base\Contact
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return parent::url($type, 'ListCliente?active=List');
+        return parent::url($type, 'ListCliente?activetab=List');
     }
 
     /**

@@ -110,15 +110,16 @@ abstract class BusinessDocumentController extends PanelController
     {
         /// doc tab
         $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
-        $view = new BusinessDocumentView('new', $fullModelName, $this->getLineXMLView(), $this->user->nick);
-        $this->addView('Document', $view, 'fa-file');
+        $view = new BusinessDocumentView($this->getLineXMLView(), 'new', $fullModelName);
+        $this->addCustomView('Document', $view);
 
         /// edita tab
         $viewName = 'Edit' . $this->getModelClassName();
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fa-edit');
 
         /// template
-        $this->setTemplate('Master/BusinessDocumentController');
+        ///$this->setTemplate('Master/BusinessDocumentController');
+        $this->setTabsPosition('top');
     }
 
     /**
@@ -216,7 +217,7 @@ abstract class BusinessDocumentController extends PanelController
         $view = $this->views[$this->active];
 
         /// gets data form and separate lines data
-        $data = $this->getFormData();
+        $data = $this->request->request->all();
         $newLines = isset($data['lines']) ? $view->processFormLines($data['lines']) : [];
         unset($data['lines']);
 
@@ -245,7 +246,7 @@ abstract class BusinessDocumentController extends PanelController
         $view = $this->views[$this->active];
 
         /// gets data form and separate date, hour, codcliente, codproveedor and lines data
-        $data = $this->getFormData();
+        $data = $this->request->request->all();
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
         $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
         $fecha = isset($data['fecha']) ? $data['fecha'] : $view->model->fecha;

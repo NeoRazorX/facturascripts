@@ -15,14 +15,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>icon</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
-        <name>description</name>
-        <type>text</type>
-    </column>
-    <column>
         <name>properties</name>
         <type>text</type>
     </column>

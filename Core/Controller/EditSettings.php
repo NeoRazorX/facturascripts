@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Lib\EmailTools;
-use FacturaScripts\Core\Model\Base\ModelClass;
 
 /**
  * Controller to edit main settings
@@ -32,27 +31,6 @@ class EditSettings extends ExtendedController\PanelController
 {
 
     const KEY_SETTINGS = 'Settings';
-
-    /**
-     * Returns the configuration property value for a specified $field
-     *
-     * @param ModelClass $model
-     * @param string     $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        if (isset($model->{$field})) {
-            return $model->{$field};
-        }
-
-        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
-            return $model->properties[$field];
-        }
-
-        return null;
-    }
 
     /**
      * Returns basic page attributes
@@ -71,27 +49,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the url for a specified $type
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getURL($type)
-    {
-        switch ($type) {
-            case 'list':
-                return 'AdminPlugins';
-
-            case 'edit':
-                return 'EditSettings';
-        }
-
-        return FS_ROUTE;
-    }
-
-    /**
-     * Return a list of all XML view files on XMLView folder.
+     * Return a list of all XML settings files on XMLView folder.
      *
      * @return array
      */
@@ -112,14 +70,26 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function createViews()
     {
+        $this->setTemplate('EditSettings');
+
         $modelName = 'Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
-            $title = strtolower(substr($name, 8));
+            $title = $this->getKeyFromViewName($name);
             $this->addEditView($name, $modelName, $title, $icon);
-        }
 
-        $this->testViews();
+            /// change icon
+            $groups = $this->views[$name]->getColumns();
+            foreach ($groups as $group) {
+                if (!empty($group->icon)) {
+                    $this->views[$name]->icon = $group->icon;
+                    break;
+                }
+            }
+
+            /// disable delete
+            $this->setSettings($name, 'btnDelete', false);
+        }
     }
 
     /**
@@ -131,8 +101,6 @@ class EditSettings extends ExtendedController\PanelController
     {
         switch ($action) {
             case 'export':
-                $this->setTemplate(false);
-                $this->exportAction();
                 break;
 
             case 'testmail':
@@ -144,31 +112,6 @@ class EditSettings extends ExtendedController\PanelController
                 }
                 break;
         }
-    }
-
-    /**
-     * Exports data from views.
-     */
-    private function exportAction()
-    {
-        $this->exportManager->newDoc($this->request->get('option'));
-        foreach ($this->views as $view) {
-            if ($view->model === null || !isset($view->model->properties)) {
-                continue;
-            }
-
-            $headers = ['key' => 'key', 'value' => 'value'];
-            $rows = [];
-            foreach ($view->model->properties as $key => $value) {
-                $rows[] = ['key' => $key, 'value' => $value];
-            }
-
-            if (count($rows) > 0) {
-                $this->exportManager->generateTablePage($headers, $rows);
-            }
-        }
-
-        $this->exportManager->show($this->response);
     }
 
     /**
@@ -191,48 +134,11 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if (empty($view->model)) {
-            return;
-        }
-
         $code = $this->getKeyFromViewName($viewName);
         $view->loadData($code);
 
-        if ($view->model->name === null) {
-            $view->model->description = $view->model->name = strtolower(substr($viewName, 8));
-            $view->model->save();
-        }
-    }
-
-    /**
-     * Test all view to show usefull errors.
-     */
-    private function testViews()
-    {
-        foreach ($this->views as $viewName => $view) {
-            if (!$view->model) {
-                continue;
-            }
-
-            $error = true;
-            foreach ($view->getColumns() as $group) {
-                if (!isset($group->columns)) {
-                    break;
-                }
-
-                foreach ($group->columns as $col) {
-                    if ($col->name === 'name') {
-                        $error = false;
-                        break;
-                    }
-                }
-
-                break;
-            }
-
-            if ($error) {
-                $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
-            }
+        if (empty($view->model->name)) {
+            $view->model->name = $code;
         }
     }
 }

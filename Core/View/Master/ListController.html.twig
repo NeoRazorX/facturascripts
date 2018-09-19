@@ -6,7 +6,7 @@
      * in rows and columns format.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -28,258 +28,90 @@
 
 {% block javascripts %}
     {{ parent() }}
-
-    <script src="{{ asset('Dinamic/Assets/JS/ListController.js') }}"></script>
-    <script type="text/javascript">
-        tabActive = '{{ fsc.active }}';
-        settings = {{ fsc.getSettings(null, null)|json_encode|raw }};
-        urls = { {{ fsc.getStringURLs('new') | raw }} };
-
-        function deleteFromList() {
-            var deleteCodes = getLineCodes();
-            if (deleteCodes.length) {
-                bootbox.confirm({
-                    title: "{{ i18n.trans('confirm-delete')|raw }}",
-                    message: "{{ i18n.trans('are-you-sure') }}",
-                    closeButton: false,
-                    buttons: {
-                        cancel: {
-                            label: '<i class="fas fa-times"></i> {{ i18n.trans("cancel") }}'
-                        },
-                        confirm: {
-                            label: '<i class="fas fa-check"></i> {{ i18n.trans("confirm") }}',
-                            className: 'btn-danger'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            execActionForm('delete');
-                        }
-                    }
-                });
-            }
-
-            return false;
-        }
-        $(document).ready(function () {
-            // autocomplete filters
-            $('.autocomplete').each(function () {
-                var field = $(this).attr('data-field');
-                var source = $(this).attr('data-source');
-                var fieldcode = $(this).attr('data-fieldcode');
-                var fieldtitle = $(this).attr('data-fieldtitle');
-                var formName = $(this).closest('form').attr('name');
-                $(this).autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            method: 'POST',
-                            url: '{{ fsc.url() }}',
-                            data: getAutocompleteData(formName, field, source, fieldcode, fieldtitle, request.term),
-                            dataType: 'json',
-                            success: function (results) {
-                                var values = [];
-                                results.forEach(function (element) {
-                                    values.push({key: element.key, value: element.key + " | " + element.value});
-                                });
-                                response(values);
-                            },
-                            error: function (msg) {
-                                alert(msg.status + ' ' + msg.statusText);
-                            }
-                        });
-                    },
-                    select: function (event, ui) {
-                        $('#' + field + 'Autocomplete').val(ui.item.key);
-                        ui.item.value = ui.item.value.split(' | ')[1];
-                        $(this).form().submit();
-                    }
-                });
-            });
-        });
-    </script>
 {% endblock %}
 
-{% block body %}
-    {# Calculate texts according to language #}
-    {% set refresh = i18n.trans('refresh-page') %}
-    {% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
-    {% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
-    {% set print, print_title = i18n.trans('print'), i18n.trans('print-list-of-records') %}
-    {% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
-    {% set search_title = i18n.trans('filter-records-containing-indicated-value') %}
-    {% set panel_header = i18n.trans('common-data') %}
-    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
-
-    {# Calculate common values #}
-    {% set list_url = fsc.views[fsc.active].getURL('list') %}
-
-    {# Macros Template Imports #}
-    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
-    {% from 'Macro/Utils.html.twig' import exportData as exportData %}
-    {% import 'Macro/BaseController.html.twig' as BaseController %}
-    {% import 'Macro/ListFilter.html.twig' as ListFilter %}
-
-    {# Page Header #}
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+    {% set pageData = fsc.getPageData() %}
     <div class="container-fluid d-print-none">
-        {{ parent() }}
-        <div class="d-none">
-            <form action="#" method="post" name="insertForm">')
-                <input type="hidden" name="action" value="insert"/>
-            </form>
-        </div>
-        {# Header Row #}
         <div class="row">
             <div class="col-md-7">
+                {# -- Page data for small devices -- #}
                 <nav aria-label="breadcrumb">
-                    {% set pageData = fsc.getPageData() %}
                     <ol class="breadcrumb d-md-none">
-                        <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.menu) }}</a></li>
-                            {% if pageData.submenu %}
-                            <li class="breadcrumb-item"><a href="#">{{ i18n.trans(pageData.submenu) }}</a></li>
-                            {% endif %}
-                        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                        <li class="breadcrumb-item">
+                            <a href="#">{{ i18n.trans(pageData.menu) }}</a>
+                        </li>
+                        {% if pageData.submenu %}
+                            <li class="breadcrumb-item">
+                                <a href="#">{{ i18n.trans(pageData.submenu) }}</a>
+                            </li>
+                        {% endif %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
                     </ol>
                 </nav>
                 <div class="btn-group">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
                         <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
-                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                    {% if pageData.name == fsc.user.homepage %}
+                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                            <i class="far fa-bookmark" aria-hidden="true"></i>
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE">
+                            <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
+                {# -- Options button -- #}
                 <div class="btn-group">
-                    <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
-                        <i class="fas fa-plus" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">&nbsp;{{ new_record }}</span>
-                    </a>
-                    <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions('{{ list_url }}');" {{ popoverTitle(options_title, 'bottom') }}>
-                        <i class="fas fa-wrench" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">&nbsp;{{ options }}</span>
-                    </a>
-                    {# Adds print and export options #}
-                    {{ exportData(fsc, i18n) }}
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ i18n.trans('options') }}
+                        </button>
+                        <div class="dropdown-menu">
+                            {% for viewName, view in fsc.views %}
+                            <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
+                                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-5 text-right">
                 <h1 class="h3 d-none d-md-inline-block">
-                    <i class="fas {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                    {{ fsc.title }} <i class="fas {{ pageData.icon }}" aria-hidden="true"></i>
                 </h1>
                 <br class="d-md-none"/>
             </div>
         </div>
     </div>
+{% endblock %}
 
-    {# Main Data #}
-    <div>
-        {# Tabs declaration #}
-        <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
-            {% for indexView, view in fsc.views %}
-                <li class="nav-item" {{ popoverTitle(view.title, 'bottom') }}>
-                    {% set active = (indexView == fsc.active) ? 'active' : '' %}
-                    <a href="#{{ indexView }}" class="nav-link {{ active }}" data-toggle="tab" role="tab" aria-controls="{{ indexView }}">
-                        <i class="fas {{ fsc.getSettings(indexView, 'icon') }}" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                        {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-
-        {# Main Tab #}
-        <div class="tab-content" id="mainTabsContent">
-            {% for indexView, view in fsc.views %}
-                {% set active = (indexView == fsc.active) ? 'active' : '' %}
-                <div class="tab-pane {{ active }}" id="{{ indexView }}" role="tabpanel">
-                    {# Filters Row #}
-                    <form name="form{{ indexView }}" id="form{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
-                        <input type="hidden" name="active" value="{{ indexView }}"/>
-                        <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
-                        <div class="container-fluid d-print-none" style="margin-top: 15px;">
-                            <div class="row align-items-center">
-                                {# Main filter #}
-                                <div class="col-md-3 col-lg-2">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
-                                            <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off"
-                                                   placeholder="{{ i18n.trans('search') }}" autofocus=""/>
-                                            <span class="input-group-append">
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="fas fa-search" aria-hidden="true"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {# Aditionals filters #}
-                                {% for key1, filter in view.getFilters() %}
-                                    {% if filter.type == 'autocomplete' %}
-                                        {{ ListFilter.filterAutocomplete(_context, key1, filter) }}
-                                    {% elseif filter.type == 'select' %}
-                                        {{ ListFilter.filterSelect(_context, key1, filter) }}
-                                    {% elseif filter.type == 'checkbox' %}
-                                        {{ ListFilter.filterCheckbox(_context, key1, filter) }}
-                                    {% else %}
-                                        {{ ListFilter.filterText(_context, key1, filter) }}
-                                    {% endif %}
-                                {% endfor %}
-
-                                {# Order by selector #}
-                                {{ ListFilter.buttonOrderBy(_context, view) }}
-                            </div>
-                        </div>
-                    </form>
-
-                    {# Data Table #}
-                    {{ BaseController.columnsForListView(_context, view, true) }}
-
-                    {# Footer Navigation #}
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-10 text-center">
-                                <div class="btn-group">
-                                    {% for item in fsc.pagination(indexView) %}
-                                        {% if item.active %}
-                                            <a class="btn btn-primary">{{ item.page }}</a>
-                                        {% else %}
-                                            <a class="btn btn-light" href="{{ item.url }}">
-                                                {% if item.icon %}
-                                                    <i class="fas {{ item.icon }}" aria-hidden="true"></i>
-                                                {% else %}
-                                                    <span>{{ item.page }}</span>
-                                                {% endif %}
-                                            </a>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <br/>
-                                <br/>
-                            </div>
-                            <div class="col-2 text-right">
-                                {% if view.getCursor() is not empty %}
-                                    <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
-                                        <i class="fas fa-trash" aria-hidden="true"></i>
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
-                                {{ BaseController.modalFormFromColumns(_context, view) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+{% block body %}
+    {{ parent() }}
+    {# -- Tabs -- #}
+    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+        {% for viewName, view in fsc.views %}
+            <li class="nav-item">
+                {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                    <i class="fas {{ view.icon }}" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
+                    {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content" id="mainTabsContent">
+        {% for viewName, view in fsc.views %}
+            {% set active = (viewName == fsc.active) ? ' active' : '' %}
+            <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
+                {% do fsc.setCurrentView(viewName) %}
+                {{ include(view.template) }}
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

@@ -36,12 +36,12 @@
         </column>
         <column name="debit" display="right" order="120">
             <widget type="money" fieldname="debe">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="credit" display="right" order="130">
             <widget type="money" fieldname="haber">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
     </columns>

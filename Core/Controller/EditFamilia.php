@@ -53,7 +53,7 @@ class EditFamilia extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditFamilia', 'Familia', 'family');
-        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down');
+        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down-alt');
         $this->addListView('ListProducto', 'Producto', 'products', 'fa-cubes');
     }
 

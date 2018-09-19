@@ -234,9 +234,9 @@ class XLSExport implements ExportInterface
                 continue;
             }
 
-            if (isset($col->widget->fieldName)) {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $sheetHeaders[$col->widget->fieldName] = 'string';
+            if (isset($col->widget->fieldname)) {
+                $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
+                $sheetHeaders[$col->widget->fieldname] = 'string';
             }
         }
     }

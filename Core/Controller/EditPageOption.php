@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -130,8 +131,7 @@ class EditPageOption extends Base\Controller
         parent::privateCore($response, $user, $permissions);
 
         $this->getParams();
-        $this->model = new Model\PageOption();
-        $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+        $this->loadPageOptions();
 
         $action = $this->request->get('action', '');
         switch ($action) {
@@ -181,7 +181,7 @@ class EditPageOption extends Base\Controller
         $rows = $this->model->all($where, [], 0, 1);
         if ($rows[0] && $rows[0]->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+            $this->loadPageOptions();
         } else {
             $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
         }
@@ -196,6 +196,25 @@ class EditPageOption extends Base\Controller
         $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
 
         $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
+    }
+
+    protected function loadPageOptions()
+    {
+        $this->model = new Model\PageOption();
+
+        $orderby = ['nick' => 'ASC'];
+        $where = [
+            new DataBaseWhere('name', $this->selectedViewName),
+            new DataBaseWhere('nick', $this->selectedUser),
+            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+            new DataBaseWhere('name', $this->selectedViewName),
+        ];
+
+        if ($this->model->loadFromCode('', $where, $orderby)) {
+            VisualItemLoadEngine::loadArray($this->model->columns, $this->model->modals, $this->model->rows, $this->model);
+        } else {
+            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+        }
     }
 
     /**

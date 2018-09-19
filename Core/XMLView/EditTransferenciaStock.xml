@@ -39,7 +39,7 @@
                 </widget>
             </column>
             <column name="date" order="130">
-                <widget type="datepicker" fieldname="fecha" />
+                <widget type="date" fieldname="fecha" />
             </column>
             <column name="user" order="140">
                 <widget type="select" fieldname="usuario" readonly="true">

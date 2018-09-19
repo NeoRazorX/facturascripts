@@ -41,11 +41,11 @@
         </column>
         <column name="amount" order="130" display="right">
             <widget type="money" fieldname="total">
-                <option color="red">&lt;0</option>
+                <option color="danger">&lt;0</option>
             </widget>
         </column>
         <column name="date" order="130" display="right">
-            <widget type="text" fieldname="fecha" />
+            <widget type="date" fieldname="fecha" />
         </column>
         <column name="email-sent" order="140" display="center">
             <widget type="checkbox" fieldname="femail" />
@@ -53,8 +53,8 @@
     </columns>
     <rows>
         <row type="status" fieldname="pagada">
-            <option color="table-warning">0</option>
-            <option color="table-success">1</option>
+            <option color="warning">0</option>
+            <option color="success">1</option>
         </row>
     </rows>
 </view>

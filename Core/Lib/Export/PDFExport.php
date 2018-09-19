@@ -68,7 +68,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         $tableData = [];
         $longTitles = [];
 
-        /// Get the columns
+        /// turns widget columns into needed arrays
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
         if (count($tableCols) > 5) {
             $orientation = 'landscape';
