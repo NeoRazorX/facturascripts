@@ -19,7 +19,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
+use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
  * Description of BusinessDocumentController
@@ -372,6 +374,12 @@ abstract class BusinessDocumentController extends PanelController
     {
         foreach ($newLine as $key => $value) {
             $oldLine->{$key} = $value;
+            if ($key === 'iva') {
+                $impuesto = new Impuesto();
+                $where = [new DataBaseWhere('iva', (int) $value)];
+                $impuesto->loadFromCode('', $where);
+                $oldLine->codimpuesto = $impuesto->codimpuesto;
+            }
         }
 
         $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;

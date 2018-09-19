@@ -19,7 +19,10 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Contacto;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -260,7 +263,16 @@ class PDFExport extends PDFDocument implements ExportInterface
         }
 
         $this->newPage();
-        $headers = [
+
+        $headersTaxes = [
+            'tax' => $this->i18n->trans('tax'),
+            'irpf' => $this->i18n->trans('irpf'),
+            'neto' => $this->i18n->trans('net'),
+            'totaliva' => $this->i18n->trans('totaliva'),
+            'totalrecargo' => $this->i18n->trans('totalrecargo'),
+            'totalirpf' => $this->i18n->trans('totalirpf'),
+        ];
+        $headersFooter = [
             'currency' => $this->i18n->trans('currency'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
@@ -268,7 +280,23 @@ class PDFExport extends PDFDocument implements ExportInterface
             'totalIrpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
-        $rows = [
+        $taxes = (new BusinessDocumentTools())->getSubtotals($model->getLines());
+
+        $rowsTaxes = [];
+        foreach ($taxes as $codimpuesto => $tax) {
+            $impuesto = new Impuesto();
+            $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
+            $impuesto->loadFromCode('', $where);
+            $rowsTaxes[] = [
+                'tax' => $impuesto->primaryDescription(),
+                'irpf' => $this->numberTools->format($tax['irpf']),
+                'neto' => $this->numberTools->format($tax['neto']),
+                'totaliva' => $this->numberTools->format($tax['totaliva']),
+                'totalrecargo' => $this->numberTools->format($tax['totalrecargo']),
+                'totalirpf' => $this->numberTools->format($tax['totalirpf']),
+            ];
+        }
+        $rowsFooter = [
             [
                 'currency' => $this->getDivisaName($model->coddivisa),
                 'net' => $this->numberTools->format($model->neto),
@@ -278,8 +306,22 @@ class PDFExport extends PDFDocument implements ExportInterface
                 'total' => $this->numberTools->format($model->total),
             ]
         ];
-        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
-        $tableOptions = [
+        $this->removeEmptyCols($rowsTaxes, $headersTaxes, $this->numberTools->format(0));
+        $this->removeEmptyCols($rowsFooter, $headersFooter, $this->numberTools->format(0));
+        $tableOptionsTaxes = [
+            'cols' => [
+                'tax' => ['justification' => 'left'],
+                'irpf' => ['justification' => 'right'],
+                'neto' => ['justification' => 'right'],
+                'totaliva' => ['justification' => 'right'],
+                'totalrecargo' => ['justification' => 'right'],
+                'totalirpf' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        $tableOptionsFooter = [
             'cols' => [
                 'net' => ['justification' => 'right'],
                 'taxes' => ['justification' => 'right'],
@@ -291,7 +333,9 @@ class PDFExport extends PDFDocument implements ExportInterface
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
-        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+        $this->pdf->ezTable($rowsTaxes, $headersTaxes, '', $tableOptionsTaxes);
+        $this->newPage();
+        $this->pdf->ezTable($rowsFooter, $headersFooter, '', $tableOptionsFooter);
     }
 
     /**

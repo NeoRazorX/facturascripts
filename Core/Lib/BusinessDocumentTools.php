@@ -226,6 +226,13 @@ class BusinessDocumentTools
             $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
         }
 
+        $impuesto = new Impuesto();
+        $where = [new DataBaseWhere('iva', (int) $newLine->iva)];
+        $newLine->codimpuesto = null;
+        if ($impuesto->loadFromCode('', $where)) {
+            $newLine->codimpuesto = $impuesto->codimpuesto;
+        }
+
         return $newLine;
     }
 
