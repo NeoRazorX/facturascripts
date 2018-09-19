@@ -30,8 +30,6 @@ use FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
 class EditAsiento extends ExtendedController\PanelController
 {
@@ -60,6 +58,7 @@ class EditAsiento extends ExtendedController\PanelController
         $this->addEditView('EditAsiento', 'Asiento', 'accounting-entry', 'fa-balance-scale');
         $this->addGridView('EditPartida', 'EditAsiento', 'Partida', 'accounting-items');
         $this->setTemplate('EditAsiento');
+        $this->views['EditPartida']->template = 'EditAsientoGridView.html.twig';
     }
 
     /**
@@ -409,7 +408,7 @@ class EditAsiento extends ExtendedController\PanelController
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
                     $orderby = ['idpartida' => 'ASC'];
-                    $view->loadData($where, $orderby);
+                    $view->loadData('', $where, $orderby, 0, 0);
                 }
                 break;
         }
@@ -429,9 +428,9 @@ class EditAsiento extends ExtendedController\PanelController
 
     /**
      * Replace concept in concepts array with macro values
-     * 
+     *
      * @param array array
-     * 
+     *
      * @return array
      */
     private function replaceConcept($results): array
