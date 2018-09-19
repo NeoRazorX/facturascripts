@@ -33,21 +33,6 @@ abstract class EditController extends PanelController
     abstract public function getModelClassName();
 
     /**
-     * Starts all the objects and properties.
-     *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
-     * @param string          $uri
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->setTabsPosition('bottom');
-    }
-
-    /**
      * Pointer to the data model.
      *
      * @return mixed
