@@ -256,7 +256,7 @@ abstract class PanelController extends BaseController
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
             return false;
         }
-        
+
         // loads form data
         $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->save()) {

@@ -100,6 +100,7 @@ class EditListView extends BaseView
                 foreach ($this->getColumns() as $group) {
                     $group->processFormData($this->model, $request);
                 }
+                break;
 
             case 'load':
                 $this->offset = (int) $request->request->get('offset', 0);

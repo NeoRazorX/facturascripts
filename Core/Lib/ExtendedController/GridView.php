@@ -346,7 +346,7 @@ class GridView extends BaseView
 
         return $result;
     }
-    
+
     /**
      * 
      * @param Request $request

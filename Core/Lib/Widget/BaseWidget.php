@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Lib\Widget;
+
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -168,7 +169,7 @@ class BaseWidget extends VisualItem
         $this->setValue($model);
         return $this->show();
     }
-    
+
     /**
      * 
      * @param object  $model

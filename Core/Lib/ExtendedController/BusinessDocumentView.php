@@ -181,7 +181,7 @@ class BusinessDocumentView extends BaseView
 
         return $newLines;
     }
-    
+
     /**
      * 
      * @param Request $request

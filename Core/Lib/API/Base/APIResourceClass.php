@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\API\Base;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -31,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class APIResourceClass
 {
+
     /**
      * Contains the HTTP method (GET, PUT, PATCH, POST, DELETE).
      * PUT, PATCH and POST used in the same way.
@@ -38,6 +38,7 @@ abstract class APIResourceClass
      * @var string $method
      */
     protected $method;
+
     /**
      * HTTP response object.
      *

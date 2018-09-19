@@ -162,7 +162,7 @@ class GroupItem extends VisualItem
      */
     public function processFormData(&$model, $request)
     {
-        foreach($this->columns as $col) {
+        foreach ($this->columns as $col) {
             $col->processFormData($model, $request);
         }
     }
