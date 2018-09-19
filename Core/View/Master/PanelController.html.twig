@@ -82,22 +82,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn-group">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-md-inline-block">{{ i18n.trans('print') }} </span>
-                        </button>
-                        <div class="dropdown-menu">
-                            {% for key, option in fsc.exportManager.options() %}
-                                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
-                                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
-                                    {{ i18n.trans(option.description) }}
-                                </a>
-                            {% endfor %}
+                {% if fsc.hasData %}
+                    <div class="btn-group">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-md-inline-block">{{ i18n.trans('print') }} </span>
+                            </button>
+                            <div class="dropdown-menu">
+                                {% for key, option in fsc.exportManager.options() %}
+                                    <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                                        <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                                        {{ i18n.trans(option.description) }}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">

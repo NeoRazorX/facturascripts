@@ -21,16 +21,22 @@
             {# -- Left buttons -- #}
             <div class="col">
                 <div class="btn-group">
-                    <a href="{{ currentView.model.url('new') }}" class="btn btn-success">
-                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                    </a>
-                    <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
-                        <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
-                    </button>
+                    {% if currentView.settings.btnNew %}
+                        <a href="{{ currentView.model.url('new') }}" class="btn btn-success">
+                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                    {% if currentView.settings.btnDelete %}
+                        <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
+                            <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
+                        </button>
+                    {% endif %}
                 </div>
-                <div class="btn-group">
-                    {{ macros.printButton(fsc, currentView, i18n) }}
-                </div>
+                {% if currentView.settings.btnPrint %}
+                    <div class="btn-group">
+                        {{ macros.printButton(fsc, currentView, i18n) }}
+                    </div>
+                {% endif %}
             </div>
             <div class="col">
                 {# -- Row actions -- #}

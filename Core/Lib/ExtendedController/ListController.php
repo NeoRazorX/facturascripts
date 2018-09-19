@@ -207,6 +207,7 @@ abstract class ListController extends BaseController
         $title = empty($viewTitle) ? $this->title : $viewTitle;
         $view = new ListView($viewName, $title, self::MODEL_NAMESPACE . $modelName, $icon);
         $this->addCustomView($viewName, $view);
+        $this->setSettings($viewName, 'btnPrint', true);
     }
 
     /**

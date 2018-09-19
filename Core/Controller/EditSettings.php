@@ -86,6 +86,9 @@ class EditSettings extends ExtendedController\PanelController
                     break;
                 }
             }
+
+            /// disable delete
+            $this->setSettings($name, 'btnDelete', false);
         }
     }
 
