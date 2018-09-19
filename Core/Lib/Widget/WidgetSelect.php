@@ -80,7 +80,7 @@ class WidgetSelect extends BaseWidget
                 $this->setSourceData($child);
                 break;
             } elseif (isset($child['title'])) {
-                $this->setValuesFromArray($data['children'], isset($child['translate']), !$this->required, 'text');
+                $this->setValuesFromArray($data['children'], isset($data['translate']), !$this->required, 'text');
                 break;
             } elseif (isset($child['start'])) {
                 $this->setValuesFromRange($child['start'], $child['end'], $child['step']);
@@ -104,7 +104,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param object  $model
      * @param Request $request
      */
@@ -221,7 +221,7 @@ class WidgetSelect extends BaseWidget
 
     /**
      * Set datasource data and Load data from Model into values array.
-     * 
+     *
      * @param array $child
      * @param bool  $loadData
      */
