@@ -200,37 +200,6 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
-     * @return array
-     */
-    protected function getFormData(): array
-    {
-        $data = $this->request->request->all();
-
-        /// get file uploads
-        foreach ($this->request->files->all() as $key => $uploadFile) {
-            if (is_null($uploadFile)) {
-                continue;
-            } elseif (!$uploadFile->isValid()) {
-                $this->miniLog->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            /// exclude php files
-            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $this->miniLog->error($this->i18n->trans('php-files-blocked'));
-                continue;
-            }
-
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $data[$key] = $uploadFile->getClientOriginalName();
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Return array with parameters values
      *
      * @param array $keys

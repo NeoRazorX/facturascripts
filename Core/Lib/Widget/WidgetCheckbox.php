@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of WidgetCheckbox
  *
@@ -49,6 +51,17 @@ class WidgetCheckbox extends BaseWidget
             . $labelHtml
             . $descriptionHtml
             . '</div>';
+    }
+
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $value = $request->request->get($this->fieldname);
+        $model->{$this->fieldname} = !is_null($value);
     }
 
     /**

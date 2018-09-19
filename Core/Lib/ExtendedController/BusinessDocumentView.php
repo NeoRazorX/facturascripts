@@ -181,8 +181,13 @@ class BusinessDocumentView extends BaseView
 
         return $newLines;
     }
-
-    public function processRequest($request)
+    
+    /**
+     * 
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
     {
         ;
     }

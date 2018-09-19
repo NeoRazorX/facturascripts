@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to manage the data editing
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class EditController extends PanelController
 {
@@ -31,21 +31,6 @@ abstract class EditController extends PanelController
      * Returns the class name of the model to use in the editView.
      */
     abstract public function getModelClassName();
-
-    /**
-     * Starts all the objects and properties.
-     *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
-     * @param string          $uri
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->setTabsPosition('bottom');
-    }
 
     /**
      * Pointer to the data model.
@@ -60,8 +45,6 @@ abstract class EditController extends PanelController
 
     /**
      * Create the view to display.
-     *
-     * @return EditView
      */
     protected function createViews()
     {

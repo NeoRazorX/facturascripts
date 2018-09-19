@@ -70,18 +70,23 @@ class EditView extends BaseView
             $code = $this->newCode;
         }
 
-        $this->model->loadFromCode($code, $where, $order);
-        $fieldName = $this->model->primaryColumn();
-        $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
+        if ($this->model->loadFromCode($code, $where, $order)) {
+            $this->count = 1;
+        }
     }
 
     /**
-     * Process need request data.
-     *
+     * 
      * @param Request $request
+     * @param string  $case
      */
-    public function processRequest($request)
+    public function processFormData($request, $case)
     {
-        ;
+        switch ($case) {
+            case 'edit':
+                foreach ($this->getColumns() as $group) {
+                    $group->processFormData($this->model, $request);
+                }
+        }
     }
 }

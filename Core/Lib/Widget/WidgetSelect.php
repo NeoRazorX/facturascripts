@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Model\CodeModel;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect
@@ -66,7 +67,6 @@ class WidgetSelect extends BaseWidget
     public function __construct($data)
     {
         parent::__construct($data);
-
         if (!isset(static::$codeModel)) {
             static::$codeModel = new CodeModel();
         }
@@ -80,7 +80,7 @@ class WidgetSelect extends BaseWidget
                 $this->setSourceData($child);
                 break;
             } elseif (isset($child['title'])) {
-                $this->setValuesFromArray($data['children'], true, !$this->required, 'text');
+                $this->setValuesFromArray($data['children'], isset($child['translate']), !$this->required, 'text');
                 break;
             } elseif (isset($child['start'])) {
                 $this->setValuesFromRange($child['start'], $child['end'], $child['step']);
@@ -104,18 +104,14 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * Set datasource data and Load data from Model into values array
+     * 
+     * @param object  $model
+     * @param Request $request
      */
-    protected function setSourceData(array $child, bool $loadData = true)
+    public function processFormData(&$model, $request)
     {
-        $this->source = $child['source'];
-        $this->fieldcode = $child['fieldcode'];
-        $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-
-        if ($loadData) {
-            $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
-            $this->setValuesFromCodeModel($values);
-        }
+        $value = $request->request->get($this->fieldname);
+        $model->{$this->fieldname} = empty($value) ? null : $value;
     }
 
     /**
@@ -130,7 +126,7 @@ class WidgetSelect extends BaseWidget
      * @param string $col1
      * @param string $col2
      */
-    public function setValuesFromArray($values, $translate = true, $addEmpty = false, $col1 = 'value', $col2 = 'title')
+    public function setValuesFromArray($values, $translate = false, $addEmpty = false, $col1 = 'value', $col2 = 'title')
     {
         $this->values = [];
         if ($addEmpty) {
@@ -161,7 +157,7 @@ class WidgetSelect extends BaseWidget
      * Loads the value list from an array with value and title (description)
      *
      * @param array $rows
-     * @param bool $translate
+     * @param bool  $translate
      */
     public function setValuesFromCodeModel(&$rows, $translate = false)
     {
@@ -221,6 +217,23 @@ class WidgetSelect extends BaseWidget
 
         $html .= '</select>';
         return $html;
+    }
+
+    /**
+     * Set datasource data and Load data from Model into values array.
+     * 
+     * @param array $child
+     * @param bool  $loadData
+     */
+    protected function setSourceData(array $child, bool $loadData = true)
+    {
+        $this->source = $child['source'];
+        $this->fieldcode = $child['fieldcode'];
+        $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
+        if ($loadData) {
+            $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
+            $this->setValuesFromCodeModel($values, isset($child['translate']));
+        }
     }
 
     /**

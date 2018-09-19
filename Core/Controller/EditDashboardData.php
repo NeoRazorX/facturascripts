@@ -100,7 +100,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     protected function editAction()
     {
-        $data = $this->getFormData();
+        $data = $this->request->request->all();
         $this->views[$this->active]->loadFromData($data);
 
         $model = $this->views[$this->active]->model;

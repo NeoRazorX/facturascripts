@@ -88,12 +88,22 @@ class EditListView extends BaseView
     }
 
     /**
-     * Process need request data.
+     * Process form data needed.
      *
      * @param Request $request
+     * @param string  $case
      */
-    public function processRequest($request)
+    public function processFormData($request, $case)
     {
-        $this->offset = (int) $request->request->get('offset', 0);
+        switch ($case) {
+            case 'edit':
+                foreach ($this->getColumns() as $group) {
+                    $group->processFormData($this->model, $request);
+                }
+
+            case 'load':
+                $this->offset = (int) $request->request->get('offset', 0);
+                break;
+        }
     }
 }

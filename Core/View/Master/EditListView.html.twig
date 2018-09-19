@@ -17,7 +17,7 @@
 {# -- New form -- #}
 {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
 <form id="{{ formName }}" method="post">
-    <input type="hidden" name="action" value="save">
+    <input type="hidden" name="action" value="insert"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card bg-light">
         <div class="card-header">
@@ -51,7 +51,7 @@
 {% for counter, model in currentView.cursor %}
     {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
     <form id="{{ formName }}" method="post">
-        <input type="hidden" name="action" value="save">
+        <input type="hidden" name="action" value="edit"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <div class="card">
             <div class="card-body">

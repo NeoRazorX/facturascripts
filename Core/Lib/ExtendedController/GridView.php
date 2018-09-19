@@ -66,7 +66,6 @@ class GridView extends BaseView
     public function __construct(&$parent, $name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-
         $this->template = 'Master/GridView.html.twig';
 
         // Join the parent view
@@ -347,13 +346,13 @@ class GridView extends BaseView
 
         return $result;
     }
-
+    
     /**
-     * Process need request data.
-     *
+     * 
      * @param Request $request
+     * @param string  $case
      */
-    public function processRequest($request)
+    public function processFormData($request, $case)
     {
         ;
     }

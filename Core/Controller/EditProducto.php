@@ -24,11 +24,21 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the EditProducto model
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditProducto extends ExtendedController\PanelController
+class EditProducto extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Producto';
+    }
 
     /**
      * Returns basic page attributes
@@ -51,7 +61,7 @@ class EditProducto extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditProducto', 'Producto', 'product', 'fa-cube');
+        parent::createViews();
         $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-branch');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
     }
@@ -76,7 +86,7 @@ class EditProducto extends ExtendedController\PanelController
      * Load view data procedure
      *
      * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param ExtendedController\BaseView $view
      */
     protected function loadData($viewName, $view)
     {

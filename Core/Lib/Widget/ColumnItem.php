@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of ColumnItem
@@ -132,6 +133,16 @@ class ColumnItem extends VisualItem
         }
 
         return $user->level < $this->level;
+    }
+
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $this->widget->processFormData($model, $request);
     }
 
     /**

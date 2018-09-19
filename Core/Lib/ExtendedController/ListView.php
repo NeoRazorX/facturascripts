@@ -195,12 +195,17 @@ class ListView extends BaseView
     }
 
     /**
-     * Process need request data.
+     * Process form data needed.
      *
      * @param Request $request
+     * @param string  $case
      */
-    public function processRequest($request)
+    public function processFormData($request, $case)
     {
+        if ($case !== 'load') {
+            return;
+        }
+
         $this->offset = (int) $request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
 

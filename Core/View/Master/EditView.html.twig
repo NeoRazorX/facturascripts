@@ -1,5 +1,6 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
+{% set action = fsc.hasData ? 'edit' : 'insert' %}
 
 <script type="text/javascript">
     function editViewDelete(viewName) {
@@ -35,7 +36,7 @@
 </div>
 
 <form id="form{{ currentView.getViewName() }}" method="post">
-    <input type="hidden" name="action" value="save">
+    <input type="hidden" name="action" value="{{ action }}"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <div class="card">
         <div class="card-body">

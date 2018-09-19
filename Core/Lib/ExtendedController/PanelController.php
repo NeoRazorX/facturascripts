@@ -25,8 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Controller to edit data through the vertical panel
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class PanelController extends BaseController
 {
@@ -101,7 +101,7 @@ abstract class PanelController extends BaseController
         $mainViewName = array_keys($this->views)[0];
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
-                $view->processRequest($this->request);
+                $view->processFormData($this->request, 'load');
             }
 
             $this->loadData($viewName, $view);
@@ -236,7 +236,7 @@ abstract class PanelController extends BaseController
         }
 
         $model = $this->views[$this->active]->model;
-        $code = $this->request->get($model->primaryColumn(), '');
+        $code = $this->request->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
@@ -246,22 +246,20 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Run the data edits.
+     * Runs the data edit action.
      *
      * @return bool
      */
     protected function editAction()
     {
-        $data = $this->getFormData();
-        $this->views[$this->active]->loadFromData($data);
-
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
             return false;
         }
-
+        
+        // loads form data
+        $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->save()) {
-            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
@@ -286,10 +284,6 @@ abstract class PanelController extends BaseController
                 }
                 $this->exportManager->show($this->response);
                 break;
-
-            case 'insert':
-                $this->insertAction();
-                break;
         }
     }
 
@@ -309,7 +303,7 @@ abstract class PanelController extends BaseController
                 $this->response->setContent(json_encode($results));
                 return false;
 
-            case 'save':
+            case 'edit':
                 $this->editAction();
                 break;
 
@@ -318,11 +312,15 @@ abstract class PanelController extends BaseController
                 $this->deleteAction();
                 break;
 
+            case 'insert':
+                $this->insertAction();
+                break;
+
             case 'save-document':
                 $viewName = $this->searchGridView();
                 if (!empty($viewName)) {
                     $this->setTemplate(false);
-                    $data = $this->getFormData();
+                    $data = $this->request->request->all();
                     $result = $this->views[$viewName]->saveData($data);
                     $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
                     return false;
@@ -333,14 +331,37 @@ abstract class PanelController extends BaseController
         return true;
     }
 
+    /**
+     * Runs data insert action.
+     */
     protected function insertAction()
     {
-        $this->views[$this->active]->clear();
-        foreach ($this->request->query->all() as $field => $value) {
-            if ($field !== 'action') {
-                $this->views[$this->active]->model->{$field} = $value;
-            }
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
         }
+
+        // loads form data
+        $this->views[$this->active]->processFormData($this->request, 'edit');
+        if ($this->views[$this->active]->model->exists()) {
+            $this->miniLog->error($this->i18n->trans('record-save-error'));
+            return false;
+        }
+
+        /// empty primary key?
+        if (empty($this->views[$this->active]->model->primaryColumnValue())) {
+            $model = $this->views[$this->active]->model;
+            $this->views[$this->active]->model->{$model->primaryColumn()} = $model->newCode();
+        }
+
+        if ($this->views[$this->active]->model->save()) {
+            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return true;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        return false;
     }
 
     /**

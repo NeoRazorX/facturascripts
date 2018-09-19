@@ -58,7 +58,7 @@
                 <br/>
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
-                        {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                        {% set active = (viewName == fsc.active) ? ' show active' : '' %}
                         <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
                             {% do fsc.setCurrentView(viewName) %}
                             {{ include(view.template) }}
