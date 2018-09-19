@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Model\CodeModel;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect
@@ -76,14 +77,15 @@ class WidgetSelect extends BaseWidget
                 continue;
             }
 
+            $translate = isset($child['source']);
             if (isset($child['source'])) {
                 $this->fieldcode = $child['fieldcode'];
                 $this->fieldtitle = isset($child['fieldtitle']) ? $child['fieldtitle'] : $this->fieldcode;
                 $this->source = $child['source'];
                 $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
-                $this->setValuesFromCodeModel($values);
+                $this->setValuesFromCodeModel($values, true);
             } elseif (isset($child['title'])) {
-                $this->setValuesFromArray($data['children'], true, !$this->required, 'text');
+                $this->setValuesFromArray($data['children'], $translate, !$this->required, 'text');
                 break;
             } elseif (isset($child['start'])) {
                 $this->setValuesFromRange($child['start'], $child['end'], $child['step']);
@@ -104,6 +106,17 @@ class WidgetSelect extends BaseWidget
             'fieldcode' => $this->fieldcode,
             'fieldtitle' => $this->fieldtitle
         ];
+    }
+
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $value = $request->request->get($this->fieldname);
+        $model->{$this->fieldname} = empty($value) ? null : $value;
     }
 
     /**

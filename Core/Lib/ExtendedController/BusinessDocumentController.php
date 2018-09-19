@@ -217,7 +217,7 @@ abstract class BusinessDocumentController extends PanelController
         $view = $this->views[$this->active];
 
         /// gets data form and separate lines data
-        $data = $this->getFormData();
+        $data = $this->request->request->all();
         $newLines = isset($data['lines']) ? $view->processFormLines($data['lines']) : [];
         unset($data['lines']);
 
@@ -246,7 +246,7 @@ abstract class BusinessDocumentController extends PanelController
         $view = $this->views[$this->active];
 
         /// gets data form and separate date, hour, codcliente, codproveedor and lines data
-        $data = $this->getFormData();
+        $data = $this->request->request->all();
         $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
         $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
         $fecha = isset($data['fecha']) ? $data['fecha'] : $view->model->fecha;

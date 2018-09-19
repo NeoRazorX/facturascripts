@@ -102,7 +102,11 @@
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">
                     {{ fsc.title }}<br/>
-                    <small class="text-info d-none d-lg-inline-block">{{ firstView.model.primaryDescription() | raw }}</small>
+                    {% if fsc.hasData %}
+                        <small class="text-info d-none d-lg-inline-block">{{ firstView.model.primaryDescription() | raw }}</small>
+                    {% else %}
+                        <small class="text-info d-none d-lg-inline-block">{{ i18n.trans('new') }}</small>
+                    {% endif %}
                 </h1>
             </div>
             <div class="col-md-1 text-center">

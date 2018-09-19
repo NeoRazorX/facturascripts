@@ -147,9 +147,9 @@ abstract class BaseView
     abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
-     * Process request data needed.
+     * Process form data.
      */
-    abstract public function processRequest($request);
+    abstract public function processFormData($request, $case);
 
     /**
      * Construct and initialize the class
@@ -177,15 +177,6 @@ abstract class BaseView
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);
         $this->where = [];
-    }
-
-    /**
-     * Clears the model and set new code for the PK.
-     */
-    public function clear()
-    {
-        $this->model->clear();
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
     /**

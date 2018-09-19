@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to manage the data editing
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class EditController extends PanelController
 {
@@ -60,8 +60,6 @@ abstract class EditController extends PanelController
 
     /**
      * Create the view to display.
-     *
-     * @return EditView
      */
     protected function createViews()
     {

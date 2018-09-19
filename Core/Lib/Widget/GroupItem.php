@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of GroupItem
@@ -150,6 +151,18 @@ class GroupItem extends VisualItem
             . '</form>';
 
         return $html;
+    }
+
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        foreach($this->columns as $col) {
+            $col->processFormData($model, $request);
+        }
     }
 
     /**

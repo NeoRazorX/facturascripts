@@ -27,9 +27,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Controller that lists the data in table mode
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 abstract class ListController extends BaseController
 {
@@ -74,7 +74,7 @@ abstract class ListController extends BaseController
         // Load data for every view
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
-                $view->processRequest($this->request);
+                $view->processFormData($this->request, 'load');
             }
 
             $this->loadData($viewName, $view);

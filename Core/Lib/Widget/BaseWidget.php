@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Lib\Widget;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of BaseWidget
@@ -166,6 +167,16 @@ class BaseWidget extends VisualItem
     {
         $this->setValue($model);
         return $this->show();
+    }
+    
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $model->{$this->fieldname} = $request->request->get($this->fieldname);
     }
 
     /**
