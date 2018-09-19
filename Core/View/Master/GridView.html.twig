@@ -5,7 +5,7 @@
 {% set row = currentView.getRow('header') %}
 {% if row is not empty %}
     <div class="row">
-        {{ row.render(currentView.getViewName()) | raw }}
+        {{ row.render(currentView.getViewName(), '', fsc) | raw }}
     </div>
 {% endif %}
 
@@ -76,7 +76,7 @@
 {# -- Row footer -- #}
 <div class="row">
     {% set row = currentView.getRow('footer') %}
-    {{ row.render(currentView.getViewName()) | raw }}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
 </div>
 
 {# -- Modals -- #}

@@ -31,7 +31,7 @@
 {# -- Row header -- #}
 <div class="row">
     {% set row = currentView.getRow('header') %}
-    {{ row.render(currentView.getViewName()) | raw }}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
 </div>
 
 <form id="form{{ currentView.getViewName() }}" method="post">
@@ -83,7 +83,7 @@
 {# -- Row footer -- #}
 <div class="row">
     {% set row = currentView.getRow('footer') %}
-    {{ row.render(currentView.getViewName()) | raw }}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
 </div>
 
 {# -- Modals -- #}

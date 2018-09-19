@@ -48,15 +48,16 @@ class RowFooter extends VisualItem
      *
      * @param string $viewName
      * @param string $jsFunction
+     * @param object $controller
      *
      * @return string
      */
-    public function render($viewName, $jsFunction = '')
+    public function render($viewName, $jsFunction = '', &$controller = null)
     {
         $html = '';
         foreach ($this->children as $child) {
             if ($child['tag'] === 'group') {
-                $html .= $this->renderGroup($child, $viewName, $jsFunction);
+                $html .= $this->renderGroup($child, $viewName, $jsFunction, $controller);
             }
         }
 
@@ -105,10 +106,11 @@ class RowFooter extends VisualItem
      * @param string $group
      * @param string $viewName
      * @param string $jsFunction
+     * @param object $controller
      *
      * @return string
      */
-    protected function renderGroup($group, $viewName, $jsFunction)
+    protected function renderGroup($group, $viewName, $jsFunction, &$controller = null)
     {
         $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
         $class = isset($group['class']) ? ' ' . $group['class'] : '';
@@ -126,7 +128,7 @@ class RowFooter extends VisualItem
 
         if (isset($group['html'])) {
             $webRender = new WebRender();
-            $html .= $webRender->render($group['html']);
+            $html .= $webRender->render($group['html'], ['fsc' => $controller]);
         }
 
         if (isset($group['label'])) {

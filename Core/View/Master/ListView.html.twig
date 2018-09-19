@@ -70,7 +70,7 @@
         {# -- Row header -- #}
         <div class="row">
             {% set row = currentView.getRow('header') %}
-            {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
         </div>
     </div>
     {# -- Table -- #}
@@ -129,7 +129,7 @@
     <div class="container-fluid">
         <div class="row">
             {% set row = currentView.getRow('footer') %}
-            {{ row.render(currentView.getViewName(), 'listViewSetAction') | raw }}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
         </div>
     </div>
 </form>
