@@ -70,6 +70,8 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function createViews()
     {
+        $this->setTemplate('EditSettings');
+
         $modelName = 'Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
