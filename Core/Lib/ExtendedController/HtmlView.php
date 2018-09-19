@@ -67,7 +67,7 @@ class HtmlView extends BaseView
     {
         ;
     }
-    
+
     /**
      * 
      * @param Request $request
