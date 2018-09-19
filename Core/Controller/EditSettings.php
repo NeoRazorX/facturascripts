@@ -96,8 +96,6 @@ class EditSettings extends ExtendedController\PanelController
     {
         switch ($action) {
             case 'export':
-                $this->setTemplate(false);
-                $this->exportAction();
                 break;
 
             case 'testmail':
@@ -109,31 +107,6 @@ class EditSettings extends ExtendedController\PanelController
                 }
                 break;
         }
-    }
-
-    /**
-     * Exports data from views.
-     */
-    private function exportAction()
-    {
-        $this->exportManager->newDoc($this->request->get('option'));
-        foreach ($this->views as $view) {
-            if ($view->model === null || !isset($view->model->properties)) {
-                continue;
-            }
-
-            $headers = ['key' => 'key', 'value' => 'value'];
-            $rows = [];
-            foreach ($view->model->properties as $key => $value) {
-                $rows[] = ['key' => $key, 'value' => $value];
-            }
-
-            if (count($rows) > 0) {
-                $this->exportManager->generateTablePage($headers, $rows);
-            }
-        }
-
-        $this->exportManager->show($this->response);
     }
 
     /**
@@ -156,16 +129,11 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if (empty($view->model)) {
-            return;
-        }
-
         $code = $this->getKeyFromViewName($viewName);
         $view->loadData($code);
 
-        if ($view->model->name === null) {
-            $view->model->description = $view->model->name = strtolower(substr($viewName, 8));
-            $view->model->save();
+        if (empty($view->model->name)) {
+            $view->model->name = $code;
         }
     }
 }

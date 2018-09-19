@@ -255,13 +255,7 @@ class BaseWidget extends VisualItem
      */
     protected function setValue($model)
     {
-        if (isset($model->{$this->fieldname})) {
-            $this->value = $model->{$this->fieldname};
-        } elseif (isset($model->properties) && isset($model->properties[$this->fieldname])) {
-            $this->value = $model->properties[$this->fieldname];
-        } else {
-            $this->value = null;
-        }
+        $this->value = $model->{$this->fieldname};
     }
 
     /**

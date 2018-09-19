@@ -121,7 +121,6 @@ class AppSettings
     {
         foreach (self::$data as $key => $value) {
             $settings = new Settings();
-            $settings->description = 'default';
             $settings->name = (string) $key;
             $settings->properties = $value;
             $settings->save();

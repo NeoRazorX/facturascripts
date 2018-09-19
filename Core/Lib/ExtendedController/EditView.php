@@ -87,6 +87,7 @@ class EditView extends BaseView
                 foreach ($this->getColumns() as $group) {
                     $group->processFormData($this->model, $request);
                 }
+                break;
         }
     }
 }

@@ -21,26 +21,13 @@ namespace FacturaScripts\Core\Model;
 /**
  * Description of Settings
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class Settings extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Description of the content and value of the group.
-     *
-     * @var string
-     */
-    public $description;
-
-    /**
-     * Icon to visualize.
-     *
-     * @var string
-     */
-    public $icon;
 
     /**
      * Identifier of the group of values.
@@ -56,21 +43,14 @@ class Settings extends Base\ModelClass
      */
     public $properties;
 
-    /**
-     * Check an array of data so that it has the correct structure of the model.
-     *
-     * @param array $data
-     */
-    public function checkArrayData(array &$data)
+    public function __get($name)
     {
-        $properties = [];
-        foreach ($data as $key => $value) {
-            if (!in_array($key, ['name', 'action', 'active'])) {
-                $properties[$key] = $value;
-                unset($data[$key]);
-            }
-        }
-        $data['properties'] = json_encode($properties);
+        return isset($this->properties[$name]) ? $this->properties[$name] : null;
+    }
+
+    public function __set($name, $value)
+    {
+        $this->properties[$name] = $value;
     }
 
     /**
