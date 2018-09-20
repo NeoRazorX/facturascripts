@@ -24,9 +24,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Controller to list the items in the Cliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class ListCliente extends ExtendedController\ListController
 {
@@ -92,7 +92,6 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');
 
         $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $valuesGroup);
-        // $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
 
         $values = [
             ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', 'FALSE')]],

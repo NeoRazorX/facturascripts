@@ -60,6 +60,7 @@ class SelectWhereFilter extends SelectFilter
      */
     protected function getHtmlOptions()
     {
+        $html = '';
         foreach ($this->values as $key => $data) {
             $extra = ('' != $this->value && $key == $this->value) ? ' selected=""' : '';
             $html .= '<option value="' . $key . '"' . $extra . '>' . $data['label'] . '</option>';

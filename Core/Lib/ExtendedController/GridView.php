@@ -23,7 +23,9 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Dinamic\Lib\Widget;
+use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
+use FacturaScripts\Dinamic\Lib\Widget\WidgetAutocomplete;
+use FacturaScripts\Dinamic\Lib\Widget\WidgetSelect;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -97,7 +99,7 @@ class GridView extends BaseView
     /**
      * Configure autocomplete column with data to Grid component
      *
-     * @param Widget\WidgetAutocomplete $widget
+     * @param WidgetAutocomplete $widget
      *
      * @return array
      */
@@ -117,7 +119,7 @@ class GridView extends BaseView
     /**
      * Return array of values to select
      *
-     * @param Widget\WidgetSelect $widget
+     * @param WidgetSelect $widget
      */
     private function getSelectSource($widget): array
     {
@@ -135,7 +137,7 @@ class GridView extends BaseView
     /**
      * Return grid column configuration
      *
-     * @param Widget\ColumnItem $column
+     * @param ColumnItem $column
      *
      * @return array
      */
