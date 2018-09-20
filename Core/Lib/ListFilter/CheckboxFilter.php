@@ -41,22 +41,29 @@ class CheckboxFilter extends BaseFilter
     public $operation;
 
     /**
-     * 
+     *
+     * @var DataBaseWhere[]
+     */
+    public $default;
+
+    /**
+     *
      * @param string $key
      * @param string $field
      * @param string $label
      * @param string $operation
      * @param mixed  $matchValue
      */
-    public function __construct($key, $field = '', $label = '', $operation = '=', $matchValue = true)
+    public function __construct($key, $field = '', $label = '', $operation = '=', $matchValue = true, $default = [])
     {
         parent::__construct($key, $field, $label);
         $this->operation = $operation;
         $this->matchValue = $matchValue;
+        $this->default = $default;
     }
 
     /**
-     * 
+     *
      * @param array $where
      *
      * @return array
@@ -65,13 +72,17 @@ class CheckboxFilter extends BaseFilter
     {
         if ('TRUE' === $this->value) {
             $where[] = new DataBaseWhere($this->key, $this->matchValue, $this->operation);
+        } else {
+            foreach ($this->default as $value) {
+                $where[] = $value;
+            }
         }
 
         return $where;
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function render()

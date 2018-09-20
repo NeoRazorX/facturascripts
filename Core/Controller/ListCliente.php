@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to list the items in the Cliente model
@@ -91,7 +92,14 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListCliente', ['fechaalta', 'codcliente'], 'date');
 
         $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $valuesGroup);
-        $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
+        // $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended', 'debaja');
+
+        $values = [
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', 'FALSE')]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', 'TRUE')]],
+            ['label' => $this->i18n->trans('all'), 'where' => []]
+        ];
+        $this->addFilterSelectWhere('ListCliente', 'status', $values);
     }
 
     private function createViewGroups(array $valuesGroup)

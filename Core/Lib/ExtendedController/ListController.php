@@ -114,10 +114,11 @@ abstract class ListController extends BaseController
      * @param string $field      (Field of the model to apply filter)
      * @param string $operation  (operation to perform with match value)
      * @param mixed  $matchValue (Value to match)
+     * @param DataBaseWhere[] $default (where to apply when filter is empty)
      */
-    protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true)
+    protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
     {
-        $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue);
+        $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
         $this->views[$viewName]->filters[$key] = $filter;
     }
 
@@ -163,6 +164,26 @@ abstract class ListController extends BaseController
     protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
         $filter = new ListFilter\SelectFilter($key, $field, $label, $values);
+        $this->views[$viewName]->filters[$key] = $filter;
+    }
+
+    /**
+     * Add a select where type filter to a ListView.
+     *
+     * @param string $viewName
+     * @param string $key       (Filter identifier)
+     * @param array  $values    (Values to show)
+     *
+     * Example of values:
+     *   [
+     *    ['label' => 'Only active', 'where' => [ new DataBaseWhere('suspended', 'FALSE') ]]
+     *    ['label' => 'Only suspended', 'where' => [ new DataBaseWhere('suspended', 'TRUE') ]]
+     *    ['label' => 'All records', 'where' => []],
+     *   ]
+     */
+    protected function addFilterSelectWhere($viewName, $key, $values)
+    {
+        $filter = new ListFilter\SelectWhereFilter($key, $values);
         $this->views[$viewName]->filters[$key] = $filter;
     }
 
@@ -318,7 +339,7 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */
