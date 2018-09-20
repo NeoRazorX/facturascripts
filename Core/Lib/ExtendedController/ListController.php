@@ -363,6 +363,8 @@ abstract class ListController extends BaseController
             ],
         ];
 
+        $query = $this->request->get('query', '');
+
         /// we search in all listviews
         foreach ($this->views as $viewName => $listView) {
             if (!$this->getSettings($viewName, 'megasearch')) {
@@ -378,14 +380,14 @@ abstract class ListController extends BaseController
                 ];
             }
 
-            $fields = $listView->getSearchIn();
-            $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
-            $listView->loadData(false, $where, [], 0, FS_ITEM_LIMIT);
+            $fields = $listView->searchFields;
+            $where = [new DataBaseWhere($fields, $query, 'LIKE')];
+            $listView->loadData(false, $where);
 
             $cols = $this->getTextColumns($listView, 6);
             $json[$viewName]['columns'] = $cols;
 
-            foreach ($listView->getCursor() as $item) {
+            foreach ($listView->cursor as $item) {
                 $jItem = ['url' => $item->url()];
                 foreach ($cols as $col) {
                     $jItem[$col] = $item->{$col};

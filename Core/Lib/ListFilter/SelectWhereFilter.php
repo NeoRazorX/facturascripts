@@ -30,10 +30,10 @@ class SelectWhereFilter extends SelectFilter
 
     /**
      *
-     * @param type $key
-     * @param type $values
+     * @param string $key
+     * @param array  $values
      */
-    public function __construct($key, $values = array())
+    public function __construct($key, $values = [])
     {
         parent::__construct($key, '', '', $values);
     }

@@ -56,10 +56,8 @@
             <option color="danger">alert</option>
             <option color="danger">emergency</option>
         </row>
-        <row type="footer">
-            <group name="footer-actions" footer="specials-actions">
-                <button type="action" label="delete-selected-filters" color="info" action="delete-selected-filters" icon="fa-list-ol" />
-            </group>
+        <row type="actions">
+            <button type="action" label="delete-selected-filters" color="warning" action="delete-selected-filters" icon="fa-trash" />
         </row>
     </rows>
 </view>

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Lib\ListFilter\DataBaseWhere;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
@@ -82,7 +82,7 @@ class AutocompleteFilter extends BaseFilter
     public function getDataBaseWhere(array &$where)
     {
         if ('' !== $this->value && null !== $this->value) {
-            $where[] = new DataBaseWhere($this->key, $this->value);
+            $where[] = new DataBaseWhere($this->field, $this->value);
         }
 
         return $where;

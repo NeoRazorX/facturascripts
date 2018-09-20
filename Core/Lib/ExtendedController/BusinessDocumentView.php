@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of BusinessDocumentView
@@ -140,11 +141,11 @@ class BusinessDocumentView extends BaseView
 
     /**
      * 
-     * @param type $code
-     * @param type $where
-     * @param type $order
-     * @param type $offset
-     * @param type $limit
+     * @param string|bool $code
+     * @param array       $where
+     * @param int         $order
+     * @param int         $offset
+     * @param int         $limit
      */
     public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
     {

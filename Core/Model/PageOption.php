@@ -85,17 +85,6 @@ class PageOption extends Base\ModelClass
     }
 
     /**
-     * Get the settings for the driver and user
-     *
-     * @param string $name
-     * @param string $nick
-     */
-    public function getForUser(string $name, string $nick)
-    {
-        self::$miniLog->warning('getForUser() is now obsolete.');
-    }
-
-    /**
      * This function is called when creating the model table.
      * Returns the SQL that will be executed after the creation of the table,
      * useful to insert default values.

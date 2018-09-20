@@ -27,8 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * View definition for its use in ListController
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class ListView extends BaseView
 {

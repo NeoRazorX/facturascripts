@@ -24,9 +24,9 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the PresupuestoCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
  */
 class ListPresupuestoCliente extends ExtendedController\ListController
 {
@@ -74,7 +74,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'customer', 'codcliente', 'Cliente');
-        $this->addFilterCheckbox('ListPresupuestoCliente', 'femail', 'email-not-sent', 'femail', false, null);
+        $this->addFilterCheckbox('ListPresupuestoCliente', 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // Delivery notes lines
         $this->createViewLines();

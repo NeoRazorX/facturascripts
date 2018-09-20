@@ -24,8 +24,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the AlbaranCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class ListAlbaranCliente extends ExtendedController\ListController
 {
@@ -74,8 +74,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'customer', 'codcliente', 'Cliente');
-
-        $this->addFilterCheckbox('ListAlbaranCliente', 'femail', 'email-not-sent', 'femail', false, null);
+        $this->addFilterCheckbox('ListAlbaranCliente', 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // Delivery notes lines
         $this->createViewLines();

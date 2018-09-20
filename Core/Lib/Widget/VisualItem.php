@@ -112,7 +112,7 @@ class VisualItem
      */
     protected function renderRowButton($button, $small = false, $viewName = '', $jsFunction = '')
     {
-        $cssClass = 'btn btn-sm mr-1 ';
+        $cssClass = 'btn mr-1 ';
         $cssClass .= isset($button['color']) ? $this->colorToClass($button['color'], 'btn-') : 'btn-light';
         $icon = isset($button['icon']) ? '<i class="fas ' . $button['icon'] . ' fa-fw"></i> ' : '';
         $title = isset($button['label']) ? static::$i18n->trans($button['label']) : '';

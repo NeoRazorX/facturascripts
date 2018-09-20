@@ -75,7 +75,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox('ListFacturaProveedor', 'paid', 'paid', 'pagada');
-        $this->addFilterCheckbox('ListFacturaProveedor', 'femail', 'email-not-sent', 'femail', false, null);
+        $this->addFilterCheckbox('ListFacturaProveedor', 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // Delivery notes lines
         $this->createViewLines();

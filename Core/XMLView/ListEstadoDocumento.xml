@@ -17,14 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller ListEstadoDocumento
+ * List definition for use in ListEstadoDocumento controller.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
 -->
 
 <view>
     <columns>
-        <column name="register-symbol" order="100">
+        <column name="id" order="100">
             <widget type="text" fieldname="idestado" onclick="EditEstadoDocumento" />
         </column>
         <column name="doc-type" order="110">

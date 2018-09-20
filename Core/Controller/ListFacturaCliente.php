@@ -24,9 +24,9 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the FacturaCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
  */
 class ListFacturaCliente extends ExtendedController\ListController
 {
@@ -75,7 +75,7 @@ class ListFacturaCliente extends ExtendedController\ListController
 
         $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
-        $this->addFilterCheckbox('ListFacturaCliente', 'femail', 'email-not-sent', 'femail', false, null);
+        $this->addFilterCheckbox('ListFacturaCliente', 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // Delivery notes lines
         $this->createViewLines();

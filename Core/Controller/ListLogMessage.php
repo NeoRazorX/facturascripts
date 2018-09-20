@@ -24,8 +24,9 @@ use FacturaScripts\Core\Model\LogMessage;
 /**
  * Controller to list the items in the LogMessage model
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra      <francesc.pineda.segarra@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class ListLogMessage extends ExtendedController\ListController
 {
@@ -120,7 +121,9 @@ class ListLogMessage extends ExtendedController\ListController
         // main save process
         try {
             $logMessage = new LogMessage();
-            $where = $this->getWhere();
+
+            $this->views['ListLogMessage']->processFormData($this->request, 'load');
+            $where = $this->views['ListLogMessage']->where;
             $allFilteredLogs = $logMessage->all($where, [], 0, 0);
             $counter = 0;
             foreach ($allFilteredLogs as $log) {

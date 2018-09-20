@@ -69,14 +69,12 @@ class ListAsiento extends ExtendedController\ListController
         /// concepts
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
-
         $this->addOrderBy('ListConceptoPartida', ['codconcepto'], 'code');
         $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
 
         /// journals
         $this->addView('ListDiario', 'Diario', 'journals', 'fas fa-book');
         $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
-
         $this->addOrderBy('ListDiario', ['iddiario'], 'code');
         $this->addOrderBy('ListDiario', ['descripcion'], 'description');
     }

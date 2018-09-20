@@ -24,9 +24,9 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the PedidoCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
  */
 class ListPedidoCliente extends ExtendedController\ListController
 {
@@ -74,7 +74,7 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListPedidoCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterAutocomplete('ListPedidoCliente', 'codcliente', 'customer', 'codcliente', 'Cliente');
-        $this->addFilterCheckbox('ListPedidoCliente', 'femail', 'email-not-sent', 'femail', false, null);
+        $this->addFilterCheckbox('ListPedidoCliente', 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // Delivery notes lines
         $this->createViewLines();

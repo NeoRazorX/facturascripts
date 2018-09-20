@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use FacturaScripts\Core\Lib\Widget\BaseWidget;
+use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Lib\Widget\GroupItem;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model\Base\ModelClass;
@@ -31,8 +32,8 @@ use FacturaScripts\Core\Model\User;
 /**
  * Base definition for the views used in ExtendedControllers
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class BaseView
 {
@@ -130,11 +131,11 @@ abstract class BaseView
     public $title;
 
     /**
-     * Stores the where parameters for the cursor
+     * Stores the where parameters for the cursor.
      *
      * @var DataBaseWhere[]
      */
-    protected $where;
+    public $where;
 
     /**
      * Method to export the view data.

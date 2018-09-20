@@ -103,7 +103,7 @@ class RowFooter extends VisualItem
 
     /**
      *
-     * @param string $group
+     * @param array  $group
      * @param string $viewName
      * @param string $jsFunction
      * @param object $controller

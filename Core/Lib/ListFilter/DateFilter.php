@@ -56,7 +56,7 @@ class DateFilter extends BaseFilter
     public function getDataBaseWhere(array &$where)
     {
         if ('' !== $this->value && null !== $this->value) {
-            $where[] = new DataBaseWhere($this->key, $this->value, $this->operation);
+            $where[] = new DataBaseWhere($this->field, $this->value, $this->operation);
         }
 
         return $where;
