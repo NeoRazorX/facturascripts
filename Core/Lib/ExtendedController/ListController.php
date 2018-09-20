@@ -114,10 +114,11 @@ abstract class ListController extends BaseController
      * @param string $field      (Field of the model to apply filter)
      * @param string $operation  (operation to perform with match value)
      * @param mixed  $matchValue (Value to match)
+     * @param DataBaseWhere[] $default (where to apply when filter is empty)
      */
-    protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true)
+    protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
     {
-        $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue);
+        $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
         $this->views[$viewName]->filters[$key] = $filter;
     }
 
@@ -318,7 +319,7 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */
