@@ -73,13 +73,13 @@
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
-            <column name="decimal_separator" title="decimal-saparator" numcolumns="3" order="120">
+            <column name="decimal_separator" title="decimal-separator" numcolumns="3" order="120">
                 <widget type="select" fieldname="decimal_separator" required="true" icon="fa-calculator">
                     <values title=",">,</values>
                     <values title=".">.</values>
                 </widget>
             </column>
-            <column name="thousands_separator" title="thousands-saparator" numcolumns="3" order="120">
+            <column name="thousands_separator" title="thousands-separator" numcolumns="3" order="120">
                 <widget type="select" fieldname="thousands_separator" required="true" icon="fa-calculator">
                     <values title=",">,</values>
                     <values title=".">.</values>
