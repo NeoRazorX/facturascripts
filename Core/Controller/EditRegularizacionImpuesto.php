@@ -144,8 +144,8 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     {
         $this->addEditView('EditRegularizacionImpuesto', 'RegularizacionImpuesto', 'vat-regularization', 'fa-map-signs');
         $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fa-list-alt');
-        $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fa-sign-in');
-        $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fa-sign-out');
+        $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fa-sign-in-alt');
+        $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fa-sign-out-alt');
         $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
@@ -227,7 +227,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             $where = [new DataBaseWhere('idasiento', $idasiento)];
             $view->loadData($where, ['orden' => 'ASC']);
         }
-    } 
+    }
 
     private function getListPartidaImpuestoResumen($view)
     {
@@ -249,7 +249,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
                 'partidas.recargo' => 'ASC'
             ];
             $view->loadData(false, $where, $orderby);
-            $this->calculateAmounts($view->getCursor());
+            $this->calculateAmounts($view->cursor);
         }
     }
 
