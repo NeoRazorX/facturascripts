@@ -168,6 +168,26 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Add a select where type filter to a ListView.
+     *
+     * @param string $viewName
+     * @param string $key       (Filter identifier)
+     * @param array  $values    (Values to show)
+     *
+     * Example of values:
+     *   [
+     *    ['label' => 'Only active', 'where' => [ new DataBaseWhere('suspended', 'FALSE') ]]
+     *    ['label' => 'Only suspended', 'where' => [ new DataBaseWhere('suspended', 'TRUE') ]]
+     *    ['label' => 'All records', 'where' => []],
+     *   ]
+     */
+    protected function addFilterSelectWhere($viewName, $key, $values)
+    {
+        $filter = new ListFilter\SelectWhereFilter($key, $values);
+        $this->views[$viewName]->filters[$key] = $filter;
+    }
+
+    /**
      * Adds an order field to the ListView.
      *
      * @param string       $viewName
