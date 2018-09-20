@@ -96,11 +96,11 @@ class AutocompleteFilter extends BaseFilter
     {
         $label = static::$i18n->trans($this->label);
         $html = '<div class="col-sm-2">'
-            . '<input type="hidden" id="' . $this->name() . 'Autocomplete" name="' . $this->name() . '" value="' . $this->value . '"/>'
+            . '<input type="hidden" name="' . $this->name() . '" value="' . $this->value . '"/>'
             . '<div class="form-group">'
             . '<div class="input-group">';
 
-        if ('' !== $this->value && null !== $this->value) {
+        if ('' === $this->value || null === $this->value) {
             $html .= '<span class="input-group-prepend" title="' . $label . '">'
                 . '<span class="input-group-text">'
                 . '<i class="far fa-keyboard" aria-hidden="true"></i>'
@@ -115,7 +115,7 @@ class AutocompleteFilter extends BaseFilter
         }
 
         $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'
-            . ' data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
+            . ' data-name="' . $this->name() . '" data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
             . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off"/>'
             . '</div>'
             . '</div>'

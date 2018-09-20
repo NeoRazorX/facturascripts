@@ -33,6 +33,7 @@ function listFilterAutocompleteGetData(formId, field, source, fieldcode, fieldti
 
 $(document).ready(function () {
     $('.filter-autocomplete').each(function () {
+        var name = $(this).attr('data-name');
         var field = $(this).attr('data-field');
         var source = $(this).attr('data-source');
         var fieldcode = $(this).attr('data-fieldcode');
@@ -58,7 +59,7 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                $('#' + field + 'Autocomplete').val(ui.item.key);
+                $("form[id=" + formId + "] input[name=" + name + "]").val(ui.item.key);
                 ui.item.value = ui.item.value.split(' | ')[1];
                 $(this).form().submit();
             }

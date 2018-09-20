@@ -32,11 +32,6 @@
                 <values source="albaranesprov" fieldcode="idalbaran" fieldtitle="codigo"></values>
             </widget>
         </column>
-        <column name="order" order="110">
-            <widget type="select" fieldname="idpedido" onclick="EditPedidoProveedor">
-                <values source="pedidosprov" fieldcode="idpedido" fieldtitle="codigo"></values>
-            </widget>
-        </column>
         <column name="reference" order="120">
             <widget type="text" fieldname="referencia" onclick="EditProducto" />
         </column>
