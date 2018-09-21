@@ -1,7 +1,12 @@
 /.idea/
 /cache/
 /Cache/
-/Dinamic/
+/Dinamic/Assets
+/Dinamic/Controller
+/Dinamic/Data
+/Dinamic/Table
+/Dinamic/View
+/Dinamic/XMLView
 /doc/
 /MyFiles/
 /nbproject/
