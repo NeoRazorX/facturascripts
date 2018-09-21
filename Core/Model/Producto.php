@@ -284,6 +284,8 @@ class Producto extends Base\ModelClass
         }
 
         if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
+            $this->precio = $newPrecio;
+            $this->referencia = $newReferencia;
             $this->save();
         }
     }

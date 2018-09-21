@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\CodeModel;
 
 /**
  * Define method and attributes of table variantes.
@@ -105,6 +106,13 @@ class Variante extends Base\ModelClass
         $this->stockfis = 0.0;
     }
 
+    /**
+     * 
+     * @param string $query
+     * @param string $fieldcode
+     *
+     * @return CodeModel
+     */
     public function codeModelSearch(string $query, string $fieldcode = '')
     {
         $results = [];
