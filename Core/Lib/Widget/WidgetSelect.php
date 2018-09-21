@@ -64,7 +64,7 @@ class WidgetSelect extends BaseWidget
      *
      * @var array
      */
-    protected $values = [];
+    public $values = [];
 
     /**
      *

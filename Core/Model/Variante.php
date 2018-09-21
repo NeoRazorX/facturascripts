@@ -24,8 +24,8 @@ use FacturaScripts\Core\Model\CodeModel;
 /**
  * Define method and attributes of table variantes.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class Variante extends Base\ModelClass
 {
@@ -111,7 +111,7 @@ class Variante extends Base\ModelClass
      * @param string $query
      * @param string $fieldcode
      *
-     * @return CodeModel
+     * @return CodeModel[]
      */
     public function codeModelSearch(string $query, string $fieldcode = '')
     {
