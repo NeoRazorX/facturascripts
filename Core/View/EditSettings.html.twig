@@ -4,11 +4,21 @@
     {% set pageData = fsc.getPageData() %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 text-right">
+            <div class="col-1">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
+                    <i class="fas fa-sync" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="col-11 text-right">
                 <h1 class="h3">
                     {{ fsc.title }}
                     <i class="fas {{ pageData.icon }} fa-fw" aria-hidden="true"></i>
                 </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr/>
             </div>
         </div>
     </div>

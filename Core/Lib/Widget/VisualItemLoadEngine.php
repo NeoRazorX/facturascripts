@@ -164,7 +164,7 @@ class VisualItemLoadEngine
 
         /// text
         $text = (string) $xml;
-        if ('' !== trim($text)) {
+        if ('' !== $text) {
             $array['text'] = $text;
         }
 
