@@ -142,7 +142,7 @@ class EditUser extends ExtendedController\PanelController
         $code = $this->request->get('code');
 
         $userPages = [
-            ['value' => '---null---', 'title' => '------'],
+            ['value' => '', 'title' => '------'],
         ];
         if ($user->loadFromCode($code)) {
             $userPages = $this->getUserPages($user);

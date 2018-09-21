@@ -52,7 +52,7 @@ class EditFabricante extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditFabricante', 'Fabricante', 'manufacturer');
-        $this->addListView('ListProducto', 'Producto', 'products');
+        $this->addListView('ListProducto', 'Producto', 'products', 'fa-cubes');
     }
 
     /**

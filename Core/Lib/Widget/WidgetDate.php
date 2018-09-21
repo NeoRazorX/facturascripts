@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of WidgetDate
  *
@@ -25,6 +27,17 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class WidgetDate extends BaseWidget
 {
+
+    /**
+     *
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $value = $request->request->get($this->fieldname);
+        $model->{$this->fieldname} = empty($value) ? null : $value;
+    }
 
     /**
      * 

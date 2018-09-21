@@ -78,13 +78,14 @@ class EditListView extends BaseView
         $finalWhere = empty($where) ? $this->where : $where;
         $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
 
-        /// needed when megasearch force data reload
-        $this->cursor = [];
         if ($this->count > 0) {
             $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
         }
 
         $this->where = $finalWhere;
+        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+            $this->model->{$field} = $value;
+        }
     }
 
     /**
