@@ -257,8 +257,29 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // loads model data
+        $code = $this->request->request->get('code', '');
+        if (!$this->views[$this->active]->model->loadFromCode($code)) {
+            $this->miniLog->error($this->i18n->trans('record-not-found'));
+            return false;
+        }
+
         // loads form data
         $this->views[$this->active]->processFormData($this->request, 'edit');
+
+        // has PK value been changed?
+        $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+        if ($code != $this->views[$this->active]->newCode) {
+            $pkColumn = $this->views[$this->active]->model->primaryColumn();
+            $this->views[$this->active]->model->{$pkColumn} = $code;
+            // change in database
+            if (!$this->views[$this->active]->model->changePrimaryColumnValue($this->views[$this->active]->newCode)) {
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                return false;
+            }
+        }
+
+        // save in database
         if ($this->views[$this->active]->model->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             $this->views[$this->active]->model->clear();
@@ -345,18 +366,21 @@ abstract class PanelController extends BaseController
         // loads form data
         $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->exists()) {
-            $this->miniLog->error($this->i18n->trans('record-save-error'));
+            $this->miniLog->error($this->i18n->trans('duplicate-record'));
             return false;
         }
 
-        /// empty primary key?
+        // empty primary key?
         if (empty($this->views[$this->active]->model->primaryColumnValue())) {
             $model = $this->views[$this->active]->model;
+            // assign a new value
             $this->views[$this->active]->model->{$model->primaryColumn()} = $model->newCode();
         }
 
+        // save in database
         if ($this->views[$this->active]->model->save()) {
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+            $this->views[$this->active]->model->clear();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }

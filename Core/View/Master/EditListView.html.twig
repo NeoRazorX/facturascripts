@@ -60,6 +60,7 @@
     <form id="{{ formName }}" method="post">
         <input type="hidden" name="action" value="edit"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
         <div class="card">
             <div class="card-body">
                 <div class="row">

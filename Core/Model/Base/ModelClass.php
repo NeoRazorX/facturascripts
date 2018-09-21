@@ -234,6 +234,7 @@ abstract class ModelClass extends ModelCore
         if (empty($field)) {
             $field = $this->primaryColumn();
         }
+
         /// get fields list
         $modelFields = $this->getModelFields();
 
@@ -248,11 +249,7 @@ abstract class ModelClass extends ModelCore
         $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
         $cod = self::$dataBase->select($sql);
-        if (empty($cod)) {
-            return 1;
-        }
-
-        return 1 + (int) $cod[0]['cod'];
+        return empty($cod) ? 1 : 1 + (int) $cod[0]['cod'];
     }
 
     /**

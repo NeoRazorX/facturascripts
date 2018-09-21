@@ -28,8 +28,8 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcliente" icon="fa-user" required="true" />
             </column>
-            <column name="name" numcolumns="3" order="110" description="desc-custommer-name">
-                <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
+            <column name="name" numcolumns="3" order="110" description="desc-customer-name">
+                <widget type="text" fieldname="nombre" required="true"/>
             </column>
             <column name="business-name" numcolumns="3" order="120" description="desc-business-name">
                 <widget type="text" fieldname="razonsocial" required="true" />
