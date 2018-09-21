@@ -255,7 +255,6 @@ abstract class ListController extends BaseController
             if ($model->loadFromCode($cod) && $model->delete()) {
                 ++$numDeletes;
             } else {
-                $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
                 break;
             }
         }
@@ -265,6 +264,7 @@ abstract class ListController extends BaseController
             return true;
         }
 
+        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
         return false;
     }
 

@@ -235,6 +235,7 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // deleting a single row?
         $model = $this->views[$this->active]->model;
         $code = $this->request->request->get($model->primaryColumn(), '');
         if ($model->loadFromCode($code) && $model->delete()) {
@@ -242,6 +243,25 @@ abstract class PanelController extends BaseController
             return true;
         }
 
+        // deleting multiples rows?
+        $codes = $this->request->request->get('code', '');
+        if (is_array($codes)) {
+            $numDeletes = 0;
+            foreach ($codes as $cod) {
+                if ($model->loadFromCode($cod) && $model->delete()) {
+                    ++$numDeletes;
+                } else {
+                    break;
+                }
+            }
+
+            if ($numDeletes > 0) {
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                return true;
+            }
+        }
+
+        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
         return false;
     }
 
