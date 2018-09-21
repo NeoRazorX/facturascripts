@@ -59,7 +59,7 @@
                     <input type="text" id="doc_total" name="total" value="{{ model.total }}" class="form-control text-right" disabled="" />
                     <div class="input-group-append">
                         <button type="button" class="btn btn-primary" onclick="documentSave();">
-                            <i class="far fa-save" aria-hidden="true"></i>
+                            <i class="fas fa-save" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
             {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
             <div class="col text-right">
                 <button type="button" class="btn btn-sm btn-primary" onclick="documentSave();">
-                    <i class="far fa-save" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
+                    <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
                 </button>
             </div>
         </div>

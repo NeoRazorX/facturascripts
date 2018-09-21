@@ -22,20 +22,25 @@
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <div class="card bg-light">
             <div class="card-header">
-                {{ i18n.trans('new') }}
+                <button class="btn btn-sm btn-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                    {{ i18n.trans('new') }}
+                </button>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for group in currentView.getColumns() %}
-                        {{ group.edit(currentView.model, fsc.user) | raw }}
-                    {% endfor %}
-                </div>
-                <div class="row">
-                    <div class="col-12 text-right">
-                        <button class="btn btn-sm btn-success" type="submit">
-                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">{{ i18n.trans('new') }}</span>
-                        </button>
+            <div class="collapse" id="{{ formName }}Collapse">
+                <div class="card-body">
+                    <div class="row">
+                        {% for group in currentView.getColumns() %}
+                            {{ group.edit(currentView.model, fsc.user) | raw }}
+                        {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <button class="btn btn-sm btn-primary" type="submit">
+                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,7 +87,7 @@
                             <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
                         </button>
                         <button class="btn btn-sm btn-primary" type="submit">
-                            <i class="far fa-save fa-fw" aria-hidden="true"></i>
+                            <i class="fas fa-save fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
                         </button>
                     </div>
