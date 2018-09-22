@@ -35,7 +35,7 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
     public function getNewSubjectUrl()
     {
         $proveedor = new Proveedor();
-        return $proveedor->url('new') . '?action=insert';
+        return $proveedor->url('new');
     }
 
     /**

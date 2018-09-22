@@ -40,15 +40,5 @@
         "crm",
         "billing",
         "accounting"
-    ],
-    "scripts": {
-        "auto-scripts": {
-        },
-        "post-install-cmd": [
-            "npm install"
-        ],
-        "post-update-cmd": [
-            "npm update"
-        ]
-    }
+    ]
 }

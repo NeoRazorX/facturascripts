@@ -38,7 +38,7 @@ class WidgetTextarea extends WidgetText
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $inputHtml = '<textarea name="' . $this->fieldname . '" class="form-control"' . $this->inputHtmlExtraParams() . '>' . $this->value . '</textarea>';
+        $inputHtml = $this->inputHtml();
         $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
 
         return '<div class="form-group">'
@@ -63,5 +63,19 @@ class WidgetTextarea extends WidgetText
         $final = mb_strlen($value) > 60 ? mb_substr($value, 0, 60) . '...' : $value;
 
         return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($final) . '</td>';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $extraClass
+     *
+     * @return string
+     */
+    protected function inputHtml($type = 'text', $extraClass = '')
+    {
+        $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
+        return '<textarea name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>'
+            . $this->value . '</textarea>';
     }
 }

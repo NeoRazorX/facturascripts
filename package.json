@@ -33,8 +33,6 @@
     "handsontable": "^5.0.1",
     "jquery": "^3.x",
     "jquery-ui-dist": "^1.12.x",
-    "jscolor-picker": "^2.0.4",
-    "popper.js": "^1.14.4",
-    "summernote": "^0.8.x"
+    "popper.js": "^1.14.4"
   }
 }
