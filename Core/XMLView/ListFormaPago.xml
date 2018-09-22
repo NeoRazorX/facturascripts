@@ -28,7 +28,7 @@
             <widget type="text" fieldname="codpago" onclick="EditFormaPago" />
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="expiration" title="expiration" order="120">
             <widget type="number" fieldname="plazovencimiento" />

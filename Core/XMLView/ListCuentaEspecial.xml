@@ -29,7 +29,7 @@
         </column>
 
         <column name="description" order="130">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
     </columns>
 </view>

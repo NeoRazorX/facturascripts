@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="codcuenta" maxlength="10" icon="fa-bar-chart" />
             </column>
             <column name="description" order="120">
-                <widget type="text" fieldname="descripcion" />
+                <widget type="textarea" fieldname="descripcion" />
             </column>
         </group>
         <group name="seccondary-data" numcolumns="12">

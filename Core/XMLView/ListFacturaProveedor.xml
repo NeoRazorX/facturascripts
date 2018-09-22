@@ -36,8 +36,8 @@
         <column name="supplier" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="notes" order="130">
-            <widget type="text" fieldname="observaciones" />
+        <column name="observations" order="130">
+            <widget type="textarea" fieldname="observaciones" />
         </column>
         <column name="amount" order="130" display="right">
             <widget type="money" fieldname="total">

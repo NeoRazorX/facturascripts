@@ -42,8 +42,8 @@
         <column name="web" order="150">
             <widget type="text" fieldname="web" />
         </column>
-        <column name="notes" order="160">
-            <widget type="text" fieldname="observaciones" />
+        <column name="observations" order="160">
+            <widget type="textarea" fieldname="observaciones" />
         </column>
     </columns>
 </view>

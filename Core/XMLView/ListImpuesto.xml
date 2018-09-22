@@ -28,7 +28,7 @@
             <widget type="text" fieldname="codimpuesto" onclick="EditImpuesto" />
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="vat" title="percentage-vat" display="right" order="120">
             <widget type="number" decimal="2" fieldname="iva" />

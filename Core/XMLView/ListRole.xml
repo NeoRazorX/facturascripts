@@ -28,7 +28,7 @@
             <widget type="text" fieldname="codrole" onclick="EditRole" />
         </column>
         <column name="description" order="100">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
     </columns>
 </view>

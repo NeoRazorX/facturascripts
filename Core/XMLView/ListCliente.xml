@@ -47,8 +47,8 @@
                 <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="notes" order="180">
-            <widget type="text" fieldname="observaciones" />
+        <column name="observations" order="180">
+            <widget type="textarea" fieldname="observaciones" />
         </column>
         <column name="blocked" display="none" order="190">
             <widget type="checkbox" fieldname="debaja" />

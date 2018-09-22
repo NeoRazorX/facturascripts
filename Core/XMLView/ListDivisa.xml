@@ -28,7 +28,7 @@
             <widget type="text" fieldname="coddivisa" onclick="EditDivisa" />
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="symbol" display="center" order="110">
             <widget type="text" fieldname="simbolo" />

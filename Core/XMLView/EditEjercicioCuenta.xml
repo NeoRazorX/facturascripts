@@ -37,7 +37,7 @@
                 <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" />
             </column>
             <column name="description" numcolumns="4" order="130">
-                <widget type="text" fieldname="descripcion" />
+                <widget type="textarea" fieldname="descripcion" />
             </column>
         </group>
     </columns>

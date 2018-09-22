@@ -31,7 +31,7 @@
             <widget type="text" fieldname="codcuentaesp" />
         </column>
         <column name="description" order="110" display="left">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="taxes" order="120" display="left">
             <widget type="text" fieldname="codimpuesto" />

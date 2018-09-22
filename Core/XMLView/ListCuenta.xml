@@ -34,7 +34,7 @@
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column name="description" order="120">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="id-account-special" order="130">
             <widget type="text" fieldname="codcuentaesp" />

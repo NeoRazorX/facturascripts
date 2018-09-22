@@ -34,7 +34,7 @@
             <widget type="text" fieldname="codsubcuenta" />
         </column>
         <column name="description" order="130">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="special-account" order="140">
             <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">

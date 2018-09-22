@@ -30,7 +30,7 @@
             </column>
 
             <column name="description" order="110">
-                <widget type="text" fieldname="descripcion" />
+                <widget type="textarea" fieldname="descripcion" />
             </column>
         </group>
     </columns>

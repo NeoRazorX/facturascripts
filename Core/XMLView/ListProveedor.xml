@@ -42,8 +42,8 @@
         <column name="phone2" display="none" order="160">
             <widget type="text" fieldname="telefono2" />
         </column>
-        <column name="notes" order="180">
-            <widget type="text" fieldname="observaciones" />
+        <column name="observations" order="180">
+            <widget type="textarea" fieldname="observaciones" />
         </column>
         <column name="blocked" display="none" order="190">
             <widget type="checkbox" fieldname="debaja" />

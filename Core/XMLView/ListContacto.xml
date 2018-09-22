@@ -28,7 +28,7 @@
             <widget type="text" fieldname="idcontacto" onclick="EditContacto" />
         </column>
         <column name="description" order="105">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />

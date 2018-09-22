@@ -23,9 +23,17 @@ namespace FacturaScripts\Core\Lib\Widget;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class WidgetTextarea extends BaseWidget
+class WidgetTextarea extends WidgetText
 {
 
+    /**
+     * 
+     * @param object $model
+     * @param string $title
+     * @param string $description
+     *
+     * @return string
+     */
     public function edit($model, $title = '', $description = '')
     {
         $this->setValue($model);
@@ -38,5 +46,22 @@ class WidgetTextarea extends BaseWidget
             . $inputHtml
             . $descriptionHtml
             . '</div>';
+    }
+
+    /**
+     * 
+     * @param object $model
+     * @param string $display
+     *
+     * @return string
+     */
+    public function tableCell($model, $display = 'left')
+    {
+        $this->setValue($model);
+        $class = 'text-' . $display;
+        $value = $this->show();
+        $final = mb_strlen($value) > 60 ? mb_substr($value, 0, 60) . '...' : $value;
+
+        return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($final) . '</td>';
     }
 }
