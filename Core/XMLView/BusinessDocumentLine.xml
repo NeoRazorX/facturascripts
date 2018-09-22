@@ -31,7 +31,7 @@
             </widget>
         </column>
         <column name="description" order="120">
-            <widget type="textarea" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion" />
         </column>
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />

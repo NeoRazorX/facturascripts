@@ -176,7 +176,7 @@ class BusinessDocumentView extends BaseView
         $order = count($formLines);
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
-            foreach ($this->lineOptions as $col) {
+            foreach ($this->getColumns() as $col) {
                 $line[$col->widget->fieldname] = isset($data[$col->widget->fieldname]) ? $data[$col->widget->fieldname] : null;
             }
             $newLines[] = $line;
