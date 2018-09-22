@@ -18,15 +18,15 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\SalesDocumentController;
 
 /**
  * Controller to edit a single item from the PresupuestoCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditPresupuestoCliente extends ExtendedController\SalesDocumentController
+class EditPresupuestoCliente extends SalesDocumentController
 {
 
     /**

@@ -72,6 +72,12 @@ class BaseWidget extends VisualItem
 
     /**
      *
+     * @var string
+     */
+    private $type;
+
+    /**
+     *
      * @var mixed
      */
     protected $value;
@@ -88,6 +94,7 @@ class BaseWidget extends VisualItem
         $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
         $this->readonly = isset($data['readonly']);
         $this->required = isset($data['required']);
+        $this->type = $data['type'];
         $this->loadOptions($data['children']);
     }
 
@@ -138,12 +145,11 @@ class BaseWidget extends VisualItem
     /**
      * Get the widget type
      *
-     * @return string|false
+     * @return string
      */
     public function getType()
     {
-        $className = end(explode('\\', get_class($this)));
-        return strtolower(substr($className, 6));
+        return $this->type;
     }
 
     /**

@@ -41,13 +41,6 @@ class BusinessDocumentView extends BaseView
     public $documentStatus = [];
 
     /**
-     * Line columns from xmlview.
-     *
-     * @var array
-     */
-    private $lineOptions = [];
-
-    /**
      * Lines of document, the body.
      *
      * @var BusinessDocumentLine[]
@@ -64,11 +57,6 @@ class BusinessDocumentView extends BaseView
     public function __construct($name, $title, $modelName, $icon = 'fa-file-alt')
     {
         parent::__construct($name, $title, $modelName, $icon);
-        foreach ($this->getColumns() as $group) {
-            foreach ($group->columns as $col) {
-                $this->lineOptions[] = $col;
-            }
-        }
 
         // Loads document states
         $estadoDocModel = new EstadoDocumento();
@@ -79,7 +67,7 @@ class BusinessDocumentView extends BaseView
         $this->template = 'Master/BusinessDocumentView.html.twig';
         static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
         static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentController.js';
+        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js';
     }
 
     /**
@@ -90,6 +78,21 @@ class BusinessDocumentView extends BaseView
     public function export(&$exportManager)
     {
         $exportManager->generateBusinessDocPage($this->model);
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getColumns()
+    {
+        $keys = array_keys($this->pageOption->columns);
+        if (empty($keys)) {
+            return [];
+        }
+
+        $key = $keys[0];
+        return $this->pageOption->columns[$key]->columns;
     }
 
     /**
@@ -105,17 +108,17 @@ class BusinessDocumentView extends BaseView
             'rows' => []
         ];
 
-        foreach ($this->lineOptions as $col) {
+        foreach ($this->getColumns() as $col) {
             $item = [
                 'data' => $col->widget->fieldname,
-                'type' => $col->widget->type,
+                'type' => $col->widget->getType(),
             ];
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
-                $item['source'] = $col->widget->values[0];
+                $item['source'] = $col->widget->getDataSource()['source'];
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
@@ -147,7 +150,7 @@ class BusinessDocumentView extends BaseView
      * @param int         $offset
      * @param int         $limit
      */
-    public function loadData($code = false, $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;

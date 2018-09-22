@@ -26,13 +26,28 @@ function beforeChange(changes, source) {
     if (changes !== null && changes[0][2] !== changes[0][3]) {
         for (var i = 0; i < autocompleteColumns.length; i++) {
             if (changes[0][1] === autocompleteColumns[i]) {
-                // aply for autocomplete columns
+                // apply for autocomplete columns
                 if (typeof changes[0][3] === "string") {
                     changes[0][3] = changes[0][3].split(" | ", 1)[0];
                 }
             }
         }
     }
+}
+
+function businessDocViewAutocompleteGetData(formId, field, source, fieldcode, fieldtitle, term) {
+    var formData = {};
+    var rawForm = $("form[id=" + formId + "]").serializeArray();
+    $.each(rawForm, function (i, input) {
+        formData[input.name] = input.value;
+    });
+    formData["action"] = "autocomplete";
+    formData["field"] = field;
+    formData["source"] = source;
+    formData["fieldcode"] = fieldcode;
+    formData["fieldtitle"] = fieldtitle;
+    formData["term"] = term;
+    return formData;
 }
 
 function documentRecalculate() {
@@ -171,5 +186,37 @@ $(document).ready(function () {
 
     $("#doc_codserie").change(function () {
         documentRecalculate();
+    });
+
+    $('.autocomplete-dc').each(function () {
+        var field = $(this).attr('data-field');
+        var source = $(this).attr('data-source');
+        var fieldcode = $(this).attr('data-fieldcode');
+        var fieldtitle = $(this).attr('data-fieldtitle');
+        var formName = $(this).closest('form').attr('name');
+        $(this).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    method: 'POST',
+                    url: documentUrl,
+                    data: businessDocViewAutocompleteGetData(formName, field, source, fieldcode, fieldtitle, request.term),
+                    dataType: 'json',
+                    success: function (results) {
+                        var values = [];
+                        results.forEach(function (element) {
+                            values.push({key: element.key, value: element.key + " | " + element.value});
+                        });
+                        response(values);
+                    },
+                    error: function (msg) {
+                        alert(msg.status + ' ' + msg.statusText);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $('#' + field + 'Autocomplete').val(ui.item.key);
+                ui.item.value = ui.item.value.split(' | ')[1];
+            }
+        });
     });
 });

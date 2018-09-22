@@ -41,7 +41,7 @@
         </group>
         <group name="addresses" title="addresses" numcolumns="12">
             <column name="billingaddr" title="billing-address" numcolumns="6">
-                <widget type="select" fieldname="idcontacto" required="true">
+                <widget type="select" fieldname="idcontactofact" required="true">
                     <values></values>
                 </widget>
             </column>

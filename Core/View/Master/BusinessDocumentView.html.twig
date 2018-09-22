@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
     documentLineData = {{ currentView.getLineData() | raw }};
-    documentUrl = '{{ currentView.model.url('edit') | raw }}';
+            documentUrl = '{{ currentView.model.url("edit") | raw }}';
 </script>
 
 <form name="f_document_primary" action="#" method="post">
@@ -134,11 +134,11 @@
                 </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
-            <input type="text" id="{{ id }}" value="{{ model.nombrecliente|raw }}" class="form-control autocomplete"
+            <input type="text" id="{{ id }}" value="{{ model.nombrecliente|raw }}" class="form-control autocomplete-dc"
                    data-field="{{ id }}" data-source="Cliente" data-fieldcode="codcliente" data-fieldtitle="nombre"
-                   placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
+                   placeholder="{{ i18n.trans('customer') }}" autocomplete="off"/>
             <span class="input-group-append">
-                <a href="{{ newUrl }}" target="_blank" class="btn btn-success">
+                <a href="{{ newUrl }}" target="_blank" class="btn btn-success" title="{{ i18n.trans('new-customer') }}">
                     <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
                 </a>
             </span>
@@ -155,11 +155,11 @@
                 </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
-            <input type="text" id="{{ id }}" value="{{ model.nombre|raw }}" class="form-control autocomplete"
+            <input type="text" id="{{ id }}" value="{{ model.nombre|raw }}" class="form-control autocomplete-dc"
                    data-field="{{ id }}" data-source="Proveedor" data-fieldcode="codproveedor" data-fieldtitle="nombre"
-                   placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
+                   placeholder="{{ i18n.trans('supplier') }}" autocomplete="off"/>
             <span class="input-group-append">
-                <a href="{{ newUrl }}" target="_blank" class="btn btn-success">
+                <a href="{{ newUrl }}" target="_blank" class="btn btn-success" title="{{ i18n.trans('new-supplier') }}">
                     <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
                 </a>
             </span>
