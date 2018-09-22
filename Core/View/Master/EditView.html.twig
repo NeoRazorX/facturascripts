@@ -54,7 +54,7 @@
                 {% endfor %}
             </div>
             <div class="row">
-                {% if currentView.settings.btnDelete %}
+                {% if fsc.hasData and currentView.settings.btnDelete %}
                     <div class="col">
                         <button type="button" class="btn btn-sm btn-danger" onclick="editViewDelete('{{ currentView.getViewName() }}');">
                             <i class="fas fa-trash fa-fw" aria-hidden="true"></i>
