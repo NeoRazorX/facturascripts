@@ -48,6 +48,10 @@ class WidgetDate extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = 'datepicker')
     {
+        if ($this->readonly) {
+            $extraClass = '';
+        }
+
         return parent::inputHtml($type, $extraClass);
     }
 
