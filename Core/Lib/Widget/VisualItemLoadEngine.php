@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model;
 
 /**
@@ -47,11 +49,13 @@ class VisualItemLoadEngine
         }
 
         if (!file_exists($fileName)) {
+            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $name . '.xml']);
             return false;
         }
 
         $xml = simplexml_load_string(file_get_contents($fileName));
         if ($xml === false) {
+            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $name . '.xml']);
             return false;
         }
 
@@ -129,6 +133,18 @@ class VisualItemLoadEngine
             $groupItem = new GroupItem($newGroupArray);
             $target[$groupItem->name] = $groupItem;
         }
+    }
+
+    /**
+     * 
+     * @param string $message
+     * @param array  $context
+     */
+    private static function saveError($message, $context = [])
+    {
+        $i18n = new Translator();
+        $minilog = new MiniLog();
+        $minilog->critical($i18n->trans($message, $context));
     }
 
     /**
