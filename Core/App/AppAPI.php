@@ -57,8 +57,7 @@ class AppAPI extends App
                 $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
             }
 
-            $this->response->send();
-            exit(0);
+            return true;
         }
 
         if ($this->isDisabled()) {
