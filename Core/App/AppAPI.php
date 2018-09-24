@@ -51,6 +51,15 @@ class AppAPI extends App
         $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         $this->response->headers->set('Content-Type', 'application/json');
 
+        if ( $this->request->server->get('REQUEST_METHOD') == "OPTIONS" ) {
+            if ( ! is_null($this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS')) ) {
+                $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+                $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
+            }
+
+            return true;
+        }
+
         if ($this->isDisabled()) {
             $this->fatalError('API-DISABLED', Response::HTTP_NOT_FOUND);
             return false;
