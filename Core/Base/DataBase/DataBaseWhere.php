@@ -148,7 +148,7 @@ class DataBaseWhere
     {
         $result = '';
         $join = false;
-        foreach ($whereItems as $item) {
+        foreach ($whereItems as $key => $item) {
             if (isset($item)) {
                 $result .= $item->getSQLWhereItem($join);
                 $join = true;
@@ -164,10 +164,10 @@ class DataBaseWhere
 
     /**
      * Apply one value to a field list.
-     * 
+     *
      * @param string $value
      * @param array  $fields
-     * 
+     *
      * @return string
      */
     private function applyValueToFields($value, $fields): string
@@ -212,9 +212,9 @@ class DataBaseWhere
 
     /**
      * Return list values for IN operator.
-     * 
+     *
      * @param string $values
-     * 
+     *
      * @return string
      */
     private function getValueFromOperatorIn($values): string
@@ -234,9 +234,9 @@ class DataBaseWhere
 
     /**
      * Return value for LIKE operator.
-     * 
+     *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValueFromOperatorLike($value): string
@@ -256,7 +256,7 @@ class DataBaseWhere
      * Returns the value for the operator.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValueFromOperator($value): string
@@ -284,7 +284,7 @@ class DataBaseWhere
      * Returns the value for the type.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValueFromType($value)
@@ -315,7 +315,7 @@ class DataBaseWhere
      * Returns the filter value formatted according to the type.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValue($value): string
