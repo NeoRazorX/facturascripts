@@ -114,10 +114,11 @@ class DataBaseWhere
      * Returns a string to apply to the WHERE clause.
      *
      * @param bool $applyOperation
+     * @param string $prefix
      *
      * @return string
      */
-    public function getSQLWhereItem($applyOperation = false): string
+    public function getSQLWhereItem($applyOperation = false, $prefix = ''): string
     {
         $fields = explode('|', $this->fields);
         $value = ($this->operator === 'LIKE') ? $this->value : $this->getValue($this->value);
@@ -130,6 +131,7 @@ class DataBaseWhere
             $result = '(' . $result . ')';
         }
 
+        $result = $prefix . $result;
         if ($applyOperation) {
             $result = ' ' . $this->operation . ' ' . $result;
         }
@@ -148,10 +150,24 @@ class DataBaseWhere
     {
         $result = '';
         $join = false;
+        $group = false;
+        $max = count($whereItems) - 1;
+
         foreach ($whereItems as $key => $item) {
-            if (isset($item)) {
-                $result .= $item->getSQLWhereItem($join);
-                $join = true;
+            // Calculate the logical grouping
+            $lastItem = ($key == $max);
+            $prefix = $lastItem ? '' : $item->getGroupPrefix($whereItems[$key + 1], $group);
+
+            // Calculate the sql clause for the condition
+            $result .= $item->getSQLWhereItem($join, $prefix);
+            $join = true;
+
+            // Closes the logical condition of grouping if it exists
+            if (!$lastItem && $group) {
+                if ($whereItems[$key + 1]->operation != 'OR') {
+                    $result .= ')';
+                    $group = false;
+                }
             }
         }
 
@@ -159,7 +175,32 @@ class DataBaseWhere
             return '';
         }
 
+        if ($group == true) {
+            $result .= ')'; // Closes the logical condition of grouping
+        }
+
         return ' WHERE ' . $result;
+    }
+
+    /**
+     * Calculate if you need grouping of conditions.
+     * It is necessary for logical conditions of type 'OR'
+     *
+     * @param DataBaseWhere $item
+     * @param bool $group
+     * @return string
+     */
+    private function getGroupPrefix(&$item, &$group): string
+    {
+        $result = '';
+        if ($item->operation == 'OR') {
+            if ($group == false) {
+                $result = '(';
+                $group = true;
+            }
+        }
+
+        return $result;
     }
 
     /**
