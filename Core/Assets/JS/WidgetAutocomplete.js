@@ -58,9 +58,8 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                $('#' + field + 'Autocomplete').val(ui.item.key);
+                $("form[id=" + formId + "] input[name=" + field + "]").val(ui.item.key);
                 ui.item.value = ui.item.value.split(' | ')[1];
-                $(this).form().submit();
             }
         });
     });

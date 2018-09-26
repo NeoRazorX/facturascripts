@@ -26,10 +26,6 @@
 
 {% extends "Master/MenuTemplate.html.twig" %}
 
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %}
-
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}

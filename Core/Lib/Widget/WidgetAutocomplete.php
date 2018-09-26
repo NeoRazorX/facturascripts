@@ -56,12 +56,11 @@ class WidgetAutocomplete extends WidgetSelect
     public function edit($model, $title = '', $description = '')
     {
         $this->setValue($model);
-        $id = $this->getUniqueId();
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
         $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
 
-        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '" id="' . $id . 'Autocomplete"/>'
+        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
             . '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'

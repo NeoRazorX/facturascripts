@@ -1,10 +1,5 @@
 {#
-   /**
-     * Menu Template.
-     *
-     * Load basic structure for pages
-     * Establishes the basic characteristics of the Facturascripts.
-     *
+    /**
      * This file is part of FacturaScripts
      * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
@@ -21,11 +16,10 @@
      * You should have received a copy of the GNU Lesser General Public License
      * along with this program. If not, see http://www.gnu.org/licenses/.
      *
-    */
+     */
 #}
-
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG')|slice(0, 2) }}" xml:lang="{{ constant('FS_LANG')|slice(0, 2) }}" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}" xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}" >
     <head>
         {% block meta %}
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -62,7 +56,7 @@
         {% for js in fsc.assets['js'] %}
             <script src="{{ js }}"></script>
         {% endfor %}
-        {{ debugBarRender.renderHead()|raw }}
+        {{ debugBarRender.renderHead() | raw }}
     </head>
     {% block fullBody %}
         <body>

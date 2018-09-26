@@ -100,7 +100,6 @@ function documentSave() {
         data: data,
         success: function (results) {
             if (results.substring(0, 3) === "OK:") {
-                alert('OK');
                 location.href = results.substring(3);
             } else {
                 alert(results);

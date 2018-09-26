@@ -63,8 +63,8 @@
             </div>
         </div>
         <div class="row">
+            {# -- Top left buttons -- #}
             <div class="col-md-4 col-6">
-                {# -- Left top buttons -- #}
                 <div class="btn-group">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
@@ -90,32 +90,35 @@
                     </div>
                 </div>
             </div>
+            {# -- Top center buttons -- #}
             <div class="col-md-3 col-6 text-center">
-                <div class="btn-group">
-                    {% if fsc.hasData and firstView.settings.btnNew %}
-                        <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
-                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-md-inline-block">{{ i18n.trans('new') }}</span>
+                {% if fsc.hasData and firstView.settings.btnNew %}
+                    <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('new') }}</span>
+                    </a>
+                {% endif %}
+                {% if fsc.hasData %}
+                    <div class="btn-group">
+                        <a href="{{ currentView.model.url() }}?action=export&option={{ fsc.exportManager.defaultOption() }}" class="btn btn-sm btn-light">
+                            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-md-inline-block">{{ i18n.trans('print') }}</span>
                         </a>
-                    {% endif %}
-                    {% if fsc.hasData %}
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-print fa-fw" aria-hidden="true"></i>
-                                <span class="d-none d-md-inline-block">{{ i18n.trans('print') }}</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                {% for key, option in fsc.exportManager.options() %}
-                                    <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
-                                        <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
-                                        {{ i18n.trans(option.description) }}
-                                    </a>
-                                {% endfor %}
-                            </div>
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            {% for key, option in fsc.exportManager.options() %}
+                                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                                    {{ i18n.trans(option.description) }}
+                                </a>
+                            {% endfor %}
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
+            {# -- Top right buttons -- #}
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">
                     {{ fsc.title }}<br/>
