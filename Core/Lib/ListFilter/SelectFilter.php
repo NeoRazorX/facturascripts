@@ -35,7 +35,7 @@ class SelectFilter extends BaseFilter
     public $values;
 
     /**
-     * 
+     *
      * @param string $key
      * @param string $field
      * @param string $label
@@ -48,22 +48,23 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     * 
+     *
      * @param array $where
      *
-     * @return array
+     * @return bool
      */
-    public function getDataBaseWhere(array &$where)
+    public function getDataBaseWhere(array &$where): bool
     {
         if ('' !== $this->value && null !== $this->value) {
             $where[] = new DataBaseWhere($this->field, $this->value);
+            return true;
         }
 
-        return $where;
+        return false;
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function render()
@@ -78,7 +79,7 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function getHtmlOptions()

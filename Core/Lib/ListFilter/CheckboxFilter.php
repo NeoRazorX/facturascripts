@@ -66,19 +66,22 @@ class CheckboxFilter extends BaseFilter
      *
      * @param array $where
      *
-     * @return array
+     * @return bool
      */
-    public function getDataBaseWhere(array &$where)
+    public function getDataBaseWhere(array &$where): bool
     {
+        $result = false;
         if ('TRUE' === $this->value) {
             $where[] = new DataBaseWhere($this->field, $this->matchValue, $this->operation);
+            $result = true;
         } else {
             foreach ($this->default as $value) {
                 $where[] = $value;
+                $result = true;
             }
         }
 
-        return $where;
+        return $result;
     }
 
     /**
