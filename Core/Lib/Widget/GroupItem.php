@@ -98,7 +98,7 @@ class GroupItem extends VisualItem
 
         if (!empty($this->title)) {
             $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
-            $html .= '<legend>' . $icon . static::$i18n->trans($this->title) . '</legend>';
+            $html .= '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
         }
 
         foreach ($this->columns as $col) {

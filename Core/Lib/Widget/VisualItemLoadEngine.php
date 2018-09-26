@@ -32,7 +32,7 @@ class VisualItemLoadEngine
 {
 
     /**
-     * Add to the configuration of a controller
+     * Loads an xmlview data into a PageOption model.
      *
      * @param string           $name
      * @param Model\PageOption $model
@@ -61,47 +61,46 @@ class VisualItemLoadEngine
 
         /// turns xml into an array
         $array = static::xmlToArray($xml);
-        $columns = [];
-        $modals = [];
-        $rows = [];
+        $model->columns = [];
+        $model->modals = [];
+        $model->rows = [];
         foreach ($array['children'] as $value) {
             switch ($value['tag']) {
                 case 'columns':
-                    $columns = $value['children'];
+                    $model->columns = $value['children'];
                     break;
 
                 case 'modals':
-                    $modals = $value['children'];
+                    $model->modals = $value['children'];
                     break;
 
                 case 'rows':
-                    $rows = $value['children'];
+                    $model->rows = $value['children'];
                     break;
             }
         }
 
-        self::loadArray($columns, $modals, $rows, $model);
         return true;
     }
 
     /**
-     * Load the column structure from the JSON
+     * Reads PageOption data and loads groups, columns, rows and widgets into selected arrays.
      *
      * @param array            $columns
      * @param array            $modals
      * @param array            $rows
      * @param Model\PageOption $model
      */
-    public static function loadArray($columns, $modals, $rows, &$model)
+    public static function loadArray(&$columns, &$modals, &$rows, $model)
     {
-        static::getGroupsColumns($columns, $model->columns);
-        static::getGroupsColumns($modals, $model->modals);
+        static::getGroupsColumns($model->columns, $columns);
+        static::getGroupsColumns($model->modals, $modals);
 
-        foreach ($rows as $name => $item) {
+        foreach ($model->rows as $name => $item) {
             $className = '\\FacturaScripts\\Core\\Lib\\Widget\\Row' . ucfirst($name);
             if (class_exists($className)) {
                 $rowItem = new $className($item);
-                $model->rows[$name] = $rowItem;
+                $rows[$name] = $rowItem;
             }
         }
     }
@@ -119,12 +118,12 @@ class VisualItemLoadEngine
             'children' => [],
         ];
 
-        foreach ($columns as $item) {
+        foreach ($columns as $key => $item) {
             if ($item['tag'] === 'group') {
                 $groupItem = new GroupItem($item);
                 $target[$groupItem->name] = $groupItem;
             } else {
-                $newGroupArray['children'][] = $item;
+                $newGroupArray['children'][$key] = $item;
             }
         }
 

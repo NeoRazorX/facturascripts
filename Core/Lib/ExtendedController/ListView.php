@@ -44,7 +44,7 @@ class ListView extends BaseView
      *
      * @var BaseFilter[]
      */
-    public $filters;
+    public $filters = [];
 
     /**
      *
@@ -57,26 +57,26 @@ class ListView extends BaseView
      *
      * @var array
      */
-    public $orderOptions;
+    public $orderOptions = [];
 
     /**
      *
      * @var string
      */
-    public $query;
+    public $query = '';
 
     /**
      * List of fields where to search in when a search is made
      *
      * @var array
      */
-    public $searchFields;
+    public $searchFields = [];
 
     /**
      *
      * @var bool
      */
-    public $showFilters;
+    public $showFilters = false;
 
     /**
      * ListView constructor and initialization.
@@ -89,11 +89,6 @@ class ListView extends BaseView
     public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->filters = [];
-        $this->orderOptions = [];
-        $this->query = '';
-        $this->searchFields = [];
-        $this->showFilters = false;
         $this->template = 'Master/ListView.html.twig';
         static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListView.js';
     }
@@ -159,13 +154,13 @@ class ListView extends BaseView
      */
     public function getColumns()
     {
-        $keys = array_keys($this->pageOption->columns);
+        $keys = array_keys($this->columns);
         if (empty($keys)) {
             return [];
         }
 
         $key = $keys[0];
-        return $this->pageOption->columns[$key]->columns;
+        return $this->columns[$key]->columns;
     }
 
     /**

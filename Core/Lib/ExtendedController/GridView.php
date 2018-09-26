@@ -184,7 +184,7 @@ class GridView extends BaseView
             'hidden' => []
         ];
 
-        $columns = $this->pageOption->columns['main']->columns;
+        $columns = $this->columns['main']->columns;
         foreach ($columns as $col) {
             $item = $this->getItemForColumn($col);
             switch ($col->display) {
@@ -337,7 +337,7 @@ class GridView extends BaseView
         $primaryKey = $this->model->primaryColumn();
         foreach ($lines as $data) {
             if (!isset($data[$primaryKey])) {
-                foreach ($this->pageOption->columns as $group) {
+                foreach ($this->columns as $group) {
                     foreach ($group->columns as $col) {
                         if (!isset($data[$col->widget->fieldname])) {
                             $data[$col->widget->fieldname] = null;   // TODO: maybe the widget can have a default value method instead of null

@@ -45,18 +45,24 @@ abstract class BaseView
     protected static $assets = [];
 
     /**
+     *
+     * @var array
+     */
+    protected $columns = [];
+
+    /**
      * Total count of read rows.
      *
      * @var int
      */
-    public $count;
+    public $count = 0;
 
     /**
      * Cursor with data from the model display
      *
      * @var array
      */
-    public $cursor;
+    public $cursor = [];
 
     /**
      *
@@ -70,6 +76,12 @@ abstract class BaseView
      * @var Base\Translator
      */
     protected static $i18n;
+
+    /**
+     *
+     * @var array
+     */
+    protected $modals = [];
 
     /**
      * Model to use in this view.
@@ -96,13 +108,13 @@ abstract class BaseView
      *
      * @var int
      */
-    public $offset;
+    public $offset = 0;
 
     /**
      *
      * @var array
      */
-    public $order;
+    public $order = [];
 
     /**
      * Columns configuration
@@ -110,6 +122,12 @@ abstract class BaseView
      * @var PageOption
      */
     protected $pageOption;
+
+    /**
+     *
+     * @var array
+     */
+    protected $rows = [];
 
     /**
      *
@@ -135,7 +153,7 @@ abstract class BaseView
      *
      * @var DataBaseWhere[]
      */
-    public $where;
+    public $where = [];
 
     /**
      * Method to export the view data.
@@ -166,13 +184,9 @@ abstract class BaseView
             static::$i18n = new Base\Translator();
         }
 
-        $this->count = 0;
-        $this->cursor = [];
         $this->icon = $icon;
         $this->model = class_exists($modelName) ? new $modelName() : null;
         $this->name = $name;
-        $this->offset = 0;
-        $this->order = [];
         $this->pageOption = new PageOption();
         $this->settings = [
             'active' => true,
@@ -182,7 +196,6 @@ abstract class BaseView
         ];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);
-        $this->where = [];
     }
 
     /**
@@ -194,7 +207,7 @@ abstract class BaseView
      */
     public function columnForField(string $fieldName)
     {
-        foreach ($this->pageOption->columns as $group) {
+        foreach ($this->columns as $group) {
             foreach ($group->columns as $column) {
                 if ($column->widget->fieldname === $fieldName) {
                     return $column;
@@ -214,7 +227,7 @@ abstract class BaseView
      */
     public function columnForName(string $columnName)
     {
-        foreach ($this->pageOption->columns as $group) {
+        foreach ($this->columns as $group) {
             foreach ($group->columns as $key => $column) {
                 if ($key === $columnName) {
                     return $column;
@@ -255,7 +268,7 @@ abstract class BaseView
      */
     public function getColumns()
     {
-        return $this->pageOption->columns;
+        return $this->columns;
     }
 
     /**
@@ -265,7 +278,7 @@ abstract class BaseView
      */
     public function getModals()
     {
-        return $this->pageOption->modals;
+        return $this->modals;
     }
 
     /**
@@ -317,7 +330,7 @@ abstract class BaseView
      */
     public function getRow(string $key)
     {
-        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
+        return isset($this->rows[$key]) ? $this->rows[$key] : null;
     }
 
     /**
@@ -368,10 +381,10 @@ abstract class BaseView
             ];
         }
 
-        if ($this->pageOption->loadFromCode('', $where, $orderby)) {
-            VisualItemLoadEngine::loadArray($this->pageOption->columns, $this->pageOption->modals, $this->pageOption->rows, $this->pageOption);
-        } elseif (!is_bool($user)) {
+        if (!$this->pageOption->loadFromCode('', $where, $orderby)) {
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
+
+        VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
     }
 }

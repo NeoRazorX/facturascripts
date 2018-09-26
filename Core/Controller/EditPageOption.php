@@ -27,9 +27,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Edit option for any page.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class EditPageOption extends Base\Controller
 {
@@ -76,29 +76,6 @@ class EditPageOption extends Base\Controller
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Returns the text for the data main panel header
-     *
-     * @return string
-     */
-    public function getPanelHeader()
-    {
-        return $this->i18n->trans('configure-columns');
-    }
-
-    /**
-     * Returns the text for the data main panel footer
-     *
-     * @return string
-     */
-    public function getPanelFooter()
-    {
-        return '<strong>'
-            . $this->i18n->trans('page') . ':&nbsp;' . $this->selectedViewName . '<br>'
-            . $this->i18n->trans('user') . ':&nbsp;' . $this->selectedUser
-            . '</strong>';
     }
 
     /**
@@ -172,12 +149,7 @@ class EditPageOption extends Base\Controller
             new DataBaseWhere('name', $this->selectedViewName)
         ];
 
-        if (empty($nick)) {
-            $where[] = new DataBaseWhere('nick', 'null', 'IS');
-        } else {
-            $where[] = new DataBaseWhere('nick', $nick);
-        }
-
+        $where[] = empty($nick) ? new DataBaseWhere('nick', 'null', 'IS') : new DataBaseWhere('nick', $nick);
         $rows = $this->model->all($where, [], 0, 1);
         if ($rows[0] && $rows[0]->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
@@ -194,10 +166,12 @@ class EditPageOption extends Base\Controller
     {
         $this->selectedViewName = $this->request->get('code', '');
         $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
-
         $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
     }
 
+    /**
+     * 
+     */
     protected function loadPageOptions()
     {
         $this->model = new Model\PageOption();
@@ -210,11 +184,32 @@ class EditPageOption extends Base\Controller
             new DataBaseWhere('name', $this->selectedViewName),
         ];
 
-        if ($this->model->loadFromCode('', $where, $orderby)) {
-            VisualItemLoadEngine::loadArray($this->model->columns, $this->model->modals, $this->model->rows, $this->model);
-        } else {
+        if (!$this->model->loadFromCode('', $where, $orderby)) {
             VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
         }
+
+        // there always need to be groups of columns
+        $groups = [];
+        $newGroupArray = [
+            'tag' => 'group',
+            'name' => 'main',
+            'children' => [],
+        ];
+
+        foreach ($this->model->columns as $key => $item) {
+            if ($item['tag'] === 'group') {
+                $groups[] = $item;
+            } else {
+                $newGroupArray['children'][$key] = $item;
+            }
+        }
+
+        /// is there are loose columns, then we put it on a new group
+        if (!empty($newGroupArray['children'])) {
+            $groups[] = $newGroupArray;
+        }
+
+        $this->model->columns = $groups;
     }
 
     /**
@@ -227,10 +222,10 @@ class EditPageOption extends Base\Controller
         foreach ($data as $key => $value) {
             if (strpos($key, '+')) {
                 $path = explode('+', $key);
-                $this->model->columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
+                $this->model->columns[$path[0]]['children'][$path[1]][$path[2]] = $value;
             }
         }
-
+        
         if ($this->model->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return;

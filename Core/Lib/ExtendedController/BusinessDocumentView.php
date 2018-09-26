@@ -86,13 +86,13 @@ class BusinessDocumentView extends BaseView
      */
     public function getColumns()
     {
-        $keys = array_keys($this->pageOption->columns);
+        $keys = array_keys($this->columns);
         if (empty($keys)) {
             return [];
         }
 
         $key = $keys[0];
-        return $this->pageOption->columns[$key]->columns;
+        return $this->columns[$key]->columns;
     }
 
     /**
