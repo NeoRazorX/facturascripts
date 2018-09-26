@@ -64,12 +64,12 @@ abstract class BaseFilter
      */
     public $value;
 
-    abstract public function getDataBaseWhere(array &$where);
+    abstract public function getDataBaseWhere(array &$where): bool;
 
     abstract public function render();
 
     /**
-     * 
+     *
      * @param string $key
      * @param string $field
      * @param string $label
@@ -86,7 +86,7 @@ abstract class BaseFilter
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public static function getAssets()
@@ -95,7 +95,7 @@ abstract class BaseFilter
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function name()

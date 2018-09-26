@@ -35,7 +35,7 @@ class NumberFilter extends BaseFilter
     public $operation;
 
     /**
-     * 
+     *
      * @param string $key
      * @param string $field
      * @param string $label
@@ -48,22 +48,23 @@ class NumberFilter extends BaseFilter
     }
 
     /**
-     * 
+     *
      * @param array $where
      *
-     * @return array
+     * @return bool
      */
-    public function getDataBaseWhere(array &$where)
+    public function getDataBaseWhere(array &$where): bool
     {
         if ('' !== $this->value && null !== $this->value) {
             $where[] = new DataBaseWhere($this->field, $this->value, $this->operation);
+            return true;
         }
 
-        return $where;
+        return false;
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function render()

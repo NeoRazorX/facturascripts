@@ -42,16 +42,16 @@ class SelectWhereFilter extends SelectFilter
      *
      * @param array $where
      *
-     * @return array
+     * @return bool
      */
-    public function getDataBaseWhere(array &$where)
+    public function getDataBaseWhere(array &$where): bool
     {
         $value = ($this->value == '' || $this->value == null) ? 0 : $this->value;
         foreach ($this->values[$value]['where'] as $condition) {
             $where[] = $condition;
         }
 
-        return $where;
+        return ($value > 0);
     }
 
     /**

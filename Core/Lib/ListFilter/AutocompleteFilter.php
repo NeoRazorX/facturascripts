@@ -54,7 +54,7 @@ class AutocompleteFilter extends BaseFilter
     public $where;
 
     /**
-     * 
+     *
      * @param string $key
      * @param string $field
      * @param string $label
@@ -74,22 +74,23 @@ class AutocompleteFilter extends BaseFilter
     }
 
     /**
-     * 
+     *
      * @param array $where
      *
-     * @return array
+     * @return bool
      */
-    public function getDataBaseWhere(array &$where)
+    public function getDataBaseWhere(array &$where): bool
     {
         if ('' !== $this->value && null !== $this->value) {
             $where[] = new DataBaseWhere($this->field, $this->value);
+            return true;
         }
 
-        return $where;
+        return false;
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function render()
@@ -125,7 +126,7 @@ class AutocompleteFilter extends BaseFilter
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function getDescription()

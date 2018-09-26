@@ -154,7 +154,7 @@ class ListView extends BaseView
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getColumns()
@@ -219,10 +219,10 @@ class ListView extends BaseView
         /// filters
         foreach ($this->filters as $filter) {
             $filter->value = $request->request->get($filter->name());
-            $filter->getDataBaseWhere($this->where);
+            if ($filter->getDataBaseWhere($this->where)) {
+                $this->showFilters = true;
+            }
         }
-
-        $this->showFilters = !empty($this->where);
     }
 
     /**
