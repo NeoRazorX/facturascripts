@@ -233,7 +233,7 @@ class DocumentReports extends Controller
         ];
 
         foreach ($this->filters as $filter) {
-            $where[] = $filter->getWhere();
+            $filter->getWhere($where);
         }
 
         return $where;
