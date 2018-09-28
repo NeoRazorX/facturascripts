@@ -54,7 +54,7 @@ $(document).ready(function () {
                         response(values);
                     },
                     error: function (msg) {
-                        alert(msg.status + ' ' + msg.statusText);
+                        alert(msg.status + ' ' + msg.responseText);
                     }
                 });
             },

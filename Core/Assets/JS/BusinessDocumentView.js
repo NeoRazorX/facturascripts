@@ -51,7 +51,7 @@ function businessDocViewAutocompleteGetData(formId, field, source, fieldcode, fi
     return formData;
 }
 
-function documentRecalculate() {
+function businessDocViewRecalculate() {
     var data = {};
     $.each($("#" + businessDocViewFormName).serializeArray(), function (key, value) {
         data[value.name] = value.value;
@@ -124,7 +124,7 @@ function getGridData() {
     return lines;
 }
 
-function setAutocompletes(columns) {
+function businessDocViewSetAutocompletes(columns) {
     for (var key = 0; key < columns.length; key++) {
         if (columns[key].type === "autocomplete") {
             businessDocViewAutocompleteColumns.push(columns[key].data);
@@ -151,6 +151,9 @@ function setAutocompletes(columns) {
                             values.push(element.key + " | " + element.value);
                         });
                         process(values);
+                    },
+                    error: function (msg) {
+                        alert(msg.status + ' ' + msg.responseText);
                     }
                 });
             };
@@ -164,7 +167,7 @@ $(document).ready(function () {
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
         data: businessDocViewLineData.rows,
-        columns: setAutocompletes(businessDocViewLineData.columns),
+        columns: businessDocViewSetAutocompletes(businessDocViewLineData.columns),
         rowHeaders: true,
         colHeaders: businessDocViewLineData.headers,
         stretchH: "all",
@@ -182,10 +185,10 @@ $(document).ready(function () {
     });
 
     Handsontable.hooks.add("beforeChange", beforeChange);
-    Handsontable.hooks.add("afterChange", documentRecalculate);
+    Handsontable.hooks.add("afterChange", businessDocViewRecalculate);
 
     $("#doc_codserie").change(function () {
-        documentRecalculate();
+        businessDocViewRecalculate();
     });
 
     $('.autocomplete-dc').each(function () {
@@ -209,7 +212,7 @@ $(document).ready(function () {
                         response(values);
                     },
                     error: function (msg) {
-                        alert(msg.status + ' ' + msg.statusText);
+                        alert(msg.status + ' ' + msg.responseText);
                     }
                 });
             },

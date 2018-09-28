@@ -118,7 +118,7 @@ class BusinessDocumentView extends BaseView
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
-                $item['source'] = $col->widget->getDataSource()['source'];
+                $item['source'] = $col->widget->getDataSource();
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
