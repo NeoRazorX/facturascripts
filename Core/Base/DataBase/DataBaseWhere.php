@@ -24,8 +24,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Structure that defines a WHERE condition to filter the model data
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class DataBaseWhere
 {
@@ -113,7 +113,7 @@ class DataBaseWhere
     /**
      * Returns a string to apply to the WHERE clause.
      *
-     * @param bool $applyOperation
+     * @param bool   $applyOperation
      * @param string $prefix
      *
      * @return string
@@ -151,23 +151,22 @@ class DataBaseWhere
         $result = '';
         $join = false;
         $group = false;
-        $max = count($whereItems) - 1;
 
-        foreach ($whereItems as $key => $item) {
+        $keys = array_keys($whereItems);
+        foreach ($keys as $num => $key) {
+            $next = isset($keys[$num + 1]) ? $keys[$num + 1] : null;
+
             // Calculate the logical grouping
-            $lastItem = ($key == $max);
-            $prefix = $lastItem ? '' : $item->getGroupPrefix($whereItems[$key + 1], $group);
+            $prefix = is_null($next) ? '' : self::getGroupPrefix($whereItems[$next], $group);
 
             // Calculate the sql clause for the condition
-            $result .= $item->getSQLWhereItem($join, $prefix);
+            $result .= $whereItems[$key]->getSQLWhereItem($join, $prefix);
             $join = true;
 
             // Closes the logical condition of grouping if it exists
-            if (!$lastItem && $group) {
-                if ($whereItems[$key + 1]->operation != 'OR') {
-                    $result .= ')';
-                    $group = false;
-                }
+            if (!is_null($next) && $group && $whereItems[$next]->operation != 'OR') {
+                $result .= ')';
+                $group = false;
             }
         }
 
@@ -175,32 +174,12 @@ class DataBaseWhere
             return '';
         }
 
+        // Closes the logical condition of grouping
         if ($group == true) {
-            $result .= ')'; // Closes the logical condition of grouping
+            $result .= ')';
         }
 
         return ' WHERE ' . $result;
-    }
-
-    /**
-     * Calculate if you need grouping of conditions.
-     * It is necessary for logical conditions of type 'OR'
-     *
-     * @param DataBaseWhere $item
-     * @param bool $group
-     * @return string
-     */
-    private function getGroupPrefix(&$item, &$group): string
-    {
-        $result = '';
-        if ($item->operation == 'OR') {
-            if ($group == false) {
-                $result = '(';
-                $group = true;
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -214,11 +193,10 @@ class DataBaseWhere
     private function applyValueToFields($value, $fields): string
     {
         $result = '';
-        $union = '';
         foreach ($fields as $field) {
             if ($this->operator !== 'LIKE') {
+                $union = empty($result) ? '' : ' OR ';
                 $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $value;
-                $union = ' OR ';
                 continue;
             }
 
@@ -230,8 +208,6 @@ class DataBaseWhere
                 $union = ' AND ';
             }
             $result .= ')';
-
-            $union = ' OR ';
         }
 
         return $result;
@@ -247,8 +223,26 @@ class DataBaseWhere
     private function format2Date($addTime = false)
     {
         $time = $addTime ? ' H:i:s' : '';
-
         return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";
+    }
+
+    /**
+     * Calculate if you need grouping of conditions.
+     * It is necessary for logical conditions of type 'OR'
+     *
+     * @param DataBaseWhere $item
+     * @param bool          $group
+     *
+     * @return string
+     */
+    private static function getGroupPrefix(&$item, &$group): string
+    {
+        if ($item->operation == 'OR' && $group == false) {
+            $group = true;
+            return '(';
+        }
+
+        return '';
     }
 
     /**

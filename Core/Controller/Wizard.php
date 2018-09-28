@@ -52,7 +52,7 @@ class Wizard extends Controller
     /**
      * Check if the user must introduce the email.
      *
-     * @var boolean
+     * @var bool
      */
     public $showIntroduceEmail = false;
 
@@ -295,6 +295,10 @@ class Wizard extends Controller
         return $this->user->save();
     }
 
+    /**
+     * 
+     * @param string $codpais
+     */
     private function saveStep1(string $codpais)
     {
         $this->preSetAppSettings($codpais);

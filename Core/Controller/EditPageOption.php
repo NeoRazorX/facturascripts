@@ -181,7 +181,6 @@ class EditPageOption extends Base\Controller
             new DataBaseWhere('name', $this->selectedViewName),
             new DataBaseWhere('nick', $this->selectedUser),
             new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            new DataBaseWhere('name', $this->selectedViewName),
         ];
 
         if (!$this->model->loadFromCode('', $where, $orderby)) {
