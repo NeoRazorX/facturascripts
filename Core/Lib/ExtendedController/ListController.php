@@ -229,6 +229,7 @@ abstract class ListController extends BaseController
         $view = new ListView($viewName, $title, self::MODEL_NAMESPACE . $modelName, $icon);
         $this->addCustomView($viewName, $view);
         $this->setSettings($viewName, 'btnPrint', true);
+        $this->setSettings($viewName, 'megasearch', true);
     }
 
     /**
@@ -314,31 +315,6 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Returns columns title for megaSearchAction function.
-     *
-     * @param ListView $view
-     * @param int      $maxColumns
-     *
-     * @return array
-     */
-    private function getTextColumns($view, $maxColumns)
-    {
-        $result = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display === 'none' || !in_array($col->widget->type, ['text', 'money'], false)) {
-                continue;
-            }
-
-            $result[] = $col->widget->fieldname;
-            if (count($result) === $maxColumns) {
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      *
      * @param string   $viewName
      * @param BaseView $view
@@ -354,15 +330,7 @@ abstract class ListController extends BaseController
     protected function megaSearchAction()
     {
         $this->setTemplate(false);
-        $json = [
-            $this->active => [
-                'title' => $this->i18n->trans($this->title),
-                'icon' => $this->getPageData()['icon'],
-                'columns' => [],
-                'results' => [],
-            ],
-        ];
-
+        $json = [];
         $query = $this->request->get('query', '');
 
         /// we search in all listviews
@@ -371,31 +339,51 @@ abstract class ListController extends BaseController
                 continue;
             }
 
-            if (!isset($json[$viewName])) {
-                $json[$viewName] = [
-                    'title' => $listView->title,
-                    'icon' => $listView->icon,
-                    'columns' => [],
-                    'results' => [],
-                ];
-            }
+            $json[$viewName] = [
+                'title' => $listView->title,
+                'icon' => $listView->icon,
+                'columns' => $this->megaSearchColumns($listView),
+                'results' => [],
+            ];
 
-            $fields = $listView->searchFields;
+            $fields = implode('|', $listView->searchFields);
             $where = [new DataBaseWhere($fields, $query, 'LIKE')];
             $listView->loadData(false, $where);
+            foreach ($listView->cursor as $model) {
+                $item = ['url' => $model->url()];
+                foreach ($listView->getColumns() as $col) {
+                    if ($col->hiddeTo($this->user)) {
+                        continue;
+                    }
 
-            $cols = $this->getTextColumns($listView, 6);
-            $json[$viewName]['columns'] = $cols;
-
-            foreach ($listView->cursor as $item) {
-                $jItem = ['url' => $item->url()];
-                foreach ($cols as $col) {
-                    $jItem[$col] = $item->{$col};
+                    $item[$col->widget->fieldname] = $col->widget->plainText($model);
                 }
-                $json[$viewName]['results'][] = $jItem;
+
+                $json[$viewName]['results'][] = $item;
             }
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Returns columns title for megaSearchAction function.
+     *
+     * @param ListView $view
+     *
+     * @return array
+     */
+    private function megaSearchColumns($view)
+    {
+        $result = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->hiddeTo($this->user)) {
+                continue;
+            }
+
+            $result[] = $this->i18n->trans($col->title);
+        }
+
+        return $result;
     }
 }

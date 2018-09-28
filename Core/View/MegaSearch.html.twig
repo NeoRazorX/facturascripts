@@ -1,83 +1,87 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block javascripts %}
-{{ parent() }}
-<script src="{{ asset('Dinamic/Assets/JS/MegaSearch.js') }}"></script>
+    {{ parent() }}
+    <script src="{{ asset('Dinamic/Assets/JS/MegaSearch.js') }}"></script>
 {% endblock %}
 
 {% block body %}
-{% for section in fsc.sections %}
-<script type="text/javascript">
-    $(document).ready(function () {
-        searchOnSection("{{ section|raw }}");
-    });
-</script>
-{% endfor %}
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-3 col-xl-2">
-            <form action="{{ fsc.url() }}" method="post" class="form">
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" name="query" value="{{ fsc.query }}" class="form-control" autocomplete="off" autofocus=""/>
-                        <span class="input-group-append">
-                            <button type="submit" class="btn btn-info">
-                                <i class="fas fa-search" aria-hidden="true"></i>
-                            </button>
-                        </span>
-                    </div>
-                </div>
-            </form>
-            {% if fsc.results['pages'] is empty  %}
-            <div id="no-data-msg" class="alert alert-warning">{{ i18n.trans('no-data') }}</div>
-            {% endif %}
-            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                {% if fsc.results['pages'] is not empty  %}
-                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
-                    <span class='badge badge-secondary float-right'>{{ fsc.results['pages']|length }}</span>
-                    <i class="fas fa-mouse-pointer fa-fw"></i>
-                    {{ i18n.trans('pages') | capitalize }}
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="col-9 col-xl-10">
-            <div class="tab-content" id="v-pills-tabContent">
-                {% if fsc.results['pages'] is not empty  %}
-                <div class="tab-pane fade show active" id="v-pills-paginas" role="tabpanel" aria-labelledby="v-pills-paginas-tab">
-                    <div class="card">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>{{ i18n.trans('menu') | capitalize }}</th>
-                                        <th></th>
-                                        <th>{{ i18n.trans('page') | capitalize }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for page in fsc.results['pages'] %}
-                                    <tr class="clickableRow" data-href='{{ page.url() }}'>
-                                        <td>
-                                            {{ i18n.trans(page.menu) | capitalize }}{% if page.submenu %} - {{ i18n.trans(page.submenu) | capitalize }}{% endif %}
-                                        </td>
-                                        <td class="text-right">
-                                            {% if page.icon %}
-                                            <i class="fas {{ page.icon }}"></i>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ i18n.trans(page.title) | capitalize }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+    {% for section in fsc.sections %}
+        <script type="text/javascript">
+            $(document).ready(function () {
+                searchOnSection("{{ section | raw }}");
+            });
+        </script>
+    {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <form action="{{ fsc.url() }}" method="post" class="form">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="query" value="{{ fsc.query }}" class="form-control" autocomplete="off" autofocus=""/>
+                            <span class="input-group-append">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         </div>
                     </div>
-                </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 col-xl-2">
+                {% if fsc.results['pages'] is empty  %}
+                    <div id="no-data-msg" class="alert alert-warning">{{ i18n.trans('no-data') }}</div>
                 {% endif %}
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                    {% if fsc.results['pages'] is not empty  %}
+                        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
+                            <span class='badge badge-secondary float-right'>{{ fsc.results['pages']|length }}</span>
+                            <i class="fas fa-mouse-pointer fa-fw"></i>
+                            {{ i18n.trans('pages') | capitalize }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-9 col-xl-10">
+                <div class="tab-content" id="v-pills-tabContent">
+                    {% if fsc.results['pages'] is not empty  %}
+                        <div class="tab-pane fade show active" id="v-pills-paginas" role="tabpanel" aria-labelledby="v-pills-paginas-tab">
+                            <div class="card">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ i18n.trans('menu') | capitalize }}</th>
+                                                <th></th>
+                                                <th>{{ i18n.trans('page') | capitalize }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for page in fsc.results['pages'] %}
+                                                <tr class="clickableRow" data-href='{{ page.url() }}'>
+                                                    <td>
+                                                        {{ i18n.trans(page.menu) | capitalize }}{% if page.submenu %} - {{ i18n.trans(page.submenu) | capitalize }}{% endif %}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {% if page.icon %}
+                                                            <i class="fas {{ page.icon }}"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ i18n.trans(page.title) | capitalize }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
