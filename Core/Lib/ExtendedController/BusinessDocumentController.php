@@ -108,12 +108,12 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function createViews()
     {
-        /// doc tab
+        /// document tab
         $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
         $view = new BusinessDocumentView($this->getLineXMLView(), 'new', $fullModelName);
-        $this->addCustomView('Document', $view);
+        $this->addCustomView($view->getViewName(), $view);
 
-        /// edita tab
+        /// edit tab
         $viewName = 'Edit' . $this->getModelClassName();
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fa-edit');
 
@@ -193,6 +193,7 @@ abstract class BusinessDocumentController extends PanelController
             return;
         }
 
+        $documentView = $this->getLineXMLView();
         $editViewName = 'Edit' . $this->getModelClassName();
         switch ($viewName) {
             case $editViewName:
@@ -200,7 +201,7 @@ abstract class BusinessDocumentController extends PanelController
                 $this->loadCustomContactsWidget($view);
                 return;
 
-            case 'Document':
+            case $documentView:
                 return $view->loadData($iddoc);
         }
     }
@@ -272,6 +273,14 @@ abstract class BusinessDocumentController extends PanelController
         return false;
     }
 
+    /**
+     * 
+     * @param BusinessDocumentView $view
+     * @param array                $data
+     * @param array                $newLines
+     *
+     * @return string
+     */
     protected function saveDocumentResult(BusinessDocumentView &$view, array &$data, array &$newLines): string
     {
         if (!$view->model->setDate($data['fecha'], $data['hora'])) {

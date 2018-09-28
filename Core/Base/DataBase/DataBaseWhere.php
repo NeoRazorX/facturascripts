@@ -194,8 +194,8 @@ class DataBaseWhere
     {
         $result = '';
         foreach ($fields as $field) {
+            $union = empty($result) ? '' : ' OR ';
             if ($this->operator !== 'LIKE') {
-                $union = empty($result) ? '' : ' OR ';
                 $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $value;
                 continue;
             }

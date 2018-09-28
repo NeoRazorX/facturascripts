@@ -2,12 +2,39 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <script type="text/javascript">
-    documentLineData = {{ currentView.getLineData() | raw }};
-            documentUrl = '{{ currentView.model.url("edit") | raw }}';
+    businessDocViewLineData = {{ currentView.getLineData() | raw }};
+            businessDocViewFormName = "form{{ currentView.getViewName() }}";
+    businessDocViewUrl = "{{ currentView.model.url('edit') | raw }}";
+    function businessDocViewDelete(viewName) {
+        bootbox.confirm({
+            title: "{{ i18n.trans('confirm-delete') }}",
+            message: "{{ i18n.trans('are-you-sure') }}",
+            closeButton: false,
+            buttons: {
+                cancel: {
+                    label: '<i class="fas fa-times"></i> {{ i18n.trans('cancel') }}'
+                },
+                confirm: {
+                    label: '<i class="fas fa-check"></i> {{ i18n.trans('confirm') }}',
+                    className: "btn-danger"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $("#form" + viewName + " :input[name=\"action\"]").val("delete");
+                    $("#form" + viewName).submit();
+                }
+            }
+        });
+
+        return false;
+    }
 </script>
 
-<form name="f_document_primary" action="#" method="post">
+<form id="form{{ currentView.getViewName() }}" action="#" method="post">
     <input type="hidden" name="action"/>
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="{{ currentView.model.primaryColumn() }}" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input id="doc_idestado" type="hidden" name="idestado" value="{{ currentView.model.idestado }}"/>
     <div class="form-row">
@@ -28,7 +55,7 @@
                 </span>
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-primary" onclick="documentSave();">
+                    <button type="button" class="btn btn-primary" onclick="businessDocViewSave();">
                         <i class="fas fa-save" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -63,10 +90,10 @@
     <br/>
     <div class="form-row">
         <div class="col">
-            <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary');">
+            <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ currentView.getViewName() }}');">
                 <i class="fas fa-trash" aria-hidden="true"></i>
                 <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans('delete') }}</span>
-            </a>
+            </button>
         </div>
         {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
         {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, fsc.getSelectValues('Almacen')) }}
@@ -74,7 +101,7 @@
         {{ macros.customSelect('doc_codpago', 'codpago', currentView.model.codpago, fsc.getSelectValues('FormaPago')) }}
         {{ macros.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, fsc.getSelectValues('Divisa')) }}
         <div class="col text-right">
-            <button type="button" class="btn btn-sm btn-primary" onclick="documentSave();">
+            <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
                 <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
             </button>
         </div>
@@ -192,7 +219,7 @@
                     </a>
                 {% else %}
                     <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
-                            documentSave();">
+                            businessDocViewSave();">
                         {% if status.editable %}
                             <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}

@@ -16,16 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var autocompleteColumns = [];
-var documentLineData = [];
-var documentUrl = "";
+var businessDocViewAutocompleteColumns = [];
+var businessDocViewLineData = [];
+var businessDocViewFormName = "f_document_primary";
+var businessDocViewUrl = "";
 var hsTable = null;
 
 function beforeChange(changes, source) {
     // Check if the value has changed. Not Multiselection
     if (changes !== null && changes[0][2] !== changes[0][3]) {
-        for (var i = 0; i < autocompleteColumns.length; i++) {
-            if (changes[0][1] === autocompleteColumns[i]) {
+        for (var i = 0; i < businessDocViewAutocompleteColumns.length; i++) {
+            if (changes[0][1] === businessDocViewAutocompleteColumns[i]) {
                 // apply for autocomplete columns
                 if (typeof changes[0][3] === "string") {
                     changes[0][3] = changes[0][3].split(" | ", 1)[0];
@@ -52,7 +53,7 @@ function businessDocViewAutocompleteGetData(formId, field, source, fieldcode, fi
 
 function documentRecalculate() {
     var data = {};
-    $.each($("form[name=f_document_primary]").serializeArray(), function (key, value) {
+    $.each($("#" + businessDocViewFormName).serializeArray(), function (key, value) {
         data[value.name] = value.value;
     });
     data.action = "recalculate-document";
@@ -61,7 +62,7 @@ function documentRecalculate() {
 
     $.ajax({
         type: "POST",
-        url: documentUrl,
+        url: businessDocViewUrl,
         dataType: "json",
         data: data,
         success: function (results) {
@@ -70,7 +71,7 @@ function documentRecalculate() {
             var rowPos = 0;
             results.lines.forEach(function (element) {
                 var visualRow = hsTable.toVisualRow(rowPos);
-                documentLineData.rows[visualRow] = element;
+                businessDocViewLineData.rows[visualRow] = element;
                 rowPos++;
             });
 
@@ -83,11 +84,11 @@ function documentRecalculate() {
     });
 }
 
-function documentSave() {
+function businessDocViewSave() {
     $("#btn-document-save").prop("disabled", true);
 
     var data = {};
-    $.each($("form[name=f_document_primary]").serializeArray(), function (key, value) {
+    $.each($("#" + businessDocViewFormName).serializeArray(), function (key, value) {
         data[value.name] = value.value;
     });
     data.action = "save-document";
@@ -95,7 +96,7 @@ function documentSave() {
     console.log(data);
     $.ajax({
         type: "POST",
-        url: documentUrl,
+        url: businessDocViewUrl,
         dataType: "text",
         data: data,
         success: function (results) {
@@ -112,13 +113,13 @@ function documentSave() {
 
 function getGridData() {
     var rowIndex, lines = [];
-    for (var i = 0, max = documentLineData.rows.length; i < max; i++) {
+    for (var i = 0, max = businessDocViewLineData.rows.length; i < max; i++) {
         rowIndex = hsTable.toVisualRow(i);
         if (hsTable.isEmptyRow(rowIndex)) {
             continue;
         }
 
-        lines[rowIndex] = documentLineData.rows[i];
+        lines[rowIndex] = businessDocViewLineData.rows[i];
     }
     return lines;
 }
@@ -126,7 +127,7 @@ function getGridData() {
 function setAutocompletes(columns) {
     for (var key = 0; key < columns.length; key++) {
         if (columns[key].type === "autocomplete") {
-            autocompleteColumns.push(columns[key].data);
+            businessDocViewAutocompleteColumns.push(columns[key].data);
             var source = columns[key].source["source"];
             var field = columns[key].source["fieldcode"];
             var title = columns[key].source["fieldtitle"];
@@ -141,7 +142,7 @@ function setAutocompletes(columns) {
                 };
                 $.ajax({
                     type: "POST",
-                    url: documentUrl,
+                    url: businessDocViewUrl,
                     dataType: "json",
                     data: ajaxData,
                     success: function (response) {
@@ -162,10 +163,10 @@ function setAutocompletes(columns) {
 $(document).ready(function () {
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
-        data: documentLineData.rows,
-        columns: setAutocompletes(documentLineData.columns),
+        data: businessDocViewLineData.rows,
+        columns: setAutocompletes(businessDocViewLineData.columns),
         rowHeaders: true,
-        colHeaders: documentLineData.headers,
+        colHeaders: businessDocViewLineData.headers,
         stretchH: "all",
         autoWrapRow: true,
         manualRowResize: true,
@@ -197,7 +198,7 @@ $(document).ready(function () {
             source: function (request, response) {
                 $.ajax({
                     method: 'POST',
-                    url: documentUrl,
+                    url: businessDocViewUrl,
                     data: businessDocViewAutocompleteGetData(formName, field, source, fieldcode, fieldtitle, request.term),
                     dataType: 'json',
                     success: function (results) {

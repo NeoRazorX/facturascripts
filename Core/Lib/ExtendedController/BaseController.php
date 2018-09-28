@@ -114,6 +114,11 @@ abstract class BaseController extends Base\Controller
      */
     public function addCustomView($viewName, $view)
     {
+        if ($viewName !== $view->getViewName()) {
+            $this->miniLog->error('$viewName must be equals to $view->name');
+            return;
+        }
+
         $view->loadPageOptions($this->user);
         $this->views[$viewName] = $view;
         if (empty($this->active)) {
