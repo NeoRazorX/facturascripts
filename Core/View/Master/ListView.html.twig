@@ -153,10 +153,17 @@
         </button>
         <div class="dropdown-menu">
             {% for key, option in fsc.exportManager.options() %}
-                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
-                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
-                    {{ i18n.trans(option.description) }}
-                </a>
+                {% if '?' in currentView.model.url() %}
+                    <a href="{{ currentView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
+                        <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(option.description) }}
+                    </a>
+                {% else %}
+                    <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                        <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(option.description) }}
+                    </a>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
