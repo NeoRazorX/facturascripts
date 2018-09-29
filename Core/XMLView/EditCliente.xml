@@ -111,10 +111,10 @@
         </group>
         <group name="other" title="other-data" numcolumns="12">
             <column name="create-date" numcolumns="3" order="100">
-                <widget type="date" fieldname="fechaalta" icon="fa-calendar" readonly="true" />
+                <widget type="date" fieldname="fechaalta" icon="fa-calendar-alt" readonly="true" />
             </column>
             <column name="date-of-suspension" numcolumns="3" order="110">
-                <widget type="date" fieldname="fechabaja" icon="fa-calendar" />
+                <widget type="date" fieldname="fechabaja" icon="fa-calendar-alt" />
             </column>
             <column name="suspended" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="debaja" />

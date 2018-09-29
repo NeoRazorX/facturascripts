@@ -44,7 +44,7 @@
         {% if 'codproveedor' in fsc.getSubjectColumns() %}
             {{ macros.supplierSelect(i18n, 'codproveedor', 'codproveedor', currentView.model, fsc.getNewSubjectUrl()) }}
         {% endif %}
-        {{ macros.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
+        {{ macros.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fa-calendar-alt', {class: 'form-control datepicker'}) }}
         {{ macros.statusSelect(currentView.model, currentView, i18n) }}
         <div class="col">
             <div class="input-group">
