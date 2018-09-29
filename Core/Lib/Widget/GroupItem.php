@@ -120,7 +120,8 @@ class GroupItem extends VisualItem
     public function modal($model, $user, $viewName)
     {
         $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
-        $html = '<form method="post"><input type="hidden" name="activetab" value="' . $viewName . '"/>'
+        $html = '<form method="post" enctype="multipart/form-data">'
+            . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'

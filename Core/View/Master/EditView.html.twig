@@ -35,7 +35,7 @@
     {{ row.render(currentView.getViewName(), '', fsc) | raw }}
 </div>
 
-<form id="form{{ currentView.getViewName() }}" method="post">
+<form id="form{{ currentView.getViewName() }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="action" value="{{ action }}"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
