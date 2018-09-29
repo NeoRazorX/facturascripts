@@ -100,7 +100,7 @@
                 {% endif %}
                 {% if fsc.hasData %}
                     <div class="btn-group">
-                        <a href="{{ currentView.model.url() }}?action=export&option={{ fsc.exportManager.defaultOption() }}" class="btn btn-sm btn-light">
+                        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}" class="btn btn-sm btn-light">
                             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-md-inline-block">{{ i18n.trans('print') }}</span>
                         </a>
@@ -109,7 +109,7 @@
                         </button>
                         <div class="dropdown-menu">
                             {% for key, option in fsc.exportManager.options() %}
-                                <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
+                                <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
                                     <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
                                     {{ i18n.trans(option.description) }}
                                 </a>

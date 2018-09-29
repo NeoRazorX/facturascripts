@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="period" title="period" numcolumns="8" icon="fa-calendar">
+        <group name="period" title="period" numcolumns="8" icon="fa-calendar-alt">
             <column name="id" order="100" display="none">
                 <widget type="text" fieldname="idregularizacion" />
             </column>

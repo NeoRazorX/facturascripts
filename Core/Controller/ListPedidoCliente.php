@@ -57,8 +57,10 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addOrderBy('ListPedidoCliente', ['fecha'], 'date', 2);
         $this->addOrderBy('ListPedidoCliente', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListPedidoCliente', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListPedidoCliente', 'total', 'total', 'total');
+        $this->addFilterDatePicker('ListPedidoCliente', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListPedidoCliente', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListPedidoCliente', 'min-total', 'total', 'total', '>=');
+        $this->addFilterNumber('ListPedidoCliente', 'max-total', 'total', 'total', '<=');
 
         $where = [new DataBaseWhere('tipodoc', 'PedidoCliente')];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);

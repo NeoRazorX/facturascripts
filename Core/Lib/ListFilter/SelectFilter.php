@@ -71,7 +71,7 @@ class SelectFilter extends BaseFilter
     {
         return '<div class="col-sm-2">'
             . '<div class="form-group">'
-            . '<select name="' . $this->name() . '" class="form-control" onchange="this.form.submit()">'
+            . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . '>'
             . $this->getHtmlOptions()
             . '</select>'
             . '</div>'

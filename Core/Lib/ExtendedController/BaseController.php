@@ -145,7 +145,7 @@ abstract class BaseController extends Base\Controller
      */
     public function getSettings($viewName, $property)
     {
-        return $this->views[$viewName]->settings[$property];
+        return isset($this->views[$viewName]->settings[$property]) ? $this->views[$viewName]->settings[$property] : null;
     }
 
     /**

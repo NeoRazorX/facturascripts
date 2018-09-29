@@ -54,7 +54,7 @@
                 </widget>
             </column>
             <column name="review-date" numcolumns="4" order="170">
-                <widget type="date" fieldname="fecha_revision" icon="fa-calendar" />
+                <widget type="date" fieldname="fecha_revision" icon="fa-calendar-alt" />
             </column>
         </group>
     </columns>

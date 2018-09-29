@@ -76,11 +76,11 @@ class MegaSearch extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        $this->query = mb_strtolower($this->request->request->get('query', ''), 'UTF8');
         $this->results = ['pages' => []];
         $this->sections = [];
 
+        $query = $this->request->request->get('query', '');
+        $this->query = mb_strtolower($query, 'UTF8');
         if ($this->query !== '') {
             $this->pageSearch();
         }

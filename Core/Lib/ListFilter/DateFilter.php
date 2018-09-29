@@ -69,10 +69,18 @@ class DateFilter extends BaseFilter
      */
     public function render()
     {
+        $label = static::$i18n->trans($this->label);
         return '<div class="col-sm-2">'
             . '<div class="form-group">'
-            . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control datepicker" placeholder="'
-            . static::$i18n->trans($this->label) . '" autocomplete="off"/>'
+            . '<div class="input-group">'
+            . '<span class="input-group-prepend" title="' . $label . '">'
+            . '<span class="input-group-text">'
+            . '<i class="far fa-calendar-alt" aria-hidden="true"></i>'
+            . '</span>'
+            . '</span>'
+            . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control datepicker"'
+            . ' placeholder="' . $label . '" autocomplete="off"' . $this->onChange() . '/>'
+            . '</div>'
             . '</div>'
             . '</div>';
     }

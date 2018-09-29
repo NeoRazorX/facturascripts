@@ -229,10 +229,18 @@ class Variante extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        if ($type === 'new') {
-            return 'EditProducto';
+        switch ($type) {
+            case 'edit':
+                return is_null($this->idproducto) ? 'EditProducto' : 'EditProducto?code=' . $this->idproducto;
+
+            case 'list':
+                return $list . 'Producto';
+
+            case 'new':
+                return 'EditProducto';
         }
 
-        return parent::url($type, 'ListProducto?activetab=List');
+        /// default
+        return empty($this->idproducto) ? $list . 'Producto' : 'EditProducto?code=' . $this->idproducto;
     }
 }

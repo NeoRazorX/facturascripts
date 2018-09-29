@@ -32,19 +32,19 @@ function widgetAutocompleteGetData(formId, field, source, fieldcode, fieldtitle,
 }
 
 $(document).ready(function () {
-    $('.widget-autocomplete').each(function () {
-        var field = $(this).attr('data-field');
-        var source = $(this).attr('data-source');
-        var fieldcode = $(this).attr('data-fieldcode');
-        var fieldtitle = $(this).attr('data-fieldtitle');
-        var formId = $(this).closest('form').attr('id');
+    $(".widget-autocomplete").each(function () {
+        var field = $(this).attr("data-field");
+        var source = $(this).attr("data-source");
+        var fieldcode = $(this).attr("data-fieldcode");
+        var fieldtitle = $(this).attr("data-fieldtitle");
+        var formId = $(this).closest("form").attr("id");
         $(this).autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    method: 'POST',
+                    method: "POST",
                     url: window.location.href,
                     data: widgetAutocompleteGetData(formId, field, source, fieldcode, fieldtitle, request.term),
-                    dataType: 'json',
+                    dataType: "json",
                     success: function (results) {
                         var values = [];
                         results.forEach(function (element) {
@@ -53,13 +53,13 @@ $(document).ready(function () {
                         response(values);
                     },
                     error: function (msg) {
-                        alert(msg.status + ' ' + msg.responseText);
+                        alert(msg.status + " " + msg.responseText);
                     }
                 });
             },
             select: function (event, ui) {
                 $("form[id=" + formId + "] input[name=" + field + "]").val(ui.item.key);
-                ui.item.value = ui.item.value.split(' | ')[1];
+                ui.item.value = ui.item.value.split(" | ")[1];
             }
         });
     });

@@ -60,12 +60,28 @@ class WidgetAutocomplete extends WidgetSelect
         $inputHtml = $this->inputHtml();
         $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
 
+        if ('' === $this->value || null === $this->value) {
+            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+                . '<div class="form-group">'
+                . $labelHtml
+                . '<div class="input-group">'
+                . '<div class="input-group-prepend">'
+                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
+                . '</div>'
+                . $inputHtml
+                . '</div>'
+                . $descriptionHtml
+                . '</div>';
+        }
+
         return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
             . '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'
             . '<div class="input-group-prepend">'
-            . '<span class="input-group-text"><i class="far fa-keyboard fa-fw"></i></span>'
+            . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
+            . '<i class = "fas fa-times" aria-hidden = "true"></i>'
+            . '</button>'
             . '</div>'
             . $inputHtml
             . '</div>'

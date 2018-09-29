@@ -57,8 +57,10 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranCliente', ['fecha'], 'date', 2);
         $this->addOrderBy('ListAlbaranCliente', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListAlbaranCliente', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListAlbaranCliente', 'total', 'total', 'total');
+        $this->addFilterDatePicker('ListAlbaranCliente', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListAlbaranCliente', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListAlbaranCliente', 'min-total', 'total', 'total', '>=');
+        $this->addFilterNumber('ListAlbaranCliente', 'max-total', 'total', 'total', '<=');
 
         $where = [new DataBaseWhere('tipodoc', 'AlbaranCliente')];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);

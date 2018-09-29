@@ -104,12 +104,12 @@ class AutocompleteFilter extends BaseFilter
         if ('' === $this->value || null === $this->value) {
             $html .= '<span class="input-group-prepend" title="' . $label . '">'
                 . '<span class="input-group-text">'
-                . '<i class="far fa-keyboard" aria-hidden="true"></i>'
+                . '<i class="fas fa-search" aria-hidden="true"></i>'
                 . '</span>'
                 . '</span>';
         } else {
             $html .= '<span class="input-group-prepend" title="' . $label . '">'
-                . '<button class="btn btn-warning" type="button" onclick="">'
+                . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.submit();">'
                 . '<i class = "fas fa-times" aria-hidden = "true"></i>'
                 . '</button>'
                 . '</span>';

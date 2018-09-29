@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Base\MiniLog;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetFile
@@ -40,6 +42,41 @@ class WidgetFile extends BaseWidget
     {
         $description = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]) . ' ' . $description;
         return parent::edit($model, $title, $description);
+    }
+
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $minilog = new MiniLog();
+
+        // get file uploads
+        foreach ($request->files->all() as $key => $uploadFile) {
+            if ($key != $this->fieldname) {
+                continue;
+            } elseif (is_null($uploadFile)) {
+                continue;
+            } elseif (!$uploadFile->isValid()) {
+                $minilog->error($uploadFile->getErrorMessage());
+                continue;
+            }
+
+            /// exclude php files
+            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+                $minilog->error($this->i18n->trans('php-files-blocked'));
+                continue;
+            }
+
+            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+                $model->{$this->fieldname} = $uploadFile->getClientOriginalName();
+                break;
+            }
+            
+            $minilog->error('file-not-found');
+        }
     }
 
     /**
