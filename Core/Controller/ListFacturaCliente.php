@@ -57,8 +57,10 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addOrderBy('ListFacturaCliente', ['fecha'], 'date', 2);
         $this->addOrderBy('ListFacturaCliente', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListFacturaCliente', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListFacturaCliente', 'total', 'total', 'total');
+        $this->addFilterDatePicker('ListFacturaCliente', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListFacturaCliente', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListFacturaCliente', 'min-total', 'total', 'total', '>=');
+        $this->addFilterNumber('ListFacturaCliente', 'max-total', 'total', 'total', '<=');
 
         $where = [new DataBaseWhere('tipodoc', 'FacturaCliente')];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);

@@ -57,8 +57,10 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListFacturaProveedor', ['fecha'], 'date', 2);
         $this->addOrderBy('ListFacturaProveedor', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListFacturaProveedor', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListFacturaProveedor', 'total', 'total', 'total');
+        $this->addFilterDatePicker('ListFacturaProveedor', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListFacturaProveedor', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListFacturaProveedor', 'min-total', 'total', 'total', '>=');
+        $this->addFilterNumber('ListFacturaProveedor', 'max-total', 'total', 'total', '<=');
 
         $where = [new DataBaseWhere('tipodoc', 'FacturaProveedor')];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);

@@ -55,8 +55,10 @@ class ListAsiento extends ExtendedController\ListController
         $this->addOrderBy('ListAsiento', ['numero'], 'number');
         $this->addOrderBy('ListAsiento', ['importe'], 'ammount');
 
-        $this->addFilterDatePicker('ListAsiento', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListAsiento', 'importe', 'amount', 'importe');
+        $this->addFilterDatePicker('ListAsiento', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListAsiento', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');
+        $this->addFilterNumber('ListAsiento', 'max-total', 'amount', 'importe', '<=');
 
         $selectValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->addFilterSelect('ListAsiento', 'codejercicio', 'exercise', 'codejercicio', $selectValues);
@@ -64,7 +66,7 @@ class ListAsiento extends ExtendedController\ListController
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal');
+        $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal', '=');
 
         /// concepts
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');

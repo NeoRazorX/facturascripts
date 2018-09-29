@@ -36,6 +36,12 @@ abstract class BaseFilter
 
     /**
      *
+     * @var bool
+     */
+    public $autoSubmit = true;
+
+    /**
+     *
      * @var string
      */
     public $field;
@@ -101,5 +107,14 @@ abstract class BaseFilter
     public function name()
     {
         return 'filter' . $this->key;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function onChange()
+    {
+        return $this->autoSubmit ? ' onchange="this.form.submit()"' : '';
     }
 }

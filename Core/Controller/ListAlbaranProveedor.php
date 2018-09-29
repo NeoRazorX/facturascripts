@@ -56,8 +56,10 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranProveedor', ['fecha'], 'date', 2);
         $this->addOrderBy('ListAlbaranProveedor', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListAlbaranProveedor', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total', 'total');
+        $this->addFilterDatePicker('ListAlbaranProveedor', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListAlbaranProveedor', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListAlbaranProveedor', 'min-total', 'total', 'total', '>=');
+        $this->addFilterNumber('ListAlbaranProveedor', 'max-total', 'total', 'total', '<=');
 
         $where = [new DataBaseWhere('tipodoc', 'AlbaranProveedor')];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);

@@ -57,8 +57,10 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);
         $this->addOrderBy('ListPresupuestoProveedor', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListPresupuestoProveedor', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListPresupuestoProveedor', 'total', 'total', 'total');
+        $this->addFilterDatePicker('ListPresupuestoProveedor', 'from-date', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListPresupuestoProveedor', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterNumber('ListPresupuestoProveedor', 'min-total', 'total', 'total', '>=');
+        $this->addFilterNumber('ListPresupuestoProveedor', 'max-total', 'total', 'total', '<=');
 
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoProveedor')];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);

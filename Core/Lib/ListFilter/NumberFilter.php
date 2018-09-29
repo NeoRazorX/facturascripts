@@ -72,7 +72,7 @@ class NumberFilter extends BaseFilter
         return '<div class="col-sm-2">'
             . '<div class="form-group">'
             . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control" placeholder="'
-            . $this->operation . ' ' . static::$i18n->trans($this->label) . '" autocomplete="off"/>'
+            . $this->operation . ' ' . static::$i18n->trans($this->label) . '" autocomplete="off"' . $this->onChange() . '/>'
             . '</div>'
             . '</div>';
     }
