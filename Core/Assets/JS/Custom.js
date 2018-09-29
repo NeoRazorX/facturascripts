@@ -22,7 +22,7 @@ $(document).ready(function () {
         firstDay: 1,
         beforeShow: function () {
             setTimeout(function () {
-                $('.ui-datepicker').css('z-index', 99999999999999);
+                $(".ui-datepicker").css("z-index", 99999999999999);
             }, 0);
         }
     });

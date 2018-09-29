@@ -27,6 +27,6 @@
  */
 function insertRecord() {
     let component = $("input[name='component']").val();
-    document.insertForm.action = url + '?code=&component=' + component;
+    document.insertForm.action = url + "?code=&component=" + component;
     document.insertForm.submit();
 }
