@@ -35,13 +35,14 @@ class WidgetFile extends BaseWidget
      * @param object $model
      * @param string $title
      * @param string $description
+     * @param string $titleurl
      *
      * @return string
      */
-    public function edit($model, $title = '', $description = '')
+    public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $description = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]) . ' ' . $description;
-        return parent::edit($model, $title, $description);
+        return parent::edit($model, $title, $description, $titleurl);
     }
 
     /**
@@ -74,7 +75,7 @@ class WidgetFile extends BaseWidget
                 $model->{$this->fieldname} = $uploadFile->getClientOriginalName();
                 break;
             }
-            
+
             $minilog->error('file-not-found');
         }
     }

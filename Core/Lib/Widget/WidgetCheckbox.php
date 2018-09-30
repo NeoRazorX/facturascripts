@@ -33,10 +33,11 @@ class WidgetCheckbox extends BaseWidget
      * @param object $model
      * @param string $title
      * @param string $description
+     * @param string $titleurl
      *
      * @return string
      */
-    public function edit($model, $title = '', $description = '')
+    public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
         $checked = $this->value ? ' checked=""' : '';

@@ -31,15 +31,16 @@ class WidgetTextarea extends WidgetText
      * @param object $model
      * @param string $title
      * @param string $description
+     * @param string $titleurl
      *
      * @return string
      */
-    public function edit($model, $title = '', $description = '')
+    public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
+        $labelHtml = '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         return '<div class="form-group">'
             . $labelHtml

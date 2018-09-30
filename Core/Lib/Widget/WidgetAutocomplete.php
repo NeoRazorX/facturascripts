@@ -50,15 +50,16 @@ class WidgetAutocomplete extends WidgetSelect
      * @param object $model
      * @param string $title
      * @param string $description
+     * @param string $titleurl
      *
      * @return string
      */
-    public function edit($model, $title = '', $description = '')
+    public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
+        $labelHtml = '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if ('' === $this->value || null === $this->value) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'

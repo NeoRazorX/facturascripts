@@ -103,15 +103,16 @@ class BaseWidget extends VisualItem
      * @param object $model
      * @param string $title
      * @param string $description
+     * @param string $titleurl
      *
      * @return string
      */
-    public function edit($model, $title = '', $description = '')
+    public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label>' . static::$i18n->trans($title) . '</label>';
+        $labelHtml = '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
             return '<div class="form-group">'
@@ -243,13 +244,14 @@ class BaseWidget extends VisualItem
     /**
      *
      * @param string $inside
+     * @param string $titleurl
      *
      * @return string
      */
-    protected function onclickHtml($inside)
+    protected function onclickHtml($inside, $titleurl = '')
     {
         if (empty($this->onclick) || is_null($this->value)) {
-            return $inside;
+            return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
         return '<a href="' . $this->onclick . '?code=' . rawurlencode($this->value) . '" class="cancelClickable">' . $inside . '</a>';

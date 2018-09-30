@@ -20,6 +20,7 @@
  * Initial description for the controller EditCliente
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 
 <view>
@@ -48,17 +49,17 @@
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="group" numcolumns="3" order="100">
-                <widget type="select" fieldname="codgrupo">
+                <widget type="select" fieldname="codgrupo" onclick="EditGrupo">
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="serie" numcolumns="3" order="110">
-                <widget type="select" fieldname="codserie">
+                <widget type="select" fieldname="codserie" onclick="EditSerie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="120">
-                <widget type="select" fieldname="codpago">
+                <widget type="select" fieldname="codpago" onclick="EditFormaPago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
@@ -68,8 +69,8 @@
             <column name="subaccount" numcolumns="3" order="140">
                 <widget type="text" fieldname="codsubcuenta" />
             </column>
-            <column name="agent" numcolumns="3" titleurl="ListUser" order="150">
-                <widget type="select" fieldname="codagente">
+            <column name="agent" numcolumns="3" titleurl="ListAgente" order="150">
+                <widget type="select" fieldname="codagente" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>
             </column>
@@ -99,12 +100,12 @@
                 <widget type="email" fieldname="email" icon="fa-envelope" />
             </column>
             <column name="default-billing-address" numcolumns="6" order="140">
-                <widget type="select" fieldname="idcontactofact">
+                <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>
             <column name="default-shipping-address" numcolumns="6" order="150">
-                <widget type="select" fieldname="idcontactoenv">
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>

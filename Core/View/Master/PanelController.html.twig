@@ -118,7 +118,7 @@
                     </div>
                 {% endif %}
             </div>
-            {# -- Top right buttons -- #}
+            {# -- Top right text -- #}
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">
                     {{ fsc.title }}<br/>
@@ -129,6 +129,7 @@
                     {% endif %}
                 </h1>
             </div>
+            {# -- Top right icon -- #}
             <div class="col-md-1 text-center">
                 <div class="d-none d-md-inline-block">
                     <i class="fas {{ pageData.icon }} fa-3x" aria-hidden="true"></i>
@@ -159,7 +160,6 @@
                     </div>
                 </div>
             {% endif %}
-
             {# -- Right Panel -- #}
             {% set rightPanelClass = (fsc.views | length > 1) ? 'col-lg-10' : 'col' %}
             <div class="{{ rightPanelClass }}">

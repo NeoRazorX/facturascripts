@@ -115,7 +115,7 @@ class ColumnItem extends VisualItem
 
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        return '<div' . $divID . ' class="' . $divClass . '">' . $this->widget->edit($model, $this->title, $this->description) . '</div>';
+        return '<div' . $divID . ' class="' . $divClass . '">' . $this->widget->edit($model, $this->title, $this->description, $this->titleurl) . '</div>';
     }
 
     /**

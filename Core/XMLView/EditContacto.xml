@@ -56,12 +56,12 @@
                 <widget type="text" fieldname="telefono2" icon="fa-mobile" />
             </column>
             <column name="customer" numcolumns="3" order="190">
-                <widget type="autocomplete" fieldname="codcliente">
+                <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
                     <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="supplier" numcolumns="3" order="200">
-                <widget type="autocomplete" fieldname="codproveedor">
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
