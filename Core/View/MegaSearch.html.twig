@@ -1,11 +1,8 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('Dinamic/Assets/JS/MegaSearch.js') }}"></script>
-{% endblock %}
-
 {% block body %}
+    {% import _self as macros %}
+
     {% for section in fsc.sections %}
         <script type="text/javascript">
             $(document).ready(function () {
@@ -22,7 +19,7 @@
                         <div class="input-group">
                             <input type="text" name="query" value="{{ fsc.query }}" class="form-control" autocomplete="off" autofocus=""/>
                             <span class="input-group-append">
-                                <button type="submit" class="btn btn-info">
+                                <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-search" aria-hidden="true"></i>
                                 </button>
                             </span>
@@ -33,55 +30,66 @@
         </div>
         <div class="row">
             <div class="col-3 col-xl-2">
-                {% if fsc.results['pages'] is empty  %}
-                    <div id="no-data-msg" class="alert alert-warning">{{ i18n.trans('no-data') }}</div>
-                {% endif %}
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                    {% if fsc.results['pages'] is not empty  %}
-                        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
-                            <span class='badge badge-secondary float-right'>{{ fsc.results['pages']|length }}</span>
-                            <i class="fas fa-mouse-pointer fa-fw"></i>
-                            {{ i18n.trans('pages') | capitalize }}
+                    {% for key, result in fsc.results  %}
+                        {% set active = (loop.index == 1) ? ' active' : '' %}
+                        <a class="nav-link{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-expanded="true">
+                            <span class='badge badge-secondary float-right'>{{ result.results | length }}</span>
+                            <i class="fas {{ result.icon }} fa-fw"></i>
+                            {{ i18n.trans(result.title) | capitalize }}
                         </a>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
             <div class="col-9 col-xl-10">
                 <div class="tab-content" id="v-pills-tabContent">
-                    {% if fsc.results['pages'] is not empty  %}
-                        <div class="tab-pane fade show active" id="v-pills-paginas" role="tabpanel" aria-labelledby="v-pills-paginas-tab">
+                    {% for key, result in fsc.results  %}
+                        {% set active = (loop.index == 1) ? ' show active' : '' %}
+                        <div class="tab-pane fade{{ active }}" id="v-pills-{{ key }}" role="tabpanel" aria-labelledby="v-pills-{{ key }}-tab">
                             <div class="card">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ i18n.trans('menu') | capitalize }}</th>
-                                                <th></th>
-                                                <th>{{ i18n.trans('page') | capitalize }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for page in fsc.results['pages'] %}
-                                                <tr class="clickableRow" data-href='{{ page.url() }}'>
-                                                    <td>
-                                                        {{ i18n.trans(page.menu) | capitalize }}{% if page.submenu %} - {{ i18n.trans(page.submenu) | capitalize }}{% endif %}
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {% if page.icon %}
-                                                            <i class="fas {{ page.icon }}"></i>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>{{ i18n.trans(page.title) | capitalize }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                {{ macros.showSearchResults(result, i18n) }}
                             </div>
                         </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
+
+{% macro showSearchResults(result, i18n) %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    {% for key, column in result.columns %}
+                        {% if key == 'icon' %}
+                            <th>
+                            </th>
+                        {% else %}
+                            <th>
+                                {{ i18n.trans(column) | capitalize }}
+                            </th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in result.results %}
+                    {% set link = line.link ? line.link : '#' %}
+                    <tr class="clickableRow" data-href="{{ link }}">
+                        {% for key, column in result.columns %}
+                            {% if key == 'icon' %}
+                                <td class="text-center">
+                                    <i class="fas {{ line[key] }} fa-fw"></i>
+                                </td>
+                            {% elseif key != 'link' %}
+                                <td>{{ line[key] }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}
