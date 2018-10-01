@@ -87,24 +87,24 @@
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
-            <column name="phone" numcolumns="2" order="100">
+            <column name="phone" numcolumns="3" order="100">
                 <widget type="text" fieldname="telefono1" />
             </column>
-            <column name="phone2" numcolumns="2" order="110">
+            <column name="phone2" numcolumns="3" order="110">
                 <widget type="text" fieldname="telefono2" />
             </column>
-            <column name="fax" numcolumns="2" order="120">
+            <column name="fax" numcolumns="3" order="120">
                 <widget type="text" fieldname="fax" />
             </column>
             <column name="email" numcolumns="3" order="130">
                 <widget type="email" fieldname="email" icon="fa-envelope" />
             </column>
-            <column name="default-billing-address" numcolumns="6" order="140">
+            <column name="default-billing-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="140">
                 <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>
-            <column name="default-shipping-address" numcolumns="6" order="150">
+            <column name="default-shipping-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="150">
                 <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
                     <values></values>
                 </widget>

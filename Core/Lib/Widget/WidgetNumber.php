@@ -30,10 +30,17 @@ class WidgetNumber extends BaseWidget
 {
 
     /**
+     * Indicates the number of decimals to use.
      *
      * @var NumberTools
      */
     protected static $numberTools;
+
+    /**
+     *
+     * @var int
+     */
+    protected $decimal;
 
     /**
      * Indicates the min value
@@ -67,6 +74,7 @@ class WidgetNumber extends BaseWidget
         }
 
         parent::__construct($data);
+        $this->decimal = (int) ($data['decimal'] ?? FS_NF0);
         $this->min = $data['min'] ?? 0;
         $this->max = $data['max'] ?? 0;
         $this->step = $data['step'] ?? 'any';
@@ -103,7 +111,7 @@ class WidgetNumber extends BaseWidget
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : static::$numberTools->format($this->value);
+        return is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal);
     }
 
     /**
