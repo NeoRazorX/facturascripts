@@ -20,6 +20,7 @@
  * Initial description for the controller EditEstadoDocumento
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 
 <view>
@@ -44,7 +45,7 @@
                 </widget>
             </column>
             <column name="update-stock" order="130">
-                <widget type="select" fieldname="actualizastock" translate="true">
+                <widget type="select" fieldname="actualizastock" translate="true" required="true">
                     <values title="book">-2</values>
                     <values title="subtract">-1</values>
                     <values title="do-nothing">0</values>
