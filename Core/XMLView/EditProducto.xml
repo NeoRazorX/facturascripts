@@ -32,12 +32,12 @@
             <column name="referencia" title="reference" order="100">
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />
             </column>
-            <column name="codfabricante" title="manufacturer-code" order="110">
+            <column name="codfabricante" title="manufacturer" order="110">
                 <widget type="select" fieldname="codfabricante" onclick="EditFabricante">
                     <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="codfamilia" title="family-code" order="120">
+            <column name="codfamilia" title="family" order="120">
                 <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>

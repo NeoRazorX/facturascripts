@@ -95,7 +95,7 @@ class EditProducto extends ExtendedController\EditController
                 $code = $this->request->get('code');
                 $view->loadData($code);
                 if ($view->model->nostock) {
-                    unset($this->views['EditStock']);
+                    $this->setSettings('EditStock', 'active', false);
                 } else {
                     $this->loadCustomStockWidget();
                 }
