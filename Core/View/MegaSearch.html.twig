@@ -77,7 +77,7 @@
             <tbody>
                 {% for line in result.results %}
                     {% set link = line.link ? line.link : '#' %}
-                    <tr class="clickableRow" data-href="{{ link }}">
+                    <tr class="clickableRow" data-href="{{ link }}" data-target="_blank">
                         {% for key, column in result.columns %}
                             {% if key == 'icon' %}
                                 <td class="text-center">
