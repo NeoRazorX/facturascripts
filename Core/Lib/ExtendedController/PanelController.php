@@ -62,6 +62,15 @@ abstract class PanelController extends BaseController
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        return '';
+    }
+
+    /**
      * Return the value for a field in the model of the view.
      *
      * @param string $viewName

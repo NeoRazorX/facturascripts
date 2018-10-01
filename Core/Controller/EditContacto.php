@@ -25,8 +25,27 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class EditContacto extends ExtendedController\PanelController
+class EditContacto extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        $email = $this->getViewModelValue('EditContacto', 'email');
+        return empty($email) ? '' : $this->getGravatar($email);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Contacto';
+    }
 
     /**
      * Returns basic page attributes
@@ -45,26 +64,15 @@ class EditContacto extends ExtendedController\PanelController
     }
 
     /**
-     * Load Views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('EditContacto', 'Contacto', 'contact');
-    }
-
-    /**
-     * Load view data procedure
+     * Return the gravatar url to show email avatar.
      *
-     * @param string                      $keyView
-     * @param ExtendedController\EditView $view
+     * @param string $email
+     * @param int    $size
+     *
+     * @return string
      */
-    protected function loadData($keyView, $view)
+    protected function getGravatar(string $email, int $size = 80): string
     {
-        switch ($keyView) {
-            case 'EditContacto':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-        }
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=' . $size;
     }
 }

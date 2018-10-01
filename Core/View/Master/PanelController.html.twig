@@ -132,7 +132,12 @@
             {# -- Top right icon -- #}
             <div class="col-md-1 text-center">
                 <div class="d-none d-md-inline-block">
-                    <i class="fas {{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+                    {% set image = fsc.getImageUrl() %}
+                    {% if image is empty %}
+                        <i class="fas {{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+                    {% else %}
+                        <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail" style="margin-bottom: 10px;"/>
+                    {% endif %}
                 </div>
             </div>
         </div>
