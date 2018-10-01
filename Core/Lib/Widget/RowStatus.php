@@ -64,17 +64,23 @@ class RowStatus extends VisualItem
             $apply = false;
             switch ($opt['text'][0]) {
                 case '<':
-                    $matchValue = substr($opt['text'], 1) ?: '';
+                    $matchValue = substr($opt['text'], 1);
                     $apply = ((float) $value < (float) $matchValue);
                     break;
 
                 case '>':
-                    $matchValue = substr($opt['text'], 1) ?: '';
+                    $matchValue = substr($opt['text'], 1);
                     $apply = ((float) $value > (float) $matchValue);
                     break;
 
+                case '!':
+                    $matchValue = substr($opt['text'], 1);
+                    $apply = ($matchValue != $value);
+                    break;
+
                 default:
-                    $apply = ($opt['text'] == $value);
+                    $matchValue = $opt['text'] ?? '';
+                    $apply = ($matchValue == $value);
                     break;
             }
 
