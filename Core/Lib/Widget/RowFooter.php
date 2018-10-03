@@ -128,6 +128,7 @@ class RowFooter extends VisualItem
 
         if (isset($group['html'])) {
             $webRender = new WebRender();
+            $webRender->loadPluginFolders();
             $html .= $webRender->render($group['html'], ['fsc' => $controller]);
         }
 
