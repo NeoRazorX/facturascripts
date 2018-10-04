@@ -29,8 +29,16 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Ramiro Salvador Mamani <ramiro@solsun.pe>
  * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  */
-class EditAtributo extends ExtendedController\PanelController
+class EditAtributo extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'Atributo';
+    }
 
     /**
      * Returns basic page attributes
@@ -53,7 +61,7 @@ class EditAtributo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditAtributo', 'Atributo', 'attribute');
+        parent::createViews();
         $this->addEditListView('EditAtributoValor', 'AtributoValor', 'attribute-values');
         $this->setTabsPosition('bottom');
     }
