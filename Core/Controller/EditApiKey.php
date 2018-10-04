@@ -27,8 +27,16 @@ use FacturaScripts\Core\Model;
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditApiKey extends ExtendedController\PanelController
+class EditApiKey extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'ApiKey';
+    }
 
     /**
      * Returns basic page attributes.
@@ -68,7 +76,7 @@ class EditApiKey extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditApiKey', 'ApiKey', 'api-key', 'fa-key');
+        parent::createViews();
         $this->addEditListView('EditApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
     }
 

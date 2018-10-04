@@ -26,8 +26,16 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditBalance extends ExtendedController\PanelController
+class EditBalance extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'Balance';
+    }
 
     /**
      * Returns basic page attributes
@@ -50,7 +58,7 @@ class EditBalance extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditBalance', 'Balance', 'balance');
+        parent::createViews();
         $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account');
         $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated');
     }
