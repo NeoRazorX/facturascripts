@@ -26,8 +26,16 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Raul
  */
-class EditAgente extends ExtendedController\PanelController
+class EditAgente extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     */
+    public function getModelClassName()
+    {
+        return 'Agente';
+    }
 
     /**
      * Returns basic page attributes
@@ -50,7 +58,7 @@ class EditAgente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditAgente', 'Agente', 'agent');
+        parent::createViews();
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-copy');
