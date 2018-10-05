@@ -41,7 +41,7 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoice';
         $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -53,7 +53,7 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('EditAsiento', 'asiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('EditAsiento', 'asiento', 'accounting-entries', 'fas fa-balance-scale');
     }
 
     /**

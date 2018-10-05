@@ -39,7 +39,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-notes';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fa-copy');
+        $this->addView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListAlbaranProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListAlbaranProveedor', ['fecha'], 'date', 2);
@@ -83,7 +83,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
 
     protected function createViewLines()
     {
-        $this->addView('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'lines', 'fa-list');
+        $this->addView('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'lines', 'fas fa-list');
         $this->addSearchFields('ListLineaAlbaranProveedor', ['referencia', 'descripcion']);
         $this->addOrderBy('ListLineaAlbaranProveedor', ['referencia'], 'reference');
         $this->addOrderBy('ListLineaAlbaranProveedor', ['cantidad'], 'quantity');

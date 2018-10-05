@@ -47,7 +47,7 @@ class EditBalance extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'balance';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-clipboard';
+        $pagedata['icon'] = 'fas fa-clipboard';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

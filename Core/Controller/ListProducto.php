@@ -37,7 +37,7 @@ class ListProducto extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'products';
-        $pagedata['icon'] = 'fa-cubes';
+        $pagedata['icon'] = 'fas fa-cubes';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -55,7 +55,7 @@ class ListProducto extends ExtendedController\ListController
 
     private function createViewProducto()
     {
-        $this->addView('ListProducto', 'Producto', 'products', 'fa-cubes');
+        $this->addView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
         $this->addSearchFields('ListProducto', ['referencia', 'descripcion', 'observaciones']);
         $this->addOrderBy('ListProducto', ['referencia'], 'reference');
         $this->addOrderBy('ListProducto', ['descripcion'], 'description');
@@ -81,7 +81,7 @@ class ListProducto extends ExtendedController\ListController
 
     private function createViewVariante()
     {
-        $this->addView('ListVariante', 'Variante', 'Variants', 'fa-code-branch');
+        $this->addView('ListVariante', 'Variante', 'Variants', 'fas fa-code-branch');
         $this->addSearchFields('ListVariante', ['referencia', 'codbarras']);
         $this->addOrderBy('ListVariante', ['referencia'], 'reference');
         $this->addOrderBy('ListVariante', ['codbarras'], 'barcode');
@@ -96,7 +96,7 @@ class ListProducto extends ExtendedController\ListController
 
     private function createViewStock()
     {
-        $this->addView('ListStock', 'Stock', 'stock', 'fa-tasks');
+        $this->addView('ListStock', 'Stock', 'stock', 'fas fa-tasks');
         $this->addSearchFields('ListStock', ['referencia']);
         $this->addOrderBy('ListStock', ['referencia'], 'reference');
         $this->addOrderBy('ListStock', ['cantidad'], 'quantity');

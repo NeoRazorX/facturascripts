@@ -78,7 +78,7 @@ class DocumentStitcher extends Base\Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'sales';
         $pageData['title'] = 'group-or-split';
-        $pageData['icon'] = 'fa-thumb-tack';
+        $pageData['icon'] = 'fas fa-thumb-tack';
         $pageData['showonmenu'] = false;
 
         return $pageData;

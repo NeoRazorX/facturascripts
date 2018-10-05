@@ -69,7 +69,7 @@
             <group name="actions">
                 <button type="action" label="create-accounting-entry"
                         color="danger" action="create-accounting-entry"
-                        hint="hint-create-accounting-entry" icon="fa-balance-scale" />
+                        hint="hint-create-accounting-entry" icon="fas fa-balance-scale" />
             </group>
             <group name="summary" html="Block/PartidaImpuestoResumen.html.twig"></group>
         </row>

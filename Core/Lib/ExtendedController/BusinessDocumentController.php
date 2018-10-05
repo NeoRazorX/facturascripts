@@ -115,7 +115,7 @@ abstract class BusinessDocumentController extends PanelController
 
         /// edit tab
         $viewName = 'Edit' . $this->getModelClassName();
-        $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fa-edit');
+        $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fas fa-edit');
 
         /// tabs on top
         $this->setTabsPosition('top');

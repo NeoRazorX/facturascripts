@@ -40,7 +40,7 @@ class ListLogMessage extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'logs';
-        $pagedata['icon'] = 'fa-file-alt';
+        $pagedata['icon'] = 'fas fa-file-alt';
         $pagedata['menu'] = 'admin';
         $pagedata['submenu'] = 'control-panel';
 
@@ -63,7 +63,7 @@ class ListLogMessage extends ExtendedController\ListController
      */
     private function createCronJobView()
     {
-        $this->addView('ListCronJob', 'CronJob', 'crons', 'fa-cogs');
+        $this->addView('ListCronJob', 'CronJob', 'crons', 'fas fa-cogs');
         $this->addSearchFields('ListCronJob', ['jobname', 'pluginname']);
         $this->addOrderBy('ListCronJob', ['jobname'], 'jobname');
         $this->addOrderBy('ListCronJob', ['pluginname'], 'pluginname');
@@ -79,7 +79,7 @@ class ListLogMessage extends ExtendedController\ListController
      */
     private function createLogMessageView()
     {
-        $this->addView('ListLogMessage', 'LogMessage', 'logs', 'fa-file-alt');
+        $this->addView('ListLogMessage', 'LogMessage', 'logs', 'fas fa-file-alt');
         $this->addSearchFields('ListLogMessage', ['message', 'uri']);
         $this->addOrderBy('ListLogMessage', ['time'], 'date', 2);
         $this->addOrderBy('ListLogMessage', ['level'], 'level');

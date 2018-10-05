@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
             <column name="reference" numcolumns="4" order="120">
-                <widget type="text" fieldname="referencia" icon="fa-key" />
+                <widget type="text" fieldname="referencia" icon="fas fa-key" />
             </column>
             <column name="attribute-value-1" numcolumns="4" order="130">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
@@ -45,7 +45,7 @@
                 </widget>
             </column>
             <column name="barcode" numcolumns="3" order="150">
-                <widget type="text" fieldname="codbarras" icon="fa-barcode" />
+                <widget type="text" fieldname="codbarras" icon="fas fa-barcode" />
             </column>
             <column name="price" numcolumns="3" order="160">
                 <widget type="money" decimal="2" fieldname="precio" />

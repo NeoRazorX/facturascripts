@@ -41,7 +41,7 @@ class EditFamilia extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'family';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['icon'] = 'fas fa-object-group';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -53,8 +53,8 @@ class EditFamilia extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditFamilia', 'Familia', 'family');
-        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down-alt');
-        $this->addListView('ListProducto', 'Producto', 'products', 'fa-cubes');
+        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fas fa-level-down-alt');
+        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
     }
 
     /**

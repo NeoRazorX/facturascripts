@@ -46,7 +46,7 @@ class EditConceptoPartida extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'predefined-concepts';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-indent';
+        $pagedata['icon'] = 'fas fa-indent';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

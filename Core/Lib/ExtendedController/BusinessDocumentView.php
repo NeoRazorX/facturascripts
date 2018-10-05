@@ -54,7 +54,7 @@ class BusinessDocumentView extends BaseView
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $icon = 'fa-file-alt')
+    public function __construct($name, $title, $modelName, $icon = 'fas fa-file-alt')
     {
         parent::__construct($name, $title, $modelName, $icon);
 

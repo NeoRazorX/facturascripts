@@ -67,33 +67,33 @@
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
-        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fa-info-circle fa-lg">
+        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fas fa-info-circle fa-lg">
             <column name="decimals" numcolumns="3" order="100">
-                <widget type="select" fieldname="decimals" required="true" icon="fa-sort-numeric-up">
+                <widget type="select" fieldname="decimals" required="true" icon="fas fa-sort-numeric-up">
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
             <column name="decimal_separator" title="decimal-separator" numcolumns="3" order="120">
-                <widget type="select" fieldname="decimal_separator" required="true" icon="fa-calculator">
+                <widget type="select" fieldname="decimal_separator" required="true" icon="fas fa-calculator">
                     <values title=",">,</values>
                     <values title=".">.</values>
                 </widget>
             </column>
             <column name="thousands_separator" title="thousands-separator" numcolumns="3" order="120">
-                <widget type="select" fieldname="thousands_separator" required="true" icon="fa-calculator">
+                <widget type="select" fieldname="thousands_separator" required="true" icon="fas fa-calculator">
                     <values title=",">,</values>
                     <values title=".">.</values>
                     <values title=" "> </values>
                 </widget>
             </column>
             <column name="currency_position" title="currency-position" numcolumns="3" order="120">
-                <widget type="select" fieldname="currency_position" required="true" icon="fa-money-bill-alt">
+                <widget type="select" fieldname="currency_position" required="true" icon="fas fa-money-bill-alt">
                     <values title="$ 123">left</values>
                     <values title="123 $">right</values>
                 </widget>
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fa-database fa-lg">
+        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
@@ -106,7 +106,7 @@
                 <widget type="number" fieldname="item_limit" required="true" />
             </column>
         </group>
-        <group name="api" title="api" numcolumns="12" icon="fa-universal-access fa-lg">
+        <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>

@@ -48,7 +48,7 @@
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
                             <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                <i class="fas {{ view.icon }}" aria-hidden="true"></i>
+                                <i class="{{ view.icon }}" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
                                 {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>{% endif %}
                             </a>

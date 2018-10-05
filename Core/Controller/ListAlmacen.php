@@ -38,7 +38,7 @@ class ListAlmacen extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'warehouses';
-        $pagedata['icon'] = 'fa-building';
+        $pagedata['icon'] = 'fas fa-building';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListAlmacen extends ExtendedController\ListController
     protected function createViews()
     {
         /// warehouse
-        $this->addView('ListAlmacen', 'Almacen', 'warehouses', 'fa-building');
+        $this->addView('ListAlmacen', 'Almacen', 'warehouses', 'fas fa-building');
         $this->addSearchFields('ListAlmacen', ['nombre', 'codalmacen']);
         $this->addOrderBy('ListAlmacen', ['codalmacen'], 'code');
         $this->addOrderBy('ListAlmacen', ['nombre'], 'name');
@@ -59,7 +59,7 @@ class ListAlmacen extends ExtendedController\ListController
         $this->addFilterSelect('ListAlmacen', 'idempresa', 'company', 'idempresa', $selectValues);
 
         /// transferences
-        $this->addView('ListTransferenciaStock', 'TransferenciaStock', 'stock-transfers', 'fa-exchange-alt');
+        $this->addView('ListTransferenciaStock', 'TransferenciaStock', 'stock-transfers', 'fas fa-exchange-alt');
         $this->addSearchFields('ListTransferenciaStock', ['observaciones']);
         $this->addOrderBy('ListTransferenciaStock', ['codalmacenorigen'], 'origin-warehouse');
         $this->addOrderBy('ListTransferenciaStock', ['codalmacendestino'], 'destination-warehouse');

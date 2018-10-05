@@ -46,7 +46,7 @@ class EditAttachedFile extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attached-file';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-paperclip';
+        $pagedata['icon'] = 'fas fa-paperclip';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

@@ -41,7 +41,7 @@ class EditCuenta extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounts';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-bar-chart';
+        $pagedata['icon'] = 'fas fa-bar-chart';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

@@ -38,7 +38,7 @@ class ListProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'suppliers';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fas fa-users';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         /* Supplier */
-        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fa-users');
+        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fas fa-users');
         $this->addSearchFields('ListProveedor', ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
         $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
@@ -62,7 +62,7 @@ class ListProveedor extends ExtendedController\ListController
 
     private function createViewAdresses()
     {
-        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
+        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields('ListContacto', ['nombre', 'apellidos', 'email']);
         $this->addOrderBy('ListContacto', ['email'], 'email');
         $this->addOrderBy('ListContacto', ['nombre'], 'name');

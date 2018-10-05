@@ -38,7 +38,7 @@ class ListFamilia extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'families';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['icon'] = 'fas fa-object-group';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListFamilia extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFamilia', 'Familia', 'families', 'fa-object-group');
+        $this->addView('ListFamilia', 'Familia', 'families', 'fas fa-object-group');
         $this->addSearchFields('ListFamilia', ['descripcion', 'codfamilia', 'madre']);
         $this->addOrderBy('ListFamilia', ['codfamilia'], 'code');
         $this->addOrderBy('ListFamilia', ['descripcion'], 'description');

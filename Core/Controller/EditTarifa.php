@@ -48,7 +48,7 @@ class EditTarifa extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'rates';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-money-bill-alt';
+        $pagedata['icon'] = 'fas fa-money-bill-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

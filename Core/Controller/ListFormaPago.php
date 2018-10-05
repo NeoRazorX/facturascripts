@@ -38,7 +38,7 @@ class ListFormaPago extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'payment-methods';
-        $pagedata['icon'] = 'fa-credit-card';
+        $pagedata['icon'] = 'fas fa-credit-card';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListFormaPago extends ExtendedController\ListController
     protected function createViews()
     {
         /* Payment Methods */
-        $this->addView('ListFormaPago', 'FormaPago', 'payment-methods', 'fa-credit-card');
+        $this->addView('ListFormaPago', 'FormaPago', 'payment-methods', 'fas fa-credit-card');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
         $this->addOrderBy('ListFormaPago', ['codpago'], 'code');
         $this->addOrderBy('ListFormaPago', ['descripcion'], 'description');
@@ -59,7 +59,7 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print', 'imprimir');
 
         /* Bank accounts */
-        $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fa-piggy-bank');
+        $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
         $this->addOrderBy('ListCuentaBanco', ['codcuenta'], 'code');
         $this->addOrderBy('ListCuentaBanco', ['descripcion'], 'description');

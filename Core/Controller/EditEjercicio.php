@@ -42,7 +42,7 @@ class EditEjercicio extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'exercise';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-calendar-alt';
+        $pagedata['icon'] = 'fas fa-calendar-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -54,7 +54,7 @@ class EditEjercicio extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditEjercicio', 'Ejercicio', 'exercise');
-        $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');
+        $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fas fa-book');
         $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccount');
 
         /// Disable columns

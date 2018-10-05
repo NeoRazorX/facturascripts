@@ -97,7 +97,7 @@ class GroupItem extends VisualItem
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="form-row">';
 
         if (!empty($this->title)) {
-            $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
+            $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
             $html .= '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
         }
 
@@ -119,7 +119,7 @@ class GroupItem extends VisualItem
      */
     public function modal($model, $user, $viewName)
     {
-        $icon = empty($this->icon) ? '' : '<i class="fas ' . $this->icon . ' fa-fw"></i> ';
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $html = '<form method="post" enctype="multipart/form-data">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'

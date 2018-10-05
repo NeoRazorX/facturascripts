@@ -70,7 +70,7 @@ class RowStatistics extends VisualItem
     protected function renderDatalabel(&$controller, $data)
     {
         $color = isset($data['color']) ? $this->colorToClass($data['color'], 'btn-') : 'btn-light';
-        $icon = isset($data['icon']) ? '<i class="fas ' . $data['icon'] . ' fa-fw"></i> ' : '';
+        $icon = isset($data['icon']) ? '<i class="' . $data['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $link = isset($data['link']) ? $data['link'] : '#';
         $divID = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';

@@ -83,7 +83,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'vat-regularization';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-map-signs';
+        $pagedata['icon'] = 'fas fa-map-signs';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -142,11 +142,11 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditRegularizacionImpuesto', 'RegularizacionImpuesto', 'vat-regularization', 'fa-map-signs');
-        $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fa-list-alt');
-        $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fa-sign-in-alt');
-        $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fa-sign-out-alt');
-        $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fa-balance-scale');
+        $this->addEditView('EditRegularizacionImpuesto', 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-map-signs');
+        $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fas fa-list-alt');
+        $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fas fa-sign-in-alt');
+        $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fas fa-sign-out-alt');
+        $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fas fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
 

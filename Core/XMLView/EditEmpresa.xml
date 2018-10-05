@@ -24,9 +24,9 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="12" icon="fa-file" title="fiscal-data">
+        <group name="data" numcolumns="12" icon="fas fa-file" title="fiscal-data">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="idempresa" icon="fa-object-group" required="true" />
+                <widget type="text" fieldname="idempresa" icon="fas fa-object-group" required="true" />
             </column>
             <column name="company-name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
@@ -61,7 +61,7 @@
                 </widget>
             </column>
         </group>
-        <group name="contact-data" numcolumns="12" icon="fa-address-card" title="contact-data">
+        <group name="contact-data" numcolumns="12" icon="fas fa-address-card" title="contact-data">
             <column name="phone" numcolumns="2" order="100">
                 <widget type="text" fieldname="telefono1"/>
             </column>
@@ -78,7 +78,7 @@
                 <widget type="text" fieldname="web" />
             </column>
         </group>
-        <group name="management" columns="12" icon="fa-cog" title="advanced">
+        <group name="management" columns="12" icon="fas fa-cog" title="advanced">
             <column name="startdate" numcolumns="2" order="100">
                 <widget type="date" fieldname="fechaalta"/>
             </column>

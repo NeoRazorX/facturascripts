@@ -66,7 +66,7 @@ class Wizard extends Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
         $pageData['showonmenu'] = false;
-        $pageData['icon'] = 'fa-magic';
+        $pageData['icon'] = 'fas fa-magic';
 
         return $pageData;
     }

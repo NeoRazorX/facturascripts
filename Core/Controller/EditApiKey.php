@@ -48,7 +48,7 @@ class EditApiKey extends ExtendedController\EditController
         $pageData = parent::getPageData();
         $pageData['title'] = 'api-key';
         $pageData['menu'] = 'admin';
-        $pageData['icon'] = 'fa-key';
+        $pageData['icon'] = 'fas fa-key';
         $pageData['showonmenu'] = false;
 
         return $pageData;

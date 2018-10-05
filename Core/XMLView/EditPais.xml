@@ -24,19 +24,19 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="6" title="international-identifier" icon="fa-globe" titleurl="https://es.wikipedia.org/wiki/ISO_3166-1">
+        <group name="data" numcolumns="6" title="international-identifier" icon="fas fa-globe" titleurl="https://es.wikipedia.org/wiki/ISO_3166-1">
             <column name="code" title="alfa-code-3" numcolumns="6" order="100"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1"
                     description="desc-alfa-code-3">
-                <widget type="text" fieldname="codpais" icon="fa-globe" required="true" />
+                <widget type="text" fieldname="codpais" icon="fas fa-globe" required="true" />
             </column>
             <column name="codeiso" title="alfa-code-2" numcolumns="6" order="110"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
                     description="desc-alfa-code-2">
-                <widget type="text" fieldname="codiso" icon="fa-globe" />
+                <widget type="text" fieldname="codiso" icon="fas fa-globe" />
             </column>
         </group>
-        <group name="other" numcolumns="6" title="other-data" icon="fa-chart-area">
+        <group name="other" numcolumns="6" title="other-data" icon="fas fa-chart-area">
             <column name="name" order="120">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>

@@ -51,12 +51,12 @@
     <rows>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
-                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fa-file" />
+                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fas fa-file" />
             </group>
         </row>
     </rows>
     <modals>
-        <group name="import-accounting" title="import-accounting-plan" icon="fa-file">
+        <group name="import-accounting" title="import-accounting-plan" icon="fas fa-file">
             <column name="accounting-file" numcolumns="12">
                 <widget type="file" fieldname="accountingfile" required="true" />
             </column>

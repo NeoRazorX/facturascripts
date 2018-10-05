@@ -39,7 +39,7 @@ class ListAtributo extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attributes';
-        $pagedata['icon'] = 'fa-sliders-h';
+        $pagedata['icon'] = 'fas fa-sliders-h';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListAtributo extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAtributo', 'Atributo', 'attributes', 'fa-sliders-h');
+        $this->addView('ListAtributo', 'Atributo', 'attributes', 'fas fa-sliders-h');
         $this->addSearchFields('ListAtributo', ['nombre', 'codatributo']);
         $this->addOrderBy('ListAtributo', ['codatributo'], 'code');
         $this->addOrderBy('ListAtributo', ['nombre'], 'name');

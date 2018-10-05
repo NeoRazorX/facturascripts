@@ -80,7 +80,7 @@
                                     {% set active = (viewName == fsc.active) ? ' active' : '' %}
                                     {% set disable = view.settings.active ? '' : ' disabled' %}
                                     <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                        <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
+                                        <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
                                         &nbsp;{{ view.title }}
                                     </a>
                                 {% endif %}

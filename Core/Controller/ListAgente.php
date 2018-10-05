@@ -38,7 +38,7 @@ class ListAgente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agents';
-        $pagedata['icon'] = 'fa-id-badge';
+        $pagedata['icon'] = 'fas fa-id-badge';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListAgente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAgente', 'Agente', 'agents', 'fa-id-badge');
+        $this->addView('ListAgente', 'Agente', 'agents', 'fas fa-id-badge');
         $this->addSearchFields('ListAgente', ['nombre', 'apellidos', 'codagente', 'email']);
 
         $this->addOrderBy('ListAgente', ['codagente'], 'code');

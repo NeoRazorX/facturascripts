@@ -36,8 +36,8 @@ class ListView extends BaseView
     /**
      * Order constants
      */
-    const ICON_ASC = 'fa-arrow-up';
-    const ICON_DESC = 'fa-arrow-down';
+    const ICON_ASC = 'fas fa-arrow-up';
+    const ICON_DESC = 'fas fa-arrow-down';
 
     /**
      * Filter configuration preset by the user

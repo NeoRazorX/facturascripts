@@ -38,7 +38,7 @@ class ListCuenta extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounting-accounts';
-        $pagedata['icon'] = 'fa-book';
+        $pagedata['icon'] = 'fas fa-book';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListCuenta extends ExtendedController\ListController
     protected function createViews()
     {
         /* Sub-Accounts */
-        $this->addView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fa-th-list');
+        $this->addView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-th-list');
         $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp']);
 
         $exerciseValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
@@ -61,7 +61,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addOrderBy('ListSubcuenta', ['saldo'], 'balance');
 
         /* Accounts */
-        $this->addView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');
+        $this->addView('ListCuenta', 'Cuenta', 'accounts', 'fas fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp']);
 
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'exercise', 'codejercicio', $exerciseValues);
@@ -73,7 +73,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addOrderBy('ListCuenta', ['codejercicio desc, descripcion'], 'description');
 
         /* Special account */
-        $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fa-newspaper');
+        $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fas fa-newspaper');
         $this->setSettings('ListCuentaEspecial', 'insert', false);
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuentaesp']);
 

@@ -55,7 +55,7 @@ class Updater extends Controller
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
         $pageData['title'] = 'updater';
-        $pageData['icon'] = 'fa-cloud-download-alt';
+        $pageData['icon'] = 'fas fa-cloud-download-alt';
 
         return $pageData;
     }

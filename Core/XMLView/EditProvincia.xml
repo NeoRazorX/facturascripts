@@ -25,36 +25,36 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" numcolumns="2" order="100" display="none">
-                <widget type="text" fieldname="idprovincia" icon="fa-globe" required="true" />
+                <widget type="text" fieldname="idprovincia" icon="fas fa-globe" required="true" />
             </column>
             <column name="iso" numcolumns="2" order="110" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
-                <widget type="text" fieldname="codisoprov" icon="fa-globe" required="true" />
+                <widget type="text" fieldname="codisoprov" icon="fas fa-globe" required="true" />
             </column>
             <column name="postalcode" numcolumns="2" order="120" titleurl="https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png">
-                <widget type="text" fieldname="codpostal2d" icon="fa-globe" required="true" />
+                <widget type="text" fieldname="codpostal2d" icon="fas fa-globe" required="true" />
             </column>
             <column name="country" numcolumns="2" order="130" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
-                <widget type="select" fieldname="codpais" icon="fa-globe" required="true">
+                <widget type="select" fieldname="codpais" icon="fas fa-globe" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="province" numcolumns="6" order="140">
-                <widget type="text" fieldname="provincia" icon="fa-map" required="true" />
+                <widget type="text" fieldname="provincia" icon="fas fa-map" required="true" />
             </column>
         </group>
         <group name="data-aux" numcolumns="12">
             <column name="latitude" numcolumns="4" display="right" order="150">
-                <widget type="number" decimal="4" fieldname="latitud" icon="fa-map-marker">
+                <widget type="number" decimal="4" fieldname="latitud" icon="fas fa-map-marker">
                     <option>&lt;1</option>
                 </widget>
             </column>
             <column name="longitude" numcolumns="4" display="right" order="160">
-                <widget type="number" decimal="4" fieldname="longitud" icon="fa-map-marker">
+                <widget type="number" decimal="4" fieldname="longitud" icon="fas fa-map-marker">
                     <option>&lt;1</option>
                 </widget>
             </column>
             <column name="review-date" numcolumns="4" order="170">
-                <widget type="date" fieldname="fecha_revision" icon="fa-calendar-alt" />
+                <widget type="date" fieldname="fecha_revision" icon="fas fa-calendar-alt" />
             </column>
         </group>
     </columns>

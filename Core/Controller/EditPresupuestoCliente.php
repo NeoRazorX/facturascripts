@@ -39,7 +39,7 @@ class EditPresupuestoCliente extends SalesDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

@@ -27,7 +27,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" id="pk" numcolumns="2" order="100">
-                <widget type="text" fieldname="codconcepto" icon="fa-indent" required="true" />
+                <widget type="text" fieldname="codconcepto" icon="fas fa-indent" required="true" />
             </column>
 
             <column name="description" numcolumns="10" order="110">
@@ -37,7 +37,7 @@
     </columns>
     <rows>
         <row type="actions">
-            <button type="js" label='help' color="primary" action="$('#help-card').toggle()" icon="fa-question-circle" />
+            <button type="js" label='help' color="primary" action="$('#help-card').toggle()" icon="fas fa-question-circle" />
         </row>
         <row type="footer">
             <group name="help" id="help-card" class="collapse" html="Block/AccountNoteInfo.html.twig"></group>

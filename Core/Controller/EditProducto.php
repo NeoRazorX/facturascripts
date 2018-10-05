@@ -49,7 +49,7 @@ class EditProducto extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'product';
-        $pagedata['icon'] = 'fa-cube';
+        $pagedata['icon'] = 'fas fa-cube';
         $pagedata['menu'] = 'warehouse';
         $pagedata['showonmenu'] = false;
 
@@ -62,8 +62,8 @@ class EditProducto extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fa-code-branch');
-        $this->addEditListView('EditStock', 'Stock', 'stock', 'fa-tasks');
+        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-code-branch');
+        $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-tasks');
     }
 
     /**

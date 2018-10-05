@@ -38,7 +38,7 @@ class ListDivisa extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'currency';
-        $pagedata['icon'] = 'fa-money-bill-alt';
+        $pagedata['icon'] = 'fas fa-money-bill-alt';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListDivisa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListDivisa', 'Divisa', 'currency', 'fa-money-bill-alt');
+        $this->addView('ListDivisa', 'Divisa', 'currency', 'fas fa-money-bill-alt');
         $this->addSearchFields('ListDivisa', ['descripcion', 'coddivisa']);
 
         $this->addOrderBy('ListDivisa', ['coddivisa'], 'code');

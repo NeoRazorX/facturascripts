@@ -39,7 +39,7 @@ class EditPedidoCliente extends ExtendedController\SalesDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'order';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

@@ -38,7 +38,7 @@ class ListSerie extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'series';
-        $pagedata['icon'] = 'fa-file-alt';
+        $pagedata['icon'] = 'fas fa-file-alt';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListSerie extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListSerie', 'Serie', 'series', 'fa-file-alt');
+        $this->addView('ListSerie', 'Serie', 'series', 'fas fa-file-alt');
         $this->addSearchFields('ListSerie', ['descripcion', 'codserie']);
 
         $this->addOrderBy('ListSerie', ['codserie'], 'code');

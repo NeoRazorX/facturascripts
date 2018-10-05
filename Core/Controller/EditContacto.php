@@ -57,7 +57,7 @@ class EditContacto extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'contact';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-address-book';
+        $pagedata['icon'] = 'fas fa-address-book';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

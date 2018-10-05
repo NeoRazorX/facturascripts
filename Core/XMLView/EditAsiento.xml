@@ -38,7 +38,7 @@
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="date" numcolumns="2" order="100">
-            <widget type="date" fieldname="fecha" icon="fa-calendar-alt" required="true" />
+            <widget type="date" fieldname="fecha" icon="fas fa-calendar-alt" required="true" />
         </column>
         <column name="concept" order="120">
             <widget type="text" fieldname="concepto" required="true" />
@@ -55,7 +55,7 @@
             <widget type="number" decimal="0" step="1" fieldname="canal" />
         </column>
         <column name="ammount" numcolumns="2" display="right" order="200">
-            <widget type="money" fieldname="importe" icon="fa-money-bill-alt" readonly="readonly" />
+            <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="readonly" />
         </column>
     </columns>
 </view>

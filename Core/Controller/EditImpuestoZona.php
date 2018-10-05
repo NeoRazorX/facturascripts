@@ -46,7 +46,7 @@ class EditImpuestoZona extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'tax-area';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-dollar-sign';
+        $pagedata['icon'] = 'fas fa-dollar-sign';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

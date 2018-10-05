@@ -79,7 +79,7 @@ class Dashboard extends Base\Controller
         $pageData = parent::getPageData();
         $pageData['title'] = 'dashboard';
         $pageData['menu'] = 'reports';
-        $pageData['icon'] = 'fa-tachometer-alt';
+        $pageData['icon'] = 'fas fa-tachometer-alt';
 
         return $pageData;
     }

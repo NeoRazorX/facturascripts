@@ -41,7 +41,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customer-group';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['icon'] = 'fas fa-folder-open';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -53,7 +53,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditGrupoClientes', 'GrupoClientes', 'customer-group');
-        $this->addListView('ListCliente', 'Cliente', 'customers', 'fa-users');
+        $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
         $this->setTabsPosition('bottom');
 
         /// Disable columns

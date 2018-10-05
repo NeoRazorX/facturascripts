@@ -26,7 +26,7 @@
     <columns>
         <group name="bankaccount" numcolumns="12">
             <column name="account" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcuenta" icon="fa-university" required="true" />
+                <widget type="text" fieldname="codcuenta" icon="fas fa-university" required="true" />
             </column>
             
             <column name="codsubcuenta" numcolumns="2" order="110">

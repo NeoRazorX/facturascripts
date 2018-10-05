@@ -39,7 +39,7 @@ class ListApiKey extends ExtendedController\ListController
     {
         $pageData = parent::getPageData();
         $pageData['title'] = 'api-keys';
-        $pageData['icon'] = 'fa-key';
+        $pageData['icon'] = 'fas fa-key';
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
 
@@ -51,7 +51,7 @@ class ListApiKey extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListApiKey', 'ApiKey', 'api-keys', 'fa-key');
+        $this->addView('ListApiKey', 'ApiKey', 'api-keys', 'fas fa-key');
         $this->addSearchFields('ListApiKey', ['description', 'apikey', 'nick']);
         $this->addOrderBy('ListApiKey', ['apikey'], 'api-key');
         $this->addOrderBy('ListApiKey', ['descripcion'], 'description');

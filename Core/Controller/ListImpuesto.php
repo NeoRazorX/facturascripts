@@ -41,7 +41,7 @@ class ListImpuesto extends ExtendedController\ListController
         $pagedata['menu'] = 'accounting';
         $pagedata['submenu'] = 'taxes';
         $pagedata['title'] = 'taxes';
-        $pagedata['icon'] = 'fa-plus-square';
+        $pagedata['icon'] = 'fas fa-plus-square';
 
         return $pagedata;
     }
@@ -52,21 +52,21 @@ class ListImpuesto extends ExtendedController\ListController
     protected function createViews()
     {
         /// Taxes
-        $this->addView('ListImpuesto', 'Impuesto', 'taxes', 'fa-plus-square');
+        $this->addView('ListImpuesto', 'Impuesto', 'taxes', 'fas fa-plus-square');
         $this->addSearchFields('ListImpuesto', ['descripcion', 'codimpuesto']);
 
         $this->addOrderBy('ListImpuesto', ['codimpuesto'], 'code');
         $this->addOrderBy('ListImpuesto', ['descripcion'], 'description');
 
         /// Withholdings
-        $this->addView('ListRetencion', 'Retencion', 'retentions', 'fa-plus-square');
+        $this->addView('ListRetencion', 'Retencion', 'retentions', 'fas fa-plus-square');
         $this->addSearchFields('ListRetencion', ['descripcion', 'codretencion']);
 
         $this->addOrderBy('ListRetencion', ['codretencion'], 'code');
         $this->addOrderBy('ListRetencion', ['descripcion'], 'description');
 
         /// Tax areas
-        $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-area', 'fa-dollar-sign');
+        $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-area', 'fas fa-dollar-sign');
         $this->addSearchFields('ListImpuestoZona', ['codpais']);
 
         $this->addOrderBy('ListImpuestoZona', ['codimpuesto'], 'tax');

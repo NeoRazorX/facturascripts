@@ -48,7 +48,7 @@ class EditAlmacen extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'warehouse';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-building';
+        $pagedata['icon'] = 'fas fa-building';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

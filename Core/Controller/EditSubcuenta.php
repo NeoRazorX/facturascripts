@@ -41,7 +41,7 @@ class EditSubcuenta extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'subaccount';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fas fa-th-list';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -53,7 +53,7 @@ class EditSubcuenta extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditSubcuenta', 'Subcuenta', 'subaccount');
-        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
 

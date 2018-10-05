@@ -167,7 +167,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
+    protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -181,7 +181,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-list-alt')
+    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list-alt')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -196,7 +196,7 @@ abstract class PanelController extends BaseController
      * @param $viewTitle
      * @param string $viewIcon
      */
-    protected function addGridView($viewName, $parentView, $modelName, $viewTitle, $viewIcon = 'fa-list')
+    protected function addGridView($viewName, $parentView, $modelName, $viewTitle, $viewIcon = 'fas fa-list')
     {
         $parent = $this->views[$parentView];
         if (isset($parent)) {
@@ -214,7 +214,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fa-html5')
+    protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fas fa-html5')
     {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -228,7 +228,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fa-bars')
+    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);

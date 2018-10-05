@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="period" title="period" numcolumns="8" icon="fa-calendar-alt">
+        <group name="period" title="period" numcolumns="8" icon="fas fa-calendar-alt">
             <column name="id" order="100" display="none">
                 <widget type="text" fieldname="idregularizacion" />
             </column>
@@ -51,12 +51,12 @@
 
         <group name="space" numcolumns="1"></group>
 
-        <group name="accounting" title="accounting-entry" icon="fa-book">
+        <group name="accounting" title="accounting-entry" icon="fas fa-book">
             <column name="accounting-date" order="200">
                 <widget type="text" fieldname="fechaasiento" readonly="true" />
             </column>
         </group>
-        <group name="accounts" title="accounts" numcolumns="8" icon="fa-th-list">
+        <group name="accounts" title="accounts" numcolumns="8" icon="fas fa-th-list">
             <column name="tax-credit-account" order="300">
                 <widget type="autocomplete" fieldname="codsubcuentaacreedora" required="true">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>

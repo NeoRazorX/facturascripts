@@ -38,7 +38,7 @@ class ListEmpresa extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'companies';
-        $pagedata['icon'] = 'fa-building';
+        $pagedata['icon'] = 'fas fa-building';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListEmpresa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fa-building');
+        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fas fa-building');
         $this->addSearchFields('ListEmpresa', ['nombre', 'nombrecorto']);
         $this->addOrderBy('ListEmpresa', ['idempresa'], 'code');
         $this->addOrderBy('ListEmpresa', ['nombre'], 'name');

@@ -49,12 +49,12 @@
     <rows>
         <row type="footer">
             <group name="footer_actions" footer="specials-actions">
-                <button type="modal" label="add" color="info" action="add-rol-access" icon="fa-user-plus" />
+                <button type="modal" label="add" color="info" action="add-rol-access" icon="fas fa-user-plus" />
             </group>
         </row>
     </rows>
     <modals>
-        <group name="add-rol-access" icon="fa-user-plus">
+        <group name="add-rol-access" icon="fas fa-user-plus">
             <column name="select-menu" title="menu">
                 <widget type="select" fieldname="menu">
                     <values source="pages" fieldcode="menu" fieldtitle="menu" translate="true"></values>

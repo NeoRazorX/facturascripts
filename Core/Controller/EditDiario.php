@@ -49,6 +49,7 @@ class EditDiario extends ExtendedController\EditController
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fas fa-book';
         $pagedata['showonmenu'] = false;
+
         return $pagedata;
     }
 }

@@ -39,7 +39,7 @@ class EditTransferenciaStock extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'stock-transfer';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-exchange-alt';
+        $pagedata['icon'] = 'fas fa-exchange-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

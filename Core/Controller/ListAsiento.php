@@ -37,7 +37,7 @@ class ListAsiento extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounting-entries';
-        $pagedata['icon'] = 'fa-balance-scale';
+        $pagedata['icon'] = 'fas fa-balance-scale';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListAsiento extends ExtendedController\ListController
     protected function createViews()
     {
         /// accounting entries
-        $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
         $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
         $this->addOrderBy('ListAsiento', ['numero'], 'number');
@@ -69,7 +69,7 @@ class ListAsiento extends ExtendedController\ListController
         $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal', '=');
 
         /// concepts
-        $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');
+        $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
         $this->addOrderBy('ListConceptoPartida', ['codconcepto'], 'code');
         $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');

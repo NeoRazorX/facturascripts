@@ -40,7 +40,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'orders';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -51,7 +51,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fa-copy');
+        $this->addView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
         $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListPedidoProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListPedidoProveedor', ['fecha'], 'date', 2);
@@ -84,7 +84,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
 
     protected function createViewLines()
     {
-        $this->addView('ListLineaPedidoProveedor', 'LineaPedidoProveedor', 'lines', 'fa-list');
+        $this->addView('ListLineaPedidoProveedor', 'LineaPedidoProveedor', 'lines', 'fas fa-list');
         $this->addSearchFields('ListLineaPedidoProveedor', ['referencia', 'descripcion']);
         $this->addOrderBy('ListLineaPedidoProveedor', ['referencia'], 'reference');
         $this->addOrderBy('ListLineaPedidoProveedor', ['cantidad'], 'quantity');

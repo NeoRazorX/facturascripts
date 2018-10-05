@@ -155,12 +155,12 @@
             {% for key, option in fsc.exportManager.options() %}
                 {% if '?' in currentView.model.url() %}
                     <a href="{{ currentView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
-                        <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans(option.description) }}
                     </a>
                 {% else %}
                     <a href="{{ currentView.model.url() }}?action=export&option={{ key }}" class="dropdown-item">
-                        <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans(option.description) }}
                     </a>
                 {% endif %}
@@ -189,7 +189,7 @@
         <div class="form-group">
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <i class="fas {{ currentView.orderOptions[currentView.orderKey]['icon'] }} fa-fw" aria-hidden="true"></i>
+                    <i class="{{ currentView.orderOptions[currentView.orderKey]['icon'] }} fa-fw" aria-hidden="true"></i>
                     {{ currentView.orderOptions[currentView.orderKey]['label'] }}
                     <span class="caret"></span>
                 </button>
@@ -197,7 +197,7 @@
                     {% for key, orderby in currentView.orderOptions %}
                         {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
                         <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
-                            <i class="fas {{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
+                            <i class="{{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
                         </a>
                     {% endfor %}
                 </div>

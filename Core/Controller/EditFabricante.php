@@ -40,7 +40,7 @@ class EditFabricante extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'manufacturer';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-columns';
+        $pagesata['icon'] = 'fas fa-columns';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -52,7 +52,7 @@ class EditFabricante extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('EditFabricante', 'Fabricante', 'manufacturer');
-        $this->addListView('ListProducto', 'Producto', 'products', 'fa-cubes');
+        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
     }
 
     /**

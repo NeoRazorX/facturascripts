@@ -38,7 +38,7 @@ class ListEjercicio extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'exercises';
-        $pagedata['icon'] = 'fa-calendar-alt';
+        $pagedata['icon'] = 'fas fa-calendar-alt';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListEjercicio extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEjercicio', 'Ejercicio', 'exercises', 'fa-calendar-alt');
+        $this->addView('ListEjercicio', 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
         $this->addSearchFields('ListEjercicio', ['nombre', 'codejercicio']);
         $this->addOrderBy('ListEjercicio', ['fechainicio'], 'start-date', 2);
         $this->addOrderBy('ListEjercicio', ['codejercicio'], 'code');

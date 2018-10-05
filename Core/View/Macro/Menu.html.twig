@@ -55,7 +55,7 @@
         {% if item.menu is empty %}
             <li>
                 <a class="dropdown-item{{ extraClass }}" href="{{ item.url }}">
-                    <i class="fas {{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp; {{ item.title | capitalize }}
+                    <i class="{{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp; {{ item.title | capitalize }}
                 </a>
             </li>
         {% else %}

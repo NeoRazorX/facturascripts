@@ -95,7 +95,7 @@ class DocumentReports extends Controller
         ];
 
         $this->filters = [
-            'employee' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fa-users'),
+            'employee' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fas fa-users'),
             'serie' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Serie', AppSettings::get('default', 'codserie')),
             'currency' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Divisa', AppSettings::get('default', 'coddivisa')),
             'payment-method' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago'),
@@ -325,7 +325,7 @@ class DocumentReports extends Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'reports';
         $pageData['title'] = 'document-reports';
-        $pageData['icon'] = 'fa-chart-area';
+        $pageData['icon'] = 'fas fa-chart-area';
 
         return $pageData;
     }

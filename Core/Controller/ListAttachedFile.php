@@ -38,7 +38,7 @@ class ListAttachedFile extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attached-files';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-paperclip';
+        $pagedata['icon'] = 'fas fa-paperclip';
 
         return $pagedata;
     }
@@ -48,7 +48,7 @@ class ListAttachedFile extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAttachedFile', 'AttachedFile', 'attached-files', 'fa-paperclip');
+        $this->addView('ListAttachedFile', 'AttachedFile', 'attached-files', 'fas fa-paperclip');
         $this->addSearchFields('ListAttachedFile', ['filename', 'mimetype']);
         $this->addOrderBy('ListAttachedFile', ['idfile'], 'code');
         $this->addOrderBy('ListAttachedFile', ['filename'], 'file-name');

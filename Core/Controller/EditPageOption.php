@@ -72,7 +72,7 @@ class EditPageOption extends Base\Controller
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'page-configuration';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-wrench';
+        $pagedata['icon'] = 'fas fa-wrench';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

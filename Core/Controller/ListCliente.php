@@ -40,7 +40,7 @@ class ListCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fas fa-users';
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
@@ -60,7 +60,7 @@ class ListCliente extends ExtendedController\ListController
 
     protected function createViewContacts()
     {
-        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
+        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields('ListContacto', ['nombre', 'apellidos', 'email']);
         $this->addOrderBy('ListContacto', ['email'], 'email');
         $this->addOrderBy('ListContacto', ['nombre'], 'name');
@@ -85,7 +85,7 @@ class ListCliente extends ExtendedController\ListController
 
     private function createViewCustomers(array $valuesGroup)
     {
-        $this->addView('ListCliente', 'Cliente', 'customers', 'fa-users');
+        $this->addView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
         $this->addSearchFields('ListCliente', ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy('ListCliente', ['codcliente'], 'code');
         $this->addOrderBy('ListCliente', ['nombre'], 'name', 1);
@@ -103,7 +103,7 @@ class ListCliente extends ExtendedController\ListController
 
     private function createViewGroups(array $valuesGroup)
     {
-        $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fa-folder-open');
+        $this->addView('ListGrupoClientes', 'GrupoClientes', 'groups', 'fas fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         $this->addOrderBy('ListGrupoClientes', ['codgrupo'], 'code');
         $this->addOrderBy('ListGrupoClientes', ['nombre'], 'name', 1);

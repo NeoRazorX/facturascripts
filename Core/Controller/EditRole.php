@@ -40,7 +40,7 @@ class EditRole extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'role';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-id-card';
+        $pagedata['icon'] = 'fas fa-id-card';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -68,9 +68,9 @@ class EditRole extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditRole', 'Role', 'rol', 'fa-id-card');
+        $this->addEditView('EditRole', 'Role', 'rol', 'fas fa-id-card');
         $this->addEditListView('EditRoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fa-address-card');
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fas fa-address-card');
 
         /// Disable columns
         $this->views['EditRoleAccess']->disableColumn('role', true);

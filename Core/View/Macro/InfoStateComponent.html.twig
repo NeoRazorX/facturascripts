@@ -27,7 +27,7 @@
     {% for key, data in component.group %}
         <a href="{{ data.url }}" class="list-group-item list-group-item-action">
             <div class="item-data item-title">
-                <span>{% if data.icon is not empty %}<i class="fas {{ data.icon }} mr-2 text-info"></i>{% endif %}{{ i18n.trans(key) }}</span>
+                <span>{% if data.icon is not empty %}<i class="{{ data.icon }} mr-2 text-info"></i>{% endif %}{{ i18n.trans(key) }}</span>
                 <span class="badge badge-primary">{{ data.value }}</span>
             </div>
 

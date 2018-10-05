@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="email" numcolumns="12" icon="fa-envelope fa-lg">
+        <group name="email" numcolumns="12" icon="fas fa-envelope fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
@@ -35,7 +35,7 @@
                 <widget type="password" fieldname="password" />
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fa-server fa-lg">
+        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server fa-lg">
             <column name="user" numcolumns="3" order="100">
                 <widget type="text" fieldname="user" />
             </column>
@@ -66,7 +66,7 @@
     </columns>
     <rows>
         <row type="actions">
-            <button type="action" label="test" color="info" action="testmail" icon="fa-envelope" />
+            <button type="action" label="test" color="info" action="testmail" icon="fas fa-envelope" />
         </row>
     </rows>
 </view>

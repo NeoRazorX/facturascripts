@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="log" title="which-logs-store" numcolumns="12" icon="fa-server fa-lg">
+        <group name="log" title="which-logs-store" numcolumns="12" icon="fas fa-server fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>

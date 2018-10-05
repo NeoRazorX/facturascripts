@@ -41,7 +41,7 @@ class EditUser extends ExtendedController\PanelController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'user';
-        $pagedata['icon'] = 'fa-user';
+        $pagedata['icon'] = 'fas fa-user';
         $pagedata['menu'] = 'admin';
         $pagedata['showonmenu'] = false;
 
@@ -54,8 +54,8 @@ class EditUser extends ExtendedController\PanelController
     protected function createViews()
     {
         /// Add all views
-        $this->addEditView('EditUser', 'User', 'user', 'fa-user');
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fa-address-card');
+        $this->addEditView('EditUser', 'User', 'user', 'fas fa-user');
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
 
         /// Load values for input selects
         $this->loadHomepageValues();

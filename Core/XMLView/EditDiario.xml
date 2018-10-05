@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="code" numcolumns="2" order="100">
-            <widget type="text" fieldname="iddiario" icon="fa-file-alt" required="true" />
+            <widget type="text" fieldname="iddiario" icon="fas fa-file-alt" required="true" />
         </column>
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" required="true" />

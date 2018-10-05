@@ -83,7 +83,7 @@
                         <div class="dropdown-menu">
                             {% for viewName, view in fsc.views %}
                                 <a class="dropdown-item" href="EditPageOption?code={{ view.getViewName() }}&url={{ firstView.model.url() | url_encode }}">
-                                    <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 </a>
                             {% endfor %}
                         </div>
@@ -110,7 +110,7 @@
                         <div class="dropdown-menu">
                             {% for key, option in fsc.exportManager.options() %}
                                 <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
-                                    <i class="fas {{ option.icon }} fa-fw" aria-hidden="true"></i>
+                                    <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
                                     {{ i18n.trans(option.description) }}
                                 </a>
                             {% endfor %}
@@ -134,7 +134,7 @@
                 <div class="d-none d-md-inline-block">
                     {% set image = fsc.getImageUrl() %}
                     {% if image is empty %}
-                        <i class="fas {{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+                        <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
                     {% else %}
                         <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail" style="margin-bottom: 10px;"/>
                     {% endif %}
@@ -159,7 +159,7 @@
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
                                     <span class='badge badge-secondary float-right'>{{ view.count }}</span>
                                 {% endif %}
-                                <i class="fas {{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
+                                <i class="{{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
                             </a>
                         {% endfor %}
                     </div>
@@ -176,7 +176,7 @@
                             {% set disable = view.settings.active ? '' : ' disabled' %}
                             <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
-                                <i class="fas {{ view.icon }} fa-fw" aria-hidden="true"></i>
+                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
                             </a>
                         {% endfor %}
                     </div>

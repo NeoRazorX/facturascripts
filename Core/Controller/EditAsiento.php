@@ -44,7 +44,7 @@ class EditAsiento extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounting-entries';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-balance-scale';
+        $pagedata['icon'] = 'fas fa-balance-scale';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -55,7 +55,7 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditAsiento', 'Asiento', 'accounting-entry', 'fa-balance-scale');
+        $this->addEditView('EditAsiento', 'Asiento', 'accounting-entry', 'fas fa-balance-scale');
         $this->addGridView('EditPartida', 'EditAsiento', 'Partida', 'accounting-items');
         $this->setTemplate('EditAsiento');
         $this->views['EditPartida']->template = 'EditAsientoGridView.html.twig';

@@ -28,7 +28,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codproveedor" icon="fa-user" />
+                <widget type="text" fieldname="codproveedor" icon="fas fa-user" />
             </column>
             <column name="name" numcolumns="3" order="110" description="desc-provider-name">
                 <widget type="text" fieldname="nombre" required="true"/>
@@ -76,7 +76,7 @@
                 </widget>
             </column>
             <column name="irpf" numcolumns="3" order="140">
-                <widget type="number" fieldname="irpf" icon="fa-percent" />
+                <widget type="number" fieldname="irpf" icon="fas fa-percent" />
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
@@ -90,7 +90,7 @@
                 <widget type="tel" fieldname="fax" />
             </column>
             <column name="email" numcolumns="3" order="140">
-                <widget type="email" fieldname="email" icon="fa-envelope" />
+                <widget type="email" fieldname="email" icon="fas fa-envelope" />
             </column>
             <column name="website" numcolumns="3" order="150">
                 <widget type="url" fieldname="web" />
@@ -98,10 +98,10 @@
         </group>
         <group name="other" title="other-data" numcolumns="12">
             <column name="create-date" numcolumns="3" order="100">
-                <widget type="date" fieldname="fechaalta" icon="fa-calendar-alt" readonly="true" />
+                <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
             </column>
             <column name="date-of-suspension" numcolumns="3" order="110">
-                <widget type="date" fieldname="fechabaja" icon="fa-calendar-alt" />
+                <widget type="date" fieldname="fechabaja" icon="fas fa-calendar-alt" />
             </column>
             <column name="suspended" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="debaja" />
@@ -115,8 +115,8 @@
     </columns>
     <rows>
         <row type="statistics">
-            <datalabel icon="fa-copy" label="delivery-notes-button" function="calcSupplierDeliveryNotes" />
-            <datalabel icon="fa-money-bill-alt" label="pending-invoices-button" function="calcSupplierInvoicePending" />
+            <datalabel icon="fas fa-copy" label="delivery-notes-button" function="calcSupplierDeliveryNotes" />
+            <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="calcSupplierInvoicePending" />
         </row>
     </rows>
 </view>

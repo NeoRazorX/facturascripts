@@ -40,7 +40,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimations';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -51,7 +51,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fa-copy');
+        $this->addView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fas fa-copy');
         $this->addSearchFields('ListPresupuestoProveedor', ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy('ListPresupuestoProveedor', ['codigo'], 'code');
         $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);
@@ -84,7 +84,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
 
     protected function createViewLines()
     {
-        $this->addView('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor', 'lines', 'fa-list');
+        $this->addView('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor', 'lines', 'fas fa-list');
         $this->addSearchFields('ListLineaPresupuestoProveedor', ['referencia', 'descripcion']);
         $this->addOrderBy('ListLineaPresupuestoProveedor', ['referencia'], 'reference');
         $this->addOrderBy('ListLineaPresupuestoProveedor', ['cantidad'], 'quantity');

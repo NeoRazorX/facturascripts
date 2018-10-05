@@ -59,7 +59,7 @@ class AdminPlugins extends Base\Controller
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
         $pageData['title'] = 'plugins';
-        $pageData['icon'] = 'fa-plug';
+        $pageData['icon'] = 'fas fa-plug';
 
         return $pageData;
     }

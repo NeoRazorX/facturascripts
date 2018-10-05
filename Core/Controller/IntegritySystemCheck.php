@@ -48,7 +48,7 @@ class IntegritySystemCheck extends Base\Controller
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
         $pageData['title'] = 'integrity-check';
-        $pageData['icon'] = 'fa-shield';
+        $pageData['icon'] = 'fas fa-shield';
         $pageData['showonmenu'] = false;
 
         return $pageData;

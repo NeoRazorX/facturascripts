@@ -80,7 +80,7 @@ class EditCliente extends ExtendedController\PanelController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customer';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fas fa-users';
         $pagedata['menu'] = 'sales';
         $pagedata['showonmenu'] = false;
 
@@ -94,15 +94,15 @@ class EditCliente extends ExtendedController\PanelController
     {
         $this->createViewCustomer();
 
-        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fa-address-book');
-        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-piggy-bank');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fa-users');
+        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
+        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
 
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-copy');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-copy');
-        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fa-cubes');
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
+        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
 
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);

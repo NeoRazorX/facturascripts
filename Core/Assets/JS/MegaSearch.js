@@ -73,7 +73,7 @@ function searchOnSection(url) {
                 $("#v-pills-tab").append("<a class='nav-link' id='v-pills-" + key + "-tab' data-toggle='pill' href='#v-pills-"
                         + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
                     <span class='badge badge-secondary float-right'>" + items.length + "</span>\n\
-                    <i class='fas " + val.icon + " fa-fw'></i>\n\
+                    <i class='" + val.icon + " fa-fw'></i>\n\
                     " + val.title + "\n\
                 </a>");
                 var tableHTML = "<thead><tr>";

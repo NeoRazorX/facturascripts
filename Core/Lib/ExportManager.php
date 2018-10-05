@@ -50,10 +50,10 @@ class ExportManager
     {
         if (self::$options === null) {
             self::$options = [
-                'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
-                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive'],
-                'MAIL' => ['description' => 'email', 'icon' => 'fa-envelope'],
+                'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
+                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-archive'],
+                'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope'],
             ];
         }
     }

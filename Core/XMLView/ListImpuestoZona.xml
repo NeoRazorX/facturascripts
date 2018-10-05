@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="id" numcolumns="2" order="10">
-            <widget type="text" fieldname="id" icon="fa-dollar-sign" onclick="EditImpuestoZona" />
+            <widget type="text" fieldname="id" icon="fas fa-dollar-sign" onclick="EditImpuestoZona" />
         </column>
         <column name="tax" numcolumns="2" order="20">
             <widget type="select" fieldname="codimpuesto">
@@ -33,7 +33,7 @@
             </widget>
         </column>
         <column name="country" numcolumns="2" order="30">
-            <widget type="select" fieldname="codpais" icon="fa-globe" >
+            <widget type="select" fieldname="codpais" icon="fas fa-globe" >
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
             </widget>
         </column>

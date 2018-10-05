@@ -38,7 +38,7 @@ class EditAlbaranCliente extends ExtendedController\SalesDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-note';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-copy';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

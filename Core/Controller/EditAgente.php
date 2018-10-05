@@ -47,7 +47,7 @@ class EditAgente extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agent';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-id-badge';
+        $pagedata['icon'] = 'fas fa-id-badge';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -59,10 +59,10 @@ class EditAgente extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-copy');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-copy');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-copy');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-copy');
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
     }
 
     /**

@@ -46,7 +46,7 @@ class EditCuentaBanco extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'bank-account';
-        $pagedata['icon'] = 'fa-piggy-bank';
+        $pagedata['icon'] = 'fas fa-piggy-bank';
         $pagedata['menu'] = 'accounting';
         $pagedata['showonmenu'] = false;
 

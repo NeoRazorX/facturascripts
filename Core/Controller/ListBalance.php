@@ -40,7 +40,7 @@ class ListBalance extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'balances';
-        $pagedata['icon'] = 'fa-clipboard';
+        $pagedata['icon'] = 'fas fa-clipboard';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;

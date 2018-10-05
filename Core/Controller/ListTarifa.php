@@ -38,7 +38,7 @@ class ListTarifa extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'rates';
-        $pagedata['icon'] = 'fa-money-bill-alt';
+        $pagedata['icon'] = 'fas fa-money-bill-alt';
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListTarifa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListTarifa', 'Tarifa', 'rates', 'fa-money-bill-alt');
+        $this->addView('ListTarifa', 'Tarifa', 'rates', 'fas fa-money-bill-alt');
         $this->addSearchFields('ListTarifa', ['nombre', 'codtarifa']);
 
         $this->addOrderBy('ListTarifa', ['codtarifa'], 'code');

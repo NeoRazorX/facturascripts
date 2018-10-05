@@ -35,7 +35,7 @@
                         {% set active = (loop.index == 1) ? ' active' : '' %}
                         <a class="nav-link{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-expanded="true">
                             <span class='badge badge-secondary float-right'>{{ result.results | length }}</span>
-                            <i class="fas {{ result.icon }} fa-fw"></i>
+                            <i class="{{ result.icon }} fa-fw"></i>
                             {{ i18n.trans(result.title) | capitalize }}
                         </a>
                     {% endfor %}
@@ -81,7 +81,7 @@
                         {% for key, column in result.columns %}
                             {% if key == 'icon' %}
                                 <td class="text-center">
-                                    <i class="fas {{ line[key] }} fa-fw"></i>
+                                    <i class="{{ line[key] }} fa-fw"></i>
                                 </td>
                             {% elseif key != 'link' %}
                                 <td>{{ line[key] }}</td>
