@@ -110,7 +110,7 @@ class AutocompleteFilter extends BaseFilter
         } else {
             $html .= '<span class="input-group-prepend" title="' . $label . '">'
                 . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.submit();">'
-                . '<i class = "fas fa-times" aria-hidden = "true"></i>'
+                . '<i class="fas fa-times" aria-hidden="true"></i>'
                 . '</button>'
                 . '</span>';
         }

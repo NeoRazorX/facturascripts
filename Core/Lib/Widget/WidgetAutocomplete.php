@@ -81,7 +81,7 @@ class WidgetAutocomplete extends WidgetSelect
             . '<div class="input-group">'
             . '<div class="input-group-prepend">'
             . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
-            . '<i class = "fas fa-times" aria-hidden = "true"></i>'
+            . '<i class="fas fa-times" aria-hidden="true"></i>'
             . '</button>'
             . '</div>'
             . $inputHtml
