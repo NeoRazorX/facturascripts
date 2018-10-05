@@ -24,8 +24,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Fabricante model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class EditFabricante extends ExtendedController\PanelController
 {
@@ -40,7 +40,7 @@ class EditFabricante extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'manufacturer';
         $pagedata['menu'] = 'warehouse';
-        $pagesata['icon'] = 'fas fa-columns';
+        $pagedata['icon'] = 'fas fa-columns';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
