@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 col-xl-2">
+            <div class="col-sm-3 col-xl-2">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                     {% for key, result in fsc.results  %}
                         {% set active = (loop.index == 1) ? ' active' : '' %}
@@ -41,7 +41,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-9 col-xl-10">
+            <div class="col-sm-9 col-xl-10">
                 <div class="tab-content" id="v-pills-tabContent">
                     {% for key, result in fsc.results  %}
                         {% set active = (loop.index == 1) ? ' show active' : '' %}
