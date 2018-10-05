@@ -110,9 +110,9 @@ class PHPCollector extends DataCollector implements Renderable
      * Exception error handler. Called from constructor with set_error_handler to add all details.
      *
      * @param int    $severity Error type.
-     * @param string $message Message of error.
+     * @param string $message  Message of error.
      * @param string $fileName File where error is generated.
-     * @param int    $line Line number where error is generated.
+     * @param int    $line     Line number where error is generated.
      */
     public function errorHandler($severity, $message, $fileName, $line)
     {
@@ -160,39 +160,24 @@ class PHPCollector extends DataCollector implements Renderable
      */
     private function friendlyErrorType($type)
     {
-        switch ($type) {
-            case E_ERROR:
-                return 'ERROR';
-            case E_WARNING:
-                return 'WARNING';
-            case E_PARSE:
-                return 'PARSE';
-            case E_NOTICE:
-                return 'NOTICE';
-            case E_CORE_ERROR:
-                return 'CORE_ERROR';
-            case E_CORE_WARNING:
-                return 'CORE_WARNING';
-            case E_COMPILE_ERROR:
-                return 'COMPILE_ERROR';
-            case E_COMPILE_WARNING:
-                return 'COMPILE_WARNING';
-            case E_USER_ERROR:
-                return 'USER_ERROR';
-            case E_USER_WARNING:
-                return 'USER_WARNING';
-            case E_USER_NOTICE:
-                return 'USER_NOTICE';
-            case E_STRICT:
-                return 'STRICT';
-            case E_RECOVERABLE_ERROR:
-                return 'RECOVERABLE_ERROR';
-            case E_DEPRECATED:
-                return 'DEPRECATED';
-            case E_USER_DEPRECATED:
-                return 'USER_DEPRECATED';
-            default:
-                return '';
-        }
+        $errors = [
+            E_ERROR => 'ERROR',
+            E_WARNING => 'WARNING',
+            E_PARSE => 'PARSE',
+            E_NOTICE => 'NOTICE',
+            E_CORE_ERROR => 'CORE_ERROR',
+            E_CORE_WARNING => 'CORE_WARNING',
+            E_COMPILE_ERROR => 'COMPILE_ERROR',
+            E_COMPILE_WARNING => 'COMPILE_WARNING',
+            E_USER_ERROR => 'USER_ERROR',
+            E_USER_WARNING => 'USER_WARNING',
+            E_USER_NOTICE => 'USER_NOTICE',
+            E_STRICT => 'STRICT',
+            E_RECOVERABLE_ERROR => 'RECOVERABLE_ERROR',
+            E_DEPRECATED => 'DEPRECATED',
+            E_USER_DEPRECATED => 'USER_DEPRECATED',
+        ];
+
+        return $errors[$type] ?? '';
     }
 }
