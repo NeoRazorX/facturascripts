@@ -233,43 +233,6 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Delete data action method.
-     *
-     * @return bool
-     */
-    protected function deleteAction()
-    {
-        if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
-            return false;
-        }
-
-        $codes = $this->request->request->get('code', '');
-        if (!is_array($codes)) {
-            $this->miniLog->warning($this->i18n->trans('no-data'));
-            return false;
-        }
-
-        $model = $this->views[$this->active]->model;
-        $numDeletes = 0;
-        foreach ($codes as $cod) {
-            if ($model->loadFromCode($cod) && $model->delete()) {
-                ++$numDeletes;
-            } else {
-                break;
-            }
-        }
-
-        if ($numDeletes > 0) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return true;
-        }
-
-        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
-        return false;
-    }
-
-    /**
      * Runs the controller actions after data read.
      *
      * @param string $action

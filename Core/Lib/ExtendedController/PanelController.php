@@ -235,48 +235,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Action to delete data.
-     *
-     * @return bool
-     */
-    protected function deleteAction()
-    {
-        if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
-            return false;
-        }
-
-        // deleting a single row?
-        $model = $this->views[$this->active]->model;
-        $code = $this->request->request->get($model->primaryColumn(), '');
-        if ($model->loadFromCode($code) && $model->delete()) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return true;
-        }
-
-        // deleting multiples rows?
-        $codes = $this->request->request->get('code', '');
-        if (is_array($codes)) {
-            $numDeletes = 0;
-            foreach ($codes as $cod) {
-                if ($model->loadFromCode($cod) && $model->delete()) {
-                    ++$numDeletes;
-                } else {
-                    break;
-                }
-            }
-
-            if ($numDeletes > 0) {
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-                return true;
-            }
-        }
-
-        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
-        return false;
-    }
-
-    /**
      * Runs the data edit action.
      *
      * @return bool
