@@ -29,6 +29,16 @@ class WidgetDate extends BaseWidget
 {
 
     /**
+     * 
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        $data['icon'] = $data['icon'] ?? 'fas fa-calendar-alt';
+        parent::__construct($data);
+    }
+
+    /**
      *
      * @param object  $model
      * @param Request $request
