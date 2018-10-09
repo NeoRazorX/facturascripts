@@ -1,6 +1,6 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
-{% set action = fsc.hasData ? 'edit' : 'insert' %}
+{% set action = currentView.model.exists() ? 'edit' : 'insert' %}
 
 <script type="text/javascript">
     function editViewDelete(viewName) {
