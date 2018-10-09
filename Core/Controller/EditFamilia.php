@@ -24,12 +24,21 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Familia model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antobnio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditFamilia extends ExtendedController\PanelController
+class EditFamilia extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Familia';
+    }
 
     /**
      * Returns basic page attributes
@@ -52,7 +61,7 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditFamilia', 'Familia', 'family');
+        parent::createViews();
         $this->addListView('ListFamilia', 'Familia', 'families-children', 'fas fa-level-down-alt');
         $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
     }
@@ -66,11 +75,6 @@ class EditFamilia extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditFamilia':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListProducto':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
@@ -81,6 +85,10 @@ class EditFamilia extends ExtendedController\PanelController
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('madre', $codfamilia)];
                 $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

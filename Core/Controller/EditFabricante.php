@@ -27,8 +27,17 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class EditFabricante extends ExtendedController\PanelController
+class EditFabricante extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Fabricante';
+    }
 
     /**
      * Returns basic page attributes
@@ -51,7 +60,7 @@ class EditFabricante extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditFabricante', 'Fabricante', 'manufacturer');
+        parent::createViews();
         $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
     }
 
@@ -64,15 +73,14 @@ class EditFabricante extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditFabricante':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListProducto':
                 $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
                 $where = [new DataBaseWhere('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }
