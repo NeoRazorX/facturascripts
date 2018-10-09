@@ -55,7 +55,6 @@
                         </li>
                     {% endfor %}
                 </ul>
-                <br/>
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
                         {% set active = (viewName == fsc.active) ? ' show active' : '' %}
