@@ -188,8 +188,13 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $iddoc = $this->request->get('code', '');
-        if (empty($iddoc)) {
+        /**
+         * We need the identifier to load the model. It's almost always code,
+         * but sometimes it's not.
+         */
+        $primaryKey = $this->request->request->get($view->model->primaryColumn());
+        $code = $this->request->get('code', $primaryKey);
+        if (empty($code)) {
             return;
         }
 
@@ -197,12 +202,17 @@ abstract class BusinessDocumentController extends PanelController
         $editViewName = 'Edit' . $this->getModelClassName();
         switch ($viewName) {
             case $editViewName:
-                $view->loadData($iddoc);
+                $view->loadData($code);
                 $this->loadCustomContactsWidget($view);
-                return;
+                break;
 
             case $documentView:
-                return $view->loadData($iddoc);
+                $view->loadData($code);
+                /// data not found?
+                if (!empty($code) && !$view->model->exists()) {
+                    $this->miniLog->warning($this->i18n->trans('record-not-found'));
+                }
+                break;
         }
     }
 
