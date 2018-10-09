@@ -53,7 +53,6 @@ class EditGrupoClientes extends ExtendedController\EditController
      */
     protected function createViews()
     {
-        $this->addEditView('EditGrupoClientes', 'GrupoClientes', 'customer-group');
         $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
         $this->setTabsPosition('bottom');
 

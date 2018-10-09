@@ -53,7 +53,6 @@ class EditCuenta extends ExtendedController\EditController
      */
     protected function createViews()
     {
-        $this->addEditView('EditCuenta', 'Cuenta', 'account');
         $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts');
         $this->addListView('ListCuenta', 'Cuenta', 'children-accounts');
         $this->setTabsPosition('bottom');

@@ -53,7 +53,6 @@ class EditSubcuenta extends ExtendedController\EditController
      */
     protected function createViews()
     {
-        $this->addEditView('EditSubcuenta', 'Subcuenta', 'subaccount');
         $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
