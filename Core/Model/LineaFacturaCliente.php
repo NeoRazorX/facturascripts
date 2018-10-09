@@ -54,4 +54,20 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     {
         return 'lineasfacturascli';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idfactura) {
+            return 'EditFacturaCliente?code=' . $this->idfactura;
+        }
+
+        return parent::url($type, $list);
+    }
 }

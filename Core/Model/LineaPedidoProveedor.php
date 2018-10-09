@@ -55,4 +55,20 @@ class LineaPedidoProveedor extends Base\BusinessDocumentLine
     {
         return 'lineaspedidosprov';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idpedido) {
+            return 'EditPedidoProveedor?code=' . $this->idpedido;
+        }
+
+        return parent::url($type, $list);
+    }
 }
