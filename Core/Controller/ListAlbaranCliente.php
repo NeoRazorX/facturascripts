@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListAlbaranCliente extends ExtendedController\ListController
 {
@@ -102,5 +103,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
 
         /// disable megasearch for this view
         $this->setSettings('ListLineaAlbaranCliente', 'megasearch', false);
+        $this->setSettings('ListLineaAlbaranCliente', 'btnNew', false);
+        $this->setSettings('ListLineaAlbaranCliente', 'btnDelete', false);
     }
 }
