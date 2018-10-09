@@ -28,11 +28,11 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 /**
  * Controller to edit a single item from the Proveedor model
  *
- * @author Nazca Networks <comercial@nazcanetworks.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Nazca Networks               <comercial@nazcanetworks.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class EditProveedor extends ExtendedController\PanelController
+class EditProveedor extends ExtendedController\EditController
 {
 
     /**
@@ -72,6 +72,15 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Proveedor';
+    }
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -88,11 +97,17 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Create and configure main view
+     * Create views
      */
-    private function addMainView()
+    protected function createViews()
     {
-        $this->addEditView('EditProveedor', 'Proveedor', 'supplier');
+        parent::createViews();
+        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fas fa-copy');
+        $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
+        $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
+        $this->addListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fas fa-copy');
 
         /// Load values option to Fiscal ID select input
         $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
@@ -101,21 +116,6 @@ class EditProveedor extends ExtendedController\PanelController
         /// Load values option to VAT Type select input
         $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
         $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
-    }
-
-    /**
-     * Create views
-     */
-    protected function createViews()
-    {
-        $this->addMainView();
-
-        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fas fa-copy');
-        $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
-        $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
-        $this->addListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fas fa-copy');
 
         /// Disable columns
         $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
@@ -132,24 +132,20 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $limit = FS_ITEM_LIMIT;
         switch ($viewName) {
-            case 'EditProveedor':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListContacto':
             case 'EditCuentaBancoProveedor':
-                $limit = 0;
-            /// no break
             case 'ListFacturaProveedor':
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
                 $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
-                $view->loadData('', $where, [], 0, $limit);
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

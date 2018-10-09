@@ -60,11 +60,11 @@ class WidgetMoney extends WidgetNumber
             $simbol = static::$divisaTools->getSymbol();
             switch ($simbol) {
                 case '€':
-                    $this->icon = 'fa-euro-sign';
+                    $this->icon = 'fas fa-euro-sign';
                     break;
 
                 default:
-                    $this->icon = 'fa-dollar-sign';
+                    $this->icon = 'fas fa-dollar-sign';
                     break;
             }
         }
