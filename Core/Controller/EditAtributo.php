@@ -24,10 +24,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Controller to edit a single item from the Atributo model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Ramiro Salvador Mamani <ramiro@solsun.pe>
- * @author Carlos Jiménez Gómez <carlos@evolunext.es>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Ramiro Salvador Mamani   <ramiro@solsun.pe>
+ * @author Carlos Jiménez Gómez     <carlos@evolunext.es>
  */
 class EditAtributo extends ExtendedController\EditController
 {
@@ -63,7 +63,6 @@ class EditAtributo extends ExtendedController\EditController
     {
         parent::createViews();
         $this->addEditListView('EditAtributoValor', 'AtributoValor', 'attribute-values');
-        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -75,15 +74,14 @@ class EditAtributo extends ExtendedController\EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditAtributo':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'EditAtributoValor':
                 $codatributo = $this->getViewModelValue('EditAtributo', 'codatributo');
                 $where = [new DataBaseWhere('codatributo', $codatributo)];
                 $view->loadData('', $where, [], 0, 0);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

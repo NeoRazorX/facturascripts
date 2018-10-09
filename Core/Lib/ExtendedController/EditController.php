@@ -64,7 +64,12 @@ abstract class EditController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->request->get('code');
+        /**
+         * We need the identifier to load the model. It's almost always code,
+         * but sometimes it's not.
+         */
+        $primaryKey = $this->request->request->get($view->model->primaryColumn());
+        $code = $this->request->get('code', $primaryKey);
         $view->loadData($code);
     }
 }
