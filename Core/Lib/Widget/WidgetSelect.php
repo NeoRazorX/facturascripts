@@ -215,6 +215,10 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
+        if ($this->readonly) {
+            return parent::inputHtml($type, $extraClass);
+        }
+
         $html = '<select name="' . $this->fieldname . '" class="form-control"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)

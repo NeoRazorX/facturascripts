@@ -26,8 +26,17 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class EditTransferenciaStock extends ExtendedController\PanelController
+class EditTransferenciaStock extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'TransferenciaStock';
+    }
 
     /**
      * Returns basic page attributes
@@ -50,17 +59,11 @@ class EditTransferenciaStock extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditTransferenciaStock', 'TransferenciaStock', 'transfer-head');
+        parent::createViews();
         $this->addEditListView('EditLineaTransferenciaStock', 'LineaTransferenciaStock', 'lines-transfer');
 
         /// tabs on bottom
         $this->setTabsPosition('bottom');
-    }
-
-    protected function insertAction()
-    {
-        parent::insertAction();
-        $this->views[$this->active]->model->usuario = $this->user->nick;
     }
 
     /**
@@ -75,6 +78,9 @@ class EditTransferenciaStock extends ExtendedController\PanelController
             case 'EditTransferenciaStock':
                 $code = $this->request->get('code');
                 $view->loadData($code);
+                if (empty($this->views[$this->active]->model->usuario)) {
+                    $this->views[$this->active]->model->usuario = $this->user->nick;
+                }
                 break;
 
             case 'EditLineaTransferenciaStock':
