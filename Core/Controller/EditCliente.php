@@ -128,9 +128,8 @@ class EditCliente extends ExtendedController\EditController
     {
         switch ($viewName) {
             case 'EditCliente':
-                $primaryKey = $this->request->request->get($view->model->primaryColumn());
-                $code = $this->request->get('code', $primaryKey);
-                $view->loadData($code);
+                parent::loadData($viewName, $view);
+                $code = $this->getViewModelValue('EditCliente', 'codcliente');
                 $this->setCustomWidgetValues($code);
                 break;
 
