@@ -92,6 +92,9 @@ class ListProducto extends ExtendedController\ListController
         $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect('ListVariante', 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
         $this->addFilterSelect('ListVariante', 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
+
+        /// disable new button
+        $this->setSettings('ListVariante', 'btnNew', false);
     }
 
     private function createViewStock()
@@ -106,5 +109,8 @@ class ListProducto extends ExtendedController\ListController
 
         $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect('ListStock', 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
+
+        /// disable new button
+        $this->setSettings('ListStock', 'btnNew', false);
     }
 }
