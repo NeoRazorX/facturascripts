@@ -57,6 +57,7 @@ class ListAttachedFile extends ExtendedController\ListController
         $types = $this->codeModel->all('attached_files', 'mimetype', 'mimetype');
         $this->addFilterSelect('ListAttachedFile', 'mimetype', 'mime-type', 'mimetype', $types);
 
-        $this->addFilterDatePicker('ListAttachedFile', 'date', 'date', 'date');
+        $this->addFilterDatePicker('ListAttachedFile', 'fromdate', 'from-date', 'date', '>=');
+        $this->addFilterDatePicker('ListAttachedFile', 'untildate', 'until-date', 'date', '<=');
     }
 }
