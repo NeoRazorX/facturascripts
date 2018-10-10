@@ -55,4 +55,20 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
     {
         return 'lineaspedidoscli';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idpedido) {
+            return 'EditPedidoCliente?code=' . $this->idpedido;
+        }
+
+        return parent::url($type, $list);
+    }
 }

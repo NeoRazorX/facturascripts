@@ -92,8 +92,7 @@ class EditProducto extends ExtendedController\EditController
     {
         switch ($viewName) {
             case 'EditProducto':
-                $code = $this->request->get('code');
-                $view->loadData($code);
+                parent::loadData($viewName, $view);
                 if ($view->model->nostock) {
                     $this->setSettings('EditStock', 'active', false);
                 } else {
@@ -105,7 +104,7 @@ class EditProducto extends ExtendedController\EditController
             case 'EditStock':
                 $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
                 $where = [new DataBaseWhere('idproducto', $idproducto)];
-                $view->loadData('', $where, ['referencia' => 'ASC'], 0, 0);
+                $view->loadData('', $where, ['referencia' => 'ASC']);
                 break;
         }
     }

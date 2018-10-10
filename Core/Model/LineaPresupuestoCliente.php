@@ -55,4 +55,20 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
     {
         return 'lineaspresupuestoscli';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idpresupuesto) {
+            return 'EditPresupuestoCliente?code=' . $this->idpresupuesto;
+        }
+
+        return parent::url($type, $list);
+    }
 }

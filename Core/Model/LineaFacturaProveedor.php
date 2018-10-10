@@ -54,4 +54,20 @@ class LineaFacturaProveedor extends Base\BusinessDocumentLine
     {
         return 'lineasfacturasprov';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idfactura) {
+            return 'EditFacturaProveedor?code=' . $this->idfactura;
+        }
+
+        return parent::url($type, $list);
+    }
 }

@@ -57,4 +57,20 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
     {
         return 'lineasalbaranescli';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idalbaran) {
+            return 'EditAlbaranCliente?code=' . $this->idalbaran;
+        }
+
+        return parent::url($type, $list);
+    }
 }

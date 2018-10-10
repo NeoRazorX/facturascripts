@@ -68,8 +68,10 @@ class ListLogMessage extends ExtendedController\ListController
         $this->addOrderBy('ListCronJob', ['jobname'], 'jobname');
         $this->addOrderBy('ListCronJob', ['pluginname'], 'pluginname');
         $this->addOrderBy('ListCronJob', ['date'], 'date');
+        $this->addFilterDatePicker('ListCronJob', 'fromdate', 'from-date', 'date', '>=');
+        $this->addFilterDatePicker('ListCronJob', 'untildate', 'until-date', 'date', '<=');
 
-        $this->addFilterDatePicker('ListCronJob', 'date', 'date', 'date');
+        $this->setSettings('ListCronJob', 'btnNew', false);
     }
 
     /**
@@ -88,7 +90,10 @@ class ListLogMessage extends ExtendedController\ListController
         $this->addFilterSelect('ListLogMessage', 'level', 'level', 'level', $values);
         $this->addFilterAutocomplete('ListLogMessage', 'nick', 'user', 'nick', 'users');
         $this->addFilterAutocomplete('ListLogMessage', 'ip', 'ip', 'ip', 'logs');
-        $this->addFilterDatePicker('ListLogMessage', 'time', 'date', 'time');
+        $this->addFilterDatePicker('ListLogMessage', 'fromdate', 'from-date', 'time', '>=');
+        $this->addFilterDatePicker('ListLogMessage', 'untildate', 'until-date', 'time', '<=');
+
+        $this->setSettings('ListLogMessage', 'btnNew', false);
     }
 
     /**

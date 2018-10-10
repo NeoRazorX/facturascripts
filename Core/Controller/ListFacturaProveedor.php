@@ -27,6 +27,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class ListFacturaProveedor extends ExtendedController\ListController
 {
@@ -103,5 +104,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
 
         /// disable megasearch for this view
         $this->setSettings('ListLineaFacturaProveedor', 'megasearch', false);
+        $this->setSettings('ListLineaFacturaProveedor', 'btnNew', false);
+        $this->setSettings('ListLineaFacturaProveedor', 'btnDelete', false);
     }
 }

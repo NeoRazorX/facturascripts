@@ -55,4 +55,20 @@ class LineaPresupuestoProveedor extends Base\BusinessDocumentLine
     {
         return 'lineaspresupuestosprov';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idpresupuesto) {
+            return 'EditPresupuestoProveedor?code=' . $this->idpresupuesto;
+        }
+
+        return parent::url($type, $list);
+    }
 }
