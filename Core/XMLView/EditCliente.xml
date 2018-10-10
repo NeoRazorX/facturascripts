@@ -49,7 +49,7 @@
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="group" numcolumns="3" order="100">
-                <widget type="select" fieldname="codgrupo" onclick="EditGrupo">
+                <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes" icon="fas fa-folder" >
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>
