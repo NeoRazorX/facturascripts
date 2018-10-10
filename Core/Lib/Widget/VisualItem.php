@@ -92,6 +92,47 @@ class VisualItem
     }
 
     /**
+     * Calculate color from option configuration
+     *
+     * @param array $option
+     * @param mixed $value
+     * @param string $prefix
+     * @return string
+     */
+    public function getColorFromOption($option, $value, $prefix): string
+    {
+        $apply = false;
+        $color = '';
+        switch ($option['text'][0]) {
+            case '<':
+                $matchValue = substr($option['text'], 1);
+                $apply = ((float) $value < (float) $matchValue);
+                break;
+
+            case '>':
+                $matchValue = substr($option['text'], 1);
+                $apply = ((float) $value > (float) $matchValue);
+                break;
+
+            case '!':
+                $matchValue = substr($option['text'], 1);
+                $apply = ($matchValue != $value);
+                break;
+
+            default:
+                $matchValue = $option['text'] ?? '';
+                $apply = ($matchValue == $value);
+                break;
+        }
+
+        if ($apply) {
+            $color = $this->colorToClass($option['color'], $prefix);
+        }
+
+        return $color;
+    }
+
+    /**
      *
      * @return int
      */
