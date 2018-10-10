@@ -27,8 +27,9 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Nazca Networks <comercial@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class EditGrupoClientes extends ExtendedController\PanelController
+class EditGrupoClientes extends ExtendedController\EditController
 {
 
     /**
@@ -52,7 +53,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditGrupoClientes', 'GrupoClientes', 'customer-group');
+        parent::createViews();
         $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
         $this->setTabsPosition('bottom');
 
@@ -80,5 +81,15 @@ class EditGrupoClientes extends ExtendedController\PanelController
                 $view->loadData('', $where);
                 break;
         }
+    }
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return String
+     */
+    public function getModelClassName() : string
+    {
+        return 'Cuenta';
     }
 }

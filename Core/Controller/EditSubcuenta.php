@@ -27,8 +27,9 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
-class EditSubcuenta extends ExtendedController\PanelController
+class EditSubcuenta extends ExtendedController\EditController
 {
 
     /**
@@ -52,7 +53,7 @@ class EditSubcuenta extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditSubcuenta', 'Subcuenta', 'subaccount');
+        parent::createViews();
         $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
@@ -78,5 +79,15 @@ class EditSubcuenta extends ExtendedController\PanelController
                 $view->loadData('', $where);
                 break;
         }
+    }
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return String
+     */
+    public function getModelClassName() : string
+    {
+        return 'Cuenta';
     }
 }
