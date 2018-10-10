@@ -103,6 +103,9 @@ class Cuenta extends Base\ModelClass
         return 'idcuenta';
     }
 
+    /**
+     * 
+     */
     public function clear()
     {
         parent::clear();
@@ -125,9 +128,10 @@ class Cuenta extends Base\ModelClass
     public function install()
     {
         /// force the parents tables
+        new CuentaEspecial();
         new Ejercicio();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -186,6 +190,13 @@ class Cuenta extends Base\ModelClass
         return parent::test();
     }
 
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCuenta?activetab=List');

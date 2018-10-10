@@ -83,5 +83,8 @@ class ListProveedor extends ExtendedController\ListController
 
         $this->addFilterCheckbox('ListContacto', 'verificado', 'verified', 'verificado');
         $this->addFilterCheckbox('ListContacto', 'admitemarketing', 'allow-marketing', 'admitemarketing');
+
+        /// disable megasearch
+        $this->setSettings('ListContacto', 'megasearch', false);
     }
 }

@@ -24,9 +24,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Controller to edit a single item from the AlbaranCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
  */
 class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
 {
@@ -77,8 +77,8 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
         switch ($viewName) {
             case 'EditAsiento':
                 $where = [
-                    new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasiento')),
-                    new DataBaseWhere('idasiento', $this->getViewModelValue('Document', 'idasientop'), '=', 'OR')
+                    new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento')),
+                    new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasientop'), '=', 'OR')
                 ];
                 $view->loadData('', $where);
                 break;

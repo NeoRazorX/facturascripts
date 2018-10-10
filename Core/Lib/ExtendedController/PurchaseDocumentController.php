@@ -65,7 +65,11 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
      */
     protected function setSubject(&$view, $formData)
     {
-        if ($view->model->codproveedor === $formData['codproveedor'] && !empty($view->model->codproveedor)) {
+        if (empty($formData['codproveedor'])) {
+            return 'ERROR: NO SUPPLIER';
+        }
+
+        if ($view->model->codproveedor === $formData['codproveedor']) {
             return 'OK';
         }
 

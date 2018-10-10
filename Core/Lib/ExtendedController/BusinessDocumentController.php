@@ -271,13 +271,8 @@ abstract class BusinessDocumentController extends PanelController
         /// save
         $data['fecha'] = $fecha;
         $data['hora'] = $hora;
-        if (!empty($codcliente)) {
-            $data['codcliente'] = $codcliente;
-        }
-        if (!empty($codproveedor)) {
-            $data['codproveedor'] = $codproveedor;
-        }
-
+        $data['codcliente'] = $codcliente;
+        $data['codproveedor'] = $codproveedor;
         $result = $this->saveDocumentResult($view, $data, $newLines);
         $this->response->setContent($result);
         return false;

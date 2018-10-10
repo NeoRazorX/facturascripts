@@ -77,11 +77,16 @@ abstract class SalesDocumentController extends BusinessDocumentController
      * 
      * @param mixed $view
      * @param array $formData
+     *
      * @return string
      */
     protected function setSubject(&$view, $formData)
     {
-        if ($view->model->codcliente === $formData['codcliente'] && !empty($view->model->codcliente)) {
+        if (empty($formData['codcliente'])) {
+            return 'ERROR: NO CUSTOMER';
+        }
+
+        if ($view->model->codcliente === $formData['codcliente']) {
             return 'OK';
         }
 

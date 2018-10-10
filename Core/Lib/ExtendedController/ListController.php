@@ -315,11 +315,9 @@ abstract class ListController extends BaseController
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];
                 foreach ($listView->getColumns() as $col) {
-                    if ($col->hiddeTo($this->user)) {
-                        continue;
+                    if (!$col->hiddeTo($this->user->level)) {
+                        $item[$col->widget->fieldname] = $col->widget->plainText($model);
                     }
-
-                    $item[$col->widget->fieldname] = $col->widget->plainText($model);
                 }
 
                 $json[$viewName]['results'][] = $item;
@@ -340,11 +338,9 @@ abstract class ListController extends BaseController
     {
         $result = [];
         foreach ($view->getColumns() as $col) {
-            if ($col->hiddeTo($this->user)) {
-                continue;
+            if (!$col->hiddeTo($this->user->level)) {
+                $result[] = $this->i18n->trans($col->title);
             }
-
-            $result[] = $this->i18n->trans($col->title);
         }
 
         return $result;

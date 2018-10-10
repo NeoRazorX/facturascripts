@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -103,13 +102,13 @@ class ColumnItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param User|false $user
+     * @param int    $level
      *
      * @return string
      */
-    public function edit($model, $user)
+    public function edit($model, $level = 0)
     {
-        if ($this->hiddeTo($user)) {
+        if ($this->hiddeTo($level)) {
             return $this->widget->inputHidden($model);
         }
 
@@ -120,19 +119,17 @@ class ColumnItem extends VisualItem
 
     /**
      *
-     * @param User|false $user
+     * @param int $level
      *
      * @return boolean
      */
-    public function hiddeTo($user)
+    public function hiddeTo($level)
     {
         if ($this->display === 'none') {
             return true;
-        } elseif (false === $user) {
-            return false;
         }
 
-        return $user->level < $this->level;
+        return $level < $this->level;
     }
 
     /**
@@ -148,24 +145,24 @@ class ColumnItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param User|false $user
+     * @param int    $level
      *
      * @return string
      */
-    public function tableCell($model, $user)
+    public function tableCell($model, $level = 0)
     {
-        return $this->hiddeTo($user) ? '' : $this->widget->tableCell($model, $this->display);
+        return $this->hiddeTo($level) ? '' : $this->widget->tableCell($model, $this->display);
     }
 
     /**
      *
-     * @param User|false $user
+     * @param level $level
      *
      * @return string
      */
-    public function tableHeader($user)
+    public function tableHeader($level = 0)
     {
-        if ($this->hiddeTo($user)) {
+        if ($this->hiddeTo($level)) {
             return '';
         }
 

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -85,12 +84,12 @@ class GroupItem extends VisualItem
 
     /**
      *
-     * @param object     $model
-     * @param User|false $user
+     * @param object $model
+     * @param int    $level
      *
      * @return string
      */
-    public function edit($model, $user)
+    public function edit($model, $level = 0)
     {
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
@@ -102,7 +101,7 @@ class GroupItem extends VisualItem
         }
 
         foreach ($this->columns as $col) {
-            $html .= $col->edit($model, $user);
+            $html .= $col->edit($model, $level);
         }
 
         $html .= '</div></div>';
@@ -111,13 +110,13 @@ class GroupItem extends VisualItem
 
     /**
      *
-     * @param object     $model
-     * @param User|false $user
-     * @param string     $viewName
+     * @param object $model
+     * @param int    $level
+     * @param string $viewName
      *
      * @return string
      */
-    public function modal($model, $user, $viewName)
+    public function modal($model, $level, $viewName)
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $html = '<form method="post" enctype="multipart/form-data">'
@@ -135,7 +134,7 @@ class GroupItem extends VisualItem
             . '<div class="row">';
 
         foreach ($this->columns as $col) {
-            $html .= $col->edit($model, $user);
+            $html .= $col->edit($model, $level);
         }
 
         $html .= '</div>'

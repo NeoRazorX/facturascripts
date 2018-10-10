@@ -51,4 +51,13 @@ class EditLogMessage extends ExtendedController\EditController
 
         return $pagedata;
     }
+
+    /**
+     * 
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setSettings('Edit' . $this->getModelClassName(), 'btnNew', FALSE);
+    }
 }
