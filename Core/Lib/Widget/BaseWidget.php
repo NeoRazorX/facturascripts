@@ -178,7 +178,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object  $model
      * @param Request $request
      */
@@ -285,25 +285,9 @@ class BaseWidget extends VisualItem
     protected function tableCellClass($initialClass = '', $alternativeClass = '')
     {
         foreach ($this->options as $opt) {
-            $apply = false;
-            switch ($opt['text'][0]) {
-                case '<':
-                    $matchValue = substr($opt['text'], 1) ?: '';
-                    $apply = ((float) $this->value < (float) $matchValue);
-                    break;
-
-                case '>':
-                    $matchValue = substr($opt['text'], 1) ?: '';
-                    $apply = ((float) $this->value > (float) $matchValue);
-                    break;
-
-                default:
-                    $apply = ($opt['text'] == $this->value);
-                    break;
-            }
-
-            if ($apply) {
-                $alternativeClass = $this->colorToClass($opt['color'], 'text-');
+            $textClass = $this->getColorFromOption($opt, $this->value, 'text-');
+            if (!empty($textClass)) {
+                $alternativeClass = $textClass;
                 break;
             }
         }

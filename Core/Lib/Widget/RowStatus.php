@@ -60,32 +60,9 @@ class RowStatus extends VisualItem
         foreach ($this->options as $opt) {
             $fieldname = isset($opt['fieldname']) ? $opt['fieldname'] : $this->fieldname;
             $value = isset($model->{$fieldname}) ? $model->{$fieldname} : null;
-
-            $apply = false;
-            switch ($opt['text'][0]) {
-                case '<':
-                    $matchValue = substr($opt['text'], 1);
-                    $apply = ((float) $value < (float) $matchValue);
-                    break;
-
-                case '>':
-                    $matchValue = substr($opt['text'], 1);
-                    $apply = ((float) $value > (float) $matchValue);
-                    break;
-
-                case '!':
-                    $matchValue = substr($opt['text'], 1);
-                    $apply = ($matchValue != $value);
-                    break;
-
-                default:
-                    $matchValue = $opt['text'] ?? '';
-                    $apply = ($matchValue == $value);
-                    break;
-            }
-
-            if ($apply) {
-                return $this->colorToClass($opt['color'], 'table-');
+            $rowColor = $this->getColorFromOption($opt, $value, 'table-');
+            if (!empty($rowColor)) {
+                return $rowColor;
             }
         }
 
