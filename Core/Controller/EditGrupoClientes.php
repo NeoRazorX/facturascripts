@@ -24,13 +24,23 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the GrupoClientes model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Nazca Networks <comercial@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Nazca Networks               <comercial@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class EditGrupoClientes extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'GrupoClientes';
+    }
 
     /**
      * Returns basic page attributes
@@ -70,26 +80,15 @@ class EditGrupoClientes extends ExtendedController\EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditGrupoClientes':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListCliente':
                 $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
                 $where = [new DataBaseWhere('codgrupo', $codgrupo)];
                 $view->loadData('', $where);
                 break;
-        }
-    }
 
-    /**
-     * Returns the class name of the model to use in the editView.
-     * 
-     * @return String
-     */
-    public function getModelClassName() : string
-    {
-        return 'Cuenta';
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

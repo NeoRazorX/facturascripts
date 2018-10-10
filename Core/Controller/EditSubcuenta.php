@@ -24,13 +24,23 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the SubCuenta model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author PC REDNET S.L.               <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class EditSubcuenta extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Subcuenta';
+    }
 
     /**
      * Returns basic page attributes
@@ -67,27 +77,16 @@ class EditSubcuenta extends ExtendedController\EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditSubcuenta':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListAsiento':
                 $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
                 $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
                 $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
                 $view->loadData('', $where);
                 break;
-        }
-    }
 
-    /**
-     * Returns the class name of the model to use in the editView.
-     * 
-     * @return String
-     */
-    public function getModelClassName() : string
-    {
-        return 'Cuenta';
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

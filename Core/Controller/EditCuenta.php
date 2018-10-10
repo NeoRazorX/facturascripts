@@ -24,13 +24,23 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Cuenta model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author PC REDNET S.L.               <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class EditCuenta extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Cuenta';
+    }
 
     /**
      * Returns basic page attributes
@@ -42,7 +52,7 @@ class EditCuenta extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounts';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-bar-chart';
+        $pagedata['icon'] = 'fas fa-chart-bar';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -68,11 +78,6 @@ class EditCuenta extends ExtendedController\EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditCuenta':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListSubcuenta':
                 $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
@@ -84,16 +89,10 @@ class EditCuenta extends ExtendedController\EditController
                 $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
                 $view->loadData('', $where);
                 break;
-        }
-    }
 
-    /**
-     * Returns the class name of the model to use in the editView.
-     * 
-     * @return String
-     */
-    public function getModelClassName() : string
-    {
-        return 'Cuenta';
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }
