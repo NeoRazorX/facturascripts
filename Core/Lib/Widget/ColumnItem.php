@@ -47,7 +47,7 @@ class ColumnItem extends VisualItem
     /**
      * Indicates the security level of the column
      *
-     * @var integer
+     * @var int
      */
     public $level;
 
@@ -91,7 +91,7 @@ class ColumnItem extends VisualItem
         parent::__construct($data);
         $this->description = isset($data['description']) ? $data['description'] : '';
         $this->display = isset($data['display']) ? $data['display'] : 'left';
-        $this->level = isset($data['level']) ? (int) $data['level'] : 1;
+        $this->level = isset($data['level']) ? (int) $data['level'] : 0;
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int) $data['order'] : 0;
         $this->title = isset($data['title']) ? $data['title'] : $this->name;
