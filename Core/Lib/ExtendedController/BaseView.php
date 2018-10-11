@@ -78,6 +78,13 @@ abstract class BaseView
     protected static $i18n;
 
     /**
+     * App log manager.
+     *
+     * @var Base\MiniLog
+     */
+    protected static $miniLog;
+
+    /**
      *
      * @var array
      */
@@ -182,10 +189,16 @@ abstract class BaseView
     {
         if (!isset(static::$i18n)) {
             static::$i18n = new Base\Translator();
+            static::$miniLog = new Base\MiniLog();
+        }
+
+        if (class_exists($modelName)) {
+            $this->model = new $modelName();
+        } else {
+            static::$miniLog->critical(static::$i18n->trans('model-not-found', ['%model%' => $modelName]));
         }
 
         $this->icon = $icon;
-        $this->model = class_exists($modelName) ? new $modelName() : null;
         $this->name = $name;
         $this->pageOption = new PageOption();
         $this->settings = [
