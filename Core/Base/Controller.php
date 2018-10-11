@@ -127,9 +127,9 @@ class Controller
     /**
      * User logged in.
      *
-     * @var Model\User
+     * @var Model\User|false
      */
-    public $user;
+    public $user = false;
 
     /**
      * Initialize all objects and properties.
@@ -244,12 +244,7 @@ class Controller
      */
     public function setTemplate($template)
     {
-        if ($template === false) {
-            $this->template = false;
-            return true;
-        }
-
-        $this->template = $template . '.html.twig';
+        $this->template = ($template === false) ? false : $template . '.html.twig';
         return true;
     }
 
