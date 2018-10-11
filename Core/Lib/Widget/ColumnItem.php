@@ -156,7 +156,7 @@ class ColumnItem extends VisualItem
 
     /**
      *
-     * @param level $level
+     * @param int $level
      *
      * @return string
      */

@@ -23,7 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the LogMessage model
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  */
 class EditLogMessage extends ExtendedController\EditController
 {
@@ -58,6 +59,6 @@ class EditLogMessage extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setSettings('Edit' . $this->getModelClassName(), 'btnNew', FALSE);
+        $this->setSettings('Edit' . $this->getModelClassName(), 'btnNew', false);
     }
 }

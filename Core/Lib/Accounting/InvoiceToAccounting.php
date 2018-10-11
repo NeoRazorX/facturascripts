@@ -159,11 +159,15 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * Search VAT Account for VAT Code into exercise and account plan
+     * Search VAT Account for VAT Code into exercise and account plan.
+     * 
+     * @param string $vat
+     * @param string $type
+     * @param string $default
      *
      * @return string
      */
-    protected function getVatAccount(string $vat, string $type, string $default): string
+    protected function getVatAccount($vat, $type, $default): string
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->document->codejercicio),

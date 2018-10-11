@@ -94,9 +94,10 @@ class VisualItem
     /**
      * Calculate color from option configuration
      *
-     * @param array $option
-     * @param mixed $value
-     * @param string $prefix
+     * @param string[] $option
+     * @param mixed    $value
+     * @param string   $prefix
+     *
      * @return string
      */
     public function getColorFromOption($option, $value, $prefix): string
