@@ -34,7 +34,8 @@ foreach ($files as $filename) {
     $url = "https://beta.facturascripts.com/EditLanguage?action=json&code=";
     $json = file_get_contents($url . substr($filename, 0, -5));
     if (empty($json) || strlen($json) < 10) {
-        echo "Skip " . $filename . "\n";
+        unlink($filename);
+        echo "Remove " . $filename . "\n";
         continue;
     }
 
