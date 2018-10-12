@@ -81,7 +81,7 @@ class ListProducto extends ExtendedController\ListController
 
     private function createViewVariante()
     {
-        $this->addView('ListVariante', 'Variante', 'Variants', 'fas fa-code-branch');
+        $this->addView('ListVariante', 'Variante', 'variants', 'fas fa-code-branch');
         $this->addSearchFields('ListVariante', ['referencia', 'codbarras']);
         $this->addOrderBy('ListVariante', ['referencia'], 'reference');
         $this->addOrderBy('ListVariante', ['codbarras'], 'barcode');

@@ -200,9 +200,11 @@ class WidgetSelect extends BaseWidget
     private function applyTranslations()
     {
         foreach ($this->values as $key => $value) {
-            if (!empty($value['title'])) {
-                $this->values[$key]['title'] = static::$i18n->trans($value['title']);
+            if (empty($value['title']) || '------' === $value['title']) {
+                continue;
             }
+
+            $this->values[$key]['title'] = static::$i18n->trans($value['title']);
         }
     }
 

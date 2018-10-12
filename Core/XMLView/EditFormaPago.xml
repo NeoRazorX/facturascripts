@@ -34,10 +34,10 @@
             </column>
         </group>
         <group name="payment-info" numcolumns="12">
-            <column name="expiration" title="expiration" order="120">
+            <column name="expiration" order="120">
                 <widget type="number" fieldname="plazovencimiento" />
             </column>
-            <column name="type-expiration" title="type-expiration" numcolumns="4" order="125">
+            <column name="expiration-type" numcolumns="4" order="125">
                 <widget type="select" fieldname="tipovencimiento">
                     <values title="days">days</values>
                     <values title="weeks">weeks</values>
