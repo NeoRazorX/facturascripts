@@ -132,7 +132,7 @@ class AccountingGenerator
         if ($withVAT) {
             $result['VAT'] = [
                 'document' => '',
-                'vat-id' => '',
+                'fiscal-number' => '',
                 'tax-base' => 0.00,
                 'pct-vat' => 0.00,
                 'surcharge' => 0.00
@@ -185,7 +185,7 @@ class AccountingGenerator
 
                 if (count($line['VAT']) > 0) {
                     $detail->documento = $line['VAT']['document'] ?? $entry->documento;
-                    $detail->cifnif = $line['VAT']['vat-id'];
+                    $detail->cifnif = $line['VAT']['fiscal-number'];
                     $detail->baseimponible = $line['VAT']['tax-base'];
                     $detail->iva = $line['VAT']['pct-vat'];
                     $detail->recargo = $line['VAT']['surcharge'];

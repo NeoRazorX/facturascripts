@@ -34,7 +34,7 @@
             <column name="surname" numcolumns="6" order="120">
                 <widget type="text" fieldname="apellidos" />
             </column>
-            <column name="cifnif" numcolumns="4" order="130">
+            <column name="fiscal-number" numcolumns="4" order="130">
                 <widget type="text" fieldname="cifnif" />
             </column>
             <column name="position" numcolumns="4" order="140">

@@ -56,7 +56,6 @@
             </widget>
         </column>
     </columns>
-
     <rows>
         <row type="actions">
             <button type="js" id="vat-register-btn" label="vat-register" color="info" action="showVatRegister('vat-register')" hint="hint-vat-register" icon="fas fa-book" />
@@ -64,25 +63,20 @@
             <button type="action" label="lock-unlock" color="warning" action="lock" hint="lock-unlock-account-entry" icon="fas fa-lock" />
         </row>
     </rows>
-
     <modals>
         <group name="vat-register" class="modal-lg" title="VAT-register" icon="fas fa-book">
             <column name="vat-document" numcolumns="6" description="desc-vat-document">
                 <widget type="text" fieldname="documento" required="true" />
             </column>
-
-            <column name="vat-id" numcolumns="6" description="desc-vat-id">
+            <column name="fiscal-number" numcolumns="6">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
-
             <column name="tax-base" numcolumns="6">
                 <widget type="money" decimal="2" fieldname="baseimponible" />
             </column>
-
             <column name="pct-vat" numcolumns="3">
                 <widget type="number" decimal="2" fieldname="iva" />
             </column>
-
             <column name="surcharge" numcolumns="3">
                 <widget type="number" decimal="2" fieldname="recargo" />
             </column>

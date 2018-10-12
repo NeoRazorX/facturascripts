@@ -245,7 +245,7 @@ class InvoiceToAccounting extends AccountingGenerator
                 'credit' => $subtotal['totaliva'] + $subtotal['totalrecargo'],
                 'VAT' => [
                     'document' => $this->document->codigo,
-                    'vat-id' => $this->document->cifnif,
+                    'fiscal-number' => $this->document->cifnif,
                     'tax-base' => $subtotal['neto'],
                     'pct-vat' => $this->vat->iva,
                     'surcharge' => $this->vat->recargo
@@ -309,7 +309,7 @@ class InvoiceToAccounting extends AccountingGenerator
                 'debit' => $subtotal['totaliva'] + $subtotal['totalrecargo'],
                 'VAT' => [
                     'document' => $this->document->codigo,
-                    'vat-id' => $this->document->cifnif,
+                    'fiscal-number' => $this->document->cifnif,
                     'tax-base' => $subtotal['neto'],
                     'pct-vat' => $this->vat->iva,
                     'surcharge' => $this->vat->recargo

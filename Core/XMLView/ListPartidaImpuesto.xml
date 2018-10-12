@@ -60,7 +60,7 @@
         <column name="subaccount" order="150" display="none">
             <widget type="text" fieldname="codcontrapartida" />
         </column>
-        <column name="vat-id" order="160" display="none">
+        <column name="fiscal-number" order="160" display="none">
             <widget type="text" fieldname="cifnif" />
         </column>
         <column name="accounting-concept" order="170">
