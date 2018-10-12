@@ -68,7 +68,7 @@
                         </button>
                         <div class="dropdown-menu">
                             {% for viewName, view in fsc.views %}
-                            <a class="dropdown-item" href="EditPageOption?code={{ view.getViewName() }}&url={{ view.model.url() | url_encode }}">
+                            <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                             </a>
                             {% endfor %}

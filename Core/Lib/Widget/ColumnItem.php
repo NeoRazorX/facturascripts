@@ -186,11 +186,12 @@ class ColumnItem extends VisualItem
                 continue;
             }
 
-            $className = '\\FacturaScripts\\Dinamic\\Lib\\Widget\\Widget' . ucfirst($child['type']);
+            $className = VisualItemLoadEngine::getNamespace() . 'Widget' . ucfirst($child['type']);
             if (class_exists($className)) {
                 $this->widget = new $className($child);
             } else {
-                $this->widget = new WidgetText($child);
+                $defaultWidget = VisualItemLoadEngine::getNamespace() . 'WidgetText';
+                $this->widget = new $defaultWidget($child);
             }
 
             break;

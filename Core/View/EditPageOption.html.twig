@@ -183,7 +183,7 @@
         </td>
         {% if fsc.user.admin %}
             <td class="d-inline-block col-1">
-                <input type="number" class="form-control" name="{{ masterName ~ 'level' }}" min="1" max="99" step="1" placeholder="1" value="{{ field.level }}"/>
+                <input type="number" class="form-control" name="{{ masterName ~ 'level' }}" min="0" max="99" step="1" value="{{ field.level }}"/>
             </td>
         {% endif %}
         <td class="d-inline-block col-2">

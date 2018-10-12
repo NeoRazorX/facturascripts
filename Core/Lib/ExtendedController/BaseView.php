@@ -377,7 +377,7 @@ abstract class BaseView
      *
      * @param User|false $user
      */
-    public function loadPageOptions($user)
+    public function loadPageOptions($user = false)
     {
         $orderby = ['nick' => 'ASC'];
         $viewName = explode('-', $this->name)[0];

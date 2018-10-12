@@ -32,6 +32,30 @@ class VisualItemLoadEngine
 {
 
     /**
+     *
+     * @var string
+     */
+    private static $namespace = '\\FacturaScripts\\Dinamic\\Lib\\Widget\\';
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getNamespace()
+    {
+        return static::$namespace;
+    }
+
+    /**
+     * 
+     * @param string $namespace
+     */
+    public static function setNamespace($namespace)
+    {
+        static::$namespace = $namespace;
+    }
+
+    /**
      * Loads an xmlview data into a PageOption model.
      *
      * @param string           $name
@@ -97,7 +121,7 @@ class VisualItemLoadEngine
         static::getGroupsColumns($model->modals, $modals);
 
         foreach ($model->rows as $name => $item) {
-            $className = '\\FacturaScripts\\Core\\Lib\\Widget\\Row' . ucfirst($name);
+            $className = static::$namespace . 'Row' . ucfirst($name);
             if (class_exists($className)) {
                 $rowItem = new $className($item);
                 $rows[$name] = $rowItem;
@@ -113,14 +137,16 @@ class VisualItemLoadEngine
      */
     private static function getGroupsColumns($columns, &$target)
     {
+        $groupClass = static::$namespace . 'GroupItem';
         $newGroupArray = [
-            'name' => 'main',
             'children' => [],
+            'name' => 'main',
+            'tag' => 'group',
         ];
 
         foreach ($columns as $key => $item) {
             if ($item['tag'] === 'group') {
-                $groupItem = new GroupItem($item);
+                $groupItem = new $groupClass($item);
                 $target[$groupItem->name] = $groupItem;
             } else {
                 $newGroupArray['children'][$key] = $item;
@@ -129,7 +155,7 @@ class VisualItemLoadEngine
 
         /// is there are loose columns, then we put it on a new group
         if (!empty($newGroupArray['children'])) {
-            $groupItem = new GroupItem($newGroupArray);
+            $groupItem = new $groupClass($newGroupArray);
             $target[$groupItem->name] = $groupItem;
         }
     }
