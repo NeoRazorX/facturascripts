@@ -43,7 +43,7 @@ class VisualItemLoadEngine
      */
     public static function getNamespace()
     {
-        return static::$namespace;
+        return self::$namespace;
     }
 
     /**
@@ -52,7 +52,7 @@ class VisualItemLoadEngine
      */
     public static function setNamespace($namespace)
     {
-        static::$namespace = $namespace;
+        self::$namespace = $namespace;
     }
 
     /**
@@ -121,7 +121,7 @@ class VisualItemLoadEngine
         static::getGroupsColumns($model->modals, $modals);
 
         foreach ($model->rows as $name => $item) {
-            $className = static::$namespace . 'Row' . ucfirst($name);
+            $className = self::$namespace . 'Row' . ucfirst($name);
             if (class_exists($className)) {
                 $rowItem = new $className($item);
                 $rows[$name] = $rowItem;
@@ -137,7 +137,7 @@ class VisualItemLoadEngine
      */
     private static function getGroupsColumns($columns, &$target)
     {
-        $groupClass = static::$namespace . 'GroupItem';
+        $groupClass = self::$namespace . 'GroupItem';
         $newGroupArray = [
             'children' => [],
             'name' => 'main',
