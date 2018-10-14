@@ -26,11 +26,16 @@ use Symfony\Component\HttpFoundation\Cookie;
 /**
  * Controller to edit a single item from the User model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class EditUser extends ExtendedController\PanelController
+class EditUser extends ExtendedController\EditController
 {
+
+    public function getModelClassName()
+    {
+        return 'User';
+    }
 
     /**
      * Returns basic page attributes
@@ -53,8 +58,7 @@ class EditUser extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        /// Add all views
-        $this->addEditView('EditUser', 'User', 'user', 'fas fa-user');
+        parent::createViews();
         $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
 
         /// Load values for input selects
@@ -120,16 +124,14 @@ class EditUser extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditUser':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'EditRoleUser':
                 $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData('', $where, [], 0, 0);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 

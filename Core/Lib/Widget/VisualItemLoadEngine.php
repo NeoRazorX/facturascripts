@@ -127,6 +127,13 @@ class VisualItemLoadEngine
                 $rows[$name] = $rowItem;
             }
         }
+
+        /// we allways need a row type actions
+        $className = self::$namespace . 'RowActions';
+        if (!isset($rows['actions']) && class_exists($className)) {
+            $rowItem = new $className([]);
+            $rows['actions'] = $rowItem;
+        }
     }
 
     /**

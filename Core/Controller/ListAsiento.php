@@ -54,7 +54,6 @@ class ListAsiento extends ExtendedController\ListController
         $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
         $this->addOrderBy('ListAsiento', ['numero'], 'number');
         $this->addOrderBy('ListAsiento', ['importe'], 'ammount');
-
         $this->addFilterDatePicker('ListAsiento', 'from-date', 'from-date', 'fecha', '>=');
         $this->addFilterDatePicker('ListAsiento', 'until-date', 'until-date', 'fecha', '<=');
         $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');
@@ -68,13 +67,23 @@ class ListAsiento extends ExtendedController\ListController
 
         $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal', '=');
 
-        /// concepts
+        /// concepts tab
+        $this->createViewConcepts();
+
+        /// journals tab
+        $this->createViewJournals();
+    }
+
+    protected function createViewConcepts()
+    {
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
         $this->addOrderBy('ListConceptoPartida', ['codconcepto'], 'code');
         $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
+    }
 
-        /// journals
+    protected function createViewJournals()
+    {
         $this->addView('ListDiario', 'Diario', 'journals', 'fas fa-book');
         $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
         $this->addOrderBy('ListDiario', ['iddiario'], 'code');

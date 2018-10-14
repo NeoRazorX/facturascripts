@@ -109,6 +109,20 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
+     * Adds a new button to the tab.
+     *
+     * @param string $viewName
+     * @param array  $btnArray
+     */
+    public function addButton($viewName, $btnArray)
+    {
+        $row = $this->views[$viewName]->getRow('actions');
+        if ($row) {
+            $row->addButton($btnArray);
+        }
+    }
+
+    /**
      * 
      * @param string   $viewName
      * @param BaseView $view

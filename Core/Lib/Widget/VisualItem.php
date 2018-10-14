@@ -165,6 +165,11 @@ class VisualItem
             return '';
         }
 
+        if ($button['type'] === 'link') {
+            return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $button['action'] . '"'
+                . ' title="' . $title . '">' . $icon . $label . '</a>';
+        }
+
         if ($button['type'] === 'modal') {
             return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
                 . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';

@@ -39,7 +39,21 @@ class RowActions extends VisualItem
     public function __construct($data)
     {
         parent::__construct($data);
-        $this->children = $data['children'];
+        $this->children = isset($data['children']) ? $data['children'] : [];
+    }
+
+    /**
+     * Adds a new button.
+     *
+     * @param array $btnArray
+     */
+    public function addButton($btnArray)
+    {
+        if (!isset($btnArray['tag'])) {
+            $btnArray['tag'] = 'button';
+        }
+
+        $this->children[] = $btnArray;
     }
 
     /**
