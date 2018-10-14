@@ -144,6 +144,13 @@ class Contacto extends Base\Contact
     public $lastip;
 
     /**
+     * Indicates the level of security that the contact can access.
+     *
+     * @var integer
+     */
+    public $level;
+
+    /**
      * Session key, saved also in cookie. Regenerated when user log in.
      *
      * @var string
@@ -185,6 +192,7 @@ class Contacto extends Base\Contact
         parent::clear();
         $this->admitemarketing = false;
         $this->codpais = AppSettings::get('default', 'codpais');
+        $this->level = 1;
         $this->puntos = 0;
         $this->verificado = false;
     }
@@ -208,8 +216,10 @@ class Contacto extends Base\Contact
      */
     public function install()
     {
+        /// we need this models to be checked before
         new Cliente();
         new Proveedor();
+
         return parent::install();
     }
 

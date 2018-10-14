@@ -88,29 +88,30 @@
                 </widget>
             </column>
         </group>
-        <group name="other" numcolumns="6">
-            <column name="create-date" numcolumns="4" order="100">
+        <group name="other" numcolumns="12">
+            <column name="create-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="last-activity" numcolumns="4" order="110">
+            <column name="last-activity" numcolumns="3" order="110">
                 <widget type="date" fieldname="lastactivity" readonly="true" />
             </column>
-            <column name="points" numcolumns="4" order="120">
+            <column name="points" numcolumns="3" order="120">
                 <widget type="number" fieldname="puntos" />
             </column>
-        </group>
-        <group name="other2" numcolumns="6">
-            <column name="verified" title="verified" numcolumns="12" order="110">
+            <column name="level" numcolumns="3" order="130">
+                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
+            </column>
+            <column name="verified" title="verified" numcolumns="4" order="140">
                 <widget type="checkbox" fieldname="verificado" />
             </column>
-            <column name="fiscal-mode" title="is-person" numcolumns="12" order="120">
+            <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
-            <column name="allow-marketing" title="allow-marketing" numcolumns="12" order="130">
+            <column name="allow-marketing" title="allow-marketing" numcolumns="4" order="160">
                 <widget type="checkbox" fieldname="admitemarketing" />
             </column>
         </group>
-        <group name="notes">
+        <group name="notes" numcolumns="12">
             <column name="observations" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="observaciones" />
             </column>

@@ -53,7 +53,10 @@
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="last-activity" display="none" order="180">
+        <column name="level" display="none" order="180">
+            <widget type="number" fieldname="level" decimal="0" />
+        </column>
+        <column name="last-activity" display="none" order="190">
             <widget type="date" fieldname="lastactivity" />
         </column>
     </columns>

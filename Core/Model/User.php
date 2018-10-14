@@ -88,7 +88,7 @@ class User extends Base\ModelClass
     public $lastip;
 
     /**
-     * Indicates the level of security that the user can access
+     * Indicates the level of security that the user can access.
      *
      * @var integer
      */
@@ -138,7 +138,7 @@ class User extends Base\ModelClass
         $this->enabled = true;
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
-        $this->level = 1;
+        $this->level = 2;
     }
 
     /**

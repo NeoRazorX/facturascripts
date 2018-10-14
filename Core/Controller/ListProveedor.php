@@ -67,6 +67,7 @@ class ListProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListContacto', ['email'], 'email');
         $this->addOrderBy('ListContacto', ['nombre'], 'name');
         $this->addOrderBy('ListContacto', ['empresa'], 'company');
+        $this->addOrderBy('ListContacto', ['level'], 'level');
         $this->addOrderBy('ListContacto', ['lastactivity'], 'last-activity', 2);
 
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
