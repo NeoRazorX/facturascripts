@@ -19,7 +19,8 @@
  *
  * Initial description for the controller ListEjercicio
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa    <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 
 <view>
@@ -37,16 +38,16 @@
             <widget type="text" fieldname="fechafin" />
         </column>
         <column name="state" display="center" order="140">
-            <widget type="select" fieldname="estado">
+            <widget type="select" fieldname="estado" translate="true">
                 <values title="opened">ABIERTO</values>
                 <values title="closed">CERRADO</values>
 
-                <option color="red" font-weight="bold">ABIERTO</option>
-                <option color="blue">CERRADO</option>
+                <option color="success">ABIERTO</option>
+                <option color="warning">CERRADO</option>
             </widget>
         </column>
-        <column name="account-length" display="center" order="160">
-            <widget type="text" fieldname="longsubcuenta" />
+        <column name="account-length" display="right" order="160">
+            <widget type="number" fieldname="longsubcuenta" decimal="0" />
         </column>
     </columns>
 </view>

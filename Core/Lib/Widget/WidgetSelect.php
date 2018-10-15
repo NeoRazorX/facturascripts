@@ -142,6 +142,10 @@ class WidgetSelect extends BaseWidget
         }
 
         foreach ($values as $value) {
+            if ($value['tag'] !== 'values') {
+                continue;
+            }
+
             if (is_array($value)) {
                 $this->values[] = [
                     'title' => isset($value[$col2]) ? $value[$col2] : '------',
