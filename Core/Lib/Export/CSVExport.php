@@ -91,6 +91,10 @@ class CSVExport implements ExportInterface
 
         /// Get the columns
         foreach ($columns as $col) {
+            if ($col->hidden()) {
+                continue;
+            }
+
             $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
             $sheetHeaders[$col->widget->fieldname] = 'string';
         }
