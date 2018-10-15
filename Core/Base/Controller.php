@@ -176,7 +176,7 @@ class Controller
         return [
             'name' => $this->className,
             'title' => $this->className,
-            'icon' => 'fa-circle',
+            'icon' => 'fas fa-circle',
             'menu' => 'new',
             'submenu' => null,
             'showonmenu' => true,

@@ -47,7 +47,7 @@ class InfoStateInitialData
     protected function getCustomerData()
     {
         $result['model'] = 'Cliente';
-        $result['icon'] = 'fa-users';
+        $result['icon'] = 'fas fa-users';
         $result['group'] = 'customers';
         $result['values'] = [
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
@@ -66,7 +66,7 @@ class InfoStateInitialData
     protected function getSupplierData()
     {
         $result['model'] = 'Proveedor';
-        $result['icon'] = 'fa-users';
+        $result['icon'] = 'fas fa-users';
         $result['group'] = 'suppliers';
         $result['values'] = [
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
@@ -85,7 +85,7 @@ class InfoStateInitialData
     protected function getProductData()
     {
         $result['model'] = 'Producto';
-        $result['icon'] = 'fa-cube';
+        $result['icon'] = 'fas fa-cube';
         $result['group'] = 'products';
         $result['values'] = [
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
