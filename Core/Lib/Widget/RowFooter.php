@@ -122,7 +122,8 @@ class RowFooter extends VisualItem
 
         foreach ($group['children'] as $child) {
             if ($child['tag'] === 'button') {
-                $html .= $this->renderRowButton($child, false, $viewName, $jsFunction);
+                $button = new RowButton($child);
+                $html .= $button->render(false, $viewName, $jsFunction);
             }
         }
 

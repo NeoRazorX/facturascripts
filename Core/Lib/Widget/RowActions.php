@@ -70,7 +70,8 @@ class RowActions extends VisualItem
                 continue;
             }
 
-            $html .= $this->renderRowButton($child, $small);
+            $button = new RowButton($child);
+            $html .= $button->render($small);
         }
 
         return $html;

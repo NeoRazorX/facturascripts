@@ -142,47 +142,4 @@ class VisualItem
         static::$uniqueId++;
         return static::$uniqueId;
     }
-
-    /**
-     *
-     * @param array  $button
-     * @param bool   $small
-     * @param string $viewName
-     * @param string $jsFunction
-     *
-     * @return string
-     */
-    protected function renderRowButton($button, $small = false, $viewName = '', $jsFunction = '')
-    {
-        $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
-        $cssClass .= isset($button['color']) ? $this->colorToClass($button['color'], 'btn-') : 'btn-light';
-        $icon = isset($button['icon']) ? '<i class="' . $button['icon'] . ' fa-fw"></i> ' : '';
-        $title = isset($button['label']) ? static::$i18n->trans($button['label']) : '';
-        $label = $small ? '' : $title;
-        $divID = isset($button['id']) ? ' id="' . $button['id'] . '"' : '';
-
-        if (!isset($button['type']) || !isset($button['action'])) {
-            return '';
-        }
-
-        switch ($button['type']) {
-            case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $button['action']
-                    . '" title="' . $title . '">' . $icon . $label . '</button>';
-
-            case 'link':
-                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $button['action'] . '"'
-                    . ' title="' . $title . '">' . $icon . $label . '</a>';
-
-            case 'modal':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
-                    . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';
-
-            default:
-                $onclick = empty($jsFunction) ? 'this.form.action.value=\'' . $button['action'] . '\';this.form.submit();' :
-                    $jsFunction . '(\'' . $viewName . '\',\'' . $button['action'] . '\');';
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
-                    . '" title="' . $title . '">' . $icon . $label . '</button>';
-        }
-    }
 }
