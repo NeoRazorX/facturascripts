@@ -300,6 +300,7 @@ class AppController extends App
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                 EventManager::trigger('App:User:Login', $user);
                 $this->updateCookies($user, true);
+                $this->ipFilter->clear();
                 $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
                 return $user;
             }

@@ -97,8 +97,8 @@
                 </tr>
             </thead>
             <tbody>
+                {% set rowStatus = currentView.getRow('status') %}
                 {% for model in currentView.cursor %}
-                    {% set rowStatus = currentView.getRow('status') %}
                     {% set trClass = rowStatus.trClass(model) %}
                     <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
                         <td class="cancelClickable">

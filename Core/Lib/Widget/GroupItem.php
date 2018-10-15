@@ -190,12 +190,13 @@ class GroupItem extends VisualItem
      */
     protected function loadColumns($children)
     {
+        $columnClass = VisualItemLoadEngine::getNamespace() . 'ColumnItem';
         foreach ($children as $child) {
             if ($child['tag'] !== 'column') {
                 continue;
             }
 
-            $columnItem = new ColumnItem($child);
+            $columnItem = new $columnClass($child);
             $this->columns[$columnItem->name] = $columnItem;
         }
 

@@ -40,7 +40,7 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="vat-id" numcolumns="2" order="140" description="desc-vat-id">
+            <column name="fiscal-number" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif"/>
             </column>
             <column name="fiscal-mode" title="is-person" order="150">

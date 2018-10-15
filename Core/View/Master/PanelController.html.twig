@@ -74,6 +74,7 @@
                         <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                 </div>
+                {# -- Options button -- #}
                 <div class="btn-group">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -82,7 +83,7 @@
                         </button>
                         <div class="dropdown-menu">
                             {% for viewName, view in fsc.views %}
-                                <a class="dropdown-item" href="EditPageOption?code={{ view.getViewName() }}&url={{ firstView.model.url() | url_encode }}">
+                                <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
                                     <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 </a>
                             {% endfor %}

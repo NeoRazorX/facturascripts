@@ -88,9 +88,7 @@ class EditPageOption extends Base\Controller
         $result = [];
         $users = Model\CodeModel::all(Model\User::tableName(), 'nick', 'nick', false);
         foreach ($users as $codeModel) {
-            if ($codeModel->code != 'admin') {
-                $result[$codeModel->code] = $codeModel->description;
-            }
+            $result[$codeModel->code] = $codeModel->description;
         }
 
         return $result;
@@ -106,8 +104,10 @@ class EditPageOption extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        $this->getParams();
+        $this->model = new Model\PageOption();
+        $this->selectedViewName = $this->request->get('code', '');
+        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
         $this->loadPageOptions();
 
         $action = $this->request->get('action', '');
@@ -120,6 +120,24 @@ class EditPageOption extends Base\Controller
                 $this->deleteData();
                 break;
         }
+    }
+
+    /**
+     * Checks and fix GroupItem array.
+     *
+     * @param array $group
+     *
+     * @return array
+     */
+    private function checkGroupItem($group)
+    {
+        foreach ($group['children'] as $key => $child) {
+            if (!isset($child['level'])) {
+                $group['children'][$key]['level'] = 0;
+            }
+        }
+
+        return $group;
     }
 
     /**
@@ -160,22 +178,10 @@ class EditPageOption extends Base\Controller
     }
 
     /**
-     * Load and initialize the parameters sent by the form
-     */
-    private function getParams()
-    {
-        $this->selectedViewName = $this->request->get('code', '');
-        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
-    }
-
-    /**
      * 
      */
     protected function loadPageOptions()
     {
-        $this->model = new Model\PageOption();
-
         $orderby = ['nick' => 'ASC'];
         $where = [
             new DataBaseWhere('name', $this->selectedViewName),
@@ -190,14 +196,14 @@ class EditPageOption extends Base\Controller
         // there always need to be groups of columns
         $groups = [];
         $newGroupArray = [
-            'tag' => 'group',
-            'name' => 'main',
             'children' => [],
+            'name' => 'main',
+            'tag' => 'group',
         ];
 
         foreach ($this->model->columns as $key => $item) {
             if ($item['tag'] === 'group') {
-                $groups[] = $item;
+                $groups[$key] = $this->checkGroupItem($item);
             } else {
                 $newGroupArray['children'][$key] = $item;
             }
@@ -205,7 +211,7 @@ class EditPageOption extends Base\Controller
 
         /// is there are loose columns, then we put it on a new group
         if (!empty($newGroupArray['children'])) {
-            $groups[] = $newGroupArray;
+            $groups['main'] = $this->checkGroupItem($newGroupArray);
         }
 
         $this->model->columns = $groups;
@@ -224,7 +230,7 @@ class EditPageOption extends Base\Controller
                 $this->model->columns[$path[0]]['children'][$path[1]][$path[2]] = $value;
             }
         }
-        
+
         if ($this->model->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return;

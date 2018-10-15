@@ -54,21 +54,18 @@ class ListImpuesto extends ExtendedController\ListController
         /// Taxes
         $this->addView('ListImpuesto', 'Impuesto', 'taxes', 'fas fa-plus-square');
         $this->addSearchFields('ListImpuesto', ['descripcion', 'codimpuesto']);
-
         $this->addOrderBy('ListImpuesto', ['codimpuesto'], 'code');
         $this->addOrderBy('ListImpuesto', ['descripcion'], 'description');
 
         /// Withholdings
         $this->addView('ListRetencion', 'Retencion', 'retentions', 'fas fa-plus-square');
         $this->addSearchFields('ListRetencion', ['descripcion', 'codretencion']);
-
         $this->addOrderBy('ListRetencion', ['codretencion'], 'code');
         $this->addOrderBy('ListRetencion', ['descripcion'], 'description');
 
         /// Tax areas
-        $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-area', 'fas fa-dollar-sign');
+        $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
         $this->addSearchFields('ListImpuestoZona', ['codpais']);
-
         $this->addOrderBy('ListImpuestoZona', ['codimpuesto'], 'tax');
         $this->addOrderBy('ListImpuestoZona', ['codpais'], 'country');
         $this->addOrderBy('ListImpuestoZona', ['codisopro'], 'province');

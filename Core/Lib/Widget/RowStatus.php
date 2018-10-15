@@ -52,15 +52,16 @@ class RowStatus extends VisualItem
     /**
      *
      * @param object $model
+     * @param string $classPrefix
      *
      * @return string
      */
-    public function trClass($model)
+    public function trClass($model, $classPrefix = 'table-')
     {
         foreach ($this->options as $opt) {
             $fieldname = isset($opt['fieldname']) ? $opt['fieldname'] : $this->fieldname;
             $value = isset($model->{$fieldname}) ? $model->{$fieldname} : null;
-            $rowColor = $this->getColorFromOption($opt, $value, 'table-');
+            $rowColor = $this->getColorFromOption($opt, $value, $classPrefix);
             if (!empty($rowColor)) {
                 return $rowColor;
             }

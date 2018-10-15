@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListUser
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -30,19 +30,20 @@
         <column name="email" order="110">
             <widget type="text" fieldname="email" />
         </column>
-        <column name="company" order="120">
+        <column name="level" display="none" order="120">
+            <widget type="number" fieldname="level" decimal="0" />
+        </column>
+        <column name="company" order="130">
             <widget type="text" fieldname="idempresa" />
-        </column>        
-        <column name="lang-code" order="120">
+        </column>
+        <column name="lang-code" order="140">
             <widget type="text" fieldname="langcode" />
-        </column>                
-        <column name="last-ip" order="120">
+        </column>
+        <column name="last-ip" order="150">
             <widget type="text" fieldname="lastip" />
         </column>
-        <column name="last-activity" display="right" order="130">
+        <column name="last-activity" display="right" order="160">
             <widget type="text" fieldname="lastactivity" />
         </column>
     </columns>
-    <filters>
-    </filters>
 </view>

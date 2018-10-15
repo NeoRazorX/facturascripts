@@ -32,11 +32,6 @@
                 <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
             </widget>
         </column>
-        <column name="order" order="110" title="delivery-note">
-            <widget type="select" fieldname="idalbaran" onclick="EditAlbaranProveedor">
-                <values source="albaranesprov" fieldcode="idalbaran" fieldtitle="codigo"></values>
-            </widget>
-        </column>
         <column name="reference" order="120">
             <widget type="text" fieldname="referencia" onclick="EditProducto" />
         </column>
@@ -45,9 +40,6 @@
         </column>
         <column name="quantity" order="150" display="right">
             <widget type="number" fieldname="cantidad" />
-        </column>
-        <column name="served" order="155" display="right">
-            <widget type="number" fieldname="servido" />
         </column>
         <column name="price" order="160" display="right">
             <widget type="money" fieldname="pvpunitario" />
