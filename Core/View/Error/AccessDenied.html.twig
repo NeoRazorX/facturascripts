@@ -1,35 +1,36 @@
 {% extends "Master/MicroTemplate.html.twig" %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <br/><br/>
-            <div class="jumbotron">
-                <h1>
-                    <i class="fas fa-lock" aria-hidden="true"></i> {{ i18n.trans('access-denied') }}:
-                </h1>
-                <b>{{ controllerName }}</b>
-                <hr class="my-4">
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <a class="navbar-brand" href="index.php">
-                        <img src="Core/Assets/Images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
-                    </a>
-                    <ul class="nav navbar-nav mr-auto">
-                        {% for menuItem in menuManager.getMenu() %}
-                        {{ menuItem.getHTML()|raw }}
-                        {% endfor %}
-                    </ul>
-                    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="?logout=TRUE">
-                                <i class="fas fa-sign-out" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <br/><br/>
+                <div class="jumbotron">
+                    <h1>
+                        <i class="fas fa-lock" aria-hidden="true"></i> {{ i18n.trans('access-denied') }}:
+                    </h1>
+                    <b>{{ controllerName }}</b>
+                    <hr class="my-4">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <a class="navbar-brand" href="index.php">
+                            <img src="Core/Assets/Images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
+                        </a>
+                        <ul class="nav navbar-nav mr-auto">
+                            {% import 'Macro/Menu.html.twig' as MenuMacro %}
+                            {% for menuItem in menuManager.getMenu() %}
+                                {{ MenuMacro.showMenu(menuItem) }}
+                            {% endfor %}
+                        </ul>
+                        <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="?logout=TRUE">
+                                    <i class="fas fa-sign-out" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

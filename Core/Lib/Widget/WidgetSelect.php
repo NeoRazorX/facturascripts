@@ -142,7 +142,7 @@ class WidgetSelect extends BaseWidget
         }
 
         foreach ($values as $value) {
-            if ($value['tag'] !== 'values') {
+            if (isset($value['tag']) && $value['tag'] !== 'values') {
                 continue;
             }
 

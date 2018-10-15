@@ -102,13 +102,12 @@ class ColumnItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param int    $level
      *
      * @return string
      */
-    public function edit($model, $level = 0)
+    public function edit($model)
     {
-        if ($this->hiddeTo($level)) {
+        if ($this->hidden()) {
             return $this->widget->inputHidden($model);
         }
 
@@ -119,17 +118,15 @@ class ColumnItem extends VisualItem
 
     /**
      *
-     * @param int $level
-     *
      * @return boolean
      */
-    public function hiddeTo($level)
+    public function hidden()
     {
         if ($this->display === 'none') {
             return true;
         }
 
-        return $level < $this->level;
+        return $this->getLevel() < $this->level;
     }
 
     /**
@@ -145,24 +142,21 @@ class ColumnItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param int    $level
      *
      * @return string
      */
-    public function tableCell($model, $level = 0)
+    public function tableCell($model)
     {
-        return $this->hiddeTo($level) ? '' : $this->widget->tableCell($model, $this->display);
+        return $this->hidden() ? '' : $this->widget->tableCell($model, $this->display);
     }
 
     /**
      *
-     * @param int $level
-     *
      * @return string
      */
-    public function tableHeader($level = 0)
+    public function tableHeader()
     {
-        if ($this->hiddeTo($level)) {
+        if ($this->hidden()) {
             return '';
         }
 

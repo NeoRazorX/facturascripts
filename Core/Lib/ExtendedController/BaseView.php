@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use FacturaScripts\Core\Lib\Widget\BaseWidget;
 use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Lib\Widget\GroupItem;
+use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\PageOption;
@@ -391,6 +392,8 @@ abstract class BaseView
                 new DataBaseWhere('nick', $user->nick),
                 new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
             ];
+            /// sets user security level for use in render
+            VisualItem::setLevel($user->level);
         }
 
         if (!$this->pageOption->loadFromCode('', $where, $orderby)) {

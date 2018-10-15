@@ -85,11 +85,10 @@ class GroupItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param int    $level
      *
      * @return string
      */
-    public function edit($model, $level = 0)
+    public function edit($model)
     {
         $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
@@ -101,7 +100,7 @@ class GroupItem extends VisualItem
         }
 
         foreach ($this->columns as $col) {
-            $html .= $col->edit($model, $level);
+            $html .= $col->edit($model);
         }
 
         $html .= '</div></div>';
@@ -111,12 +110,11 @@ class GroupItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param int    $level
      * @param string $viewName
      *
      * @return string
      */
-    public function modal($model, $level, $viewName)
+    public function modal($model, $viewName)
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $html = '<form method="post" enctype="multipart/form-data">'
@@ -134,7 +132,7 @@ class GroupItem extends VisualItem
             . '<div class="row">';
 
         foreach ($this->columns as $col) {
-            $html .= $col->edit($model, $level);
+            $html .= $col->edit($model);
         }
 
         $html .= '</div>'

@@ -51,6 +51,13 @@ class RowButton extends VisualItem
     public $label;
 
     /**
+     * Indicates the security level of the button
+     *
+     * @var int
+     */
+    public $level;
+
+    /**
      *
      * @var string
      */
@@ -67,6 +74,7 @@ class RowButton extends VisualItem
         $this->color = $data['color'] ?? '';
         $this->icon = $data['icon'] ?? '';
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
+        $this->level = isset($data['level']) ? (int) $data['level'] : 0;
         $this->type = $data['type'] ?? 'action';
     }
 
@@ -80,6 +88,10 @@ class RowButton extends VisualItem
      */
     public function render($small = false, $viewName = '', $jsFunction = '')
     {
+        if ($this->getLevel() < $this->level) {
+            return '';
+        }
+
         $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';

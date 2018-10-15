@@ -315,7 +315,7 @@ abstract class ListController extends BaseController
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];
                 foreach ($listView->getColumns() as $col) {
-                    if (!$col->hiddeTo($this->user->level)) {
+                    if (!$col->hidden()) {
                         $item[$col->widget->fieldname] = $col->widget->plainText($model);
                     }
                 }
@@ -338,7 +338,7 @@ abstract class ListController extends BaseController
     {
         $result = [];
         foreach ($view->getColumns() as $col) {
-            if (!$col->hiddeTo($this->user->level)) {
+            if (!$col->hidden()) {
                 $result[] = $this->i18n->trans($col->title);
             }
         }

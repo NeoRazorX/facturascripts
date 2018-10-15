@@ -253,7 +253,7 @@ class PDFCore
                 continue;
             }
 
-            if (isset($col->widget->fieldname)) {
+            if (!$col->hidden()) {
                 $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
                 $tableColsTitle[$col->widget->fieldname] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldname] = [

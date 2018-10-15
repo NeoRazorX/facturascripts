@@ -124,7 +124,7 @@ class BusinessDocumentView extends BaseView
                 $item['trimDropdown'] = false;
             }
 
-            if ($col->display !== 'none') {
+            if (!$col->hidden()) {
                 $data['columns'][] = $item;
                 $data['headers'][] = self::$i18n->trans($col->title);
             }

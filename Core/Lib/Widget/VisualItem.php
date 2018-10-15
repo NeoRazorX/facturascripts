@@ -42,6 +42,13 @@ class VisualItem
     public $id;
 
     /**
+     * Selected security level.
+     *
+     * @var int
+     */
+    private static $level = 0;
+
+    /**
      * Name defined in the view as key
      *
      * @var string
@@ -65,6 +72,24 @@ class VisualItem
 
         $this->id = $data['id'] ?? '';
         $this->name = $data['name'] ?? '';
+    }
+
+    /**
+     * 
+     * @return int
+     */
+    public static function getLevel()
+    {
+        return self::$level;
+    }
+
+    /**
+     * 
+     * @param int $new
+     */
+    public static function setLevel($new)
+    {
+        self::$level = $new;
     }
 
     /**
