@@ -165,28 +165,24 @@ class VisualItem
             return '';
         }
 
-        if ($button['type'] === 'link') {
-            return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $button['action'] . '"'
-                . ' title="' . $title . '">' . $icon . $label . '</a>';
-        }
+        switch ($button['type']) {
+            case 'js':
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $button['action']
+                    . '" title="' . $title . '">' . $icon . $label . '</button>';
 
-        if ($button['type'] === 'modal') {
-            return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
-                . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';
-        }
+            case 'link':
+                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $button['action'] . '"'
+                    . ' title="' . $title . '">' . $icon . $label . '</a>';
 
-        if ($button['type'] === 'js') {
-            return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $button['action']
-                . '" title="' . $title . '">' . $icon . $label . '</button>';
-        }
+            case 'modal':
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
+                    . $button['action'] . '" title="' . $title . '">' . $icon . $label . '</button>';
 
-        /// type action
-        if (empty($jsFunction)) {
-            return '<button type="submit"' . $divID . ' name="action" value="' . $button['action'] . '" class="'
-                . $cssClass . '" title="' . $title . '">' . $icon . $label . '</button>';
+            default:
+                $onclick = empty($jsFunction) ? 'this.form.action.value=\'' . $button['action'] . '\';this.form.submit();' :
+                    $jsFunction . '(\'' . $viewName . '\',\'' . $button['action'] . '\');';
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
+                    . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
-
-        return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $jsFunction
-            . '(\'' . $viewName . '\',\'' . $button['action'] . '\');" title="' . $title . '">' . $icon . $label . '</button>';
     }
 }
