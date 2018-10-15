@@ -64,7 +64,7 @@ class DocumentReportsFilterList
      * @param string $icon
      * @param bool $allowEmpty
      */
-    public function __construct($modelName, $selectedValue = '', $icon = 'fa-list', $allowEmpty = true)
+    public function __construct($modelName, $selectedValue = '', $icon = 'fas fa-list', $allowEmpty = true)
     {
         $this->model = new $modelName();
         $this->selectedValue = $selectedValue;
