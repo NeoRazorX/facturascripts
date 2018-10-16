@@ -51,6 +51,7 @@ class ListAtributo extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListAtributo', 'Atributo', 'attributes', 'fas fa-sliders-h');
+        $this->addView('ListAtributoValor', 'AtributoValor', 'attribute-values', 'fas fa-bars');
         $this->addSearchFields('ListAtributo', ['nombre', 'codatributo']);
         $this->addOrderBy('ListAtributo', ['codatributo'], 'code');
         $this->addOrderBy('ListAtributo', ['nombre'], 'name');
