@@ -71,8 +71,10 @@ abstract class ListController extends BaseController
             return;
         }
 
-        // Load data for every view
+        // Load filter saved and data for every view
         foreach ($this->views as $viewName => $view) {
+            $view->loadPageFilter($this->request, $this->user);
+
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
             }
@@ -272,6 +274,10 @@ abstract class ListController extends BaseController
             case 'delete':
                 $this->deleteAction();
                 break;
+
+            case 'savefilter':
+                $this->saveFilterAction();
+                break;
         }
 
         return true;
@@ -344,5 +350,15 @@ abstract class ListController extends BaseController
         }
 
         return $result;
+    }
+
+    /**
+     * Save filters values for active view and user
+     */
+    protected function saveFilterAction()
+    {
+        $view = $this->views[$this->active];
+        $idFilter = $view->savePageFilter($this->request, $this->user);
+        $this->request->request->set('loadfilter', $idFilter);
     }
 }
