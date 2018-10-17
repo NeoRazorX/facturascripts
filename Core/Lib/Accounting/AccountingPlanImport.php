@@ -110,6 +110,8 @@ class AccountingPlanImport
     {
         $account = new Model\Cuenta();
         $parent = new Model\Cuenta();
+        
+        $account->disableAditionalTest();
 
         /// the account exists?
         $where = [
@@ -148,6 +150,9 @@ class AccountingPlanImport
     {
         $subaccount = new Model\Subcuenta();
         $account = new Model\Cuenta();
+        
+        $subaccount->disableAditionalTest();
+        
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $parentCode)

@@ -75,11 +75,23 @@ class Subcuenta extends Base\ModelClass
     public $debe;
 
     /**
+     *
+     * @var Ejercicio
+     */
+    private static $ejercicios;
+
+    /**
      * Description of the subaccount.
      *
      * @var string
      */
     public $descripcion;
+
+    /**
+     *
+     * @var bool
+     */
+    private static $disableAditionTest = false;
 
     /**
      * Amount of credit.
@@ -115,18 +127,24 @@ class Subcuenta extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->codejercicio = $this->getDefaultCodejercicio();
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
-
-        // Search open exercise for current date
-        $exerciseModel = new Ejercicio();
-        $exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false);
-        if ($exercise !== false) {
-            $this->codejercicio = $exercise->codejercicio;
-        }
     }
 
+    /**
+     * 
+     */
+    public function disableAditionalTest()
+    {
+        self::$disableAditionTest = true;
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function getSpecialAccountCode()
     {
         if (empty($this->codcuentaesp)) {
@@ -184,9 +202,11 @@ class Subcuenta extends Base\ModelClass
      */
     public function install()
     {
+        /// force the parents tables
         new CuentaEspecial();
         new Cuenta();
-        return '';
+
+        return parent::install();
     }
 
     /**
@@ -219,21 +239,22 @@ class Subcuenta extends Base\ModelClass
         $this->codcuenta = trim($this->codcuenta);
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
-
-        if ($this->testErrorInData()) {
+        if (empty($this->descripcion)) {
             self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
             return false;
         }
 
-        if ($this->testErrorInLengthSubAccount()) {
-            self::$miniLog->alert(self::$i18n->trans('account-length-error'));
-            return false;
-        }
+        if (!self::$disableAditionTest) {
+            if ($this->testErrorInLengthSubAccount()) {
+                self::$miniLog->alert(self::$i18n->trans('account-length-error'));
+                return false;
+            }
 
-        $this->idcuenta = $this->getIdAccount();
-        if (empty($this->idcuenta)) {
-            self::$miniLog->alert(self::$i18n->trans('account-data-error'));
-            return false;
+            $this->idcuenta = $this->getIdAccount();
+            if (empty($this->idcuenta)) {
+                self::$miniLog->alert(self::$i18n->trans('account-data-error'));
+                return false;
+            }
         }
 
         return parent::test();
@@ -301,6 +322,24 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return string
+     */
+    protected function getDefaultCodejercicio()
+    {
+        if (empty(self::$ejercicios)) {
+            $exerciseModel = new Ejercicio();
+            self::$ejercicios = $exerciseModel->all();
+        }
+
+        foreach (self::$ejercicios as $eje) {
+            return $eje->codejercicio;
+        }
+
+        return '';
+    }
+
+    /**
      * Insert the model data in the database.
      *
      * @param array $values
@@ -349,24 +388,18 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * Check if exists error in data of account
-     *
-     * @return bool
-     */
-    private function testErrorInData(): bool
-    {
-        return empty($this->codcuenta) || empty($this->codsubcuenta) || empty($this->descripcion) || empty($this->codejercicio);
-    }
-
-    /**
      * Check if exists error in long of subaccount
      *
      * @return bool
      */
     private function testErrorInLengthSubAccount(): bool
     {
-        $exercise = new Ejercicio();
-        $exercise->loadFromCode($this->codejercicio);
-        return empty($exercise->codejercicio) || (strlen($this->codsubcuenta) <> $exercise->longsubcuenta);
+        foreach (self::$ejercicios as $eje) {
+            if ($eje->codejercicio === $this->codejercicio) {
+                return strlen($this->codsubcuenta) != $exercise->longsubcuenta;
+            }
+        }
+
+        return false;
     }
 }
