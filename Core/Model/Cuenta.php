@@ -165,7 +165,7 @@ class Cuenta extends Base\ModelClass
         if (!self::$disableAditionTest) {
             /// Check and load correct id parent account
             $this->parent_idcuenta = null;
-            if (!empty($this->parent_codcuenta) && $this->testErrorInParentAccount()) {
+            if (!empty($this->parent_codcuenta) && !$this->testErrorInParentAccount()) {
                 self::$miniLog->alert(self::$i18n->trans('account-parent-error'));
                 return false;
             }
@@ -205,7 +205,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * Check and load the id of the parent account
+     * Check and load the id of the parent account. Returns FALSE if error.
      *
      * @return bool
      */
@@ -218,10 +218,10 @@ class Cuenta extends Base\ModelClass
 
         $account = $this->all($where, ['codcuenta' => 'ASC'], 0, 1);
         if (empty($account)) {
-            return true;
+            return false;
         }
 
         $this->parent_idcuenta = $account[0]->parent_idcuenta;
-        return false;
+        return true;
     }
 }

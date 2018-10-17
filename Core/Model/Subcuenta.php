@@ -76,7 +76,7 @@ class Subcuenta extends Base\ModelClass
 
     /**
      *
-     * @var Ejercicio
+     * @var Ejercicio[]
      */
     private static $ejercicios;
 
@@ -245,7 +245,7 @@ class Subcuenta extends Base\ModelClass
         }
 
         if (!self::$disableAditionTest) {
-            if ($this->testErrorInLengthSubAccount()) {
+            if (!$this->testErrorInLengthSubAccount()) {
                 self::$miniLog->alert(self::$i18n->trans('account-length-error'));
                 return false;
             }
@@ -388,7 +388,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * Check if exists error in long of subaccount
+     * Check if exists error in long of subaccount. Returns FALSE if error.
      *
      * @return bool
      */
@@ -396,7 +396,7 @@ class Subcuenta extends Base\ModelClass
     {
         foreach (self::$ejercicios as $eje) {
             if ($eje->codejercicio === $this->codejercicio) {
-                return strlen($this->codsubcuenta) != $exercise->longsubcuenta;
+                return strlen($this->codsubcuenta) == $eje->longsubcuenta;
             }
         }
 
