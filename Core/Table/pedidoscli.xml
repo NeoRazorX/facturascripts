@@ -208,4 +208,8 @@
         <name>ca_pedidoscli_users</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
+    <constraint>
+        <name>ca_pedidoscli_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
 </table>
