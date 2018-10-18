@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Visual filter configuration of the FacturaScripts views,
  * each PageFilter corresponds to a view or tab filter.
@@ -65,6 +67,15 @@ class PageFilter extends Base\ModelClass
     public $nick;
 
     /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->filters = [];
+    }
+
+    /**
      * This function is called when creating the model table.
      * Returns the SQL that will be executed after the creation of the table,
      * useful to insert default values.
@@ -90,7 +101,7 @@ class PageFilter extends Base\ModelClass
         array_push($exclude, 'filters', 'code', 'action');
         parent::loadFromData($data, $exclude);
 
-        $this->filters = json_decode($data['filters'], true);
+        $this->filters = isset($data['filters']) ? json_decode($data['filters'], true) : [];
     }
 
     /**
@@ -113,6 +124,16 @@ class PageFilter extends Base\ModelClass
         return 'pages_filters';
     }
 
+    public function test()
+    {
+        $this->description = Utils::noHtml($this->description);
+        if (empty($this->description)) {
+            self::$miniLog->alert(self::$i18n->trans('description-error'));
+            return false;
+        }
+        return parent::test();
+    }
+
     /**
      * Returns the values of the view configuration fields in JSON format
      *
@@ -121,7 +142,7 @@ class PageFilter extends Base\ModelClass
     private function getEncodeValues()
     {
         return [
-            'fields' => json_encode($this->fields)
+            'filters' => json_encode($this->filters)
         ];
     }
 

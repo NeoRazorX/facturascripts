@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -55,6 +55,11 @@ function listViewSetOffset(viewName, value) {
     $("#form" + viewName).submit();
 }
 
+function listViewSetLoadFilter(viewName, value) {
+    $("#form" + viewName + " :input[name=\"loadfilter\"]").val(value);
+    $("#form" + viewName).submit();
+}
+
 function listViewSetOrder(viewName, value) {
     $("#form" + viewName + " :input[name=\"order\"]").val(value);
     $("#form" + viewName).submit();
@@ -62,6 +67,10 @@ function listViewSetOrder(viewName, value) {
 
 function listViewShowFilters(viewName) {
     $("#form" + viewName + "Filters").toggle();
+}
+
+function noEnterKey(e) {
+    return !(e.which == 13 || e.keyCode == 13);
 }
 
 $(document).ready(function () {

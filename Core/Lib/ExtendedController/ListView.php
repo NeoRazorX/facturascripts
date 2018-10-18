@@ -215,15 +215,18 @@ class ListView extends BaseView
         $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
         $where = $this->getPageWhere($user);
 
+        // Search saved filters
         $pageFilter = new PageFilter();
         $this->pageFilters = $pageFilter->all($where, $orderby);
         $this->pageFilterKey = $request->request->get('loadfilter', 0);
-        if (!empty($this->pageFilterKey)) {
-            foreach ($this->pageFilterKey as $item) {
-                if ($item->id == $this->pageFilterKey) {
-                    $request->response->request->add($item->filters);
-                    break;
-                }
+        if (empty($this->pageFilterKey)) {
+            return;
+        }
+        // Load saved filter into page parameters
+        foreach ($this->pageFilters as $item) {
+            if ($item->id == $this->pageFilterKey) {
+                $request->request->add($item->filters);
+                break;
             }
         }
     }
@@ -266,18 +269,18 @@ class ListView extends BaseView
      * @param User|false $user
      * @return int|null
      */
-    public function savePageFilter($request, $user = false): int
+    public function savePageFilter($request, $user = false)
     {
         $pageFilter = new PageFilter();
 
         // Set values data filter
-        $pageFilter->filters = [];
         foreach ($this->filters as $filter) {
             $name = $filter->name();
             $value = $request->request->get($name, null);
-            if (isset($value)) {
-                $pageFilter->filters[$name] = $value;
+            if (empty($value)) {
+                continue;
             }
+            $pageFilter->filters[$name] = $value;
         }
 
         // If filters values its empty, don't save filter
@@ -288,8 +291,12 @@ class ListView extends BaseView
         // Set basic data and save filter
         $pageFilter->id = $request->request->get('filter-id', null);
         $pageFilter->description = $request->request->get('filter-description');
-        $pageFilter->name = $this->name;
-        $pageFilter->nick = ($user === false) ? null : $user->nick;
+        $pageFilter->name = $this->getViewName();
+
+        // If there isn't user or is an administrator, it's for everyone else it's just for the user
+        $pageFilter->nick = (is_bool($user) || $user->admin) ? null : $user->nick;
+
+        // Save and return it's all ok
         if ($pageFilter->save()) {
             return $pageFilter->id;
         }
