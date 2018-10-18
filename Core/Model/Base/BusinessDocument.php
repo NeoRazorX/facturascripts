@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -363,6 +364,7 @@ abstract class BusinessDocument extends ModelClass
     {
         new Serie();
         new Ejercicio();
+        new Almacen();
         return parent::install();
     }
 
