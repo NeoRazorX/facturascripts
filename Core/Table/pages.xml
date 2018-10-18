@@ -9,7 +9,7 @@
 <table>
     <column>
         <name>name</name>
-        <type>character varying(30)</type>
+        <type>character varying(40)</type>
         <null>NO</null>
     </column>
     <column>
