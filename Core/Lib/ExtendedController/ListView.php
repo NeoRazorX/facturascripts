@@ -154,13 +154,14 @@ class ListView extends BaseView
      */
     public function getColumns()
     {
-        $keys = array_keys($this->columns);
-        if (empty($keys)) {
-            return [];
+        $columns = [];
+        foreach ($this->columns as $group) {
+            foreach ($group->columns as $col) {
+                $columns[] = $col;
+            }
         }
 
-        $key = $keys[0];
-        return $this->columns[$key]->columns;
+        return $columns;
     }
 
     /**

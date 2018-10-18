@@ -62,6 +62,7 @@ class EditAtributo extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
         $this->addEditListView('EditAtributoValor', 'AtributoValor', 'attribute-values');
     }
 
