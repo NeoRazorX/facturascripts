@@ -40,7 +40,7 @@
                 <widget type="text" fieldname="parent_codcuenta" maxlength="10" icon="fas fa-chart-bar" />
             </column>
             <column name="fiscal-exercise" numcolumns="3" order="110">
-                <widget type="select" fieldname="codejercicio" required="true">
+                <widget type="select" fieldname="codejercicio" required="true" onclick="EditEjercicio">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>

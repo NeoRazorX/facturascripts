@@ -68,8 +68,7 @@ class AtributoValor extends Base\ModelClass
     public function install()
     {
         new Atributo();
-
-        return '';
+        return parent::install();
     }
 
     /**
@@ -108,5 +107,30 @@ class AtributoValor extends Base\ModelClass
         }
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListAtributo')
+    {
+        $value = $this->codatributo;
+        switch ($type) {
+            case 'edit':
+                return is_null($value) ? 'EditAtributo' : 'EditAtributo?code=' . $value;
+
+            case 'list':
+                return $list;
+
+            case 'new':
+                return 'EditAtributo';
+        }
+
+        /// default
+        return empty($value) ? $list : 'EditAtributo?code=' . $value;
     }
 }

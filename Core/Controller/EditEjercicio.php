@@ -25,12 +25,21 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Ejercicio model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class EditEjercicio extends ExtendedController\PanelController
+class EditEjercicio extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Ejercicio';
+    }
 
     /**
      * Returns basic page attributes
@@ -53,7 +62,7 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditEjercicio', 'Ejercicio', 'exercise');
+        parent::createViews();
         $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fas fa-book');
         $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccount');
 
@@ -74,11 +83,6 @@ class EditEjercicio extends ExtendedController\PanelController
         $where = [new DataBaseWhere('codejercicio', $codejercicio)];
 
         switch ($viewName) {
-            case 'EditEjercicio':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListCuenta':
                 $view->loadData(false, $where, ['codcuenta' => 'ASC']);
                 break;
@@ -86,6 +90,9 @@ class EditEjercicio extends ExtendedController\PanelController
             case 'ListSubcuenta':
                 $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 

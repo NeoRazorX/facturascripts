@@ -86,7 +86,7 @@ class AccountingPlanImport
     public function importXML(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'ejercicio not found']));
+            $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'exercise not found']));
             return;
         }
 
@@ -101,7 +101,7 @@ class AccountingPlanImport
 
     /**
      * Insert/update and account in accounting plan.
-     * 
+     *
      * @param string $code
      * @param string $definition
      * @param string $parentCode
@@ -110,6 +110,8 @@ class AccountingPlanImport
     {
         $account = new Model\Cuenta();
         $parent = new Model\Cuenta();
+        
+        $account->disableAditionalTest();
 
         /// the account exists?
         $where = [
@@ -148,6 +150,9 @@ class AccountingPlanImport
     {
         $subaccount = new Model\Subcuenta();
         $account = new Model\Cuenta();
+        
+        $subaccount->disableAditionalTest();
+        
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $parentCode)
@@ -225,7 +230,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlAccount) {
             $accountElement = (array) $xmlAccount;
-            $this->createSubaccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe']);
+            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe']);
         }
     }
 
@@ -293,10 +298,10 @@ class AccountingPlanImport
 
     /**
      * Search the parent of account in a accounting Plan.
-     * 
+     *
      * @param array  $accountCodes
      * @param string $account
-     * 
+     *
      * @return string
      */
     private function searchParent(array &$accountCodes, string $account): string
