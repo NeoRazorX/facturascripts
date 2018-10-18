@@ -182,4 +182,8 @@
         <name>uniq_codigo_facturasprov2</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
+    <constraint>
+        <name>ca_facturasprov_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
 </table>
