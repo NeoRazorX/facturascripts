@@ -153,6 +153,21 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Adds a period type filter to the ListView.
+     * (period + start date + end date)
+     *
+     * @param string $viewName
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     */
+    protected function addFilterPeriod($viewName, $key, $label, $field)
+    {
+        $filter = new ListFilter\PeriodFilter($key, $field, $label);
+        $this->views[$viewName]->filters[$key] = $filter;
+    }
+
+    /**
      * Add a select type filter to a ListView.
      *
      * @param string $viewName

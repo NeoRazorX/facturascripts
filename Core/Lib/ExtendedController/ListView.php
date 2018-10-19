@@ -214,7 +214,7 @@ class ListView extends BaseView
 
         /// filters
         foreach ($this->filters as $filter) {
-            $filter->value = $request->request->get($filter->name());
+            $filter->setValueFromRequest($request->request);
             if ($filter->getDataBaseWhere($this->where)) {
                 $this->showFilters = true;
             }

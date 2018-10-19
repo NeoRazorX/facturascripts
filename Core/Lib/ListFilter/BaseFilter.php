@@ -68,7 +68,7 @@ abstract class BaseFilter
      *
      * @var mixed
      */
-    public $value;
+    protected $value;
 
     abstract public function getDataBaseWhere(array &$where): bool;
 
@@ -101,6 +101,16 @@ abstract class BaseFilter
     }
 
     /**
+     * Get the filter value
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
      *
      * @return string
      */
@@ -110,11 +120,31 @@ abstract class BaseFilter
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function onChange()
     {
         return $this->autoSubmit ? ' onchange="this.form.submit()"' : '';
+    }
+
+    /**
+     * Set value to filter
+     *
+     * @param mixed $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Set value to filter from form request
+     *
+     * @param \Symfony\Component\HttpFoundation\ParameterBag $request
+     */
+    public function setValueFromRequest(&$request)
+    {
+        $this->setValue($request->get($this->name()));
     }
 }
