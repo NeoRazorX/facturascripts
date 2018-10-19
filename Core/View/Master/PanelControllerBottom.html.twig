@@ -26,18 +26,6 @@
 
 {% extends "Master/PanelController.html.twig" %}
 
-{% block css %}
-    {{ parent() }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %}
-
-{% block bodyHeaderOptions %}
-    {{ parent() }}
-{% endblock %}
-
 {% block body %}
     {% set firstView = fsc.views | first %}
     {% set firstViewName = firstView.getViewName() %}
