@@ -65,8 +65,13 @@ class AssetManager
     {
         $txt = '';
         foreach ($fileList as $file) {
-            $content = file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . $file) . "\n";
-            $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $file);
+            $filePath = $file;
+            if (FS_ROUTE == substr($file, 0, strlen(FS_ROUTE))) {
+                $filePath = substr($file, strlen(FS_ROUTE));
+            }
+
+            $content = file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
+            $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $filePath);
         }
 
         return $txt;
@@ -98,6 +103,11 @@ class AssetManager
         return str_replace(["\r\n", "\r", "\n", "\t", '  ', '    ', '    '], '', $buffer);
     }
 
+    /**
+     * 
+     * @param array $assets1
+     * @param array $assets2
+     */
     public static function merge(&$assets1, $assets2)
     {
         foreach ($assets2 as $type => $subAssets2) {
