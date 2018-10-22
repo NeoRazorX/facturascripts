@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -64,6 +65,15 @@ class HtmlView extends BaseView
      * @param int    $limit
      */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        ;
+    }
+
+    /**
+     * 
+     * @param User $user
+     */
+    public function loadPageOptions($user = false)
     {
         ;
     }

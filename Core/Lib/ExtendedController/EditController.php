@@ -73,7 +73,8 @@ abstract class EditController extends PanelController
         $view->loadData($code);
 
         /// data not found?
-        if (!empty($code) && !$view->model->exists()) {
+        $mainViewName = 'Edit' . $this->getModelClassName();
+        if (!empty($code) && !$view->model->exists() && $viewName === $mainViewName) {
             $this->miniLog->warning($this->i18n->trans('record-not-found'));
         }
     }
