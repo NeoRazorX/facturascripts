@@ -98,6 +98,10 @@ class RowButton extends VisualItem
         $label = $small ? '' : $this->label;
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
 
+        if ($small && empty($icon)) {
+            $icon = $this->label;
+        }
+
         switch ($this->type) {
             case 'js':
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
