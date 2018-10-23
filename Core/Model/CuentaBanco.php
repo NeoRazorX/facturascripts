@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * A bank account of the company itself.
  *
@@ -29,11 +31,11 @@ class CuentaBanco extends Base\BankAccount
     use Base\ModelTrait;
 
     /**
-     * Code of the accounting sub-account.
+     * Foreign Key with Empresas table.
      *
-     * @var string
+     * @var int
      */
-    public $codsubcuenta;
+    public $idempresa;
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -53,6 +55,28 @@ class CuentaBanco extends Base\BankAccount
     public static function tableName()
     {
         return 'cuentasbanco';
+    }
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->idempresa = AppSettings::get('default', 'idempresa');
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Empresa();
+        return parent::install();
     }
 
     /**
