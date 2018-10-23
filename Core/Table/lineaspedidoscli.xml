@@ -100,6 +100,10 @@
         <type>PRIMARY KEY (idlinea)</type>
     </constraint>
     <constraint>
+        <name>ca_lineaspedidoscli_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_lineaspedidoscli_pedidoscli</name>
         <type>FOREIGN KEY (idpedido) REFERENCES pedidoscli (idpedido) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
