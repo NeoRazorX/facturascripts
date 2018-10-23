@@ -100,6 +100,10 @@
         <type>PRIMARY KEY (idlinea)</type>
     </constraint>
     <constraint>
+        <name>ca_lineaspresupuestoscli_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_lineaspresupuestoscli_presupuestoscli</name>
         <type>FOREIGN KEY (idpresupuesto) REFERENCES presupuestoscli (idpresupuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
