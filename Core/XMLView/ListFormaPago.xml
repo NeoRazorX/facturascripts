@@ -31,7 +31,7 @@
             <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="expiration" order="120">
-            <widget type="number" fieldname="plazovencimiento" />
+            <widget type="number" fieldname="plazovencimiento" decimal="0" />
         </column>
         <column name="expiration-type" numcolumns="4" order="125">
             <widget type="select" fieldname="tipovencimiento">
@@ -41,11 +41,11 @@
                 <values title="years">years</values>
             </widget>
         </column>
-        <column name="account-code" titleurl="ListEmpresa" order="130">
+        <column name="bank-account" order="130">
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column name="generate-receipt" display="center" order="135">
-            <widget type="select" fieldname="genrecibos">
+            <widget type="select" fieldname="genrecibos" translate="true">
                 <values title="paid">Pagados</values>
                 <values title="issued">Emitidos</values>
                 <option color="green">Pagados</option>

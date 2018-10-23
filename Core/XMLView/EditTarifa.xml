@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="aplicar" title="formula-to-apply" numcolumns="3" order="120">
-                <widget type="select" fieldname="aplicar">
+                <widget type="select" fieldname="aplicar" translate="true">
                     <values title="formula-sale-price">pvp</values>
                     <values title="formula-cost-price">coste</values>
                 </widget>
