@@ -91,7 +91,7 @@
     </constraint>
     <constraint>
         <name>ca_lineaspresupuestosprov_impuestos</name>
-        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_lineaspresupuestosprov_presupuestosprov</name>
