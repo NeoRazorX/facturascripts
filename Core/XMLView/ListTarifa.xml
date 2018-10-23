@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListTarifa
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -31,7 +31,7 @@
             <widget type="text" fieldname="nombre" />
         </column>
         <column name="formula" title="formula-to-apply" order="120">
-            <widget type="select" fieldname="aplicar">
+            <widget type="select" fieldname="aplicar" translate="true">
                 <values title="formula-sale-price">pvp</values>
                 <values title="formula-cost-price">coste</values>
             </widget>
