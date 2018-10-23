@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to list the items in the Agentes model
@@ -62,6 +63,11 @@ class ListAgente extends ExtendedController\ListController
         $cityValues = $this->codeModel->all('agentes', 'ciudad', 'ciudad');
         $this->addFilterSelect('ListAgente', 'ciudad', 'city', 'ciudad', $cityValues);
 
-        $this->addFilterCheckbox('ListAgente', 'debaja', 'suspended', 'debaja');
+        $values = [
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', 'FALSE')]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', 'TRUE')]],
+            ['label' => $this->i18n->trans('all'), 'where' => []]
+        ];
+        $this->addFilterSelectWhere('ListAgente', 'status', $values);
     }
 }
