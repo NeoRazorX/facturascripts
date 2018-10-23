@@ -45,13 +45,13 @@
                     <values title="years">years</values>
                 </widget>
             </column>
-            <column name="codaccount" title="account-code" numcolums="4" order="130">
+            <column name="bank-account" numcolums="4" order="130">
                 <widget type="select" fieldname="codcuenta">
-                    <values source="cuentas" fieldcode="codcuenta" fieldtitle="codcuenta"></values>
+                    <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="genreceipts" title="generate-receipt" numcolumns="4" order="140">
-                <widget type="select" fieldname="genrecibos">
+                <widget type="select" fieldname="genrecibos" translate="true">
                     <values title="paid">Pagados</values>
                     <values title="issued">Emitidos</values>
                 </widget>
