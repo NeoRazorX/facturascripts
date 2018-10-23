@@ -105,7 +105,7 @@ class WebRender
             if (substr($string, 0, strlen($path)) == $path) {
                 return $string;
             }
-            return $path . $string;
+            return str_replace('//', '/', $path . $string);
         });
         $twig->addFunction($assetFunction);
 
