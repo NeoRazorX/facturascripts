@@ -35,7 +35,7 @@
         </group>
         <group name="payment-info" numcolumns="12">
             <column name="expiration" order="120">
-                <widget type="number" fieldname="plazovencimiento" />
+                <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />
             </column>
             <column name="expiration-type" numcolumns="4" order="125">
                 <widget type="select" fieldname="tipovencimiento">
