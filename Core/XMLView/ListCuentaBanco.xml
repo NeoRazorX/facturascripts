@@ -24,19 +24,21 @@
 
 <view>
     <columns>
-        <column name="account" numcolumns="2">
+        <column name="code" order="100">
             <widget type="text" fieldname="codcuenta" onclick="EditCuentaBanco" />
         </column>
-        <column name="subaccount" numcolumns="2">
-            <widget type="text" fieldname="codsubcuenta"/>
-        </column>
-        <column name="description" numcolumns="4">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion"/>
         </column>
-        <column name="swift" numcolumns="2">
+        <column name="company" order="120">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
+        <column name="swift" order="130">
             <widget type="text" fieldname="swift"/>
         </column>
-        <column name="iban" numcolumns="2">
+        <column name="iban" order="140">
             <widget type="text" fieldname="iban"/>
         </column>
     </columns>
