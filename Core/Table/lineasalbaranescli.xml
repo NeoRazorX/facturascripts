@@ -104,6 +104,10 @@
         <type>FOREIGN KEY (idalbaran) REFERENCES albaranescli (idalbaran) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
+        <name>ca_lineasalbaranescli_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>lineasalbaranescli_pkey</name>
         <type>PRIMARY KEY (idlinea)</type>
     </constraint>

@@ -67,6 +67,23 @@ class WidgetDate extends BaseWidget
 
     /**
      * 
+     * @return string
+     */
+    protected function show()
+    {
+        if (is_null($this->value)) {
+            return '-';
+        }
+
+        if (is_numeric($this->value)) {
+            return date('d-m-Y', $this->value);
+        }
+
+        return (string) $this->value;
+    }
+
+    /**
+     * 
      * @param string $initialClass
      * @param string $alternativeClass
      *
