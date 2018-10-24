@@ -37,12 +37,24 @@ class EditEmpresa extends ExtendedController\EditController
     {
         parent::createViews();
         $this->createViewBankAccounts();
+        $this->createViewWarehouse();
     }
 
     private function createViewBankAccounts()
     {
         $this->addEditListView('EditCuentaBanco', 'CuentaBanco', 'accounts', 'fas fa-piggy-bank');
-        $companyColumn = $this->views['EditCuentaBanco']->columnForField('idempresa');
+        $this->hideCompanyColumn('EditCuentaBanco');
+    }
+
+    private function createViewWarehouse()
+    {
+        $this->addEditListView('EditAlmacen', 'Almacen', 'warehouse', 'fas fa-building');
+        $this->hideCompanyColumn('EditAlmacen');
+    }
+
+    private function hideCompanyColumn($viewName)
+    {
+        $companyColumn = $this->views[$viewName]->columnForField('idempresa');
         $companyColumn->display = 'none';
     }
 
@@ -80,6 +92,7 @@ class EditEmpresa extends ExtendedController\EditController
     {
         switch ($viewName) {
             case 'EditCuentaBanco':
+            case 'EditAlmacen':
                 $idcompany = $this->getViewModelValue('EditEmpresa', 'idempresa');
                 $where = [new DataBaseWhere('idempresa', $idcompany)];
                 $view->loadData('', $where);
