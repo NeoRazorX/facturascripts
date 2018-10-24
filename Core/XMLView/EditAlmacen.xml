@@ -24,11 +24,11 @@
 
 <view>
     <columns>
-        <group name="data" title="warehouse" numcolumns="12">
+        <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codalmacen" required="true" />
             </column>
-            <column name="name" numcolumns="6" order="110">
+            <column name="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="phone" numcolumns="2" order="120">
