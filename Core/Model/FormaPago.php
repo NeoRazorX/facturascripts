@@ -32,13 +32,6 @@ class FormaPago extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Code of the associated bank account.
-     *
-     * @var string
-     */
-    public $codcuenta;
-
-    /**
      * Primary key. Varchar (10).
      *
      * @var string

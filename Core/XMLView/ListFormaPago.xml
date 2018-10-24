@@ -41,9 +41,6 @@
                 <values title="years">years</values>
             </widget>
         </column>
-        <column name="bank-account" order="130">
-            <widget type="text" fieldname="codcuenta" />
-        </column>
         <column name="generate-receipt" display="center" order="135">
             <widget type="select" fieldname="genrecibos" translate="true">
                 <values title="paid">Pagados</values>
