@@ -25,25 +25,30 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="6">
-            <column name="code" numcolumns="4" order="100">
+        <group name="data1" numcolumns="12">
+            <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codpago" icon="fas fa-credit-card" required="true" />
             </column>
-            <column name="description" numcolumns="8" order="110">
+            <column name="description" numcolumns="5" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="domicilied" title="domicilied" numcolumns="3" order="150">
-                <widget type="checkbox" fieldname="domiciliado"></widget>
+            <column name="genreceipts" title="generate-receipt" numcolumns="2" order="130">
+                <widget type="select" fieldname="genrecibos" translate="true">
+                    <values title="paid">Pagados</values>
+                    <values title="issued">Emitidos</values>
+                </widget>
             </column>
-            <column name="print" title="print" numcolumns="3" order="160">
-                <widget type="checkbox" fieldname="imprimir"></widget>
+            <column name="company" numcolumns="3" order="140">
+                <widget type="select" fieldname="idempresa" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
             </column>
         </group>
-        <group name="payment-info" numcolumns="6">
-            <column name="expiration" numcolumns="2" order="120">
+        <group name="data2" numcolumns="12">
+            <column name="expiration" numcolumns="2" order="200">
                 <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />
             </column>
-            <column name="expiration-type" numcolumns="5" order="125">
+            <column name="expiration-type" numcolumns="4" order="220">
                 <widget type="select" fieldname="tipovencimiento" translate="true">
                     <values title="days">days</values>
                     <values title="weeks">weeks</values>
@@ -51,11 +56,18 @@
                     <values title="years">years</values>
                 </widget>
             </column>
-            <column name="genreceipts" title="generate-receipt" numcolumns="5" order="140">
-                <widget type="select" fieldname="genrecibos" translate="true">
-                    <values title="paid">Pagados</values>
-                    <values title="issued">Emitidos</values>
+            <column name="subaccount" numcolumns="4" order="250">
+                <widget type="autocomplete" fieldname="codsubcuenta">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
+            </column>
+        </group>
+        <group name="data3" numcolumns="12">
+            <column name="domicilied" title="domicilied" numcolumns="2" order="300">
+                <widget type="checkbox" fieldname="domiciliado"></widget>
+            </column>
+            <column name="print" title="print" numcolumns="2" order="330">
+                <widget type="checkbox" fieldname="imprimir"></widget>
             </column>
         </group>
     </columns>

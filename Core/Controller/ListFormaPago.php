@@ -30,6 +30,13 @@ class ListFormaPago extends ExtendedController\ListController
 {
 
     /**
+     * List of companies to filter the views
+     *
+     * @var Empresa[]
+     */
+    private $companyValues = [];
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -49,29 +56,56 @@ class ListFormaPago extends ExtendedController\ListController
      */
     protected function createViews()
     {
+        // Get company list
+        $this->companyValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
+
+        // Add views
         $this->createViewsPaymentMethods();
         $this->createViewsBankAccounts();
     }
 
+    /**
+     * Add Bank Acounts view
+     */
     private function createViewsBankAccounts()
     {
-        $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
-        $this->addOrderBy('ListCuentaBanco', ['codcuenta'], 'code');
-        $this->addOrderBy('ListCuentaBanco', ['descripcion'], 'description');
+        $viewName = 'ListCuentaBanco';
+        $this->addView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addSearchFields($viewName, ['descripcion', 'codcuenta']);
+        $this->addOrderBy($viewName, ['codcuenta'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
 
-        $values = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', $values);
+        $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', $this->companyValues);
     }
 
+    /**
+     * Add Payment Methods view
+     */
     private function createViewsPaymentMethods()
     {
-        $this->addView('ListFormaPago', 'FormaPago', 'payment-methods', 'fas fa-credit-card');
-        $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
-        $this->addOrderBy('ListFormaPago', ['codpago'], 'code');
-        $this->addOrderBy('ListFormaPago', ['descripcion'], 'description');
+        $viewName = 'ListFormaPago';
+        $this->addView($viewName, 'FormaPago', 'payment-methods', 'fas fa-credit-card');
+        $this->addSearchFields($viewName, ['descripcion', 'codpago', 'codcuenta', 'codsubcuenta']);
+        $this->addOrderBy($viewName, ['codpago'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['idempresa', 'codpago'], 'company');
 
-        $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied', 'domiciliado');
-        $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print', 'imprimir');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
+        $this->addFilterSelect($viewName, 'genreceipt', 'generate-receipt', 'genrecibos', $this->getGenerateReceiptOptions());
+        $this->addFilterCheckbox($viewName, 'domiciliado', 'domicilied', 'domiciliado');
+        $this->addFilterCheckbox($viewName, 'imprimir', 'print', 'imprimir');
+    }
+
+    /**
+     * Return list of generate receipt availables
+     *
+     * @return array
+     */
+    private function getGenerateReceiptOptions()
+    {
+        return [
+            ['code' => 'Pagados', 'description' => $this->i18n->trans('paid')],
+            ['code' => 'Emitidos', 'description' => $this->i18n->trans('issued')],
+        ];
     }
 }
