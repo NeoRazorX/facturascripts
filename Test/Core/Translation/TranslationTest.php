@@ -100,8 +100,6 @@ class TranslationTest extends TestCase
         foreach ($secondaryArray as $key => $value) {
             $exists = array_key_exists($key, $primaryArray);
             $msg = 'Key \'' . $key . '\' not exists on ' . $this->mainLang . '.';
-            // Require remove unneeded translations
-            //$this->assertTrue($exists, $msg);
         }
     }
 

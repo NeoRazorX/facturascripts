@@ -141,9 +141,7 @@ class FormaPago extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
 
         /// we check the expiration validity
-        if (is_string($this->plazovencimiento)) {
-            $this->plazovencimiento = 0;
-        } elseif ($this->plazovencimiento < 0) {
+        if ($this->plazovencimiento < 0) {
             self::$miniLog->alert(self::$i18n->trans('number-expiration-invalid'));
             return false;
         }

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\NumberTools;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetNumber
@@ -78,6 +79,16 @@ class WidgetNumber extends BaseWidget
         $this->min = $data['min'] ?? 0;
         $this->max = $data['max'] ?? 0;
         $this->step = $data['step'] ?? 'any';
+    }
+
+    /**
+     * 
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $model->{$this->fieldname} = (float) $request->request->get($this->fieldname);
     }
 
     /**

@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="12" icon="fas fa-file" title="fiscal-data">
+        <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="idempresa" icon="fas fa-object-group" required="true" />
             </column>
@@ -85,7 +85,7 @@
             <column name="surcharge" numcolumns="1" order="110">
                 <widget type="checkbox" fieldname="recequivalencia"/>
             </column>
-             <column name="fiscal-mode" title="is-person" numcolumns="4" order="120">
+            <column name="fiscal-mode" title="is-person" numcolumns="4" order="120">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>

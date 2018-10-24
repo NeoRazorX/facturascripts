@@ -177,17 +177,14 @@ class ListView extends BaseView
     {
         $this->offset = ($offset < 0) ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-
-        $finalWhere = empty($where) ? $this->where : $where;
-        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
+        $this->where = array_merge($where, $this->where);
+        $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
 
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
+            $this->cursor = $this->model->all($this->where, $this->order, $this->offset, $limit);
         }
-
-        $this->where = $finalWhere;
     }
 
     /**
