@@ -25,22 +25,24 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
+            <column name="code" numcolumns="2" display="none" order="100">
                 <widget type="text" fieldname="idempresa" icon="fas fa-object-group" required="true" />
             </column>
-            <column name="company-name" numcolumns="4" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+            <column name="short-name" numcolumns="2" order="100">
+                <widget type="text" fieldname="nombrecorto" required="true" />
             </column>
-            <column name="short-name" numcolumns="3" order="120">
-                <widget type="text" fieldname="nombrecorto" />
+            <column name="company-name" order="110">
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="cifnif" numcolumns="3" order="120" >
                 <widget type="text" fieldname="cifnif" />
             </column>
-            <column name="administrator" numcolumns="4" order="125" description="administrator">
+            <column name="administrator" numcolumns="3" order="125" description="administrator">
                 <widget type="text" fieldname="administrador" hint="company-manager"/>
             </column>
-            <column name="address" numcolumns="6" order="130">
+        </group>
+        <group name="address" numcolumns="12">
+            <column name="address" numcolumns="8" order="130">
                 <widget type="text" fieldname="direccion"/>
             </column>
             <column name="postalmail" numcolumns="2" order="135">
@@ -79,10 +81,10 @@
             </column>
         </group>
         <group name="management" columns="12" icon="fas fa-cog" title="advanced">
-            <column name="startdate" numcolumns="2" order="100">
+            <column name="startdate" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta"/>
             </column>
-            <column name="surcharge" numcolumns="1" order="110">
+            <column name="surcharge" numcolumns="2" order="110">
                 <widget type="checkbox" fieldname="recequivalencia"/>
             </column>
             <column name="fiscal-mode" title="is-person" numcolumns="4" order="120">
