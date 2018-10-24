@@ -32,7 +32,7 @@ class ListFormaPago extends ExtendedController\ListController
     /**
      * List of companies to filter the views
      *
-     * @var Empresa[]
+     * @var CodeModel[]
      */
     private $companyValues = [];
 

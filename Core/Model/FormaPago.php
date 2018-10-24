@@ -125,8 +125,7 @@ class FormaPago extends Base\ModelClass
      */
     public function install()
     {
-        new Empresa();
-        new CuentaBanco();
+        new CuentaBanco();       // Install: CuentaBanco() + Empresa()
         return parent::install();
     }
 
