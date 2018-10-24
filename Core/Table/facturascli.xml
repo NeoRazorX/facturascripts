@@ -43,11 +43,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>codigo</name>
         <type>character varying(20)</type>
         <null>NO</null>
@@ -224,10 +219,6 @@
     <constraint>
         <name>ca_facturascli_series2</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_facturascli_ejercicios2</name>
-        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_asiento2</name>
