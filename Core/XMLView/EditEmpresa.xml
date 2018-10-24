@@ -25,9 +25,6 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" display="none" order="100">
-                <widget type="text" fieldname="idempresa" icon="fas fa-object-group" required="true" />
-            </column>
             <column name="short-name" numcolumns="2" order="100">
                 <widget type="text" fieldname="nombrecorto" required="true" />
             </column>
@@ -42,7 +39,7 @@
             </column>
         </group>
         <group name="address" numcolumns="12">
-            <column name="address" numcolumns="8" order="130">
+            <column name="address" numcolumns="10" order="130">
                 <widget type="text" fieldname="direccion"/>
             </column>
             <column name="postalmail" numcolumns="2" order="135">

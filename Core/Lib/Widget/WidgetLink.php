@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\Widget;
  * Description of WidgetLink
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class WidgetLink extends BaseWidget
 {
@@ -35,20 +36,10 @@ class WidgetLink extends BaseWidget
      */
     protected function onclickHtml($inside, $titleurl = '')
     {
-        if (empty($this->onclick) || is_null($this->value)) {
+        if (empty($this->value)) {
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a target="_blank" href="' . $this->onclick . '?code=' . rawurlencode($this->value) . '" class="cancelClickable">' . $inside . '</a>';
-    }
-
-    /**
-     *
-     * @param object $model
-     */
-    protected function setValue($model)
-    {
-        parent::setValue($model);
-        $this->onclick = $this->value;
+        return '<a target="_blank" href="' . $this->value . '" class="cancelClickable">' . $inside . '</a>';
     }
 }
