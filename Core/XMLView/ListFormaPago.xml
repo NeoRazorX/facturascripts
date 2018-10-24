@@ -30,19 +30,21 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
+        <column name="company" order="115">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="expiration" order="120">
             <widget type="number" fieldname="plazovencimiento" decimal="0" />
         </column>
         <column name="expiration-type" numcolumns="4" order="125">
-            <widget type="select" fieldname="tipovencimiento">
+            <widget type="select" fieldname="tipovencimiento" translate="true">
                 <values title="days">days</values>
                 <values title="weeks">weeks</values>
                 <values title="months">months</values>
                 <values title="years">years</values>
             </widget>
-        </column>
-        <column name="bank-account" order="130">
-            <widget type="text" fieldname="codcuenta" />
         </column>
         <column name="generate-receipt" display="center" order="135">
             <widget type="select" fieldname="genrecibos" translate="true">
