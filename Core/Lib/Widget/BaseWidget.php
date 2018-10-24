@@ -60,7 +60,7 @@ class BaseWidget extends VisualItem
 
     /**
      *
-     * @var bool
+     * @var string
      */
     public $readonly;
 
