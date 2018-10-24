@@ -88,6 +88,7 @@ class AssetManager
     {
         // Replace relative paths
         $replace = [
+            'url("' => 'url("' . dirname($url) . '/',
             'url(../' => "url(" . dirname($url, 2) . '/',
             "url('../" => "url('" . dirname($url, 2) . '/',
         ];

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -28,6 +29,22 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditEmpresa extends ExtendedController\EditController
 {
+
+    /**
+     * Create views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->createViewBankAccounts();
+    }
+
+    private function createViewBankAccounts()
+    {
+        $this->addEditListView('EditCuentaBanco', 'CuentaBanco', 'accounts', 'fas fa-piggy-bank');
+        $companyColumn = $this->views['EditCuentaBanco']->columnForField('idempresa');
+        $companyColumn->display = 'none';
+    }
 
     /**
      * Returns the model name
@@ -51,5 +68,26 @@ class EditEmpresa extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditCuentaBanco':
+                $idcompany = $this->getViewModelValue('EditEmpresa', 'idempresa');
+                $where = [new DataBaseWhere('idempresa', $idcompany)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }
