@@ -37,11 +37,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>codigo</name>
         <type>character varying(20)</type>
         <null>NO</null>
@@ -195,10 +190,6 @@
     <constraint>
         <name>ca_presupuestoscli_series</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_presupuestoscli_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_presupuestoscli2</name>
