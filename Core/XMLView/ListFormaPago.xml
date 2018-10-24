@@ -39,7 +39,7 @@
             <widget type="number" fieldname="plazovencimiento" decimal="0" />
         </column>
         <column name="expiration-type" numcolumns="4" order="125">
-            <widget type="select" fieldname="tipovencimiento">
+            <widget type="select" fieldname="tipovencimiento" translate="true">
                 <values title="days">days</values>
                 <values title="weeks">weeks</values>
                 <values title="months">months</values>
