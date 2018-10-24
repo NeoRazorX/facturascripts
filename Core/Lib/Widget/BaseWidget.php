@@ -90,9 +90,9 @@ class BaseWidget extends VisualItem
     {
         parent::__construct($data);
         $this->fieldname = $data['fieldname'];
-        $this->icon = isset($data['icon']) ? $data['icon'] : '';
-        $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
-        $this->readonly = isset($data['readonly']);
+        $this->icon = $data['icon'] ?? '';
+        $this->onclick = $data['onclick'] ?? '';
+        $this->readonly = $data['readonly'] ?? 'false';
         $this->required = isset($data['required']);
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
@@ -221,8 +221,16 @@ class BaseWidget extends VisualItem
      */
     protected function inputHtmlExtraParams()
     {
-        $params = $this->readonly ? ' readonly=""' : '';
-        $params .= $this->required ? ' required=""' : '';
+        $params = $this->required ? ' required=""' : '';
+        switch ($this->readonly) {
+            case 'dinamic':
+                $params .= empty($this->value) ? '' : ' readonly=""';
+                break;
+
+            case 'true':
+                $params .= ' readonly=""';
+                break;
+        }
 
         return $params;
     }
