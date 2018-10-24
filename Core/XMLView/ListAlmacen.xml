@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListAlmacen
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -30,13 +30,18 @@
         <column name="name" order="100">
             <widget type="text" fieldname="nombre" />
         </column>
+        <column name="company" order="105">
+            <widget type="select" fieldname="idempresa" required="true">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="address" order="110">
             <widget type="text" fieldname="direccion" />
         </column>
         <column name="city" order="120">
             <widget type="text" fieldname="ciudad" />
         </column>
-        <column name="postal-code" order="130">
+        <column name="postal-code" display="none" order="130">
             <widget type="text" fieldname="codpostal" />
         </column>
         <column name="province" display="center" order="140">
@@ -46,6 +51,4 @@
             <widget type="text" fieldname="telefono" />
         </column>
     </columns>
-    <filters>
-    </filters>
 </view>
