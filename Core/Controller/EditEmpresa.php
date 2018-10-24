@@ -43,19 +43,13 @@ class EditEmpresa extends ExtendedController\EditController
     private function createViewBankAccounts()
     {
         $this->addEditListView('EditCuentaBanco', 'CuentaBanco', 'accounts', 'fas fa-piggy-bank');
-        $this->hideCompanyColumn('EditCuentaBanco');
+        $this->views['EditCuentaBanco']->disableColumn('company');
     }
 
     private function createViewWarehouse()
     {
         $this->addEditListView('EditAlmacen', 'Almacen', 'warehouse', 'fas fa-building');
-        $this->hideCompanyColumn('EditAlmacen');
-    }
-
-    private function hideCompanyColumn($viewName)
-    {
-        $companyColumn = $this->views[$viewName]->columnForField('idempresa');
-        $companyColumn->display = 'none';
+        $this->views['EditAlmacen']->disableColumn('company');
     }
 
     /**
