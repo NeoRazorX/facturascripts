@@ -67,7 +67,7 @@ class AssetManager
         foreach ($fileList as $file) {
             $filePath = $file;
             if (FS_ROUTE == substr($file, 0, strlen(FS_ROUTE))) {
-                $filePath = substr($file, strlen(FS_ROUTE));
+                $filePath = substr($file, strlen(FS_ROUTE) + 1);
             }
 
             $content = file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
@@ -86,13 +86,19 @@ class AssetManager
      */
     protected static function fixCombineContent(string $data, string $url): string
     {
-        // Replace relative paths
+        // Excluce url("data:) from replacement
+        $buffer = str_replace('url("data:', '#url-data:#', $data);
+
+        // Replace relative paths in url()
         $replace = [
             'url("' => 'url("' . dirname($url) . '/',
             'url(../' => "url(" . dirname($url, 2) . '/',
             "url('../" => "url('" . dirname($url, 2) . '/',
         ];
-        $buffer = \str_replace(array_keys($replace), $replace, $data);
+        $buffer = str_replace(array_keys($replace), $replace, $buffer);
+
+        // fix url("data:)
+        $buffer = str_replace('#url-data:#', 'url("data:', $buffer);
 
         // Remove comments
         $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
