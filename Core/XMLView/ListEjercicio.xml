@@ -31,6 +31,11 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
+        <column name="company" order="115">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="start-date" display="center" order="120">
             <widget type="text" fieldname="fechainicio" />
         </column>
