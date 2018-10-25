@@ -216,16 +216,10 @@ abstract class BaseController extends Base\Controller
             return false;
         }
 
-        // deleting a single row?
         $model = $this->views[$this->active]->model;
-        $code = $this->request->request->get($model->primaryColumn(), '');
-        if ($model->loadFromCode($code) && $model->delete()) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return true;
-        }
+        $codes = $this->request->request->get('code', '');
 
         // deleting multiples rows?
-        $codes = $this->request->request->get('code', '');
         if (is_array($codes)) {
             $numDeletes = 0;
             foreach ($codes as $cod) {
@@ -240,6 +234,10 @@ abstract class BaseController extends Base\Controller
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
                 return true;
             }
+        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+            // deleting a single row?
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            return true;
         }
 
         $this->miniLog->warning($this->i18n->trans('record-deleted-error'));

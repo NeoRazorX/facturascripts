@@ -43,10 +43,6 @@
         <type>FOREIGN KEY (idtrans) REFERENCES transferenciasstock (idtrans) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_lineastransferenciasstock_impuestos</name>
-        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
         <name>ca_lineastransferenciasstock_variantes</name>
         <type>FOREIGN KEY (referencia) REFERENCES variantes (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
