@@ -40,7 +40,7 @@
             <widget type="text" fieldname="email" />
         </column>
         <column name="web" order="150">
-            <widget type="text" fieldname="web" />
+            <widget type="link" fieldname="web" />
         </column>
         <column name="observations" order="160">
             <widget type="textarea" fieldname="observaciones" />

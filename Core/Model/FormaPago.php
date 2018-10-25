@@ -36,7 +36,7 @@ class FormaPago extends Base\ModelClass
      *
      * @var string
      */
-    public $codcuenta;
+    public $codcuentabanco;
 
     /**
      * Primary key. Varchar (10).
@@ -44,6 +44,13 @@ class FormaPago extends Base\ModelClass
      * @var string
      */
     public $codpago;
+
+    /**
+     * Sub-account code.
+     *
+     * @var string
+     */
+    public $codsubcuenta;
 
     /**
      * Description of the payment method.
@@ -65,6 +72,13 @@ class FormaPago extends Base\ModelClass
      * @var string
      */
     public $genrecibos;
+
+    /**
+     * Foreign Key with Empresas table.
+     *
+     * @var int
+     */
+    public $idempresa;
 
     /**
      * True (default) -> display the data in sales documents,
@@ -94,11 +108,25 @@ class FormaPago extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->domiciliado = false;
         $this->genrecibos = 'Emitidos';
         $this->imprimir = true;
         $this->plazovencimiento = 0;
         $this->tipovencimiento = 'days';
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new CuentaBanco();       // Install: CuentaBanco() + Empresa()
+        return parent::install();
     }
 
     /**

@@ -53,7 +53,7 @@ class EditFacturaCliente extends ExtendedController\SalesDocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('EditAsiento', 'asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView('EditAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
     }
 
     /**

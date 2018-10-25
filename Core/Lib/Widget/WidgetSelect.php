@@ -221,7 +221,7 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        if ($this->readonly) {
+        if ($this->readonly === 'true' || ($this->readonly === 'dinamic' && !empty($this->value))) {
             return parent::inputHtml($type, $extraClass);
         }
 
