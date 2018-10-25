@@ -159,6 +159,18 @@ class VisualItem
     }
 
     /**
+     * Returns equivalent css class to $class. To extend in plugins.
+     *
+     * @param string $class
+     *
+     * @return string
+     */
+    protected function css($class)
+    {
+        return $class;
+    }
+
+    /**
      *
      * @return int
      */

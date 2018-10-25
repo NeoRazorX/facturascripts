@@ -181,7 +181,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list-alt')
+    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);

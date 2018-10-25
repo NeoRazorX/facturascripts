@@ -125,7 +125,7 @@ class BaseWidget extends VisualItem
         return '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="input-group-prepend">'
+            . '<div class="' . $this->css('input-group-prepend') . '">'
             . '<span class="input-group-text"><i class="' . $this->icon . ' fa-fw"></i></span>'
             . '</div>'
             . $inputHtml
@@ -210,7 +210,8 @@ class BaseWidget extends VisualItem
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
+        $cssFormControl = $this->css('form-control');
+        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
