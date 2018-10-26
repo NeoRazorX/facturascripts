@@ -96,16 +96,14 @@ class GroupItem extends VisualItem
             . '<div class="' . $this->css('form-row') . '">';
 
         if (!empty($this->title)) {
-            $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-            $html .= '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+            $html .= $this->legend();
         }
 
         foreach ($this->columns as $col) {
             $html .= $col->edit($model);
         }
 
-        $html .= '</div></div>';
-        return $html;
+        return $html . '</div></div>';
     }
 
     /**
@@ -181,6 +179,16 @@ class GroupItem extends VisualItem
         }
 
         return ($column1->order < $column2->order) ? -1 : 1;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function legend()
+    {
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
+        return '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
     }
 
     /**
