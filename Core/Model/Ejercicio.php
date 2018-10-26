@@ -180,7 +180,7 @@ class Ejercicio extends Base\ModelClass
         if (empty($data)) {
             if ($crear && (strtotime($fecha) >= 1)) {
                 $eje = new self();
-                $eje->codejercicio = $eje->newCodigo();
+                $eje->codejercicio = $eje->newCode();
                 $eje->nombre = date('Y', strtotime($fecha));
                 $eje->fechainicio = date('1-1-Y', strtotime($fecha));
                 $eje->fechafin = date('31-12-Y', strtotime($fecha));
@@ -231,28 +231,18 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
-     * Returns a new code for an exercise.
+     * Returns the following code for the reported field or the primary key of the model.
+     * (Formated to 4 digits)
      *
-     * @param string $cod
+     * @param string $field
+     * @param array  $where
      *
      * @return string
      */
-    public function newCodigo($cod = '')
+    public function newCode(string $field = '', array $where = array())
     {
-        if ($cod !== '') {
-            $sql = 'SELECT codejercicio FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($cod) . '; ';
-            if (!self::$dataBase->select($sql)) {
-                return $cod;
-            }
-        }
-
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codejercicio') . ') as cod FROM ' . static::tableName() . '; ';
-        $newCod = self::$dataBase->select($sql);
-        if (!empty($newCod)) {
-            return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
-        }
-
-        return '0001';
+        $newCode = parent::newCode($field, $where);
+        return sprintf('%04s', (int) $newCode);
     }
 
     /**
