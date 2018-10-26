@@ -34,8 +34,10 @@
         <column name="editable" display="none" order="100">
             <widget type="text" fieldname="editable" />
         </column>
-        <column name="exercise" display="none" order="100">
-            <widget type="text" fieldname="codejercicio" />
+        <column name="exercise" numcolumns="2" order="100">
+            <widget type="select" fieldname="codejercicio">
+                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="date" numcolumns="2" order="100">
             <widget type="date" fieldname="fecha" icon="fas fa-calendar-alt" required="true" />
@@ -46,7 +48,7 @@
         <column name="document" numcolumns="2" order="130">
             <widget type="text" fieldname="documento" />
         </column>
-        <column name="journals" numcolumns="2" order="140">
+        <column name="journal" numcolumns="2" order="140">
             <widget type="select" fieldname="iddiario">
                 <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
             </widget>
@@ -55,7 +57,7 @@
             <widget type="number" decimal="0" step="1" fieldname="canal" />
         </column>
         <column name="ammount" numcolumns="2" display="right" order="200">
-            <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="readonly" />
+            <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="true" />
         </column>
     </columns>
 </view>
