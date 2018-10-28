@@ -25,6 +25,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>codigo</name>
         <type>character varying(20)</type>
         <null>NO</null>
@@ -137,7 +142,11 @@
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_pedidosprov2</name>
+        <name>ca_pedidosprov_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_pedidosprov</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
     <constraint>

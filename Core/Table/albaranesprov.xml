@@ -25,6 +25,11 @@
         <null>NO</null>
     </column>
     <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>codigo</name>
         <type>character varying(20)</type>
         <null>NO</null>
@@ -144,11 +149,15 @@
         <type>PRIMARY KEY (idalbaran)</type>
     </constraint>
     <constraint>
-        <name>ca_albaranesprov_series2</name>
+        <name>ca_albaranesprov_series</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_albaranesprov2</name>
+        <name>ca_albaranesprov_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_albaranesprov</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
     <constraint>
