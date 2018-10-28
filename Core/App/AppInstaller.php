@@ -100,12 +100,13 @@ class AppInstaller
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
 
-        if (strtolower($dbData['name']) != $dbData['name']) {
+        $dbType = $this->request->request->get('fs_db_type');
+        if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
             $this->miniLog->alert($this->i18n->trans('database-name-must-be-lowercase'));
             return false;
         }
 
-        switch ($this->request->request->get('fs_db_type')) {
+        switch ($dbType) {
             case 'mysql':
                 if (class_exists('mysqli')) {
                     return $this->testMysql($dbData);
