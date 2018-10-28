@@ -209,7 +209,8 @@ abstract class BusinessDocumentController extends PanelController
             case $documentView:
                 $view->loadData($code);
                 /// data not found?
-                if (!empty($code) && !$view->model->exists()) {
+                $action = $this->request->request->get('action', '');
+                if (!empty($code) && !$view->model->exists() && '' === $action) {
                     $this->miniLog->warning($this->i18n->trans('record-not-found'));
                 }
                 break;
