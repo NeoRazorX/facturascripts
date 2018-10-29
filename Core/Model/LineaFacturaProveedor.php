@@ -39,9 +39,20 @@ class LineaFacturaProveedor extends Base\BusinessDocumentLine
      * 
      * @return string
      */
+    public function documentColumn()
+    {
+        return 'idfactura';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new FacturaProveedor();
+
         return parent::install();
     }
 

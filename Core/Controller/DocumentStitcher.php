@@ -16,12 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,6 +32,19 @@ class DocumentStitcher extends Base\Controller
 {
 
     /**
+     * Array of document primary keys.
+     *
+     * @var array
+     */
+    public $codes = [];
+
+    /**
+     *
+     * @var array
+     */
+    public $documents = [];
+
+    /**
      * Model name source.
      *
      * @var string
@@ -41,32 +52,34 @@ class DocumentStitcher extends Base\Controller
     public $modelName;
 
     /**
-     * Array of document primary keys.
+     * 
+     * @param string $description
      *
-     * @var array
+     * @return string
      */
-    public $codes;
+    public function fixDescription($description)
+    {
+        return nl2br(Base\Utils::fixHtml($description));
+    }
 
     /**
-     * Array of documents.
-     *
-     * @var array
+     * 
+     * @return array
      */
-    public $docs;
+    public function getDestinyDocs()
+    {
+        $types = [];
 
-    /**
-     * Array of lines of documents.
-     *
-     * @var array
-     */
-    public $linesDocs;
+        $documentState = new Model\EstadoDocumento();
+        $where = [new Base\DataBase\DataBaseWhere('tipodoc', $this->modelName)];
+        foreach ($documentState->all($where) as $docState) {
+            if (!empty($docState->generadoc)) {
+                $types[$docState->generadoc] = $docState->generadoc;
+            }
+        }
 
-    /**
-     * List of document status where can be approved.
-     *
-     * @var Model\EstadoDocumento[]
-     */
-    public $approveTo;
+        return $types;
+    }
 
     /**
      * Returns basic page attributes
@@ -78,7 +91,7 @@ class DocumentStitcher extends Base\Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'sales';
         $pageData['title'] = 'group-or-split';
-        $pageData['icon'] = 'fas fa-thumb-tack';
+        $pageData['icon'] = 'fas fa-thumbtack';
         $pageData['showonmenu'] = false;
 
         return $pageData;
@@ -94,203 +107,93 @@ class DocumentStitcher extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->codes = $this->getCodes();
+        $this->modelName = $this->getModelName();
+        $this->setDocuments();
 
-        // Read model received
-        $this->modelName = $this->request->get('model', '');
+        $destiny = $this->request->request->get('destiny', '');
+        if (!empty($destiny)) {
+            $this->generateNewDocument($destiny);
+        }
+    }
 
-        // Operations with data, before execute action
-        if (!$this->execPrevious($this->modelName)) {
+    /**
+     * 
+     * @param string $destiny
+     */
+    protected function generateNewDocument($destiny)
+    {
+        $newLines = [];
+        $prototype = null;
+        $quantities = [];
+        foreach ($this->documents as $doc) {
+            foreach ($doc->getLines() as $line) {
+                $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
+                if (empty($quantity)) {
+                    continue;
+                }
+
+                if (null === $prototype) {
+                    $prototype = $doc;
+                }
+
+                $quantities[$line->primaryColumnValue()] = $quantity;
+                $newLines[] = $line;
+            }
+        }
+
+        if (null === $prototype) {
             return;
         }
 
-        // Store action to execute
-        $action = $this->request->get('action', '');
-        // Operations with data, after execute action
-        $this->execAfterAction($action);
+        $generator = new BusinessDocumentGenerator();
+        if ($generator->generate($prototype, $destiny, $newLines, $quantities)) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
+            /// redir to new document
+            foreach ($generator->getLastDocs() as $doc) {
+                $this->response->headers->set('Refresh', '0; ' . $doc->url());
+                break;
+            }
+            return;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
     }
 
     /**
-     * Run the actions that alter data before reading it.
-     *
-     * @param string $modelName
-     *
-     * @return bool
+     * 
+     * @return array
      */
-    protected function execPrevious($modelName)
+    protected function getCodes()
     {
-        $this->approveTo = $this->getDestinyDoc($modelName);
-
-        switch ($modelName) {
-            case 'AlbaranCliente':
-                /// no break
-            case 'AlbaranProveedor':
-                /// no break
-            case 'PedidoCliente':
-                /// no break
-            case 'PedidoProveedor':
-                /// no break
-            case 'PresupuestoCliente':
-                /// no break
-            case 'PresupuestoProveedor':
-                $this->codes = \explode(',', trim($this->request->get('codes', '')));
-                if (empty($this->codes)) {
-                    $this->miniLog->alert('no-codes-received');
-                    return false;
-                }
-
-                foreach ($this->codes as $code) {
-                    $modelClass = 'FacturaScripts\\Dinamic\\Model\\' . $modelName;
-                    $doc = new $modelClass();
-                    if ($doc->loadFromCode($code)) {
-                        $this->docs[$code] = $doc;
-                        $this->linesDocs[$code] = $doc->getLines();
-                    }
-                }
-                break;
-
-            default:
-                $this->miniLog->alert('no-modelname-data-received-or-not-supported');
-                break;
+        $code = $this->request->request->get('code', []);
+        if (!empty($code)) {
+            return $code;
         }
 
-        return true;
+        $codes = $this->request->get('codes', '');
+        return explode(',', $codes);
     }
 
     /**
-     * Runs the controller actions after data read.
-     *
-     * @param string $action
-     *
-     * @return bool
+     * 
+     * @return string
      */
-    protected function execAfterAction($action)
+    protected function getModelName()
     {
-        switch ($action) {
-            case 'FacturaCliente':
-                /// no break
-            case 'FacturaProveedor':
-                /// no break
-            case 'AlbaranCliente':
-                /// no break
-            case 'AlbaranProveedor':
-                /// no break
-            case 'PedidoCliente':
-                /// no break
-            case 'PedidoProveedor':
-                /// no break
-            case 'PresupuestoCliente':
-                /// no break
-            case 'PresupuestoProveedor':
-                $this->approveDocument($action);
-                break;
-        }
-        return true;
+        $model = $this->request->get('model', '');
+        return $this->request->request->get('model', $model);
     }
 
-    /**
-     * Returns a list of destiny docs for this modelName.
-     *
-     * @param string $modelName
-     *
-     * @return Model\EstadoDocumento[]
-     */
-    private function getDestinyDoc($modelName): array
+    protected function setDocuments()
     {
-        $docStatus = new Model\EstadoDocumento();
-        $where = [new Base\DataBase\DataBaseWhere('nombre', 'Aprobado')];
-        switch (true) {
-            case strpos($modelName, 'Proveedor') !== false:
-                /// no break
-            case strpos($modelName, 'Cliente') !== false:
-                $where[] = new Base\DataBase\DataBaseWhere('tipodoc', $modelName);
-                break;
-
-            default:
-                $this->miniLog->alert('no-modelname-data-received-or-not-supported');
-                break;
-        }
-
-        $approveTo = [];
-        if (!empty($where)) {
-            $approveTo = $docStatus->all($where);
-        }
-        return $approveTo;
-    }
-
-    /**
-     * Generate next document.
-     *
-     * @param string $generateDoc
-     *
-     * @return bool
-     */
-    private function approveDocument($generateDoc): bool
-    {
-        $data = $this->request->request->all();
-        $modelName = $data['model'];
-        $lines = $data['line'];
-        $prevLines = $data['prevline'];
-        $docs = $data['doc'];
-        $modelClass = 'FacturaScripts\\Dinamic\\Model\\' . $modelName;
-        $docSource = new $modelClass();
-
-        if (empty($docs) || !isset($docs[0])) {
-            $this->miniLog->error($this->i18n->trans('document-not-available'));
-            return false;
-        }
-
-        $docSource->loadFromCode($docs[0]);
-        unset($docs[0]);
-
-        // Look for EstadoDocumento as user was selected 'Aprobado' TODO: must be a translatable string
-        $docStatus = new Model\EstadoDocumento();
-        $where = [
-            new Base\DataBase\DataBaseWhere('tipodoc', $modelName),
-            new Base\DataBase\DataBaseWhere('generadoc', $generateDoc)
-        ];
-        if (!$docStatus->loadFromCode('', $where)) {
-            $this->miniLog->error($this->i18n->trans('document-status-not-available'));
-            return false;
-        }
-
-        // Update quantity based on form values
-        $docRevisedLines = [];
-        foreach ($lines as $line => $quantity) {
-            if ($lines[$line] !== $prevLines[$line]) {
-                $docRevisedLines[$line] = $quantity;
+        foreach ($this->codes as $code) {
+            $modelClass = 'FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
+            $doc = new $modelClass();
+            if ($doc->loadFromCode($code)) {
+                $this->documents[] = $doc;
             }
         }
-
-        $docGenerator = new BusinessDocumentGenerator();
-        if (!$docGenerator->generate($docSource, $docStatus->generadoc, $docRevisedLines)) {
-            $this->miniLog->error($this->i18n->trans('document-not-generated'));
-            return false;
-        }
-
-        foreach ($docs as $doc) {
-            if ($docSource->loadFromCode($doc)) {
-                $docGenerator->addLinesFrom($docSource, $docRevisedLines);
-                continue;
-            }
-        }
-
-        $docDestiny = $docGenerator->getNewDoc();
-        $businessDocTools = new BusinessDocumentTools();
-        $businessDocTools->recalculate($docDestiny);
-        if ($docDestiny->save()) {
-            $this->miniLog->notice(
-                $this->i18n->trans(
-                    'document-generated-successfully',
-                    [
-                        '%code%' => $docDestiny->codigo,
-                        '%url%' => $docDestiny->url()
-                    ]
-                )
-            );
-            return true;
-        }
-
-        $this->miniLog->error($this->i18n->trans('document-not-generated'));
-        return false;
     }
 }
