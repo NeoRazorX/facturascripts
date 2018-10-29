@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Core\Model\PageFilter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -50,7 +51,7 @@ class ListView extends BaseView
      *
      * @var string
      */
-    public $orderKey;
+    public $orderKey = '';
 
     /**
      * List of fields available to order by.
@@ -58,6 +59,20 @@ class ListView extends BaseView
      * @var array
      */
     public $orderOptions = [];
+
+    /**
+     * Predefined filter values selected
+     *
+     * @var int
+     */
+    public $pageFilterKey = 0;
+
+    /**
+     * List of predefined filter values
+     *
+     * @var PageFilter[]
+     */
+    public $pageFilters = [];
 
     /**
      *
@@ -188,6 +203,33 @@ class ListView extends BaseView
     }
 
     /**
+     * Load filter values saved
+     *
+     * @param Request $request
+     * @param User|false $user
+     */
+    public function loadPageFilter($request, $user = false)
+    {
+        $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
+        $where = $this->getPageWhere($user);
+
+        // Search saved filters
+        $pageFilter = new PageFilter();
+        $this->pageFilters = $pageFilter->all($where, $orderby);
+        $this->pageFilterKey = $request->request->get('loadfilter', 0);
+        if (empty($this->pageFilterKey)) {
+            return;
+        }
+        // Load saved filter into page parameters
+        foreach ($this->pageFilters as $item) {
+            if ($item->id == $this->pageFilterKey) {
+                $request->request->add($item->filters);
+                break;
+            }
+        }
+    }
+
+    /**
      * Process form data needed.
      *
      * @param Request $request
@@ -216,6 +258,48 @@ class ListView extends BaseView
                 $this->showFilters = true;
             }
         }
+    }
+
+    /**
+     * Save filter values for user/s
+     *
+     * @param Request $request
+     * @param User|false $user
+     * @return int|null
+     */
+    public function savePageFilter($request, $user = false)
+    {
+        $pageFilter = new PageFilter();
+
+        // Set values data filter
+        foreach ($this->filters as $filter) {
+            $name = $filter->name();
+            $value = $request->request->get($name, null);
+            if (empty($value)) {
+                continue;
+            }
+            $pageFilter->filters[$name] = $value;
+        }
+
+        // If filters values its empty, don't save filter
+        if (empty($pageFilter->filters)) {
+            return null;
+        }
+
+        // Set basic data and save filter
+        $pageFilter->id = $request->request->get('filter-id', null);
+        $pageFilter->description = $request->request->get('filter-description');
+        $pageFilter->name = $this->getViewName();
+
+        // If there isn't user or is an administrator, it's for everyone else it's just for the user
+        $pageFilter->nick = (is_bool($user) || $user->admin) ? null : $user->nick;
+
+        // Save and return it's all ok
+        if ($pageFilter->save()) {
+            return $pageFilter->id;
+        }
+
+        return null;
     }
 
     /**

@@ -1,6 +1,5 @@
 {% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
-{% set formName = 'form' ~ currentView.getViewName() %}
 
 <script type="text/javascript">
     var listViewDeleteCancel = "{{ i18n.trans('cancel') }}";
@@ -11,7 +10,7 @@
 
 <br/>
 
-<form id="{{ formName }}" method="post">
+<form id="{{ 'form' ~ currentView.getViewName() }}" method="post">
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
@@ -38,8 +37,8 @@
                     </div>
                 {% endif %}
             </div>
+            {# -- Row actions -- #}
             <div class="col">
-                {# -- Row actions -- #}
                 {% set row = currentView.getRow('actions') %}
                 {{ row.render(true) | raw }}
             </div>
@@ -47,22 +46,23 @@
             {% if currentView.searchFields is not empty %}
                 {{ macros.searchControl(currentView, i18n) }}
             {% endif %}
+            {# -- Center buttons -- #}
             <div class="col">
                 {# -- Filters button -- #}
                 {% if currentView.filters is not empty %}
-                    <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ currentView.getViewName() }}');">
-                        <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
-                    </button>
+                    {{ macros.filterButton(currentView, i18n) }}
                 {% endif %}
                 {# -- Row statistics -- #}
                 {% set row = currentView.getRow('statistics') %}
                 {{ row.render(fsc) | raw }}
             </div>
+            {# -- Right buttons -- #}
             {% if currentView.orderOptions is empty %}
                 <div class="col">
                     <br/><br/>
                 </div>
             {% else %}
+                {# -- OrderBy button -- #}
                 {{ macros.sortButton(currentView) }}
             {% endif %}
         </div>
@@ -72,6 +72,7 @@
             {% for filterName, filter in currentView.filters %}
                 {{ filter.render() | raw }}
             {% endfor %}
+
         </div>
         {# -- Row header -- #}
         <div class="row">
@@ -138,6 +139,8 @@
             {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
         </div>
     </div>
+    {# -- Save Filter modal window -- #}
+    {{ macros.filterSaveModal(currentView, i18n) }}
 </form>
 
 {# -- Modals -- #}
@@ -200,6 +203,68 @@
                             <i class="{{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
                         </a>
                     {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro filterButton(currentView, i18n) %}
+    {% set viewName = currentView.getViewName() %}
+    {% set saveFilters = currentView.pageFilters %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
+            <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
+        </button>
+        {% if saveFilters is not empty %}
+            <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only"></span>
+            </button>
+            <input type="hidden" name="loadfilter" value=""/>
+            <div class="dropdown-menu dropdown-menu-right">
+                {% for pageFilter in saveFilters %}
+                    {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
+                    {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
+                    <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
+                        <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i> {{ pageFilter.description }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    {% if currentView.showFilters %}
+        <button type="button" class="btn btn-primary ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}" title="{{ i18n.trans('save-filter') }}">
+            <i class="far fa-save fa-fw"></i>
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{% macro filterSaveModal(currentView, i18n) %}
+    {% set viewName = currentView.getViewName() %}
+    <div class="modal" id="savefilter{{ viewName }}" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('save-filter') }}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>{{ i18n.trans('description') }}</label>
+                                <input type="text" name="filter-description" value="" class="form-control" required="" onkeypress="return noEnterKey(event);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
+                    <button type="button" class="btn btn-primary" onclick="listViewSetAction('{{ viewName }}', 'savefilter');">{{ i18n.trans('accept') }}</button>
                 </div>
             </div>
         </div>
