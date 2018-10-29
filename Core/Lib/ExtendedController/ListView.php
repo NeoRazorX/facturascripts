@@ -310,6 +310,7 @@ class ListView extends BaseView
 
         // Save and return it's all ok
         if ($pageFilter->save()) {
+            $this->pageFilters[] = $pageFilter;
             return $pageFilter->id;
         }
 
