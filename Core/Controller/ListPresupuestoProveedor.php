@@ -58,8 +58,7 @@ class ListPresupuestoProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListPresupuestoProveedor', ['fecha'], 'date', 2);
         $this->addOrderBy('ListPresupuestoProveedor', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListPresupuestoProveedor', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListPresupuestoProveedor', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterPeriod('ListPresupuestoProveedor', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListPresupuestoProveedor', 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber('ListPresupuestoProveedor', 'max-total', 'total', 'total', '<=');
 

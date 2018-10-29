@@ -58,8 +58,7 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addOrderBy('ListFacturaCliente', ['fecha'], 'date', 2);
         $this->addOrderBy('ListFacturaCliente', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListFacturaCliente', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListFacturaCliente', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterPeriod('ListFacturaCliente', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListFacturaCliente', 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber('ListFacturaCliente', 'max-total', 'total', 'total', '<=');
 

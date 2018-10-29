@@ -58,8 +58,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addOrderBy('ListPresupuestoCliente', ['fecha'], 'date', 2);
         $this->addOrderBy('ListPresupuestoCliente', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterPeriod('ListPresupuestoCliente', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListPresupuestoCliente', 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber('ListPresupuestoCliente', 'max-total', 'total', 'total', '<=');
 
