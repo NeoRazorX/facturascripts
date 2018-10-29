@@ -19,12 +19,13 @@
  *
  * Initial description for the Log Settings Options
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
 
 <view>
     <columns>
-        <group name="log" title="which-logs-store" numcolumns="12" icon="fas fa-server fa-lg">
+        <group name="log" title="which-logs-store" numcolumns="12" icon="fas fa-server">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>

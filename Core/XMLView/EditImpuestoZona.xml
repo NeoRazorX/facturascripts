@@ -19,14 +19,15 @@
  *
  * Initial description for the EditImpuestoZona tab of EditImpuesto controller
  *
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
 
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" numcolumns="2" order="10">
-                <widget type="text" fieldname="id" icon="fas fa-dollar-sign" required="true" />
+                <widget type="text" fieldname="id" required="true" />
             </column>
             <column name="tax" numcolumns="2" order="20">
                 <widget type="select" fieldname="codimpuesto"  required="true">
@@ -34,7 +35,7 @@
                 </widget>
             </column>
             <column name="country" numcolumns="2" order="30">
-                <widget type="autocomplete" fieldname="codpais" icon="fas fa-globe" required="true">
+                <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>

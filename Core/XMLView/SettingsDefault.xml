@@ -68,7 +68,7 @@
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
-        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fas fa-info-circle fa-lg">
+        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fas fa-info-circle">
             <column name="decimals" numcolumns="3" order="100">
                 <widget type="select" fieldname="decimals" required="true" icon="fas fa-sort-numeric-up">
                     <values start="0" end="6" step="1"></values>
@@ -94,7 +94,7 @@
                 </widget>
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database fa-lg">
+        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
@@ -107,7 +107,7 @@
                 <widget type="number" fieldname="item_limit" required="true" />
             </column>
         </group>
-        <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access fa-lg">
+        <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>

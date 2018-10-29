@@ -19,12 +19,13 @@
  *
  * Initial description for the Mail Settings Options
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
     <columns>
-        <group name="email" numcolumns="12" icon="fas fa-envelope fa-lg">
+        <group name="email" numcolumns="12" icon="fas fa-envelope">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
@@ -35,7 +36,7 @@
                 <widget type="password" fieldname="password" />
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server fa-lg">
+        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server">
             <column name="user" numcolumns="3" order="100">
                 <widget type="text" fieldname="user" />
             </column>

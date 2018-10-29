@@ -47,7 +47,7 @@ class EditPais extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'country';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-globe';
+        $pagedata['icon'] = 'fas fa-globe-americas';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
