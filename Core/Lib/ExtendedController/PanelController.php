@@ -111,6 +111,8 @@ abstract class PanelController extends BaseController
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
+            } else {
+                $view->processFormData($this->request, 'preload');
             }
 
             $this->loadData($viewName, $view);

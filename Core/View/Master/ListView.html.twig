@@ -14,6 +14,7 @@
 <form id="{{ formName }}" method="post">
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="loadfilter" value="{{ currentView.pageFilterKey }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="container-fluid">
@@ -160,7 +161,6 @@
             <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only"></span>
             </button>
-            <input type="hidden" name="loadfilter" value=""/>
             <div class="dropdown-menu dropdown-menu-right">
                 {% for pageFilter in saveFilters %}
                     {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
@@ -172,9 +172,18 @@
             </div>
         {% endif %}
     </div>
-    {% if currentView.showFilters %}
+    {% if currentView.pageFilterKey %}
+        <div class="btn-group ml-1">
+            <button type="button" class="btn btn-warning" onclick="listViewSetLoadFilter('{{ viewName }}', '');">
+                <i class="fas fa-times fa-fw"></i>
+            </button>
+            <button type="button" class="btn btn-danger" title="{{ i18n.trans('remove-filter') }}" onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
+                <i class="fas fa-trash fa-fw"></i>
+            </button>
+        </div>
+    {% elseif currentView.showFilters %}
         <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}" title="{{ i18n.trans('save-filter') }}">
-            <i class="far fa-save fa-fw"></i>
+            <i class="fas fa-save fa-fw"></i>
         </button>
     {% endif %}
 {% endmacro %}
@@ -197,7 +206,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>{{ i18n.trans('description') }}</label>
-                                <input type="text" name="filter-description" value="" class="form-control noEnterKey" required=""/>
+                                <input type="text" name="filter-description" value="" class="form-control noEnterKey" autofocus="" required=""/>
                             </div>
                         </div>
                     </div>
@@ -206,7 +215,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         {{ i18n.trans('cancel') }}
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="listViewSetAction('{{ viewName }}', 'savefilter');">
+                    <button type="button" class="btn btn-primary" onclick="listViewSetAction('{{ viewName }}', 'save-filter');">
                         {{ i18n.trans('accept') }}
                     </button>
                 </div>
@@ -258,15 +267,17 @@
         <div class="form-group">
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <i class="{{ currentView.orderOptions[currentView.orderKey]['icon'] }} fa-fw" aria-hidden="true"></i>
+                    {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
+                    <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                     {{ currentView.orderOptions[currentView.orderKey]['label'] }}
                     <span class="caret"></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
                     {% for key, orderby in currentView.orderOptions %}
                         {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
+                        {% set icon = (orderby.type == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
                         <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
-                            <i class="{{ orderby['icon'] }} fa-fw" aria-hidden="true"></i> {{ orderby['label'] }}
+                            <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
                         </a>
                     {% endfor %}
                 </div>

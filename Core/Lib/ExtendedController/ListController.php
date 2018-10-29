@@ -250,6 +250,21 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Removes the selected page filter.
+     */
+    protected function deleteFilterAction()
+    {
+        $idfilter = $this->request->request->get('loadfilter', 0);
+        if ($this->views[$this->active]->deletePageFilter($idfilter)) {
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->request->request->remove('loadfilter');
+            return;
+        }
+
+        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+    }
+
+    /**
      * Runs the controller actions after data read.
      *
      * @param string $action
@@ -290,7 +305,11 @@ abstract class ListController extends BaseController
                 $this->deleteAction();
                 break;
 
-            case 'savefilter':
+            case 'delete-filter':
+                $this->deleteFilterAction();
+                break;
+
+            case 'save-filter':
                 $this->saveFilterAction();
                 break;
         }
@@ -368,12 +387,17 @@ abstract class ListController extends BaseController
     }
 
     /**
-     * Save filters values for active view and user
+     * Saves filter values for active view and user.
      */
     protected function saveFilterAction()
     {
         $view = $this->views[$this->active];
         $idFilter = $view->savePageFilter($this->request, $this->user);
-        $this->request->request->set('loadfilter', $idFilter);
+        if (!empty($idFilter)) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
+            /// load filters in request
+            $this->request->request->set('loadfilter', $idFilter);
+        }
     }
 }

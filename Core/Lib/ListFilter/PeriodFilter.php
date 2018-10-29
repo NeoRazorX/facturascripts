@@ -62,8 +62,8 @@ class PeriodFilter extends BaseFilter
         parent::__construct($key, $field, $label);
         $values = PeriodTools::getFilterOptions(static::$i18n);
         $this->select = new SelectFilter((self::SELECT_ID . $key), '', $label, $values);
-        $this->startDate = new DateFilter((self::STARTDATE_ID . $key), $field, 'startdate', '>=');
-        $this->endDate = new DateFilter((self::ENDDATE_ID . $key), $field, 'enddate', '<=');
+        $this->startDate = new DateFilter((self::STARTDATE_ID . $key), $field, 'from-date', '>=');
+        $this->endDate = new DateFilter((self::ENDDATE_ID . $key), $field, 'until-date', '<=');
     }
 
     /**
@@ -117,10 +117,6 @@ class PeriodFilter extends BaseFilter
     private function setDateAndDisable($date, $option)
     {
         $this->setValue($date, $option);
-        $filter = &$this->startDate;
-        if ($option = self::ENDDATE_ID) {
-            $filter = &$this->endDate;
-        }
     }
 
     /**
