@@ -73,10 +73,10 @@ abstract class ListController extends BaseController
 
         // Load filter saved and data for every view
         foreach ($this->views as $viewName => $view) {
-            $view->loadPageFilter($this->request, $this->user);
-
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
+            } else {
+                $view->processFormData($this->request, 'preload');
             }
 
             $this->loadData($viewName, $view);

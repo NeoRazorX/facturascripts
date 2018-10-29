@@ -203,30 +203,18 @@ class ListView extends BaseView
     }
 
     /**
-     * Load filter values saved
      *
-     * @param Request $request
      * @param User|false $user
      */
-    public function loadPageFilter($request, $user = false)
+    public function loadPageOptions($user = false)
     {
+        parent::loadPageOptions($user);
+
+        // load saved filters
         $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
         $where = $this->getPageWhere($user);
-
-        // Search saved filters
         $pageFilter = new PageFilter();
         $this->pageFilters = $pageFilter->all($where, $orderby);
-        $this->pageFilterKey = $request->request->get('loadfilter', 0);
-        if (empty($this->pageFilterKey)) {
-            return;
-        }
-        // Load saved filter into page parameters
-        foreach ($this->pageFilters as $item) {
-            if ($item->id == $this->pageFilterKey) {
-                $request->request->add($item->filters);
-                break;
-            }
-        }
     }
 
     /**
@@ -249,6 +237,18 @@ class ListView extends BaseView
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
             $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'LIKE');
+        }
+
+        /// select saved filter
+        $this->pageFilterKey = $request->request->get('loadfilter', 0);
+        if (!empty($this->pageFilterKey)) {
+            // Load saved filter into page parameters
+            foreach ($this->pageFilters as $item) {
+                if ($item->id == $this->pageFilterKey) {
+                    $request->request->add($item->filters);
+                    break;
+                }
+            }
         }
 
         /// filters

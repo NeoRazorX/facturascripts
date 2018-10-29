@@ -296,26 +296,6 @@ abstract class BaseView
     }
 
     /**
-     * Get DataBaseWhere[] for locate a group of pages
-     *
-     * @param User|false $user
-     */
-    protected function getPageWhere($user = false)
-    {
-        $viewName = explode('-', $this->name)[0];
-
-        if (is_bool($user)) {
-            return [new DataBaseWhere('name', $viewName)];
-        }
-
-        return [
-            new DataBaseWhere('name', $viewName),
-            new DataBaseWhere('nick', $user->nick),
-            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-        ];
-    }
-
-    /**
      *
      * @return array
      */
@@ -413,5 +393,25 @@ abstract class BaseView
         }
 
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+    }
+
+    /**
+     * Returns DataBaseWhere[] for locate a pageOption model.
+     *
+     * @param User|false $user
+     */
+    protected function getPageWhere($user = false)
+    {
+        $viewName = explode('-', $this->name)[0];
+
+        if (is_bool($user)) {
+            return [new DataBaseWhere('name', $viewName)];
+        }
+
+        return [
+            new DataBaseWhere('name', $viewName),
+            new DataBaseWhere('nick', $user->nick),
+            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+        ];
     }
 }

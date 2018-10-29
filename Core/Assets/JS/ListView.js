@@ -50,13 +50,13 @@ function listViewSetAction(viewName, value) {
     $("#form" + viewName).submit();
 }
 
-function listViewSetOffset(viewName, value) {
-    $("#form" + viewName + " :input[name=\"offset\"]").val(value);
+function listViewSetLoadFilter(viewName, value) {
+    $("#form" + viewName + " :input[name=\"loadfilter\"]").val(value);
     $("#form" + viewName).submit();
 }
 
-function listViewSetLoadFilter(viewName, value) {
-    $("#form" + viewName + " :input[name=\"loadfilter\"]").val(value);
+function listViewSetOffset(viewName, value) {
+    $("#form" + viewName + " :input[name=\"offset\"]").val(value);
     $("#form" + viewName).submit();
 }
 
@@ -69,14 +69,14 @@ function listViewShowFilters(viewName) {
     $("#form" + viewName + "Filters").toggle();
 }
 
-function noEnterKey(e) {
-    return !(e.which == 13 || e.keyCode == 13);
-}
-
 $(document).ready(function () {
     // set/unset all delete checkbox
     $(".listActionCB").click(function () {
         var checked = $(this).prop("checked");
         $(".listAction").prop("checked", checked);
+    });
+    // disable enter key press
+    $(".noEnterKey").keypress(function (e) {
+        return !(e.which == 13 || e.keyCode == 13);
     });
 });
