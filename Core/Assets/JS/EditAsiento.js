@@ -227,7 +227,7 @@ function customAfterChange(changes) {
             total.val(results.total);
             // show VAT Register, if needed
             if (Object.keys(results.vat).length > 0) {
-                showVatRegister("VAT-register", "EditAsiento");
+                showVatRegister("vat-register", "EditAsiento");
             }
         },
         error: function (xhr, status, error) {
@@ -250,12 +250,13 @@ $(document).ready(function () {
         accountBalance = document.getElementById("account-balance");
         unbalance = document.getElementById("unbalance");
         total = $("#formEditAsiento input[name=importe]");
-        vatRegister = $("#formGridViewEditPartida button[value=VAT-register]");
+        vatRegister = $("#vat-register-btn");
         vatRegister.prop("disabled", true);
+        console.log(vatRegister);
 
         // Set initial clone state
         if (getGridFieldData(0, "idpartida") === undefined) {
-            $("#formGridViewEditPartida button[value=clone-btn]").prop("disabled", true);
+            $("#clone-btn").prop("disabled", true);
         }
 
         // Calculate initial unbalance
