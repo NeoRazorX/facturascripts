@@ -242,6 +242,9 @@ class Wizard extends Controller
         $this->empresa->codpais = $codpais;
         $this->empresa->provincia = $this->request->request->get('provincia', '');
         $this->empresa->ciudad = $this->request->request->get('ciudad', '');
+        $this->empresa->nombrecorto = $this->request->request->get('empresa', '');
+        $this->empresa->direccion = $this->request->request->get('direccion', '');
+        $this->empresa->codpostal = $this->request->request->get('codpostal', '');
         $this->empresa->save();
 
         $almacenModel = new Model\Almacen();
@@ -249,6 +252,9 @@ class Wizard extends Controller
             $almacen->codpais = $codpais;
             $almacen->provincia = $this->empresa->provincia;
             $almacen->ciudad = $this->empresa->ciudad;
+            $almacen->nombrecorto = $this->empresa->nombrecorto;
+            $almacen->direccion = $this->empresa->direccion;
+            $almacen->codpostal = $this->empresa->codpostal;
             $almacen->save();
 
             $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
