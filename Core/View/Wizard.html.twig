@@ -23,12 +23,12 @@
         <form action="#" method="post" class="form">
             <div class="row">
                 {% if fsc.showChangePasswd %}
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'autofocus': '', 'class': 'form-control is-invalid'}) }}
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
                         </div>
@@ -41,24 +41,26 @@
                         </div>
                     </div>
                 {% endif %}
+            </div>
+            <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombrecorto, 'text', i18n.trans('business'), 'fas fa-building', {'required': '', 'class': 'form-control is-invalid'}) }}
+                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombrecorto, 'text', i18n.trans('company'), 'fas fa-building', {'required': ''}) }}
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'required': ''}) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'required': '', 'class': 'form-control is-invalid'}) }}
+                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('postal-code')) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('postal-code'), 'fas fa-map-marked', {'required': '', 'class': 'form-control is-invalid'}) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
+                        {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -68,7 +70,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
+                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
                     </div>
                 </div>
             </div>
