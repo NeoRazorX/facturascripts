@@ -32,7 +32,6 @@ class GridView extends EditView
 
     const GRIDVIEW_TEMPLATE = 'Master/GridView.html.twig';
 
-
     /**
      * Detail view
      *
@@ -233,6 +232,28 @@ class GridView extends EditView
             $result[] = $value['title'];
         }
         return $result;
+    }
+
+    /**
+     * Load the data in the model property, according to the code specified.
+     *
+     * @param string          $code
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
+     */
+    public function loadData($code = '', $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        parent::loadData($code, $where, $order, $offset, $limit);
+
+        if ($this->count == 0) {
+            $this->template = self::EDITVIEW_TEMPLATE;
+        } else {
+            $where = [new DataBaseWhere($this->model->primaryColumn(), $code)];
+            $orderby = [$this->detailView->model->primaryColumn() => 'ASC'];
+            $this->loadGridData($where, $orderby);
+        }
     }
 
     /**
