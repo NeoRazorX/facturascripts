@@ -78,7 +78,7 @@ class AssetManager
     }
 
     /**
-     * 
+     *
      * @param string $data
      * @param string $url
      *
@@ -105,7 +105,7 @@ class AssetManager
     }
 
     /**
-     * 
+     *
      * @param array $assets1
      * @param array $assets2
      */
@@ -118,7 +118,7 @@ class AssetManager
 
             foreach ($subAssets2 as $asset) {
                 if (!in_array($asset, $assets1[$type])) {
-                    $assets1[$type][] = $asset;
+                    array_unshift($assets1[$type], $asset);
                 }
             }
         }
