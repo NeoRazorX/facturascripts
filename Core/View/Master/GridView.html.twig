@@ -1,85 +1,137 @@
-{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+{#
+   /**
+     * Grid View template
+     *
+     * Visualization of grid data edited into handsontable component.
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     *
+    */
+#}
+{% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
+{% set currentViewName = currentView.getViewName() %}
 
-{# -- Row header -- #}
-{% set row = currentView.getRow('header') %}
-{% if row is not empty %}
-    <div class="row">
-        {{ row.render(currentView.getViewName(), '', fsc) | raw }}
-    </div>
-{% endif %}
-
-{# -- Row statistics -- #}
-{% set row = currentView.getRow('statistics') %}
-{% if row is not empty %}
-    <div class="row">
-        <div class="col-12 text-right">
-            {{ row.render(fsc) | raw }}
-        </div>
-    </div>
-{% endif %}
-
-{# Grid zone #}
-<div class="row no-gutters">
-    <script type="text/javascript">
-        documentLineData = {{ currentView.getGridData()|raw }};
-    </script>
-    {% block gridcard %}
-        <div class="col">
-            {# Grid data panel #}
-            <div class="card">
-                <div class="card-body p-0">
-                    <div id="document-lines"></div>
-                </div>
-            </div>
-        </div>
+{#
+   If new record then show master xml view
+   else show detail xml view (master group and detail group)
+#}
+{% if currentView.count == 0 %}
+    {% block mastercard %}
+        {{ include(currentView.editTemplate) }}
     {% endblock %}
-</div>
-
-{# Buttons actions #}
-{% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
-{% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
-<form id="formGridView{{ currentView.getViewName() }}" method="post">
-    <input type="hidden" name="action" value="save">
-    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-
-    <div class="mt-3">
-        <div class="card col-12">
-            <div class="card-body d-flex justify-content-between" style="padding: 1rem 0rem;">
-                {# -- Delete action -- #}
-                <div class="col">
-                    <button class="btn btn-sm btn-danger" type="button" id="delete-document" onclick="deleteRecord('{{ parentViewName }}', 'delete-document');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
-                        <i class="fas fa-trash" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
-                    </button>
-                </div>
-                {# -- Row actions -- #}
-                {% set row = currentView.getRow('actions') %}
-                {% if row is not empty %}
-                    <div class="col d-flex justify-content-center">
-                        {{ row.render() | raw }}
+{% else %}
+    {% set detailView = currentView.detailView %}
+    {# -- Row header -- #}
+    {{ macros.rowRender(fsc, detailView, currentViewName, 'header') }}
+    {{ macros.rowRender(fsc, currentView, currentViewName, 'header') }}
+    {# Master data #}
+    <form id="form{{ currentView.getViewName() }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="{{ action }}"/>
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
+        <div class="card">
+            <div class="card-body">
+                {# -- Row statistics -- #}
+                <div class="row">
+                    <div class="col-12 text-right">
+                        {% set row = currentView.getRow('statistics') %}
+                        {{ row.render(fsc) | raw }}
                     </div>
-                {% endif %}
-                {# -- DSave & Restore actions -- #}
-                <div class="col text-right">
-                    <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ parentViewName }}');" href="#" {{ popoverTitle(save_title, 'bottom') }}>
-                        <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ save }}
-                    </button>
+                </div>
+                {% block detailmastercard %}
+                    <div class="row">
+                        {% for group in currentView.getDetailColumns('master') %}
+                            {{ group.edit(currentView.model) | raw }}
+                        {% endfor %}
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </form>
+    <br>
+    {# Grid zone #}
+    <div class="row no-gutters">
+        <script type="text/javascript">
+            documentLineData = {{ currentView.getGridData()|raw }};
+        </script>
+        {% block gridcard %}
+            <div class="col">
+                {# Grid data panel #}
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div id="document-lines"></div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+    {# Buttons actions #}
+    {% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
+    {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
+    <form id="formGridView{{ currentViewName }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" name="activetab" value="{{ currentViewName }}"/>
+        <div class="mt-3">
+            <div class="card col-12">
+                <div class="card-body d-flex justify-content-between" style="padding: 1rem 0rem;">
+                    {# -- Delete action -- #}
+                    <div class="col">
+                        <button class="btn btn-sm btn-danger" type="button" id="delete-document" onclick="deleteRecord('{{ currentViewName }}', 'delete-document');" href="#">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
+                        </button>
+                    </div>
+                    {# -- Row actions -- #}
+                    {% set row = detailView.getRow('actions') %}
+                    {% if row is not empty %}
+                        <div class="col d-flex justify-content-center">
+                            {{ row.render() | raw }}
+                        </div>
+                    {% endif %}
+                    {# -- Save actions -- #}
+                    <div class="col text-right">
+                        <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ currentViewName }}');" href="#">
+                            <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ save }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+    </form>
+    <br/>
+    {# -- Row footer -- #}
+    {{ macros.rowRender(fsc, detailView, currentViewName, 'footer') }}
+    {{ macros.rowRender(fsc, currentView, currentViewName, 'footer') }}
+    {# -- Modals -- #}
+    {{ macros.modalRender(detailView, currentViewName) }}
+    {{ macros.modalRender(currentView, currentViewName) }}
+{% endif %}
+
+{# -- Macros -- #}
+{% macro rowRender(fsc, view, viewName, rowName) %}
+    {% set row = view.getRow(rowName) %}
+    <div class="row">
+        {{ row.render(viewName, '', fsc) | raw }}
     </div>
-</form>
+{% endmacro %}
 
-<br/>
-
-{# -- Row footer -- #}
-<div class="row">
-    {% set row = currentView.getRow('footer') %}
-    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
-</div>
-
-{# -- Modals -- #}
-{% for group in currentView.getModals() %}
-    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
-{% endfor %}
+{% macro modalRender(view, viewName) %}
+    {% for group in view.getModals() %}
+        {{ group.modal(view.model, viewName) | raw }}
+    {% endfor %}
+{% endmacro %}
