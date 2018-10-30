@@ -22,7 +22,6 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Dinamic\Lib\AssetManager;
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Twig_Filter;
@@ -108,12 +107,6 @@ class WebRender
             return str_replace('//', '/', $path . $string);
         });
         $twig->addFunction($assetFunction);
-
-        /// assetCombine functions
-        $assetCombineFunction = new Twig_Function('assetCombine', function ($fileList) {
-            return AssetManager::combine($fileList);
-        });
-        $twig->addFunction($assetCombineFunction);
 
         /// fixHtml functions
         $fixHtmlFunction = new Twig_Filter('fixHtml', function ($string) {

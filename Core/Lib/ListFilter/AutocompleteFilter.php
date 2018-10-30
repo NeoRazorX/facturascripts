@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
@@ -70,7 +71,6 @@ class AutocompleteFilter extends BaseFilter
         $this->fieldcode = empty($fieldcode) ? $this->field : $fieldcode;
         $this->fieldtitle = empty($fieldtitle) ? $this->fieldcode : $fieldtitle;
         $this->where = $where;
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js';
     }
 
     /**
@@ -123,6 +123,14 @@ class AutocompleteFilter extends BaseFilter
             . '</div>';
 
         return $html;
+    }
+
+    /**
+     * Adds need asset to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\AssetManager;
+
 /**
  * Description of WidgetAutocomplete
  *
@@ -34,16 +36,6 @@ class WidgetAutocomplete extends WidgetSelect
      * @var bool
      */
     public $strict;
-
-    /**
-     *
-     * @param array $data
-     */
-    public function __construct($data)
-    {
-        parent::__construct($data);
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js';
-    }
 
     /**
      *
@@ -84,6 +76,14 @@ class WidgetAutocomplete extends WidgetSelect
             . '</div>'
             . $descriptionHtml
             . '</div>';
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**

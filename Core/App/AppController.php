@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base\DebugBar\PHPCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -102,8 +103,8 @@ class AppController extends App
      */
     public function close(string $nick = '')
     {
-        $nick = (false !== $this->user) ? $this->user->nick : '';
-        parent::close($nick);
+        $selectedNick = (false !== $this->user) ? $this->user->nick : '';
+        parent::close($selectedNick);
     }
 
     /**
@@ -251,11 +252,11 @@ class AppController extends App
         /// HTML template variables
         $templateVars = [
             'appSettings' => $this->settings,
+            'assetManager' => new AssetManager(),
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'menuManager' => $this->menuManager,
-            'sql' => $this->miniLog->read(['sql']),
             'template' => $template,
         ];
 

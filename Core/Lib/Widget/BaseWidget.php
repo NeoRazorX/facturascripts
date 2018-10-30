@@ -30,12 +30,6 @@ class BaseWidget extends VisualItem
 
     /**
      *
-     * @var array
-     */
-    protected static $assets = [];
-
-    /**
-     *
      * @var string
      */
     public $fieldname;
@@ -96,6 +90,7 @@ class BaseWidget extends VisualItem
         $this->required = isset($data['required']);
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
+        $this->assets();
     }
 
     /**
@@ -132,15 +127,6 @@ class BaseWidget extends VisualItem
             . '</div>'
             . $descriptionHtml
             . '</div>';
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public static function getAssets()
-    {
-        return static::$assets;
     }
 
     /**
@@ -199,6 +185,14 @@ class BaseWidget extends VisualItem
         $this->setValue($model);
         $class = 'text-' . $display;
         return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($this->show()) . '</td>';
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        ;
     }
 
     /**

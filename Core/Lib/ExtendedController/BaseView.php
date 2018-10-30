@@ -20,8 +20,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
-use FacturaScripts\Core\Lib\Widget\BaseWidget;
 use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Lib\Widget\GroupItem;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
@@ -38,12 +36,6 @@ use FacturaScripts\Core\Model\User;
  */
 abstract class BaseView
 {
-
-    /**
-     *
-     * @var array
-     */
-    protected static $assets = [];
 
     /**
      *
@@ -210,6 +202,7 @@ abstract class BaseView
         ];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);
+        $this->assets();
     }
 
     /**
@@ -264,15 +257,6 @@ abstract class BaseView
         if (!empty($column)) {
             $column->display = $disabled ? 'none' : 'left';
         }
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public static function getAssets()
-    {
-        return array_merge_recursive(static::$assets, BaseFilter::getAssets(), BaseWidget::getAssets());
     }
 
     /**
@@ -393,6 +377,14 @@ abstract class BaseView
         }
 
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        ;
     }
 
     /**

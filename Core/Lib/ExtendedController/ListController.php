@@ -84,9 +84,6 @@ abstract class ListController extends BaseController
 
         // Operations with data, after execute action
         $this->execAfterAction($action);
-
-        // final operations, like assets merge
-        $this->finalStep();
     }
 
     /**

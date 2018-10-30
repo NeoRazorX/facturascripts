@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -54,7 +55,7 @@ class BusinessDocumentView extends BaseView
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $icon = 'fas fa-file-alt')
+    public function __construct($name, $title, $modelName, $icon = 'fas fa-file')
     {
         parent::__construct($name, $title, $modelName, $icon);
 
@@ -65,9 +66,6 @@ class BusinessDocumentView extends BaseView
 
         // custom template
         $this->template = 'Master/BusinessDocumentView.html.twig';
-        static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
-        static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js';
     }
 
     /**
@@ -194,5 +192,15 @@ class BusinessDocumentView extends BaseView
     public function processFormData($request, $case)
     {
         ;
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js');
     }
 }

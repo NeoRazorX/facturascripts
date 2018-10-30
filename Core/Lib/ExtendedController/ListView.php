@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use FacturaScripts\Core\Model\PageFilter;
@@ -100,7 +101,6 @@ class ListView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/ListView.html.twig';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListView.js';
     }
 
     /**
@@ -274,7 +274,7 @@ class ListView extends BaseView
 
         /// filters
         foreach ($this->filters as $filter) {
-            $filter->setValueFromRequest($request->request);
+            $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {
                 $this->showFilters = true;
             }
@@ -320,6 +320,14 @@ class ListView extends BaseView
         }
 
         return 0;
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
     }
 
     /**

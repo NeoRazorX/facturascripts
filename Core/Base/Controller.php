@@ -33,13 +33,6 @@ class Controller
 {
 
     /**
-     * Contains a list of extra files to load: javascript, css, etc.
-     *
-     * @var array
-     */
-    public $assets;
-
-    /**
      * Cache access manager.
      *
      * @var Cache
@@ -142,7 +135,6 @@ class Controller
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        $this->assets = AssetManager::getAssetsForPage($className);
         $this->cache = &$cache;
         $this->className = $className;
         $this->dataBase = new DataBase();
@@ -154,6 +146,8 @@ class Controller
 
         $pageData = $this->getPageData();
         $this->title = empty($pageData) ? $this->className : $this->i18n->trans($pageData['title']);
+
+        AssetManager::setAssetsForPage($className);
     }
 
     /**

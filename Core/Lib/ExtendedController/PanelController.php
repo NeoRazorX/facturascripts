@@ -131,9 +131,6 @@ abstract class PanelController extends BaseController
 
         // General operations with the loaded data
         $this->execAfterAction($action);
-
-        // final operations, like assets merge
-        $this->finalStep();
     }
 
     /**

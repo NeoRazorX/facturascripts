@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Translator;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of BaseFilter
@@ -27,12 +28,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 abstract class BaseFilter
 {
-
-    /**
-     *
-     * @var array
-     */
-    protected static $assets = [];
 
     /**
      *
@@ -89,15 +84,7 @@ abstract class BaseFilter
         $this->key = $key;
         $this->field = empty($field) ? $this->key : $field;
         $this->label = empty($label) ? $this->field : $label;
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public static function getAssets()
-    {
-        return static::$assets;
+        $this->assets();
     }
 
     /**
@@ -120,15 +107,6 @@ abstract class BaseFilter
     }
 
     /**
-     *
-     * @return string
-     */
-    protected function onChange()
-    {
-        return $this->autoSubmit ? ' onchange="this.form.submit()"' : '';
-    }
-
-    /**
      * Set value to filter
      *
      * @param mixed $value
@@ -141,10 +119,27 @@ abstract class BaseFilter
     /**
      * Set value to filter from form request
      *
-     * @param \Symfony\Component\HttpFoundation\ParameterBag $request
+     * @param Request $request
      */
     public function setValueFromRequest(&$request)
     {
-        $this->setValue($request->get($this->name()));
+        $this->setValue($request->request->get($this->name()));
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        ;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    protected function onChange()
+    {
+        return $this->autoSubmit ? ' onchange="this.form.submit()"' : '';
     }
 }

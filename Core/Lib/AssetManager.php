@@ -27,44 +27,47 @@ class AssetManager
 {
 
     /**
-     * Return the needed assets for this page
+     * CSS asset list.
      *
-     * @param string $name
-     *
-     * @return array
+     * @var \SplPriorityQueue
      */
-    public static function getAssetsForPage(string $name): array
+    private static $cssList;
+
+    /**
+     * JS asset list.
+     *
+     * @var \SplPriorityQueue
+     */
+    private static $jsList;
+
+    /**
+     * Adds and asset to the list.
+     *
+     * @param string $type
+     * @param string $asset
+     * @param int    $priority
+     */
+    public static function add(string $type, string $asset, int $priority = 1)
     {
-        $assets = [
-            'js' => [],
-            'css' => [],
-        ];
-        $base = DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
-
-        $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        if (file_exists(FS_FOLDER . $jsFile)) {
-            $assets['js'][] = FS_ROUTE . $jsFile;
+        static::init();
+        if ($type === 'css') {
+            self::$cssList->insert($asset, $priority);
+        } else {
+            self::$jsList->insert($asset, $priority);
         }
-
-        $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
-        if (file_exists(FS_FOLDER . $cssFile)) {
-            $assets['css'][] = FS_ROUTE . $cssFile;
-        }
-
-        return $assets;
     }
 
     /**
-     * Combine and returns the content of the selected files.
+     * Combine and returns the content of the selected type.
      *
-     * @param array $fileList
+     * @param string $type
      *
      * @return string
      */
-    public static function combine(array $fileList): string
+    public static function combine(array $type): string
     {
         $txt = '';
-        foreach ($fileList as $file) {
+        foreach (static::get($type) as $file) {
             $filePath = $file;
             if (FS_ROUTE == substr($file, 0, strlen(FS_ROUTE))) {
                 $filePath = substr($file, strlen(FS_ROUTE) + 1);
@@ -75,6 +78,53 @@ class AssetManager
         }
 
         return $txt;
+    }
+
+    /**
+     * Gets the list of assets.
+     *
+     * @param string $type
+     *
+     * @return array
+     */
+    public static function get(string $type)
+    {
+        static::init();
+
+        /// select list
+        $list = ($type === 'css') ? self::$cssList : self::$jsList;
+
+        /// convert to array and exlcude duplicates
+        $assets = [];
+        foreach ($list as $item) {
+            $filePath = (string) $item;
+            if (!in_array($filePath, $assets)) {
+                $assets[] = $filePath;
+            }
+        }
+        return $assets;
+    }
+
+    /**
+     * Finds and sets the assets for this page.
+     *
+     * @param string $name
+     */
+    public static function setAssetsForPage(string $name)
+    {
+        $base = DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
+
+        /// find js file with $name name
+        $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
+        if (file_exists(FS_FOLDER . $jsFile)) {
+            self::add('js', FS_ROUTE . $jsFile, 0);
+        }
+
+        /// find css file with $name name
+        $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
+        if (file_exists(FS_FOLDER . $cssFile)) {
+            self::add('css', FS_ROUTE . $cssFile, 0);
+        }
     }
 
     /**
@@ -110,23 +160,14 @@ class AssetManager
         return str_replace(["\r\n", "\r", "\n", "\t", '  ', '    ', '    '], '', $buffer);
     }
 
-    /**
-     * 
-     * @param array $assets1
-     * @param array $assets2
-     */
-    public static function merge(&$assets1, $assets2)
+    protected static function init()
     {
-        foreach ($assets2 as $type => $subAssets2) {
-            if (!isset($assets1[$type])) {
-                $assets1[$type] = [];
-            }
+        if (!isset(self::$cssList)) {
+            self::$cssList = new \SplPriorityQueue();
+        }
 
-            foreach ($subAssets2 as $asset) {
-                if (!in_array($asset, $assets1[$type])) {
-                    $assets1[$type][] = $asset;
-                }
-            }
+        if (!isset(self::$jsList)) {
+            self::$jsList = new \SplPriorityQueue();
         }
     }
 }

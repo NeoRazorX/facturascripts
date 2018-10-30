@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\CodeModel;
 
@@ -242,14 +241,6 @@ abstract class BaseController extends Base\Controller
 
         $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
         return false;
-    }
-
-    /**
-     * 
-     */
-    protected function finalStep()
-    {
-        AssetManager::merge($this->assets, BaseView::getAssets());
     }
 
     /**
