@@ -111,9 +111,11 @@ class ColumnItem extends VisualItem
             return $this->widget->inputHidden($model);
         }
 
-        $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
+        $divClass = ($this->numcolumns > 0) ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        return '<div' . $divID . ' class="' . $divClass . '">' . $this->widget->edit($model, $this->title, $this->description, $this->titleurl) . '</div>';
+        return '<div' . $divID . ' class="' . $divClass . '">'
+            . $this->widget->edit($model, $this->title, $this->description, $this->titleurl)
+            . '</div>';
     }
 
     /**

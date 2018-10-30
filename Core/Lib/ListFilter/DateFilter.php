@@ -75,7 +75,7 @@ class DateFilter extends BaseFilter
             . '<div class="input-group">'
             . '<span class="input-group-prepend" title="' . $label . '">'
             . '<span class="input-group-text">'
-            . '<i class="far fa-calendar-alt" aria-hidden="true"></i>'
+            . '<i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>'
             . '</span>'
             . '</span>'
             . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control datepicker"'

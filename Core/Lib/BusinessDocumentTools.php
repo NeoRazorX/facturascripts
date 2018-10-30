@@ -115,6 +115,8 @@ class BusinessDocumentTools
 
         $doc->irpf = 0.0;
         $doc->neto = 0.0;
+        $doc->total = 0.0;
+        $doc->totaleuros = 0.0;
         $doc->totaliva = 0.0;
         $doc->totalirpf = 0.0;
         $doc->totalrecargo = 0.0;

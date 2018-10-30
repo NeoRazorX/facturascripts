@@ -19,7 +19,8 @@
  *
  * Initial description for the controller EditUser
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -35,7 +36,7 @@
                 <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
             </column>
             <column name="email" numcolumns="5" order="130">
-                <widget type="email" fieldname="email" icon="fas fa-envelope" />
+                <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="level" numcolumns="2" order="140">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
@@ -49,7 +50,7 @@
         </group>
         <group name="other" numcolumns="12">
             <column name="homepage" numcolumns="4" order="100">
-                <widget type="select" fieldname="homepage">
+                <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values></values>
                 </widget>
             </column>
@@ -59,7 +60,7 @@
                 </widget>
             </column>
             <column name="lang-code" numcolumns="4" order="120">
-                <widget type="select" fieldname="langcode">
+                <widget type="select" fieldname="langcode" icon="fas fa-language">
                     <values></values>
                 </widget>
             </column>

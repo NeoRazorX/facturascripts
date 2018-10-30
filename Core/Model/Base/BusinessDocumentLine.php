@@ -32,13 +32,14 @@ abstract class BusinessDocumentLine extends ModelClass
 {
 
     /**
-     * True if this states must update product stock.
+     * True if this state must update product stock.
      *
      * @var int
      */
     public $actualizastock;
 
     /**
+     * Previus value of $actualizastock.
      *
      * @var int
      */
@@ -148,6 +149,8 @@ abstract class BusinessDocumentLine extends ModelClass
      */
     public $referencia;
 
+    abstract public function documentColumn();
+
     /**
      * Class constructor.
      *
@@ -193,6 +196,15 @@ abstract class BusinessDocumentLine extends ModelClass
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @return int
+     */
+    public function documentColumnValue()
+    {
+        return $this->{$this->documentColumn()};
     }
 
     /**

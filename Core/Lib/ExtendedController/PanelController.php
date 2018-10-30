@@ -111,6 +111,8 @@ abstract class PanelController extends BaseController
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
+            } else {
+                $view->processFormData($this->request, 'preload');
             }
 
             $this->loadData($viewName, $view);
@@ -181,7 +183,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list-alt')
+    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);

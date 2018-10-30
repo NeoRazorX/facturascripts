@@ -36,6 +36,15 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
     public $idalbaran;
 
     /**
+     * 
+     * @return string
+     */
+    public function documentColumn()
+    {
+        return 'idalbaran';
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -44,7 +53,9 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      */
     public function install()
     {
+        /// needed dependency
         new AlbaranCliente();
+
         return parent::install();
     }
 

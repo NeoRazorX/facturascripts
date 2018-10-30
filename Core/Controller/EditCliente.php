@@ -105,10 +105,10 @@ class EditCliente extends ExtendedController\EditController
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
         $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
+        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
         $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
-        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
 
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);
@@ -126,6 +126,7 @@ class EditCliente extends ExtendedController\EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         switch ($viewName) {
             case 'EditCliente':
                 parent::loadData($viewName, $view);
@@ -147,13 +148,11 @@ class EditCliente extends ExtendedController\EditController
             case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
-                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListLineaFacturaCliente':
-                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
                 $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);

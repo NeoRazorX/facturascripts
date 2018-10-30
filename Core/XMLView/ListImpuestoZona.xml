@@ -19,7 +19,8 @@
  *
  * Initial description for the EditImpuestoZona tab of EditImpuesto controller
  *
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
 
 <view>
@@ -33,7 +34,7 @@
             </widget>
         </column>
         <column name="country" numcolumns="2" order="30">
-            <widget type="select" fieldname="codpais" icon="fas fa-globe" >
+            <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" >
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
             </widget>
         </column>

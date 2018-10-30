@@ -38,7 +38,7 @@ class ListPais extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'countries';
-        $pagedata['icon'] = 'fas fa-globe';
+        $pagedata['icon'] = 'fas fa-globe-americas';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -50,7 +50,7 @@ class ListPais extends ExtendedController\ListController
     protected function createViews()
     {
         /// Countries
-        $this->addView('ListPais', 'Pais', 'countries', 'fas fa-globe');
+        $this->addView('ListPais', 'Pais', 'countries', 'fas fa-globe-americas');
         $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
         $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states', 'validarprov');

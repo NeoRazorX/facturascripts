@@ -362,9 +362,11 @@ abstract class BusinessDocument extends ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new Serie();
         new Ejercicio();
         new Almacen();
+
         return parent::install();
     }
 
@@ -386,6 +388,10 @@ abstract class BusinessDocument extends ModelClass
         return false;
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function parentDocuments()
     {
         $parents = [];
@@ -495,6 +501,10 @@ abstract class BusinessDocument extends ModelClass
         return parent::test();
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     private function checkStatus()
     {
         if ($this->idestado == $this->idestadoAnt) {

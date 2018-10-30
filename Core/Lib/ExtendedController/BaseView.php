@@ -296,7 +296,7 @@ abstract class BaseView
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getPagination()
@@ -380,26 +380,38 @@ abstract class BaseView
      */
     public function loadPageOptions($user = false)
     {
-        $orderby = ['nick' => 'ASC'];
-        $viewName = explode('-', $this->name)[0];
-        $where = [
-            new DataBaseWhere('name', $viewName),
-        ];
-
         if (!is_bool($user)) {
-            $where = [
-                new DataBaseWhere('name', $viewName),
-                new DataBaseWhere('nick', $user->nick),
-                new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            ];
             /// sets user security level for use in render
             VisualItem::setLevel($user->level);
         }
 
+        $orderby = ['nick' => 'ASC'];
+        $where = $this->getPageWhere($user);
         if (!$this->pageOption->loadFromCode('', $where, $orderby)) {
+            $viewName = explode('-', $this->name)[0];
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
 
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+    }
+
+    /**
+     * Returns DataBaseWhere[] for locate a pageOption model.
+     *
+     * @param User|false $user
+     */
+    protected function getPageWhere($user = false)
+    {
+        $viewName = explode('-', $this->name)[0];
+
+        if (is_bool($user)) {
+            return [new DataBaseWhere('name', $viewName)];
+        }
+
+        return [
+            new DataBaseWhere('name', $viewName),
+            new DataBaseWhere('nick', $user->nick),
+            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+        ];
     }
 }

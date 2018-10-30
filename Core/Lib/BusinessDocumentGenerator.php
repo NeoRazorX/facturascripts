@@ -18,81 +18,75 @@
  */
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\DocTransformation;
 
 /**
  * Description of BusinessDocumentGenerator
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
  */
 class BusinessDocumentGenerator
 {
 
     /**
-     * New document generated.
      *
-     * @var mixed
+     * @var array
      */
-    private $newDoc;
-
-    /**
-     * Clone the lines from the prototype document, to previous generated document.
-     * Requires a previous call to generate method.
-     *
-     * @param BusinessDocument $prototype
-     * @param array            $auxData
-     *
-     * @return bool
-     */
-    public function addLinesFrom(BusinessDocument $prototype, $auxData = [])
-    {
-        if ($this->newDoc === null) {
-            return false;
-        }
-
-        return $this->cloneLines($prototype, $this->newDoc, $auxData);
-    }
+    protected $lastDocs = [];
 
     /**
      * Generates a new document from a prototype document.
      *
      * @param BusinessDocument $prototype
      * @param string           $newClass
-     * @param array            $auxData
+     * @param array            $lines
+     * @param array            $quantity
      *
      * @return bool
      */
-    public function generate(BusinessDocument $prototype, string $newClass, $auxData = [])
+    public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [])
     {
         $exclude = ['codigo', 'idestado', 'fecha', 'hora', 'numero', 'femail'];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
-        $this->newDoc = new $newDocClass();
+        $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
+            /// exclude some properties
             if (in_array($field, $exclude) || !property_exists($newDocClass, $field)) {
                 continue;
             }
 
-            $this->newDoc->{$field} = $prototype->{$field};
+            /// copy properties to new document
+            $newDoc->{$field} = $prototype->{$field};
         }
 
-        if ($this->newDoc->save() && $this->cloneLines($prototype, $this->newDoc, $auxData)) {
+        $protoLines = empty($lines) ? $prototype->getLines() : $lines;
+        if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
+            /// recalculate totals on new document
+            $tool = new BusinessDocumentTools();
+            $tool->recalculate($newDoc);
+            $newDoc->save();
+
+            /// add to last doc list
+            $this->lastDocs[] = $newDoc;
             return true;
+        }
+
+        if ($newDoc->exists()) {
+            $newDoc->delete();
         }
 
         return false;
     }
 
     /**
-     * Return the new generated doc.
-     *
-     * @return mixed
+     * 
+     * @return array
      */
-    public function getNewDoc()
+    public function getLastDocs()
     {
-        return $this->newDoc;
+        return $this->lastDocs;
     }
 
     /**
@@ -100,34 +94,27 @@ class BusinessDocumentGenerator
      *
      * @param BusinessDocument $prototype
      * @param mixed            $newDoc
-     * @param array            $auxData
+     * @param array            $lines
+     * @param array            $quantity
      *
      * @return bool
      */
-    private function cloneLines(BusinessDocument $prototype, $newDoc, $auxData = [])
+    private function cloneLines(BusinessDocument $prototype, $newDoc, $lines, $quantity)
     {
-        $sameType = \get_class($prototype) === \get_class($newDoc);
-
-        // start transaction
-        $database = new DataBase();
-        $database->beginTransaction();
-
         $docTrans = new DocTransformation();
-        foreach ($prototype->getLines() as $line) {
+        foreach ($lines as $line) {
             $docTrans->clear();
 
+            /// copy line properties to new line
             $arrayLine = [];
-            foreach ($line->getModelFields() as $field => $value) {
-                $arrayLine[$field] = $line->{$field};
-                /// Remove idlinea if are different document types
-                if (!$sameType && $field === 'idlinea') {
-                    unset($arrayLine[$field]);
+            foreach (array_keys($line->getModelFields()) as $field) {
+                if ($field !== 'idlinea') {
+                    $arrayLine[$field] = $line->{$field};
                 }
             }
 
-            /// Fix quantity value if needed
-            if (!empty($auxData) && isset($auxData[$line->idlinea])) {
-                $arrayLine['cantidad'] = $auxData[$line->idlinea];
+            if (isset($quantity[$line->primaryColumnValue()])) {
+                $arrayLine['cantidad'] = $quantity[$line->primaryColumnValue()];
             }
 
             if ($arrayLine['cantidad'] == 0) {
@@ -136,25 +123,24 @@ class BusinessDocumentGenerator
 
             $newLine = $newDoc->getNewLine($arrayLine);
             if (!$newLine->save()) {
-                break;
+                return false;
             }
 
+            /// update stock
+            $newLine->updateStock($newDoc->codalmacen);
+
+            /// save relation
             $docTrans->model1 = $prototype->modelClassName();
-            $docTrans->iddoc1 = $prototype->primaryColumnValue();
+            $docTrans->iddoc1 = $line->documentColumnValue();
             $docTrans->idlinea1 = $line->primaryColumnValue();
             $docTrans->model2 = $newDoc->modelClassName();
             $docTrans->iddoc2 = $newDoc->primaryColumnValue();
             $docTrans->idlinea2 = $newLine->primaryColumnValue();
             if (!$docTrans->save()) {
-                $database->rollback();
                 return false;
             }
-
-            $newLine->updateStock($newDoc->codalmacen);
         }
 
-        // confirm data
-        $database->commit();
         return true;
     }
 }

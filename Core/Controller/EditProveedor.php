@@ -105,6 +105,7 @@ class EditProveedor extends ExtendedController\EditController
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
         $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fas fa-copy');
+        $this->addListView('ListLineaFacturaProveedor', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
         $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
         $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
         $this->addListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fas fa-copy');
@@ -132,6 +133,7 @@ class EditProveedor extends ExtendedController\EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
         switch ($viewName) {
             case 'ListContacto':
             case 'EditCuentaBancoProveedor':
@@ -139,8 +141,13 @@ class EditProveedor extends ExtendedController\EditController
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
-                $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListLineaFacturaProveedor':
+                $inSQL = 'SELECT idfactura FROM facturasprov WHERE codproveedor = ' . $this->dataBase->var2str($codproveedor);
+                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);
                 break;
 

@@ -58,8 +58,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListFacturaProveedor', ['fecha'], 'date', 2);
         $this->addOrderBy('ListFacturaProveedor', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListFacturaProveedor', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListFacturaProveedor', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterPeriod('ListFacturaProveedor', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListFacturaProveedor', 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber('ListFacturaProveedor', 'max-total', 'total', 'total', '<=');
 

@@ -19,9 +19,9 @@
  *
  * Initial description for the controller EditProveedor
  *
- * @author Nazca Networks <comercial@nazcanetworks.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Nazca Networks               <comercial@nazcanetworks.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
 -->
 
 <view>
@@ -81,16 +81,16 @@
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="phone" numcolumns="2" order="100">
-                <widget type="tel" fieldname="telefono1" />
+                <widget type="tel" fieldname="telefono1" icon="fas fa-phone" />
             </column>
             <column name="phone2" numcolumns="2" order="110">
-                <widget type="tel" fieldname="telefono2" />
+                <widget type="tel" fieldname="telefono2" icon="fas fa-mobile-alt" />
             </column>
             <column name="fax" numcolumns="2" order="120">
                 <widget type="tel" fieldname="fax" />
             </column>
             <column name="email" numcolumns="3" order="140">
-                <widget type="email" fieldname="email" icon="fas fa-envelope" />
+                <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="website" numcolumns="3" order="150">
                 <widget type="url" fieldname="web" />

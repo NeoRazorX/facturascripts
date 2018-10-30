@@ -57,8 +57,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListAlbaranProveedor', ['fecha'], 'date', 2);
         $this->addOrderBy('ListAlbaranProveedor', ['total'], 'amount');
 
-        $this->addFilterDatePicker('ListAlbaranProveedor', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListAlbaranProveedor', 'until-date', 'until-date', 'fecha', '<=');
+        $this->addFilterPeriod('ListAlbaranProveedor', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListAlbaranProveedor', 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber('ListAlbaranProveedor', 'max-total', 'total', 'total', '<=');
 

@@ -40,9 +40,20 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
+    public function documentColumn()
+    {
+        return 'idpedido';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new PedidoCliente();
+
         return parent::install();
     }
 
