@@ -35,6 +35,21 @@ class EditAsiento extends ExtendedController\PanelController
 {
 
     /**
+     * Starts all the objects and properties.
+     *
+     * @param Base\Cache      $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
+     * @param string          $uri
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
+        $this->setTabsPosition('bottom');
+    }
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -55,10 +70,10 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditAsiento', 'Asiento', 'accounting-entry', 'fas fa-balance-scale');
-        $this->addGridView('EditPartida', 'EditAsiento', 'Partida', 'accounting-items');
-        $this->setTemplate('EditAsiento');
-        $this->views['EditPartida']->template = 'EditAsientoGridView.html.twig';
+        $master = ['name' => 'EditAsiento', 'model' => 'Asiento'];
+        $detail = ['name' => 'EditPartida', 'model' => 'Partida'];
+        $this->addGridView($master, $detail, 'accounting-entry', 'fas fa-balance-scale');
+        $this->views['EditAsiento']->template = 'EditAsiento.html.twig';
     }
 
     /**
@@ -401,14 +416,10 @@ class EditAsiento extends ExtendedController\PanelController
             case 'EditAsiento':
                 $code = $this->request->get('code');
                 $view->loadData($code);
-                break;
-
-            case 'EditPartida':
-                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
-                if (!empty($idasiento)) {
-                    $where = [new DataBaseWhere('idasiento', $idasiento)];
+                if ($view->count > 0) {
+                    $where = [new DataBaseWhere('idasiento', $code)];
                     $orderby = ['idpartida' => 'ASC'];
-                    $view->loadData('', $where, $orderby, 0, 0);
+                    $view->loadGridData($where, $orderby);
                 }
                 break;
         }

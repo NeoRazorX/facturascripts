@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\ExtendedController\GridDocumentInterface;
 
 /**
  * The accounting entry. It is related to an exercise and consists of games.
@@ -29,7 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\GridDocumentInterface;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Asiento extends Base\ModelClass implements GridDocumentInterface
+class Asiento extends Base\ModelClass implements Base\GridModelInterface
 {
 
     use Base\ModelTrait;

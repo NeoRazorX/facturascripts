@@ -100,8 +100,6 @@ function setAccountData(data) {
  * @returns {Boolean}
  */
 function saveVatRegister() {
-    console.log("saveVatRegister");
-
     // cancel eventManager for submit form and hide form
     event.preventDefault();
     vatModal.modal("hide");
@@ -285,7 +283,6 @@ $(document).ready(function () {
                 options: {}
             });
         }
-
         selectCell(0, 0);
     }
 });
