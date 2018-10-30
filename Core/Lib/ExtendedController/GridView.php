@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 
 /**
@@ -75,6 +77,33 @@ class GridView extends EditView
         static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
         static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
         static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/GridView.js';
+    }
+
+    /**
+     * Removes from the database the non-existent detail
+     *
+     * @param array $linesOld
+     * @param array $linesNew
+     *
+     * @return bool
+     */
+    private function deleteLinesOld(&$linesOld, &$linesNew): bool
+    {
+        if (!empty($linesOld)) {
+            $model = $this->detailView->model;
+            $fieldPK = $model->primaryColumn();
+            $oldIDs = array_column($linesOld, $fieldPK);
+            $newIDs = array_column($linesNew, $fieldPK);
+            $deletedIDs = array_diff($oldIDs, $newIDs);
+
+            foreach ($deletedIDs as $idKey) {
+                $model->loadFromCode($idKey);
+                if (!$model->delete()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -207,6 +236,23 @@ class GridView extends EditView
     }
 
     /**
+     * Load data of master document and set data from array
+     *
+     * @param string $field
+     * @param array  $data
+     *
+     * @return bool
+     */
+    private function loadDocumentDataFromArray($field, &$data): bool
+    {
+        if ($this->model->loadFromCode($data[$field])) {    // old data
+            $this->model->loadFromData($data, ['action', 'activetab', 'code']);  // new data (the web form may be not have all the fields)
+            return $this->model->test();
+        }
+        return false;
+    }
+
+    /**
      * Load detail data and set grid configuration
      *
      * @param DataBaseWhere[] $where
@@ -224,6 +270,93 @@ class GridView extends EditView
             foreach ($this->detailView->model->all($where, $order, 0, 0) as $line) {
                 $this->gridData['rows'][] = (array) $line;
             }
+        }
+    }
+
+    /**
+     *
+     * @param array $lines
+     * @return array
+     */
+    public function processFormLines(&$lines): array
+    {
+        $result = [];
+        $primaryKey = $this->detailView->model->primaryColumn();
+        foreach ($lines as $data) {
+            if (!isset($data[$primaryKey])) {
+                foreach ($this->getDetailColumns('detail') as $group) {
+                    foreach ($group->columns as $col) {
+                        if (!isset($data[$col->widget->fieldname])) {
+                            $data[$col->widget->fieldname] = null;   // TODO: maybe the widget can have a default value method instead of null
+                        }
+                    }
+                }
+            }
+            $result[] = $data;
+        }
+
+        return $result;
+    }
+
+    public function saveData($data): array
+    {
+        $result = [
+            'error' => false,
+            'message' => '',
+            'url' => ''
+        ];
+
+        try {
+            // load master document data and test it's ok
+            if (!$this->loadDocumentDataFromArray('code', $data['document'])) {
+                throw new Exception(self::$i18n->trans('parent-document-test-error'));
+            }
+
+            // load detail document data (old)
+            $primaryKey = $this->model->primaryColumn();
+            $primaryKeyValue = $this->model->primaryColumnValue();
+            $linesOld = $this->detailView->model->all([new DataBaseWhere($primaryKey, $primaryKeyValue)]);
+
+            // start transaction
+            $dataBase = new DataBase();
+            $dataBase->beginTransaction();
+
+            // delete old lines not used
+            if (!$this->deleteLinesOld($linesOld, $data['lines'])) {
+                throw new Exception(self::$i18n->trans('lines-delete-error'));
+            }
+
+            // Proccess detail document data (new)
+            $this->model->initTotals(); // Master Model must implement GridModelInterface
+            foreach ($data['lines'] as $newLine) {
+                $this->detailView->model->loadFromData($newLine);
+                if (empty($this->detailView->model->primaryColumnValue())) {
+                    $this->detailView->model->{$parentPK} = $primaryKeyValue;
+                }
+                if (!$this->detailView->model->save()) {
+                    throw new Exception(self::$i18n->trans('lines-save-error'));
+                }
+                $this->model->accumulateAmounts($newLine);
+            }
+
+            // save master document
+            if (!$this->model->save()) {
+                throw new Exception(self::$i18n->trans('parent-document-save-error'));
+            }
+
+            // confirm save data into database
+            $dataBase->commit();
+
+            // URL for refresh data
+            $result['url'] = $this->model->url('edit') . '&action=save-ok';
+        } catch (Exception $e) {
+            $result['error'] = true;
+            $result['message'] = $e->getMessage();
+        } finally {
+            if ($dataBase->inTransaction()) {
+                $dataBase->rollback();
+            }
+            return $result;
         }
     }
 }

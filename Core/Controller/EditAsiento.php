@@ -337,7 +337,7 @@ class EditAsiento extends ExtendedController\PanelController
 
         if (isset($data['lines'])) {
             // Prepare lines data
-            $lines = $this->views['EditPartida']->processFormLines($data['lines']);
+            $lines = $this->views['EditAsiento']->processFormLines($data['lines']);
 
             // Recalculate lines data and amounts
             $totalCredit = $totalDebit = 0.00;
