@@ -43,6 +43,21 @@
                 {% endif %}
                 <div class="col-sm-4">
                     <div class="form-group">
+                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombrecorto, 'text', i18n.trans('business'), 'fas fa-building', {'required': '', 'class': 'form-control is-invalid'}) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'required': '', 'class': 'form-control is-invalid'}) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('postal-code'), 'fas fa-map-marked', {'required': '', 'class': 'form-control is-invalid'}) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
                         {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
                     </div>
                 </div>
