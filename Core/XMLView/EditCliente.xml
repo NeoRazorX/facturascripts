@@ -19,8 +19,8 @@
  *
  * Initial description for the controller EditCliente
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -88,16 +88,16 @@
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="phone" numcolumns="3" order="100">
-                <widget type="text" fieldname="telefono1" />
+                <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
             </column>
             <column name="phone2" numcolumns="3" order="110">
-                <widget type="text" fieldname="telefono2" />
+                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
             </column>
             <column name="fax" numcolumns="3" order="120">
                 <widget type="text" fieldname="fax" />
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="email" fieldname="email" icon="fas fa-envelope" />
+                <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="default-billing-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="140">
                 <widget type="select" fieldname="idcontactofact" onclick="EditContacto">

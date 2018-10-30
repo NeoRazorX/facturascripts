@@ -38,7 +38,7 @@
                 <widget type="text" fieldname="apellidos" />
             </column>
             <column name="email" numcolumns="4" order="130">
-                <widget type="text" fieldname="email" icon="fas fa-envelope" />
+                <widget type="text" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="fiscal-number" numcolumns="4" order="140">
                 <widget type="text" fieldname="cifnif" />
@@ -53,7 +53,7 @@
                 <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
             </column>
             <column name="phone2" numcolumns="2" order="180">
-                <widget type="text" fieldname="telefono2" icon="fas fa-mobile" />
+                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
             </column>
             <column name="customer" numcolumns="3" order="190">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">

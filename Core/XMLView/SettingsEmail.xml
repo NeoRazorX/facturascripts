@@ -30,10 +30,10 @@
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
             <column name="email" numcolumns="3" order="100">
-                <widget type="text" fieldname="email" />
+                <widget type="text" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="password" numcolumns="3" order="100">
-                <widget type="password" fieldname="password" />
+                <widget type="password" fieldname="password" icon="fas fa-key" />
             </column>
         </group>
         <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server">
@@ -41,13 +41,13 @@
                 <widget type="text" fieldname="user" />
             </column>
             <column name="host" numcolumns="3" order="100">
-                <widget type="text" fieldname="host" />
+                <widget type="text" fieldname="host" icon="fas fa-server" />
             </column>
             <column name="port" numcolumns="3" order="100">
                 <widget type="number" fieldname="port" />
             </column>
             <column name="enc" title="encrypt" numcolumns="3" order="110">
-                <widget type="select" fieldname="enc" required="true">
+                <widget type="select" fieldname="enc" icon="fas fa-shield-alt" required="true">
                     <values title="SSL">ssl</values>
                     <values title="TLS">tls</values>
                     <values title=""></values>
