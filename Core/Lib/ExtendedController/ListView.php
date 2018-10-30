@@ -241,7 +241,12 @@ class ListView extends BaseView
      */
     public function processFormData($request, $case)
     {
-        if ($case !== 'load') {
+        if ($case === 'preload') {
+            foreach ($this->filters as $filter) {
+                $filter->getDataBaseWhere($this->where);
+            }
+            return;
+        } elseif ($case !== 'load') {
             return;
         }
 
