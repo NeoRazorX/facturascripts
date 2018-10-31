@@ -294,7 +294,7 @@ class Subcuenta extends Base\ModelClass
             if ($inTransaction === false) {
                 self::$dataBase->commit();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             self::$miniLog->error($e->getMessage());
             return false;
         } finally {
