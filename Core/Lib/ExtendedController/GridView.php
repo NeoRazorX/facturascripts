@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
@@ -134,6 +135,9 @@ class GridView extends EditView
     public function getDetailColumns($key = '')
     {
         if (!array_key_exists($key, $this->detailView->columns)) {
+            if ($key == 'master') {
+                return [];
+            }
             $key = array_keys($this->detailView->columns)[0];
         }
 
@@ -352,7 +356,7 @@ class GridView extends EditView
             foreach ($data['lines'] as $newLine) {
                 $this->detailView->model->loadFromData($newLine);
                 if (empty($this->detailView->model->primaryColumnValue())) {
-                    $this->detailView->model->{$parentPK} = $primaryKeyValue;
+                    $this->detailView->model->{$primaryKey} = $primaryKeyValue;
                 }
                 if (!$this->detailView->model->save()) {
                     throw new Exception(self::$i18n->trans('lines-save-error'));

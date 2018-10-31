@@ -26,7 +26,9 @@
     <columns>
         <group name="master">
             <column name="exercise" numcolumns="2" order="100">
-                <widget type="text" fieldname="codejercicio" readonly="true" />
+                <widget type="select" fieldname="codejercicio" readonly="true">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                </widget>
             </column>
             <column name="date" numcolumns="2" order="100">
                 <widget type="date" fieldname="fecha" icon="fas fa-calendar-alt" readonly="true" />

@@ -167,7 +167,7 @@ function customAfterSelection(row1, col1, row2, col2, preventScrolling) {
                 return;
             }
 
-            var exercise = $("input[name=codejercicio]")[0];
+            var exercise = $("#formGridEditAsiento input[name=codejercicio]")[0];
             var data = {
                 action: "account-data",
                 codsubcuenta: subAccount,
@@ -245,14 +245,13 @@ function customAfterChange(changes) {
 $(document).ready(function () {
     if (document.getElementById("document-lines")) {
         // Init Working variables
-        mainForm = $("#formEditAsiento");
+        mainForm = $("#formGridEditAsiento");
         accountDescription = document.getElementById("account-description");
         accountBalance = document.getElementById("account-balance");
         unbalance = document.getElementById("unbalance");
-        total = $("#formEditAsiento input[name=importe]");
+        total = $("#formGridEditAsiento input[name=importe]");
         vatRegister = $("#vat-register-btn");
         vatRegister.prop("disabled", true);
-        console.log(vatRegister);
 
         // Set initial clone state
         if (getGridFieldData(0, "idpartida") === undefined) {

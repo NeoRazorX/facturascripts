@@ -234,11 +234,10 @@ function saveDocument(mainFormName) {
             lines: getGridData("order"),
             document: {}
         };
-        var mainForm = $("#form" + mainFormName);
+        var mainForm = $("#" + mainFormName);
         $.each(mainForm.serializeArray(), function (key, value) {
             data.document[value.name] = value.value;
         });
-
         $.ajax({
             type: "POST",
             url: documentUrl,

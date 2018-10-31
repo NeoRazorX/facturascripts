@@ -61,9 +61,6 @@
             <column name="document" numcolumns="4" order="320">
                 <widget type="text" fieldname="documento" />
             </column>
-            <column name="editable" display="none" order="300">
-                <widget type="text" fieldname="editable" />
-            </column>
         </group>
     </columns>
 </view>
