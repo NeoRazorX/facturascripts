@@ -64,7 +64,7 @@ abstract class ListController extends BaseController
         $this->createViews();
 
         // Store action to execute
-        $action = $this->request->get('action', '');
+        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Operations with data, before execute action
         if (!$this->execPreviousAction($action)) {

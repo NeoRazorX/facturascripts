@@ -99,7 +99,7 @@ abstract class PanelController extends BaseController
         $this->createViews();
 
         // Get any operations that have to be performed
-        $action = $this->request->get('action', '');
+        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Run operations on the data before reading it
         if (!$this->execPreviousAction($action)) {
