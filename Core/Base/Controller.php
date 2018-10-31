@@ -147,6 +147,7 @@ class Controller
         $pageData = $this->getPageData();
         $this->title = empty($pageData) ? $this->className : $this->i18n->trans($pageData['title']);
 
+        AssetManager::clear();
         AssetManager::setAssetsForPage($className);
     }
 

@@ -27,18 +27,10 @@ class AssetManager
 {
 
     /**
-     * CSS asset list.
      *
-     * @var \SplPriorityQueue
+     * @var array
      */
-    private static $cssList;
-
-    /**
-     * JS asset list.
-     *
-     * @var \SplPriorityQueue
-     */
-    private static $jsList;
+    private static $list;
 
     /**
      * Adds and asset to the list.
@@ -50,11 +42,30 @@ class AssetManager
     public static function add(string $type, string $asset, int $priority = 1)
     {
         static::init();
-        if ($type === 'css') {
-            self::$cssList->insert($asset, $priority);
-        } else {
-            self::$jsList->insert($asset, $priority);
+
+        /// avoid duplicates
+        foreach (self::$list[$type] as $item) {
+            if ($item['asset'] == $asset) {
+                return;
+            }
         }
+
+        /// insert
+        self::$list[$type][] = [
+            'asset' => $asset,
+            'priority' => $priority,
+        ];
+    }
+
+    /**
+     * Clears all asset lists.
+     */
+    public static function clear()
+    {
+        self::$list = [
+            'css' => [],
+            'js' => [],
+        ];
     }
 
     /**
@@ -64,7 +75,7 @@ class AssetManager
      *
      * @return string
      */
-    public static function combine(array $type): string
+    public static function combine(string $type): string
     {
         $txt = '';
         foreach (static::get($type) as $file) {
@@ -91,16 +102,21 @@ class AssetManager
     {
         static::init();
 
-        /// select list
-        $list = ($type === 'css') ? self::$cssList : self::$jsList;
-
-        /// convert to array and exlcude duplicates
-        $assets = [];
-        foreach ($list as $item) {
-            $filePath = (string) $item;
-            if (!in_array($filePath, $assets)) {
-                $assets[] = $filePath;
+        /// sort by priority
+        uasort(self::$list[$type], function($item1, $item2) {
+            if ($item1['priority'] > $item2['priority']) {
+                return -1;
+            } elseif ($item1['priority'] < $item2['priority']) {
+                return 1;
             }
+
+            return 0;
+        });
+
+        /// extract assets
+        $assets = [];
+        foreach (self::$list[$type] as $item) {
+            $assets[] = $item['asset'];
         }
         return $assets;
     }
@@ -162,12 +178,8 @@ class AssetManager
 
     protected static function init()
     {
-        if (!isset(self::$cssList)) {
-            self::$cssList = new \SplPriorityQueue();
-        }
-
-        if (!isset(self::$jsList)) {
-            self::$jsList = new \SplPriorityQueue();
+        if (!isset(self::$list)) {
+            static::clear();
         }
     }
 }
