@@ -208,7 +208,7 @@ class BusinessDocumentTools
 
     private function recalculateLine(array $fLine, BusinessDocument $doc)
     {
-        if (!isset($fLine['cantidad'])) {
+        if (!isset($fLine['cantidad']) || '' === $fLine['cantidad']) {
             $this->setProductData($fLine);
         }
 

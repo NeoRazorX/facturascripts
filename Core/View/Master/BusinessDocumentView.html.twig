@@ -40,6 +40,7 @@
     <input type="hidden" name="{{ currentView.model.primaryColumn() }}" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input id="doc_idestado" type="hidden" name="idestado" value="{{ currentView.model.idestado }}"/>
     <div class="form-row">
+        {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, fsc.getSelectValues('Almacen')) }}
         {% if 'codcliente' in fsc.getSubjectColumns() %}
             {{ macros.customerSelect(i18n, 'codcliente', 'codcliente', currentView.model, fsc.getNewSubjectUrl()) }}
         {% endif %}
@@ -98,8 +99,6 @@
             </button>
         </div>
         {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
-        {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, fsc.getSelectValues('Almacen')) }}
-        {{ macros.customSelect('doc_idempresa', 'idempresa', currentView.model.idempresa, fsc.getSelectValues('Empresa')) }}
         {{ macros.customSelect('doc_codpago', 'codpago', currentView.model.codpago, fsc.getSelectValues('FormaPago')) }}
         {{ macros.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, fsc.getSelectValues('Divisa')) }}
         <div class="col text-right">
