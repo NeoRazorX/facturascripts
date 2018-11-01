@@ -61,8 +61,8 @@ class ListAsiento extends ExtendedController\ListController
         $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
         $this->addOrderBy('ListAsiento', ['numero'], 'number');
         $this->addOrderBy('ListAsiento', ['importe'], 'ammount');
-        $this->addFilterDatePicker('ListAsiento', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListAsiento', 'until-date', 'until-date', 'fecha', '<=');
+
+        $this->addFilterPeriod('ListAsiento', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber('ListAsiento', 'max-total', 'amount', 'importe', '<=');
 
