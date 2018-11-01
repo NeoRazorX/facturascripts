@@ -33,7 +33,7 @@ class EditEjercicio extends ExtendedController\EditController
 {
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -96,20 +96,15 @@ class EditEjercicio extends ExtendedController\EditController
         }
     }
 
-    /**
-     * Run the controller after actions
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'import-accounting':
                 $this->importAccountingPlan();
-                break;
+                return true;
 
             default:
-                parent::execAfterAction($action);
+                return parent::execPreviousAction($action);
         }
     }
 
@@ -120,27 +115,33 @@ class EditEjercicio extends ExtendedController\EditController
      */
     private function importAccountingPlan()
     {
-        $accountingPlanImport = new AccountingPlanImport();
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $exercise = $this->request->request->get('codejercicio', '');
+        if (empty($exercise)) {
+            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            return false;
+        }
+
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
             $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
             return false;
         }
 
+        $accountingPlanImport = new AccountingPlanImport();
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
+                $accountingPlanImport->importXML($uploadFile->getPathname(), $exercise);
                 break;
 
             case 'text/csv':
             case 'text/plain':
-                $accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio);
+                $accountingPlanImport->importCSV($uploadFile->getPathname(), $exercise);
                 break;
 
             default:
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
+        return true;
     }
 }

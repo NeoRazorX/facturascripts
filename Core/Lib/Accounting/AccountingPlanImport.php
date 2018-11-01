@@ -70,7 +70,7 @@ class AccountingPlanImport
     public function importCSV(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'ejercicio not found']));
+            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
             return;
         }
 
@@ -86,7 +86,7 @@ class AccountingPlanImport
     public function importXML(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'exercise not found']));
+            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
             return;
         }
 
@@ -109,8 +109,6 @@ class AccountingPlanImport
     private function createAccount(string $code, string $definition, string $parentCode = '')
     {
         $account = new Model\Cuenta();
-        $parent = new Model\Cuenta();
-        
         $account->disableAditionalTest();
 
         /// the account exists?
@@ -125,11 +123,13 @@ class AccountingPlanImport
                 new DatabaseWhere('codejercicio', $this->ejercicio->codejercicio),
                 new DataBaseWhere('codcuenta', $parentCode)
             ];
+            $parent = new Model\Cuenta();
             if ($parent->loadFromCode('', $whereParent)) {
                 $account->parent_codcuenta = $parent->codcuenta;
                 $account->parent_idcuenta = $parent->idcuenta;
             } else {
                 $this->miniLog->alert($this->i18n->trans('parent-error'));
+                return;
             }
         }
 
@@ -150,9 +150,9 @@ class AccountingPlanImport
     {
         $subaccount = new Model\Subcuenta();
         $account = new Model\Cuenta();
-        
+
         $subaccount->disableAditionalTest();
-        
+
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $parentCode)

@@ -119,6 +119,19 @@ class ColumnItem extends VisualItem
     }
 
     /**
+     * Returns CSS percentage width
+     * 
+     * @return string
+     */
+    public function htmlWidth()
+    {
+        if ($this->numcolumns < 1 || $this->numcolumns > 11) {
+            return '100%';
+        }
+        return round((100.00/12 * $this->numcolumns), 5) . '%';
+    }
+
+    /**
      *
      * @return boolean
      */
@@ -132,7 +145,7 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object  $model
      * @param Request $request
      */

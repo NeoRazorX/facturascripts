@@ -96,16 +96,7 @@ class Cuenta extends Base\ModelClass
     public $parent_idcuenta;
 
     /**
-     * 
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->codejercicio = $this->getDefaultCodejercicio();
-    }
-
-    /**
-     * 
+     *
      */
     public function disableAditionalTest()
     {
@@ -175,7 +166,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *
@@ -184,24 +175,6 @@ class Cuenta extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCuenta?activetab=List');
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    protected function getDefaultCodejercicio()
-    {
-        if (empty(self::$defaultCodejercicio)) {
-            // Search open exercise for current date
-            $exerciseModel = new Ejercicio();
-            $exercise = $exerciseModel->getByFecha(date('d-m-Y'), true, false);
-            if ($exercise !== false) {
-                self::$defaultCodejercicio = $exercise->codejercicio;
-            }
-        }
-
-        return self::$defaultCodejercicio;
     }
 
     /**

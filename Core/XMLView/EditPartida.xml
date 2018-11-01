@@ -24,37 +24,58 @@
 
 <view>
     <columns>
-        <column name="idasiento" order="100" display="none">
-            <widget type="text" fieldname="idasiento" />
-        </column>
-        <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idpartida" />
-        </column>
-        <column name="subaccount" order="105">
-            <widget type="autocomplete" fieldname="codsubcuenta" required="true">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-            </widget>
-        </column>
-        <column name="offsetting" order="110">
-            <widget type="autocomplete" fieldname="codcontrapartida" required="true">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-            </widget>
-        </column>
-        <column name="description" order="115">
-            <widget type="autocomplete" fieldname="concepto" required="true">
-                <values source="conceptos_partidas" fieldcode="descripcion" fieldtitle="codconcepto" strict="false"></values>
-            </widget>
-        </column>
-        <column name="debit" display="right" order="120">
-            <widget type="money" fieldname="debe">
-                <option color="danger">&lt;0</option>
-            </widget>
-        </column>
-        <column name="credit" display="right" order="130">
-            <widget type="money" fieldname="haber">
-                <option color="danger">&lt;0</option>
-            </widget>
-        </column>
+        <group name="master">
+            <column name="exercise" numcolumns="2" order="100">
+                <widget type="select" fieldname="codejercicio" readonly="true">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="date" numcolumns="2" order="100">
+                <widget type="date" fieldname="fecha" icon="fas fa-calendar-alt" readonly="true" />
+            </column>
+            <column name="concept" order="120">
+                <widget type="text" fieldname="concepto" required="true" />
+            </column>
+            <column name="channel" numcolumns="1" order="130">
+                <widget type="number" fieldname="canal" readonly="true" />
+            </column>
+            <column name="ammount" numcolumns="2" display="right" order="200">
+                <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="true" />
+            </column>
+        </group>
+        <group name="detail">
+            <column name="idasiento" order="100" display="none">
+                <widget type="text" fieldname="idasiento" />
+            </column>
+            <column name="id" order="100" display="none">
+                <widget type="text" fieldname="idpartida" />
+            </column>
+            <column name="subaccount" numcolumns="4" order="105">
+                <widget type="autocomplete" fieldname="codsubcuenta" required="true">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="offsetting" numcolumns="4" order="110">
+                <widget type="autocomplete" fieldname="codcontrapartida" required="true">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="description" order="115">
+                <widget type="autocomplete" fieldname="concepto" required="true">
+                    <values source="conceptos_partidas" fieldcode="descripcion" fieldtitle="codconcepto" strict="false"></values>
+                </widget>
+            </column>
+            <column name="debit" numcolumns="3" display="right" order="120">
+                <widget type="money" fieldname="debe">
+                    <option color="danger">&lt;0</option>
+                </widget>
+            </column>
+            <column name="credit" numcolumns="3" display="right" order="130">
+                <widget type="money" fieldname="haber">
+                    <option color="danger">&lt;0</option>
+                </widget>
+            </column>
+        </group>
     </columns>
     <rows>
         <row type="actions">
