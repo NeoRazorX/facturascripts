@@ -22,6 +22,7 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Lib\Widget\WidgetAutocomplete;
 use FacturaScripts\Core\Lib\Widget\WidgetSelect;
@@ -84,56 +85,6 @@ class GridView extends EditView
 
         // custom template
         $this->template = self::GRIDVIEW_TEMPLATE;
-        static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
-        static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/GridView.js';
-    }
-
-    /**
-     * Removes from the database the non-existent detail
-     *
-     * @param array $linesOld
-     * @param array $linesNew
-     *
-     * @return bool
-     */
-    private function deleteLinesOld(&$linesOld, &$linesNew): bool
-    {
-        if (!empty($linesOld)) {
-            $model = $this->detailView->model;
-            $fieldPK = $model->primaryColumn();
-            $oldIDs = array_column($linesOld, $fieldPK);
-            $newIDs = array_column($linesNew, $fieldPK);
-            $deletedIDs = array_diff($oldIDs, $newIDs);
-
-            foreach ($deletedIDs as $idKey) {
-                $model->loadFromCode($idKey);
-                if (!$model->delete()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Configure autocomplete column with data to Grid component
-     *
-     * @param WidgetAutocomplete $widget
-     *
-     * @return array
-     */
-    private function getAutocompleteSource($widget): array
-    {
-        $url = $this->model->url('edit');
-        $datasource = $widget->getDataSource();
-
-        return [
-            'url' => $url,
-            'source' => $datasource['source'],
-            'field' => $datasource['fieldcode'],
-            'title' => $datasource['fieldtitle']
-        ];
     }
 
     /**
@@ -155,35 +106,6 @@ class GridView extends EditView
     }
 
     /**
-     * Return grid columns configuration
-     * from pages_options of columns
-     *
-     * @return array
-     */
-    private function getGridColumns(): array
-    {
-        $data = [
-            'headers' => [],
-            'columns' => [],
-            'hidden' => [],
-            'colwidths' => []
-        ];
-
-        foreach ($this->getDetailColumns('detail') as $col) {
-            $item = $this->getItemForColumn($col);
-            if ($col->hidden()) {
-                $data['hidden'][] = $item;
-            } else {
-                $data['columns'][] = $item;
-                $data['colwidths'][] = $col->htmlWidth();
-                $data['headers'][] = self::$i18n->trans($col->title);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Returns JSON into string with Grid view data
      *
      * @return string
@@ -191,61 +113,6 @@ class GridView extends EditView
     public function getGridData(): string
     {
         return json_encode($this->gridData);
-    }
-
-    /**
-     * Return grid column configuration
-     *
-     * @param ColumnItem $column
-     *
-     * @return array
-     */
-    private function getItemForColumn($column): array
-    {
-        $item = [
-            'data' => $column->widget->fieldname,
-            'type' => $column->widget->getType()
-        ];
-        switch ($item['type']) {
-            case 'autocomplete':
-                $item['visibleRows'] = 5;
-                $item['allowInvalid'] = true;
-                $item['trimDropdown'] = false;
-                $item['strict'] = $column->widget->strict;
-                $item['data-source'] = $this->getAutocompleteSource($column->widget);
-                break;
-
-            case 'select':
-                $item['editor'] = 'select';
-                $item['selectOptions'] = $this->getSelectSource($column->widget);
-                break;
-
-            case 'number':
-            case 'money':
-                $item['type'] = 'numeric';
-                $item['numericFormat'] = DivisaTools::gridMoneyFormat();
-                break;
-        }
-
-        return $item;
-    }
-
-    /**
-     * Return array of values to select
-     *
-     * @param WidgetSelect $widget
-     */
-    private function getSelectSource($widget): array
-    {
-        $result = [];
-        if (!$widget->required) {
-            $result[] = '';
-        }
-
-        foreach ($widget->values as $value) {
-            $result[] = $value['title'];
-        }
-        return $result;
     }
 
     /**
@@ -268,23 +135,6 @@ class GridView extends EditView
             $orderby = [$this->detailView->model->primaryColumn() => 'ASC'];
             $this->loadGridData($where, $orderby);
         }
-    }
-
-    /**
-     * Load data of master document and set data from array
-     *
-     * @param string $field
-     * @param array  $data
-     *
-     * @return bool
-     */
-    private function loadDocumentDataFromArray($field, &$data): bool
-    {
-        if ($this->model->loadFromCode($data[$field])) {    // old data
-            $this->model->loadFromData($data, ['action', 'activetab', 'code']);  // new data (the web form may be not have all the fields)
-            return $this->model->test();
-        }
-        return false;
     }
 
     /**
@@ -393,5 +243,160 @@ class GridView extends EditView
             }
             return $result;
         }
+    }
+
+    protected function assets()
+    {
+        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/GridView.js');
+    }
+
+    /**
+     * Removes from the database the non-existent detail
+     *
+     * @param array $linesOld
+     * @param array $linesNew
+     *
+     * @return bool
+     */
+    private function deleteLinesOld(&$linesOld, &$linesNew): bool
+    {
+        if (!empty($linesOld)) {
+            $model = $this->detailView->model;
+            $fieldPK = $model->primaryColumn();
+            $oldIDs = array_column($linesOld, $fieldPK);
+            $newIDs = array_column($linesNew, $fieldPK);
+            $deletedIDs = array_diff($oldIDs, $newIDs);
+
+            foreach ($deletedIDs as $idKey) {
+                $model->loadFromCode($idKey);
+                if (!$model->delete()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Configure autocomplete column with data to Grid component
+     *
+     * @param WidgetAutocomplete $widget
+     *
+     * @return array
+     */
+    private function getAutocompleteSource($widget): array
+    {
+        $url = $this->model->url('edit');
+        $datasource = $widget->getDataSource();
+
+        return [
+            'url' => $url,
+            'source' => $datasource['source'],
+            'field' => $datasource['fieldcode'],
+            'title' => $datasource['fieldtitle']
+        ];
+    }
+
+    /**
+     * Return grid columns configuration
+     * from pages_options of columns
+     *
+     * @return array
+     */
+    private function getGridColumns(): array
+    {
+        $data = [
+            'headers' => [],
+            'columns' => [],
+            'hidden' => [],
+            'colwidths' => []
+        ];
+
+        foreach ($this->getDetailColumns('detail') as $col) {
+            $item = $this->getItemForColumn($col);
+            if ($col->hidden()) {
+                $data['hidden'][] = $item;
+            } else {
+                $data['columns'][] = $item;
+                $data['colwidths'][] = $col->htmlWidth();
+                $data['headers'][] = self::$i18n->trans($col->title);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Return grid column configuration
+     *
+     * @param ColumnItem $column
+     *
+     * @return array
+     */
+    private function getItemForColumn($column): array
+    {
+        $item = [
+            'data' => $column->widget->fieldname,
+            'type' => $column->widget->getType()
+        ];
+        switch ($item['type']) {
+            case 'autocomplete':
+                $item['visibleRows'] = 5;
+                $item['allowInvalid'] = true;
+                $item['trimDropdown'] = false;
+                $item['strict'] = $column->widget->strict;
+                $item['data-source'] = $this->getAutocompleteSource($column->widget);
+                break;
+
+            case 'select':
+                $item['editor'] = 'select';
+                $item['selectOptions'] = $this->getSelectSource($column->widget);
+                break;
+
+            case 'number':
+            case 'money':
+                $item['type'] = 'numeric';
+                $item['numericFormat'] = DivisaTools::gridMoneyFormat();
+                break;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Return array of values to select
+     *
+     * @param WidgetSelect $widget
+     */
+    private function getSelectSource($widget): array
+    {
+        $result = [];
+        if (!$widget->required) {
+            $result[] = '';
+        }
+
+        foreach ($widget->values as $value) {
+            $result[] = $value['title'];
+        }
+        return $result;
+    }
+
+    /**
+     * Load data of master document and set data from array
+     *
+     * @param string $field
+     * @param array  $data
+     *
+     * @return bool
+     */
+    private function loadDocumentDataFromArray($field, &$data): bool
+    {
+        if ($this->model->loadFromCode($data[$field])) {    // old data
+            $this->model->loadFromData($data, ['action', 'activetab', 'code']);  // new data (the web form may be not have all the fields)
+            return $this->model->test();
+        }
+        return false;
     }
 }
