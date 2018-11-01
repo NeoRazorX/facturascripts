@@ -29,24 +29,24 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codejercicio" readonly="true" />
             </column>
-            <column name="name" numcolumns="4" order="110">
+            <column name="name" numcolumns="5" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="start-date" numcolumns="3" order="120">
-                <widget type="date" fieldname="fechainicio" />
-            </column>
-            <column name="end-date" numcolumns="3" order="130">
-                <widget type="date" fieldname="fechafin" />
-            </column>
-            <column name="company" numcolumns="4" order="130">
+            <column name="company" numcolumns="5" order="120">
                 <widget type="select" fieldname="idempresa" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="account-length" numcolumns="2" order="140">
+            <column name="start-date" numcolumns="3" order="130">
+                <widget type="date" fieldname="fechainicio" />
+            </column>
+            <column name="end-date" numcolumns="3" order="140">
+                <widget type="date" fieldname="fechafin" />
+            </column>
+            <column name="account-length" numcolumns="3" order="150">
                 <widget type="number" fieldname="longsubcuenta" required="true" />
             </column>
-            <column name="status" numcolumns="3" order="150">
+            <column name="status" numcolumns="3" order="160">
                 <widget type="select" fieldname="estado" translate="true" required="true">
                     <values title="opened">ABIERTO</values>
                     <values title="closed">CERRADO</values>

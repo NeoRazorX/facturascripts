@@ -47,4 +47,12 @@
             <widget type="text" fieldname="nivel4" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="naturaleza">A</option>
+            <option color="info" fieldname="naturaleza">P</option>
+            <option color="danger" fieldname="naturaleza">PG</option>
+            <option color="warning" fieldname="naturaleza">IG</option>
+        </row>
+    </rows>
 </view>

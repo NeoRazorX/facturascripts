@@ -24,33 +24,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Controller to edit a single item from the  Empresa model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class EditEmpresa extends ExtendedController\EditController
 {
-
-    /**
-     * Create views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-        $this->createViewBankAccounts();
-        $this->createViewWarehouse();
-    }
-
-    private function createViewBankAccounts()
-    {
-        $this->addEditListView('EditCuentaBanco', 'CuentaBanco', 'accounts', 'fas fa-piggy-bank');
-        $this->views['EditCuentaBanco']->disableColumn('company');
-    }
-
-    private function createViewWarehouse()
-    {
-        $this->addEditListView('EditAlmacen', 'Almacen', 'warehouse', 'fas fa-building');
-        $this->views['EditAlmacen']->disableColumn('company');
-    }
 
     /**
      * Returns the model name
@@ -74,6 +52,35 @@ class EditEmpresa extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Create views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->createViewWarehouse();
+        $this->createViewBankAccounts();
+        $this->createViewExercises();
+    }
+
+    private function createViewBankAccounts($viewName = 'EditCuentaBanco')
+    {
+        $this->addEditListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->views[$viewName]->disableColumn('company');
+    }
+
+    private function createViewExercises($viewName = 'ListEjercicio')
+    {
+        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
+        $this->views[$viewName]->disableColumn('company');
+    }
+
+    private function createViewWarehouse($viewName = 'EditAlmacen')
+    {
+        $this->addEditListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');
+        $this->views[$viewName]->disableColumn('company');
     }
 
     /**
