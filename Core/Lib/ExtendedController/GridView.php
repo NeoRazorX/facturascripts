@@ -91,7 +91,8 @@ class GridView extends EditView
      * Returns detail column configuration
      *
      * @param string $key
-     * @return GroupItem[]
+     * 
+     * @return ColumnItem[]
      */
     public function getDetailColumns($key = '')
     {
@@ -169,11 +170,10 @@ class GridView extends EditView
         $primaryKey = $this->detailView->model->primaryColumn();
         foreach ($lines as $data) {
             if (!isset($data[$primaryKey])) {
-                foreach ($this->getDetailColumns('detail') as $group) {
-                    foreach ($group->columns as $col) {
-                        if (!isset($data[$col->widget->fieldname])) {
-                            $data[$col->widget->fieldname] = null;   // TODO: maybe the widget can have a default value method instead of null
-                        }
+                foreach ($this->getDetailColumns('detail') as $col) {
+                    if (!isset($data[$col->widget->fieldname])) {
+                        // TODO: maybe the widget can have a default value method instead of null
+                        $data[$col->widget->fieldname] = null;
                     }
                 }
             }
