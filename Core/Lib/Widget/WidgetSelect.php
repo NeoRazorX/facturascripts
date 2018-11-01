@@ -221,14 +221,16 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
+        $cssFormControl = $this->css('form-control');
         if ($this->readonly === 'true' || ($this->readonly === 'dinamic' && !empty($this->value))) {
-            return parent::inputHtml($type, $extraClass);
+            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+                . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>';
         }
 
-        $html = '<select name="' . $this->fieldname . '" class="form-control"' . $this->inputHtmlExtraParams() . '>';
+        $html = '<select name="' . $this->fieldname . '" class="' . $cssFormControl . '"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
             /// don't use strict comparation (===)
-            $selected = ($option['value'] == $this->value) ? ' selected="selected" ' : '';
+            $selected = ($option['value'] == $this->value) ? ' selected="" ' : '';
             $title = empty($option['title']) ? $option['value'] : $option['title'];
             $html .= '<option value="' . $option['value'] . '" ' . $selected . '>' . $title . '</option>';
         }
