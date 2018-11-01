@@ -144,7 +144,7 @@ class AssetManager
     }
 
     /**
-     * 
+     *
      * @param string $data
      * @param string $url
      *

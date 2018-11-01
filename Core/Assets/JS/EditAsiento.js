@@ -100,8 +100,6 @@ function setAccountData(data) {
  * @returns {Boolean}
  */
 function saveVatRegister() {
-    console.log("saveVatRegister");
-
     // cancel eventManager for submit form and hide form
     event.preventDefault();
     vatModal.modal("hide");
@@ -169,7 +167,7 @@ function customAfterSelection(row1, col1, row2, col2, preventScrolling) {
                 return;
             }
 
-            var exercise = $("input[name=codejercicio]")[0];
+            var exercise = $("#formGridEditAsiento input[name=codejercicio]")[0];
             var data = {
                 action: "account-data",
                 codsubcuenta: subAccount,
@@ -229,7 +227,7 @@ function customAfterChange(changes) {
             total.val(results.total);
             // show VAT Register, if needed
             if (Object.keys(results.vat).length > 0) {
-                showVatRegister("VAT-register", "EditAsiento");
+                showVatRegister("vat-register", "EditAsiento");
             }
         },
         error: function (xhr, status, error) {
@@ -247,17 +245,17 @@ function customAfterChange(changes) {
 $(document).ready(function () {
     if (document.getElementById("document-lines")) {
         // Init Working variables
-        mainForm = $("#formEditAsiento");
+        mainForm = $("#formGridEditAsiento");
         accountDescription = document.getElementById("account-description");
         accountBalance = document.getElementById("account-balance");
         unbalance = document.getElementById("unbalance");
-        total = $("#formEditAsiento input[name=importe]");
-        vatRegister = $("#formGridViewEditPartida button[value=VAT-register]");
+        total = $("#formGridEditAsiento input[name=importe]");
+        vatRegister = $("#vat-register-btn");
         vatRegister.prop("disabled", true);
 
         // Set initial clone state
         if (getGridFieldData(0, "idpartida") === undefined) {
-            $("#formGridViewEditPartida button[value=clone-btn]").prop("disabled", true);
+            $("#clone-btn").prop("disabled", true);
         }
 
         // Calculate initial unbalance
@@ -285,7 +283,6 @@ $(document).ready(function () {
                 options: {}
             });
         }
-
         selectCell(0, 0);
     }
 });

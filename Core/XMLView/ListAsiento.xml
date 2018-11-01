@@ -30,23 +30,28 @@
         <column name="number" order="100">
             <widget type="text" fieldname="numero" />
         </column>
-        <column name="fiscal-exercise" order="110">
+        <column name="company" order="110">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
+        <column name="exercise" order="120">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column name="journals" order="120">
+        <column name="journal" order="130">
             <widget type="select" fieldname="iddiario" onclick="EditDiario">
                 <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="accounting-concept" order="130">
+        <column name="accounting-concept" order="140">
             <widget type="text" fieldname="concepto" />
         </column>
-        <column name="amount" display="right" order="140">
+        <column name="amount" display="right" order="150">
             <widget type="money" fieldname="importe">
                 <option color="danger">&lt;0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="150">
+        <column name="date" display="right" order="160">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>

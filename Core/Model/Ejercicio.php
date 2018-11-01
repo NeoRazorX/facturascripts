@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -27,6 +28,9 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Ejercicio extends Base\ModelClass
 {
+
+    const EXERCISE_STATUS_OPEN = 'ABIERTO';
+    const EXERCISE_STATUS_CLOSED = 'CERRADO';
 
     use Base\ModelTrait;
 
@@ -80,6 +84,13 @@ class Ejercicio extends Base\ModelClass
     public $idasientoapertura;
 
     /**
+     * Foreign Key with Empresas table.
+     *
+     * @var int
+     */
+    public $idempresa;
+
+    /**
      * Length of characters of the subaccounts assigned.
      *
      * @var int
@@ -100,7 +111,7 @@ class Ejercicio extends Base\ModelClass
      */
     public function abierto()
     {
-        return $this->estado === 'ABIERTO';
+        return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
 
     /**
@@ -109,10 +120,11 @@ class Ejercicio extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->nombre = '';
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
-        $this->estado = 'ABIERTO';
+        $this->estado = self::EXERCISE_STATUS_OPEN;
         $this->longsubcuenta = 10;
     }
 
@@ -151,22 +163,24 @@ class Ejercicio extends Base\ModelClass
      * Returns the exercise for the indicated date.
      * If it does not exist, create it.
      *
+     * @param int    $idempresa
      * @param string $fecha
      * @param bool   $soloAbierto
      * @param bool   $crear
      *
      * @return bool|Ejercicio
      */
-    public static function getByFecha($fecha, $soloAbierto = true, $crear = true)
+    public static function getByFecha($idempresa, $fecha, $soloAbierto = true, $crear = true)
     {
         $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE ' . self::$dataBase->var2str($fecha) . ' BETWEEN fechainicio AND fechafin;';
+            . ' WHERE idempresa = ' . $idempresa
+            . ' AND ' . self::$dataBase->var2str($fecha) . ' BETWEEN fechainicio AND fechafin;';
 
         $data = self::$dataBase->select($sql);
         if (empty($data)) {
             if ($crear && (strtotime($fecha) >= 1)) {
                 $eje = new self();
-                $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
+                $eje->codejercicio = $eje->newCode();
                 $eje->nombre = date('Y', strtotime($fecha));
                 $eje->fechainicio = date('1-1-Y', strtotime($fecha));
                 $eje->fechafin = date('31-12-Y', strtotime($fecha));
@@ -190,10 +204,16 @@ class Ejercicio extends Base\ModelClass
      */
     public function install()
     {
-        return 'INSERT INTO ' . static::tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
-            . 'estado,longsubcuenta,idasientoapertura,idasientopyg,idasientocierre) '
-            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
-            . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,null,null,null);";
+        new Empresa();
+
+        $code = "'0001'";
+        $year = "'" . date('Y') . "'";
+        $start = self::$dataBase->var2str(date('01-01-Y'));
+        $end = self::$dataBase->var2str(date('31-12-Y'));
+        $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
+        return 'INSERT INTO ' . static::tableName()
+            . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'
+            . ' VALUES (' . $code . ',' . $year . ',' . $start . ',' . $end . ',' . $state . ',10,1);';
     }
 
     /**
@@ -211,26 +231,18 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
-     * Returns a new code for an exercise.
+     * Returns the following code for the reported field or the primary key of the model.
+     * (Formated to 4 digits)
      *
-     * @param string $cod
+     * @param string $field
+     * @param array  $where
      *
      * @return string
      */
-    public function newCodigo($cod = '0001')
+    public function newCode(string $field = '', array $where = array())
     {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($cod) . ';';
-        if (!self::$dataBase->select($sql)) {
-            return $cod;
-        }
-
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codejercicio') . ') as cod FROM ' . static::tableName() . ';';
-        $newCod = self::$dataBase->select($sql);
-        if (!empty($newCod)) {
-            return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
-        }
-
-        return '0001';
+        $newCode = parent::newCode($field, $where);
+        return sprintf('%04s', (int) $newCode);
     }
 
     /**

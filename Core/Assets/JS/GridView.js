@@ -234,11 +234,10 @@ function saveDocument(mainFormName) {
             lines: getGridData("order"),
             document: {}
         };
-        var mainForm = $("#form" + mainFormName);
+        var mainForm = $("#" + mainFormName);
         $.each(mainForm.serializeArray(), function (key, value) {
             data.document[value.name] = value.value;
         });
-
         $.ajax({
             type: "POST",
             url: documentUrl,
@@ -273,23 +272,24 @@ $(document).ready(function () {
 
         // Create Grid Object
         gridObject = new Handsontable(container, {
-            data: documentLineData.rows,
-            columns: documentLineData.columns,
-            rowHeaders: true,
-            colHeaders: documentLineData.headers,
-            stretchH: "all",
             autoWrapRow: true,
-            contextMenu: false,
+            contextMenu: true,
+            colHeaders: documentLineData.headers,
+            columns: documentLineData.columns,
+            colWidths: documentLineData.colwidths,
+            data: documentLineData.rows,
+            dropdownMenu: true,
+            enterMoves: {row: 0, col: 1},
+            filters: true,
             manualRowResize: true,
             manualColumnResize: true,
             manualRowMove: true,
             manualColumnMove: false,
-            filters: true,
-            minSpareRows: 1,
-            minRows: 7,
-            enterMoves: {row: 0, col: 1}
+            minSpareRows: 5,
+            preventOverflow: "horizontal",
+            rowHeaders: true,
+            stretchH: 'all'
         });
-
         Handsontable.hooks.add("afterSelection", eventAfterSelection);
         Handsontable.hooks.add("beforeChange", eventBeforeChange);
     }

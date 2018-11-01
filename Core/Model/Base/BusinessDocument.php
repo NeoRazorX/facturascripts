@@ -462,7 +462,7 @@ abstract class BusinessDocument extends ModelClass
     public function setDate(string $date, string $hour): bool
     {
         $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->getByFecha($date);
+        $ejercicio = $ejercicioModel->getByFecha($this->idempresa, $date);
         if ($ejercicio) {
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;

@@ -48,6 +48,13 @@ class ListAsiento extends ExtendedController\ListController
      */
     protected function createViews()
     {
+        $this->createViewAccountEntries(); /// account entries tab
+        $this->createViewConcepts(); /// concepts tab
+        $this->createViewJournals(); /// journals tab
+    }
+
+    private function createViewAccountEntries()
+    {
         /// accounting entries
         $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
@@ -59,22 +66,19 @@ class ListAsiento extends ExtendedController\ListController
         $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber('ListAsiento', 'max-total', 'amount', 'importe', '<=');
 
-        $selectValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->addFilterSelect('ListAsiento', 'codejercicio', 'exercise', 'codejercicio', $selectValues);
+        $selectCompany = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect('ListAsiento', 'idempresa', 'company', 'idempresa', $selectCompany);
+
+        $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+        $this->addFilterSelect('ListAsiento', 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
 
         $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal', '=');
-
-        /// concepts tab
-        $this->createViewConcepts();
-
-        /// journals tab
-        $this->createViewJournals();
     }
 
-    protected function createViewConcepts()
+    private function createViewConcepts()
     {
         $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
@@ -82,7 +86,7 @@ class ListAsiento extends ExtendedController\ListController
         $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
     }
 
-    protected function createViewJournals()
+    private function createViewJournals()
     {
         $this->addView('ListDiario', 'Diario', 'journals', 'fas fa-book');
         $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
