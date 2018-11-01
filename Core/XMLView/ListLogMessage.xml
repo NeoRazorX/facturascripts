@@ -57,7 +57,7 @@
             <option color="danger">emergency</option>
         </row>
         <row type="actions">
-            <button type="action" label="delete-selected-filters" color="warning" action="delete-selected-filters" icon="fas fa-trash" />
+            <button type="action" label="delete-selected-filters" color="warning" action="delete-selected-filters" icon="fas fa-trash-alt" />
         </row>
     </rows>
 </view>
