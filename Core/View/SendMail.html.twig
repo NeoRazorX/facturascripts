@@ -1,10 +1,5 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
-{% block css %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('node_modules/summernote/dist/summernote-bs4.css') }}"/>
-{% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
@@ -16,9 +11,6 @@
             return split(term).pop();
         }
         $(document).ready(function () {
-            // html widgets
-            $('.html-editor').summernote();
-
             var cacheQuery = {};
             $("#email,#email-cc,#email-bcc")
                     // don't navigate away from the field on tab when selecting an item
@@ -116,7 +108,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <textarea name="body" rows="10" class="html-editor"></textarea>
+                        <textarea name="body" rows="10" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
