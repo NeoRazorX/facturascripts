@@ -155,7 +155,9 @@ class PeriodTools
      */
     public static function getFilterOptions(&$i18n)
     {
-        $result = [];
+        $result = [
+            ['code' => '', 'description' => '------']
+        ];
         foreach (self::getPeriods() as $value) {
             $result[] = ['code' => $value, 'description' => $i18n->trans($value)];
         }

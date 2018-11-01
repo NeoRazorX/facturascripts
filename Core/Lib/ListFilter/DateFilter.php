@@ -79,7 +79,7 @@ class DateFilter extends BaseFilter
             . '</span>'
             . '</span>'
             . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control datepicker"'
-            . ' placeholder="' . $label . '" autocomplete="off"' . $this->onChange() . '/>'
+            . ' placeholder="' . $label . '" autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'
             . '</div>'
             . '</div>'
             . '</div>';

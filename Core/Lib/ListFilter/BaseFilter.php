@@ -61,6 +61,12 @@ abstract class BaseFilter
 
     /**
      *
+     * @var bool
+     */
+    public $readonly = false;
+
+    /**
+     *
      * @var mixed
      */
     protected $value;
@@ -140,6 +146,15 @@ abstract class BaseFilter
      */
     protected function onChange()
     {
-        return $this->autoSubmit ? ' onchange="this.form.submit()"' : '';
+        return $this->autoSubmit ? ' onchange="this.form.submit();"' : '';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function readonly()
+    {
+        return $this->readonly ? ' readonly=""' : '';
     }
 }

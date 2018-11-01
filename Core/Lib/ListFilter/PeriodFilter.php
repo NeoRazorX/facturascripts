@@ -19,18 +19,26 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Lib\ListFilter\PeriodTools;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of PeriodFilter
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PeriodFilter extends BaseFilter
 {
 
+    const ENDDATE_ID = 'end';
     const SELECT_ID = 'period';
     const STARTDATE_ID = 'start';
-    const ENDDATE_ID = 'end';
+
+    /**
+     *
+     * @var DateFilter
+     */
+    private $endDate;
 
     /**
      *
@@ -43,12 +51,6 @@ class PeriodFilter extends BaseFilter
      * @var DateFilter
      */
     private $startDate;
-
-    /**
-     *
-     * @var DateFilter
-     */
-    private $endDate;
 
     /**
      * Class constructor.
@@ -84,17 +86,17 @@ class PeriodFilter extends BaseFilter
      * @param string $option
      * @return mixed
      */
-    public function getValue($option = self::STARTDATE_ID)
+    public function getValue($option = self::SELECT_ID)
     {
         switch ($option) {
-            case 'period':
-                return $this->select->getValue();
+            case self::STARTDATE_ID:
+                return $this->startDate->getValue();
 
-            case 'end':
+            case self::ENDDATE_ID:
                 return $this->endDate->getValue();
 
             default:
-                return $this->startDate->getValue();
+                return $this->select->getValue();
         };
     }
 
@@ -110,6 +112,51 @@ class PeriodFilter extends BaseFilter
     }
 
     /**
+     * Set value to filter
+     *
+     * @param mixed $value
+     */
+    public function setValue($value, $option = self::SELECT_ID)
+    {
+        switch ($option) {
+            case self::STARTDATE_ID:
+                $this->startDate->setValue($value);
+                break;
+
+            case self::ENDDATE_ID:
+                $finalValue = empty($value) ? $this->getValue(self::STARTDATE_ID) : $value;
+                $this->endDate->setValue($value);
+                break;
+
+            default:
+                $this->select->setValue($value);
+                $this->setPeriodToDates();
+                break;
+        }
+    }
+
+    /**
+     * Set value to filter from form request
+     *
+     * @param Request $request
+     */
+    public function setValueFromRequest(&$request)
+    {
+        $selectValue = $request->request->get($this->select->name());
+        if (empty($selectValue)) {
+            /// start
+            $startValue = $request->request->get($this->startDate->name());
+            $this->setValue($startValue, self::STARTDATE_ID);
+
+            /// end
+            $endValue = $request->request->get($this->endDate->name());
+            $this->setValue($endValue, self::ENDDATE_ID);
+        } else {
+            $this->setValue($selectValue, self::SELECT_ID);
+        }
+    }
+
+    /**
      * Set date value and disable filter
      *
      * @param string $date
@@ -118,6 +165,8 @@ class PeriodFilter extends BaseFilter
     private function setDateAndDisable($date, $option)
     {
         $this->setValue($date, $option);
+        $this->startDate->readonly = true;
+        $this->endDate->readonly = true;
     }
 
     /**
@@ -130,50 +179,5 @@ class PeriodFilter extends BaseFilter
         PeriodTools::applyPeriod($this->getValue(self::SELECT_ID), $startdate, $enddate);
         $this->setDateAndDisable($startdate, self::STARTDATE_ID);
         $this->setDateAndDisable($enddate, self::ENDDATE_ID);
-    }
-
-    /**
-     * Set value to filter
-     *
-     * @param mixed $value
-     */
-    public function setValue($value, $option = self::STARTDATE_ID)
-    {
-        switch ($option) {
-            case self::SELECT_ID:
-                $this->select->setValue($value);
-                $this->setPeriodToDates();
-                break;
-
-            case self::ENDDATE_ID:
-                if (empty($value)) {
-                    $this->endDate->setValue($this->getValue(self::STARTDATE_ID));
-                } else {
-                    $this->endDate->setValue($value);
-                }
-                break;
-
-            default:
-                $this->startDate->setValue($value);
-                break;
-        }
-    }
-
-    /**
-     * Set value to filter from form request
-     *
-     * @param \Symfony\Component\HttpFoundation\ParameterBag $request
-     */
-    public function setValueFromRequest(&$request)
-    {
-        $selectValue = $request->get($this->select->name());
-        $this->setValue($selectValue, self::SELECT_ID);
-        if (empty($selectValue)) {
-            $startValue = $request->get($this->startDate->name());
-            $this->setValue($startValue, self::STARTDATE_ID);
-
-            $endValue = $request->get($this->endDate->name());
-            $this->setValue($endValue, self::ENDDATE_ID);
-        }
     }
 }
