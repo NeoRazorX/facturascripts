@@ -34,7 +34,6 @@
     <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>NO</null>
     </column>
     <column>
         <name>nombre</name>
