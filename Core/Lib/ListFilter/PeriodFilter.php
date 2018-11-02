@@ -77,7 +77,12 @@ class PeriodFilter extends BaseFilter
      */
     public function getDataBaseWhere(array &$where): bool
     {
-        return $this->startDate->getDataBaseWhere($where) && $this->endDate->getDataBaseWhere($where);
+        /// apply both
+        $start = $this->startDate->getDataBaseWhere($where);
+        $end = $this->endDate->getDataBaseWhere($where);
+
+        /// return true if anyone is true
+        return $start || $end;
     }
 
     /**
@@ -124,7 +129,6 @@ class PeriodFilter extends BaseFilter
                 break;
 
             case self::ENDDATE_ID:
-                $finalValue = empty($value) ? $this->getValue(self::STARTDATE_ID) : $value;
                 $this->endDate->setValue($value);
                 break;
 
