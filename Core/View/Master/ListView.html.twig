@@ -141,7 +141,9 @@
         </div>
     </div>
     {# -- Save Filter modal window -- #}
-    {{ macros.filterSaveModal(currentView, i18n) }}
+    {% if currentView.showFilters %}
+        {{ macros.filterSaveModal(currentView, i18n) }}
+    {% endif %}
 </form>
 
 {# -- Modals -- #}
@@ -206,7 +208,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>{{ i18n.trans('description') }}</label>
-                                <input type="text" name="filter-description" value="" class="form-control noEnterKey" autofocus="" required=""/>
+                                <input type="text" name="filter-description" class="form-control noEnterKey" autofocus=""/>
                             </div>
                         </div>
                     </div>

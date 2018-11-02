@@ -309,7 +309,7 @@ class ListView extends BaseView
 
         // Set basic data and save filter
         $pageFilter->id = $request->request->get('filter-id', null);
-        $pageFilter->description = $request->request->get('filter-description');
+        $pageFilter->description = $request->request->get('filter-description', '');
         $pageFilter->name = explode('-', $this->getViewName())[0];
         $pageFilter->nick = $user->nick;
 
