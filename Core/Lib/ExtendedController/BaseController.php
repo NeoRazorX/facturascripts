@@ -122,7 +122,7 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */
@@ -141,7 +141,7 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
+     *
      * @return BaseView
      */
     public function getCurrentView()
@@ -163,7 +163,7 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     public function setCurrentView($viewName)
@@ -199,6 +199,10 @@ abstract class BaseController extends Base\Controller
         $results = [];
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+
+        if (empty($results)) {
+            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-value')];
         }
         return $results;
     }
