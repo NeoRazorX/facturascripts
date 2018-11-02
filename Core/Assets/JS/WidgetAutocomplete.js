@@ -62,7 +62,7 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                value = ui.item.value.split(" | ");
+                var value = ui.item.value.split(" | ");
                 if (value[0] !== null) {
                     $("form[id=" + formId + "] input[name=" + field + "]").val(ui.item.key);
                     ui.item.value = value[1];

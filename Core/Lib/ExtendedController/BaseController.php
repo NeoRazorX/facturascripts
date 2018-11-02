@@ -202,7 +202,7 @@ abstract class BaseController extends Base\Controller
         }
 
         if (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-value')];
+            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-data')];
         }
         return $results;
     }
