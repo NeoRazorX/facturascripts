@@ -48,6 +48,15 @@ class ExportManager
      */
     public function __construct()
     {
+        $this->init();
+    }
+
+    /**
+     * Initialize options array
+     *
+     */
+    public static function init()
+    {
         if (self::$options === null) {
             self::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
@@ -172,5 +181,19 @@ class ExportManager
         }
 
         return $className;
+    }
+
+    /**
+     * Add a new option in array options
+     * @param string $key
+     * @param string $description
+     * @param string $icon
+     */
+    public static function addOption($key, $description, $icon)
+    {
+        self::init();
+        $values = ['description' => $description, 'icon' => $icon];
+
+        self::$options[$key] = $values;
     }
 }
