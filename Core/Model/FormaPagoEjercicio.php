@@ -19,67 +19,58 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
 
 /**
- * Payment method of an invoice, delivery note, order or estimation.
+ * Payment method for company and exercise.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class FormaPago extends Base\ModelClass
+class FormaPagoEjercicio extends Base\ModelClass
 {
 
     use Base\ModelTrait;
 
     /**
-     * Primary key. Varchar (10).
+     * Code of the associated bank account.
+     *
+     * @var string
+     */
+    public $codcuentabanco;
+
+    /**
+     * Exercise code of the accounting entry.
+     *
+     * @var string
+     */
+    public $codejercicio;
+
+    /**
+     * Foreign Key with FormasPago table.
      *
      * @var string
      */
     public $codpago;
 
     /**
-     * Description of the payment method.
+     * Sub-account code.
      *
      * @var string
      */
-    public $descripcion;
+    public $codsubcuenta;
 
     /**
-     * To indicate if it is necessary to show the bank account of the client.
-     *
-     * @var bool
-     */
-    public $domiciliado;
-
-    /**
-     * Paid -> mark the invoices generated as paid.
-     *
-     * @var string
-     */
-    public $genrecibos;
-
-    /**
-     * True (default) -> display the data in sales documents,
-     * including the associated bank account.
-     *
-     * @var bool
-     */
-    public $imprimir;
-
-    /**
-     * Expiration period.
+     * Foreign Key with Empresas table.
      *
      * @var int
      */
-    public $plazovencimiento;
+    public $idempresa;
 
     /**
-     * Type of expiration. varchar(10)
+     * Primary key. Serial.
      *
-     * @var string
+     * @var type
      */
-    public $tipovencimiento;
+    public $idfpagoejer;
 
     /**
      * Reset the values of all model properties.
@@ -87,21 +78,22 @@ class FormaPago extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->domiciliado = false;
-        $this->genrecibos = 'Emitidos';
-        $this->imprimir = true;
-        $this->plazovencimiento = 0;
-        $this->tipovencimiento = 'days';
+        $this->idempresa = AppSettings::get('default', 'idempresa');
     }
 
     /**
-     * Returns True if is the default payment method for the company.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
-     * @return bool
+     * @return string
      */
-    public function isDefault()
+    public function install()
     {
-        return $this->codpago === AppSettings::get('default', 'codpago');
+        new Ejercicio();
+        new FormaPago();
+        new CuentaBanco();
+        return parent::install();
     }
 
     /**
@@ -111,7 +103,7 @@ class FormaPago extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'codpago';
+        return 'idfpagoejer';
     }
 
     /**
@@ -121,7 +113,7 @@ class FormaPago extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'formaspago';
+        return 'formaspagoejercicios';
     }
 
     /**
@@ -131,14 +123,6 @@ class FormaPago extends Base\ModelClass
      */
     public function test()
     {
-        $this->descripcion = Utils::noHtml($this->descripcion);
-
-        /// we check the expiration validity
-        if ($this->plazovencimiento < 0) {
-            self::$miniLog->alert(self::$i18n->trans('number-expiration-invalid'));
-            return false;
-        }
-
         return parent::test();
     }
 }
