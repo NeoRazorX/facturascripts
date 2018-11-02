@@ -50,7 +50,7 @@
             <widget type="text" fieldname="fechafin" />
         </column>
         <column name="id-accounting" title="accounting-entry" order="140">
-            <widget type="select" fieldname="idasiento" onclick="EditAsiento">
+            <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento">
                 <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
             </widget>
         </column>
