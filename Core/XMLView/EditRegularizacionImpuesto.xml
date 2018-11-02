@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="period" title="period" numcolumns="8" icon="fas fa-calendar-alt">
+        <group name="period" title="period" numcolumns="12" icon="fas fa-calendar-alt">
             <column name="id" order="100" display="none">
                 <widget type="text" fieldname="idregularizacion" />
             </column>
@@ -34,7 +34,7 @@
                 </widget>
             </column>
             <column name="period" order="110">
-                <widget type="select" fieldname="periodo" required="true">
+                <widget type="select" fieldname="periodo" required="true" translate="true">
                     <values title="first-trimester">T1</values>
                     <values title="second-trimester">T2</values>
                     <values title="third-trimester">T3</values>
@@ -47,15 +47,13 @@
             <column name="end-date" order="130">
                 <widget type="date" fieldname="fechafin" readonly="true" />
             </column>
-        </group>
-
-        <group name="space" numcolumns="1"></group>
-
-        <group name="accounting" title="accounting-entry" icon="fas fa-book">
-            <column name="accounting-date" order="200">
-                <widget type="text" fieldname="fechaasiento" readonly="true" />
+            <column name="company" order="140">
+                <widget type="select" fieldname="idempresa" readonly="true" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
             </column>
         </group>
+
         <group name="accounts" title="accounts" numcolumns="8" icon="fas fa-th-list">
             <column name="tax-credit-account" order="300">
                 <widget type="autocomplete" fieldname="codsubcuentaacreedora" required="true">
@@ -66,6 +64,14 @@
                 <widget type="autocomplete" fieldname="codsubcuentadeudora" required="true">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
+            </column>
+        </group>
+
+        <group name="space" numcolumns="1"></group>
+
+        <group name="accounting" title="accounting-entry" icon="fas fa-book">
+            <column name="accounting-date" order="200">
+                <widget type="date" fieldname="fechaasiento" readonly="true" />
             </column>
         </group>
     </columns>
