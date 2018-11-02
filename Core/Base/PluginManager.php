@@ -131,9 +131,15 @@ class PluginManager
      */
     public function enable(string $pluginName)
     {
+        // Exits facturascripts.ini
+        if (!$this->existIniFile($pluginName)) {
+            self::$minilog->alert(self::$i18n->trans('initfile-not-exits'));
+            return;
+        }
         /// is pluginName enabled?
         foreach (self::$enabledPlugins as $value) {
             if ($value['name'] === $pluginName) {
+
                 return;
             }
         }
@@ -151,6 +157,21 @@ class PluginManager
                 self::$minilog->notice(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
             }
             break;
+        }
+    }
+
+    /**
+     * Return True if exits facturascripts.ini in Plugin root folder
+     * @param string $pluginName
+     * @return boolean
+     */
+    public function existIniFile(string $pluginName)
+    {
+        if (file_exists(FS_FOLDER . '\Plugins' . DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . 'facturascripts.ini'))
+            return TRUE;
+        else {
+            self::$minilog->notice(FS_FOLDER . '\Plugins' . DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . 'facturascripts.ini');
+            return FALSE;
         }
     }
 
@@ -364,7 +385,7 @@ class PluginManager
     }
 
     /**
-     * 
+     *
      * @param string $pluginName
      */
     private function initPlugin(string $pluginName)
