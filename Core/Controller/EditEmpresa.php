@@ -92,8 +92,9 @@ class EditEmpresa extends ExtendedController\EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditCuentaBanco':
             case 'EditAlmacen':
+            case 'EditCuentaBanco':
+            case 'ListEjercicio':
                 $idcompany = $this->getViewModelValue('EditEmpresa', 'idempresa');
                 $where = [new DataBaseWhere('idempresa', $idcompany)];
                 $view->loadData('', $where);
