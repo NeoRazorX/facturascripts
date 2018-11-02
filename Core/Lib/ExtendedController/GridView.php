@@ -91,7 +91,7 @@ class GridView extends EditView
      * Returns detail column configuration
      *
      * @param string $key
-     * 
+     *
      * @return ColumnItem[]
      */
     public function getDetailColumns($key = '')
@@ -132,6 +132,10 @@ class GridView extends EditView
         if ($this->count == 0) {
             $this->template = self::EDITVIEW_TEMPLATE;
         } else {
+            if ($this->newCode !== null) {
+                $code = $this->newCode;
+            }
+
             $where = [new DataBaseWhere($this->model->primaryColumn(), $code)];
             $orderby = [$this->detailView->model->primaryColumn() => 'ASC'];
             $this->loadGridData($where, $orderby);
