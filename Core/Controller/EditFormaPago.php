@@ -33,6 +33,30 @@ class EditFormaPago extends ExtendedController\EditController
 {
 
     /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'FormaPago';
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'payment-method';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fas fa-credit-card';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
+
+    /**
      * Run the autocomplete action with exercise filter
      * Returns a JSON string for the searched values.
      *
@@ -48,11 +72,8 @@ class EditFormaPago extends ExtendedController\EditController
             case 'subcuentas':
                 return $this->autocompleteWithFilter('codejercicio');
 
-            case 'ejercicios':
-                return $this->autocompleteWithFilter('idempresa');
-
-          default:
-              return parent::autocompleteAction();
+            default:
+                return parent::autocompleteAction();
         }
     }
 
@@ -82,37 +103,10 @@ class EditFormaPago extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->createViewExercises();
-    }
 
-    private function createViewExercises($viewName = 'EditFormaPagoEjercicio')
-    {
-        $this->addEditListView($viewName, 'FormaPagoEjercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->views[$viewName]->disableColumn('codpago');
-    }
-
-    /**
-     * Returns the model name
-     */
-    public function getModelClassName()
-    {
-        return 'FormaPago';
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'payment-method';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-credit-card';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        /// configurations
+        $this->addEditListView('EditFormaPagoEmpresa', 'FormaPagoEmpresa', 'company', 'fas fa-building');
+        $this->views['EditFormaPagoEmpresa']->disableColumn('codpago');
     }
 
     /**
@@ -127,7 +121,7 @@ class EditFormaPago extends ExtendedController\EditController
             case 'FormaPagoEjercicio':
                 $payment = $this->getViewModelValue('EditFormapago', 'codpago');
                 $where = [new DataBaseWhere('codpago', $payment)];
-                $view->loadData('', $where, ['idempresa' => 'ASC', 'codejercicio' => 'ASC']);
+                $view->loadData('', $where, ['idempresa' => 'ASC']);
                 break;
 
             default:

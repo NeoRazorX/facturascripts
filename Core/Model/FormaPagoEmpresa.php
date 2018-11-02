@@ -21,11 +21,12 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 
 /**
- * Payment method for company and exercise.
+ * Custom company payment method configuration.
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class FormaPagoEjercicio extends Base\ModelClass
+class FormaPagoEmpresa extends Base\ModelClass
 {
 
     use Base\ModelTrait;
@@ -36,13 +37,6 @@ class FormaPagoEjercicio extends Base\ModelClass
      * @var string
      */
     public $codcuentabanco;
-
-    /**
-     * Exercise code of the accounting entry.
-     *
-     * @var string
-     */
-    public $codejercicio;
 
     /**
      * Foreign Key with FormasPago table.
@@ -68,9 +62,9 @@ class FormaPagoEjercicio extends Base\ModelClass
     /**
      * Primary key. Serial.
      *
-     * @var type
+     * @var int
      */
-    public $idfpagoejer;
+    public $idpago;
 
     /**
      * Reset the values of all model properties.
@@ -90,9 +84,10 @@ class FormaPagoEjercicio extends Base\ModelClass
      */
     public function install()
     {
-        new Ejercicio();
+        /// needed dependencies
         new FormaPago();
         new CuentaBanco();
+
         return parent::install();
     }
 
@@ -103,7 +98,7 @@ class FormaPagoEjercicio extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idfpagoejer';
+        return 'idpago';
     }
 
     /**
@@ -113,16 +108,6 @@ class FormaPagoEjercicio extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'formaspagoejercicios';
-    }
-
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return parent::test();
+        return 'formaspagoempresa';
     }
 }
