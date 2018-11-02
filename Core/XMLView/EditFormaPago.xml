@@ -27,38 +27,26 @@
     <columns>
         <group name="data1" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codpago" icon="fas fa-credit-card" required="true" />
+                <widget type="text" fieldname="codpago" icon="fas fa-credit-card" readonly="dinamic" required="true" />
             </column>
-            <column name="description" numcolumns="5" order="110">
+            <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="genreceipts" title="generate-receipt" numcolumns="2" order="130">
+            <column name="genreceipts" numcolumns="2" title="generate-receipt" order="130">
                 <widget type="select" fieldname="genrecibos" translate="true">
                     <values title="paid">Pagados</values>
                     <values title="issued">Emitidos</values>
                 </widget>
             </column>
-            <column name="company" numcolumns="3" order="140">
-                <widget type="select" fieldname="idempresa" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-                </widget>
-            </column>
-        </group>
-        <group name="data2" numcolumns="12">
             <column name="expiration" numcolumns="2" order="200">
                 <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />
             </column>
-            <column name="expiration-type" numcolumns="4" order="220">
+            <column name="expiration-type" numcolumns="2" order="220">
                 <widget type="select" fieldname="tipovencimiento" translate="true">
                     <values title="days">days</values>
                     <values title="weeks">weeks</values>
                     <values title="months">months</values>
                     <values title="years">years</values>
-                </widget>
-            </column>
-            <column name="subaccount" numcolumns="4" order="250">
-                <widget type="autocomplete" fieldname="codsubcuenta">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
         </group>
@@ -72,4 +60,3 @@
         </group>
     </columns>
 </view>
-

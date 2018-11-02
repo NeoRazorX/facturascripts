@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\CodeModel;
 
 /**
  * Controller to edit a single item from the FormaPago model
@@ -29,6 +31,65 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditFormaPago extends ExtendedController\EditController
 {
+
+    /**
+     * Run the autocomplete action with exercise filter
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function autocompleteAction(): array
+    {
+        $source = $this->request->get('source', '');
+        switch ($source) {
+            case 'cuentasbanco':
+                return $this->autocompleteWithFilter('idempresa');
+
+            case 'subcuentas':
+                return $this->autocompleteWithFilter('codejercicio');
+
+            case 'ejercicios':
+                return $this->autocompleteWithFilter('idempresa');
+
+          default:
+              return parent::autocompleteAction();
+        }
+    }
+
+    private function autocompleteWithFilter($filterField)
+    {
+        $results = [];
+        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', $filterField]);
+        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
+        $where = [
+            new DataBaseWhere($filterField, $data[$filterField]),
+            new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
+        ];
+
+        foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
+            $results[] = ['key' => $row->code, 'value' => $row->description];
+        }
+
+        if (empty($results)) {
+            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-value')];
+        }
+        return $results;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->createViewExercises();
+    }
+
+    private function createViewExercises($viewName = 'EditFormaPagoEjercicio')
+    {
+        $this->addEditListView($viewName, 'FormaPagoEjercicio', 'exercises', 'fas fa-calendar-alt');
+        $this->views[$viewName]->disableColumn('codpago');
+    }
 
     /**
      * Returns the model name
@@ -52,5 +113,26 @@ class EditFormaPago extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'FormaPagoEjercicio':
+                $payment = $this->getViewModelValue('EditFormapago', 'codpago');
+                $where = [new DataBaseWhere('codpago', $payment)];
+                $view->loadData('', $where, ['idempresa' => 'ASC', 'codejercicio' => 'ASC']);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }
