@@ -61,6 +61,9 @@ class EditFabricante extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        /// products tab
         $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
     }
 

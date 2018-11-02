@@ -207,7 +207,11 @@ $(document).ready(function () {
                     success: function (results) {
                         var values = [];
                         results.forEach(function (element) {
-                            values.push({key: element.key, value: element.key + " | " + element.value});
+                            if (element.key !== null) {
+                                values.push({key: element.key, value: element.key + " | " + element.value});
+                            } else {
+                                values.push({key: null, value: element.value});
+                            }
                         });
                         response(values);
                     },
@@ -217,8 +221,11 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                $("#" + field + "Autocomplete").val(ui.item.key);
-                ui.item.value = ui.item.value.split(" | ")[1];
+                var value = ui.item.value.split(" | ");
+                if (value[0] !== null) {
+                    $("#" + field + "Autocomplete").val(ui.item.key);
+                    ui.item.value = value[1];
+                }
             }
         });
     });
