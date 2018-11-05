@@ -31,13 +31,13 @@
             <widget type="text" fieldname="level" />
         </column>
         <column name="message" order="120">
-            <widget type="text" fieldname="message" />
+            <widget type="textarea" fieldname="message" />
         </column>
         <column name="user" order="130">
             <widget type="text" fieldname="nick" />
         </column>
         <column name="url" order="140">
-            <widget type="text" fieldname="uri" />
+            <widget type="link" fieldname="uri" />
         </column>
         <column name="ip" order="150">
             <widget type="text" fieldname="ip" />
