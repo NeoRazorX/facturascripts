@@ -74,12 +74,7 @@ class EditAgente extends ExtendedController\EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditAgente':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'ListAlbaraneCliente':
+            case 'ListAlbaranCliente':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
@@ -87,6 +82,9 @@ class EditAgente extends ExtendedController\EditController
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 }
