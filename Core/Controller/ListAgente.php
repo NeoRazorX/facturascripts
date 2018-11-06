@@ -40,7 +40,7 @@ class ListAgente extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agents';
         $pagedata['icon'] = 'fas fa-id-badge';
-        $pagedata['menu'] = 'admin';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
