@@ -217,15 +217,7 @@ class BaseWidget extends VisualItem
     protected function inputHtmlExtraParams()
     {
         $params = $this->required ? ' required=""' : '';
-        switch ($this->readonly) {
-            case 'dinamic':
-                $params .= empty($this->value) ? '' : ' readonly=""';
-                break;
-
-            case 'true':
-                $params .= ' readonly=""';
-                break;
-        }
+        $params .= $this->readonly() ? ' readonly=""' : '';
 
         return $params;
     }
@@ -258,6 +250,19 @@ class BaseWidget extends VisualItem
         }
 
         return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value) . '" class="cancelClickable">' . $inside . '</a>';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function readonly()
+    {
+        if ($this->readonly === 'dinamic') {
+            return !empty($this->value);
+        }
+
+        return $this->readonly === 'true';
     }
 
     /**

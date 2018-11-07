@@ -58,7 +58,7 @@ class WidgetDate extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = 'datepicker')
     {
-        if ($this->readonly === 'true' || ($this->readonly === 'dinamic' && !empty($this->value))) {
+        if ($this->readonly()) {
             $extraClass = '';
         }
 

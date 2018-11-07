@@ -42,6 +42,12 @@ class WidgetFile extends BaseWidget
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $description = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]) . ' ' . $description;
+        if ($this->readonly()) {
+            $cssFormControl = $this->css('form-control');
+            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+                . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>';
+        }
+
         return parent::edit($model, $title, $description, $titleurl);
     }
 

@@ -222,7 +222,7 @@ class WidgetSelect extends BaseWidget
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $cssFormControl = $this->css('form-control');
-        if ($this->readonly === 'true' || ($this->readonly === 'dinamic' && !empty($this->value))) {
+        if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>';
         }
