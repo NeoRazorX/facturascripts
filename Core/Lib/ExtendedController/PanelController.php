@@ -319,13 +319,13 @@ abstract class PanelController extends BaseController
                 $this->response->setContent(json_encode($results));
                 return false;
 
-            case 'edit':
-                $this->editAction();
-                break;
-
             case 'delete':
             case 'delete-document':
                 $this->deleteAction();
+                break;
+
+            case 'edit':
+                $this->editAction();
                 break;
 
             case 'insert':

@@ -66,9 +66,7 @@ class WidgetFile extends BaseWidget
 
         // get file uploads
         foreach ($request->files->all() as $key => $uploadFile) {
-            if ($key != $this->fieldname) {
-                continue;
-            } elseif (is_null($uploadFile)) {
+            if ($key != $this->fieldname || is_null($uploadFile)) {
                 continue;
             } elseif (!$uploadFile->isValid()) {
                 $minilog->error($uploadFile->getErrorMessage());
@@ -109,7 +107,7 @@ class WidgetFile extends BaseWidget
      */
     protected function inputHtml($type = 'file', $extraClass = '')
     {
-        $class = empty($extraClass) ? 'form-control-file' : 'form-control-file ' . $extraClass;
+        $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
