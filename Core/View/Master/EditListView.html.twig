@@ -20,7 +20,7 @@
     <form id="{{ formName }}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="insert"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-        <div class="card bg-light">
+        <div class="card bg-light mb-2">
             <div class="card-header">
                 <button class="btn btn-sm btn-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
@@ -61,7 +61,7 @@
         <input type="hidden" name="action" value="edit"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
-        <div class="card">
+        <div class="card mb-2">
             <div class="card-body">
                 <div class="row">
                     {% for group in currentView.getColumns() %}
