@@ -249,7 +249,8 @@ class BaseWidget extends VisualItem
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value) . '" class="cancelClickable">' . $inside . '</a>';
+        return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value)
+            . '" class="cancelClickable">' . $inside . '</a>';
     }
 
     /**
@@ -304,7 +305,7 @@ class BaseWidget extends VisualItem
         if (!empty($alternativeClass)) {
             $class[] = $alternativeClass;
         } elseif (is_null($this->value)) {
-            $class[] = 'table-warning';
+            $class[] = $this->colorToClass('warning', 'table-');
         }
 
         return implode(' ', $class);

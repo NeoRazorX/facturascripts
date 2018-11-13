@@ -102,9 +102,9 @@ class WidgetCheckbox extends BaseWidget
     protected function tableCellClass($initialClass = '', $alternativeClass = '')
     {
         if (false === $this->value) {
-            $alternativeClass = 'text-danger';
+            $alternativeClass = $this->colorToClass('danger', 'text-');
         } elseif (true === $this->value) {
-            $alternativeClass = 'text-success';
+            $alternativeClass = $this->colorToClass('success', 'text-');
         }
 
         return parent::tableCellClass($initialClass, $alternativeClass);
