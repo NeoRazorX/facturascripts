@@ -128,6 +128,7 @@ class ColumnItem extends VisualItem
         if ($this->numcolumns < 1 || $this->numcolumns > 11) {
             return '100%';
         }
+
         return round((100.00 / 12 * $this->numcolumns), 5) . '%';
     }
 
@@ -151,9 +152,7 @@ class ColumnItem extends VisualItem
      */
     public function processFormData(&$model, $request)
     {
-        if (!$this->hidden()) {
-            $this->widget->processFormData($model, $request);
-        }
+        $this->widget->processFormData($model, $request);
     }
 
     /**

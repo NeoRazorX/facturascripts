@@ -68,6 +68,18 @@ class WidgetCheckbox extends BaseWidget
     /**
      * 
      * @param object $model
+     *
+     * @return string
+     */
+    public function inputHidden($model)
+    {
+        $this->setValue($model);
+        return $this->value ? '<input type="hidden" name="' . $this->fieldname . '" value="TRUE"/>' : '';
+    }
+
+    /**
+     * 
+     * @param object $model
      */
     protected function setValue($model)
     {
