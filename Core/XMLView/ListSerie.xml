@@ -19,8 +19,8 @@
  *
  * Initial description for the controller ListSerie
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>  
- * @author Carlos García Gómez  <carlos@facturascripts.com>  
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -30,6 +30,14 @@
         </column>
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
+        </column>
+        <column name="journal" numcolumns="5" order="120">
+            <widget type="select" fieldname="iddiario">
+                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="canal" numcolumns="4" order="130">
+            <widget type="number" fieldname="canal" decimal="0" step="1" readonly="true" />
         </column>
         <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva">

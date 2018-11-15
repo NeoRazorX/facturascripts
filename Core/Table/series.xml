@@ -19,6 +19,16 @@
         <name>siniva</name>
         <type>boolean</type>
     </column>
+    <column>
+        <name>iddiario</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>canal</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
     <constraint>
         <name>series_pkey</name>
         <type>PRIMARY KEY (codserie)</type>

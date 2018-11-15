@@ -54,12 +54,30 @@ class Serie extends Base\ModelClass
     public $siniva;
 
     /**
+     *
+     * id from accounting diary
+     *
+     * @var integer
+     */
+    public $iddiario;
+
+    /**
+     *
+     * canal number
+     *
+     * @var integer
+     */
+    public $canal;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
         $this->siniva = false;
+        $this->idiario = 0;
+        $this->canal = 0;
     }
 
     /**
