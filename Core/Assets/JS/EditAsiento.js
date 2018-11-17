@@ -193,13 +193,21 @@ function customAfterChange(changes) {
     if (changes === null) {
         return;
     }
-
+    console.log(changes);
     var data = {
         action: "recalculate-document",
         changes: changes,
         lines: getGridData("order"),
         document: {}
     };
+    if (data.changes[0][1] === "haber")
+    {
+        data.lines[data.changes[0][0]]["debe"] = 0;
+    }
+    if (data.changes[0][1] === "debe")
+    {
+        data.lines[data.changes[0][0]]["haber"] = 0;
+    }
     $.each(mainForm.serializeArray(), function (key, value) {
         data.document[value.name] = value.value;
     });
