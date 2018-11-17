@@ -212,6 +212,16 @@ function customAfterChange(changes) {
             // update lines
             var rowPos = 0;
             results.lines.forEach(function (element) {
+                if (element.debe == 0.00 && element.haber == 0.00) {
+                    if (results.unbalance > 0)
+                    {
+                        element.haber = results.unbalance;
+                    }
+                    if (results.unbalance < 0)
+                    {
+                        element.debe = -1 * results.unbalance;
+                    }
+                }
                 var visualRow = gridObject.toVisualRow(rowPos);
                 documentLineData.rows[visualRow] = element;
                 rowPos++;

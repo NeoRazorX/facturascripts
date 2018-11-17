@@ -59,17 +59,7 @@ class EditAsiento extends EditController
         $index = count($data['lines']) - 1;
         $line = &$data['lines'][$index];
 
-        if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
-            // if the sub-account is the same as the previous offsetting
-            if ($line['codsubcuenta'] === $data['lines'][$index - 1]['codcontrapartida']) {
-                $field = 'haber';
-                if ($unbalance < 0) {
-                    $field = 'debe';
-                }
-                $line[$field] = abs($unbalance);
-                $unbalance = 0.00;
-            }
-        }
+
         $data['unbalance'] = $unbalance;
         $data['total'] = ($credit > $debit) ? round($credit, (int) FS_NF0) : round($debit, (int) FS_NF0);
     }
