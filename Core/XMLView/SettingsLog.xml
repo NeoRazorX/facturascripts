@@ -25,7 +25,7 @@
 
 <view>
     <columns>
-        <group name="log" title="which-logs-store" numcolumns="12" icon="fas fa-server">
+        <group name="log" title="which-logs-store" numcolumns="12" icon="fas fa-file-medical-alt">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
