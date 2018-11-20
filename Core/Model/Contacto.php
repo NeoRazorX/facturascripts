@@ -185,6 +185,21 @@ class Contacto extends Base\Contact
     public $verificado;
 
     /**
+     * Returns an unique alias for this contact.
+     *
+     * @return string
+     */
+    public function alias()
+    {
+        if (empty($this->email)) {
+            return (string) $this->idcontacto;
+        }
+
+        $aux = explode('@', $this->email);
+        return (count($aux) == 2) ? $aux[0] . '_' . $this->idcontacto : (string) $this->idcontacto;
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
