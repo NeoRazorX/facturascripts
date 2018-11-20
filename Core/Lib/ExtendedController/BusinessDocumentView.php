@@ -154,6 +154,10 @@ class BusinessDocumentView extends BaseView
             $code = $this->newCode;
         }
 
+        if (empty($code) && empty($where)) {
+            return;
+        }
+
         $this->model->loadFromCode($code);
         $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
@@ -191,7 +195,16 @@ class BusinessDocumentView extends BaseView
      */
     public function processFormData($request, $case)
     {
-        ;
+        switch ($case) {
+            case 'load':
+                foreach ($request->query->all() as $key => $value) {
+                    if ($key != 'code') {
+                        $this->model->{$key} = $value;
+                    }
+                }
+                $this->model->updateSubject();
+                break;
+        }
     }
 
     /**
