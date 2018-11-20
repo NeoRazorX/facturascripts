@@ -72,6 +72,10 @@ class EditView extends BaseView
             $code = $this->newCode;
         }
 
+        if (empty($code) && empty($where)) {
+            return;
+        }
+
         if ($this->model->loadFromCode($code, $where, $order)) {
             $this->count = 1;
         }
@@ -88,6 +92,14 @@ class EditView extends BaseView
             case 'edit':
                 foreach ($this->getColumns() as $group) {
                     $group->processFormData($this->model, $request);
+                }
+                break;
+
+            case 'load':
+                foreach ($request->query->all() as $key => $value) {
+                    if ($key != 'code') {
+                        $this->model->{$key} = $value;
+                    }
                 }
                 break;
         }

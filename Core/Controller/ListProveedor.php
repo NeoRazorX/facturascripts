@@ -92,8 +92,8 @@ class ListProveedor extends ExtendedController\ListController
         $this->addOrderBy('ListProveedor', ['fecha'], 'date');
 
         $values = [
-            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', 'FALSE')]],
-            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', 'TRUE')]],
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
         $this->addFilterSelectWhere('ListProveedor', 'status', $values);

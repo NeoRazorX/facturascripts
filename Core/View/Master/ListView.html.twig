@@ -23,7 +23,7 @@
             <div class="col">
                 <div class="btn-group">
                     {% if currentView.settings.btnNew %}
-                        <a href="{{ currentView.model.url('new') }}" class="btn btn-success">
+                        <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success">
                             <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                         </a>
                     {% endif %}

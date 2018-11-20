@@ -64,8 +64,8 @@ class ListAgente extends ExtendedController\ListController
         $this->addFilterSelect('ListAgente', 'ciudad', 'city', 'ciudad', $cityValues);
 
         $values = [
-            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', 'FALSE')]],
-            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', 'TRUE')]],
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
         $this->addFilterSelectWhere('ListAgente', 'status', $values);

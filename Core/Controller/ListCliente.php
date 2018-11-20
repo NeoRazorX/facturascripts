@@ -95,8 +95,8 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListCliente', 'codgrupo', 'group', 'codgrupo', $valuesGroup);
 
         $values = [
-            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', 'FALSE')]],
-            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', 'TRUE')]],
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
         $this->addFilterSelectWhere('ListCliente', 'status', $values);

@@ -143,6 +143,23 @@ class ListView extends BaseView
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function btnNewUrl()
+    {
+        $url = $this->model->url('new');
+        $params = [];
+        foreach (DataBaseWhere::getFieldsFilter($this->where) as $key => $value) {
+            if ($value !== false) {
+                $params[] = $key . '=' . $value;
+            }
+        }
+
+        return empty($params) ? $url : $url . '?' . implode('&', $params);
+    }
+
+    /**
      * Removes a saved user filter.
      * 
      * @param string $idfilter
