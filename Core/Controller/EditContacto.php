@@ -34,8 +34,7 @@ class EditContacto extends ExtendedController\EditController
      */
     public function getImageUrl()
     {
-        $email = $this->getViewModelValue('EditContacto', 'email');
-        return empty($email) ? '' : $this->getGravatar($email);
+        return $this->views['EditContacto']->model->gravatar();
     }
 
     /**
@@ -61,18 +60,5 @@ class EditContacto extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Return the gravatar url to show email avatar.
-     *
-     * @param string $email
-     * @param int    $size
-     *
-     * @return string
-     */
-    protected function getGravatar(string $email, int $size = 80): string
-    {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=' . $size;
     }
 }
