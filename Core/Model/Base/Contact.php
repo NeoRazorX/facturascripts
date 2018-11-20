@@ -103,6 +103,17 @@ abstract class Contact extends ModelClass
     }
 
     /**
+     * Stores the model data in the database.
+     *
+     * @return bool
+     */
+    public function save()
+    {
+        $this->email = \strtolower($this->email);
+        return parent::save();
+    }
+
+    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
