@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
-use ParseCsv\Csv;
 
 /**
  * A division of acounting entries in different journals
@@ -42,11 +41,6 @@ class Diario extends Base\ModelClass
      * @var string
      */
     public $descripcion;
-
-    public function __construct(array $data = array())
-    {
-        parent::__construct($data);
-    }
 
     /**
      * Returns the name of the column that is the model's primary key.
