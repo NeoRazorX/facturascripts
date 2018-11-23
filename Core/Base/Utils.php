@@ -96,7 +96,7 @@ class Utils
     public static function fixHtml($txt)
     {
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
-        $final = ['<', '>', "'", "'"];
+        $final = ['<', '>', '"', "'"];
 
         return ($txt === null) ? null : trim(str_replace($original, $final, $txt));
     }
