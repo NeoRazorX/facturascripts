@@ -66,6 +66,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListContacto', ['nombre'], 'name');
         $this->addOrderBy('ListContacto', ['empresa'], 'company');
         $this->addOrderBy('ListContacto', ['level'], 'level');
+        $this->addOrderBy('ListContacto', ['puntos'], 'points');
         $this->addOrderBy('ListContacto', ['lastactivity'], 'last-activity', 2);
 
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
