@@ -117,6 +117,10 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $this->editable = true;
         $this->importe = 0.0;
         $this->numero = '';
+
+        $ejercicio = new Ejercicio();
+        $ejercicio = $ejercicio->getByFecha($this->idempresa, $this->fecha);
+        $this->codejercicio = $ejercicio->codejercicio;
     }
 
     /**
