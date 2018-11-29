@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
  * Description of SalesDocument
@@ -154,19 +155,35 @@ abstract class SalesDocument extends BusinessDocument
     /**
      * Assign the customer to the document.
      * 
-     * @param Cliente $subject
+     * @param Cliente|Contacto $subject
      * 
-     * @return boolean
+     * @return bool
      */
     public function setSubject($subject)
     {
+        if (isset($subject->idcontacto)) {
+            /// Contacto model
+            $this->apartado = $subject->apartado;
+            $this->cifnif = $subject->cifnif;
+            $this->ciudad = $subject->ciudad;
+            $this->codcliente = $subject->codcliente;
+            $this->codpais = $subject->codpais;
+            $this->codpostal = $subject->codpostal;
+            $this->direccion = $subject->direccion;
+            $this->idcontactoenv = $subject->idcontacto;
+            $this->idcontactofact = $subject->idcontacto;
+            $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
+            $this->provincia = $subject->provincia;
+            return true;
+        }
+
         if (!isset($subject->codcliente)) {
             return false;
         }
 
+        $this->cifnif = $subject->cifnif;
         $this->codcliente = $subject->codcliente;
         $this->nombrecliente = $subject->razonsocial;
-        $this->cifnif = $subject->cifnif;
 
         $billingAddress = $subject->getDefaultAddress('billing');
         if ($billingAddress->exists()) {
@@ -209,7 +226,7 @@ abstract class SalesDocument extends BusinessDocument
     /**
      * Updates subjects data in this document.
      *
-     * @return boolean
+     * @return bool
      */
     public function updateSubject()
     {

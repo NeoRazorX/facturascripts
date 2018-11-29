@@ -32,6 +32,8 @@ class Producto extends Base\ModelClass
 
     use Base\ModelTrait;
 
+    const ROUND_DECIMALS = 5;
+
     /**
      * Date when this product was updated.
      *
@@ -101,6 +103,12 @@ class Producto extends Base\ModelClass
      * @var int
      */
     public $idproducto;
+
+    /**
+     *
+     * @var Impuesto[]
+     */
+    private static $impuestos = [];
 
     /**
      * True -> do not control the stock.
@@ -185,6 +193,31 @@ class Producto extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return Impuesto
+     */
+    public function getImpuesto()
+    {
+        if (!isset(self::$impuestos[$this->codimpuesto])) {
+            self::$impuestos[$this->codimpuesto] = new Impuesto();
+            self::$impuestos[$this->codimpuesto]->loadFromCode($this->codimpuesto);
+        }
+
+        return self::$impuestos[$this->codimpuesto];
+    }
+
+    /**
+     * 
+     * @return Variante[]
+     */
+    public function getVariants()
+    {
+        $variantModel = new Variante();
+        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+        return $variantModel->all($where, [], 0, 0);
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -204,6 +237,15 @@ class Producto extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return float
+     */
+    public function priceWithTax()
+    {
+        return $this->precio * (100 + $this->getImpuesto()->iva) / 100;
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -220,6 +262,25 @@ class Producto extends Base\ModelClass
     public function primaryDescriptionColumn()
     {
         return 'referencia';
+    }
+
+    /**
+     * 
+     * @param float $price
+     */
+    public function setPriceWithTax($price)
+    {
+        $impuesto = $this->getImpuesto();
+        $newPrice = (100 * $price) / (100 + $impuesto->iva);
+
+        foreach ($this->getVariants() as $variant) {
+            if ($variant->referencia == $this->referencia) {
+                $variant->precio = round($newPrice, self::ROUND_DECIMALS);
+                return $variant->save();
+            }
+        }
+
+        $this->precio = round($newPrice, self::ROUND_DECIMALS);
     }
 
     /**
@@ -276,9 +337,7 @@ class Producto extends Base\ModelClass
         $newPrecio = 0.0;
         $newReferencia = null;
 
-        $variantModel = new Variante();
-        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
-        foreach ($variantModel->all($where, [], 0, 0) as $variant) {
+        foreach ($this->getVariants() as $variant) {
             $newPrecio = ($newPrecio == 0.0 || $variant->precio < $newPrecio) ? $variant->precio : $newPrecio;
             $newReferencia = is_null($newReferencia) ? $variant->referencia : $newReferencia;
         }

@@ -85,10 +85,16 @@ class PresupuestoCliente extends Base\SalesDocument
         return $newLine;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// parent dependencies
         $sql = parent::install();
         new PedidoCliente();
+
         return $sql;
     }
 

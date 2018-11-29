@@ -223,6 +223,68 @@ class Contacto extends Base\Contact
     }
 
     /**
+     * 
+     * @return Cliente
+     */
+    public function getCustomer()
+    {
+        $cliente = new Cliente();
+        if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
+            return $cliente;
+        }
+
+        /// creates a new customer
+        $cliente->idcontactoenv = $this->idcontacto;
+        $cliente->idcontactofact = $this->idcontacto;
+        $cliente->cifnif = $this->cifnif;
+        $cliente->codproveedor = $this->codproveedor;
+        $cliente->email = $this->email;
+        $cliente->fax = $this->fax;
+        $cliente->nombre = $this->fullName();
+        $cliente->observaciones = $this->observaciones;
+        $cliente->personafisica = $this->personafisica;
+        $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
+        $cliente->telefono1 = $this->telefono1;
+        $cliente->telefono2 = $this->telefono2;
+        if ($cliente->save()) {
+            $this->codcliente = $cliente->codcliente;
+            $this->save();
+        }
+
+        return $cliente;
+    }
+
+    /**
+     * 
+     * @return Proveedor
+     */
+    public function getSupplier()
+    {
+        $proveedor = new Proveedor();
+        if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
+            return $proveedor;
+        }
+
+        /// creates a new supplier
+        $proveedor->cifnif = $this->cifnif;
+        $proveedor->codcliente = $this->codcliente;
+        $proveedor->email = $this->email;
+        $proveedor->fax = $this->fax;
+        $proveedor->nombre = $this->fullName();
+        $proveedor->observaciones = $this->observaciones;
+        $proveedor->personafisica = $this->personafisica;
+        $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
+        $proveedor->telefono1 = $this->telefono1;
+        $proveedor->telefono2 = $this->telefono2;
+        if ($proveedor->save()) {
+            $this->codproveedor = $proveedor->codproveedor;
+            $this->save();
+        }
+
+        return $proveedor;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.

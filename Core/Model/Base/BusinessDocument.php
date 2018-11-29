@@ -340,6 +340,22 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
+     * @return EstadoDocumento[]
+     */
+    public function getAvaliableStatus()
+    {
+        $avaliables = [];
+        foreach (self::$estados as $status) {
+            if ($status->tipodoc === $this->modelClassName()) {
+                $avaliables[] = $status;
+            }
+        }
+
+        return $avaliables;
+    }
+
+    /**
+     * 
      * @return EstadoDocumento
      */
     public function getStatus()

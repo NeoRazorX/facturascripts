@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\AssetManager;
@@ -37,7 +36,7 @@ class BusinessDocumentView extends BaseView
 
     /**
      *
-     * @var array
+     * @var EstadoDocumento[]
      */
     public $documentStatus = [];
 
@@ -58,13 +57,7 @@ class BusinessDocumentView extends BaseView
     public function __construct($name, $title, $modelName, $icon = 'fas fa-file')
     {
         parent::__construct($name, $title, $modelName, $icon);
-
-        // Loads document states
-        $estadoDocModel = new EstadoDocumento();
-        $modelClass = explode('\\', $modelName);
-        $this->documentStatus = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
-
-        // custom template
+        $this->documentStatus = $this->model->getAvaliableStatus();
         $this->template = 'Master/BusinessDocumentView.html.twig';
     }
 
