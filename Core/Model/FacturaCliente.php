@@ -40,7 +40,6 @@ class FacturaCliente extends Base\SalesDocument
     {
         parent::clear();
         $this->anulada = false;
-        $this->pagada = false;
     }
 
     /**

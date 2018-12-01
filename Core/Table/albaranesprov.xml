@@ -109,6 +109,12 @@
         <type>text</type>
     </column>
     <column>
+        <name>pagado</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>tasaconv</name>
         <type>double precision</type>
         <null>NO</null>

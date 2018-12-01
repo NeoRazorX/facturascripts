@@ -18,17 +18,16 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  *  Controller to list the items in the AlbaranProveedor model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListAlbaranProveedor extends ExtendedController\ListController
+class ListAlbaranProveedor extends ListBusinessDocument
 {
 
     /**
@@ -51,57 +50,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
-        $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListAlbaranProveedor', ['codigo'], 'code');
-        $this->addOrderBy('ListAlbaranProveedor', ['fecha'], 'date', 2);
-        $this->addOrderBy('ListAlbaranProveedor', ['total'], 'amount');
-
-        $this->addFilterPeriod('ListAlbaranProveedor', 'date', 'period', 'fecha');
-        $this->addFilterNumber('ListAlbaranProveedor', 'min-total', 'total', 'total', '>=');
-        $this->addFilterNumber('ListAlbaranProveedor', 'max-total', 'total', 'total', '<=');
-
-        $where = [new DataBaseWhere('tipodoc', 'AlbaranProveedor')];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListAlbaranProveedor', 'idestado', 'state', 'idestado', $statusValues);
-
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', 'codserie', $serieValues);
-
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
-
-        $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
-        $this->addFilterCheckbox('ListAlbaranProveedor', 'femail', 'email-not-sent', 'femail', 'IS', null);
-
-        // Delivery notes lines
-        $this->createViewLines();
-    }
-
-    protected function createViewLines()
-    {
-        $this->addView('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'lines', 'fas fa-list');
-        $this->addSearchFields('ListLineaAlbaranProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaAlbaranProveedor', ['referencia'], 'reference');
-        $this->addOrderBy('ListLineaAlbaranProveedor', ['cantidad'], 'quantity');
-        $this->addOrderBy('ListLineaAlbaranProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListLineaAlbaranProveedor', ['pvptotal'], 'ammount');
-        $this->addOrderBy('ListLineaAlbaranProveedor', ['idalbaran'], 'delivery-note', 2);
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect('ListLineaAlbaranProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
-        $this->addFilterNumber('ListLineaAlbaranProveedor', 'cantidad', 'quantity', 'cantidad');
-        $this->addFilterNumber('ListLineaAlbaranProveedor', 'dtopor', 'discount', 'dtopor');
-        $this->addFilterNumber('ListLineaAlbaranProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber('ListLineaAlbaranProveedor', 'pvptotal', 'ammount', 'pvptotal');
-
-        /// disable megasearch for this view
-        $this->setSettings('ListLineaAlbaranProveedor', 'megasearch', false);
-        $this->setSettings('ListLineaAlbaranProveedor', 'btnNew', false);
-        $this->setSettings('ListLineaAlbaranProveedor', 'btnDelete', false);
+        $this->createViewPurchases('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        $this->createViewLines('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor');
     }
 }

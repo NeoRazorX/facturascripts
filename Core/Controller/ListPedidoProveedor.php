@@ -18,18 +18,17 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the PedidoProveedor model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListPedidoProveedor extends ExtendedController\ListController
+class ListPedidoProveedor extends ListBusinessDocument
 {
 
     /**
@@ -52,57 +51,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
-        $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListPedidoProveedor', ['codigo'], 'code');
-        $this->addOrderBy('ListPedidoProveedor', ['fecha'], 'date', 2);
-        $this->addOrderBy('ListPedidoProveedor', ['total'], 'amount');
-
-        $this->addFilterPeriod('ListPedidoProveedor', 'date', 'period', 'fecha');
-        $this->addFilterNumber('ListPedidoProveedor', 'min-total', 'total', 'total', '>=');
-        $this->addFilterNumber('ListPedidoProveedor', 'max-total', 'total', 'total', '<=');
-
-        $where = [new DataBaseWhere('tipodoc', 'PedidoProveedor')];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListPedidoProveedor', 'idestado', 'state', 'idestado', $statusValues);
-
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', 'codserie', $serieValues);
-
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
-
-        $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
-        $this->addFilterCheckbox('ListPedidoProveedor', 'femail', 'email-not-sent', 'femail', 'IS', null);
-
-        // Delivery notes lines
-        $this->createViewLines();
-    }
-
-    protected function createViewLines()
-    {
-        $this->addView('ListLineaPedidoProveedor', 'LineaPedidoProveedor', 'lines', 'fas fa-list');
-        $this->addSearchFields('ListLineaPedidoProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaPedidoProveedor', ['referencia'], 'reference');
-        $this->addOrderBy('ListLineaPedidoProveedor', ['cantidad'], 'quantity');
-        $this->addOrderBy('ListLineaPedidoProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListLineaPedidoProveedor', ['pvptotal'], 'ammount');
-        $this->addOrderBy('ListLineaPedidoProveedor', ['idpedido'], 'code', 2);
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect('ListLineaPedidoProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
-        $this->addFilterNumber('ListLineaPedidoProveedor', 'cantidad', 'quantity', 'cantidad');
-        $this->addFilterNumber('ListLineaPedidoProveedor', 'dtopor', 'discount', 'dtopor');
-        $this->addFilterNumber('ListLineaPedidoProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber('ListLineaPedidoProveedor', 'pvptotal', 'ammount', 'pvptotal');
-
-        /// disable megasearch for this view
-        $this->setSettings('ListLineaPedidoProveedor', 'megasearch', false);
-        $this->setSettings('ListLineaPedidoProveedor', 'btnNew', false);
-        $this->setSettings('ListLineaPedidoProveedor', 'btnDelete', false);
+        $this->createViewPurchases('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        $this->createViewLines('ListLineaPedidoProveedor', 'LineaPedidoProveedor');
     }
 }

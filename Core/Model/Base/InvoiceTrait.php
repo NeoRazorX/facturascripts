@@ -69,13 +69,6 @@ trait InvoiceTrait
     public $idfacturarect;
 
     /**
-     * True => paid.
-     *
-     * @var bool
-     */
-    public $pagada;
-
-    /**
      * Due date of the invoice.
      *
      * @var string

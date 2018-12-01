@@ -161,7 +161,7 @@ abstract class SalesDocument extends BusinessDocument
      */
     public function setSubject($subject)
     {
-        if (isset($subject->idcontacto)) {
+        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Contacto')) {
             /// Contacto model
             $this->apartado = $subject->apartado;
             $this->cifnif = $subject->cifnif;
@@ -177,16 +177,13 @@ abstract class SalesDocument extends BusinessDocument
             return true;
         }
 
-        if (!isset($subject->codcliente)) {
-            return false;
-        }
+        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Cliente')) {
+            /// Cliente model
+            $this->cifnif = $subject->cifnif;
+            $this->codcliente = $subject->codcliente;
+            $this->nombrecliente = $subject->razonsocial;
 
-        $this->cifnif = $subject->cifnif;
-        $this->codcliente = $subject->codcliente;
-        $this->nombrecliente = $subject->razonsocial;
-
-        $billingAddress = $subject->getDefaultAddress('billing');
-        if ($billingAddress->exists()) {
+            $billingAddress = $subject->getDefaultAddress('billing');
             $this->codpais = $billingAddress->codpais;
             $this->provincia = $billingAddress->provincia;
             $this->ciudad = $billingAddress->ciudad;
@@ -194,14 +191,13 @@ abstract class SalesDocument extends BusinessDocument
             $this->codpostal = $billingAddress->codpostal;
             $this->apartado = $billingAddress->apartado;
             $this->idcontactofact = $billingAddress->idcontacto;
-        }
 
-        $shippingAddress = $subject->getDefaultAddress('shipping');
-        if ($shippingAddress->exists()) {
+            $shippingAddress = $subject->getDefaultAddress('shipping');
             $this->idcontactoenv = $shippingAddress->idcontacto;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**

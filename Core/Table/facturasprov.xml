@@ -128,7 +128,7 @@
         <type>text</type>
     </column>
     <column>
-        <name>pagada</name>
+        <name>pagado</name>
         <type>boolean</type>
         <null>NO</null>
         <default>false</default>

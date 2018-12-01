@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
@@ -171,6 +172,13 @@ abstract class BusinessDocument extends ModelClass
     public $observaciones;
 
     /**
+     * Paid.
+     *
+     * @var bool
+     */
+    public $pagado;
+
+    /**
      * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
@@ -216,17 +224,11 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * Returns the lines associated with the document.
-     *
-     * @return mixed
      */
     abstract public function getLines();
 
     /**
      * Returns a new line for this business document.
-     * 
-     * @param array $data
-     * 
-     * @return BusinessDocumentLine[]
      */
     abstract public function getNewLine(array $data = []);
 
@@ -252,7 +254,7 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @return array
+     * @return BusinessDocument[]
      */
     public function childrenDocuments()
     {
@@ -297,6 +299,7 @@ abstract class BusinessDocument extends ModelClass
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
+        $this->pagado = false;
         $this->tasaconv = 1.0;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
@@ -356,6 +359,17 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
+     * @return Empresa
+     */
+    public function getCompany()
+    {
+        $empresa = new Empresa();
+        $empresa->loadFromCode($this->idempresa);
+        return $empresa;
+    }
+
+    /**
+     * 
      * @return EstadoDocumento
      */
     public function getStatus()
@@ -392,7 +406,7 @@ abstract class BusinessDocument extends ModelClass
      * @param array  $where
      * @param array  $orderby
      * 
-     * @return boolean
+     * @return bool
      */
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
@@ -406,7 +420,7 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @return array
+     * @return BusinessDocument[]
      */
     public function parentDocuments()
     {
@@ -519,7 +533,7 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     private function checkStatus()
     {
