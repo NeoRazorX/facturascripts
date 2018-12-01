@@ -85,7 +85,6 @@
     <column>
         <name>direccion</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>editable</name>
