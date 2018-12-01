@@ -47,6 +47,24 @@
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
+        <group name="contact" title="contact-info" numcolumns="12">
+            <column name="billing-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="3" order="100">
+                <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="3" order="110">
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="phone" numcolumns="3" order="120">
+                <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
+            </column>
+            <column name="email" numcolumns="3" order="130">
+                <widget type="email" fieldname="email" icon="fas fa-at" />
+            </column>
+        </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="group" numcolumns="3" order="100">
                 <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes" icon="fas fa-folder" >
@@ -84,30 +102,6 @@
             </column>
             <column name="surcharge" order="180">
                 <widget type="checkbox" fieldname="recargo" />
-            </column>
-        </group>
-        <group name="contact" title="contact-info" numcolumns="12">
-            <column name="phone" numcolumns="3" order="100">
-                <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
-            </column>
-            <column name="phone2" numcolumns="3" order="110">
-                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
-            </column>
-            <column name="fax" numcolumns="3" order="120">
-                <widget type="text" fieldname="fax" />
-            </column>
-            <column name="email" numcolumns="3" order="130">
-                <widget type="email" fieldname="email" icon="fas fa-at" />
-            </column>
-            <column name="default-billing-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="140">
-                <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
-                    <values></values>
-                </widget>
-            </column>
-            <column name="default-shipping-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="150">
-                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
-                    <values></values>
-                </widget>
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">

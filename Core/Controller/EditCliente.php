@@ -168,14 +168,14 @@ class EditCliente extends ExtendedController\EditController
     {
         /// Search for client contacts
         $where = [new DataBaseWhere('codcliente', $code)];
-        $contacts = CodeModel::all('contactos', 'idcontacto', 'descripcion', true, $where);
+        $contacts = CodeModel::all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         /// Load values option to default billing address from client contacts list
-        $columnBilling = $this->views['EditCliente']->columnForName('default-billing-address');
+        $columnBilling = $this->views['EditCliente']->columnForName('billing-address');
         $columnBilling->widget->setValuesFromCodeModel($contacts);
 
         /// Load values option to default shipping address from client contacts list
-        $columnShipping = $this->views['EditCliente']->columnForName('default-shipping-address');
+        $columnShipping = $this->views['EditCliente']->columnForName('shipping-address');
         $columnShipping->widget->setValuesFromCodeModel($contacts);
 
         /// Load values option to Fiscal ID select input

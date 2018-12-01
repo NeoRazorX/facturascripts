@@ -82,6 +82,13 @@ class Cliente extends Base\ComercialContact
         $this->recargo = false;
     }
 
+    /**
+     * 
+     * @param string $query
+     * @param string $fieldcode
+     *
+     * @return CodeModel[]
+     */
     public function codeModelSearch(string $query, string $fieldcode = '')
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
@@ -191,5 +198,36 @@ class Cliente extends Base\ComercialContact
         $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = array())
+    {
+        $return = parent::saveInsert($values);
+        if ($return && empty($this->idcontactofact)) {
+            $contact = new Contacto();
+            $contact->cifnif = $this->cifnif;
+            $contact->codcliente = $this->codcliente;
+            $contact->descripcion = $this->nombre;
+            $contact->email = $this->email;
+            $contact->empresa = $this->razonsocial;
+            $contact->fax = $this->fax;
+            $contact->nombre = $this->nombre;
+            $contact->personafisica = $this->personafisica;
+            $contact->telefono1 = $this->telefono1;
+            $contact->telefono2 = $this->telefono2;
+            if ($contact->save()) {
+                $this->idcontactoenv = $contact->idcontacto;
+                $this->idcontactofact = $contact->idcontacto;
+                return $this->save();
+            }
+        }
+
+        return $return;
     }
 }
