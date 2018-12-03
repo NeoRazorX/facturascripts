@@ -227,12 +227,26 @@ class WidgetSelect extends BaseWidget
                 . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>';
         }
 
+        $found = false;
         $html = '<select name="' . $this->fieldname . '" class="' . $cssFormControl . '"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
-            /// don't use strict comparation (===)
-            $selected = ($option['value'] == $this->value) ? ' selected="" ' : '';
             $title = empty($option['title']) ? $option['value'] : $option['title'];
-            $html .= '<option value="' . $option['value'] . '" ' . $selected . '>' . $title . '</option>';
+
+            /// don't use strict comparation (===)
+            if ($option['value'] == $this->value) {
+                $found = true;
+                $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
+                break;
+            }
+
+            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+        }
+
+        /// value not found?
+        if (!$found) {
+            $html .= '<option value="' . $this->value . '" selected="">'
+                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+                . '</option>';
         }
 
         $html .= '</select>';
