@@ -93,9 +93,7 @@ class Cliente extends Base\ComercialContact
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where = [
-            new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')
-        ];
+        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -210,6 +208,7 @@ class Cliente extends Base\ComercialContact
     {
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontactofact)) {
+            /// creates new contact
             $contact = new Contacto();
             $contact->cifnif = $this->cifnif;
             $contact->codcliente = $this->codcliente;

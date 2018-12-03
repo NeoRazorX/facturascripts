@@ -28,7 +28,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codproveedor" icon="fas fa-user" />
+                <widget type="text" fieldname="codproveedor" icon="fas fa-hashtag" readonly="dinamic" />
             </column>
             <column name="name" numcolumns="3" order="110" description="desc-provider-name">
                 <widget type="text" fieldname="nombre" required="true"/>
@@ -49,6 +49,28 @@
             </column>
             <column name="is-creditor" title="is-creditor" numcolumns="3" order="160">
                 <widget type="checkbox" fieldname="acreedor" />
+            </column>
+        </group>
+        <group name="contact" title="contact-info" numcolumns="12">
+            <column name="contact" titleurl="ListProveedor?activetab=ListContacto" order="100">
+                <widget type="select" fieldname="idcontacto" onclick="EditContacto">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="phone" order="110">
+                <widget type="tel" fieldname="telefono1" icon="fas fa-phone" />
+            </column>
+            <column name="phone2" display="none" order="120">
+                <widget type="tel" fieldname="telefono2" icon="fas fa-mobile-alt" />
+            </column>
+            <column name="fax" display="none" order="130">
+                <widget type="tel" fieldname="fax" />
+            </column>
+            <column name="email" order="140">
+                <widget type="email" fieldname="email" icon="fas fa-at" />
+            </column>
+            <column name="website" order="150">
+                <widget type="url" fieldname="web" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
@@ -77,23 +99,6 @@
             </column>
             <column name="irpf" numcolumns="3" order="140">
                 <widget type="number" fieldname="irpf" icon="fas fa-percent" />
-            </column>
-        </group>
-        <group name="contact" title="contact-info" numcolumns="12">
-            <column name="phone" numcolumns="2" order="100">
-                <widget type="tel" fieldname="telefono1" icon="fas fa-phone" />
-            </column>
-            <column name="phone2" numcolumns="2" order="110">
-                <widget type="tel" fieldname="telefono2" icon="fas fa-mobile-alt" />
-            </column>
-            <column name="fax" numcolumns="2" order="120">
-                <widget type="tel" fieldname="fax" />
-            </column>
-            <column name="email" numcolumns="3" order="140">
-                <widget type="email" fieldname="email" icon="fas fa-at" />
-            </column>
-            <column name="website" numcolumns="3" order="150">
-                <widget type="url" fieldname="web" />
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">

@@ -27,7 +27,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcliente" icon="fas fa-user" />
+                <widget type="text" fieldname="codcliente" icon="fas fa-hashtag" readonly="dinamic" />
             </column>
             <column name="name" numcolumns="3" order="110" description="desc-customer-name">
                 <widget type="text" fieldname="nombre" required="true"/>
@@ -48,20 +48,26 @@
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
-            <column name="billing-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="3" order="100">
+            <column name="billing-address" titleurl="ListCliente?activetab=ListContacto" order="100">
                 <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>
-            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="3" order="110">
+            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" order="110">
                 <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>
-            <column name="phone" numcolumns="3" order="120">
+            <column name="phone" order="120">
                 <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
             </column>
-            <column name="email" numcolumns="3" order="130">
+            <column name="phone2" display="none" order="130">
+                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
+            </column>
+            <column name="fax" display="none" order="140">
+                <widget type="text" fieldname="fax" />
+            </column>
+            <column name="email" order="150">
                 <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
         </group>

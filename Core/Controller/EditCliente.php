@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model\TotalModel;
-use FacturaScripts\Core\Model\CodeModel;
-use FacturaScripts\Core\Lib\IDFiscal;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\IDFiscal;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\TotalModel;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Controller to edit a single item from the Cliente model

@@ -30,7 +30,7 @@
                 <widget type="text" fieldname="idproducto" />
             </column>
             <column name="referencia" title="reference" order="100">
-                <widget type="text" fieldname="referencia" maxlength="18" required="true" readonly="dinamic" />
+                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" readonly="dinamic" />
             </column>
             <column name="codfabricante" title="manufacturer" order="110">
                 <widget type="select" fieldname="codfabricante" onclick="EditFabricante">

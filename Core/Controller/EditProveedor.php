@@ -21,9 +21,10 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Lib\IDFiscal;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\IDFiscal;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\TotalModel;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -47,7 +48,7 @@ class EditProveedor extends ExtendedController\EditController
             new DataBaseWhere('editable', true)
         ];
 
-        $totalModel = Model\TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
+        $totalModel = TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);
@@ -65,7 +66,7 @@ class EditProveedor extends ExtendedController\EditController
             new DataBaseWhere('pagado', false)
         ];
 
-        $totalModel = Model\TotalModel::all('facturasprov', $where, ['total' => 'SUM(total)'], '')[0];
+        $totalModel = TotalModel::all('facturasprov', $where, ['total' => 'SUM(total)'], '')[0];
 
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);
@@ -110,14 +111,6 @@ class EditProveedor extends ExtendedController\EditController
         $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
         $this->addListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fas fa-copy');
 
-        /// Load values option to Fiscal ID select input
-        $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
-
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
-
         /// Disable columns
         $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
         $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
@@ -135,6 +128,12 @@ class EditProveedor extends ExtendedController\EditController
     {
         $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
         switch ($viewName) {
+            case 'EditProveedor':
+                parent::loadData($viewName, $view);
+                $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+                $this->setCustomWidgetValues($code);
+                break;
+
             case 'ListContacto':
             case 'EditCuentaBancoProveedor':
             case 'ListFacturaProveedor':
@@ -155,5 +154,24 @@ class EditProveedor extends ExtendedController\EditController
                 parent::loadData($viewName, $view);
                 break;
         }
+    }
+
+    protected function setCustomWidgetValues($code)
+    {
+        /// Load values option to Fiscal ID select input
+        $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
+        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
+
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
+
+        /// Search for supplier contacts
+        $where = [new DataBaseWhere('codproveedor', $code)];
+        $contacts = CodeModel::all('contactos', 'idcontacto', 'descripcion', false, $where);
+
+        /// Load values option to default contact
+        $columnBilling = $this->views['EditProveedor']->columnForName('contact');
+        $columnBilling->widget->setValuesFromCodeModel($contacts);
     }
 }

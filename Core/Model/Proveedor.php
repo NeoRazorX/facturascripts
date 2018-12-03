@@ -47,6 +47,13 @@ class Proveedor extends Base\ComercialContact
     public $codimpuestoportes;
 
     /**
+     * Default contact.
+     *
+     * @var int
+     */
+    public $idcontacto;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -56,13 +63,18 @@ class Proveedor extends Base\ComercialContact
         $this->codimpuestoportes = AppSettings::get('default', 'codimpuesto');
     }
 
+    /**
+     * 
+     * @param string $query
+     * @param string $fieldcode
+     *
+     * @return CodeModel[]
+     */
     public function codeModelSearch(string $query, string $fieldcode = '')
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where = [
-            new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')
-        ];
+        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -117,5 +129,36 @@ class Proveedor extends Base\ComercialContact
         $this->codproveedor = empty($this->codproveedor) ? (string) $this->newCode() : trim($this->codproveedor);
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = array())
+    {
+        $return = parent::saveInsert($values);
+        if ($return && empty($this->idcontacto)) {
+            /// creates new contact
+            $contact = new Contacto();
+            $contact->cifnif = $this->cifnif;
+            $contact->codproveedor = $this->codproveedor;
+            $contact->descripcion = $this->nombre;
+            $contact->email = $this->email;
+            $contact->empresa = $this->razonsocial;
+            $contact->fax = $this->fax;
+            $contact->nombre = $this->nombre;
+            $contact->personafisica = $this->personafisica;
+            $contact->telefono1 = $this->telefono1;
+            $contact->telefono2 = $this->telefono2;
+            if ($contact->save()) {
+                $this->idcontacto = $contact->idcontacto;
+                return $this->save();
+            }
+        }
+
+        return $return;
     }
 }

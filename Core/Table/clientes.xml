@@ -116,8 +116,6 @@
     <column>
         <name>tipoidfiscal</name>
         <type>character varying(25)</type>
-        <null>NO</null>
-        <default>'NIF'::character varying</default>
     </column>
     <column>
         <name>web</name>
