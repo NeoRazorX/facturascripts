@@ -66,10 +66,11 @@ class ListFormaPago extends ExtendedController\ListController
 
     /**
      * Add Bank Acounts view
+     * 
+     * @param string $viewName
      */
-    private function createViewsBankAccounts()
+    private function createViewsBankAccounts($viewName = 'ListCuentaBanco')
     {
-        $viewName = 'ListCuentaBanco';
         $this->addView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->addSearchFields($viewName, ['descripcion', 'codcuenta']);
         $this->addOrderBy($viewName, ['codcuenta'], 'code');
@@ -80,12 +81,13 @@ class ListFormaPago extends ExtendedController\ListController
 
     /**
      * Add Payment Methods view
+     * 
+     * @param string $viewName
      */
-    private function createViewsPaymentMethods()
+    private function createViewsPaymentMethods($viewName = 'ListFormaPago')
     {
-        $viewName = 'ListFormaPago';
         $this->addView($viewName, 'FormaPago', 'payment-methods', 'fas fa-credit-card');
-        $this->addSearchFields($viewName, ['descripcion', 'codpago', 'codcuenta', 'codsubcuenta']);
+        $this->addSearchFields($viewName, ['descripcion', 'codpago']);
         $this->addOrderBy($viewName, ['codpago'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['idempresa', 'codpago'], 'company');
