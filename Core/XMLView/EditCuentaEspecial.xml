@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="10">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcuentaesp" />
+                <widget type="text" fieldname="codcuentaesp" icon="fas fa-hashtag" />
             </column>
 
             <column name="description" order="110">

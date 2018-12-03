@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12" title="rates">
             <column name="codtarifa" title="code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codtarifa" icon="fas fa-money-bill-alt" required="true" />
+                <widget type="text" fieldname="codtarifa" icon="fas fa-hashtag" required="true" />
             </column>
             <column name="nombre" title="name" numcolumns="6" order="110">
                 <widget type="text" fieldname="nombre" required="true" />

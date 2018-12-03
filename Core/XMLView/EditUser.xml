@@ -27,7 +27,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" title="nick" numcolumns="4" order="100">
-                <widget type="text" fieldname="nick" icon="fas fa-user-circle" required="true" />
+                <widget type="text" fieldname="nick" icon="fas fa-hashtag" required="true" />
             </column>
             <column name="new-password" numcolumns="4" order="110">
                 <widget type="password" fieldname="newPassword" icon="fas fa-key" />

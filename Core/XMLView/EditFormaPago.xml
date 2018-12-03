@@ -27,7 +27,7 @@
     <columns>
         <group name="data1" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codpago" icon="fas fa-credit-card" readonly="dinamic" required="true" />
+                <widget type="text" fieldname="codpago" icon="fas fa-hashtag" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />

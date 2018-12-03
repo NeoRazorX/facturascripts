@@ -26,9 +26,8 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="4" order="1">
-                <widget type="text" fieldname="codatributo" icon="fas fa-object-group" required="true" />
+                <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" required="true" />
             </column>
-            
             <column name="name" numcolumns="8" order="2">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>

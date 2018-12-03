@@ -25,14 +25,14 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="id" icon="fas fa-file-alt" />
+            <column name="code" display="none" order="100">
+                <widget type="text" fieldname="id" />
             </column>
-            <column name="description" numcolumns="10" order="110">
+            <column name="description" numcolumns="4" order="110">
                 <widget type="text" fieldname="description" required="true" />
             </column>
             <column name="api-key" numcolumns="6" order="120">
-                <widget type="text" fieldname="apikey" required="true" />
+                <widget type="text" fieldname="apikey" icon="fas fa-key" required="true" />
             </column>
             <column name="created" numcolumns="2" order="130">
                 <widget type="date" fieldname="creationdate" />
