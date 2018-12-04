@@ -236,14 +236,14 @@ class WidgetSelect extends BaseWidget
             if ($option['value'] == $this->value) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
-                break;
+                continue;
             }
 
             $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
         }
 
         /// value not found?
-        if (!$found) {
+        if (!$found && !empty($this->value)) {
             $html .= '<option value="' . $this->value . '" selected="">'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';

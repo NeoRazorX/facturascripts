@@ -23,7 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the ImpuestoZona model
  *
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  */
 class EditImpuestoZona extends ExtendedController\EditController
 {

@@ -23,9 +23,9 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the Impuesto model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
  */
 class ListImpuesto extends ExtendedController\ListController
 {
@@ -51,24 +51,47 @@ class ListImpuesto extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /// Taxes
-        $this->addView('ListImpuesto', 'Impuesto', 'taxes', 'fas fa-plus-square');
-        $this->addSearchFields('ListImpuesto', ['descripcion', 'codimpuesto']);
-        $this->addOrderBy('ListImpuesto', ['codimpuesto'], 'code');
-        $this->addOrderBy('ListImpuesto', ['descripcion'], 'description');
+        $this->createViewTax();
+        $this->createViewTaxZone();
+        $this->createViewRetention();
+    }
 
-        /// Withholdings
-        $this->addView('ListRetencion', 'Retencion', 'retentions', 'fas fa-plus-square');
-        $this->addSearchFields('ListRetencion', ['descripcion', 'codretencion']);
-        $this->addOrderBy('ListRetencion', ['codretencion'], 'code');
-        $this->addOrderBy('ListRetencion', ['descripcion'], 'description');
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewRetention($name = 'ListRetencion')
+    {
+        $this->addView($name, 'Retencion', 'retentions', 'fas fa-plus-square');
+        $this->addSearchFields($name, ['descripcion', 'codretencion']);
+        $this->addOrderBy($name, ['codretencion'], 'code');
+        $this->addOrderBy($name, ['descripcion'], 'description');
+    }
 
-        /// Tax areas
-        $this->addView('ListImpuestoZona', 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
-        $this->addSearchFields('ListImpuestoZona', ['codpais']);
-        $this->addOrderBy('ListImpuestoZona', ['codimpuesto'], 'tax');
-        $this->addOrderBy('ListImpuestoZona', ['codpais'], 'country');
-        $this->addOrderBy('ListImpuestoZona', ['codisopro'], 'province');
-        $this->addOrderBy('ListImpuestoZona', ['codimpuestosel'], 'applied-tax');
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewTax($name = 'ListImpuesto')
+    {
+        $this->addView($name, 'Impuesto', 'taxes', 'fas fa-plus-square');
+        $this->addSearchFields($name, ['descripcion', 'codimpuesto']);
+        $this->addOrderBy($name, ['codimpuesto'], 'code');
+        $this->addOrderBy($name, ['descripcion'], 'description');
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewTaxZone($name = 'ListImpuestoZona')
+    {
+        $this->addView($name, 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
+        $this->addSearchFields($name, ['codpais']);
+        $this->addOrderBy($name, ['prioridad'], 'priority', 2);
+        $this->addOrderBy($name, ['codimpuesto'], 'tax');
+        $this->addOrderBy($name, ['codpais'], 'country');
+        $this->addOrderBy($name, ['codisopro'], 'province');
+        $this->addOrderBy($name, ['codimpuestosel'], 'applied-tax');
     }
 }

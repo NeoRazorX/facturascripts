@@ -26,30 +26,30 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="id" numcolumns="2" order="10">
-                <widget type="text" fieldname="id" required="true" />
+            <column name="code" display="none" order="100">
+                <widget type="text" fieldname="id" icon="fas fa-hashtag" required="true" />
             </column>
-            <column name="tax" numcolumns="2" order="20">
+            <column name="tax"  order="110">
                 <widget type="select" fieldname="codimpuesto"  required="true">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="country" numcolumns="2" order="30">
-                <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" required="true">
+            <column name="country" order="120">
+                <widget type="select" fieldname="codpais" icon="fas fa-globe-americas">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="province" numcolumns="2" order="40">
+            <column name="province" order="130">
                 <widget type="autocomplete" fieldname="codisopro">
                     <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
                 </widget>
             </column>
-            <column name="applied-tax" numcolumns="2" order="50">
+            <column name="applied-tax" order="140">
                 <widget type="select" fieldname="codimpuestosel">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="priority" numcolumns="2" order="60">
+            <column name="priority" order="150">
                 <widget type="number" fieldname="prioridad" required="true" />
             </column>
         </group>

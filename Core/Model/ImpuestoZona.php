@@ -18,23 +18,19 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * A tax (VAT) that can be associated to tax, country, province, and.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class ImpuestoZona extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Primary key autoincremental
-     *
-     * @var int
-     */
-    public $id;
 
     /**
      * Foreign key with tax table. varchar(10).
@@ -44,11 +40,11 @@ class ImpuestoZona extends Base\ModelClass
     public $codimpuesto;
 
     /**
-     * Foreign key with country table. varchar(20).
+     * Foreign key with tax table. varchar(10).
      *
      * @var string
      */
-    public $codpais;
+    public $codimpuestosel;
 
     /**
      * Foreign key with provincias table. varchar(10).
@@ -58,11 +54,18 @@ class ImpuestoZona extends Base\ModelClass
     public $codisopro;
 
     /**
-     * Foreign key with tax table. varchar(10).
+     * Foreign key with country table. varchar(20).
      *
      * @var string
      */
-    public $codimpuestosel;
+    public $codpais;
+
+    /**
+     * Primary key autoincremental
+     *
+     * @var int
+     */
+    public $id;
 
     /**
      * Priority of taxt by zone.
@@ -70,6 +73,17 @@ class ImpuestoZona extends Base\ModelClass
      * @var int
      */
     public $prioridad;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->prioridad = 1;
+    }
 
     /**
      * Returns the name of the column that is the primary key of the model.
@@ -89,16 +103,6 @@ class ImpuestoZona extends Base\ModelClass
     public static function tableName()
     {
         return 'impuestoszonas';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-
-        $this->prioridad = 1;
     }
 
     /**
