@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\IDFiscal;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
@@ -159,7 +158,6 @@ abstract class ComercialContact extends Contact
     public function clear()
     {
         parent::clear();
-        $this->codpago = AppSettings::get('default', 'codpago');
         $this->irpf = 0.0;
         $this->debaja = false;
         $this->regimeniva = self::$regimenIVA->defaultValue();
