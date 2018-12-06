@@ -160,11 +160,6 @@ abstract class BusinessDocumentController extends PanelController
                 $this->exportManager->show($this->response);
                 break;
 
-            case 'insert':
-                parent::execAfterAction($action);
-                $this->views['Document']->model->updateSubject();
-                break;
-
             default:
                 parent::execAfterAction($action);
         }
@@ -322,7 +317,7 @@ abstract class BusinessDocumentController extends PanelController
      * Save the lines of the document.
      *
      * @param BusinessDocumentView $view
-     * @param array $newLines
+     * @param array                $newLines
      *
      * @return string
      */

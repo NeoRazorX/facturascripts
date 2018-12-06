@@ -78,6 +78,9 @@ class PresupuestoCliente extends Base\SalesDocument
     {
         $newLine = new LineaPresupuestoCliente($data);
         $newLine->idpresupuesto = $this->idpresupuesto;
+        if (empty($data)) {
+            $newLine->irpf = $this->irpf;
+        }
 
         $status = $this->getStatus();
         $newLine->actualizastock = $status->actualizastock;

@@ -43,7 +43,7 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="cifnif" title="cifnif" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
         </group>
         <group name="codattributes" title="attributes" numcolumns="12">

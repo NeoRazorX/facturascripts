@@ -181,7 +181,12 @@ $(document).ready(function () {
         dropdownMenu: true,
         preventOverflow: "horizontal",
         minSpareRows: 5,
-        enterMoves: {row: 0, col: 1}
+        enterMoves: {row: 0, col: 1},
+        modifyColWidth: function (width, col) {
+            if (width > 500) {
+                return 500;
+            }
+        }
     });
 
     Handsontable.hooks.add("beforeChange", beforeChange);

@@ -54,6 +54,13 @@ class Proveedor extends Base\ComercialContact
     public $idcontacto;
 
     /**
+     * True -> equivalence surcharge is applied to the client.
+     *
+     * @var bool
+     */
+    public $recargo;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -61,6 +68,7 @@ class Proveedor extends Base\ComercialContact
         parent::clear();
         $this->acreedor = false;
         $this->codimpuestoportes = AppSettings::get('default', 'codimpuesto');
+        $this->recargo = false;
     }
 
     /**

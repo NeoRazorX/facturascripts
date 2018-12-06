@@ -48,7 +48,7 @@ class EditEmpresa extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'company';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-home';
+        $pagedata['icon'] = 'fas fa-building';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -65,18 +65,30 @@ class EditEmpresa extends ExtendedController\EditController
         $this->createViewExercises();
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
     private function createViewBankAccounts($viewName = 'EditCuentaBanco')
     {
         $this->addEditListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->views[$viewName]->disableColumn('company');
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
     private function createViewExercises($viewName = 'ListEjercicio')
     {
         $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
         $this->views[$viewName]->disableColumn('company');
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
     private function createViewWarehouse($viewName = 'EditAlmacen')
     {
         $this->addEditListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');

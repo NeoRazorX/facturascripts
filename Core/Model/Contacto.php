@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -210,6 +211,21 @@ class Contacto extends Base\Contact
         $this->level = 1;
         $this->puntos = 0;
         $this->verificado = false;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function country()
+    {
+        $country = new Pais();
+        $where = [new DataBaseWhere('codiso', $this->codpais)];
+        if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
+            return Utils::fixHtml($country->nombre);
+        }
+
+        return $this->codpais;
     }
 
     /**

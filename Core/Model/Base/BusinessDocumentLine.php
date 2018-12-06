@@ -18,10 +18,12 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Stock;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of BusinessDocumentLine
@@ -171,16 +173,20 @@ abstract class BusinessDocumentLine extends ModelClass
         parent::clear();
         $this->actualizastock = 0;
         $this->cantidad = 0.0;
-        $this->servido = 0.0;
         $this->descripcion = '';
         $this->dtopor = 0.0;
         $this->irpf = 0.0;
-        $this->iva = 0.0;
         $this->orden = 0;
         $this->pvpsindto = 0.0;
         $this->pvptotal = 0.0;
         $this->pvpunitario = 0.0;
-        $this->recargo = 0.0;
+        $this->servido = 0.0;
+
+        /// default tax
+        $impuesto = $this->getDefaultTax();
+        $this->codimpuesto = $impuesto->codimpuesto;
+        $this->iva = $impuesto->iva;
+        $this->recargo = $impuesto->recargo;
     }
 
     /**
@@ -310,5 +316,17 @@ abstract class BusinessDocumentLine extends ModelClass
                 $stock->reservada += $quantity;
                 break;
         }
+    }
+
+    /**
+     * 
+     * @return Impuesto
+     */
+    private function getDefaultTax()
+    {
+        $codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $impuesto = new Impuesto();
+        $impuesto->loadFromCode($codimpuesto);
+        return $impuesto;
     }
 }

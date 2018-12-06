@@ -41,7 +41,7 @@
                 <widget type="text" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="fiscal-number" numcolumns="4" order="140">
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
             <column name="company" numcolumns="4" order="150">
                 <widget type="text" fieldname="empresa" />

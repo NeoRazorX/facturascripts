@@ -183,6 +183,13 @@ abstract class SalesDocument extends BusinessDocument
             $this->codcliente = $subject->codcliente;
             $this->nombrecliente = $subject->razonsocial;
 
+            /// commercial data
+            $this->codagente = $subject->codagente ?? $this->codagente;
+            $this->codpago = $subject->codpago ?? $this->codpago;
+            $this->codserie = $subject->codserie ?? $this->codserie;
+            $this->irpf = $subject->irpf;
+
+            /// billing address
             $billingAddress = $subject->getDefaultAddress('billing');
             $this->codpais = $billingAddress->codpais;
             $this->provincia = $billingAddress->provincia;
@@ -192,6 +199,7 @@ abstract class SalesDocument extends BusinessDocument
             $this->apartado = $billingAddress->apartado;
             $this->idcontactofact = $billingAddress->idcontacto;
 
+            /// shipping address
             $shippingAddress = $subject->getDefaultAddress('shipping');
             $this->idcontactoenv = $shippingAddress->idcontacto;
             return true;

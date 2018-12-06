@@ -67,6 +67,9 @@ class FacturaCliente extends Base\SalesDocument
     {
         $newLine = new LineaFacturaCliente($data);
         $newLine->idfactura = $this->idfactura;
+        if (empty($data)) {
+            $newLine->irpf = $this->irpf;
+        }
 
         $status = $this->getStatus();
         $newLine->actualizastock = $status->actualizastock;

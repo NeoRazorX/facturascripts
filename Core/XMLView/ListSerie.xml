@@ -32,9 +32,7 @@
             <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="without-taxation" display="center" order="140">
-            <widget type="checkbox" fieldname="siniva">
-                <option color="danger">0</option>
-            </widget>
+            <widget type="checkbox" fieldname="siniva" />
         </column>
     </columns>
 </view>

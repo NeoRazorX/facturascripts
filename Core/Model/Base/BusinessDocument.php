@@ -21,13 +21,14 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of BusinessDocument
@@ -366,6 +367,34 @@ abstract class BusinessDocument extends ModelClass
         $empresa = new Empresa();
         $empresa->loadFromCode($this->idempresa);
         return $empresa;
+    }
+
+    /**
+     * 
+     * @param string $reference
+     *
+     * @return BusinessDocumentLine
+     */
+    public function getNewProductLine($reference)
+    {
+        $newLine = $this->getNewLine();
+
+        $variant = new Variante();
+        $where = [new DataBaseWhere('referencia', $reference)];
+        if ($variant->loadFromCode('', $where)) {
+            $product = $variant->getProducto();
+            $impuesto = $product->getImpuesto();
+
+            $newLine->cantidad = 1;
+            $newLine->codimpuesto = $impuesto->codimpuesto;
+            $newLine->descripcion = $product->descripcion;
+            $newLine->iva = $impuesto->iva;
+            $newLine->pvpunitario = $variant->precio;
+            $newLine->recargo = $impuesto->recargo;
+            $newLine->referencia = $variant->referencia;
+        }
+
+        return $newLine;
     }
 
     /**

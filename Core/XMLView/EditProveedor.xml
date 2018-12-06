@@ -42,7 +42,7 @@
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
             <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
@@ -84,21 +84,24 @@
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="subaccount" numcolumns="3" order="120">
-                <widget type="text" fieldname="codsubcuenta" />
-            </column>
-            <column name="tax-transport" numcolumns="3" order="130">
+            <column name="tax-transport" numcolumns="3" order="120">
                 <widget type="select" fieldname="codimpuestoportes">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="vat-regime" order="140" numcolumns="3">
+            <column name="subaccount" numcolumns="3" order="130">
+                <widget type="text" fieldname="codsubcuenta" />
+            </column>
+            <column name="irpf" numcolumns="3" order="140">
+                <widget type="number" fieldname="irpf" icon="fas fa-percent" />
+            </column>
+            <column name="vat-regime" numcolumns="3" order="150">
                 <widget type="select" fieldname="regimeniva" required="true">
                     <values></values>
                 </widget>
             </column>
-            <column name="irpf" numcolumns="3" order="140">
-                <widget type="number" fieldname="irpf" icon="fas fa-percent" />
+            <column name="surcharge" order="160">
+                <widget type="checkbox" fieldname="recargo" />
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">

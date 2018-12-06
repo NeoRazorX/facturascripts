@@ -74,7 +74,7 @@ abstract class Contact extends ModelClass
      * True -> the customer is a natural person.
      * False -> the client is a legal person (company).
      *
-     * @var boolean
+     * @var bool
      */
     public $personafisica;
 

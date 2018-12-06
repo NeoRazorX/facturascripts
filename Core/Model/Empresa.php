@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\RegimenIVA;
 
 /**
  * This class stores the main data of the company.
@@ -75,13 +74,6 @@ class Empresa extends Base\Contact
     public $direccion;
 
     /**
-     * Physical person.
-     *
-     * @var int
-     */
-    public $personafisica;
-
-    /**
      * Primary key. Integer.
      *
      * @var int
@@ -103,20 +95,6 @@ class Empresa extends Base\Contact
     public $provincia;
 
     /**
-     * True -> activates the use of an equivalence surcharge on delivery notes and purchase invoices.
-     *
-     * @var bool
-     */
-    public $recequivalencia;
-
-    /**
-     * VAT regime of the company.
-     *
-     * @var string
-     */
-    public $regimeniva;
-
-    /**
      * Website of the person.
      *
      * @var string
@@ -130,9 +108,6 @@ class Empresa extends Base\Contact
     {
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
-
-        $regimenIVA = new RegimenIVA();
-        $this->regimeniva = $regimenIVA::defaultValue();
     }
 
     /**

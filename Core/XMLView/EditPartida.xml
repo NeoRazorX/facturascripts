@@ -90,7 +90,7 @@
                 <widget type="text" fieldname="documento" required="true" />
             </column>
             <column name="fiscal-number" numcolumns="6">
-                <widget type="text" fieldname="cifnif" required="true" />
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" required="true" />
             </column>
             <column name="tax-base" numcolumns="6">
                 <widget type="money" decimal="2" fieldname="baseimponible" />

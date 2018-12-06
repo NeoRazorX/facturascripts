@@ -56,7 +56,7 @@
                 <widget type="text" fieldname="nombrecliente" required="true" />
             </column>
             <column name="cifnif" title="cifnif" numcolumns="2" order="110">
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
             <column name="address" numcolumns="6" order="120">
                 <widget type="text" fieldname="direccion" />

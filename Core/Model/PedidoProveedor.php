@@ -62,6 +62,9 @@ class PedidoProveedor extends Base\PurchaseDocument
     {
         $newLine = new LineaPedidoProveedor($data);
         $newLine->idpedido = $this->idpedido;
+        if (empty($data)) {
+            $newLine->irpf = $this->irpf;
+        }
 
         $status = $this->getStatus();
         $newLine->actualizastock = $status->actualizastock;

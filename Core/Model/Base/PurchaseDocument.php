@@ -56,7 +56,7 @@ abstract class PurchaseDocument extends BusinessDocument
      * 
      * @param Proveedor $subject
      *
-     * @return boolean
+     * @return bool
      */
     public function setSubject($subject)
     {
@@ -64,9 +64,16 @@ abstract class PurchaseDocument extends BusinessDocument
             return false;
         }
 
+        /// supplier model
         $this->codproveedor = $subject->codproveedor;
         $this->nombre = $subject->razonsocial;
         $this->cifnif = $subject->cifnif;
+
+        /// commercial data
+        $this->codpago = $subject->codpago ?? $this->codpago;
+        $this->codserie = $subject->codserie ?? $this->codserie;
+        $this->irpf = $subject->irpf ?? $this->irpf;
+
         return true;
     }
 
@@ -86,7 +93,7 @@ abstract class PurchaseDocument extends BusinessDocument
     /**
      * Updates subjects data in this document.
      *
-     * @return boolean
+     * @return bool
      */
     public function updateSubject()
     {
