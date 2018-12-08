@@ -443,7 +443,7 @@ class EditAsiento extends EditController
             $values['code'] = $client->codcliente;
             $values['description'] = $client->nombre;
             $values['id'] = $client->cifnif;
-            $values['surcharge'] = $client->recargo;
+            $values['surcharge'] = ($client->regimeniva == 'Recargo');
         }
     }
 
@@ -461,7 +461,7 @@ class EditAsiento extends EditController
             $values['code'] = $supplier->codproveedor;
             $values['description'] = $supplier->nombre;
             $values['id'] = $supplier->cifnif;
-            $values['surcharge'] = $this->empresa->recequivalencia;
+            $values['surcharge'] = ($this->empresa->regimeniva == 'Recargo');
         }
     }
 
