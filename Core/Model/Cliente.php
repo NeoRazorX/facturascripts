@@ -67,22 +67,6 @@ class Cliente extends Base\ComercialContact
     public $idcontactoenv;
 
     /**
-     * True -> equivalence surcharge is applied to the client.
-     *
-     * @var bool
-     */
-    public $recargo;
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->recargo = false;
-    }
-
-    /**
      * 
      * @param string $query
      * @param string $fieldcode

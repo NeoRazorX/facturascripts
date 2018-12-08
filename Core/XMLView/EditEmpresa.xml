@@ -85,7 +85,12 @@
             <column name="startdate" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta"/>
             </column>
-            <column name="observations" order="100">
+            <column name="vat-regime" numcolumns="3" order="110">
+                <widget type="select" fieldname="regimeniva" required="true">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="observations" numcolumns="12" order="120">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

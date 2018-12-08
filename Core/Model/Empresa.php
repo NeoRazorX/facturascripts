@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * This class stores the main data of the company.
@@ -95,11 +96,38 @@ class Empresa extends Base\Contact
     public $provincia;
 
     /**
+     * Taxation regime of the provider. For now they are only implemented general and exempt.
+     *
+     * @var string
+     */
+    public $regimeniva;
+
+    /**
+     * Type of VAT regime
+     *
+     * @var RegimenIVA
+     */
+    private static $regimenIVA;
+
+    /**
      * Website of the person.
      *
      * @var string
      */
     public $web;
+
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct(array $data = array())
+    {
+        if (self::$regimenIVA === null) {
+            self::$regimenIVA = new RegimenIVA();
+        }
+
+        parent::__construct($data);
+    }
 
     /**
      * Reset the values of all model properties.
@@ -108,6 +136,7 @@ class Empresa extends Base\Contact
     {
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
+        $this->regimeniva = self::$regimenIVA->defaultValue();
     }
 
     /**
@@ -121,11 +150,11 @@ class Empresa extends Base\Contact
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono1,codpais,apartado,'
-            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto,personafisica)'
-            . "VALUES (1,NULL,'https://www.facturascripts.com',"
-            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
-            . "'Empresa " . $num . " S.L.','E-" . $num . "','0');";
+        return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
+            . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
+            . "VALUES (1,'https://www.facturascripts.com','ESP','C/ Falsa, 123',"
+            . "'','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "','0',"
+            . "'" . self::$regimenIVA->defaultValue() . "');";
     }
 
     /**

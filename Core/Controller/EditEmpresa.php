@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -114,7 +115,15 @@ class EditEmpresa extends ExtendedController\EditController
 
             default:
                 parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues();
                 break;
         }
+    }
+    
+    protected function setCustomWidgetValues()
+    {
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views['EditEmpresa']->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
     }
 }

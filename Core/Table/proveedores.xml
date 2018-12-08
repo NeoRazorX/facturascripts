@@ -91,10 +91,6 @@
         <type>character varying(100)</type>
     </column>
     <column>
-        <name>recargo</name>
-        <type>boolean</type>
-    </column>
-    <column>
         <name>regimeniva</name>
         <type>character varying(20)</type>
     </column>

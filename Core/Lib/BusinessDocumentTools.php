@@ -171,14 +171,31 @@ class BusinessDocumentTools
             $cliente = new Cliente();
             if ($cliente->loadFromCode($doc->codcliente)) {
                 $doc->irpf = $cliente->irpf;
-                $this->recargo = $cliente->recargo;
+                $this->loadRegimenIva($cliente->regimeniva);
             }
         } elseif (isset($doc->codproveedor)) {
             $proveedor = new Proveedor();
             if ($proveedor->loadFromCode($doc->codproveedor)) {
                 $doc->irpf = $proveedor->irpf;
-                $this->recargo = $cliente->recargo;
+                $this->loadRegimenIva($proveedor->regimeniva);
             }
+        }
+    }
+
+    /**
+     * 
+     * @param string $reg
+     */
+    private function loadRegimenIva($reg)
+    {
+        switch ($reg) {
+            case 'Exento':
+                $this->siniva = true;
+                break;
+
+            case 'Recargo':
+                $this->recargo = true;
+                break;
         }
     }
 
