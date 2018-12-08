@@ -164,7 +164,7 @@ class EditProveedor extends ExtendedController\EditController
 
         /// Load values option to VAT Type select input
         $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
+        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
 
         /// Search for supplier contacts
         $where = [new DataBaseWhere('codproveedor', $code)];

@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
 
@@ -178,6 +179,11 @@ class BusinessDocumentTools
             if ($proveedor->loadFromCode($doc->codproveedor)) {
                 $doc->irpf = $proveedor->irpf;
                 $this->loadRegimenIva($proveedor->regimeniva);
+            }
+
+            $empresa = new Empresa();
+            if ($empresa->loadFromCode($doc->idempresa)) {
+                $this->loadRegimenIva($empresa->regimeniva);
             }
         }
     }

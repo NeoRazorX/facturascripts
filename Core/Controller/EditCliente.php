@@ -184,6 +184,6 @@ class EditCliente extends ExtendedController\EditController
 
         /// Load values option to VAT Type select input
         $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
+        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
     }
 }

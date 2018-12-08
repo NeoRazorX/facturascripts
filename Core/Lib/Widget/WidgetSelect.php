@@ -166,6 +166,31 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
+     * 
+     * @param array $values
+     * @param bool  $translate
+     * @param bool  $addEmpty
+     */
+    public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false)
+    {
+        $this->values = [];
+        if ($addEmpty) {
+            $this->values[] = ['value' => null, 'title' => '------'];
+        }
+
+        foreach ($values as $key => $value) {
+            $this->values[] = [
+                'value' => $key,
+                'title' => $value,
+            ];
+        }
+
+        if ($translate) {
+            $this->applyTranslations();
+        }
+    }
+
+    /**
      * Loads the value list from an array with value and title (description)
      *
      * @param array $rows
