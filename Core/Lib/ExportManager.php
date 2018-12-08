@@ -48,23 +48,20 @@ class ExportManager
      */
     public function __construct()
     {
-        $this->init();
+        self::init();
     }
 
     /**
-     * Initialize options array
+     * Adds a new option.
      *
+     * @param string $key
+     * @param string $description
+     * @param string $icon
      */
-    public static function init()
+    public static function addOption($key, $description, $icon)
     {
-        if (self::$options === null) {
-            self::$options = [
-                'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
-                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-archive'],
-                'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope'],
-            ];
-        }
+        self::init();
+        self::$options[$key] = ['description' => $description, 'icon' => $icon];
     }
 
     /**
@@ -75,53 +72,17 @@ class ExportManager
     public function defaultOption()
     {
         $keys = array_keys(self::$options);
-
         return $keys[0];
     }
 
     /**
-     * returns options to export.
+     * Adds a new page with the document data.
      *
-     * @return array
+     * @param mixed $model
      */
-    public function options()
+    public function generateBusinessDocPage($model)
     {
-        return self::$options;
-    }
-
-    /**
-     * Create a new doc and set headers.
-     *
-     * @param string $option
-     */
-    public function newDoc($option)
-    {
-        /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
-        $className = $this->getExportClassName($option);
-        self::$engine = new $className();
-        self::$engine->newDoc();
-    }
-
-    /**
-     * Returns the formated data.
-     *
-     * @param Response $response
-     */
-    public function show(Response &$response)
-    {
-        self::$engine->show($response);
-    }
-
-    /**
-     * Adds a new page with the model data.
-     *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
-     */
-    public function generateModelPage($model, $columns, $title = '')
-    {
-        self::$engine->generateModelPage($model, $columns, $title);
+        self::$engine->generateBusinessDocPage($model);
     }
 
     /**
@@ -140,13 +101,15 @@ class ExportManager
     }
 
     /**
-     * Adds a new page with the document data.
+     * Adds a new page with the model data.
      *
-     * @param mixed $model
+     * @param mixed  $model
+     * @param array  $columns
+     * @param string $title
      */
-    public function generateBusinessDocPage($model)
+    public function generateModelPage($model, $columns, $title = '')
     {
-        self::$engine->generateBusinessDocPage($model);
+        self::$engine->generateModelPage($model, $columns, $title);
     }
 
     /**
@@ -167,6 +130,39 @@ class ExportManager
     }
 
     /**
+     * Create a new doc and set headers.
+     *
+     * @param string $option
+     */
+    public function newDoc($option)
+    {
+        /// calls to the appropiate engine to generate the doc
+        $className = $this->getExportClassName($option);
+        self::$engine = new $className();
+        self::$engine->newDoc();
+    }
+
+    /**
+     * returns options to export.
+     *
+     * @return array
+     */
+    public function options()
+    {
+        return self::$options;
+    }
+
+    /**
+     * Returns the formated data.
+     *
+     * @param Response $response
+     */
+    public function show(Response &$response)
+    {
+        self::$engine->show($response);
+    }
+
+    /**
      * Returns the full class name.
      *
      * @param string $option
@@ -184,16 +180,17 @@ class ExportManager
     }
 
     /**
-     * Add a new option in array options
-     * @param string $key
-     * @param string $description
-     * @param string $icon
+     * Initialize options array
      */
-    public static function addOption($key, $description, $icon)
+    protected static function init()
     {
-        self::init();
-        $values = ['description' => $description, 'icon' => $icon];
-
-        self::$options[$key] = $values;
+        if (self::$options === null) {
+            self::$options = [
+                'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
+                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-archive'],
+                'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope'],
+            ];
+        }
     }
 }
