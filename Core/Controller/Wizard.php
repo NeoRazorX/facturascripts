@@ -188,7 +188,7 @@ class Wizard extends Controller
      */
     private function enableLogs()
     {
-        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+        $types = ['error', 'critical', 'alert', 'emergency'];
         $appSettings = new AppSettings();
         foreach ($types as $type) {
             $appSettings->set('log', $type, 'true');
