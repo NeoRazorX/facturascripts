@@ -380,6 +380,10 @@ class Contacto extends Base\Contact
      */
     public function test()
     {
+        if (empty($this->descripcion)) {
+            $this->descripcion = $this->direccion ?? $this->fullName();
+        }
+
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->apellidos = Utils::noHtml($this->apellidos);
         $this->cargo = Utils::noHtml($this->cargo);
@@ -387,14 +391,6 @@ class Contacto extends Base\Contact
         $this->direccion = Utils::noHtml($this->direccion);
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
-
-        /// transform empty values in null
-        $fields = ['codagente', 'codcliente', 'codpais', 'codproveedor', 'lastactivity'];
-        foreach ($fields as $field) {
-            if (empty($this->{$field})) {
-                $this->{$field} = null;
-            }
-        }
 
         return parent::test();
     }
