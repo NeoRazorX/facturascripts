@@ -159,19 +159,20 @@
     <div class="col">
         <div class="input-group">
             <span class="input-group-prepend">
-                <span class="input-group-text">
-                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                </span>
+                {% if model.codcliente %}
+                    <a href="EditCliente?code={{ model.codcliente }}" target="_blank" class="btn btn-info">
+                        <i class="fas fa-user-cog fa-fw" aria-hidden="true"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ newUrl }}" target="_blank" class="btn btn-success" title="{{ i18n.trans('new-customer') }}">
+                        <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente | raw }}" class="form-control autocomplete-dc"
                    data-field="{{ id }}" data-source="Cliente" data-fieldcode="codcliente" data-fieldtitle="nombre"
                    placeholder="{{ i18n.trans('customer') }}" autocomplete="off"/>
-            <span class="input-group-append">
-                <a href="{{ newUrl }}" target="_blank" class="btn btn-success" title="{{ i18n.trans('new-customer') }}">
-                    <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
-                </a>
-            </span>
         </div>
     </div>
 {% endmacro %}
@@ -180,19 +181,20 @@
     <div class="col">
         <div class="input-group">
             <span class="input-group-prepend">
-                <span class="input-group-text">
-                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                </span>
+                {% if model.codproveedor %}
+                    <a href="EditProveedor?code={{ model.codproveedor }}" target="_blank" class="btn btn-info">
+                        <i class="fas fa-user-cog fa-fw" aria-hidden="true"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ newUrl }}" target="_blank" class="btn btn-success" title="{{ i18n.trans('new-supplier') }}">
+                        <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombre | raw }}" class="form-control autocomplete-dc"
                    data-field="{{ id }}" data-source="Proveedor" data-fieldcode="codproveedor" data-fieldtitle="nombre"
                    placeholder="{{ i18n.trans('supplier') }}" autocomplete="off"/>
-            <span class="input-group-append">
-                <a href="{{ newUrl }}" target="_blank" class="btn btn-success" title="{{ i18n.trans('new-supplier') }}">
-                    <i class="fas fa-user-plus fa-fw" aria-hidden="true"></i>
-                </a>
-            </span>
         </div>
     </div>
 {% endmacro %}
