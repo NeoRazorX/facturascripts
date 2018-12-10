@@ -119,62 +119,28 @@ abstract class ModelView
     }
 
     /**
-     * Reset the values of all model properties.
-     */
-    protected function clear()
-    {
-        foreach (array_keys($this->getFields()) as $field) {
-            $this->values[$field] = null;
-        }
-    }
-
-    /**
-     * Assign the values of the $data array to the model view properties.
+     * Load data for the indicated where.
      *
-     * @param array $data
-     */
-    protected function loadFromData($data)
-    {
-        foreach ($data as $field => $value) {
-            $this->values[$field] = $value;
-        }
-    }
-
-    /**
-     * Return Group By clausule
+     * @param DataBaseWhere[] $where  filters to apply to model records.
+     * @param array           $order  fields to use in the sorting. For example ['code' => 'ASC']
+     * @param int             $offset
+     * @param int             $limit
      *
-     * @return string
+     * @return self[]
      */
-    protected function getGroupBy(): string
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
     {
-        $fields = $this->getGroupFields();
-        return empty($fields) ? '' : ' GROUP BY ' . $fields;
-    }
-
-    /**
-     * Return Group By fields
-     *
-     * @return string
-     */
-    protected function getGroupFields(): string
-    {
-        return '';
-    }
-
-    /**
-     * Convert an array of filters order by in string.
-     *
-     * @param array $order
-     *
-     * @return string
-     */
-    private function getOrderBy(array $order): string
-    {
-        $result = '';
-        $coma = ' ORDER BY ';
-        foreach ($order as $key => $value) {
-            $result .= $coma . $key . ' ' . $value;
-            $coma = ', ';
+        $result = [];
+        if ($this->checkTables()) {
+            $class = get_class($this);
+            $sql = 'SELECT ' . $this->fieldsList()
+                . ' FROM ' . $this->getSQLFrom()
+                . DataBaseWhere::getSQLWhere($where)
+                . $this->getGroupBy()
+                . $this->getOrderBy($order);
+            foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
+                $result[] = new $class($d);
+            }
         }
         return $result;
     }
@@ -194,6 +160,16 @@ abstract class ModelView
             }
         }
         return $result;
+    }
+
+    /**
+     * Reset the values of all model properties.
+     */
+    protected function clear()
+    {
+        foreach (array_keys($this->getFields()) as $field) {
+            $this->values[$field] = null;
+        }
     }
 
     /**
@@ -237,29 +213,53 @@ abstract class ModelView
     }
 
     /**
-     * Load data for the indicated where.
+     * Return Group By clausule
      *
-     * @param DataBaseWhere[] $where  filters to apply to model records.
-     * @param array           $order  fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int             $offset
-     * @param int             $limit
-     *
-     * @return self[]
+     * @return string
      */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
+    protected function getGroupBy(): string
     {
-        $result = [];
-        if ($this->checkTables()) {
-            $class = get_class($this);
-            $sql = 'SELECT ' . $this->fieldsList()
-                . ' FROM ' . $this->getSQLFrom()
-                . DataBaseWhere::getSQLWhere($where)
-                . $this->getGroupBy()
-                . $this->getOrderBy($order);
-            foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
-                $result[] = new $class($d);
-            }
+        $fields = $this->getGroupFields();
+        return empty($fields) ? '' : ' GROUP BY ' . $fields;
+    }
+
+    /**
+     * Return Group By fields
+     *
+     * @return string
+     */
+    protected function getGroupFields(): string
+    {
+        return '';
+    }
+
+    /**
+     * Convert an array of filters order by in string.
+     *
+     * @param array $order
+     *
+     * @return string
+     */
+    private function getOrderBy(array $order): string
+    {
+        $result = '';
+        $coma = ' ORDER BY ';
+        foreach ($order as $key => $value) {
+            $result .= $coma . $key . ' ' . $value;
+            $coma = ', ';
         }
         return $result;
+    }
+
+    /**
+     * Assign the values of the $data array to the model view properties.
+     *
+     * @param array $data
+     */
+    protected function loadFromData($data)
+    {
+        foreach ($data as $field => $value) {
+            $this->values[$field] = $value;
+        }
     }
 }
