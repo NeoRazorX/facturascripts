@@ -51,10 +51,10 @@ class ListAgente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('ListAgente', 'Agente', 'agents', 'fas fa-id-badge');
-        $this->addSearchFields('ListAgente', ['nombre', 'apellidos', 'codagente', 'email']);
+        $this->addSearchFields('ListAgente', ['nombre', 'codagente', 'email']);
 
         $this->addOrderBy('ListAgente', ['codagente'], 'code');
-        $this->addOrderBy('ListAgente', ['concat(nombre,apellidos)'], 'name', 1);
+        $this->addOrderBy('ListAgente', ['nombre'], 'name', 1);
         $this->addOrderBy('ListAgente', ['provincia'], 'province');
 
         $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');

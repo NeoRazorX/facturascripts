@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListAgente
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -29,9 +29,6 @@
         </column>
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
-        </column>
-        <column name="surname" order="120">
-            <widget type="text" fieldname="apellidos" />
         </column>
         <column name="cifnif" order="125">
             <widget type="text" fieldname="cifnif" />
