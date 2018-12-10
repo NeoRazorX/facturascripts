@@ -18,10 +18,13 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * The head of transfer.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class TransferenciaStock extends Base\ModelClass
 {
@@ -29,11 +32,11 @@ class TransferenciaStock extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key autoincremental.
+     * Warehouse of destination. Varchar (4).
      *
-     * @var int
+     * @var string
      */
-    public $idtrans;
+    public $codalmacendestino;
 
     /**
      * Warehouse of origin. Varchar (4).
@@ -43,11 +46,11 @@ class TransferenciaStock extends Base\ModelClass
     public $codalmacenorigen;
 
     /**
-     * Warehouse of destination. Varchar (4).
+     * Primary key autoincremental.
      *
-     * @var string
+     * @var int
      */
-    public $codalmacendestino;
+    public $idtrans;
 
     /**
      * Date of transfer.
@@ -61,13 +64,14 @@ class TransferenciaStock extends Base\ModelClass
      *
      * @var string
      */
-    public $usuario;
+    public $nick;
 
     /**
-     * * Reset the values of all model properties.
      *
-     * @return void
+     * @var string
      */
+    public $observaciones;
+
     public function clear()
     {
         parent::clear();
@@ -95,12 +99,13 @@ class TransferenciaStock extends Base\ModelClass
     }
 
     /**
-     * If warehouse oirigin is diferent warehouse destination return true. If not, return false.
-     *
+     * 
      * @return bool
      */
     public function test()
     {
+        $this->observaciones = Utils::noHtml($this->observaciones);
+
         if ($this->codalmacenorigen == $this->codalmacendestino) {
             self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
             return false;
