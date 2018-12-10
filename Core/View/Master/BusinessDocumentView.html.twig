@@ -53,7 +53,7 @@
             <div class="input-group">
                 <span class="input-group-prepend">
                     <span class="input-group-text">
-                        <i class="fas fa-money-bill-alt fa-fw" aria-hidden="true"></i>
+                        {{ currentView.model.coddivisa }}
                     </span>
                 </span>
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
@@ -63,6 +63,21 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-right">
+            {% if currentView.model.femail %}
+                <span class="badge badge-info">
+                    <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('email-sent') }}
+                    {{ currentView.model.femail }}
+                </span>
+            {% endif %}
+            {% if currentView.model.pagado %}
+                <span class="badge badge-success">
+                    <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ i18n.trans('paid') }}
+                </span>
+            {% endif %}
         </div>
     </div>
     <br/>

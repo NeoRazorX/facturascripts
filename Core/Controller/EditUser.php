@@ -46,7 +46,7 @@ class EditUser extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'user';
-        $pagedata['icon'] = 'fas fa-user';
+        $pagedata['icon'] = 'fas fa-user-tie';
         $pagedata['menu'] = 'admin';
         $pagedata['showonmenu'] = false;
 
