@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\ImpuestoZona;
 
 /**
  * Controller to list the items in the Impuesto model
@@ -93,5 +95,48 @@ class ListImpuesto extends ExtendedController\ListController
         $this->addOrderBy($name, ['codpais'], 'country');
         $this->addOrderBy($name, ['codisopro'], 'province');
         $this->addOrderBy($name, ['codimpuestosel'], 'applied-tax');
+
+        /// buttons
+        $button = [
+            'action' => 'generate-zones',
+            'color' => 'warning',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate',
+            'type' => 'action'
+        ];
+        $this->addButton($name, $button);
+    }
+
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'generate-zones':
+                $this->generateTaxZones();
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
+    }
+
+    protected function generateTaxZones()
+    {
+        $impuesto = new Impuesto();
+        foreach ($impuesto->all() as $imp) {
+            $impZona = new ImpuestoZona();
+            $impZona->codimpuesto = $imp->codimpuesto;
+            $impZona->codpais = FS_CODPAIS;
+            $impZona->codisopro = null;
+            $impZona->codimpuestosel = $imp->codimpuesto;
+            $impZona->prioridad = 1;
+            $impZona->save();
+
+            $impZona2 = new ImpuestoZona();
+            $impZona2->codimpuesto = $imp->codimpuesto;
+            $impZona2->codpais = null;
+            $impZona2->codisopro = null;
+            $impZona2->prioridad = 0;
+            $impZona2->save();
+        }
     }
 }

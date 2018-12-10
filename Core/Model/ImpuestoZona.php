@@ -75,6 +75,12 @@ class ImpuestoZona extends Base\ModelClass
     public $prioridad;
 
     /**
+     *
+     * @var string
+     */
+    protected $provincia;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -93,6 +99,21 @@ class ImpuestoZona extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'id';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function provincia()
+    {
+        if (!isset($this->provincia)) {
+            $provincia = new Provincia();
+            $provincia->loadFromCode($this->codisopro);
+            $this->provincia = $provincia->provincia;
+        }
+
+        return $this->provincia;
     }
 
     /**

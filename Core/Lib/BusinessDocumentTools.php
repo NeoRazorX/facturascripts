@@ -23,16 +23,24 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\ImpuestoZona;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
- * Description of DocumentCalculator
+ * A set of tools to recalculate business documents.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BusinessDocumentTools
 {
+
+    /**
+     *
+     * @var ImpuestoZona[]
+     */
+    protected $impuestosZonas = [];
 
     /**
      *
@@ -103,7 +111,12 @@ class BusinessDocumentTools
     public function recalculate(BusinessDocument &$doc)
     {
         $this->clearTotals($doc);
+
         $lines = $doc->getLines();
+        foreach (array_keys($lines) as $key) {
+            $this->recalculateLine($lines[$key]);
+        }
+
         foreach ($this->getSubtotals($lines) as $subt) {
             $doc->neto += $subt['neto'];
             $doc->totaliva += $subt['totaliva'];
@@ -125,9 +138,10 @@ class BusinessDocumentTools
     public function recalculateForm(BusinessDocument &$doc, array &$formLines)
     {
         $this->clearTotals($doc);
+
         $lines = [];
         foreach ($formLines as $fLine) {
-            $lines[] = $this->recalculateLine($fLine, $doc);
+            $lines[] = $this->recalculateFormLine($fLine, $doc);
         }
 
         foreach ($this->getSubtotals($lines) as $subt) {
@@ -164,15 +178,12 @@ class BusinessDocumentTools
             $this->siniva = $serie->siniva;
         }
 
-        if ($doc->exists()) {
-            return;
-        }
-
         if (isset($doc->codcliente)) {
             $cliente = new Cliente();
             if ($cliente->loadFromCode($doc->codcliente)) {
                 $doc->irpf = $cliente->irpf;
                 $this->loadRegimenIva($cliente->regimeniva);
+                $this->loadTaxZones($doc);
             }
         } elseif (isset($doc->codproveedor)) {
             $proveedor = new Proveedor();
@@ -207,26 +218,87 @@ class BusinessDocumentTools
 
     /**
      * 
+     * @param BusinessDocument $doc
+     */
+    private function loadTaxZones($doc)
+    {
+        $this->impuestosZonas = [];
+
+        $impuestoZonaModel = new ImpuestoZona();
+        foreach ($impuestoZonaModel->all([], ['prioridad' => 'DESC']) as $impZona) {
+            if ($impZona->codpais == $doc->codpais && $impZona->provincia() == $doc->provincia) {
+                $this->impuestosZonas[] = $impZona;
+            } elseif ($impZona->codpais == $doc->codpais && $impZona->codisopro == null) {
+                $this->impuestosZonas[] = $impZona;
+            } elseif ($impZona->codpais == null) {
+                $this->impuestosZonas[] = $impZona;
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param BusinessDocumentLine $line
+     */
+    private function recalculateLine(&$line)
+    {
+        $newCodimpuesto = $line->codimpuesto;
+        $newRecargo = $line->recargo;
+
+        /// apply tax zones
+        foreach ($this->impuestosZonas as $impZona) {
+            if ($line->codimpuesto == $impZona->codimpuesto) {
+                $newCodimpuesto = $impZona->codimpuestosel;
+                break;
+            }
+        }
+
+        if ($this->siniva) {
+            $newCodimpuesto = null;
+            $newRecargo = false;
+        } elseif ($this->recargo) {
+            $newRecargo = false;
+        }
+
+        if ($newCodimpuesto != $line->codimpuesto || $newRecargo != $newRecargo) {
+            /// get new tax
+            $impuesto = new Impuesto();
+            $impuesto->loadFromCode($newCodimpuesto);
+
+            $line->codimpuesto = $newCodimpuesto;
+            $line->iva = $impuesto->iva;
+            $line->recargo = $newRecargo ? $impuesto->recargo : 0.0;
+            $line->save();
+        }
+    }
+
+    /**
+     * 
      * @param array            $fLine
      * @param BusinessDocument $doc
      *
      * @return BusinessDocumentLine
      */
-    private function recalculateLine(array $fLine, BusinessDocument $doc)
+    private function recalculateFormLine(array $fLine, BusinessDocument $doc)
     {
-        if (!isset($fLine['cantidad']) || '' === $fLine['cantidad']) {
-            $newLine = $doc->getNewProductLine($fLine['referencia']);
-        } else {
-            $newLine = $doc->getNewLine();
-            foreach ($fLine as $key => $value) {
-                $newLine->{$key} = $value;
-            }
+        if (isset($fLine['cantidad']) && '' !== $fLine['cantidad']) {
+            /// edit line
+            $newLine = $doc->getNewLine($fLine);
             $newLine->cantidad = (float) $fLine['cantidad'];
             $newLine->pvpunitario = (float) $fLine['pvpunitario'];
             $newLine->dtopor = (float) $fLine['dtopor'];
             $newLine->irpf = (float) $fLine['irpf'];
             $newLine->iva = (float) $fLine['iva'];
             $newLine->recargo = (float) $fLine['recargo'];
+        } elseif (isset($fLine['referencia']) && '' !== $fLine['referencia']) {
+            /// new line with reference
+            $newLine = $doc->getNewProductLine($fLine['referencia']);
+            $this->recalculateFormLineTaxZones($newLine);
+        } else {
+            /// new line without reference
+            $newLine = $doc->getNewLine();
+            $newLine->descripcion = $fLine['descripcion'];
+            $this->recalculateFormLineTaxZones($newLine);
         }
 
         $newLine->descripcion = Utils::fixHtml($newLine->descripcion);
@@ -234,11 +306,37 @@ class BusinessDocumentTools
         $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
 
         if ($this->siniva) {
+            $newLine->codimpuesto = null;
             $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
         } elseif (!$this->recargo) {
             $newLine->recargo = 0.0;
         }
 
         return $newLine;
+    }
+
+    /**
+     * 
+     * @param BusinessDocumentLine $line
+     */
+    private function recalculateFormLineTaxZones(&$line)
+    {
+        $newCodimpuesto = $line->codimpuesto;
+        foreach ($this->impuestosZonas as $impZona) {
+            if ($line->codimpuesto == $impZona->codimpuesto) {
+                $newCodimpuesto = $impZona->codimpuestosel;
+                break;
+            }
+        }
+
+        if ($newCodimpuesto != $line->codimpuesto) {
+            /// get new tax
+            $impuesto = new Impuesto();
+            $impuesto->loadFromCode($newCodimpuesto);
+
+            $line->codimpuesto = $newCodimpuesto;
+            $line->iva = $impuesto->iva;
+            $line->recargo = $impuesto->recargo;
+        }
     }
 }

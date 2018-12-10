@@ -158,6 +158,16 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
+     * 
+     * @param array $data
+     */
+    public function loadFromData(array &$data)
+    {
+        parent::loadFromData($data);
+        $this->model->updateSubject();
+    }
+
+    /**
      * Process form lines to add missing data from data form.
      * Also adds order column.
      *
