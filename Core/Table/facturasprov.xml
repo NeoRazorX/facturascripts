@@ -110,6 +110,10 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
         <name>nombre</name>
         <type>character varying(100)</type>
         <null>NO</null>
@@ -163,12 +167,8 @@
         <type>PRIMARY KEY (idfactura)</type>
     </constraint>
     <constraint>
-        <name>ca_facturasprov_series</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_facturasprov_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_facturasprov_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturasprov_asiento</name>
@@ -179,11 +179,19 @@
         <type>FOREIGN KEY (idasientop) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_facturasprov</name>
-        <type>UNIQUE (codigo,idempresa)</type>
+        <name>ca_facturasprov_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_facturasprov_almacenes</name>
-        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_facturasprov_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturasprov_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_facturasprov</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>

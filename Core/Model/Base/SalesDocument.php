@@ -108,13 +108,6 @@ abstract class SalesDocument extends BusinessDocument
     public $idcontactofact;
 
     /**
-     * User who created this document. User model.
-     *
-     * @var string
-     */
-    public $nick;
-
-    /**
      * Customer name.
      *
      * @var string

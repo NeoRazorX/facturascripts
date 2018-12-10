@@ -66,6 +66,13 @@
         </div>
     </div>
     <div class="row">
+        <div class="col">
+            {% if currentView.model.nick %}
+                <span class="badge badge-light">
+                    <i class="fas fa-user-tie fa-fw" aria-hidden="true"></i> {{ currentView.model.nick }}
+                </span>
+            {% endif %}
+        </div>
         <div class="col text-right">
             {% if currentView.model.femail %}
                 <span class="badge badge-info">
