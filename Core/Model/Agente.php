@@ -34,13 +34,6 @@ class Agente extends Base\Contact
     use Base\ModelTrait;
 
     /**
-     * Last name of the agent or employee.
-     *
-     * @var string
-     */
-    public $apellidos;
-
-    /**
      * Bank account.
      *
      * @var string
@@ -161,16 +154,6 @@ class Agente extends Base\Contact
     }
 
     /**
-     * Returns name + agent's last name.
-     *
-     * @return string
-     */
-    public function primaryDescription()
-    {
-        return $this->nombre . ' ' . $this->apellidos;
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -187,7 +170,6 @@ class Agente extends Base\Contact
      */
     public function test()
     {
-        $this->apellidos = Utils::noHtml($this->apellidos);
         $this->banco = Utils::noHtml($this->banco);
         $this->cargo = Utils::noHtml($this->cargo);
         $this->ciudad = Utils::noHtml($this->ciudad);
