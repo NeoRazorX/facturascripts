@@ -92,6 +92,12 @@ class WidgetAutocomplete extends WidgetSelect
      */
     protected function inputGroupClearBtn()
     {
+        if ($this->readonly()) {
+            return '<div class="' . $this->css('input-group-prepend') . '">'
+                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
+                . '</div>';
+        }
+
         return '<div class="' . $this->css('input-group-prepend') . '">'
             . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
             . '<i class="fas fa-times" aria-hidden="true"></i>'
