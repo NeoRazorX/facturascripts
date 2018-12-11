@@ -242,10 +242,8 @@ class BusinessDocumentTools
      */
     private function recalculateLine(&$line)
     {
-        $newCodimpuesto = $line->codimpuesto;
-        $newRecargo = $line->recargo;
-
         /// apply tax zones
+        $newCodimpuesto = $line->codimpuesto;
         foreach ($this->impuestosZonas as $impZona) {
             if ($line->codimpuesto == $impZona->codimpuesto) {
                 $newCodimpuesto = $impZona->codimpuestosel;
@@ -253,21 +251,28 @@ class BusinessDocumentTools
             }
         }
 
-        if ($this->siniva) {
-            $newCodimpuesto = null;
-            $newRecargo = false;
-        } elseif ($this->recargo) {
-            $newRecargo = false;
-        }
-
-        if ($newCodimpuesto != $line->codimpuesto || $newRecargo != $newRecargo) {
+        $save = false;
+        if ($this->siniva || $newCodimpuesto === null) {
+            $line->codimpuesto = null;
+            $line->irpf = $line->iva = $line->recargo = 0.0;
+            $save = true;
+        } elseif ($newCodimpuesto != $line->codimpuesto) {
             /// get new tax
             $impuesto = new Impuesto();
             $impuesto->loadFromCode($newCodimpuesto);
 
             $line->codimpuesto = $newCodimpuesto;
             $line->iva = $impuesto->iva;
-            $line->recargo = $newRecargo ? $impuesto->recargo : 0.0;
+            $line->recargo = $impuesto->recargo;
+            $save = true;
+        }
+
+        if ($line->recargo && !$this->recargo) {
+            $line->recargo = 0.0;
+            $save = true;
+        }
+
+        if ($save) {
             $line->save();
         }
     }
