@@ -158,6 +158,13 @@ abstract class BusinessDocument extends ModelClass
     public $neto;
 
     /**
+     * User who created this document. User model.
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
      * Number of the document.
      * Unique within the series + exercise.
      *

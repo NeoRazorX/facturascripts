@@ -349,6 +349,8 @@ abstract class PanelController extends BaseController
 
     /**
      * Runs data insert action.
+     * 
+     * @return bool
      */
     protected function insertAction()
     {

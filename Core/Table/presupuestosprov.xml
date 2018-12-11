@@ -86,7 +86,10 @@
     <column>
         <name>neto</name>
         <type>double precision</type>
-        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>nombre</name>
@@ -119,12 +122,10 @@
     <column>
         <name>total</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totaleuros</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totalirpf</name>
@@ -133,7 +134,6 @@
     <column>
         <name>totaliva</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totalrecargo</name>
@@ -144,19 +144,23 @@
         <type>PRIMARY KEY (idpresupuesto)</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_series</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_presupuestosprov_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_presupuestosprov_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_presupuestosprov</name>
-        <type>UNIQUE (codigo,idempresa)</type>
+        <name>ca_presupuestosprov_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_almacenes</name>
-        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_presupuestosprov_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_presupuestosprov</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>

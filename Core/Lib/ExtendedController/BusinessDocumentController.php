@@ -295,6 +295,10 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         $exists = $view->model->exists();
+        if (!$exists) {
+            $view->model->nick = $this->user->nick;
+        }
+
         if ($view->model->save()) {
             $result = ($view->model->editable || !$exists) ? $this->saveLines($view, $newLines) : 'OK';
         } else {

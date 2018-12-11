@@ -24,7 +24,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Controller to edit a transfer of stock
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class EditTransferenciaStock extends ExtendedController\EditController
 {
@@ -78,8 +79,8 @@ class EditTransferenciaStock extends ExtendedController\EditController
             case 'EditTransferenciaStock':
                 $code = $this->request->get('code');
                 $view->loadData($code);
-                if (empty($this->views[$this->active]->model->usuario)) {
-                    $this->views[$this->active]->model->usuario = $this->user->nick;
+                if (empty($this->views[$this->active]->model->nick)) {
+                    $this->views[$this->active]->model->nick = $this->user->nick;
                 }
                 break;
 

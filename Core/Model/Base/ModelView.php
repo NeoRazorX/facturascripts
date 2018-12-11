@@ -262,4 +262,49 @@ abstract class ModelView
             $this->values[$field] = $value;
         }
     }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return '';
+    }
+
+    /**
+     * Fill the class with the registry values
+     * whose primary column corresponds to the value $cod, or according to the condition
+     * where indicated, if value is not reported in $cod.
+     * Initializes the values of the class if there is no record that
+     * meet the above conditions.
+     * Returns True if the record exists and False otherwise.
+     *
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
+     *
+     * @return bool
+     */
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    {
+        $sql = 'SELECT ' . $this->fieldsList()
+            . ' FROM ' . $this->getSQLFrom()
+            . DataBaseWhere::getSQLWhere($where)
+            . $this->getGroupBy()
+            . $this->getOrderBy($orderby);
+
+        $data = self::$dataBase->selectLimit($sql, 1);
+        if (empty($data)) {
+            $this->clear();
+            return false;
+        }
+
+        $this->loadFromData($data[0]);
+        return true;
+    }
 }

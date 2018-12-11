@@ -42,7 +42,7 @@
                 <widget type="date" fieldname="fecha" />
             </column>
             <column name="user" order="140">
-                <widget type="select" fieldname="usuario" readonly="true">
+                <widget type="select" fieldname="nick" readonly="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
             </column>
