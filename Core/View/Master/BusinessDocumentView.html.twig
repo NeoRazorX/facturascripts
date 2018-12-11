@@ -94,20 +94,22 @@
         {% for parentDoc in currentView.model.parentDocuments() %}
             <div class="col">
                 <div class="alert alert-warning text-center">
-                    <i class="fas fa-backward" aria-hidden="true"></i> {{ parentDoc.modelClassName() }}
+                    <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ parentDoc.modelClassName() }}
                     <a href="{{ parentDoc.url() }}">{{ parentDoc.primaryDescription() }}</a>
                 </div>
             </div>
         {% endfor %}
         {% if currentView.model.editable == false and currentView.model.exists() %}
             <div class="col">
-                <div class="alert alert-info text-center">{{ i18n.trans('non-editable-document') }}</div>
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-lock fa-fw"></i> {{ i18n.trans('non-editable-document') }}
+                </div>
             </div>
         {% endif %}
         {% for childrenDoc in currentView.model.childrenDocuments() %}
             <div class="col">
                 <div class="alert alert-success text-center">
-                    <i class="fas fa-forward" aria-hidden="true"></i> {{ childrenDoc.modelClassName() }}
+                    <i class="fas fa-forward fa-fw" aria-hidden="true"></i> {{ childrenDoc.modelClassName() }}
                     <a href="{{ childrenDoc.url() }}">{{ childrenDoc.primaryDescription() }}</a>
                 </div>
             </div>
