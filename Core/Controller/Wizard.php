@@ -204,6 +204,7 @@ class Wizard extends Controller
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+        new Model\Provincia();
 
         $pluginManager = new PluginManager();
         $pluginManager->deploy(true, true);
