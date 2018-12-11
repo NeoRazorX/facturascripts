@@ -68,14 +68,18 @@
                     {{ row.render() | raw }}
                 </div>
                 <div class="col text-right">
-                    <button class="btn btn-sm btn-secondary" type="reset">
-                        <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
-                    </button>
-                    <button class="btn btn-sm btn-primary" type="submit">
-                        <i class="fas fa-save fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
-                    </button>
+                    {% if currentView.settings.btnUndo %}
+                        <button class="btn btn-sm btn-secondary" type="reset">
+                            <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
+                        </button>
+                    {% endif %}
+                    {% if currentView.settings.btnSave %}
+                        <button class="btn btn-sm btn-primary" type="submit">
+                            <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         </div>

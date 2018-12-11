@@ -199,6 +199,8 @@ abstract class BaseView
             'btnDelete' => true,
             'btnNew' => true,
             'btnPrint' => false,
+            'btnSave' => true,
+            'btnUndo' => true,
         ];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);

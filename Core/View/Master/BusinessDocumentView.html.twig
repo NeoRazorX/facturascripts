@@ -58,9 +58,11 @@
                 </span>
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-primary" onclick="businessDocViewSave();">
-                        <i class="fas fa-save" aria-hidden="true"></i>
-                    </button>
+                    {% if currentView.settings.btnSave %}
+                        <button type="button" class="btn btn-primary" onclick="businessDocViewSave();">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -126,9 +128,11 @@
         {{ macros.customSelect('doc_codpago', 'codpago', currentView.model.codpago, fsc.getSelectValues('FormaPago')) }}
         {{ macros.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, fsc.getSelectValues('Divisa')) }}
         <div class="col text-right">
-            <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
-                <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
-            </button>
+            {% if currentView.settings.btnSave %}
+                <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
+                    <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
+                </button>
+            {% endif %}
         </div>
     </div>
 </form>

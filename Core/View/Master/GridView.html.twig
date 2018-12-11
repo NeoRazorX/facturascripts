@@ -140,9 +140,11 @@
                                 {% endif %}
                                 {# -- Save actions -- #}
                                 <div class="col text-right">
-                                    <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ formName }}');">
-                                        <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
-                                    </button>
+                                    {% if currentView.settings.btnSave %}
+                                        <button class="btn btn-sm btn-primary" type="button" id="save-document" onclick="saveDocument('{{ formName }}');">
+                                            <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
+                                        </button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
