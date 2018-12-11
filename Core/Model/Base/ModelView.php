@@ -252,31 +252,6 @@ abstract class ModelView
     }
 
     /**
-     * Assign the values of the $data array to the model view properties.
-     *
-     * @param array $data
-     */
-    protected function loadFromData($data)
-    {
-        foreach ($data as $field => $value) {
-            $this->values[$field] = $value;
-        }
-    }
-
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
-    {
-        return '';
-    }
-
-    /**
      * Fill the class with the registry values
      * whose primary column corresponds to the value $cod, or according to the condition
      * where indicated, if value is not reported in $cod.
@@ -306,5 +281,30 @@ abstract class ModelView
 
         $this->loadFromData($data[0]);
         return true;
+    }
+
+    /**
+     * Assign the values of the $data array to the model view properties.
+     *
+     * @param array $data
+     */
+    protected function loadFromData($data)
+    {
+        foreach ($data as $field => $value) {
+            $this->values[$field] = $value;
+        }
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return '';
     }
 }
