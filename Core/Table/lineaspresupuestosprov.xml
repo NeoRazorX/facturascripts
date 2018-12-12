@@ -48,6 +48,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>idproducto</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
     </column>
@@ -96,5 +100,9 @@
     <constraint>
         <name>ca_lineaspresupuestosprov_presupuestosprov</name>
         <type>FOREIGN KEY (idpresupuesto) REFERENCES presupuestosprov (idpresupuesto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineaspresupuestosprov_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

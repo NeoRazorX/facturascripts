@@ -48,6 +48,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>idproducto</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
     </column>
@@ -96,5 +100,9 @@
     <constraint>
         <name>ca_lineaspedidosprov_pedidosprov</name>
         <type>FOREIGN KEY (idpedido) REFERENCES pedidosprov (idpedido) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineaspedidosprov_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

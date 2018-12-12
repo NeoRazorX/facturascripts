@@ -101,6 +101,12 @@ abstract class BusinessDocumentLine extends ModelClass
      * @var int
      */
     public $idlinea;
+    
+    /**
+     *
+     * @var int
+     */
+    public $idproducto;
 
     /**
      * % of IRPF of the line.
@@ -151,6 +157,9 @@ abstract class BusinessDocumentLine extends ModelClass
      */
     public $referencia;
 
+    /**
+     * Returns the name of the column to store the document's identifier.
+     */
     abstract public function documentColumn();
 
     /**
@@ -205,7 +214,8 @@ abstract class BusinessDocumentLine extends ModelClass
     }
 
     /**
-     * 
+     * Returns the identifier of the document.
+     *
      * @return int
      */
     public function documentColumnValue()

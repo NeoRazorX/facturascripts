@@ -395,6 +395,7 @@ abstract class BusinessDocument extends ModelClass
             $newLine->cantidad = 1;
             $newLine->codimpuesto = $impuesto->codimpuesto;
             $newLine->descripcion = $product->descripcion;
+            $newLine->idproducto = $product->idproducto;
             $newLine->iva = $impuesto->iva;
             $newLine->pvpunitario = $variant->precio;
             $newLine->recargo = $impuesto->recargo;

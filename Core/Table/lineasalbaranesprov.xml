@@ -48,6 +48,10 @@
         <default>nextval('lineasalbaranesprov_idlinea_seq'::regclass)</default>
     </column>
     <column>
+        <name>idproducto</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
     </column>
@@ -86,6 +90,10 @@
         <type>character varying(30)</type>
     </column>
     <constraint>
+        <name>lineasalbaranesprov_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
         <name>ca_lineasalbaranesprov_albaranesprov2</name>
         <type>FOREIGN KEY (idalbaran) REFERENCES albaranesprov (idalbaran) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
@@ -94,7 +102,7 @@
         <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>lineasalbaranesprov_pkey</name>
-        <type>PRIMARY KEY (idlinea)</type>
+        <name>ca_lineasalbaranesprov_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
