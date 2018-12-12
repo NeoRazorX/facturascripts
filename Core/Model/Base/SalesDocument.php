@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\Pais;
 
 /**
  * Description of SalesDocument
@@ -143,6 +144,20 @@ abstract class SalesDocument extends BusinessDocument
         parent::clear();
         $this->direccion = '';
         $this->porcomision = 0.0;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function country()
+    {
+        $country = new Pais();
+        if ($country->loadFromCode($this->codpais)) {
+            return Utils::fixHtml($country->nombre);
+        }
+
+        return $this->codpais;
     }
 
     /**
