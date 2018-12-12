@@ -243,9 +243,9 @@ class BusinessDocumentTools
     private function recalculateLine(&$line)
     {
         /// apply tax zones
-        $newCodimpuesto = $line->codimpuesto;
+        $newCodimpuesto = $line->getProducto()->codimpuesto;
         foreach ($this->impuestosZonas as $impZona) {
-            if ($line->codimpuesto == $impZona->codimpuesto) {
+            if ($newCodimpuesto == $impZona->codimpuesto) {
                 $newCodimpuesto = $impZona->codimpuestosel;
                 break;
             }
@@ -328,7 +328,7 @@ class BusinessDocumentTools
     {
         $newCodimpuesto = $line->codimpuesto;
         foreach ($this->impuestosZonas as $impZona) {
-            if ($line->codimpuesto == $impZona->codimpuesto) {
+            if ($newCodimpuesto == $impZona->codimpuesto) {
                 $newCodimpuesto = $impZona->codimpuestosel;
                 break;
             }

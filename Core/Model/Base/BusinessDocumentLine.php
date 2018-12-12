@@ -22,6 +22,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -221,6 +222,18 @@ abstract class BusinessDocumentLine extends ModelClass
     public function documentColumnValue()
     {
         return $this->{$this->documentColumn()};
+    }
+
+    /**
+     * Returns related product.
+     *
+     * @return Producto
+     */
+    public function getProducto()
+    {
+        $producto = new Producto();
+        $producto->loadFromCode($this->idproducto);
+        return $producto;
     }
 
     /**
