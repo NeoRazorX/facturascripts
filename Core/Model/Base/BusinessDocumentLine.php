@@ -102,7 +102,7 @@ abstract class BusinessDocumentLine extends ModelClass
      * @var int
      */
     public $idlinea;
-    
+
     /**
      *
      * @var int
@@ -234,6 +234,19 @@ abstract class BusinessDocumentLine extends ModelClass
         $producto = new Producto();
         $producto->loadFromCode($this->idproducto);
         return $producto;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new Impuesto();
+        new Producto();
+
+        return parent::install();
     }
 
     /**
