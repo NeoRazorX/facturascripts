@@ -32,6 +32,10 @@ use Symfony\Component\HttpFoundation\Cookie;
 class EditUser extends ExtendedController\EditController
 {
 
+    /**
+     * 
+     * @return string
+     */
     public function getModelClassName()
     {
         return 'User';
@@ -61,25 +65,27 @@ class EditUser extends ExtendedController\EditController
         parent::createViews();
         $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
 
-        /// Load values for input selects
-        $this->loadHomepageValues();
-        $this->loadLanguageValues();
-
         /// Disable column
         $this->views['EditRoleUser']->disableColumn('user', true);
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function editAction()
     {
-        parent::editAction();
+        $result = parent::editAction();
 
         // Are we changing user language?
-        if ($this->views['EditUser']->model->nick === $this->user->nick) {
+        if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
             $this->i18n->setLangCode($this->views['EditUser']->model->nick);
 
             $expire = time() + FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
         }
+
+        return $result;
     }
 
     /**
@@ -130,6 +136,12 @@ class EditUser extends ExtendedController\EditController
                 $view->loadData('', $where, [], 0, 0);
                 break;
 
+            case 'EditUser':
+                parent::loadData($viewName, $view);
+                $this->loadHomepageValues();
+                $this->loadLanguageValues();
+                break;
+
             default:
                 parent::loadData($viewName, $view);
         }
@@ -140,17 +152,8 @@ class EditUser extends ExtendedController\EditController
      */
     private function loadHomepageValues()
     {
-        $user = new Model\User();
-        $code = $this->request->get('code');
-
-        $userPages = [
-            ['value' => '', 'title' => '------'],
-        ];
-        if ($user->loadFromCode($code)) {
-            $userPages = $this->getUserPages($user);
-        }
-
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
+        $userPages = $this->getUserPages($this->views['EditUser']->model);
         $columnHomepage->widget->setValuesFromArray($userPages);
     }
 
