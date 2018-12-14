@@ -37,7 +37,7 @@ abstract class ModelView
      *
      * @var DataBase
      */
-    private static $dataBase;
+    protected static $dataBase;
 
     /**
      * List of values for record view
@@ -165,7 +165,7 @@ abstract class ModelView
     /**
      * Reset the values of all model properties.
      */
-    protected function clear()
+    public function clear()
     {
         foreach (array_keys($this->getFields()) as $field) {
             $this->values[$field] = null;
