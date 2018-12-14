@@ -38,7 +38,7 @@
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="{{ currentView.model.primaryColumn() }}" value="{{ currentView.model.primaryColumnValue() }}"/>
-    <input id="doc_idestado" type="hidden" name="idestado" value="{{ currentView.model.idestado }}"/>
+    <input type="hidden" name="idestado" value="{{ currentView.model.idestado }}" id="doc_idestado"/>
     <div class="form-row">
         {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, fsc.getSelectValues('Almacen')) }}
         {% if 'codcliente' in fsc.getSubjectColumns() %}
@@ -89,8 +89,7 @@
             {% endif %}
         </div>
     </div>
-    <br/>
-    <div class="row">
+    <div class="row mb-2">
         {% for parentDoc in currentView.model.parentDocuments() %}
             <div class="col">
                 <div class="alert alert-warning text-center">
@@ -118,14 +117,14 @@
     <div id="document-lines"></div>
     <br/>
     <div class="form-row">
-        {% if fsc.hasData and currentView.settings.btnDelete %}
-            <div class="col">
+        <div class="col">
+            {% if fsc.hasData and currentView.settings.btnDelete %}
                 <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ currentView.getViewName() }}');">
                     <i class="fas fa-trash-alt" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans('delete') }}</span>
                 </button>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
         {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
         {{ macros.customSelect('doc_codpago', 'codpago', currentView.model.codpago, fsc.getSelectValues('FormaPago')) }}
         {{ macros.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, fsc.getSelectValues('Divisa')) }}
@@ -145,7 +144,7 @@
             <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
         {% endfor %}
     {% else %}
-        <div class="col">
+        <div class="col-sm-2 mb-2">
             <select id="{{ id }}" name="{{ name }}" class="form-control">
                 {% for key, option in allValues %}
                     <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
@@ -158,7 +157,7 @@
 {% endmacro %}
 
 {% macro customInput(id, name, value, type = "text", icon = NULL, attributes = NULL) %}
-    <div class="col-sm-2">
+    <div class="col-sm-2 mb-2">
         {% if icon %}
             <div class="input-group">
                 <span class="input-group-prepend">
@@ -184,7 +183,7 @@
 {% endmacro %}
 
 {% macro customerSelect(i18n, id, name, model, newUrl) %}
-    <div class="col">
+    <div class="col mb-2">
         <div class="input-group">
             <span class="input-group-prepend">
                 {% if model.codcliente %}
@@ -206,7 +205,7 @@
 {% endmacro %}
 
 {% macro supplierSelect(i18n, id, name, model, newUrl) %}
-    <div class="col">
+    <div class="col mb-2">
         <div class="input-group">
             <span class="input-group-prepend">
                 {% if model.codproveedor %}
