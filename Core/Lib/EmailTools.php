@@ -58,25 +58,25 @@ class EmailTools
      */
     public function getTemplateHtml(array $params, string $template = '/Dinamic/Assets/Email/BasicTemplate.html.twig'): string
     {
-        $html = file_get_contents(FS_FOLDER . $template);
-        $title = isset($params['title']) ? $params['title'] : '-';
-        $company = isset($params['company']) ? $params['company'] : '-';
         $body = isset($params['body']) ? $params['body'] : '-';
+        $company = isset($params['company']) ? $params['company'] : '-';
         $footer = isset($params['footer']) ? $params['footer'] : '-';
+        $title = isset($params['title']) ? $params['title'] : '-';
 
         $search = [
-            '[[title]]',
-            '[[company]]',
             '[[body]]',
+            '[[company]]',
             '[[footer]]',
+            '[[title]]',
         ];
         $replace = [
-            $title,
-            $company,
             $body,
+            $company,
             $footer,
+            $title,
         ];
 
+        $html = file_get_contents(FS_FOLDER . $template);
         return str_replace($search, $replace, $html);
     }
 
