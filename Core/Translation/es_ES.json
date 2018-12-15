@@ -877,5 +877,6 @@
     "yearly": "Anual",
     "yes": "Si",
     "your": "Suyo",
-    "zip-code": "Código Postal"
+    "zip-code": "Código Postal",
+    "apache-module-not-found": "El Módulo de apache '%module%' no se encuentra activo en el servidor."
 }

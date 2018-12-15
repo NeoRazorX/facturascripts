@@ -877,5 +877,6 @@
     "yearly": "Yearly",
     "yes": "Yes",
     "your": "Your",
-    "zip-code": "Zip code"
+    "zip-code": "Zip code",
+    "apache-module-not-found": "The '%module%' module wasn't found in the server."
 }
