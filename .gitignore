@@ -23,3 +23,6 @@ package-lock.json
 .project
 .settings
 .buildpath
+
+# Vscode config files
+*.code-workspace
