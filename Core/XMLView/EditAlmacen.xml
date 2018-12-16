@@ -43,7 +43,7 @@
         </group>
         <group name="contact-data" title="contact-data" numcolumns="12">
             <column name="address" numcolumns="6" order="100">
-                <widget type="text" fieldname="direccion" />
+                <widget type="text" fieldname="direccion" icon="fas fa-map-marked" />
             </column>
             <column name="postalcode" numcolumns="3" order="110">
                 <widget type="text" fieldname="codpostal" />

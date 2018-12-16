@@ -68,7 +68,7 @@
         </group>
         <group name="address" title="address" numcolumns="12">
             <column name="address" numcolumns="4" order="100">
-                <widget type="text" fieldname="direccion" />
+                <widget type="text" fieldname="direccion" icon="fas fa-map-marked" />
             </column>
             <column name="postalmail" numcolumns="1" order="110">
                 <widget type="text" fieldname="apartado" />

@@ -44,7 +44,7 @@
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="address" numcolumns="4" order="100">
-                <widget type="text" fieldname="direccion" />
+                <widget type="text" fieldname="direccion" icon="fas fa-map-marked" />
             </column>
             <column name="postalcode" numcolumns="2" order="110">
                 <widget type="text" fieldname="codpostal" />
