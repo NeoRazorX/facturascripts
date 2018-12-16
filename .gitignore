@@ -10,7 +10,6 @@
 /vendor/
 .DS_Store
 .htaccess
-.vscode
 config.php
 config-mysql.php
 config-postgresql.php
@@ -20,6 +19,10 @@ package-lock.json
 *.lock
 
 # Eclipse config files
+.buildpath
 .project
 .settings
-.buildpath
+
+# Vscode config files
+.vscode
+*.code-workspace
