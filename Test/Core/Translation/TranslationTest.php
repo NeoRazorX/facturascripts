@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,6 +52,10 @@ class TranslationTest extends TestCase
     public function testFiles()
     {
         foreach ($this->scanFolder($this->basePath) as $fileName) {
+            if (substr($fileName, -5) !== '.json') {
+                continue;
+            }
+
             $fileArray = $this->readJSON($this->basePath . $fileName);
             $msg = 'File ' . $fileName . ' is wrong';
             $this->assertNotNull($fileArray, $msg);
@@ -67,6 +71,10 @@ class TranslationTest extends TestCase
         $mainLangArray = $this->readJSON($this->basePath . $this->mainLang);
 
         foreach ($this->scanFolder($this->basePath) as $fileName) {
+            if (substr($fileName, -5) !== '.json') {
+                continue;
+            }
+
             $fileArray = $this->readJSON($this->basePath . $fileName);
             $this->compareKeys($mainLangArray, $fileArray, $fileName);
         }
@@ -78,6 +86,10 @@ class TranslationTest extends TestCase
     public function testHasOrderedKeys()
     {
         foreach ($this->scanFolder($this->basePath) as $fileName) {
+            if (substr($fileName, -5) !== '.json') {
+                continue;
+            }
+
             $fileString = $this->getJSON($this->basePath . $fileName);
             $orderedArray = \json_decode($fileString, true);
             \ksort($orderedArray);
@@ -112,7 +124,7 @@ class TranslationTest extends TestCase
      */
     private function scanFolder(string $folderPath): array
     {
-        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..', 'updater.php']);
+        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..']);
     }
 
     /**
