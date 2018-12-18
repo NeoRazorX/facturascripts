@@ -79,7 +79,7 @@ class PartidaImpuesto extends Base\ModelView
     /**
      * Reset the values of all model view properties.
      */
-    protected function clear()
+    public function clear()
     {
         parent::clear();
 
