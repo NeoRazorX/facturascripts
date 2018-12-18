@@ -90,6 +90,12 @@ class ListView extends BaseView
     public $showFilters = false;
 
     /**
+     *
+     * @var bool
+     */
+    public $modalInsert = false;
+
+    /**
      * ListView constructor and initialization.
      *
      * @param string $name
@@ -143,7 +149,7 @@ class ListView extends BaseView
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function btnNewUrl()
@@ -161,7 +167,7 @@ class ListView extends BaseView
 
     /**
      * Removes a saved user filter.
-     * 
+     *
      * @param string $idfilter
      *
      * @return boolean
@@ -248,6 +254,13 @@ class ListView extends BaseView
         $where = $this->getPageWhere($user);
         $pageFilter = new PageFilter();
         $this->pageFilters = $pageFilter->all($where, $orderby);
+
+        // set insert mode
+        foreach ($this->modals as $key => $value) {
+            if ($key === 'insert') {
+                $this->modalInsert = true;
+            }
+        }
     }
 
     /**
@@ -258,15 +271,30 @@ class ListView extends BaseView
      */
     public function processFormData($request, $case)
     {
-        if ($case === 'preload') {
-            foreach ($this->filters as $filter) {
-                $filter->getDataBaseWhere($this->where);
-            }
-            return;
-        } elseif ($case !== 'load') {
-            return;
-        }
+        switch ($case) {
+            case 'edit':
+                if ($this->modalInsert) {
+                    $modals = $this->getModals();
+                    foreach ($modals['insert']->columns as $column) {
+                        $column->processFormData($this->model, $request);
+                    }
+                }
+                break;
 
+            case 'preload':
+                foreach ($this->filters as $filter) {
+                    $filter->getDataBaseWhere($this->where);
+                }
+                break;
+
+            case 'load':
+                $this->processFormDataLoad($request);
+                break;
+        }
+    }
+
+    private function processFormDataLoad($request)
+    {
         $this->offset = (int) $request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
 
@@ -303,7 +331,7 @@ class ListView extends BaseView
      *
      * @param Request $request
      * @param User    $user
-     * 
+     *
      * @return int
      */
     public function savePageFilter($request, $user)

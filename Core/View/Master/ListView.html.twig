@@ -23,9 +23,15 @@
             <div class="col">
                 <div class="btn-group">
                     {% if currentView.settings.btnNew %}
-                        <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success">
-                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                        </a>
+                        {% if currentView.modalInsert %}
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalinsert">
+                                <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                            </button>
+                        {% else %}
+                            <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success">
+                                <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                            </a>
+                        {% endif %}
                     {% endif %}
                     {% if currentView.settings.btnDelete %}
                         <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
