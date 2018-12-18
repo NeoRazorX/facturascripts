@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -24,8 +24,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * A VAT regularization.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class RegularizacionImpuesto extends Base\ModelClass
 {
@@ -150,10 +150,10 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     /**
      * Returns the VAT regularization corresponding to that date,
-     * that is, the regularization whose start date is earlier
-     * to the date provided and its end date is after the date
-     * provided. So you can know if the period is still open to be able
-     * check in.
+           * that is, the regularization whose start date is earlier
+           * to the date provided and its end date is after the date
+           * provided. So you can know if the period is still open to be able
+           * check in.
      *
      * @param string $fecha
      *
@@ -248,7 +248,10 @@ class RegularizacionImpuesto extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new Ejercicio();
+        new Asiento();
+
         return parent::install();
     }
 
