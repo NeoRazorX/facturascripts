@@ -307,12 +307,12 @@ class AppController extends App
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
-            $this->miniLog->alert($this->i18n->trans('login-password-fail'));
+            $this->miniLog->warning($this->i18n->trans('login-password-fail'));
             return false;
         }
 
         $this->ipFilter->setAttempt($this->request->getClientIp());
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
         return false;
     }
 
@@ -337,12 +337,12 @@ class AppController extends App
                 return $user;
             }
 
-            $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
+            $this->miniLog->warning($this->i18n->trans('login-cookie-fail'));
             $this->response->headers->clearCookie('fsNick');
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
         return false;
     }
 
