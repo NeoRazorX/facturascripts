@@ -31,6 +31,12 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
+        <column name="diary" order="120" display="none">
+            <widget type="text" fieldname="iddiario" />
+        </column>
+        <column name="channel" order="130" display="none">
+            <widget type="text" fieldname="canal" />
+        </column>
         <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva" />
         </column>
