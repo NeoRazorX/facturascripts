@@ -221,6 +221,9 @@ abstract class BaseController extends Base\Controller
 
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->get('code', '');
+        if (empty($codes)) {
+            return false;
+        }
 
         // deleting multiples rows?
         if (is_array($codes)) {
