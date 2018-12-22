@@ -60,7 +60,7 @@ class ListSerie extends ExtendedController\ListController
         //TODO: This is necesary?
         $canalvalues = $this->codeModel->all('series', 'canal', 'canal');
         $this->addFilterSelect('ListSerie', 'canal', 'channel', 'canal', $canalvalues);
-        $diariovalues = $this->codeModel->All('series', 'iddiario', 'iddiario');
-        $this->addFilterSelect('ListSerie', 'iddiario', 'diary', 'iddiario', $diariovalues);
+        $diariovalues = $this->codeModel->All('diarios', 'iddiario', 'descripcion');
+        $this->addFilterSelect('ListSerie', 'iddiario', 'journal', 'descripcion', $diariovalues);
     }
 }
