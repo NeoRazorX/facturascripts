@@ -26,20 +26,13 @@ use FacturaScripts\Core\Base\Utils;
  * It is related to a single fiscal year and epigraph,
  * but it can be related to many subaccounts.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class Cuenta extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Code of the exercise of this account.
-     *
-     * @var string
-     */
-    public $codejercicio;
 
     /**
      * Account code.
@@ -54,6 +47,13 @@ class Cuenta extends Base\ModelClass
      * @var string
      */
     public $codcuentaesp;
+
+    /**
+     * Code of the exercise of this account.
+     *
+     * @var string
+     */
+    public $codejercicio;
 
     /**
      * Description of the account.
@@ -90,8 +90,16 @@ class Cuenta extends Base\ModelClass
     public $parent_idcuenta;
 
     /**
-     *
+     * 
+     * @return Cuenta
      */
+    public function getParent()
+    {
+        $parent = new Cuenta();
+        $parent->loadFromCode($this->parent_idcuenta);
+        return $parent;
+    }
+
     public function disableAditionalTest()
     {
         self::$disableAditionTest = true;
@@ -147,10 +155,14 @@ class Cuenta extends Base\ModelClass
             return false;
         }
 
-        if (!self::$disableAditionTest) {
-            /// Check and load correct id parent account
-            $this->parent_idcuenta = null;
-            if (!empty($this->parent_codcuenta) && !$this->testErrorInParentAccount()) {
+        /// uncomplete parent account data?
+        if (empty($this->parent_codcuenta) && !empty($this->parent_idcuenta)) {
+            $this->completeParentData();
+        }
+
+        if (!empty($this->parent_idcuenta) && !self::$disableAditionTest) {
+            $parent = $this->getParent();
+            if ($parent->codejercicio != $this->codejercicio || $parent->idcuenta == $this->idcuenta) {
                 self::$miniLog->alert(self::$i18n->trans('account-parent-error'));
                 return false;
             }
@@ -172,23 +184,19 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * Check and load the id of the parent account. Returns FALSE if error.
-     *
+     * 
      * @return bool
      */
-    private function testErrorInParentAccount(): bool
+    private function completeParentData()
     {
-        $where = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
-        ];
-
-        $account = $this->all($where, ['codcuenta' => 'ASC'], 0, 1);
-        if (empty($account)) {
-            return false;
+        $parent = $this->getParent();
+        if ($parent->exists() && $parent->codejercicio == $this->codejercicio && $parent->idcuenta != $this->idcuenta) {
+            $this->parent_codcuenta = $parent->codcuenta;
+            return true;
         }
 
-        $this->parent_idcuenta = $account[0]->parent_idcuenta;
-        return true;
+        $this->parent_codcuenta = null;
+        $this->parent_idcuenta = null;
+        return false;
     }
 }
