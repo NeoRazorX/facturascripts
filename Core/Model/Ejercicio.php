@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -170,29 +171,32 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool|Ejercicio
      */
-    public static function getByFecha($idempresa, $fecha, $soloAbierto = true, $crear = true)
+    public function getByFecha($idempresa, $fecha, $soloAbierto = true, $crear = true)
     {
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE idempresa = ' . $idempresa
-            . ' AND ' . self::$dataBase->var2str($fecha) . ' BETWEEN fechainicio AND fechafin;';
+        $where = [
+            new DataBaseWhere('idempresa', $idempresa),
+            new DataBaseWhere('fechainicio', $fecha, '<='),
+            new DataBaseWhere('fechafin', $fecha, '>='),
+        ];
 
-        $data = self::$dataBase->select($sql);
-        if (empty($data)) {
-            if ($crear && (strtotime($fecha) >= 1)) {
-                $eje = new self();
-                $eje->codejercicio = $eje->newCode();
-                $eje->nombre = date('Y', strtotime($fecha));
-                $eje->fechainicio = date('1-1-Y', strtotime($fecha));
-                $eje->fechafin = date('31-12-Y', strtotime($fecha));
-                if ($eje->save()) {
-                    return $eje;
-                }
+        foreach ($this->all($where) as $eje) {
+            if (($eje->abierto() && $soloAbierto) || !$soloAbierto) {
+                return $eje;
             }
-            return false;
         }
 
-        $eje = new self($data[0]);
-        return ($eje->abierto() || $soloAbierto === false) ? $eje : false;
+        if ($crear && (strtotime($fecha) >= 1)) {
+            $eje = new self();
+            $eje->codejercicio = $eje->newCode();
+            $eje->nombre = date('Y', strtotime($fecha));
+            $eje->fechainicio = date('1-1-Y', strtotime($fecha));
+            $eje->fechafin = date('31-12-Y', strtotime($fecha));
+            if ($eje->save()) {
+                return $eje;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -239,7 +243,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return string
      */
-    public function newCode(string $field = '', array $where = array())
+    public function newCode(string $field = '', array $where = [])
     {
         $newCode = parent::newCode($field, $where);
         return sprintf('%04s', (int) $newCode);
