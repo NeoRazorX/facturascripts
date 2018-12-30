@@ -50,9 +50,9 @@ class EditCuenta extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounts';
+        $pagedata['title'] = 'account';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-chart-bar';
+        $pagedata['icon'] = 'fas fa-book';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -77,16 +77,15 @@ class EditCuenta extends ExtendedController\EditController
      */
     protected function loadData($viewName, $view)
     {
+        $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
         switch ($viewName) {
-            case 'ListSubcuenta':
-                $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
-                $where = [new DataBaseWhere('idcuenta', $idcuenta)];
+            case 'ListCuenta':
+                $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
                 $view->loadData('', $where);
                 break;
 
-            case 'ListCuenta':
-                $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
-                $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
+            case 'ListSubcuenta':
+                $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
                 break;
 
