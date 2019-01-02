@@ -48,7 +48,7 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [])
     {
-        $exclude = ['codigo', 'idestado', 'fecha', 'hora', 'numero', 'femail'];
+        $exclude = ['codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado', 'numero'];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
@@ -60,6 +60,9 @@ class BusinessDocumentGenerator
             /// copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
+
+        /// sets date, hour and codejercicio
+        $newDoc->setDate($newDoc->fecha, $newDoc->hora);
 
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
