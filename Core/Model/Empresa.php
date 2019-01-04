@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -137,6 +137,20 @@ class Empresa extends Base\Contact
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
         $this->regimeniva = self::$regimenIVA->defaultValue();
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->idempresa == AppSettings::get('default', 'idempresa')) {
+            self::$miniLog->alert('you-cant-not-remove-default-company');
+            return false;
+        }
+
+        return parent::delete();
     }
 
     /**
