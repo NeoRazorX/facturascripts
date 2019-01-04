@@ -515,6 +515,7 @@
     "mark-as-homepage": "Hasiera orri ezarri",
     "marked-as-homepage": "Hasierako orri gisa markatua",
     "maximum-stock": "Gehieneko stocka",
+    "megasearch": "megasearch",
     "memcache": "Memcache",
     "memcache-clear": "Memcache garbitua.",
     "memcache-delete-key-item": "Memcache-tik '%item%' elementua ezabatu da.",

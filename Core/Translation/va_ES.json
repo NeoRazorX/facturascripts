@@ -515,6 +515,7 @@
     "mark-as-homepage": "Marcar com a pàgina d'inici",
     "marked-as-homepage": "Marcat com a pàgina d'inici",
     "maximum-stock": "Estoc màxim",
+    "megasearch": "megasearch",
     "memcache": "Memcache",
     "memcache-clear": "S'ha netejat la Memcache.",
     "memcache-delete-key-item": "L'element '%item%' s'ha eliminat de la Memcache.",

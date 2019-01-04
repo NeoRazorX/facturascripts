@@ -74,5 +74,4 @@ trait InvoiceTrait
      * @var string
      */
     public $vencimiento;
-
 }
