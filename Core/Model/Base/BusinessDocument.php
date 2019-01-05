@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -332,16 +332,21 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     public function delete()
     {
         $lines = $this->getLines();
         if (parent::delete()) {
+            /// update stock
             foreach ($lines as $line) {
                 $line->cantidad = 0;
                 $line->updateStock($this->codalmacen);
             }
+
+            /// remove data from DocTransformation
+            $docTransformation = new DocTransformation();
+            $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
 
             return true;
         }
