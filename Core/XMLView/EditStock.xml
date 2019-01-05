@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,9 @@
  *
  * Initial description for the controller EditStock
  *
- * @author PC REDNET S.L. <luismi@pcrednet.com>
- * @author Rafael San José <info@rsanjoseo.com>
+ * @author PC REDNET S.L.       <luismi@pcrednet.com>
+ * @author Rafael San José      <info@rsanjoseo.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -32,12 +33,12 @@
             <widget type="text" fieldname="idproducto" />
         </column>
         <column name="reference" order="110">
-            <widget type="select" fieldname="referencia" required="true">
+            <widget type="select" fieldname="referencia" readonly="dinamic" required="true">
                 <values></values>
             </widget>
         </column>
         <column name="warehouse" order="120">
-            <widget type="select" fieldname="codalmacen" required="true">
+            <widget type="select" fieldname="codalmacen" readonly="dinamic" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
