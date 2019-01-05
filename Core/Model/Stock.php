@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -117,6 +117,21 @@ class Stock extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if (parent::delete()) {
+            $this->cantidad = 0.0;
+            $this->updateProductoStock();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -125,11 +140,12 @@ class Stock extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new Almacen();
         new Producto();
         new Variante();
 
-        return '';
+        return parent::install();
     }
 
     /**
