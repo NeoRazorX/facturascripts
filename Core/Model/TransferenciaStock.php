@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\LineaTransferenciaStock;
 
 /**
  * The head of transfer.
@@ -76,6 +78,31 @@ class TransferenciaStock extends Base\ModelClass
     {
         parent::clear();
         $this->fecha = date('d-m-Y H:i:s');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        /// remove lines to force update stock
+        foreach ($this->getLines() as $line) {
+            $line->delete();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * 
+     * @return LineaTransferenciaStock[]
+     */
+    public function getLines()
+    {
+        $line = new LineaTransferenciaStock();
+        $where = [new DataBaseWhere('idtrans', $this->primaryColumnValue())];
+        return $line->all($where, [], 0, 0);
     }
 
     /**
