@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017       Francesc Pineda Segarra     <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2013-2018  Carlos Garcia Gomez         <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019  Carlos Garcia Gomez         <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -84,6 +85,12 @@ class Provincia extends Base\ModelClass
      */
     public $provincia;
 
+    public function clear()
+    {
+        parent::clear();
+        $this->codpais = AppSettings::get('default', 'codpais');
+    }
+
     /**
      * Returns the name of the column that is the model's primary key.
      *
@@ -112,7 +119,6 @@ class Provincia extends Base\ModelClass
     public function test()
     {
         $this->provincia = Utils::noHtml($this->provincia);
-
         return parent::test();
     }
 
