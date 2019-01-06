@@ -118,8 +118,8 @@ class WidgetSelect extends BaseWidget
      */
     public function processFormData(&$model, $request)
     {
-        $value = $request->request->get($this->fieldname);
-        $model->{$this->fieldname} = empty($value) ? null : $value;
+        $value = $request->request->get($this->fieldname, '');
+        $model->{$this->fieldname} = ('' === $value) ? null : $value;
     }
 
     /**
