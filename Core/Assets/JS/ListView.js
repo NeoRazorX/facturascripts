@@ -45,6 +45,12 @@ function listViewDelete(viewName) {
     return false;
 }
 
+function listViewPrintAction(viewName, option) {
+    $("#form" + viewName + " :input[name=\"action\"]").val('export');
+    $("#form" + viewName + "").append('<input type="hidden" name="option" value="' + option + '"/>');
+    $("#form" + viewName).submit();
+}
+
 function listViewSetAction(viewName, value) {
     $("#form" + viewName + " :input[name=\"action\"]").val(value);
     $("#form" + viewName).submit();

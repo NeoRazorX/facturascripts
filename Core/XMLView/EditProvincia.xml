@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,26 +22,25 @@
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" numcolumns="2" order="100" display="none">
                 <widget type="text" fieldname="idprovincia" required="true" />
             </column>
-            <column name="iso" numcolumns="2" order="110" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
-                <widget type="text" fieldname="codisoprov" required="true" />
-            </column>
-            <column name="postalcode" numcolumns="2" order="120" titleurl="https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png">
-                <widget type="text" fieldname="codpostal2d" required="true" />
-            </column>
-            <column name="country" numcolumns="2" order="130" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
+            <column name="country" numcolumns="2" order="110" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
                 <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="province" numcolumns="6" order="140">
+            <column name="province" numcolumns="6" order="120">
                 <widget type="text" fieldname="provincia" icon="fas fa-map" required="true" />
+            </column>
+            <column name="iso" numcolumns="2" order="130" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
+                <widget type="text" fieldname="codisoprov" maxlength="10" required="true" />
+            </column>
+            <column name="postalcode" numcolumns="2" order="140" titleurl="https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png">
+                <widget type="text" fieldname="codpostal2d" required="true" />
             </column>
         </group>
         <group name="data-aux" numcolumns="12">

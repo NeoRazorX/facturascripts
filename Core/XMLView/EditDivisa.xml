@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,15 @@
  *
  * Description for the controller EditDivisa
  *
- * @author Raúl Jiménez Nazca Networks <comercial@nazcanetworks.com>
- * @author Carlos Jiménez Gómez <carlos@evolunext.es>
+ * @author Raúl Jiménez Nazca Networks  <comercial@nazcanetworks.com>
+ * @author Carlos Jiménez Gómez         <carlos@evolunext.es>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="3" order="100">
-                <widget type="text" fieldname="coddivisa" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="coddivisa" icon="fas fa-hashtag" maxlength="3" required="true" />
             </column>
             <column name="symbol" numcolumns="3" order="100" description="symbol">
                 <widget type="text" fieldname="simbolo" />

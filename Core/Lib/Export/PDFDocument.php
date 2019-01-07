@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,8 @@ use FacturaScripts\Core\Model;
 /**
  * PDF document data.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class PDFDocument extends PDFCore
 {
@@ -35,7 +36,7 @@ class PDFDocument extends PDFCore
      *
      * @param $logo
      *
-     * @return array|bool
+     * @return array
      */
     protected function calcLogoSize($logo)
     {
@@ -137,7 +138,7 @@ class PDFDocument extends PDFCore
         if ($company->loadFromCode($code)) {
             $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9);
             $address = $company->direccion;
-            $address .= empty($company->codpostal) ? '' : ' - CP: ' . $company->codpostal . ' - ';
+            $address .= empty($company->codpostal) ? ' - ' : ' - CP: ' . $company->codpostal . ' - ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
             $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';

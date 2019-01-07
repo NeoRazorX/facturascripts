@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Lib\ExtendedController;
 
 /**
  * Controller to edit a single item from the GrupoClientes model
@@ -64,11 +64,14 @@ class EditGrupoClientes extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
         $this->setTabsPosition('bottom');
 
-        /// Disable columns
+        $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
+
+        /// settings
         $this->views['ListCliente']->disableColumn('group', true);
+        $this->views['ListCliente']->settings['btnNew'] = false;
+        $this->views['ListCliente']->settings['btnDelete'] = false;
     }
 
     /**

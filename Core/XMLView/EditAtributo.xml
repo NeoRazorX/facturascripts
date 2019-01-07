@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,16 @@
  *
  * Initial description for the controller EditAtributo
  *
- * @author Ramiro Salvador Mamani <ramiro@solsun.pe>
+ * @author Ramiro Salvador Mamani   <ramiro@solsun.pe>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="4" order="1">
-                <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" required="true" />
+            <column name="code" numcolumns="4" order="100">
+                <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" maxlength="20" required="true" />
             </column>
-            <column name="name" numcolumns="8" order="2">
+            <column name="name" numcolumns="8" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
         </group>

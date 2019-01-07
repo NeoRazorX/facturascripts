@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -76,6 +77,31 @@ class TransferenciaStock extends Base\ModelClass
     {
         parent::clear();
         $this->fecha = date('d-m-Y H:i:s');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        /// remove lines to force update stock
+        foreach ($this->getLines() as $line) {
+            $line->delete();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * 
+     * @return LineaTransferenciaStock[]
+     */
+    public function getLines()
+    {
+        $line = new LineaTransferenciaStock();
+        $where = [new DataBaseWhere('idtrans', $this->primaryColumnValue())];
+        return $line->all($where, [], 0, 0);
     }
 
     /**

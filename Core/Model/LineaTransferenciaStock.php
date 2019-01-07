@@ -24,7 +24,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Transfers stock lines.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos Garcia Gomez          <carlos@facturascripts.com>
  */
 class LineaTransferenciaStock extends Base\ModelClass
 {
@@ -90,6 +91,10 @@ class LineaTransferenciaStock extends Base\ModelClass
         $this->cantidad = 0.0;
     }
 
+    /**
+     * 
+     * @return bool
+     */
     public function delete()
     {
         if (parent::delete()) {
@@ -101,6 +106,10 @@ class LineaTransferenciaStock extends Base\ModelClass
         return false;
     }
 
+    /**
+     * 
+     * @return TransferenciaStock
+     */
     public function getTransference()
     {
         $transf = new TransferenciaStock();
@@ -108,6 +117,10 @@ class LineaTransferenciaStock extends Base\ModelClass
         return $transf;
     }
 
+    /**
+     * 
+     * @return Variante
+     */
     public function getVariant()
     {
         $variant = new Variante();
@@ -122,8 +135,10 @@ class LineaTransferenciaStock extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new TransferenciaStock();
         new Variante();
+
         return parent::install();
     }
 
@@ -133,7 +148,7 @@ class LineaTransferenciaStock extends Base\ModelClass
      * @param array  $where
      * @param array  $orderby
      * 
-     * @return boolean
+     * @return bool
      */
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
@@ -155,6 +170,10 @@ class LineaTransferenciaStock extends Base\ModelClass
         return 'idlinea';
     }
 
+    /**
+     * 
+     * @return bool
+     */
     public function save()
     {
         if (parent::save()) {
@@ -165,6 +184,10 @@ class LineaTransferenciaStock extends Base\ModelClass
         return false;
     }
 
+    /**
+     * 
+     * @return bool
+     */
     public function test()
     {
         if (is_null($this->idproducto)) {

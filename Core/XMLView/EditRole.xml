@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,14 @@
  *
  * Initial description for the controller EditRol
  *
- * @author Artex Trading sa <jferrer@artextrading.com>  
+ * @author Artex Trading sa     <jferrer@artextrading.com>  
+ * @author Carlos García Gómez  <carlos@facturascripts.com>  
 -->
 
 <view>
     <columns>
         <column name="code" order="100" numcolumns="3">
-            <widget type="text" fieldname="codrole" icon="fas fa-hashtag" required="true"/>
+            <widget type="text" fieldname="codrole" icon="fas fa-hashtag" maxlength="20" required="true"/>
         </column>
         <column name="description" order="100" numcolumns="9">
             <widget type="text" fieldname="descripcion" required="true"/>
