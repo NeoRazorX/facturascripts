@@ -109,28 +109,29 @@
 <br/>
 
 {# -- Pagination -- #}
-{% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}
-<form id="{{ formName }}" method="post">
-    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-    <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
-    <div class="text-center">
-        <div class="btn-group">
-            {% for page in currentView.getPagination() %}
-                {% if page.active %}
-                    <button type="button" class="btn btn-light active" onclick="EditListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
-                        {{ page.num }}
-                    </button>
-                {% else %}
-                    <button type="button" class="btn btn-light" onclick="EditListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
-                        {{ page.num }}
-                    </button>
-                {% endif %}
-            {% endfor %}
+{% if currentView.getPagination() | length > 0 %}
+    {% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}
+    <form id="{{ formName }}" method="post">
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
+        <div class="text-center">
+            <div class="btn-group">
+                {% for page in currentView.getPagination() %}
+                    {% if page.active %}
+                        <button type="button" class="btn btn-light active" onclick="EditListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                            {{ page.num }}
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-light" onclick="EditListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                            {{ page.num }}
+                        </button>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
-    </div>
-</form>
-
-<br/>
+    </form>
+    <br/>
+{% endif %}
 
 {# -- Row footer -- #}
 <div class="row">

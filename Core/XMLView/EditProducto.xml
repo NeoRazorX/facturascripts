@@ -22,27 +22,26 @@
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="idproducto" display="none" order="100">
                 <widget type="text" fieldname="idproducto" />
             </column>
-            <column name="referencia" title="reference" order="100">
+            <column name="reference" numcolumns="3" order="100">
                 <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" readonly="dinamic" />
             </column>
-            <column name="codfabricante" title="manufacturer" order="110">
+            <column name="manufacturer" numcolumns="3" order="110">
                 <widget type="select" fieldname="codfabricante" onclick="EditFabricante">
                     <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="codfamilia" title="family" order="120">
+            <column name="family" numcolumns="3" order="120">
                 <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codimpuesto" title="tax" order="130">
+            <column name="tax" numcolumns="3" order="130">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
@@ -84,17 +83,17 @@
             </column>
         </group>
         <group name="accounts" title="accounting" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" order="100">
+            <column name="codsubcuentacom" title="subaccount-purchases" numcolumns="4" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentaven" title="subaccount-sales" order="110">
+            <column name="codsubcuentaven" title="subaccount-sales" numcolumns="4" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" order="120">
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" numcolumns="4" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>

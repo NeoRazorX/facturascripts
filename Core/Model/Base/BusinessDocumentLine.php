@@ -202,7 +202,7 @@ abstract class BusinessDocumentLine extends ModelClass
     /**
      * Removed this row from the database table.
      *
-     * @return boolean
+     * @return bool
      */
     public function delete()
     {

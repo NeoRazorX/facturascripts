@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,12 +22,11 @@
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez     <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" title="exercise" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" readonly="dynamic" />
+                <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dynamic" />
             </column>
             <column name="name" numcolumns="5" order="110">
                 <widget type="text" fieldname="nombre" required="true" />

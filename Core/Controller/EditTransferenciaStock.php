@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 
 /**
  * Controller to edit a transfer of stock
@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class EditTransferenciaStock extends ExtendedController\EditController
+class EditTransferenciaStock extends EditController
 {
 
     /**
@@ -61,24 +61,22 @@ class EditTransferenciaStock extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditListView('EditLineaTransferenciaStock', 'LineaTransferenciaStock', 'lines-transfer');
-
-        /// tabs on bottom
         $this->setTabsPosition('bottom');
+
+        $this->addEditListView('EditLineaTransferenciaStock', 'LineaTransferenciaStock', 'lines');
     }
 
     /**
      * Load view data procedure
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string $viewName
+     * @param object $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
             case 'EditTransferenciaStock':
-                $code = $this->request->get('code');
-                $view->loadData($code);
+                parent::loadData($viewName, $view);
                 if (empty($this->views[$this->active]->model->nick)) {
                     $this->views[$this->active]->model->nick = $this->user->nick;
                 }

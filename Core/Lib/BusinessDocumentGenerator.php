@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,7 +48,7 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [])
     {
-        $exclude = ['codigo', 'idestado', 'fecha', 'hora', 'numero', 'femail'];
+        $exclude = ['codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado', 'numero'];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
@@ -60,6 +60,9 @@ class BusinessDocumentGenerator
             /// copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
+
+        /// sets date, hour and codejercicio
+        $newDoc->setDate($newDoc->fecha, $newDoc->hora);
 
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
@@ -103,8 +106,6 @@ class BusinessDocumentGenerator
     {
         $docTrans = new DocTransformation();
         foreach ($lines as $line) {
-            $docTrans->clear();
-
             /// copy line properties to new line
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
@@ -130,6 +131,7 @@ class BusinessDocumentGenerator
             $newLine->updateStock($newDoc->codalmacen);
 
             /// save relation
+            $docTrans->clear();
             $docTrans->model1 = $prototype->modelClassName();
             $docTrans->iddoc1 = $line->documentColumnValue();
             $docTrans->idlinea1 = $line->primaryColumnValue();

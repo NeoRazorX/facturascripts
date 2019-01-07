@@ -29,12 +29,12 @@
             <column name="code" title="alfa-code-3" numcolumns="6" order="100"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1"
                     description="desc-alfa-code-3">
-                <widget type="text" fieldname="codpais" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="codpais" icon="fas fa-hashtag" maxlength="20" required="true" />
             </column>
             <column name="codeiso" title="alfa-code-2" numcolumns="6" order="110"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
                     description="desc-alfa-code-2">
-                <widget type="text" fieldname="codiso" icon="fas fa-globe-americas" />
+                <widget type="text" fieldname="codiso" maxlength="2" icon="fas fa-globe-americas" />
             </column>
         </group>
         <group name="other" numcolumns="6" title="other-data" icon="fas fa-chart-area">
