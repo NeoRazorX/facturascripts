@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
  *
  * Initial description for the controller EditStock
  *
- * @author PC REDNET S.L. <luismi@pcrednet.com>
- * @author Rafael San José <info@rsanjoseo.com>
+ * @author PC REDNET S.L.       <luismi@pcrednet.com>
+ * @author Rafael San José      <info@rsanjoseo.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <column name="id" display="none" order="90">
@@ -31,23 +31,23 @@
         <column name="product" display="none" order="100">
             <widget type="text" fieldname="idproducto" />
         </column>
-        <column name="reference" order="110">
-            <widget type="select" fieldname="referencia" required="true">
+        <column name="reference" numcolumns="2" order="110">
+            <widget type="select" fieldname="referencia" readonly="dinamic" required="true">
                 <values></values>
             </widget>
         </column>
-        <column name="warehouse" order="120">
-            <widget type="select" fieldname="codalmacen" required="true">
+        <column name="warehouse" numcolumns="2" order="120">
+            <widget type="select" fieldname="codalmacen" readonly="dinamic" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="quantity" display="right" order="130">
+        <column name="quantity" display="right" numcolumns="1" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="stockmin" display="right" order="140">
+        <column name="stockmin" display="right" numcolumns="1" order="140">
             <widget type="number" fieldname="stockmin" />
         </column>
-        <column name="stockmax" display="right" order="150">
+        <column name="stockmax" display="right" numcolumns="1" order="150">
             <widget type="number" fieldname="stockmax" />
         </column>
         <column name="reserved" display="right" order="160">

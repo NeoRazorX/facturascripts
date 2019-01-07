@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,22 +19,22 @@
  *
  * Initial description for the controller EditAgenciaTransporte
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codtrans" icon="fas fa-hashtag" required="true" />
+            <column name="code" numcolumns="3" order="100">
+                <widget type="text" fieldname="codtrans" icon="fas fa-hashtag" maxlength="8" required="true" />
             </column>
-            <column name="name" order="110">
+            <column name="name" numcolumns="3" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="phone" order="120">
+            <column name="phone" numcolumns="3" order="120">
                 <widget type="text" fieldname="telefono" icon="fas fa-phone" />
             </column>
-            <column name="url" order="130">
+            <column name="url" numcolumns="3" order="130">
                 <widget type="link" fieldname="web" icon="fas fa-globe-americas" />
             </column>
         </group>

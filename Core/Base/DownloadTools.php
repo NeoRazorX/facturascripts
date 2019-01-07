@@ -39,7 +39,7 @@ class DownloadTools
      * 
      * @return string
      */
-    public function getContents(string $url, int $timeout = 30): string
+    public function getContents(string $url, int $timeout = 30)
     {
         if (function_exists('curl_init')) {
             $ch = curl_init();
@@ -86,7 +86,7 @@ class DownloadTools
      * 
      * @return string
      */
-    private function curlRedirectExec($ch, &$redirects, $curlopt_header = false): string
+    private function curlRedirectExec($ch, &$redirects, $curlopt_header = false)
     {
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

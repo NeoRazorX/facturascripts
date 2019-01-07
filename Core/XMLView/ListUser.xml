@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
  *
  * Initial description for the controller ListUser
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -34,7 +35,9 @@
             <widget type="number" fieldname="level" decimal="0" />
         </column>
         <column name="company" order="130">
-            <widget type="text" fieldname="idempresa" />
+            <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
         </column>
         <column name="lang-code" order="140">
             <widget type="text" fieldname="langcode" />

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DebugBar;
 
 use DebugBar\DataCollector\DataCollector;
@@ -33,6 +32,7 @@ use DebugBar\DataCollector\Renderable;
  */
 class PHPCollector extends DataCollector implements Renderable
 {
+
     /**
      * Collector name.
      *

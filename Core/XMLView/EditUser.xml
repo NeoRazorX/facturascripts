@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,40 +26,40 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" title="nick" numcolumns="4" order="100">
-                <widget type="text" fieldname="nick" icon="fas fa-hashtag" required="true" />
+            <column name="code" title="nick" numcolumns="3" order="100">
+                <widget type="text" fieldname="nick" icon="fas fa-hashtag" maxlength="50" required="true" />
             </column>
-            <column name="new-password" numcolumns="4" order="110">
+            <column name="new-password" numcolumns="3" order="110">
                 <widget type="password" fieldname="newPassword" icon="fas fa-key" />
             </column>
-            <column name="repeat-new-password" numcolumns="4" order="120">
+            <column name="repeat-new-password" numcolumns="3" order="120">
                 <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
             </column>
-            <column name="email" numcolumns="5" order="130">
+            <column name="email" numcolumns="3" order="130">
                 <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
-            <column name="level" numcolumns="2" order="140">
-                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
-            </column>
-            <column name="is-admin" numcolumns="3" order="150">
+            <column name="is-admin" order="140">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
-            <column name="enabled" numcolumns="2" order="160">
+            <column name="enabled" order="150">
                 <widget type="checkbox" fieldname="enabled" />
             </column>
         </group>
         <group name="other" numcolumns="12">
-            <column name="homepage" numcolumns="4" order="100">
+            <column name="level" numcolumns="3" order="100">
+                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
+            </column>
+            <column name="homepage" numcolumns="3" order="110">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values></values>
                 </widget>
             </column>
-            <column name="company" numcolumns="4" order="110">
-                <widget type="select" fieldname="idempresa">
+            <column name="company" numcolumns="3" order="120">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="lang-code" numcolumns="4" order="120">
+            <column name="lang-code" numcolumns="3" order="130">
                 <widget type="select" fieldname="langcode" icon="fas fa-language">
                     <values></values>
                 </widget>

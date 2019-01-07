@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Base\MiniLog;
  */
 class DataBaseCollector extends DataCollector implements Renderable, AssetProvider
 {
+
     /**
      * App log manager
      *

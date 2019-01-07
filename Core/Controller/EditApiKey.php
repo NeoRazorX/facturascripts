@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,19 +19,22 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * Controller to edit a single item from the ApiKey model.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  */
-class EditApiKey extends ExtendedController\EditController
+class EditApiKey extends EditController
 {
 
     /**
-     * Returns the model name
+     * Returns the model name.
+     * 
+     * @return string
      */
     public function getModelClassName()
     {
@@ -77,7 +80,12 @@ class EditApiKey extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('top');
+
         $this->addEditListView('EditApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
+
+        /// settings
+        $this->views['EditApiAccess']->settings['btnNew'] = false;
     }
 
     /**
@@ -138,7 +146,9 @@ class EditApiKey extends ExtendedController\EditController
     private function getResources(): array
     {
         $resources = [];
-        foreach (scandir(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API', SCANDIR_SORT_NONE) as $resource) {
+
+        $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
+        foreach (scandir($path, SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) === '.php') {
                 $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
                 $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
@@ -150,32 +160,28 @@ class EditApiKey extends ExtendedController\EditController
                 unset($APIClass);
             }
         }
-        sort($resources);
 
+        sort($resources);
         return $resources;
     }
 
     /**
      * Load view data.
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string $viewName
+     * @param object $view
      */
     protected function loadData($viewName, $view)
     {
-        $order = [];
         switch ($viewName) {
-            case 'EditApiKey':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'EditApiAccess':
-                $order['resource'] = 'ASC';
                 $idApiKey = $this->getViewModelValue('EditApiKey', 'id');
                 $where = [new DataBaseWhere('idapikey', $idApiKey)];
-                $view->loadData('', $where, $order, 0, 0);
+                $view->loadData('', $where, ['resource' => 'ASC'], 0, 0);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 }
