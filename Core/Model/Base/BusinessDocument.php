@@ -315,14 +315,9 @@ abstract class BusinessDocument extends ModelClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
 
-        if (!isset(self::$estados)) {
-            $statusModel = new EstadoDocumento();
-            self::$estados = $statusModel->all([], [], 0, 0);
-        }
-
         /// select default status
-        foreach (self::$estados as $status) {
-            if ($status->tipodoc === $this->modelClassName() && $status->predeterminado) {
+        foreach ($this->getAvaliableStatus() as $status) {
+            if ($status->predeterminado) {
                 $this->idestado = $status->idestado;
                 $this->editable = $status->editable;
                 break;
@@ -337,21 +332,32 @@ abstract class BusinessDocument extends ModelClass
     public function delete()
     {
         $lines = $this->getLines();
-        if (parent::delete()) {
-            /// update stock
-            foreach ($lines as $line) {
-                $line->cantidad = 0;
-                $line->updateStock($this->codalmacen);
-            }
-
-            /// remove data from DocTransformation
-            $docTransformation = new DocTransformation();
-            $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
-
-            return true;
+        if (!parent::delete()) {
+            return false;
         }
 
-        return false;
+        /// update stock
+        foreach ($lines as $line) {
+            $line->cantidad = 0;
+            $line->updateStock($this->codalmacen);
+        }
+
+        /// change parent doc status
+        foreach ($this->parentDocuments() as $parent) {
+            foreach ($parent->getAvaliableStatus() as $status) {
+                if ($status->predeterminado) {
+                    $parent->idestado = $status->idestado;
+                    $parent->save();
+                    break;
+                }
+            }
+        }
+
+        /// remove data from DocTransformation
+        $docTransformation = new DocTransformation();
+        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
+
+        return true;
     }
 
     /**
@@ -360,6 +366,11 @@ abstract class BusinessDocument extends ModelClass
      */
     public function getAvaliableStatus()
     {
+        if (!isset(self::$estados)) {
+            $statusModel = new EstadoDocumento();
+            self::$estados = $statusModel->all([], [], 0, 0);
+        }
+
         $avaliables = [];
         foreach (self::$estados as $status) {
             if ($status->tipodoc === $this->modelClassName()) {
@@ -416,7 +427,7 @@ abstract class BusinessDocument extends ModelClass
      */
     public function getStatus()
     {
-        foreach (self::$estados as $status) {
+        foreach ($this->getAvaliableStatus() as $status) {
             if ($status->idestado === $this->idestado) {
                 return $status;
             }
@@ -565,10 +576,9 @@ abstract class BusinessDocument extends ModelClass
             return false;
         }
 
-        $statusModel = new EstadoDocumento();
-        if ($statusModel->loadFromCode($this->idestado)) {
-            $this->editable = $statusModel->editable;
-        }
+        /// check status
+        $status = $this->getStatus();
+        $this->editable = $status->editable;
 
         return parent::test();
     }

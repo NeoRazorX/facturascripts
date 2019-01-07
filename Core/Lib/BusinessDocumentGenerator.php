@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -106,8 +106,6 @@ class BusinessDocumentGenerator
     {
         $docTrans = new DocTransformation();
         foreach ($lines as $line) {
-            $docTrans->clear();
-
             /// copy line properties to new line
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
@@ -133,6 +131,7 @@ class BusinessDocumentGenerator
             $newLine->updateStock($newDoc->codalmacen);
 
             /// save relation
+            $docTrans->clear();
             $docTrans->model1 = $prototype->modelClassName();
             $docTrans->iddoc1 = $line->documentColumnValue();
             $docTrans->idlinea1 = $line->primaryColumnValue();
