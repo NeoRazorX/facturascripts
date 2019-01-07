@@ -811,11 +811,15 @@
     "template-not-found": "No s'ha trobat la plantilla",
     "test": "Prova",
     "third-trimester": "Tercer trimestre",
+    "this-month": "this-month",
+    "this-week": "this-week",
+    "this-year": "this-year",
     "thousands-separator": "Separador de millars",
     "time": "Hora",
     "title": "Títul",
     "title-url": "Títul (URL)",
     "to": "Per a",
+    "today": "today",
     "total": "Total",
     "total-value-error": "La cantitat total en %docType% %docCode% és incorrecta (%docTotal%). La cantitat correcta és: %calcTotal%",
     "totalirpf-value-error": "El total del IRPF de %docType% %docCode% no és incorrecte (%docTotalIRPF%). La cantitat correcta és: %calcTotalIRPF%",
@@ -879,6 +883,7 @@
     "year-wildcard-info": "Any actual (de la data actual)",
     "yearly": "Anualment",
     "yes": "Sí",
+    "yesterday": "yesterday",
     "your": "seu",
     "zip-code": "Còdic postal"
 }

@@ -811,11 +811,15 @@
     "template-not-found": "Template no trobat",
     "test": "Test",
     "third-trimester": "Tercer trimestre",
+    "this-month": "this-month",
+    "this-week": "this-week",
+    "this-year": "this-year",
     "thousands-separator": "Milers",
     "time": "Hora",
     "title": "Títol",
     "title-url": "Títol (URL)",
     "to": "Per",
+    "today": "today",
     "total": "Total",
     "total-value-error": "Import total de %docType% %docCode% incorrecte (%docTotal%). Import correcte: %calcTotal%",
     "totalirpf-value-error": "Import IRPF total de %docType% %docCode% incorrecte (%docTotalIRPF%). Import correcte: %calcTotalIRPF%",
@@ -879,6 +883,7 @@
     "year-wildcard-info": "Any actual (a partir de la data actual)",
     "yearly": "Anualment",
     "yes": "Sí",
+    "yesterday": "yesterday",
     "your": "El vostre",
     "zip-code": "Codi Postal"
 }

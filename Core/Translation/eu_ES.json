@@ -811,11 +811,15 @@
     "template-not-found": "Ez da txantiloia aurkitu",
     "test": "Froga",
     "third-trimester": "Hirugarren hiruhilabetekoa",
+    "this-month": "this-month",
+    "this-week": "this-week",
+    "this-year": "this-year",
     "thousands-separator": "Milakoen banatzailea",
     "time": "Ordua",
     "title": "Izenburua",
     "title-url": "Titulua (URL)",
     "to": "Nori",
+    "today": "today",
     "total": "Guztira",
     "total-value-error": "%docType% %docCode% zenbateko osoa ez zuzena ((%docTotal%). Zenbateko zuzena: %calcTotal%",
     "totalirpf-value-error": "PFEZ kopurua %docType% %docCode% ez zuzena (%docTotalIRPF%). Zenbateko zuzena: %calcTotalIRPF%",
@@ -879,6 +883,7 @@
     "year-wildcard-info": "Oraingo urtea (gaurko datakoa)",
     "yearly": "Urtero",
     "yes": "Bai",
+    "yesterday": "yesterday",
     "your": "Zure",
     "zip-code": "Posta Kodea"
 }

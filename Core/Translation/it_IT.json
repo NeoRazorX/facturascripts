@@ -811,11 +811,15 @@
     "template-not-found": "Modello non trovato",
     "test": "Test",
     "third-trimester": "Third trimester",
+    "this-month": "this-month",
+    "this-week": "this-week",
+    "this-year": "this-year",
     "thousands-separator": "migliaia",
     "time": "Time",
     "title": "Title",
     "title-url": "Title URL",
     "to": "To",
+    "today": "today",
     "total": "Totale",
     "total-value-error": "Quantità totale di 0 1 non corretta (2). Importo corretto: 3",
     "totalirpf-value-error": "Quantità totale IRPF pari a 0 1 non corretta (2). Importo corretto: 3",
@@ -879,6 +883,7 @@
     "year-wildcard-info": "Current year (from the current date)",
     "yearly": "Yearly",
     "yes": "se",
+    "yesterday": "yesterday",
     "your": "your",
     "zip-code": "Cap"
 }

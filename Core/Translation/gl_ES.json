@@ -811,11 +811,15 @@
     "template-not-found": "Template non atopou",
     "test": "Test",
     "third-trimester": "Terceiro trimestre",
+    "this-month": "this-month",
+    "this-week": "this-week",
+    "this-year": "this-year",
     "thousands-separator": "Separador de millares",
     "time": "Hora",
     "title": "Título",
     "title-url": "Título (URL)",
     "to": "Para",
+    "today": "today",
     "total": "Total",
     "total-value-error": "Valor total de %docType% %docCode% incorrecto (%docTotal%). Valor correcto: %calcTotal%",
     "totalirpf-value-error": "Valor total IRPF de %docType% %docCode% incorrecto (%docTotalIRPF%). Valor correcto: %calcTotalIRPF%",
@@ -879,6 +883,7 @@
     "year-wildcard-info": "Ano actual (da data actual)",
     "yearly": "Anual",
     "yes": "Si",
+    "yesterday": "yesterday",
     "your": "seu",
     "zip-code": "Código postal"
 }

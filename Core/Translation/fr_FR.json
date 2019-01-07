@@ -811,11 +811,15 @@
     "template-not-found": "Modèle non trouvé",
     "test": "Essai",
     "third-trimester": "Third trimester",
+    "this-month": "this-month",
+    "this-week": "this-week",
+    "this-year": "this-year",
     "thousands-separator": "Milliers",
     "time": "Time",
     "title": "Titre",
     "title-url": "Titre (URL)",
     "to": "To",
+    "today": "today",
     "total": "Total",
     "total-value-error": "Montant total de %docType% %docCode% incorrect (%docTotal%). Montant correct: %calcTotal%",
     "totalirpf-value-error": "Montant total IRPF de %docType% %docCode% incorrect (%docTotalIRPF%). Montant correct: %calcTotalIRPF%",
@@ -879,6 +883,7 @@
     "year-wildcard-info": "Current year (from the current date)",
     "yearly": "Annuel",
     "yes": "Si",
+    "yesterday": "yesterday",
     "your": "your",
     "zip-code": "Code postal"
 }
