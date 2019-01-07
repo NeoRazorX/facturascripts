@@ -90,12 +90,6 @@ class ListView extends BaseView
     public $showFilters = false;
 
     /**
-     *
-     * @var bool
-     */
-    public $modalInsert = false;
-
-    /**
      * ListView constructor and initialization.
      *
      * @param string $name
@@ -254,13 +248,6 @@ class ListView extends BaseView
         $where = $this->getPageWhere($user);
         $pageFilter = new PageFilter();
         $this->pageFilters = $pageFilter->all($where, $orderby);
-
-        // set insert mode
-        foreach ($this->modals as $key => $value) {
-            if ($key === 'insert') {
-                $this->modalInsert = true;
-            }
-        }
     }
 
     /**

@@ -23,8 +23,8 @@
             <div class="col">
                 <div class="btn-group">
                     {% if currentView.settings.btnNew %}
-                        {% if currentView.modalInsert %}
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalinsert">
+                        {% if currentView.settings.modalInsert %}
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
                                 <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                             </button>
                         {% else %}
