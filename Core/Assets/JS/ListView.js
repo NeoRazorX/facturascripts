@@ -35,7 +35,7 @@ function listViewDelete(viewName) {
                 className: "btn-danger"
             }
         },
-        callback: function (result) {
+        callback: function(result) {
             if (result) {
                 listViewSetAction(viewName, "delete");
             }
@@ -75,14 +75,39 @@ function listViewShowFilters(viewName) {
     $("#form" + viewName + "Filters").toggle();
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
+    // disable button delete
+    $("#delete-register").prop("disabled", true);
+
     // set/unset all delete checkbox
-    $(".listActionCB").click(function () {
+    $(".listActionCB").click(function() {
         var checked = $(this).prop("checked");
         $(".listAction").prop("checked", checked);
+        if (checked) {
+            $("#delete-register").prop("disabled", false);
+        } else {
+            $("#delete-register").prop("disabled", true);
+        }
     });
     // disable enter key press
-    $(".noEnterKey").keypress(function (e) {
+    $(".noEnterKey").keypress(function(e) {
         return !(e.which == 13 || e.keyCode == 13);
     });
+
+    // Disable or enable delete button when click an individual item of list.
+    $(".listAction").click(() => {
+        let sinMarcar = 0;
+        for (let i = 0; i < $(".listAction").length; i++) {
+            if (!$(".listAction")[i].checked) {
+                sinMarcar++;
+            }
+        }
+
+        if (sinMarcar == $(".listAction").length) {
+            $("#delete-register").prop("disabled", true);
+        } else {
+            $("#delete-register").prop("disabled", false);
+        }
+    });
+
 });

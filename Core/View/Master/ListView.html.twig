@@ -28,7 +28,7 @@
                         </a>
                     {% endif %}
                     {% if currentView.settings.btnDelete %}
-                        <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
+                        <button id="delete-register" type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
                             <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                         </button>
                     {% endif %}
