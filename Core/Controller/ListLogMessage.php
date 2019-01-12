@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -142,17 +142,17 @@ class ListLogMessage extends ExtendedController\ListController
             $allFilteredLogs = $logMessage->all($where, [], 0, 0);
             $counter = 0;
             foreach ($allFilteredLogs as $log) {
-                if ($log->delete()) {
-                    $counter++;
-                } else {
-                    $this->miniLog->alert('cant-delete-item', ['%modelName%' => 'LogMessage', '%code%' => $log->primaryColumnValue()]);
+                if (!$log->delete()) {
+                    $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
                     break;
                 }
+
+                $counter++;
             }
             // confirm data
             $this->dataBase->commit();
             if ($counter > 0) {
-                $this->miniLog->notice('total-items-deleted', ['%total%' => $counter]);
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             }
         } catch (\Exception $e) {
             $this->miniLog->alert($e->getMessage());
