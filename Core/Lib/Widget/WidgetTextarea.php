@@ -22,9 +22,26 @@ namespace FacturaScripts\Core\Lib\Widget;
  * Description of WidgetTextarea
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class WidgetTextarea extends WidgetText
 {
+    /**
+     * Indicates the number of rows value
+     *
+     * @var int
+     */
+    protected $rows;
+
+    /**
+     *
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->rows = (int) ($data['rows'] ?? 5);
+    }
 
     /**
      * 
@@ -77,7 +94,7 @@ class WidgetTextarea extends WidgetText
     {
         $cssFormControl = $this->css('form-control');
         $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
-        return '<textarea name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>'
+        return '<textarea rows="' . $this->rows . '" name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>'
             . $this->value . '</textarea>';
     }
 }
