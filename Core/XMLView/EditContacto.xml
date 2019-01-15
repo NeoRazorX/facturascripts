@@ -117,4 +117,9 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="actions">
+            <button type="action" label="convet-to-customer" color="success" action="convert-to-customer" icon="fas fa-plus" />
+        </row>
+    </rows>
 </view>

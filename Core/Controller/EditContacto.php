@@ -19,11 +19,13 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Model\Contacto;
 
 /**
  * Controller to edit a single item from the Contacto model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  */
 class EditContacto extends ExtendedController\EditController
 {
@@ -60,5 +62,28 @@ class EditContacto extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Run the controller after actions
+     *
+     * @param string $action
+     */
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'convert-to-customer':
+                $code = $this->request->request->get('code', '');
+                $contact = new Contacto();
+                $contact->loadFromCode($code);
+
+                $customer = $contact->getCustomer();
+                if(empty($customer->codcliente)) {
+                    $this->miniLog->error($this->i18n->trans('problem-storage-customer'));
+                } else {
+                    $this->miniLog->info($this->i18n->trans('customer-created'));
+                }
+                break;
+        }
     }
 }
