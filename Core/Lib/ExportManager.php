@@ -188,7 +188,7 @@ class ExportManager
             self::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-archive'],
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-csv'],
                 'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope'],
             ];
         }
