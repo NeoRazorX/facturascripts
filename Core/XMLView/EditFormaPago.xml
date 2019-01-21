@@ -33,7 +33,7 @@
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             <column name="genreceipts" numcolumns="2" title="generate-receipt" order="130">
-                <widget type="select" fieldname="genrecibos" translate="true">
+                <widget type="select" fieldname="genrecibos" translate="true" required="true">
                     <values title="paid">Pagados</values>
                     <values title="issued">Emitidos</values>
                 </widget>
@@ -42,7 +42,7 @@
                 <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />
             </column>
             <column name="expiration-type" numcolumns="2" order="220">
-                <widget type="select" fieldname="tipovencimiento" translate="true">
+                <widget type="select" fieldname="tipovencimiento" translate="true" required="true">
                     <values title="days">days</values>
                     <values title="weeks">weeks</values>
                     <values title="months">months</values>
