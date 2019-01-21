@@ -567,7 +567,11 @@ abstract class BusinessDocument extends ModelClass
             return false;
         }
 
-        if (!$this->editable) {
+        /// check status
+        $status = $this->getStatus();
+        $this->editable = $status->editable;
+
+        if (!$this->editable && !$this->previousData['editable']) {
             $fields = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa'];
             foreach ($fields as $field) {
                 if ($this->{$field} != $this->previousData[$field]) {
@@ -576,10 +580,6 @@ abstract class BusinessDocument extends ModelClass
                 }
             }
         }
-
-        /// check status
-        $status = $this->getStatus();
-        $this->editable = $status->editable;
 
         return parent::test();
     }
@@ -675,7 +675,10 @@ abstract class BusinessDocument extends ModelClass
 
     protected function setPreviousData()
     {
-        $fields = ['codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'idestado'];
+        $fields = [
+            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie',
+            'editable', 'fecha', 'hora', 'idempresa', 'idestado'
+        ];
         foreach ($fields as $field) {
             $this->previousData[$field] = $this->{$field};
         }
