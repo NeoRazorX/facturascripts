@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,8 @@ use FacturaScripts\Core\Base\Translator;
 /**
  * PeriodTools give us some basic and common methods for periods.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PeriodTools
 {
@@ -98,7 +99,7 @@ class PeriodTools
                 break;
 
             case 'this-last-fortnight':
-                self::applyFormatToPeriod($startdate, $enddate, '-14 day', '-1 day');
+                self::applyFormatToPeriod($startdate, $enddate, '-15 day', '-1 day');
                 break;
 
             case 'this-last-month':
