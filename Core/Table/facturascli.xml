@@ -7,12 +7,6 @@
 -->
 <table>
     <column>
-        <name>anulada</name>
-        <type>boolean</type>
-        <null>NO</null>
-        <default>false</default>
-    </column>
-    <column>
         <name>apartado</name>
         <type>character varying(10)</type>
     </column>

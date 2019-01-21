@@ -27,13 +27,6 @@ trait InvoiceTrait
 {
 
     /**
-     * TRUE => voided.
-     *
-     * @var bool
-     */
-    public $anulada;
-
-    /**
      * Code of the invoice that rectifies.
      *
      * @var string

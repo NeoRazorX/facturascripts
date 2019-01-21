@@ -7,12 +7,6 @@
 -->
 <table>
     <column>
-        <name>anulada</name>
-        <type>boolean</type>
-        <null>NO</null>
-        <default>false</default>
-    </column>
-    <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
         <null>NO</null>
