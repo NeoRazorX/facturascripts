@@ -522,15 +522,7 @@ abstract class BusinessDocument extends ModelClass
             $this->newCodigo();
         }
 
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->checkStatus() ? $this->saveUpdate() : false;
-            }
-
-            return $this->saveInsert();
-        }
-
-        return false;
+        return parent::save();
     }
 
     /**
@@ -662,6 +654,17 @@ abstract class BusinessDocument extends ModelClass
      */
     protected function saveUpdate(array $values = [])
     {
+        foreach (['codejercicio', 'codserie'] as $field) {
+            if ($this->{$field} != $this->previousData[$field]) {
+                $this->newCodigo();
+                break;
+            }
+        }
+
+        if (!$this->checkStatus()) {
+            return false;
+        }
+
         if (parent::saveUpdate($values)) {
             $this->setPreviousData();
             return true;
@@ -672,7 +675,7 @@ abstract class BusinessDocument extends ModelClass
 
     protected function setPreviousData()
     {
-        $fields = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'idestado'];
+        $fields = ['codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'idestado'];
         foreach ($fields as $field) {
             $this->previousData[$field] = $this->{$field};
         }
