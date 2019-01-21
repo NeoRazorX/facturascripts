@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -260,12 +260,18 @@ class ListView extends BaseView
     {
         switch ($case) {
             case 'edit':
-                if ($this->modalInsert) {
-                    $modals = $this->getModals();
-                    foreach ($modals['insert']->columns as $column) {
-                        $column->processFormData($this->model, $request);
-                    }
+                $name = $this->settings['modalInsert'] ?? '';
+                if (empty($name)) {
+                    break;
                 }
+                $modals = $this->getModals();
+                foreach ($modals[$name]->columns as $group) {
+                    $group->processFormData($this->model, $request);
+                }
+                break;
+
+            case 'load':
+                $this->processFormDataLoad($request);
                 break;
 
             case 'preload':
@@ -273,13 +279,13 @@ class ListView extends BaseView
                     $filter->getDataBaseWhere($this->where);
                 }
                 break;
-
-            case 'load':
-                $this->processFormDataLoad($request);
-                break;
         }
     }
 
+    /**
+     * 
+     * @param Request $request
+     */
     private function processFormDataLoad($request)
     {
         $this->offset = (int) $request->request->get('offset', 0);
