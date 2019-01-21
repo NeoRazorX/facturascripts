@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -192,12 +192,20 @@ class Contacto extends Base\Contact
      */
     public function alias()
     {
-        if (empty($this->email)) {
+        if (empty($this->email) || strpos($this->email, '@') === false) {
             return (string) $this->idcontacto;
         }
 
         $aux = explode('@', $this->email);
-        return (count($aux) == 2) ? $aux[0] . '_' . $this->idcontacto : (string) $this->idcontacto;
+        switch ($aux[0]) {
+            case 'admin':
+            case 'info':
+                $domain = explode('.', $aux[1]);
+                return $domain[0] . '_' . $this->idcontacto;
+
+            default:
+                return $aux[0] . '_' . $this->idcontacto;
+        }
     }
 
     /**
