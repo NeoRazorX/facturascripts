@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditPresupuestoProveedor
- *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @autor Luis Miguel Pérez <luismi@pcrednet.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @autor Luis Miguel Pérez     <luismi@pcrednet.com>
 -->
-
 <view>
     <columns>
         <group name="supplier" numcolumns="12">
@@ -42,7 +38,7 @@
                 <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
         </group>
-        <group name="attributes" numcolumns="12">
+        <group name="attributes" title="attributes" numcolumns="12">
             <column name="company" numcolumns="2" order="100">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
@@ -84,7 +80,7 @@
             </column>
         </group>
         <group name="notes" numcolumns="12">
-            <column name="observations" numcolumns="12" order="110">
+            <column name="observations" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
