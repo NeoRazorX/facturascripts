@@ -136,13 +136,6 @@ abstract class BusinessDocument extends ModelClass
     public $idestado;
 
     /**
-     * Previous document status.
-     *
-     * @var int
-     */
-    private $idestadoAnt;
-
-    /**
      * % IRPF retention of the document. It is obtained from the series.
      * Each line can have a different%.
      *
@@ -185,6 +178,12 @@ abstract class BusinessDocument extends ModelClass
      * @var bool
      */
     public $pagado;
+
+    /**
+     *
+     * @var array
+     */
+    private $previousData;
 
     /**
      * Rate of conversion to Euros of the selected currency.
@@ -257,7 +256,7 @@ abstract class BusinessDocument extends ModelClass
     public function __construct(array $data = [])
     {
         parent::__construct($data);
-        $this->idestadoAnt = $this->idestado;
+        $this->setPreviousData();
     }
 
     /**
@@ -464,7 +463,7 @@ abstract class BusinessDocument extends ModelClass
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
         if (parent::loadFromCode($cod, $where, $orderby)) {
-            $this->idestadoAnt = $this->idestado;
+            $this->setPreviousData();
             return true;
         }
 
@@ -576,6 +575,16 @@ abstract class BusinessDocument extends ModelClass
             return false;
         }
 
+        if (!$this->editable) {
+            $fields = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa'];
+            foreach ($fields as $field) {
+                if ($this->{$field} != $this->previousData[$field]) {
+                    self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
+                    return false;
+                }
+            }
+        }
+
         /// check status
         $status = $this->getStatus();
         $this->editable = $status->editable;
@@ -589,7 +598,7 @@ abstract class BusinessDocument extends ModelClass
      */
     private function checkStatus()
     {
-        if ($this->idestado == $this->idestadoAnt) {
+        if ($this->idestado == $this->previousData['idestado']) {
             return true;
         }
 
@@ -607,7 +616,6 @@ abstract class BusinessDocument extends ModelClass
             }
         }
 
-        $this->idestadoAnt = $this->idestado;
         return true;
     }
 
@@ -628,5 +636,45 @@ abstract class BusinessDocument extends ModelClass
         }
 
         $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            $this->setPreviousData();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = [])
+    {
+        if (parent::saveUpdate($values)) {
+            $this->setPreviousData();
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function setPreviousData()
+    {
+        $fields = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'idestado'];
+        foreach ($fields as $field) {
+            $this->previousData[$field] = $this->{$field};
+        }
     }
 }
