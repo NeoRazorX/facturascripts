@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -121,12 +121,12 @@ class Ejercicio extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->idempresa = AppSettings::get('default', 'idempresa');
-        $this->nombre = '';
+        $this->estado = self::EXERCISE_STATUS_OPEN;
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
-        $this->estado = self::EXERCISE_STATUS_OPEN;
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->longsubcuenta = 10;
+        $this->nombre = '';
     }
 
     /**
@@ -140,7 +140,6 @@ class Ejercicio extends Base\ModelClass
     public function getBestFecha($fecha, $showError = false)
     {
         $fecha2 = strtotime($fecha);
-
         if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
             return $fecha;
         }
@@ -210,8 +209,7 @@ class Ejercicio extends Base\ModelClass
     {
         new Empresa();
 
-        $code = "'0001'";
-        $year = "'" . date('Y') . "'";
+        $code = $year = "'" . date('Y') . "'";
         $start = self::$dataBase->var2str(date('01-01-Y'));
         $end = self::$dataBase->var2str(date('31-12-Y'));
         $state = "'" . self::EXERCISE_STATUS_OPEN . "'";

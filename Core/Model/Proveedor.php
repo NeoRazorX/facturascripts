@@ -137,7 +137,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return bool
      */
-    protected function saveInsert(array $values = array())
+    protected function saveInsert(array $values = [])
     {
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontacto)) {

@@ -103,6 +103,19 @@ class FacturaCliente extends Base\SalesDocument
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        if (empty($this->vencimiento)) {
+            $this->vencimiento = $this->fecha;
+        }
+
+        return parent::test();
+    }
+
+    /**
      * Generates the accounting entry for the document
      *
      * @return bool
@@ -120,7 +133,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return bool
      */
-    protected function saveInsert(array $values = array())
+    protected function saveInsert(array $values = [])
     {
         $this->accountingDocument();
         return parent::saveInsert($values);
@@ -133,7 +146,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = array())
+    protected function saveUpdate(array $values = [])
     {
         $this->accountingDocument();
         return parent::saveUpdate($values);

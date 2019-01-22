@@ -120,7 +120,7 @@ class Empresa extends Base\Contact
      * 
      * @param array $data
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         if (self::$regimenIVA === null) {
             self::$regimenIVA = new RegimenIVA();

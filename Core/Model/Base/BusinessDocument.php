@@ -301,8 +301,6 @@ abstract class BusinessDocument extends ModelClass
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->editable = true;
-        $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
@@ -313,6 +311,9 @@ abstract class BusinessDocument extends ModelClass
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
+
+        /// set date, hour and codejercicio
+        $this->setDate(date('d-m-Y'), date('H:i:s'));
 
         /// select default status
         foreach ($this->getAvaliableStatus() as $status) {
