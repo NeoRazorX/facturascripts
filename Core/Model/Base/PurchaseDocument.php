@@ -116,7 +116,10 @@ abstract class PurchaseDocument extends BusinessDocument
     protected function checkChanges()
     {
         if (!$this->editable && !$this->previousData['editable']) {
-            $fields = ['codalmacen', 'coddivisa', 'codpago', 'codporveedor', 'codserie', 'fecha', 'hora', 'idempresa'];
+            $fields = [
+                'codalmacen', 'coddivisa', 'codpago', 'codproveedor',
+                'codserie', 'fecha', 'hora', 'idempresa'
+            ];
             foreach ($fields as $field) {
                 if ($this->{$field} != $this->previousData[$field]) {
                     self::$miniLog->warning(self::$i18n->trans('non-editable-document'));

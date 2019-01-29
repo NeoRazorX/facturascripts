@@ -183,7 +183,7 @@ abstract class BusinessDocument extends ModelClass
      *
      * @var array
      */
-    private $previousData;
+    protected $previousData;
 
     /**
      * Rate of conversion to Euros of the selected currency.
