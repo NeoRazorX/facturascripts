@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocument extends ModelClass
+abstract class BusinessDocument extends ModelOnChangeClass
 {
 
     /**
@@ -180,12 +180,6 @@ abstract class BusinessDocument extends ModelClass
     public $pagado;
 
     /**
-     *
-     * @var array
-     */
-    protected $previousData;
-
-    /**
      * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
@@ -230,11 +224,6 @@ abstract class BusinessDocument extends ModelClass
     public $totalrecargo;
 
     /**
-     * Checks document to prevent changes in locked properties.
-     */
-    abstract protected function checkChanges();
-
-    /**
      * Returns the lines associated with the document.
      */
     abstract public function getLines();
@@ -245,11 +234,6 @@ abstract class BusinessDocument extends ModelClass
     abstract public function getNewLine(array $data = []);
 
     /**
-     * Sets previous properties values.
-     */
-    abstract protected function setPreviousData();
-
-    /**
      * Sets subject for this document.
      */
     abstract public function setSubject($subject);
@@ -258,16 +242,6 @@ abstract class BusinessDocument extends ModelClass
      * Updates subjects data in this document.
      */
     abstract public function updateSubject();
-
-    /**
-     * 
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->setPreviousData();
-    }
 
     /**
      * 
@@ -464,24 +438,6 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @param string $cod
-     * @param array  $where
-     * @param array  $orderby
-     * 
-     * @return bool
-     */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
-    {
-        if (parent::loadFromCode($cod, $where, $orderby)) {
-            $this->setPreviousData();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 
      * @return BusinessDocument[]
      */
     public function parentDocuments()
@@ -589,38 +545,7 @@ abstract class BusinessDocument extends ModelClass
             return false;
         }
 
-        if ($this->exists() && !$this->checkChanges()) {
-            return false;
-        }
-
         return parent::test();
-    }
-
-    /**
-     * 
-     * @return bool
-     */
-    private function checkStatus()
-    {
-        if ($this->idestado == $this->previousData['idestado']) {
-            return true;
-        }
-
-        $status = $this->getStatus();
-        foreach ($this->getLines() as $line) {
-            $line->actualizastock = $status->actualizastock;
-            $line->save();
-            $line->updateStock($this->codalmacen);
-        }
-
-        if (!empty($status->generadoc)) {
-            $docGenerator = new BusinessDocumentGenerator();
-            if (!$docGenerator->generate($this, $status->generadoc)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -644,44 +569,40 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @param array $values
+     * @param string $field
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function onChange($field)
     {
-        if (parent::saveInsert($values)) {
-            $this->setPreviousData();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
-    {
-        foreach (['codejercicio', 'codserie'] as $field) {
-            if ($this->{$field} != $this->previousData[$field]) {
-                $this->newCodigo();
-                break;
-            }
-        }
-
-        if (!$this->checkStatus()) {
+        if (!$this->editable && !$this->previousData['editable'] && $field != 'idestado') {
+            self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
             return false;
         }
 
-        if (parent::saveUpdate($values)) {
-            $this->setPreviousData();
-            return true;
+        switch ($field) {
+            case 'codejercicio':
+            case 'codserie':
+                $this->newCodigo();
+                break;
+
+            case 'idestado':
+                $status = $this->getStatus();
+                foreach ($this->getLines() as $line) {
+                    $line->actualizastock = $status->actualizastock;
+                    $line->save();
+                    $line->updateStock($this->codalmacen);
+                }
+
+                if (!empty($status->generadoc)) {
+                    $docGenerator = new BusinessDocumentGenerator();
+                    if (!$docGenerator->generate($this, $status->generadoc)) {
+                        return false;
+                    }
+                }
+                break;
         }
 
-        return false;
+        return parent::onChange($field);
     }
 }

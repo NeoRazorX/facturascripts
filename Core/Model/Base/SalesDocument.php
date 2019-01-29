@@ -256,34 +256,14 @@ abstract class SalesDocument extends BusinessDocument
 
     /**
      * 
-     * @return bool
+     * @param array $fields
      */
-    protected function checkChanges()
+    protected function setPreviousData(array $fields = array())
     {
-        if (!$this->editable && !$this->previousData['editable']) {
-            $fields = [
-                'codalmacen', 'codcliente', 'coddivisa', 'codpago', 'codserie',
-                'fecha', 'hora', 'idempresa'
-            ];
-            foreach ($fields as $field) {
-                if ($this->{$field} != $this->previousData[$field]) {
-                    self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    protected function setPreviousData()
-    {
-        $fields = [
+        $more = [
             'codalmacen', 'codcliente', 'coddivisa', 'codejercicio', 'codpago',
             'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado'
         ];
-        foreach ($fields as $field) {
-            $this->previousData[$field] = $this->{$field};
-        }
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }
