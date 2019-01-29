@@ -111,21 +111,31 @@ abstract class PurchaseDocument extends BusinessDocument
 
     /**
      * 
-     * @param array $moreFields
-     *
      * @return bool
      */
-    protected function checkChanges(array $moreFields = ['codproveedor'])
+    protected function checkChanges()
     {
-        return parent::checkChanges($moreFields);
+        if (!$this->editable && !$this->previousData['editable']) {
+            $fields = ['codalmacen', 'coddivisa', 'codpago', 'codporveedor', 'codserie', 'fecha', 'hora', 'idempresa'];
+            foreach ($fields as $field) {
+                if ($this->{$field} != $this->previousData[$field]) {
+                    self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
-    /**
-     * 
-     * @param array $moreFields
-     */
-    protected function setPreviousData(array $moreFields = ['codproveedor'])
+    protected function setPreviousData()
     {
-        parent::setPreviousData($moreFields);
+        $fields = [
+            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codproveedor',
+            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado'
+        ];
+        foreach ($fields as $field) {
+            $this->previousData[$field] = $this->{$field};
+        }
     }
 }

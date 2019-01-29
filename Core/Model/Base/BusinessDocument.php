@@ -230,6 +230,11 @@ abstract class BusinessDocument extends ModelClass
     public $totalrecargo;
 
     /**
+     * Checks document to prevent changes in locked properties.
+     */
+    abstract protected function checkChanges();
+
+    /**
      * Returns the lines associated with the document.
      */
     abstract public function getLines();
@@ -238,6 +243,11 @@ abstract class BusinessDocument extends ModelClass
      * Returns a new line for this business document.
      */
     abstract public function getNewLine(array $data = []);
+
+    /**
+     * Sets previous properties values.
+     */
+    abstract protected function setPreviousData();
 
     /**
      * Sets subject for this document.
@@ -588,27 +598,6 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * 
-     * @param array $moreFields
-     *
-     * @return bool
-     */
-    protected function checkChanges(array $moreFields = [])
-    {
-        if (!$this->editable && !$this->previousData['editable']) {
-            $fields = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa'];
-            foreach (array_merge($fields, $moreFields) as $field) {
-                if ($this->{$field} != $this->previousData[$field]) {
-                    self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * 
      * @return bool
      */
     private function checkStatus()
@@ -694,20 +683,5 @@ abstract class BusinessDocument extends ModelClass
         }
 
         return false;
-    }
-
-    /**
-     * 
-     * @param array $moreFields
-     */
-    protected function setPreviousData(array $moreFields = [])
-    {
-        $fields = [
-            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie',
-            'editable', 'fecha', 'hora', 'idempresa', 'idestado'
-        ];
-        foreach (array_merge($fields, $moreFields) as $field) {
-            $this->previousData[$field] = $this->{$field};
-        }
     }
 }
