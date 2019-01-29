@@ -15,4 +15,4 @@ npm install
 ```
 
 ## Documentation / Issues / Feedback
-https://beta.facturascripts.com
+https://www.facturascripts.com
