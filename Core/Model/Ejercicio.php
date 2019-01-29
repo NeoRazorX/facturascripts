@@ -186,10 +186,14 @@ class Ejercicio extends Base\ModelClass
 
         if ($crear && (strtotime($fecha) >= 1)) {
             $eje = new self();
-            $eje->codejercicio = $eje->newCode();
-            $eje->nombre = date('Y', strtotime($fecha));
+            $eje->codejercicio = date('Y', strtotime($fecha));
             $eje->fechainicio = date('1-1-Y', strtotime($fecha));
             $eje->fechafin = date('31-12-Y', strtotime($fecha));
+            $eje->nombre = date('Y', strtotime($fecha));
+            if ($eje->exists()) {
+                $eje->codejercicio = $eje->newCode();
+            }
+
             if ($eje->save()) {
                 return $eje;
             }
