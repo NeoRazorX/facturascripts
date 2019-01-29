@@ -109,7 +109,7 @@ class FacturaProveedor extends Base\PurchaseDocument
     public function test()
     {
         if (empty($this->vencimiento)) {
-            $this->vencimiento = $this->fecha;
+            $this->setPaymentMethod($this->codpago);
         }
 
         return parent::test();
@@ -124,6 +124,23 @@ class FacturaProveedor extends Base\PurchaseDocument
     {
         $accounting = new InvoiceToAccounting($this);
         return $accounting->accountPurchase();
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'codpago':
+                $this->setPaymentMethod($this->codpago);
+                break;
+        }
+
+        return parent::onChange($field);
     }
 
     /**

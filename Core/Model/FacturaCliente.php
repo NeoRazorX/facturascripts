@@ -109,7 +109,7 @@ class FacturaCliente extends Base\SalesDocument
     public function test()
     {
         if (empty($this->vencimiento)) {
-            $this->vencimiento = $this->fecha;
+            $this->setPaymentMethod($this->codpago);
         }
 
         return parent::test();
@@ -124,6 +124,23 @@ class FacturaCliente extends Base\SalesDocument
     {
         $accounting = new InvoiceToAccounting($this);
         return $accounting->accountSales();
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'codpago':
+                $this->setPaymentMethod($this->codpago);
+                break;
+        }
+
+        return parent::onChange($field);
     }
 
     /**

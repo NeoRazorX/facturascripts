@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Dinamic\Model\FormaPago;
+
 /**
  * Description of InvoiceTrait
  *
@@ -32,6 +34,20 @@ trait InvoiceTrait
      * @var string
      */
     public $codigorect;
+
+    /**
+     * Payment method associated.
+     *
+     * @var string
+     */
+    public $codpago;
+
+    /**
+     * Date of the document.
+     *
+     * @var string
+     */
+    public $fecha;
 
     /**
      * Related accounting entry ID, if any.
@@ -67,4 +83,21 @@ trait InvoiceTrait
      * @var string
      */
     public $vencimiento;
+
+    /**
+     * 
+     * @param string $codpago
+     */
+    public function setPaymentMethod($codpago)
+    {
+        $this->vencimiento = $this->fecha;
+
+        $formaPago = new FormaPago();
+        if ($formaPago->loadFromCode($codpago)) {
+            $this->codpago = $codpago;
+
+            $string = '+' . $formaPago->plazovencimiento . ' ' . $formaPago->tipovencimiento;
+            $this->vencimiento = date('d-m-Y', strtotime($this->fecha . ' ' . $string));
+        }
+    }
 }
