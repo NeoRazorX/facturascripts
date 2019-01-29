@@ -301,6 +301,8 @@ abstract class BusinessDocument extends ModelClass
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->editable = true;
+        $this->fecha = date('d-m-Y');
+        $this->hora = date('H:i:s');
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
@@ -311,9 +313,6 @@ abstract class BusinessDocument extends ModelClass
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
-
-        /// set date, hour and codejercicio
-        $this->setDate(date('d-m-Y'), date('H:i:s'));
 
         /// select default status
         foreach ($this->getAvaliableStatus() as $status) {
@@ -519,9 +518,19 @@ abstract class BusinessDocument extends ModelClass
      */
     public function save()
     {
+        /// check accounting exercise
+        if (empty($this->codejercicio)) {
+            $this->setDate($this->fecha, $this->hora);
+        }
+
+        /// empty code?
         if (is_null($this->codigo)) {
             $this->newCodigo();
         }
+
+        /// match editable with status
+        $status = $this->getStatus();
+        $this->editable = $status->editable;
 
         return parent::save();
     }
@@ -563,18 +572,31 @@ abstract class BusinessDocument extends ModelClass
          * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
+
+        /// check ammount
         if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
             self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
             return false;
         }
 
-        /// check status
-        $status = $this->getStatus();
-        $this->editable = $status->editable;
+        if ($this->exists() && !$this->checkChanges()) {
+            return false;
+        }
 
+        return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $moreFields
+     *
+     * @return bool
+     */
+    protected function checkChanges(array $moreFields = [])
+    {
         if (!$this->editable && !$this->previousData['editable']) {
             $fields = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa'];
-            foreach ($fields as $field) {
+            foreach (array_merge($fields, $moreFields) as $field) {
                 if ($this->{$field} != $this->previousData[$field]) {
                     self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
                     return false;
@@ -582,7 +604,7 @@ abstract class BusinessDocument extends ModelClass
             }
         }
 
-        return parent::test();
+        return true;
     }
 
     /**
@@ -674,13 +696,17 @@ abstract class BusinessDocument extends ModelClass
         return false;
     }
 
-    protected function setPreviousData()
+    /**
+     * 
+     * @param array $moreFields
+     */
+    protected function setPreviousData(array $moreFields = [])
     {
         $fields = [
             'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie',
             'editable', 'fecha', 'hora', 'idempresa', 'idestado'
         ];
-        foreach ($fields as $field) {
+        foreach (array_merge($fields, $moreFields) as $field) {
             $this->previousData[$field] = $this->{$field};
         }
     }
