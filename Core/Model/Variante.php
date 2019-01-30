@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -117,12 +117,13 @@ class Variante extends Base\ModelClass
     {
         $results = [];
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $find = Utils::noHtml(mb_strtolower($query, 'UTF8'));
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description FROM " . self::tableName() . " v"
             . " LEFT JOIN " . Producto::tableName() . " p ON v.idproducto = p.idproducto"
-            . " WHERE LOWER(v.referencia) LIKE '" . $query . "%'"
-            . " OR v.codbarras = '" . $query . "'"
-            . " OR LOWER(p.descripcion) LIKE '%" . $query . "%'"
+            . " WHERE LOWER(v.referencia) LIKE '" . $find . "%'"
+            . " OR v.codbarras = '" . $find . "'"
+            . " OR LOWER(p.descripcion) LIKE '%" . $find . "%'"
             . " ORDER BY v." . $field . " asc";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
