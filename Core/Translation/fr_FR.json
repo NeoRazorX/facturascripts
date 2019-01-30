@@ -18,6 +18,7 @@
     "account-code": "Code de compte",
     "account-data-missing": "Données manquantes dans le compte",
     "account-length": "Longueur du compte",
+    "account-length-error": "account-length-error",
     "account-parent-error": "Le compte parent est incorrect ou n'appartient pas à l'exercice",
     "accounting": "Comptabilité",
     "accounting-accounts": "Comptes comptables",

@@ -18,6 +18,7 @@
     "account-code": "Codice dell'account",
     "account-data-missing": "Dati mancanti nell'account",
     "account-length": "Lunghezza dell'account",
+    "account-length-error": "account-length-error",
     "account-parent-error": "L'account principale non è corretto o non appartiene all'esercizio",
     "accounting": "Contabilità",
     "accounting-accounts": "Contabilità",

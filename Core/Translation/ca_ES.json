@@ -18,6 +18,7 @@
     "account-code": "Codi de compte",
     "account-data-missing": "Falten dades en el compte",
     "account-length": "Longitud de compte",
+    "account-length-error": "account-length-error",
     "account-parent-error": "El compte pare és incorrecte o no pertany a l'exercici",
     "accounting": "Comptabilitat",
     "accounting-accounts": "Comptes comptables",
