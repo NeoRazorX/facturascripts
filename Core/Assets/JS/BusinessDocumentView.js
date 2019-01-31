@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,8 @@ function beforeChange(changes, source) {
                 // apply for autocomplete columns
                 if (typeof changes[0][3] === "string") {
                     changes[0][3] = changes[0][3].split(" | ", 1)[0];
+                    var position = hsTable.getSelected();
+                    hsTable.setDataAtCell(position[0][0], 2, '');
                 }
             }
         }
