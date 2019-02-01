@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
     businessDocViewLineData = {{ currentView.getLineData() | raw }};
-            businessDocViewFormName = "form{{ currentView.getViewName() }}";
+    businessDocViewFormName = "form{{ currentView.getViewName() }}";
     businessDocViewUrl = "{{ currentView.model.url('edit') | raw }}";
     function businessDocViewDelete(viewName) {
         bootbox.confirm({
@@ -114,10 +114,11 @@
             </div>
         {% endfor %}
     </div>
-    {% block extras %}{% endblock %}
+    {% block extras %}
+    {% endblock %}
     <div id="document-lines"></div>
     <br/>
-    <div class="form-row">
+    <div class="form-row mb-2">
         <div class="col">
             {% if fsc.hasData and currentView.settings.btnDelete %}
                 <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ currentView.getViewName() }}');">
@@ -135,6 +136,11 @@
                     <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
                 </button>
             {% endif %}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones }}</textarea>
         </div>
     </div>
 </form>
