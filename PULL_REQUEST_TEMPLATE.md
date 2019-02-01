@@ -15,8 +15,8 @@ Your PR description goes here.
 <!---Replace `[ ]` with `[X]` to mark what you do in the next list.--->
 <!---Reemplaza `[ ]` por `[X]` para marcar como completado en la lista.--->
 
-- [ ] MySQL
+- [X] MySQL
 - [ ] PostgreSQL
-- [ ] Clean database
+- [X] Clean database
 - [ ] Database with random data
 <!---- [ ] If additional tests was realized, added here--->
