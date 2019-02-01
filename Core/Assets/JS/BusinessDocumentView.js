@@ -194,6 +194,10 @@ $(document).ready(function () {
     Handsontable.hooks.add("beforeChange", beforeChange);
     Handsontable.hooks.add("afterChange", businessDocViewRecalculate);
 
+    $("#mainTabs li:first-child a").on('shown.bs.tab', function (e) {
+        hsTable.render();
+    });
+
     $("#doc_codserie").change(function () {
         businessDocViewRecalculate();
     });
