@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
  * Controller to edit a single item from the AlbaranCliente model
@@ -54,6 +56,24 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
     {
         parent::createViews();
         $this->addListView('EditAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+    }
+
+    /**
+     * 
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'new-refund':
+                $this->newRefundAction();
+                break;
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -75,6 +95,11 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
+            case 'Devoluciones':
+                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
+                $view->loadData('', $where);
+                break;
+
             case 'EditAsiento':
                 $where = [
                     new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento')),
@@ -86,5 +111,49 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
             default:
                 parent::loadData($viewName, $view);
         }
+    }
+
+    protected function newRefundAction()
+    {
+        $invoice = new FacturaProveedor();
+        if (!$invoice->loadFromCode($this->request->request->get('idfactura'))) {
+            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            return;
+        }
+
+        $lines = [];
+        $quantities = [];
+        foreach ($invoice->getLines() as $line) {
+            $quantity = (float) $this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            if (empty($quantity)) {
+                continue;
+            }
+
+            $quantities[$line->primaryColumnValue()] = 0 - $quantity;
+            $lines[] = $line;
+        }
+
+        $generator = new BusinessDocumentGenerator();
+        if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities)) {
+            foreach ($generator->getLastDocs() as $doc) {
+                $doc->codigorect = $invoice->codigo;
+                $doc->codserie = $this->request->request->get('codserie');
+                $doc->fecha = $this->request->request->get('fecha');
+                $doc->idfacturarect = $invoice->idfactura;
+                $doc->numproveedor = $this->request->request->get('numproveedor');
+                $doc->observaciones = $this->request->request->get('observaciones');
+                if ($doc->save()) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->response->headers->set('Refresh', '0; ' . $doc->url());
+                    continue;
+                }
+
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
+            }
+
+            return;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
     }
 }

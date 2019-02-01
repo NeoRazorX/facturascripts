@@ -48,7 +48,7 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [])
     {
-        $exclude = ['codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado', 'numero'];
+        $exclude = ['codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado', 'numero', $prototype->primaryColumn()];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {

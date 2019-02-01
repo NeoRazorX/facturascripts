@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
@@ -83,6 +84,22 @@ trait InvoiceTrait
      * @var string
      */
     public $vencimiento;
+
+    abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
+
+    /**
+     * 
+     * @return self[]
+     */
+    public function getRefunds()
+    {
+        if (empty($this->idfactura)) {
+            return [];
+        }
+
+        $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
+        return $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+    }
 
     /**
      * 
