@@ -1,7 +1,7 @@
 {#
    /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@
                 <div class="col text-right">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ i18n.trans('generate') }}
+                            <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for option in fsc.getDestinyDocs() %}
@@ -82,7 +82,7 @@
                         <th>{{ i18n.trans('reference') }}</th>
                         <th>{{ i18n.trans('description') }}</th>
                         <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                        <th>{{ i18n.trans('approve-quantity') }}</th>
+                        <th class="text-right">{{ i18n.trans('approve-quantity') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,8 +93,8 @@
                             <td>
                                 <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
                             </td>
-                            <td>
-                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ line.cantidad }}" step="any" class="form-control" autocomplete="off"/>
+                            <td class="table-warning">
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ line.cantidad }}" step="any" class="form-control text-right" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}
