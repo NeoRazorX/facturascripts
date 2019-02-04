@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
  * A supplier. It can be related to several addresses or sub-accounts.
@@ -76,6 +77,36 @@ class Proveedor extends Base\ComercialContact
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
         $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
+    }
+
+    /**
+     * 
+     * @param string $codejercicio
+     * @param bool   $create
+     *
+     * @return Subcuenta
+     */
+    public function getAccount($codejercicio, $create = false)
+    {
+        $subcuenta = new Subcuenta();
+        $where = [
+            new DataBaseWhere('codejercicio', $codejercicio),
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
+        ];
+        if (!empty($this->codsubcuenta) && $subcuenta->loadFromCode('', $where)) {
+            return $subcuenta;
+        }
+
+        if ($create) {
+            $tool = new InvoiceToAccounting();
+            $newSubcuenta = $tool->createSupplierAccount($this, $codejercicio);
+            $this->codsubcuenta = $newSubcuenta->codsubcuenta;
+            if ($newSubcuenta->exists() && $this->save()) {
+                return $newSubcuenta;
+            }
+        }
+
+        return $subcuenta;
     }
 
     /**

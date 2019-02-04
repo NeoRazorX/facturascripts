@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018    Carlos Garcia Gomez        <carlos@facturascripts.com>
- * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
+ * Copyright (C) 2014-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,8 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente;
 
 /**
  * Customer estimation.
+ * 
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PresupuestoCliente extends Base\SalesDocument
 {
@@ -86,19 +88,6 @@ class PresupuestoCliente extends Base\SalesDocument
         $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function install()
-    {
-        /// parent dependencies
-        $sql = parent::install();
-        new PedidoCliente();
-
-        return $sql;
     }
 
     /**

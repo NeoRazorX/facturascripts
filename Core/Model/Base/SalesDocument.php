@@ -258,7 +258,7 @@ abstract class SalesDocument extends BusinessDocument
      * 
      * @param array $fields
      */
-    protected function setPreviousData(array $fields = array())
+    protected function setPreviousData(array $fields = [])
     {
         $more = [
             'codalmacen', 'codcliente', 'coddivisa', 'codejercicio', 'codpago',

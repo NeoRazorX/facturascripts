@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez       <carlos@facturascripts.com>
- * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
+ * Copyright (C) 2014-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,8 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor;
 
 /**
  * Supplier order.
+ * 
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PresupuestoProveedor extends Base\PurchaseDocument
 {
@@ -70,20 +72,6 @@ class PresupuestoProveedor extends Base\PurchaseDocument
         $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        $sql = parent::install();
-        new PedidoProveedor();
-        return $sql;
     }
 
     /**

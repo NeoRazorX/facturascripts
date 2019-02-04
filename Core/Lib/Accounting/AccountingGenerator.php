@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,8 @@ use FacturaScripts\Dinamic\Model;
 /**
  * Class for the generation of accounting entries.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class AccountingGenerator
 {
@@ -73,79 +74,30 @@ class AccountingGenerator
     }
 
     /**
-     * Provides a basic structure for the generation of
-     * accounting entries
+     * 
+     * @param int    $length
+     * @param string $value
+     * @param string $prefix
      *
-     * @return array
-     */
-    protected function getEntry()
-    {
-        return [
-            'id' => null,
-            'date' => date($this->dataBase->dateStyle()),
-            'document' => '',
-            'concept' => '',
-            'editable' => true,
-            'journal' => null,
-            'channel' => null,
-            'total' => 0.00,
-            'lines' => []
-        ];
-    }
-
-    /**
-     * Search prefix account for indicate type into exercise and account plan
-     *
-     * @param string $exercise
-     * @param string $type
-     * @param string $default
      * @return string
      */
-    protected function getPrefixAccount(string $exercise, string $type, string $default): string
+    public function fillToLength(int $length, string $value, string $prefix = ''): string
     {
-        $where = [
-            new DataBaseWhere('codejercicio', $exercise),
-            new DataBaseWhere('codcuentaesp', $type)
-        ];
-        $this->account->loadFromCode('', $where);
-        return $this->account->codcuenta ?? $default;
-    }
-
-    /**
-     * Provides a basic structure for the generation of
-     * accounting entries
-     *
-     * @param bool $withVAT
-     * @return array
-     */
-    protected function getLine(bool $withVAT = false): array
-    {
-        $result = [
-            'subaccount' => '',
-            'offsetting' => null,
-            'description' => null,
-            'debit' => 0.00,
-            'credit' => 0.00,
-            'VAT' => []
-        ];
-
-        if ($withVAT) {
-            $result['VAT'] = [
-                'document' => '',
-                'fiscal-number' => '',
-                'tax-base' => 0.00,
-                'pct-vat' => 0.00,
-                'surcharge' => 0.00
-            ];
+        $value2 = trim($value);
+        $count = $length - strlen($prefix) - strlen($value2);
+        if ($count < 1) {
+            return $prefix . $value2;
         }
 
-        return $result;
+        return $prefix . str_repeat('0', $count) . $value2;
     }
 
     /**
      * Generates an accounting entry based on the data structure provided
      *
      * @param array $data
+     *
+     * @return bool
      */
     protected function accountEntry(array &$data): bool
     {
@@ -211,14 +163,75 @@ class AccountingGenerator
         return true;
     }
 
-    public function fillToLength(int $length, string $value, string $prefix = ''): string
+    /**
+     * Provides a basic structure for the generation of
+     * accounting entries
+     *
+     * @return array
+     */
+    protected function getEntry()
     {
-        $value2 = trim($value);
-        $count = $length - strlen($prefix) - strlen($value2);
-        if ($count < 1) {
-            return $prefix . $value2;
+        return [
+            'id' => null,
+            'date' => date($this->dataBase->dateStyle()),
+            'document' => '',
+            'concept' => '',
+            'editable' => true,
+            'journal' => null,
+            'channel' => null,
+            'total' => 0.00,
+            'lines' => []
+        ];
+    }
+
+    /**
+     * Provides a basic structure for the generation of
+     * accounting entries
+     *
+     * @param bool $withVAT
+     *
+     * @return array
+     */
+    protected function getLine(bool $withVAT = false): array
+    {
+        $result = [
+            'subaccount' => '',
+            'offsetting' => null,
+            'description' => null,
+            'debit' => 0.00,
+            'credit' => 0.00,
+            'VAT' => []
+        ];
+
+        if ($withVAT) {
+            $result['VAT'] = [
+                'document' => '',
+                'fiscal-number' => '',
+                'tax-base' => 0.00,
+                'pct-vat' => 0.00,
+                'surcharge' => 0.00
+            ];
         }
 
-        return $prefix . str_repeat('0', $count) . $value2;
+        return $result;
+    }
+
+    /**
+     * Search prefix account for indicate type into exercise and account plan
+     *
+     * @param string $exercise
+     * @param string $type
+     * @param string $default
+     *
+     * @return string
+     */
+    protected function getPrefixAccount(string $exercise, string $type, string $default): string
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $exercise),
+            new DataBaseWhere('codcuentaesp', $type)
+        ];
+        $this->account->loadFromCode('', $where);
+        return $this->account->codcuenta ?? $default;
     }
 }
