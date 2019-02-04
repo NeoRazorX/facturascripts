@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\DocTransformation;
@@ -549,22 +550,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Generates a new code.
+     * Set document new code .
      */
     private function newCodigo()
     {
-        $this->numero = '1';
-        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
-            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
-            . " AND codserie = " . self::$dataBase->var2str($this->codserie)
-            . " AND idempresa = " . self::$dataBase->var2str($this->idempresa) . ";";
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            $this->numero = (string) (1 + (int) $data[0]['num']);
-        }
-
-        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
+        $newCode = BusinessDocumentCode::getNewCode($this);
+        
+        $this->codigo = $newCode['codigo'];
+        $this->numero = $newCode['numero'];
     }
 
     /**
