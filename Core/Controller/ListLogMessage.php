@@ -65,8 +65,8 @@ class ListLogMessage extends ExtendedController\ListController
     {
         $this->addView($name, 'CronJob', 'crons', 'fas fa-cogs');
         $this->addSearchFields($name, ['jobname', 'pluginname']);
-        $this->addOrderBy($name, ['jobname'], 'jobname');
-        $this->addOrderBy($name, ['pluginname'], 'pluginname');
+        $this->addOrderBy($name, ['jobname'], 'job-name');
+        $this->addOrderBy($name, ['pluginname'], 'plugin');
         $this->addOrderBy($name, ['date'], 'date');
 
         /// filters

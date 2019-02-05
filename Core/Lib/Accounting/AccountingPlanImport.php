@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,8 +27,8 @@ use ParseCsv\Csv;
 /**
  * Description of AccountingPlanImport
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Raul Jimenez <comercial@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Raul Jimenez         <comercial@nazcanetworks.com>
  */
 class AccountingPlanImport
 {
@@ -105,8 +105,9 @@ class AccountingPlanImport
      * @param string $code
      * @param string $definition
      * @param string $parentCode
+     * @param string $idcuentaesp
      */
-    private function createAccount(string $code, string $definition, string $parentCode = '')
+    private function createAccount(string $code, string $definition, string $parentCode = '', string $idcuentaesp = '')
     {
         $account = new Model\Cuenta();
         $account->disableAditionalTest();
@@ -116,7 +117,9 @@ class AccountingPlanImport
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $code)
         ];
-        $account->loadFromCode('', $where);
+        if ($account->loadFromCode('', $where)) {
+            return;
+        }
 
         if (!empty($parentCode)) {
             $whereParent = [
@@ -124,17 +127,18 @@ class AccountingPlanImport
                 new DataBaseWhere('codcuenta', $parentCode)
             ];
             $parent = new Model\Cuenta();
-            if ($parent->loadFromCode('', $whereParent)) {
-                $account->parent_codcuenta = $parent->codcuenta;
-                $account->parent_idcuenta = $parent->idcuenta;
-            } else {
+            if (!$parent->loadFromCode('', $whereParent)) {
                 $this->miniLog->alert($this->i18n->trans('parent-error'));
                 return;
             }
+
+            $account->parent_codcuenta = $parent->codcuenta;
+            $account->parent_idcuenta = $parent->idcuenta;
         }
 
         $account->codejercicio = $this->ejercicio->codejercicio;
         $account->codcuenta = $code;
+        $account->codcuentaesp = empty($idcuentaesp) ? null : $idcuentaesp;
         $account->descripcion = $definition;
         $account->save();
     }
@@ -149,10 +153,18 @@ class AccountingPlanImport
     private function createSubaccount(string $code, string $description, string $parentCode)
     {
         $subaccount = new Model\Subcuenta();
-        $account = new Model\Cuenta();
-
         $subaccount->disableAditionalTest();
-
+        
+        /// the subaccount exists?
+        $where = [
+            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+            new DataBaseWhere('codsubcuenta', $code)
+        ];
+        if($subaccount->loadFromCode('', $where)) {
+            return;
+        }
+        
+        $account = new Model\Cuenta();
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $parentCode)
@@ -163,13 +175,6 @@ class AccountingPlanImport
             $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'account "' . $parentCode . '" not found']));
             return;
         }
-
-        /// the subaccount exists?
-        $where = [
-            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
-        ];
-        $subaccount->loadFromCode('', $where);
 
         $subaccount->codejercicio = $this->ejercicio->codejercicio;
         $subaccount->idcuenta = $account->idcuenta;
@@ -230,7 +235,7 @@ class AccountingPlanImport
     {
         foreach ($data as $xmlAccount) {
             $accountElement = (array) $xmlAccount;
-            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe']);
+            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
         }
     }
 

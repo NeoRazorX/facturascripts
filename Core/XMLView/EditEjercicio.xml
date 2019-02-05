@@ -26,13 +26,13 @@
     <columns>
         <group name="data" title="exercise" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dynamic" />
+                <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dinamic" />
             </column>
             <column name="name" numcolumns="5" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="company" numcolumns="5" order="120">
-                <widget type="select" fieldname="idempresa" required="true">
+                <widget type="select" fieldname="idempresa" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
@@ -56,12 +56,12 @@
     <rows>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
-                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fas fa-file" />
+                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fas fa-file-import" />
             </group>
         </row>
     </rows>
     <modals>
-        <group name="import-accounting" title="import-accounting-plan" icon="fas fa-file">
+        <group name="import-accounting" title="import-accounting-plan" icon="fas fa-file-import">
             <column name="exercise" numcolumns="4">
                 <widget type="text" fieldname="codejercicio" readonly="true" />
             </column>

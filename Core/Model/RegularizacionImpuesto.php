@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * A VAT regularization.
@@ -129,31 +128,31 @@ class RegularizacionImpuesto extends Base\ModelClass
      */
     public function delete()
     {
-        // TODO: Apply transactions
-        $sql = 'DELETE FROM ' . static::tableName()
-            . ' WHERE idregularizacion = ' . self::$dataBase->var2str($this->idregularizacion) . ';';
-        if (self::$dataBase->exec($sql)) {
-            /// si hay un asiento asociado lo eliminamos
-            if ($this->idasiento !== null) {
-                $asientoModel = new Asiento();
-                $asiento = $asientoModel->get($this->idasiento);
-                if ($asiento) {
-                    $asiento->delete();
-                }
-            }
-
-            return true;
+        $asiento = $this->getAsiento();
+        if ($asiento) {
+            $asiento->delete();
         }
 
-        return false;
+        return parent::delete();
+    }
+
+    /**
+     * 
+     * @return Asiento
+     */
+    public function getAsiento()
+    {
+        $asiento = new Asiento();
+        $asiento->loadFromCode($this->idasiento);
+        return $asiento;
     }
 
     /**
      * Returns the VAT regularization corresponding to that date,
-           * that is, the regularization whose start date is earlier
-           * to the date provided and its end date is after the date
-           * provided. So you can know if the period is still open to be able
-           * check in.
+     * that is, the regularization whose start date is earlier
+     * to the date provided and its end date is after the date
+     * provided. So you can know if the period is still open to be able
+     * check in.
      *
      * @param string $fecha
      *
@@ -176,67 +175,12 @@ class RegularizacionImpuesto extends Base\ModelClass
     /**
      * Returns the items per accounting entry.
      *
-     * @return Partida[]|bool
+     * @return Partida[]
      */
     public function getPartidas()
     {
-        if ($this->idasiento !== null) {
-            $partida = new Partida();
-            return $partida->all([new DataBaseWhere('idasiento', $this->idasiento)]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Calculate Period data
-     *
-     * @param string $period
-     * @param date|null $date
-     * @param bool $add
-     * @return array
-     */
-    private function getPeriod($period, $date = null, $add = false): array
-    {
-        /// Calculate next period
-        if (!empty($period) && $add) {
-            $period = 'T' . ((int) substr($period, -1) + 1);
-        }
-
-        /// Calculate actual year
-        if (empty($date)) {
-            $date = date('d-m-Y');
-        }
-        $year = explode('-', $date)[2];
-
-        /// Init values
-        $result = [
-            'period' => 'T1',
-            'start' => date('01-01-' . $year),
-            'end' => date('31-03-' . $year)
-        ];
-
-        // For valids periods set values
-        switch ($period) {
-            case 'T2':
-                $result['period'] = 'T2';
-                $result['start'] = '01-04-' . $year;
-                $result['end'] = '30-06-' . $year;
-                break;
-
-            case 'T3':
-                $result['period'] = 'T3';
-                $result['start'] = '01-07-' . $year;
-                $result['end'] = '30-09-' . $year;
-                break;
-
-            case 'T4':
-                $result['period'] = 'T4';
-                $result['start'] = '01-10-' . $year;
-                $result['end'] = '31-12-' . $year;
-                break;
-        }
-        return $result;
+        $asiento = $this->getAsiento();
+        return $asiento->getLines();
     }
 
     /**
@@ -283,40 +227,5 @@ class RegularizacionImpuesto extends Base\ModelClass
     public static function tableName()
     {
         return 'regularizacionimpuestos';
-    }
-
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     * It runs inside the save method.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (!parent::test()) {
-            return false;
-        }
-
-        if (!empty($this->codejercicio)) {
-            $exercise = new Ejercicio();
-            $exercise->loadFromCode($this->codejercicio);
-            /// Syncronize fields
-            $this->idempresa = $exercise->idempresa;
-
-            /// Calculate dates to selected period
-            $period = $this->getPeriod($this->periodo, $exercise->fechainicio, false);
-            $this->fechainicio = $period['start'];
-            $this->fechafin = $period['end'];
-
-            /// Calculate Id Accounts
-            $account = new Subcuenta();
-            $account->codejercicio = $this->codejercicio;
-            $account->codsubcuenta = $this->codsubcuentaacreedora;
-            $this->idsubcuentaacreedora = $account->getIdSubaccount();
-
-            $account->codsubcuenta = $this->codsubcuentadeudora;
-            $this->idsubcuentadeudora = $account->getIdSubaccount();
-        }
-        return true;
     }
 }

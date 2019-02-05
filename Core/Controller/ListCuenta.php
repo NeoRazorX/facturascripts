@@ -65,7 +65,7 @@ class ListCuenta extends ListController
         /// filters
         $this->addFilterSelect($name, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
 
-        $specialAccountsValues = $this->codeModel->all('cuentaespecial', 'codcuentaesp', 'descripcion');
+        $specialAccountsValues = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
         $this->addFilterSelect($name, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccountsValues);
     }
 

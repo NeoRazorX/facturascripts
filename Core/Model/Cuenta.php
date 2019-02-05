@@ -91,6 +91,16 @@ class Cuenta extends Base\ModelClass
 
     /**
      * 
+     * @return Cuenta[]
+     */
+    public function getChildren()
+    {
+        $where = [new DataBaseWhere('parent_idcuenta', $this->idcuenta)];
+        return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
+    }
+
+    /**
+     * 
      * @return Cuenta
      */
     public function getParent()
@@ -98,6 +108,17 @@ class Cuenta extends Base\ModelClass
         $parent = new Cuenta();
         $parent->loadFromCode($this->parent_idcuenta);
         return $parent;
+    }
+
+    /**
+     * 
+     * @return Subcuenta[]
+     */
+    public function getSubcuentas()
+    {
+        $subcuenta = new Subcuenta();
+        $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
+        return $subcuenta->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
     }
 
     public function disableAditionalTest()
@@ -150,8 +171,8 @@ class Cuenta extends Base\ModelClass
     {
         $this->codcuenta = trim($this->codcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
-        if (empty($this->descripcion)) {
-            self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
+        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 

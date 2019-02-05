@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
@@ -86,6 +87,17 @@ trait InvoiceTrait
     public $vencimiento;
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
+
+    /**
+     * 
+     * @return Asiento
+     */
+    public function getAccountingEntry()
+    {
+        $asiento = new Asiento();
+        $asiento->loadFromCode($this->idasiento);
+        return $asiento;
+    }
 
     /**
      * 

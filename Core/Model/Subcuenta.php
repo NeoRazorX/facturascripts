@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Detail level of an accounting plan. It is related to a single account.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class Subcuenta extends Base\ModelClass
 {
@@ -239,8 +239,8 @@ class Subcuenta extends Base\ModelClass
         $this->codcuenta = trim($this->codcuenta);
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
-        if (empty($this->descripcion)) {
-            self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
+        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
@@ -259,15 +259,15 @@ class Subcuenta extends Base\ModelClass
 
         return parent::test();
     }
-    /*
-     * Update account balance
-     *
+
+    /**
+     * 
      * @param string $date
      * @param float $debit
      * @param float $credit
+     *
      * @return bool
      */
-
     public function updateBalance(string $date, float $debit, float $credit): bool
     {
         $balance = $debit - $credit;
@@ -348,43 +348,19 @@ class Subcuenta extends Base\ModelClass
      */
     protected function saveInsert(array $values = [])
     {
-        $accountDetail = new SubcuentaSaldo();
-        $inTransaction = self::$dataBase->inTransaction();
-        try {
-            if ($inTransaction === false) {
-                self::$dataBase->beginTransaction();
-            }
-
-            /// main insert
-            if (!parent::saveInsert($values)) {
-                return false;
-            }
-
-            /// add account detail balance
-            $accountDetail->idcuenta = $this->idcuenta;
-            $accountDetail->idsubcuenta = $this->idsubcuenta;
+        if (parent::saveInsert($values)) {
+            $accountBalance = new SubcuentaSaldo();
+            $accountBalance->idcuenta = $this->idcuenta;
+            $accountBalance->idsubcuenta = $this->idsubcuenta;
             for ($index = 1; $index < 13; $index++) {
-                $accountDetail->mes = $index;
-                $accountDetail->id = null;
-                if (!$accountDetail->save()) {
-                    return false;
-                }
+                $accountBalance->mes = $index;
+                $accountBalance->id = null;
+                $accountBalance->save();
             }
-
-            /// save transaction
-            if ($inTransaction === false) {
-                self::$dataBase->commit();
-            }
-        } catch (\Exception $e) {
-            self::$miniLog->error($e->getMessage());
-            return false;
-        } finally {
-            if (!$inTransaction && self::$dataBase->inTransaction()) {
-                self::$dataBase->rollback();
-                return false;
-            }
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez       <carlos@facturascripts.com>
- * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
+ * Copyright (C) 2014-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,8 @@ use FacturaScripts\Dinamic\Model\LineaPedidoProveedor;
 
 /**
  * Supplier order.
+ * 
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PedidoProveedor extends Base\PurchaseDocument
 {
@@ -70,13 +72,6 @@ class PedidoProveedor extends Base\PurchaseDocument
         $newLine->actualizastock = $status->actualizastock;
 
         return $newLine;
-    }
-
-    public function install()
-    {
-        $sql = parent::install();
-        new AlbaranProveedor();
-        return $sql;
     }
 
     /**

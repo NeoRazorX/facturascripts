@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
-use FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting;
 
 /**
  * Invoice from a supplier.
@@ -32,6 +32,20 @@ class FacturaProveedor extends Base\PurchaseDocument
 
     use Base\ModelTrait;
     use Base\InvoiceTrait;
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        $asiento = $this->getAccountingEntry();
+        if ($asiento->exists()) {
+            return $asiento->delete() ? parent::delete() : false;
+        }
+
+        return parent::delete();
+    }
 
     /**
      * Returns the lines associated with the invoice.
@@ -79,6 +93,7 @@ class FacturaProveedor extends Base\PurchaseDocument
     {
         $sql = parent::install();
         new Asiento();
+
         return $sql;
     }
 
@@ -116,17 +131,6 @@ class FacturaProveedor extends Base\PurchaseDocument
     }
 
     /**
-     * Generates the accounting entry for the document
-     *
-     * @return bool
-     */
-    private function accountingDocument()
-    {
-        $accounting = new InvoiceToAccounting($this);
-        return $accounting->accountPurchase();
-    }
-
-    /**
      * 
      * @param string $field
      *
@@ -152,20 +156,12 @@ class FacturaProveedor extends Base\PurchaseDocument
      */
     protected function saveInsert(array $values = [])
     {
-        $this->accountingDocument();
-        return parent::saveInsert($values);
-    }
+        if (parent::saveInsert($values)) {
+            $tool = new InvoiceToAccounting();
+            $tool->generate($this);
+            return true;
+        }
 
-    /**
-     * Update the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
-    {
-        $this->accountingDocument();
-        return parent::saveUpdate($values);
+        return false;
     }
 }
