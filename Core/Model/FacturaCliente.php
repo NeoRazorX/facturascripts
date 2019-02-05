@@ -164,27 +164,4 @@ class FacturaCliente extends Base\SalesDocument
 
         return false;
     }
-
-    /**
-     * Returns the refunded items amount associated with the invoice.
-     *
-     * @return int
-     */
-    public function refundedItemAmount($ref)
-    {
-        $amount = 0;
-
-        foreach ($this->getRefunds() as $invoice) {
-            $sql = "SELECT SUM(cantidad) as num FROM " . LineaFacturaCliente::tableName()
-            . " WHERE idfactura = " . self::$dataBase->var2str($invoice->idfactura)
-            . " AND referencia = " . self::$dataBase->var2str($ref) . ";";
-
-            $data = self::$dataBase->select($sql);
-            if (!empty($data)) {
-                $amount += (int) $data[0]['num'];
-            }
-        }
-
-        return abs($amount);        
-    }
 }

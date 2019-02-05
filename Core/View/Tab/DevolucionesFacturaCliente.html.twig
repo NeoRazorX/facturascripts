@@ -13,12 +13,12 @@
                         <th>{{ i18n.trans('product') }}</th>
                         <th>{{ i18n.trans('description') }}</th>
                         <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                        <th class="text-right">{{ i18n.trans('refund') }}</th>
+                        <th class="text-right">{{ i18n.trans('new-refund') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for line in currentView.model.getLines() %}
-                        {% set devuelto = currentView.model.refundedItemAmount(line.referencia) %}
+                        {% set refunded = currentView.model.refundedItemAmount(line.referencia) %}
                         <tr>
                             <td>
                                 <div class="form-control">{{ line.referencia }}</div>
@@ -30,7 +30,7 @@
                                 <div class="form-control text-right">{{ line.cantidad }}</div>
                             </td>
                             <td class="table-warning">
-                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - devuelto }}" step="any" class="form-control text-right" autocomplete="off"/>
+                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}" step="any" class="form-control text-right" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}

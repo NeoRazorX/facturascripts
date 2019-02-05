@@ -88,6 +88,8 @@ trait InvoiceTrait
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
 
+    abstract public function getLines();
+
     /**
      * 
      * @return Asiento
@@ -111,6 +113,25 @@ trait InvoiceTrait
 
         $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
         return $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+    }
+
+    /**
+     * Returns the refunded items amount associated with the invoice.
+     *
+     * @return float|int
+     */
+    public function refundedItemAmount($ref)
+    {
+        $amount = 0;
+        foreach ($this->getRefunds() as $invoice) {
+            foreach ($invoice->getLines() as $line) {
+                if ($line->referencia == $ref) {
+                    $amount += abs($line->cantidad);
+                }
+            }
+        }
+
+        return $amount;
     }
 
     /**
