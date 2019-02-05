@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 
 /**
  * Description of BusinessDocumentCode
@@ -33,26 +34,33 @@ class BusinessDocumentCode
      * Generates a new identifier for humans from a document.
      *
      * @param BusinessDocument $document
-     *
-     * @return array
      */
     public static function getNewCode(&$document)
     {
+        $document->numero = static::getNewNumero($document->tableName(), $document->codejercicio, $document->codserie);
+        $document->codigo = $document->codejercicio . $document->codserie . $document->numero;
+    }
+
+    /**
+     * 
+     * @param string $tableName
+     * @param string $codejercicio
+     * @param string $codserie
+     *
+     * @return string
+     */
+    private static function getNewNumero($tableName, $codejercicio, $codserie)
+    {
         $dataBase = new DataBase();
-        $numero = '1';
-        
-        $sql = "SELECT MAX(" . $dataBase->sql2Int('numero') . ") as num FROM " . $document::tableName()
-            . " WHERE codejercicio = " . $dataBase->var2str($document->codejercicio)
-            . " AND codserie = " . $dataBase->var2str($document->codserie)
-            . " AND idempresa = " . $dataBase->var2str($document->idempresa) . ";";
+        $sql = "SELECT MAX(" . $dataBase->sql2Int('numero') . ") as num FROM " . $tableName
+            . " WHERE codejercicio = " . $dataBase->var2str($codejercicio)
+            . " AND codserie = " . $dataBase->var2str($codserie) . ";";
 
         $data = $dataBase->select($sql);
         if (!empty($data)) {
-            $numero = (string) (1 + (int) $data[0]['num']);
+            return (string) (1 + (int) $data[0]['num']);
         }
 
-        $codigo = $document->codejercicio . $document->codserie . $numero;
-
-        return ['codigo' => $codigo, 'numero' => $numero];
+        return '1';
     }
 }

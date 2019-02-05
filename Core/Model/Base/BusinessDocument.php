@@ -492,7 +492,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         /// empty code?
         if (is_null($this->codigo)) {
-            $this->newCodigo();
+            BusinessDocumentCode::getNewCode($this);
         }
 
         /// match editable with status
@@ -550,17 +550,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Set document new code .
-     */
-    private function newCodigo()
-    {
-        $newCode = BusinessDocumentCode::getNewCode($this);
-        
-        $this->codigo = $newCode['codigo'];
-        $this->numero = $newCode['numero'];
-    }
-
-    /**
      * 
      * @param string $field
      *
@@ -576,7 +565,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         switch ($field) {
             case 'codejercicio':
             case 'codserie':
-                $this->newCodigo();
+                BusinessDocumentCode::getNewCode($this);
                 break;
 
             case 'idestado':
