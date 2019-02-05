@@ -18,6 +18,7 @@
                 </thead>
                 <tbody>
                     {% for line in currentView.model.getLines() %}
+                        {% set devuelto = currentView.model.refundedItemAmount(line.referencia) %}
                         <tr>
                             <td>
                                 <div class="form-control">{{ line.referencia }}</div>
@@ -29,7 +30,7 @@
                                 <div class="form-control text-right">{{ line.cantidad }}</div>
                             </td>
                             <td class="table-warning">
-                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad }}" step="any" class="form-control text-right" autocomplete="off"/>
+                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - devuelto }}" step="any" class="form-control text-right" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}
