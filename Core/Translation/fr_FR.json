@@ -177,7 +177,6 @@
     "compatible": "Compatible",
     "component": "Composant",
     "concept": "Concept",
-    "concept-too-large": "Concept trop long.",
     "configure-columns": "Configurateur de colonne",
     "confirm": "Confirmer",
     "confirm-delete": "Confirmation de la suppression?",

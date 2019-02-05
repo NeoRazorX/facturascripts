@@ -175,7 +175,7 @@ class InvoiceToAccounting extends AccountingGenerator
                 break;
 
             case 'FacturaProveedor':
-                $this->PurchaseAccountingEntry();
+                $this->purchaseAccountingEntry();
                 break;
         }
     }
@@ -328,7 +328,7 @@ class InvoiceToAccounting extends AccountingGenerator
     /**
      * Generate the accounting entry for a purchase document.
      */
-    protected function PurchaseAccountingEntry()
+    protected function purchaseAccountingEntry()
     {
         $accountEntry = new Asiento();
         $accountEntry->codejercicio = $this->document->codejercicio;

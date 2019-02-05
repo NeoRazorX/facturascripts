@@ -129,7 +129,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     public function delete()
     {
         $asiento = $this->getAsiento();
-        if ($asiento) {
+        if ($asiento->exists()) {
             $asiento->delete();
         }
 

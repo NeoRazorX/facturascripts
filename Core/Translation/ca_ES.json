@@ -177,7 +177,6 @@
     "compatible": "Compatible",
     "component": "Component",
     "concept": "Concepte",
-    "concept-too-large": "Concepte massa llarg.",
     "configure-columns": "Configurador de columnes",
     "confirm": "Confirmar",
     "confirm-delete": "Confirma esborrat?",
