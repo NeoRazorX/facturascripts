@@ -228,7 +228,7 @@ class InvoiceToAccounting extends AccountingGenerator
         foreach ($cuenta->getSubcuentas() as $subcuenta) {
             $line = $accountEntry->getNewLine();
             $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->debe = $this->document->total;
+            $line->debe = $this->document->neto;
             $line->idsubcuenta = $subcuenta->idsubcuenta;
             return $line->save();
         }
@@ -257,7 +257,7 @@ class InvoiceToAccounting extends AccountingGenerator
         foreach ($cuenta->getSubcuentas() as $subcuenta) {
             $line = $accountEntry->getNewLine();
             $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->haber = $this->document->total;
+            $line->haber = $this->document->neto;
             $line->idsubcuenta = $subcuenta->idsubcuenta;
             return $line->save();
         }
@@ -273,7 +273,25 @@ class InvoiceToAccounting extends AccountingGenerator
      */
     protected function addPurchaseTaxLines($accountEntry)
     {
-        return true;
+        $cuenta = new Cuenta();
+        $where = [
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
+            new DataBaseWhere('codcuentaesp', 'IVASOP')
+        ];
+        if (!$cuenta->loadFromCode('', $where)) {
+            $this->miniLog->alert($this->i18n->trans('ivasop-account-not-found'));
+            return false;
+        }
+
+        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            $line = $accountEntry->getNewLine();
+            $line->codsubcuenta = $subcuenta->codsubcuenta;
+            $line->debe = $this->document->totaliva;
+            $line->idsubcuenta = $subcuenta->idsubcuenta;
+            return $line->save();
+        }
+
+        return false;
     }
 
     /**
@@ -284,7 +302,25 @@ class InvoiceToAccounting extends AccountingGenerator
      */
     protected function addSalesTaxLines($accountEntry)
     {
-        return true;
+        $cuenta = new Cuenta();
+        $where = [
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
+            new DataBaseWhere('codcuentaesp', 'IVAREP')
+        ];
+        if (!$cuenta->loadFromCode('', $where)) {
+            $this->miniLog->alert($this->i18n->trans('ivarep-account-not-found'));
+            return false;
+        }
+
+        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            $line = $accountEntry->getNewLine();
+            $line->codsubcuenta = $subcuenta->codsubcuenta;
+            $line->haber = $this->document->totaliva;
+            $line->idsubcuenta = $subcuenta->idsubcuenta;
+            return $line->save();
+        }
+
+        return false;
     }
 
     /**
