@@ -55,7 +55,10 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('EditAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+
+        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->setSettings('ListAsiento', 'btnNew', false);
+
         $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
     }
 
@@ -100,7 +103,7 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
                 $view->loadData('', $where);
                 break;
 
-            case 'EditAsiento':
+            case 'ListAsiento':
                 $where = [
                     new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento')),
                     new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasientop'), '=', 'OR')

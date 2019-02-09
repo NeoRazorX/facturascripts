@@ -286,7 +286,7 @@ class InvoiceToAccounting extends AccountingGenerator
         foreach ($cuenta->getSubcuentas() as $subcuenta) {
             $line = $accountEntry->getNewLine();
             $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->debe = $this->document->totaliva;
+            $line->debe = $this->document->totaliva + $this->document->totalrecargo;
             $line->idsubcuenta = $subcuenta->idsubcuenta;
             return $line->save();
         }
@@ -315,7 +315,7 @@ class InvoiceToAccounting extends AccountingGenerator
         foreach ($cuenta->getSubcuentas() as $subcuenta) {
             $line = $accountEntry->getNewLine();
             $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->haber = $this->document->totaliva;
+            $line->haber = $this->document->totaliva + $this->document->totalrecargo;
             $line->idsubcuenta = $subcuenta->idsubcuenta;
             return $line->save();
         }
