@@ -274,7 +274,7 @@ abstract class ModelCore
      * @param array  $field
      * @param string $value
      *
-     * @return float|null
+     * @return bool|null
      */
     private function getBoolValueForField($field, $value)
     {
