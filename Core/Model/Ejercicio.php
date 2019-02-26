@@ -106,11 +106,11 @@ class Ejercicio extends Base\ModelClass
     public $nombre;
 
     /**
-     * Returns the state of the exercise ABIERTO -> true | CLOSED -> false
+     * Returns the state of the exercise OPEN -> true | CLOSED -> false
      *
      * @return bool
      */
-    public function abierto()
+    public function isOpened()
     {
         return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
@@ -160,42 +160,51 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
-     * Returns the exercise for the indicated date.
-     * If it does not exist, create it.
+     * Load the exercise for the indicated date. If it does not exist, create it.
+     * <bold>Need the company id to be correctly informed</bold>
      *
-     * @param int    $idempresa
-     * @param string $fecha
-     * @param bool   $soloAbierto
-     * @param bool   $crear
+     * @param string $date
+     * @param bool   $onlyOpened
+     * @param bool   $create
      *
-     * @return bool|Ejercicio
+     * @return bool
      */
-    public function getByFecha($idempresa, $fecha, $soloAbierto = true, $crear = true)
+    public function loadFromDate($date, $onlyOpened = true, $create = true): bool
     {
+        /// Keep the current values in case it is necessary to register a new fiscal year
+        $company = $this->idempresa;
+        $length = $this->longsubcuenta;  /// It is possible that this value is not initialized correctly
+
+        /// Search for fiscal year for date
         $where = [
-            new DataBaseWhere('idempresa', $idempresa),
-            new DataBaseWhere('fechainicio', $fecha, '<='),
-            new DataBaseWhere('fechafin', $fecha, '>='),
+            new DataBaseWhere('idempresa', $company),
+            new DataBaseWhere('fechainicio', $date, '<='),
+            new DataBaseWhere('fechafin', $date, '>='),
         ];
 
-        foreach ($this->all($where) as $eje) {
-            if (($eje->abierto() && $soloAbierto) || !$soloAbierto) {
-                return $eje;
+        if ($this->loadFromCode('', $where)) {
+            $length = $this->longsubcuenta;  /// Now have the correct value
+            if (($this->isOpened() && $onlyOpened) || !$onlyOpened) {
+                return true;
             }
         }
 
-        if ($crear && (strtotime($fecha) >= 1)) {
-            $eje = new self();
-            $eje->codejercicio = date('Y', strtotime($fecha));
-            $eje->fechainicio = date('1-1-Y', strtotime($fecha));
-            $eje->fechafin = date('31-12-Y', strtotime($fecha));
-            $eje->nombre = date('Y', strtotime($fecha));
-            if ($eje->exists()) {
-                $eje->codejercicio = $eje->newCode();
+        /// If must be register
+        if ($create && (strtotime($date) >= 1)) {
+            $this->idempresa = $company;
+            $this->longsubcuenta = $length;
+
+            $date2 = strtotime($date);
+            $this->codejercicio = date('Y', $date2);
+            $this->fechainicio = date('1-1-Y', $date2);
+            $this->fechafin = date('31-12-Y', $date2);
+            $this->nombre = date('Y', $date2);
+            if ($this->exists()) {
+                $this->codejercicio = $this->newCode();
             }
 
-            if ($eje->save()) {
-                return $eje;
+            if ($this->save()) {
+                return true;
             }
         }
 
