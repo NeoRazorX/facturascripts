@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -89,9 +89,9 @@ abstract class ListController extends BaseController
     /**
      * Base method to add a filter to the view
      *
-     * @param string $viewName
-     * @param string $key
-     * @param BaseFilter $filter
+     * @param string                $viewName
+     * @param string                $key
+     * @param ListFilter\BaseFilter $filter
      */
     protected function addFilter($viewName, $key, $filter)
     {
@@ -119,12 +119,12 @@ abstract class ListController extends BaseController
     /**
      * Adds a boolean condition type filter to the ListView.
      *
-     * @param string $viewName
-     * @param string $key        (Filter identifier)
-     * @param string $label      (Human reader description)
-     * @param string $field      (Field of the model to apply filter)
-     * @param string $operation  (operation to perform with match value)
-     * @param mixed  $matchValue (Value to match)
+     * @param string          $viewName
+     * @param string          $key        (Filter identifier)
+     * @param string          $label      (Human reader description)
+     * @param string          $field      (Field of the model to apply filter)
+     * @param string          $operation  (operation to perform with match value)
+     * @param mixed           $matchValue (Value to match)
      * @param DataBaseWhere[] $default (where to apply when filter is empty)
      */
     protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
@@ -216,10 +216,10 @@ abstract class ListController extends BaseController
     /**
      * Adds an order field to the ListView.
      *
-     * @param string       $viewName
-     * @param array        $fields
-     * @param string       $label
-     * @param int          $default   (0 = None, 1 = ASC, 2 = DESC)
+     * @param string $viewName
+     * @param array  $fields
+     * @param string $label
+     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
      */
     protected function addOrderBy(string $viewName, array $fields, string $label = '', int $default = 0)
     {
