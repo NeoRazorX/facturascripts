@@ -146,7 +146,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
-     * 
+     *
      * @return Partida[]
      */
     public function getLines()
@@ -156,7 +156,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
-     * 
+     *
      *
      * @return Partida
      */
@@ -269,16 +269,17 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
-     * 
+     *
      * @param string $date
      *
      * @return bool
      */
     public function setDate($date)
     {
-        $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->getByFecha($this->idempresa, $date);
-        if ($ejercicio) {
+        $ejercicio = new Ejercicio();
+        $ejercicio->idempresa = $this->idempresa;
+
+        if ($ejercicio->loadFromDate($date)) {
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             return true;
@@ -327,7 +328,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     /**
      * Checks if accounty entry is a special entry or is in a closed fiscal year.
      * Returns TRUE on error.
-     * 
+     *
      * @return bool
      */
     private function deleteErrorDataExercise(): bool
@@ -337,7 +338,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
             return true;
         }
 
-        if (!$exercise->abierto()) {
+        if (!$exercise->isOpened()) {
             self::$miniLog->warning(self::$i18n->trans('closed-exercise', ['%exerciseName%' => $exercise->nombre]));
             return true;
         }
