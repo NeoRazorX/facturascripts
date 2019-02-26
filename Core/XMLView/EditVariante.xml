@@ -25,9 +25,6 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idvariante" required="true" />
-            </column>
             <column name="product" display="none" order="110">
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
