@@ -134,6 +134,21 @@ class Variante extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        $product = $this->getProducto();
+        if ($this->referencia == $product->referencia) {
+            self::$miniLog->warning(self::$i18n->trans('you-cant-delete-primary-variant'));
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * Returns related product.
      *
      * @return Producto
@@ -181,7 +196,7 @@ class Variante extends Base\ModelClass
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     public function save()
     {
