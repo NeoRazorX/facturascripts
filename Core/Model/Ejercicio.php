@@ -124,7 +124,6 @@ class Ejercicio extends Base\ModelClass
         $this->estado = self::EXERCISE_STATUS_OPEN;
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->longsubcuenta = 10;
         $this->nombre = '';
     }
