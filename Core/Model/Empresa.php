@@ -223,4 +223,24 @@ class Empresa extends Base\Contact
 
         return parent::test();
     }
+    
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if(parent::saveInsert($values)) {
+            $almacen = new Almacen();
+            $almacen->codalmacen = $almacen->newCode();
+            $almacen->idempresa = $this->idempresa;
+            $almacen->nombre = $this->nombrecorto;
+            $almacen->save();
+            return true;
+        }
+        
+        return false;
+    }
 }
