@@ -394,7 +394,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
             $newLine->cantidad = 1;
             $newLine->codimpuesto = $impuesto->codimpuesto;
-            $newLine->descripcion = $product->descripcion;
+            $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $impuesto->iva;
             $newLine->pvpunitario = $variant->precio;
