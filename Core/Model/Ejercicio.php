@@ -159,6 +159,40 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Empresa();
+
+        $code = $year = "'" . date('Y') . "'";
+        $start = self::$dataBase->var2str(date('01-01-Y'));
+        $end = self::$dataBase->var2str(date('31-12-Y'));
+        $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
+        return 'INSERT INTO ' . static::tableName()
+            . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'
+            . ' VALUES (' . $code . ',' . $year . ',' . $start . ',' . $end . ',' . $state . ',10,1);';
+    }
+
+    /**
+     * Check if the indicated date is within the period of the exercise dates
+     *
+     * @param string $dateToCheck        (string with date format)
+     * @return bool
+     */
+    public function inRange($dateToCheck): bool
+    {
+        $start = strtotime($this->fechainicio);
+        $end = strtotime($this->fechafin);
+        $date = strtotime($dateToCheck);
+        return (($date >= $start) && ($date <= $end));
+    }
+
+    /**
      * Load the exercise for the indicated date. If it does not exist, create it.
      * <bold>Need the company id to be correctly informed</bold>
      *
@@ -208,40 +242,6 @@ class Ejercicio extends Base\ModelClass
         }
 
         return false;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Empresa();
-
-        $code = $year = "'" . date('Y') . "'";
-        $start = self::$dataBase->var2str(date('01-01-Y'));
-        $end = self::$dataBase->var2str(date('31-12-Y'));
-        $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
-        return 'INSERT INTO ' . static::tableName()
-            . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'
-            . ' VALUES (' . $code . ',' . $year . ',' . $start . ',' . $end . ',' . $state . ',10,1);';
-    }
-
-    /**
-     * Check if the indicated date is within the period of the exercise dates
-     *
-     * @param string $dateToCheck        (string with date format)
-     * @return bool
-     */
-    public function inRange($dateToCheck): bool
-    {
-        $start = strtotime($this->fechainicio);
-        $end = strtotime($this->fechafin);
-        $date = strtotime($dateToCheck);
-        return (($date >= $start) && ($date <= $end));
     }
 
     /**
