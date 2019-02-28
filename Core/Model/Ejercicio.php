@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
@@ -106,16 +105,6 @@ class Ejercicio extends Base\ModelClass
     public $nombre;
 
     /**
-     * Returns the state of the exercise OPEN -> true | CLOSED -> false
-     *
-     * @return bool
-     */
-    public function isOpened()
-    {
-        return $this->estado === self::EXERCISE_STATUS_OPEN;
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -193,6 +182,16 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
+     * Returns the state of the exercise OPEN -> true | CLOSED -> false
+     *
+     * @return bool
+     */
+    public function isOpened()
+    {
+        return $this->estado === self::EXERCISE_STATUS_OPEN;
+    }
+
+    /**
      * Load the exercise for the indicated date. If it does not exist, create it.
      * <bold>Need the company id to be correctly informed</bold>
      *
@@ -206,7 +205,8 @@ class Ejercicio extends Base\ModelClass
     {
         /// Keep the current values in case it is necessary to register a new fiscal year
         $company = $this->idempresa;
-        $length = $this->longsubcuenta;  /// It is possible that this value is not initialized correctly
+        /// It is possible that this value is not initialized correctly
+        $length = $this->longsubcuenta;
 
         /// Search for fiscal year for date
         $where = [
@@ -236,9 +236,7 @@ class Ejercicio extends Base\ModelClass
                 $this->codejercicio = $this->newCode();
             }
 
-            if ($this->save()) {
-                return true;
-            }
+            return $this->save();
         }
 
         return false;

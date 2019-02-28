@@ -512,13 +512,33 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function setDate(string $date, string $hour): bool
     {
+        /// force check of warehouse-company relation
+        $this->setWarehouse($this->codalmacen);
+
         $ejercicio = new Ejercicio();
         $ejercicio->idempresa = $this->idempresa;
-
         if ($ejercicio->loadFromDate($date)) {
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             $this->hora = $hour;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse($codalmacen)
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa;
             return true;
         }
 
