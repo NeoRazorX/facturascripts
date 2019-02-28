@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,14 +18,18 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Lib\EmailTools;
+use FacturaScripts\Dinamic\Lib\EmailTools;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Controller to edit main settings
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  */
 class EditSettings extends ExtendedController\PanelController
 {
@@ -93,6 +97,42 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        if (!parent::editAction()) {
+            return false;
+        }
+
+        /// check warehouse-company relation
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+        $idempresa = $appSettings->get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $values = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
+        foreach ($values as $value) {
+            if ($value->code == $appSettings->get('default', 'codalmacen')) {
+                /// perfect
+                return true;
+            }
+        }
+
+        /// assign a new warehouse
+        foreach ($values as $value) {
+            $appSettings->set('default', 'codalmacen', $value->code);
+            $appSettings->save();
+            return true;
+        }
+
+        /// assign no warehouse
+        $appSettings->set('default', 'codalmacen', null);
+        $appSettings->save();
+        return true;
+    }
+
+    /**
      * Run the controller after actions
      *
      * @param string $action
@@ -136,9 +176,28 @@ class EditSettings extends ExtendedController\PanelController
     {
         $code = $this->getKeyFromViewName($viewName);
         $view->loadData($code);
-
         if (empty($view->model->name)) {
             $view->model->name = $code;
         }
+
+        switch ($viewName) {
+            case 'SettingsDefault':
+                $this->loadWarehouseValues($viewName);
+                break;
+        }
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function loadWarehouseValues($viewName)
+    {
+        $idempresa = AppSettings::get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $almacenes = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
+
+        $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
+        $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
     }
 }
