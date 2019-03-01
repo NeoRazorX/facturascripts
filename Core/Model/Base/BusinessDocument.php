@@ -584,6 +584,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         switch ($field) {
+            case 'codalmacen':
+            case 'idempresa':
+                self::$miniLog->warning(self::$i18n->trans('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']));
+                return false;
+
             case 'codejercicio':
             case 'codserie':
                 BusinessDocumentCode::getNewCode($this);
