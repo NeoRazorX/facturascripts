@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,6 +43,6 @@ class IDFiscal
      */
     public static function all()
     {
-        return ['CIF/NIF', 'Pasaporte', 'DNI', 'NIF', 'CIF', 'VAT', 'CUIT'];
+        return ['CIF/NIF', 'CIF', 'CUIT', 'DNI', 'NIF', 'Pasaporte', 'RUC', 'VAT'];
     }
 }
