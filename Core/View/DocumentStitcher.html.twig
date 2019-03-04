@@ -94,7 +94,7 @@
                                 <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
                             </td>
                             <td class="table-warning">
-                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ line.cantidad }}" step="any" class="form-control text-right" autocomplete="off"/>
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ fsc.getDefaultQuantity(line) }}" step="any" class="form-control text-right" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}
