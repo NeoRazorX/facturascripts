@@ -228,10 +228,6 @@ class APIModel extends APIResourceClass
             $field = $key;
             $operator = '=';
 
-            if (!isset($operation[$key])) {
-                $operation[$key] = $defaultOperation;
-            }
-
             switch (substr($key, -3)) {
                 case '_gt':
                     $field = substr($key, 0, -3);
@@ -272,6 +268,10 @@ class APIModel extends APIResourceClass
             } elseif (substr($key, -6) == '_isnot') {
                 $field = substr($key, 0, -6);
                 $operator = 'IS NOT';
+            }
+
+            if (!isset($operation[$key])) {
+                $operation[$key] = $defaultOperation;
             }
 
             $where[] = new DataBaseWhere($field, $value, $operator, $operation[$key]);
