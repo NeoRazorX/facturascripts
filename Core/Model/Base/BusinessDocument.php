@@ -245,7 +245,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     abstract public function updateSubject();
 
     /**
-     * 
+     *
      * @return BusinessDocument[]
      */
     public function childrenDocuments()
@@ -310,7 +310,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -345,7 +345,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return EstadoDocumento[]
      */
     public function getAvaliableStatus()
@@ -366,7 +366,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return Empresa
      */
     public function getCompany()
@@ -377,7 +377,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $reference
      *
      * @return BusinessDocumentLine
@@ -394,7 +394,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
             $newLine->cantidad = 1;
             $newLine->codimpuesto = $impuesto->codimpuesto;
-            $newLine->descripcion = $product->descripcion;
+            $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $impuesto->iva;
             $newLine->pvpunitario = $variant->precio;
@@ -406,7 +406,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return EstadoDocumento
      */
     public function getStatus()
@@ -438,7 +438,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return BusinessDocument[]
      */
     public function parentDocuments()
@@ -504,20 +504,41 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     /**
      * Assign the date and find an accounting exercise.
-     * 
+     *
      * @param string $date
      * @param string $hour
-     * 
+     *
      * @return bool
      */
     public function setDate(string $date, string $hour): bool
     {
-        $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->getByFecha($this->idempresa, $date);
-        if ($ejercicio) {
+        /// force check of warehouse-company relation
+        $this->setWarehouse($this->codalmacen);
+
+        $ejercicio = new Ejercicio();
+        $ejercicio->idempresa = $this->idempresa;
+        if ($ejercicio->loadFromDate($date)) {
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             $this->hora = $hour;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse($codalmacen)
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa;
             return true;
         }
 
@@ -550,7 +571,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $field
      *
      * @return bool

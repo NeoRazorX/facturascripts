@@ -22,7 +22,6 @@
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -36,7 +35,7 @@
                 <widget type="text" fieldname="telefono" icon="fas fa-phone" />
             </column>
             <column name="company" numcolumns="2" order="130">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building" required="true">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>

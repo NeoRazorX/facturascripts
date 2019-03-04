@@ -87,7 +87,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Cliente $customer
      * @param string  $codejercicio
      *
@@ -96,7 +96,7 @@ class InvoiceToAccounting extends AccountingGenerator
     public function createCustomerAccount(&$customer, $codejercicio)
     {
         $subcuenta = new Subcuenta();
-        if (!$this->exercise->loadFromCode($codejercicio) || !$this->exercise->abierto()) {
+        if (!$this->exercise->loadFromCode($codejercicio) || !$this->exercise->isOpened()) {
             return $subcuenta;
         }
 
@@ -120,7 +120,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Proveedor $supplier
      * @param string    $codejercicio
      *
@@ -129,7 +129,7 @@ class InvoiceToAccounting extends AccountingGenerator
     public function createSupplierAccount(&$supplier, $codejercicio)
     {
         $subcuenta = new Subcuenta();
-        if (!$this->exercise->loadFromCode($codejercicio) || !$this->exercise->abierto()) {
+        if (!$this->exercise->loadFromCode($codejercicio) || !$this->exercise->isOpened()) {
             return $subcuenta;
         }
 
@@ -153,7 +153,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param FacturaCliente|FacturaProveedor $model
      */
     public function generate(&$model)
@@ -162,7 +162,7 @@ class InvoiceToAccounting extends AccountingGenerator
 
         if (!empty($model->idasiento)) {
             return;
-        } elseif (!$this->exercise->loadFromCode($model->codejercicio) || !$this->exercise->abierto()) {
+        } elseif (!$this->exercise->loadFromCode($model->codejercicio) || !$this->exercise->isOpened()) {
             $this->miniLog->warning($this->i18n->trans('closed-exercise'));
             return;
         } elseif (!$this->loadSubtotals()) {
@@ -181,7 +181,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -208,7 +208,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -237,7 +237,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -266,7 +266,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -295,7 +295,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -324,7 +324,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -351,7 +351,7 @@ class InvoiceToAccounting extends AccountingGenerator
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function loadSubtotals(): bool

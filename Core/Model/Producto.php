@@ -338,8 +338,12 @@ class Producto extends Base\ModelClass
         $newReferencia = null;
 
         foreach ($this->getVariants() as $variant) {
-            $newPrecio = ($newPrecio == 0.0 || $variant->precio < $newPrecio) ? $variant->precio : $newPrecio;
-            $newReferencia = is_null($newReferencia) ? $variant->referencia : $newReferencia;
+            if ($newPrecio == 0.0 || $variant->precio < $newPrecio) {
+                $newPrecio = $variant->precio;
+            }
+            if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
+                $newReferencia = $variant->referencia;
+            }
         }
 
         if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
@@ -353,7 +357,7 @@ class Producto extends Base\ModelClass
      * 
      * @param array $values
      *
-     * @return boolean
+     * @return bool
      */
     protected function saveInsert(array $values = [])
     {

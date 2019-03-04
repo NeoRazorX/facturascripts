@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * The warehouse where the items are physically.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class Almacen extends Base\Address
 {
@@ -60,14 +60,13 @@ class Almacen extends Base\Address
      */
     public $telefono;
 
-    public function clear()
-    {
-        parent::clear();
-        $this->idempresa = AppSettings::get('default', 'idempresa');
-    }
-
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependencies
         new Empresa();
         return parent::install();
     }

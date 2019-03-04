@@ -106,16 +106,6 @@ class Ejercicio extends Base\ModelClass
     public $nombre;
 
     /**
-     * Returns the state of the exercise ABIERTO -> true | CLOSED -> false
-     *
-     * @return bool
-     */
-    public function abierto()
-    {
-        return $this->estado === self::EXERCISE_STATUS_OPEN;
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -124,7 +114,6 @@ class Ejercicio extends Base\ModelClass
         $this->estado = self::EXERCISE_STATUS_OPEN;
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->longsubcuenta = 10;
         $this->nombre = '';
     }
@@ -160,49 +149,6 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
-     * Returns the exercise for the indicated date.
-     * If it does not exist, create it.
-     *
-     * @param int    $idempresa
-     * @param string $fecha
-     * @param bool   $soloAbierto
-     * @param bool   $crear
-     *
-     * @return bool|Ejercicio
-     */
-    public function getByFecha($idempresa, $fecha, $soloAbierto = true, $crear = true)
-    {
-        $where = [
-            new DataBaseWhere('idempresa', $idempresa),
-            new DataBaseWhere('fechainicio', $fecha, '<='),
-            new DataBaseWhere('fechafin', $fecha, '>='),
-        ];
-
-        foreach ($this->all($where) as $eje) {
-            if (($eje->abierto() && $soloAbierto) || !$soloAbierto) {
-                return $eje;
-            }
-        }
-
-        if ($crear && (strtotime($fecha) >= 1)) {
-            $eje = new self();
-            $eje->codejercicio = date('Y', strtotime($fecha));
-            $eje->fechainicio = date('1-1-Y', strtotime($fecha));
-            $eje->fechafin = date('31-12-Y', strtotime($fecha));
-            $eje->nombre = date('Y', strtotime($fecha));
-            if ($eje->exists()) {
-                $eje->codejercicio = $eje->newCode();
-            }
-
-            if ($eje->save()) {
-                return $eje;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -211,6 +157,7 @@ class Ejercicio extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependecies
         new Empresa();
 
         $code = $year = "'" . date('Y') . "'";
@@ -226,6 +173,7 @@ class Ejercicio extends Base\ModelClass
      * Check if the indicated date is within the period of the exercise dates
      *
      * @param string $dateToCheck        (string with date format)
+     *
      * @return bool
      */
     public function inRange($dateToCheck): bool
@@ -234,6 +182,55 @@ class Ejercicio extends Base\ModelClass
         $end = strtotime($this->fechafin);
         $date = strtotime($dateToCheck);
         return (($date >= $start) && ($date <= $end));
+    }
+
+    /**
+     * Returns the state of the exercise OPEN -> true | CLOSED -> false
+     *
+     * @return bool
+     */
+    public function isOpened()
+    {
+        return $this->estado === self::EXERCISE_STATUS_OPEN;
+    }
+
+    /**
+     * Load the exercise for the indicated date. If it does not exist, create it.
+     * <bold>Need the company id to be correctly informed</bold>
+     *
+     * @param string $date
+     * @param bool   $onlyOpened
+     * @param bool   $create
+     *
+     * @return bool
+     */
+    public function loadFromDate($date, $onlyOpened = true, $create = true): bool
+    {
+        /// Keep the current values in case it is necessary to register a new fiscal year
+        $idempresa = $this->idempresa;
+        /// It is possible that this value is not initialized correctly
+        $length = $this->longsubcuenta;
+
+        /// Search for fiscal year for date
+        $where = [
+            new DataBaseWhere('idempresa', $idempresa),
+            new DataBaseWhere('fechainicio', $date, '<='),
+            new DataBaseWhere('fechafin', $date, '>='),
+        ];
+
+        if ($this->loadFromCode('', $where)) {
+            $length = $this->longsubcuenta;  /// Now have the correct value
+            if (($this->isOpened() && $onlyOpened) || !$onlyOpened) {
+                return true;
+            }
+        }
+
+        /// If must be register
+        if ($create && strtotime($date) >= 1) {
+            return $this->createNew($date, $idempresa, $length);
+        }
+
+        return false;
     }
 
     /**
@@ -306,5 +303,43 @@ class Ejercicio extends Base\ModelClass
     public function year()
     {
         return date('Y', strtotime($this->fechainicio));
+    }
+
+    /**
+     * 
+     * @param string $date
+     * @param int    $idempresa
+     * @param int    $length
+     *
+     * @return bool
+     */
+    protected function createNew($date, $idempresa, $length)
+    {
+        $date2 = strtotime($date);
+
+        $this->codejercicio = date('Y', $date2);
+        $this->fechainicio = date('1-1-Y', $date2);
+        $this->fechafin = date('31-12-Y', $date2);
+        $this->idempresa = $idempresa;
+        $this->longsubcuenta = $length;
+        $this->nombre = date('Y', $date2);
+
+        /// for non-default companies we try to use range from 0001 to 9999
+        if ($this->idempresa != AppSettings::get('default', 'idempresa')) {
+            $new = new self();
+            for ($num = 1; $num < 1000; $num++) {
+                $code = sprintf('%04s', (int) $num);
+                if (!$new->loadFromCode($code)) {
+                    $this->codejercicio = $code;
+                    break;
+                }
+            }
+        }
+
+        if ($this->exists()) {
+            $this->codejercicio = $this->newCode();
+        }
+
+        return $this->save();
     }
 }
