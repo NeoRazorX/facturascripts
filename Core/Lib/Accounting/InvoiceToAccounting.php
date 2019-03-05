@@ -37,7 +37,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class InvoiceToAccounting extends AccountingGenerator
+class InvoiceToAccounting extends AccountingAccounts
 {
 
     /**
