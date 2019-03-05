@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -34,6 +35,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *   - Supplier
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class AccountingAccounts
 {
@@ -68,18 +70,17 @@ class AccountingAccounts
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getCustomerAccount(string $code, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
     {
         $customer = new Cliente();
-        if ($customer->loadFromCode($code)) {
-            return empty($customer->codsubcuenta)
-                ? $this->getCustomerGroupAccount($customer->codgrupo, $specialAccount)
-                : $this->getSubAccount($customer->codsubcuenta, $specialAccount);
+        if ($customer->loadFromCode($code) && !empty($customer->codsubcuenta)) {
+            return $this->getCustomerGroupAccount($customer->codgrupo, $specialAccount);
         }
 
-        return $this->getSpecialSubAccount();
+        return $this->getSpecialSubAccount($specialAccount);
     }
 
     /**
@@ -91,15 +92,14 @@ class AccountingAccounts
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getCustomerGroupAccount(string $code, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
     {
-        if (!empty($code)) {
-            $group = new GrupoClientes();
-            if ($group->loadFromCode($code) && !empty($group->codsubcuenta)) {
-                return $this->getSubAccount($group->codsubcuenta, $specialAccount);
-            }
+        $group = new GrupoClientes();
+        if (!empty($code) && $group->loadFromCode($code) && !empty($group->codsubcuenta)) {
+            return $this->getSubAccount($group->codsubcuenta, $specialAccount);
         }
 
         return $this->getSpecialSubAccount($specialAccount);
@@ -112,6 +112,7 @@ class AccountingAccounts
      *    If it does not exist, return a empty accounting sub-account
      *
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getSpecialAccount(string $specialAccount)
@@ -120,14 +121,15 @@ class AccountingAccounts
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuentaesp', $specialAccount)
         ];
-
         $orderBy = ['codcuenta', 'DESC'];
-        if (self::$account->loadFromCode('', $where, $orderBy)) {
-            $where = [new DataBaseWhere('idcuenta', self::$account->idcuenta)];
-            $orderBy = ['codsubcuenta', 'ASC'];
+
+        $account = new Cuenta();
+        if ($account->loadFromCode('', $where, $orderBy)) {
+            $where2 = [new DataBaseWhere('idcuenta', self::$account->idcuenta)];
+            $orderBy2 = ['codsubcuenta', 'ASC'];
 
             $subaccount = new Subcuenta();
-            $subaccount->loadFromCode('', $where, $orderBy);
+            $subaccount->loadFromCode('', $where2, $orderBy2);
             return $subaccount;
         }
 
@@ -139,6 +141,7 @@ class AccountingAccounts
      * If there is no, search within the group of accounts for the special type
      *
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getSpecialSubAccount(string $specialAccount)
@@ -165,6 +168,7 @@ class AccountingAccounts
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getSubAccount(string $code, string $specialAccount)
@@ -182,7 +186,6 @@ class AccountingAccounts
         return $this->getSpecialSubAccount($specialAccount);
     }
 
-
     /**
      * Get the accounting sub-account for the supplier and the fiscal year.
      * If it does not exist, search for the sub-account
@@ -190,6 +193,7 @@ class AccountingAccounts
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getSupplierAccount(string $code, string $specialAccount = self::SPECIAL_SUPPLIER_ACCOUNT)
@@ -215,8 +219,8 @@ class AccountingAccounts
     /**
      * Set the exercise search from company and date
      *
-     * @param int $idCompany
-     * @param type $date
+     * @param int    $idCompany
+     * @param string $date
      */
     public function setExerciseFromCompany(int $idCompany, $date)
     {
