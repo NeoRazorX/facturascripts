@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -30,6 +29,13 @@ class FormaPago extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+
+    /**
+     * Bank account identifier.
+     *
+     * @var string
+     */
+    public $codcuentabanco;
 
     /**
      * Primary key. Varchar (10).
@@ -58,6 +64,13 @@ class FormaPago extends Base\ModelClass
      * @var string
      */
     public $genrecibos;
+
+    /**
+     * Company identifier.
+     *
+     * @var int
+     */
+    public $idempresa;
 
     /**
      * True (default) -> display the data in sales documents,
@@ -95,13 +108,15 @@ class FormaPago extends Base\ModelClass
     }
 
     /**
-     * Returns True if is the default payment method for the company.
-     *
-     * @return bool
+     * 
+     * @return string
      */
-    public function isDefault()
+    public function install()
     {
-        return $this->codpago === AppSettings::get('default', 'codpago');
+        /// needed dependencies
+        new CuentaBanco();
+
+        return parent::install();
     }
 
     /**

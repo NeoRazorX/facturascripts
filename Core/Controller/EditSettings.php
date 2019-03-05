@@ -69,6 +69,60 @@ class EditSettings extends ExtendedController\PanelController
         return $names;
     }
 
+    protected function checkPaymentMethod()
+    {
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+
+        $idempresa = $appSettings->get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $values = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
+        foreach ($values as $value) {
+            if ($value->code == $appSettings->get('default', 'codpago')) {
+                /// perfect
+                return true;
+            }
+        }
+
+        /// assign a new payment method
+        foreach ($values as $value) {
+            $appSettings->set('default', 'codpago', $value->code);
+            $appSettings->save();
+            return true;
+        }
+
+        /// assign no payment method
+        $appSettings->set('default', 'codpago', null);
+        $appSettings->save();
+    }
+
+    protected function checkWarehouse()
+    {
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+
+        $idempresa = $appSettings->get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $values = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
+        foreach ($values as $value) {
+            if ($value->code == $appSettings->get('default', 'codalmacen')) {
+                /// perfect
+                return true;
+            }
+        }
+
+        /// assign a new warehouse
+        foreach ($values as $value) {
+            $appSettings->set('default', 'codalmacen', $value->code);
+            $appSettings->save();
+            return true;
+        }
+
+        /// assign no warehouse
+        $appSettings->set('default', 'codalmacen', null);
+        $appSettings->save();
+    }
+
     /**
      * Load views
      */
@@ -106,29 +160,9 @@ class EditSettings extends ExtendedController\PanelController
             return false;
         }
 
-        /// check warehouse-company relation
-        $appSettings = new AppSettings();
-        $appSettings->reload();
-        $idempresa = $appSettings->get('default', 'idempresa');
-        $where = [new DataBaseWhere('idempresa', $idempresa)];
-        $values = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
-        foreach ($values as $value) {
-            if ($value->code == $appSettings->get('default', 'codalmacen')) {
-                /// perfect
-                return true;
-            }
-        }
-
-        /// assign a new warehouse
-        foreach ($values as $value) {
-            $appSettings->set('default', 'codalmacen', $value->code);
-            $appSettings->save();
-            return true;
-        }
-
-        /// assign no warehouse
-        $appSettings->set('default', 'codalmacen', null);
-        $appSettings->save();
+        /// check warehouse-company and payment-method-company relations
+        $this->checkPaymentMethod();
+        $this->checkWarehouse();
         return true;
     }
 
@@ -182,9 +216,24 @@ class EditSettings extends ExtendedController\PanelController
 
         switch ($viewName) {
             case 'SettingsDefault':
+                $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
                 break;
         }
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function loadPaymentMethodValues($viewName)
+    {
+        $idempresa = AppSettings::get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $methods = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
+
+        $columnPayment = $this->views[$viewName]->columnForName('payment-method');
+        $columnPayment->widget->setValuesFromCodeModel($methods);
     }
 
     /**
