@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -135,10 +135,9 @@ abstract class ListBusinessDocument extends ListController
         /// filters
         $this->addCommonViewFilters($name, $model);
         $this->addFilterAutocomplete($name, 'codcliente', 'customer', 'codcliente', 'Cliente');
+        $this->addFilterAutocomplete($name, 'idcontactofact', 'billing-address', 'idcontacto', 'contacto');
+        $this->addFilterautocomplete($name, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
         $this->addFilterCheckbox($name, 'paid', 'paid', 'pagado');
-
-        $this->addFilterAutocomplete($name, 'idcontactofact', 'bill_contact', 'idcontacto', 'contacto');
-        $this->addFilterautocomplete($name, 'idcontactoenv', 'ship_contact', 'idcontacto', 'contacto');
     }
 }
