@@ -29,7 +29,7 @@ abstract class ListBusinessDocument extends ListController
 {
 
     /**
-     * 
+     *
      * @param string $name
      * @param string $model
      */
@@ -68,7 +68,7 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $name
      * @param string $model
      */
@@ -98,7 +98,7 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $name
      * @param string $model
      * @param string $label
@@ -119,7 +119,7 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $name
      * @param string $model
      * @param string $label
@@ -137,5 +137,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterAutocomplete($name, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
         $this->addFilterCheckbox($name, 'paid', 'paid', 'pagado');
+
+        $this->addFilterAutocomplete($name, 'idcontactofact', 'bill_contact', 'idcontacto', 'contacto');
+        $this->addFilterautocomplete($name, 'idcontactoenv', 'ship_contact', 'idcontacto', 'contacto');
     }
 }
