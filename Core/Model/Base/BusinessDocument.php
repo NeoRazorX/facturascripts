@@ -394,7 +394,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
             $newLine->cantidad = 1;
             $newLine->codimpuesto = $impuesto->codimpuesto;
-            $newLine->descripcion = $product->descripcion;
+            $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $impuesto->iva;
             $newLine->pvpunitario = $variant->precio;
@@ -512,13 +512,33 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function setDate(string $date, string $hour): bool
     {
+        /// force check of warehouse-company relation
+        $this->setWarehouse($this->codalmacen);
+
         $ejercicio = new Ejercicio();
         $ejercicio->idempresa = $this->idempresa;
-
         if ($ejercicio->loadFromDate($date)) {
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             $this->hora = $hour;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse($codalmacen)
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa;
             return true;
         }
 
@@ -564,6 +584,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         switch ($field) {
+            case 'codalmacen':
+            case 'idempresa':
+                self::$miniLog->warning(self::$i18n->trans('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']));
+                return false;
+
             case 'codejercicio':
             case 'codserie':
                 BusinessDocumentCode::getNewCode($this);

@@ -106,16 +106,6 @@ class Ejercicio extends Base\ModelClass
     public $nombre;
 
     /**
-     * Returns the state of the exercise OPEN -> true | CLOSED -> false
-     *
-     * @return bool
-     */
-    public function isOpened()
-    {
-        return $this->estado === self::EXERCISE_STATUS_OPEN;
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -124,7 +114,6 @@ class Ejercicio extends Base\ModelClass
         $this->estado = self::EXERCISE_STATUS_OPEN;
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->longsubcuenta = 10;
         $this->nombre = '';
     }
@@ -168,6 +157,7 @@ class Ejercicio extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependecies
         new Empresa();
 
         $code = $year = "'" . date('Y') . "'";
@@ -183,6 +173,7 @@ class Ejercicio extends Base\ModelClass
      * Check if the indicated date is within the period of the exercise dates
      *
      * @param string $dateToCheck        (string with date format)
+     *
      * @return bool
      */
     public function inRange($dateToCheck): bool
@@ -191,6 +182,16 @@ class Ejercicio extends Base\ModelClass
         $end = strtotime($this->fechafin);
         $date = strtotime($dateToCheck);
         return (($date >= $start) && ($date <= $end));
+    }
+
+    /**
+     * Returns the state of the exercise OPEN -> true | CLOSED -> false
+     *
+     * @return bool
+     */
+    public function isOpened()
+    {
+        return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
 
     /**
@@ -206,12 +207,13 @@ class Ejercicio extends Base\ModelClass
     public function loadFromDate($date, $onlyOpened = true, $create = true): bool
     {
         /// Keep the current values in case it is necessary to register a new fiscal year
-        $company = $this->idempresa;
-        $length = $this->longsubcuenta;  /// It is possible that this value is not initialized correctly
+        $idempresa = $this->idempresa;
+        /// It is possible that this value is not initialized correctly
+        $length = $this->longsubcuenta;
 
         /// Search for fiscal year for date
         $where = [
-            new DataBaseWhere('idempresa', $company),
+            new DataBaseWhere('idempresa', $idempresa),
             new DataBaseWhere('fechainicio', $date, '<='),
             new DataBaseWhere('fechafin', $date, '>='),
         ];
@@ -224,22 +226,8 @@ class Ejercicio extends Base\ModelClass
         }
 
         /// If must be register
-        if ($create && (strtotime($date) >= 1)) {
-            $this->idempresa = $company;
-            $this->longsubcuenta = $length;
-
-            $date2 = strtotime($date);
-            $this->codejercicio = date('Y', $date2);
-            $this->fechainicio = date('1-1-Y', $date2);
-            $this->fechafin = date('31-12-Y', $date2);
-            $this->nombre = date('Y', $date2);
-            if ($this->exists()) {
-                $this->codejercicio = $this->newCode();
-            }
-
-            if ($this->save()) {
-                return true;
-            }
+        if ($create && strtotime($date) >= 1) {
+            return $this->createNew($date, $idempresa, $length);
         }
 
         return false;
@@ -315,5 +303,43 @@ class Ejercicio extends Base\ModelClass
     public function year()
     {
         return date('Y', strtotime($this->fechainicio));
+    }
+
+    /**
+     * 
+     * @param string $date
+     * @param int    $idempresa
+     * @param int    $length
+     *
+     * @return bool
+     */
+    protected function createNew($date, $idempresa, $length)
+    {
+        $date2 = strtotime($date);
+
+        $this->codejercicio = date('Y', $date2);
+        $this->fechainicio = date('1-1-Y', $date2);
+        $this->fechafin = date('31-12-Y', $date2);
+        $this->idempresa = $idempresa;
+        $this->longsubcuenta = $length;
+        $this->nombre = date('Y', $date2);
+
+        /// for non-default companies we try to use range from 0001 to 9999
+        if ($this->idempresa != AppSettings::get('default', 'idempresa')) {
+            $new = new self();
+            for ($num = 1; $num < 1000; $num++) {
+                $code = sprintf('%04s', (int) $num);
+                if (!$new->loadFromCode($code)) {
+                    $this->codejercicio = $code;
+                    break;
+                }
+            }
+        }
+
+        if ($this->exists()) {
+            $this->codejercicio = $this->newCode();
+        }
+
+        return $this->save();
     }
 }
