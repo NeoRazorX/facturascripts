@@ -201,15 +201,15 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert Groups of accounting plan
+     * insert Cuenta of accounting plan
      *
      * @param \SimpleXMLElement $data
      */
-    private function importEpigrafeGroup($data)
+    private function importCuenta($data)
     {
-        foreach ($data as $xmlEpigrafeGroup) {
-            $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
-            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
+        foreach ($data as $xmlAccount) {
+            $accountElement = (array) $xmlAccount;
+            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
         }
     }
 
@@ -227,15 +227,15 @@ class AccountingPlanImport
     }
 
     /**
-     * insert Cuenta of accounting plan
+     * Insert Groups of accounting plan
      *
      * @param \SimpleXMLElement $data
      */
-    private function importCuenta($data)
+    private function importEpigrafeGroup($data)
     {
-        foreach ($data as $xmlAccount) {
-            $accountElement = (array) $xmlAccount;
-            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
+        foreach ($data as $xmlEpigrafeGroup) {
+            $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
+            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
         }
     }
 

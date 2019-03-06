@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditFormaPago
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Javier García Iceta  <javigarciaiceta@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -64,8 +61,8 @@
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="bank-account" numcolumns="3" order="110">
-                <widget type="select" fieldname="codcuentabanco">
+            <column name="bank-account" titleurl="ListFormaPago?activetab=ListCuentaBanco" numcolumns="3" order="110">
+                <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
                     <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
