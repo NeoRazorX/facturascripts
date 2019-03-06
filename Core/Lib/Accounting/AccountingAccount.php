@@ -40,12 +40,13 @@ class AccountingAccounts
 
     const SPECIAL_CUSTOMER_ACCOUNT = 'CLIENT';
     const SPECIAL_SUPPLIER_ACCOUNT = 'PROVEE';
+    const SPECIAL_PAYMENT_ACCOUNT  = 'CAJA';
 
     /**
      *
      * @var Ejercicio
      */
-    protected $exercise;
+    public $exercise;
 
     /**
      * Class constructor
@@ -102,6 +103,12 @@ class AccountingAccounts
             }
         }
 
+        return $this->getSpecialSubAccount($specialAccount);
+    }
+
+    public function getPaymentAccount(string $code, $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
+    {
+        
         return $this->getSpecialSubAccount($specialAccount);
     }
 
