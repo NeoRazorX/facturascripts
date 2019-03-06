@@ -125,7 +125,7 @@ class AccountingAccounts
 
         $account = new Cuenta();
         if ($account->loadFromCode('', $where, $orderBy)) {
-            $where2 = [new DataBaseWhere('idcuenta', self::$account->idcuenta)];
+            $where2 = [new DataBaseWhere('idcuenta', $account->idcuenta)];
             $orderBy2 = ['codsubcuenta', 'ASC'];
 
             $subaccount = new Subcuenta();
