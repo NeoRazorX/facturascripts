@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,13 +18,14 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Controller to edit a single item from the CuentaBanco model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jferrer@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jferrer@artextrading.com>
  */
 class EditCuentaBanco extends ExtendedController\EditController
 {
@@ -51,5 +52,29 @@ class EditCuentaBanco extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
+        $this->setSettings('ListSubcuenta', 'btnNew', false);
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListSubcuenta':
+                $codsubcuenta = $this->getViewModelValue('Edit' . $this->getModelClassName(), 'codsubcuenta');
+                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $view->loadData('', $where, ['codejercicio' => 'DESC']);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

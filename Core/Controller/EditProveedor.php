@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,6 +105,7 @@ class EditProveedor extends ExtendedController\EditController
         parent::createViews();
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
         $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fas fa-copy');
         $this->addListView('ListLineaFacturaProveedor', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
         $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
@@ -116,6 +117,9 @@ class EditProveedor extends ExtendedController\EditController
         $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
         $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
         $this->views['ListPresupuestoProveedor']->disableColumn('supplier', true);
+        
+        /// Disable buttons
+        $this->setSettings('ListSubcuenta', 'btnNew', false);
     }
 
     /**
@@ -128,12 +132,6 @@ class EditProveedor extends ExtendedController\EditController
     {
         $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
         switch ($viewName) {
-            case 'EditProveedor':
-                parent::loadData($viewName, $view);
-                $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
-                $this->setCustomWidgetValues($code);
-                break;
-
             case 'ListContacto':
             case 'EditCuentaBancoProveedor':
             case 'ListFacturaProveedor':
@@ -147,6 +145,12 @@ class EditProveedor extends ExtendedController\EditController
             case 'ListLineaFacturaProveedor':
                 $inSQL = 'SELECT idfactura FROM facturasprov WHERE codproveedor = ' . $this->dataBase->var2str($codproveedor);
                 $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListSubcuenta':
+                $codsubcuenta = $this->getViewModelValue('EditProveedor', 'codsubcuenta');
+                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 break;
 

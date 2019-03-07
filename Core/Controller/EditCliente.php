@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -103,12 +103,13 @@ class EditCliente extends ExtendedController\EditController
         parent::createViews();
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
+        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
         $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
         $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
+        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
 
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);
@@ -116,6 +117,9 @@ class EditCliente extends ExtendedController\EditController
         $this->views['ListPedidoCliente']->disableColumn('customer', true);
         $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
         $this->views['ListLineaFacturaCliente']->disableColumn('order', true);
+        
+        /// Disable buttons
+        $this->setSettings('ListSubcuenta', 'btnNew', false);
     }
 
     /**
@@ -128,12 +132,6 @@ class EditCliente extends ExtendedController\EditController
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         switch ($viewName) {
-            case 'EditCliente':
-                parent::loadData($viewName, $view);
-                $code = $this->getViewModelValue('EditCliente', 'codcliente');
-                $this->setCustomWidgetValues($code);
-                break;
-
             case 'ListCliente':
                 $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
                 if (!empty($codgrupo)) {
@@ -156,6 +154,16 @@ class EditCliente extends ExtendedController\EditController
                 $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
                 $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);
+                break;
+            
+            case 'ListSubcuenta':
+                $codsubcuenta = $this->getViewModelValue('EditCliente', 'codsubcuenta');
+                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

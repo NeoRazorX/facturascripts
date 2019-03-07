@@ -9,8 +9,6 @@
     var listViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
 </script>
 
-<br/>
-
 <form id="{{ formName }}" method="post">
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
@@ -67,7 +65,6 @@
             {# -- Right buttons -- #}
             {% if currentView.orderOptions is empty %}
                 <div class="col">
-                    <br/><br/>
                 </div>
             {% else %}
                 {# -- OrderBy button -- #}
