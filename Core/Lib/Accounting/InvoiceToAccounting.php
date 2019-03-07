@@ -195,8 +195,37 @@ class InvoiceToAccounting extends AccountingAccounts
      *
      * @return bool
      */
+    protected function addPurchaseIrpfLines($accountEntry)
+    {
+        $cuenta = $this->getSpecialAccount('IRPFPR');
+        if (!$cuenta->exists()) {
+            $this->miniLog->alert($this->i18n->trans('irpfpr-account-not-found'));
+            return false;
+        }
+
+        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            $line = $accountEntry->getNewLine();
+            $line->codsubcuenta = $subcuenta->codsubcuenta;
+            $line->haber = $this->document->totalirpf;
+            $line->idsubcuenta = $subcuenta->idsubcuenta;
+            return empty($line->haber) ? true : $line->save();
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * @param Asiento $accountEntry
+     *
+     * @return bool
+     */
     protected function addPurchaseTaxLines($accountEntry)
     {
+        if (!$this->addPurchaseIrpfLines($accountEntry)) {
+            return false;
+        }
+
         $cuenta = $this->getSpecialAccount('IVASOP');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('ivasop-account-not-found'));
@@ -220,8 +249,37 @@ class InvoiceToAccounting extends AccountingAccounts
      *
      * @return bool
      */
+    protected function addSalesIrpfLines($accountEntry)
+    {
+        $cuenta = $this->getSpecialAccount('IRPF');
+        if (!$cuenta->exists()) {
+            $this->miniLog->alert($this->i18n->trans('irpf-account-not-found'));
+            return false;
+        }
+
+        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            $line = $accountEntry->getNewLine();
+            $line->codsubcuenta = $subcuenta->codsubcuenta;
+            $line->debe = $this->document->totalirpf;
+            $line->idsubcuenta = $subcuenta->idsubcuenta;
+            return empty($line->debe) ? true : $line->save();
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * @param Asiento $accountEntry
+     *
+     * @return bool
+     */
     protected function addSalesTaxLines($accountEntry)
     {
+        if (!$this->addSalesIrpfLines($accountEntry)) {
+            return false;
+        }
+
         $cuenta = $this->getSpecialAccount('IVAREP');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('ivarep-account-not-found'));
