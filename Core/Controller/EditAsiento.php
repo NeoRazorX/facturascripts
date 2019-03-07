@@ -147,8 +147,8 @@ class EditAsiento extends EditController
             // confirm data
             $this->dataBase->commit();
             $result = $accounting->url('type') . '&action=save-ok';
-        } catch (Exception $e) {
-            self::$miniLog->alert($e->getMessage());
+        } catch (Exception $exp) {
+            self::$miniLog->alert($exp->getMessage());
             $result = '';
         } finally {
             if ($this->dataBase->inTransaction()) {

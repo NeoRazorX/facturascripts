@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
@@ -32,6 +33,12 @@ use ParseCsv\Csv;
  */
 class AccountingPlanImport
 {
+
+    /**
+     *
+     * @var DataBase
+     */
+    private $dataBase;
 
     /**
      * Exercise related to the accounting plan.
@@ -56,6 +63,7 @@ class AccountingPlanImport
 
     public function __construct()
     {
+        $this->dataBase = new DataBase();
         $this->ejercicio = new Model\Ejercicio();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
@@ -74,7 +82,21 @@ class AccountingPlanImport
             return;
         }
 
-        $this->processCsvData($filePath);
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        try {
+            $this->processCsvData($filePath);
+
+            // confirm data
+            $this->dataBase->commit();
+        } catch (Exception $exp) {
+            $this->miniLog->alert($exp->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
+        }
     }
 
     /**
@@ -91,11 +113,27 @@ class AccountingPlanImport
         }
 
         $data = $this->getData($filePath);
-        if ($data->count() > 0) {
+        if ($data->count() == 0) {
+            return;
+        }
+
+        // start transaction
+        $this->dataBase->beginTransaction();
+
+        try {
             $this->importEpigrafeGroup($data->grupo_epigrafes);
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
             $this->importSubcuenta($data->subcuenta);
+
+            // confirm data
+            $this->dataBase->commit();
+        } catch (Exception $exp) {
+            $this->miniLog->alert($exp->getMessage());
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
         }
     }
 
@@ -154,16 +192,16 @@ class AccountingPlanImport
     {
         $subaccount = new Model\Subcuenta();
         $subaccount->disableAditionalTest();
-        
+
         /// the subaccount exists?
         $where = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
         ];
-        if($subaccount->loadFromCode('', $where)) {
+        if ($subaccount->loadFromCode('', $where)) {
             return;
         }
-        
+
         $account = new Model\Cuenta();
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
