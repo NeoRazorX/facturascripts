@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,23 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Model\ApiKey;
-use FacturaScripts\Core\Model\ApiAccess;
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\ApiAccess;
+use FacturaScripts\Dinamic\Model\ApiKey;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AppAPI is the class used for API.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Ángel Guzmán Maeso <angel@guzmanmaeso.com>
- * @author Rafael San José Tovar (http://www.x-netdigital.com) <info@rsanjoseo.com>
+ * @author Carlos García Gómez                                  <carlos@facturascripts.com>
+ * @author Ángel Guzmán Maeso                                   <angel@guzmanmaeso.com>
+ * @author Rafael San José Tovar (http://www.x-netdigital.com)  <info@rsanjoseo.com>
  */
 class AppAPI extends App
 {
+
+    const API_VERSION = 3;
 
     /**
      * Contains the ApiKey model
@@ -113,49 +116,9 @@ class AppAPI extends App
     }
 
     /**
-     * Returns true if the token has the requested access to the resource.
-     *
-     * @return bool
-     */
-    public function isAllowed(): bool
-    {
-        $resource = $this->getUriParam(2);
-        if ($resource === '') {
-            return true;
-        }
-
-        $apiAccess = new ApiAccess();
-        $where = [
-            new DataBaseWhere('idapikey', $this->apiKey->id),
-            new DataBaseWhere('resource', $resource)
-        ];
-        if ($apiAccess->loadFromCode('', $where)) {
-            $method = $this->request->getMethod();
-            if ($method == 'DELETE' && $apiAccess->allowdelete) {
-                return true;
-            }
-
-            if ($method == 'GET' && $apiAccess->allowget) {
-                return true;
-            }
-
-            if ($method == 'POST' && $apiAccess->allowpost) {
-                return true;
-            }
-
-            if ($method == 'PUT' && $apiAccess->allowput) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Expose resource.
      *
      * @param array $map
-     * @throws \UnexpectedValueException
      */
     private function exposeResources(&$map)
     {
@@ -165,6 +128,18 @@ class AppAPI extends App
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Return an array with the error message, and the corresponding status.
+     *
+     * @param string $text
+     * @param int    $status
+     */
+    private function fatalError(string $text, int $status)
+    {
+        $this->response->setContent(json_encode(['error' => $text]));
+        $this->response->setStatusCode($status);
     }
 
     /**
@@ -205,6 +180,45 @@ class AppAPI extends App
     }
 
     /**
+     * Returns true if the token has the requested access to the resource.
+     *
+     * @return bool
+     */
+    private function isAllowed(): bool
+    {
+        $resource = $this->getUriParam(2);
+        if ($resource === '') {
+            return true;
+        }
+
+        $apiAccess = new ApiAccess();
+        $where = [
+            new DataBaseWhere('idapikey', $this->apiKey->id),
+            new DataBaseWhere('resource', $resource)
+        ];
+        if (!$apiAccess->loadFromCode('', $where)) {
+            return false;
+        }
+
+        switch ($this->request->getMethod()) {
+            case 'DELETE':
+                return $apiAccess->allowdelete;
+
+            case 'GET':
+                return $apiAccess->allowget;
+
+            case 'PATCH':
+            case 'PUT':
+                return $apiAccess->allowput;
+
+            case 'POST':
+                return $apiAccess->allowpost;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if API is disabled
      *
      * @return bool
@@ -221,20 +235,13 @@ class AppAPI extends App
      */
     private function selectResource(): bool
     {
-        $resourceName = $this->getUriParam(2);
         $map = $this->getResourcesMap();
 
-        // If no command, expose resources and exit
+        $resourceName = $this->getUriParam(2);
         if ($resourceName === '') {
+            // If no command, expose resources and exit
             $this->exposeResources($map);
             return true;
-        }
-
-        $param = 3;
-        $params = [];
-        while (($cad = $this->getUriParam($param)) !== '') {
-            $params[] = $cad;
-            $param++;
         }
 
         if (!isset($map[$resourceName]['API'])) {
@@ -242,12 +249,21 @@ class AppAPI extends App
             return false;
         }
 
-        $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n, $params);
-        if (isset($APIClass) && method_exists($APIClass, 'processResource')) {
-            return $APIClass->processResource($map[$resourceName]['Name']);
+        /// get params
+        $param = 3;
+        $params = [];
+        while (($item = $this->getUriParam($param)) !== '') {
+            $params[] = $item;
+            $param++;
         }
 
-        $this->fatalError('database-error', Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n, $params);
+            return $APIClass->processResource($map[$resourceName]['Name']);
+        } catch (Exception $exc) {
+            $this->fatalError('API-ERROR: ' . $exc->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         return false;
     }
 
@@ -258,23 +274,11 @@ class AppAPI extends App
      */
     private function selectVersion(): bool
     {
-        if ($this->getUriParam(1) === '3') {
+        if ($this->getUriParam(1) == self::API_VERSION) {
             return $this->selectResource();
         }
 
         $this->fatalError('API-VERSION-NOT-FOUND', Response::HTTP_NOT_FOUND);
         return true;
-    }
-
-    /**
-     * Return an array with the error message, and the corresponding status.
-     *
-     * @param string $text
-     * @param int    $status
-     */
-    protected function fatalError(string $text, int $status)
-    {
-        $this->response->setStatusCode($status);
-        $this->response->setContent(json_encode(['error' => $text]));
     }
 }

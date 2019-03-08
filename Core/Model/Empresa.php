@@ -223,7 +223,32 @@ class Empresa extends Base\Contact
 
         return parent::test();
     }
-    
+
+    protected function createPaymentMethods()
+    {
+        $formaPago = new FormaPago();
+        $formaPago->codpago = $formaPago->newCode();
+        $formaPago->descripcion = self::$i18n->trans('default');
+        $formaPago->idempresa = $this->idempresa;
+        $formaPago->save();
+    }
+
+    protected function createWarehouse()
+    {
+        $almacen = new Almacen();
+        $almacen->apartado = $this->apartado;
+        $almacen->codalmacen = $almacen->newCode();
+        $almacen->ciudad = $this->ciudad;
+        $almacen->codpais = $this->codpais;
+        $almacen->codpostal = $this->codpostal;
+        $almacen->direccion = $this->direccion;
+        $almacen->idempresa = $this->idempresa;
+        $almacen->nombre = $this->nombrecorto;
+        $almacen->provincia = $this->provincia;
+        $almacen->telefono = $this->telefono1;
+        $almacen->save();
+    }
+
     /**
      * 
      * @param array $values
@@ -232,22 +257,12 @@ class Empresa extends Base\Contact
      */
     protected function saveInsert(array $values = [])
     {
-        if(parent::saveInsert($values)) {
-            $almacen = new Almacen();
-            $almacen->apartado = $this->apartado;
-            $almacen->codalmacen = $almacen->newCode();
-            $almacen->ciudad = $this->ciudad;
-            $almacen->codpais = $this->codpais;
-            $almacen->codpostal = $this->codpostal;
-            $almacen->direccion = $this->direccion;
-            $almacen->idempresa = $this->idempresa;
-            $almacen->nombre = $this->nombrecorto;
-            $almacen->provincia = $this->provincia;
-            $almacen->telefono = $this->telefono1;
-            $almacen->save();
+        if (parent::saveInsert($values)) {
+            $this->createPaymentMethods();
+            $this->createWarehouse();
             return true;
         }
-        
+
         return false;
     }
 }

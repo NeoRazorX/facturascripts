@@ -103,7 +103,7 @@
                     {# Grid zone #}
                     <div class="row no-gutters">
                         <script type="text/javascript">
-                            documentLineData = {{ currentView.getGridData()|raw }};
+                            documentLineData = {{ currentView.getGridData() | raw }};
                         </script>
                         {% block gridcard %}
                             <div class="col">

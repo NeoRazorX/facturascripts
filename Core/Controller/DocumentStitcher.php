@@ -18,7 +18,10 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class DocumentStitcher extends Base\Controller
+class DocumentStitcher extends Controller
 {
 
     /**
@@ -41,7 +44,7 @@ class DocumentStitcher extends Base\Controller
 
     /**
      *
-     * @var array
+     * @var Model\Base\BusinessDocument[]
      */
     public $documents = [];
 
@@ -60,7 +63,37 @@ class DocumentStitcher extends Base\Controller
      */
     public function fixDescription($description)
     {
-        return nl2br(Base\Utils::fixHtml($description));
+        return nl2br(Utils::fixHtml($description));
+    }
+
+    /**
+     * 
+     * @param Model\Base\BusinessDocumentLine $line
+     *
+     * @return int|float
+     */
+    public function getDefaultQuantity($line)
+    {
+        $quantity = $line->cantidad;
+
+        $idlines = [];
+        $docTransformationModel = new Model\DocTransformation();
+        $where = [new DataBaseWhere('idlinea1', $line->idlinea)];
+        foreach ($docTransformationModel->all($where) as $docTrans) {
+            $idlines[] = $docTrans->idlinea2;
+        }
+
+        foreach ($this->documents as $doc) {
+            foreach ($doc->childrenDocuments() as $child) {
+                foreach ($child->getLines() as $childLine) {
+                    if (in_array($childLine->primaryColumnValue(), $idlines)) {
+                        $quantity -= $childLine->cantidad;
+                    }
+                }
+            }
+        }
+
+        return $quantity;
     }
 
     /**
@@ -72,7 +105,7 @@ class DocumentStitcher extends Base\Controller
         $types = [];
 
         $documentState = new Model\EstadoDocumento();
-        $where = [new Base\DataBase\DataBaseWhere('tipodoc', $this->modelName)];
+        $where = [new DataBaseWhere('tipodoc', $this->modelName)];
         foreach ($documentState->all($where) as $docState) {
             if (!empty($docState->generadoc)) {
                 $types[$docState->generadoc] = $docState->generadoc;
@@ -101,9 +134,9 @@ class DocumentStitcher extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param Model\User                 $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param Model\User            $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {

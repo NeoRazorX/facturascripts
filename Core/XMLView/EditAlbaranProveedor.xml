@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra      <francesc.pineda.segarra@gmail.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
 -->
 <view>
     <columns>
@@ -41,12 +41,12 @@
         </group>
         <group name="attributes" title="attributes" numcolumns="12">
             <column name="company" numcolumns="2" order="100">
-                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="warehouse" numcolumns="2" order="110">
-                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
+                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true" readonly="dinamic">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
                 </widget>
             </column>

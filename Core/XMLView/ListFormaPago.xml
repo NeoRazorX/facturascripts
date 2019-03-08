@@ -24,6 +24,11 @@
 -->
 <view>
     <columns>
+        <column name="company" display="none" order="90">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="code" order="100">
             <widget type="text" fieldname="codpago" onclick="EditFormaPago" />
         </column>

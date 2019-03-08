@@ -16,32 +16,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditFormaPago
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Javier García Iceta  <javigarciaiceta@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
-        <group name="data1" numcolumns="12">
+        <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codpago" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="genreceipts" numcolumns="2" title="generate-receipt" order="130">
+            <column name="genreceipts" numcolumns="2" title="generate-receipt" order="120">
                 <widget type="select" fieldname="genrecibos" translate="true" required="true">
                     <values title="paid">Pagados</values>
                     <values title="issued">Emitidos</values>
                 </widget>
             </column>
-            <column name="expiration" numcolumns="2" order="200">
+            <column name="expiration" numcolumns="2" order="130">
                 <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />
             </column>
-            <column name="expiration-type" numcolumns="2" order="220">
+            <column name="expiration-type" numcolumns="2" order="140">
                 <widget type="select" fieldname="tipovencimiento" translate="true" required="true">
                     <values title="days">days</values>
                     <values title="weeks">weeks</values>
@@ -50,12 +47,24 @@
                 </widget>
             </column>
         </group>
-        <group name="data3" numcolumns="12">
-            <column name="domicilied" title="domicilied" numcolumns="2" order="300">
+        <group name="data2" numcolumns="12">
+            <column name="domicilied" title="domicilied" numcolumns="2" order="110">
                 <widget type="checkbox" fieldname="domiciliado"></widget>
             </column>
-            <column name="print" title="print" numcolumns="2" order="330">
+            <column name="print" title="print" numcolumns="2" order="120">
                 <widget type="checkbox" fieldname="imprimir"></widget>
+            </column>
+        </group>
+        <group name="data3" numcolumns="12">
+            <column name="company" numcolumns="2" order="100">
+                <widget type="select" fieldname="idempresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
+            </column>
+            <column name="bank-account" titleurl="ListFormaPago?activetab=ListCuentaBanco" numcolumns="3" order="110">
+                <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
+                    <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
     </columns>

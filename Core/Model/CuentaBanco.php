@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,11 +31,32 @@ class CuentaBanco extends Base\BankAccount
     use Base\ModelTrait;
 
     /**
+     *
+     * @var string
+     */
+    public $codsubcuenta;
+
+    /**
      * Foreign Key with Empresas table.
      *
      * @var int
      */
     public $idempresa;
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new Empresa();
+
+        return parent::install();
+    }
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -55,28 +76,6 @@ class CuentaBanco extends Base\BankAccount
     public static function tableName()
     {
         return 'cuentasbanco';
-    }
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->idempresa = AppSettings::get('default', 'idempresa');
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Empresa();
-        return parent::install();
     }
 
     /**
