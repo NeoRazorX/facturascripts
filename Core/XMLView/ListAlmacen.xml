@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,38 +16,35 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListAlmacen
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
-        <column name="code" order="100">
-            <widget type="text" fieldname="codalmacen" onclick="EditAlmacen" />
-        </column>
-        <column name="name" order="100">
-            <widget type="text" fieldname="nombre" />
-        </column>
-        <column name="company" order="105">
+        <column name="company" display="none" order="90">
             <widget type="select" fieldname="idempresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>
         </column>
-        <column name="address" order="110">
+        <column name="code" order="100">
+            <widget type="text" fieldname="codalmacen" onclick="EditAlmacen" />
+        </column>
+        <column name="name" order="110">
+            <widget type="text" fieldname="nombre" />
+        </column>
+        <column name="address" order="120">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column name="city" order="120">
+        <column name="city" order="130">
             <widget type="text" fieldname="ciudad" />
         </column>
-        <column name="postal-code" display="none" order="130">
+        <column name="postal-code" display="none" order="140">
             <widget type="text" fieldname="codpostal" />
         </column>
-        <column name="province" display="center" order="140">
+        <column name="province" display="center" order="150">
             <widget type="text" fieldname="provincia" />
         </column>
-        <column name="phone" order="150">
+        <column name="phone" order="160">
             <widget type="text" fieldname="telefono" />
         </column>
     </columns>

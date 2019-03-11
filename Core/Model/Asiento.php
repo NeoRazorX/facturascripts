@@ -103,7 +103,8 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      */
     public function accumulateAmounts(array &$detail)
     {
-        $this->importe += round(floatval($detail['haber']), (int) FS_NF0);
+        $haber = isset($detail['haber']) ? (float) $detail['haber'] : 0.0;
+        $this->importe += round($haber, (int) FS_NF0);
     }
 
     /**

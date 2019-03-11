@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Description of Ledger
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author nazca <comercial@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author nazca                <comercial@nazcanetworks.com>
  */
 class Ledger extends AccountingBase
 {
@@ -51,7 +51,7 @@ class Ledger extends AccountingBase
 
         $ledger = [];
         $ledgerAccount = [];
-        //Process each line of the results
+        /// Process each line of the results
         foreach ($results as $line) {
             $account = ($grouping) ? $line['codcuenta'] : 0;
             if ($grouping) {
@@ -64,6 +64,31 @@ class Ledger extends AccountingBase
         /// every page is a table
         $pages = $ledger;
         return $pages;
+    }
+
+    /**
+     * Return the appropiate data from database.
+     *
+     * @return array
+     */
+    protected function getData()
+    {
+        if (!$this->dataBase->tableExists('partidas')) {
+            return [];
+        }
+
+        $sql = 'SELECT asto.fecha, asto.numero, subc.codcuenta, cuentas.descripcion '
+            . ' as cuenta_descripcion, part.codsubcuenta, part.concepto, part.debe, part.haber '
+            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
+            . ' WHERE asto.idasiento = part.idasiento '
+            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
+            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
+            . ' AND subc.codejercicio = asto.codejercicio '
+            . ' AND cuentas.codejercicio = asto.codejercicio '
+            . ' AND subc.codsubcuenta = part.codsubcuenta '
+            . ' AND subc.idcuenta = cuentas.idcuenta '
+            . ' ORDER BY asto.fecha, asto.numero ASC';
+        return $this->dataBase->select($sql);
     }
 
     /**
@@ -90,31 +115,6 @@ class Ledger extends AccountingBase
             . ' AND subc.idcuenta = cuentas.idcuenta '
             . ' GROUP BY subc.codcuenta, cuentas.descripcion, part.codsubcuenta, subc.descripcion'
             . ' ORDER BY subc.codcuenta, part.codsubcuenta ASC';
-        return $this->dataBase->select($sql);
-    }
-
-    /**
-     * Return the appropiate data from database.
-     *
-     * @return array
-     */
-    protected function getData()
-    {
-        if (!$this->dataBase->tableExists('partidas')) {
-            return [];
-        }
-
-        $sql = 'SELECT asto.fecha, asto.numero, subc.codcuenta, cuentas.descripcion '
-            . ' as cuenta_descripcion, part.codsubcuenta, part.concepto, part.debe, part.haber '
-            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
-            . ' WHERE asto.idasiento = part.idasiento '
-            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND subc.codejercicio = asto.codejercicio '
-            . ' AND cuentas.codejercicio = asto.codejercicio '
-            . ' AND subc.codsubcuenta = part.codsubcuenta '
-            . ' AND subc.idcuenta = cuentas.idcuenta '
-            . ' ORDER BY asto.fecha, asto.numero ASC';
         return $this->dataBase->select($sql);
     }
 

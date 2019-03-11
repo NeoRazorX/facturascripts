@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,16 +18,15 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Controller to edit a single item from the FormaPago model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class EditFormaPago extends ExtendedController\EditController
 {
@@ -77,6 +76,12 @@ class EditFormaPago extends ExtendedController\EditController
         }
     }
 
+    /**
+     * 
+     * @param string $filterField
+     *
+     * @return array
+     */
     private function autocompleteWithFilter($filterField)
     {
         $results = [];
@@ -87,7 +92,7 @@ class EditFormaPago extends ExtendedController\EditController
             new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
         ];
 
-        foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
             $results[] = ['key' => $row->code, 'value' => $row->description];
         }
 
@@ -95,38 +100,5 @@ class EditFormaPago extends ExtendedController\EditController
             $results[] = ['key' => null, 'value' => $this->i18n->trans('no-value')];
         }
         return $results;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        /// configurations
-        $this->addEditListView('EditFormaPagoEmpresa', 'FormaPagoEmpresa', 'company', 'fas fa-building');
-        $this->views['EditFormaPagoEmpresa']->disableColumn('codpago');
-    }
-
-    /**
-     * Load view data procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'FormaPagoEjercicio':
-                $payment = $this->getViewModelValue('EditFormapago', 'codpago');
-                $where = [new DataBaseWhere('codpago', $payment)];
-                $view->loadData('', $where, ['idempresa' => 'ASC']);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
-                break;
-        }
     }
 }

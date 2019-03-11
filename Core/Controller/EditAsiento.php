@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,20 +19,44 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * Controller to edit a single item from the Asiento model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class EditAsiento extends EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Asiento';
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData(): array
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounting-entries';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fas fa-balance-scale';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Overwrite autocomplete function to macro concepts in accounting concept.
@@ -62,14 +86,12 @@ class EditAsiento extends EditController
         if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
             // if the sub-account is the same as the previous offsetting
             if ($line['codsubcuenta'] === $data['lines'][$index - 1]['codcontrapartida']) {
-                $field = 'haber';
-                if ($unbalance < 0) {
-                    $field = 'debe';
-                }
+                $field = $unbalance < 0 ? 'debe' : 'haber';
                 $line[$field] = abs($unbalance);
                 $unbalance = 0.00;
             }
         }
+
         $data['unbalance'] = $unbalance;
         $data['total'] = ($credit > $debit) ? round($credit, (int) FS_NF0) : round($debit, (int) FS_NF0);
     }
@@ -103,8 +125,7 @@ class EditAsiento extends EditController
         $entries = $entryModel->all([new DataBaseWhere('idasiento', $data['idasiento'])]);
 
         // start transaction
-        $dataBase = new DataBase();
-        $dataBase->beginTransaction();
+        $this->dataBase->beginTransaction();
 
         // main save process
         try {
@@ -122,15 +143,16 @@ class EditAsiento extends EditController
                     throw new Exception(self::$i18n->trans('clone-line-document-error'));
                 }
             }
+
             // confirm data
-            $dataBase->commit();
+            $this->dataBase->commit();
             $result = $accounting->url('type') . '&action=save-ok';
-        } catch (Exception $e) {
-            self::$miniLog->alert($e->getMessage());
+        } catch (Exception $exp) {
+            self::$miniLog->alert($exp->getMessage());
             $result = '';
         } finally {
-            if ($dataBase->inTransaction()) {
-                $dataBase->rollback();
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
             }
         }
 
@@ -152,24 +174,13 @@ class EditAsiento extends EditController
     /**
      * Run the actions that alter data before reading it
      *
-     * @param string   $action
+     * @param string $action
      *
      * @return bool
      */
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-                return true;
-
-            case 'recalculate-document':
-                $this->setTemplate(false);
-                $data = $this->request->request->all();
-                $result = $this->recalculateDocument($data);
-                $this->response->setContent(json_encode($result));
-                return false;
-
             case 'account-data':
                 $this->setTemplate(false);
                 $subaccount = $this->request->get('codsubcuenta', '');
@@ -190,6 +201,17 @@ class EditAsiento extends EditController
 
             case 'lock':
                 return true; // TODO: Uncomplete
+
+            case 'recalculate-document':
+                $this->setTemplate(false);
+                $data = $this->request->request->all();
+                $result = $this->recalculateDocument($data);
+                $this->response->setContent(json_encode($result));
+                return false;
+
+            case 'save-ok':
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                return true;
 
             default:
                 return parent::execPreviousAction($action);
@@ -241,6 +263,7 @@ class EditAsiento extends EditController
      *
      * @param string $exercise
      * @param string $codeSubAccount
+     *
      * @return array
      */
     private function getAccountVatID($exercise, $codeSubAccount): array
@@ -270,22 +293,6 @@ class EditAsiento extends EditController
             }
         }
         return $result;
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData(): array
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entries';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-balance-scale';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
     }
 
     /**
@@ -335,6 +342,7 @@ class EditAsiento extends EditController
      * @param array $lines
      * @param float $totalCredit
      * @param float $totalDebit
+     *
      * @return array
      */
     private function recalculateLines(array $lines, float &$totalCredit, float &$totalDebit): array
@@ -373,10 +381,11 @@ class EditAsiento extends EditController
     /**
      * Calculate Vat Register data
      *
-     * @param array $line
-     * @param array $document
+     * @param array  $line
+     * @param array  $document
      * @param string $codevat
-     * @param float $base
+     * @param float  $base
+     *
      * @return array
      */
     private function recalculateVatRegister(array &$line, array $document, string $codevat, float $base): array
@@ -433,7 +442,7 @@ class EditAsiento extends EditController
      * Search for VAT Data into Client model
      *
      * @param string $codeSubAccount
-     * @param array $values
+     * @param array  $values
      */
     private function searchVatDataFromClient($codeSubAccount, &$values)
     {
@@ -451,7 +460,7 @@ class EditAsiento extends EditController
      * Search for VAT Data into Supplier model
      *
      * @param string $codeSubAccount
-     * @param array $values
+     * @param array  $values
      */
     private function searchVatDataFromSupplier($codeSubAccount, &$values)
     {
@@ -463,10 +472,5 @@ class EditAsiento extends EditController
             $values['id'] = $supplier->cifnif;
             $values['surcharge'] = ($this->empresa->regimeniva == 'Recargo');
         }
-    }
-
-    public function getModelClassName()
-    {
-        return 'Asiento';
     }
 }

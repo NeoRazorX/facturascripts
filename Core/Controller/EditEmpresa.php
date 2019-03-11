@@ -65,6 +65,7 @@ class EditEmpresa extends ExtendedController\EditController
         parent::createViews();
         $this->createViewWarehouse();
         $this->createViewBankAccounts();
+        $this->createViewPaymentMethods();
         $this->createViewExercises();
     }
 
@@ -92,6 +93,16 @@ class EditEmpresa extends ExtendedController\EditController
      * 
      * @param string $viewName
      */
+    private function createViewPaymentMethods($viewName = 'EditFormaPago')
+    {
+        $this->addEditListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
+        $this->views[$viewName]->disableColumn('company');
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
     private function createViewWarehouse($viewName = 'EditAlmacen')
     {
         $this->addEditListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');
@@ -109,6 +120,7 @@ class EditEmpresa extends ExtendedController\EditController
         switch ($viewName) {
             case 'EditAlmacen':
             case 'EditCuentaBanco':
+            case 'EditFormaPago':
             case 'ListEjercicio':
                 $idcompany = $this->getViewModelValue('EditEmpresa', 'idempresa');
                 $where = [new DataBaseWhere('idempresa', $idcompany)];

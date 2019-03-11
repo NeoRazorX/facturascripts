@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -234,12 +235,24 @@ class Partida extends Base\ModelOnChangeClass
 
     /**
      * 
+     * @param string $codsubcuenta
+     *
      * @return Subcuenta
      */
-    public function getSubcuenta()
+    public function getSubcuenta($codsubcuenta = '')
     {
         $subcuenta = new Subcuenta();
-        $subcuenta->loadFromCode($this->idsubcuenta);
+        if (empty($codsubcuenta)) {
+            $subcuenta->loadFromCode($this->idsubcuenta);
+            return $subcuenta;
+        }
+
+        $asiento = $this->getAsiento();
+        $where = [
+            new DataBaseWhere('codejercicio', $asiento->codejercicio),
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
+        ];
+        $subcuenta->loadFromCode('', $where);
         return $subcuenta;
     }
 
@@ -290,7 +303,7 @@ class Partida extends Base\ModelOnChangeClass
         $this->codcontrapartida = trim($this->codcontrapartida);
         $this->concepto = Utils::noHtml($this->concepto);
         $this->documento = Utils::noHtml($this->documento);
-        
+
         if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
             return false;
@@ -307,6 +320,11 @@ class Partida extends Base\ModelOnChangeClass
     protected function onChange($field)
     {
         switch ($field) {
+            case 'codsubcuenta':
+                $subcuenta = $this->getSubcuenta($this->codsubcuenta);
+                $this->idsubcuenta = $subcuenta->idsubcuenta;
+                break;
+
             case 'debe':
             case 'haber':
                 $debit = $this->debe - $this->previousData['debe'];
@@ -349,7 +367,7 @@ class Partida extends Base\ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = array())
     {
-        $more = ['debe', 'haber'];
+        $more = ['codsubcuenta', 'debe', 'haber'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 
@@ -360,6 +378,15 @@ class Partida extends Base\ModelOnChangeClass
      */
     private function testErrorInData(): bool
     {
-        return empty($this->idasiento) || empty($this->codsubcuenta) || empty($this->debe + $this->haber);
+        if (empty($this->idasiento) || empty($this->codsubcuenta)) {
+            return true;
+        }
+
+        if (empty($this->idsubcuenta)) {
+            $subcuenta = $this->getSubcuenta($this->codsubcuenta);
+            $this->idsubcuenta = $subcuenta->idsubcuenta;
+        }
+
+        return empty($this->idsubcuenta);
     }
 }
