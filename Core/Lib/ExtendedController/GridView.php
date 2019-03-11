@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,16 +22,17 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Lib\Widget\ColumnItem;
-use FacturaScripts\Core\Lib\Widget\WidgetAutocomplete;
-use FacturaScripts\Core\Lib\Widget\WidgetSelect;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
+use FacturaScripts\Dinamic\Lib\Widget\WidgetAutocomplete;
+use FacturaScripts\Dinamic\Lib\Widget\WidgetSelect;
 
 /**
  * Description of GridView
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class GridView extends EditView
 {
@@ -39,17 +40,17 @@ class GridView extends EditView
     const GRIDVIEW_TEMPLATE = 'Master/GridView.html.twig';
 
     /**
+     *
+     * @var ModelClass
+     */
+    public $detailModel;
+
+    /**
      * Detail view
      *
      * @var BaseView
      */
     public $detailView;
-
-    /**
-     *
-     * @var ModelClass
-     */
-    public $detailModel;
 
     /**
      * Template for edit master data
@@ -131,15 +132,16 @@ class GridView extends EditView
 
         if ($this->count == 0) {
             $this->template = self::EDITVIEW_TEMPLATE;
-        } else {
-            if ($this->newCode !== null) {
-                $code = $this->newCode;
-            }
-
-            $where = [new DataBaseWhere($this->model->primaryColumn(), $code)];
-            $orderby = [$this->detailView->model->primaryColumn() => 'ASC'];
-            $this->loadGridData($where, $orderby);
+            return;
         }
+
+        if ($this->newCode !== null) {
+            $code = $this->newCode;
+        }
+
+        $where = [new DataBaseWhere($this->model->primaryColumn(), $code)];
+        $orderby = [$this->detailView->model->primaryColumn() => 'ASC'];
+        $this->loadGridData($where, $orderby);
     }
 
     /**
@@ -148,7 +150,7 @@ class GridView extends EditView
      * @param DataBaseWhere[] $where
      * @param array           $order
      */
-    public function loadGridData($where = array(), $order = array())
+    public function loadGridData($where = [], $order = [])
     {
         // load columns configuration
         $this->gridData = $this->getGridColumns();
@@ -156,10 +158,18 @@ class GridView extends EditView
         // load detail model data
         $this->gridData['rows'] = [];
         $this->detailView->count = $this->detailView->model->count($where);
-        if ($this->detailView->count > 0) {
-            foreach ($this->detailView->model->all($where, $order, 0, 0) as $line) {
-                $this->gridData['rows'][] = (array) $line;
+        if ($this->detailView->count == 0) {
+            return;
+        }
+
+        foreach ($this->detailView->model->all($where, $order, 0, 0) as $line) {
+            /// do not change to (array) $line
+            $row = [];
+            foreach (array_keys($line->getModelFields()) as $field) {
+                $row[$field] = $line->{$field};
             }
+
+            $this->gridData['rows'][] = $row;
         }
     }
 
@@ -259,27 +269,32 @@ class GridView extends EditView
     /**
      * Removes from the database the non-existent detail
      *
-     * @param array $linesOld
-     * @param array $linesNew
+     * @param ModelClass[] $linesOld
+     * @param array        $linesNew
      *
      * @return bool
      */
     private function deleteLinesOld(&$linesOld, &$linesNew): bool
     {
-        if (!empty($linesOld)) {
-            $model = $this->detailView->model;
-            $fieldPK = $model->primaryColumn();
-            $oldIDs = array_column($linesOld, $fieldPK);
-            $newIDs = array_column($linesNew, $fieldPK);
-            $deletedIDs = array_diff($oldIDs, $newIDs);
+        if (empty($linesOld)) {
+            return true;
+        }
 
-            foreach ($deletedIDs as $idKey) {
-                $model->loadFromCode($idKey);
-                if (!$model->delete()) {
-                    return false;
+        $fieldPK = $this->detailView->model->primaryColumn();
+        foreach ($linesOld as $lineOld) {
+            $found = false;
+            foreach ($linesNew as $lineNew) {
+                if ($lineOld->{$fieldPK} == $lineNew[$fieldPK]) {
+                    $found = true;
+                    break;
                 }
             }
+
+            if (!$found && !$lineOld->delete()) {
+                return false;
+            }
         }
+
         return true;
     }
 
@@ -354,15 +369,15 @@ class GridView extends EditView
                 $item['data-source'] = $this->getAutocompleteSource($column->widget);
                 break;
 
-            case 'select':
-                $item['editor'] = 'select';
-                $item['selectOptions'] = $this->getSelectSource($column->widget);
-                break;
-
             case 'number':
             case 'money':
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = DivisaTools::gridMoneyFormat();
+                break;
+
+            case 'select':
+                $item['editor'] = 'select';
+                $item['selectOptions'] = $this->getSelectSource($column->widget);
                 break;
         }
 
