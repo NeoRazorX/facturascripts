@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * The head of transfer.
@@ -72,7 +73,7 @@ class TransferenciaStock extends Base\ModelClass
      * @var string
      */
     public $observaciones;
-
+        
     public function clear()
     {
         parent::clear();
@@ -123,6 +124,15 @@ class TransferenciaStock extends Base\ModelClass
     {
         return 'transferenciasstock';
     }
+    
+    public function getEmpresaDeAlmacen($almacen)
+    {
+        $dataBase = new DataBase;        
+        $sql = 'SELECT idempresa FROM almacenes where codalmacen = '. $almacen;
+        $empresa = $dataBase->select($sql);
+        
+        return $empresa;
+    }
 
     /**
      * 
@@ -134,6 +144,14 @@ class TransferenciaStock extends Base\ModelClass
 
         if ($this->codalmacenorigen == $this->codalmacendestino) {
             self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
+            return false;
+        }       
+        
+        $idempresaorigen = $this->getEmpresaDeAlmacen($this->codalmacenorigen);
+        $idempresadestino = $this->getEmpresaDeAlmacen($this->codalmacendestino);       
+                 
+        if ($idempresaorigen !== $idempresadestino) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-can-be-same-business'));
             return false;
         }
 

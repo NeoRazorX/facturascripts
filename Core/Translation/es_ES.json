@@ -899,6 +899,7 @@
     "version": "Versión",
     "warehouse": "Almacén",
     "warehouse-cant-be-same": "El almacén de orígen y de destino no puede ser el mismo.",
+    "warehouse-can-be-same-business": "Los almacenes de origen y de destino deben ser de la misma empresa",
     "warehouses": "Almacenes",
     "warning": "Atención",
     "web": "Web",
