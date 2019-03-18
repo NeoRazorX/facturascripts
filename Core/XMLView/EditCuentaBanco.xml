@@ -19,7 +19,7 @@
  *
  * Initial description for the controller EditCuentaBanco
  *
- * @author Artex Trading sa     <jferrer@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
@@ -35,7 +35,7 @@
                 <widget type="text" fieldname="swift"/>
             </column>
             <column name="iban" order="130">
-                <widget type="text" fieldname="iban" required="true" />
+                <widget type="text" fieldname="iban" />
             </column>
         </group>
         <group name="extra" numcolumns="12">
@@ -44,8 +44,16 @@
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="subaccount" numcolumns="2" order="120">
-                <widget type="text" fieldname="codsubcuenta"/>
+            <column name="subaccount" numcolumns="5" order="120">
+                <widget type="autocomplete" fieldname="codsubcuenta">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="expenses" numcolumns="5" order="130">
+                <widget type="autocomplete" fieldname="codsubcuentagasto">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+                <widget type="text" fieldname=""/>
             </column>
         </group>
     </columns>

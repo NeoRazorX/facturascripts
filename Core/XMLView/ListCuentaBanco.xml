@@ -32,10 +32,16 @@
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion"/>
         </column>
-        <column name="swift" order="120">
+        <column name="subaccount" order="120">
+            <widget type="text" fieldname="codsubcuenta"/>
+        </column>
+        <column name="expenses" order="130">
+            <widget type="text" fieldname="codsubcuentagastos"/>
+        </column>
+        <column name="swift" order="140">
             <widget type="text" fieldname="swift"/>
         </column>
-        <column name="iban" order="130">
+        <column name="iban" order="150">
             <widget type="text" fieldname="iban"/>
         </column>
     </columns>
