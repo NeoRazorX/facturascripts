@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -42,12 +43,13 @@ class AccountingAccounts
 
     const SPECIAL_CUSTOMER_ACCOUNT = 'CLIENT';
     const SPECIAL_SUPPLIER_ACCOUNT = 'PROVEE';
+    const SPECIAL_PAYMENT_ACCOUNT  = 'CAJA';
 
     /**
      *
      * @var Ejercicio
      */
-    protected $exercise;
+    public $exercise;
 
     /**
      * Class constructor
@@ -138,6 +140,24 @@ class AccountingAccounts
         }
 
         return new Subcuenta();
+    }
+
+    /**
+     * Get the accounting sub-account for payments in the fiscal year.
+     *
+     * @param string $code
+     * @param string $specialAccount
+     * @return Cuenta
+     */
+    public function getPaymentAccount(string $code, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
+    {
+        $bankAccount = new CuentaBanco();
+        if ($bankAccount->loadFromCode($code)) {
+            if (!empty($bankAccount->codsubcuenta)) {
+                return $this->getSubAccount($bankAccount->codsubcuenta);
+            }
+        }
+        return $this->getSpecialSubAccount($specialAccount);
     }
 
     /**
@@ -326,7 +346,7 @@ class AccountingAccounts
     }
 
     /**
-     * 
+     *
      * @param int    $length
      * @param string $value
      * @param string $prefix
