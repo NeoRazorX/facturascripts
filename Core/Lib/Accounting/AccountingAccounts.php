@@ -44,6 +44,7 @@ class AccountingAccounts
     const SPECIAL_CUSTOMER_ACCOUNT = 'CLIENT';
     const SPECIAL_SUPPLIER_ACCOUNT = 'PROVEE';
     const SPECIAL_PAYMENT_ACCOUNT  = 'CAJA';
+    const SPECIAL_EXPENSE_ACCOUNT  = 'GTOBAN';
 
     /**
      *
@@ -59,6 +60,60 @@ class AccountingAccounts
     public function __construct()
     {
         $this->exercise = new Ejercicio();
+    }
+
+    /**
+     *
+     * @param Cliente $customer
+     * @param string  $specialAccount
+     *
+     * @return Subcuenta
+     */
+    protected function createCustomerAccount(&$customer, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
+    {
+        $subcuenta = new Subcuenta();
+        $cuenta = $this->getSpecialAccount($specialAccount);
+        if (!$cuenta->exists() || !$this->exercise->isOpened()) {
+            return $subcuenta;
+        }
+
+        $subcuenta->codcuenta = $cuenta->codcuenta;
+        $subcuenta->codejercicio = $cuenta->codejercicio;
+        $subcuenta->codsubcuenta = $customer->codsubcuenta;
+        $subcuenta->descripcion = $customer->razonsocial;
+        $subcuenta->idcuenta = $cuenta->idcuenta;
+        if ($subcuenta->save()) {
+            $customer->save();
+        }
+
+        return $subcuenta;
+    }
+
+    /**
+     *
+     * @param Proveedor $supplier
+     * @param string    $specialAccount
+     *
+     * @return Subcuenta
+     */
+    protected function createSupplierAccount(&$supplier, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
+    {
+        $subcuenta = new Subcuenta();
+        $cuenta = $this->getSpecialAccount($specialAccount);
+        if (!$cuenta->exists() || !$this->exercise->isOpened()) {
+            return $subcuenta;
+        }
+
+        $subcuenta->codcuenta = $cuenta->codcuenta;
+        $subcuenta->codejercicio = $cuenta->codejercicio;
+        $subcuenta->codsubcuenta = $supplier->codsubcuenta;
+        $subcuenta->descripcion = $supplier->razonsocial;
+        $subcuenta->idcuenta = $cuenta->idcuenta;
+        if ($subcuenta->save()) {
+            $supplier->save();
+        }
+
+        return $subcuenta;
     }
 
     /**
@@ -143,11 +198,29 @@ class AccountingAccounts
     }
 
     /**
+     * Get the banking expenses sub-account for payments in the fiscal year.
+     *
+     * @param string $code
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getExpenseAccount(string $code, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
+    {
+        $bankAccount = new CuentaBanco();
+        if ($bankAccount->loadFromCode($code)) {
+            if (!empty($bankAccount->codsubcuentagastos)) {
+                return $this->getSubAccount($bankAccount->codsubcuentagastos);
+            }
+        }
+        return $this->getSpecialSubAccount($specialAccount);
+    }
+
+    /**
      * Get the accounting sub-account for payments in the fiscal year.
      *
      * @param string $code
      * @param string $specialAccount
-     * @return Cuenta
+     * @return Subcuenta
      */
     public function getPaymentAccount(string $code, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
     {
@@ -289,60 +362,6 @@ class AccountingAccounts
 
         $this->exercise->idempresa = $idCompany;
         return $this->exercise->loadFromDate($date, false);
-    }
-
-    /**
-     *
-     * @param Cliente $customer
-     * @param string  $specialAccount
-     *
-     * @return Subcuenta
-     */
-    protected function createCustomerAccount(&$customer, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
-    {
-        $subcuenta = new Subcuenta();
-        $cuenta = $this->getSpecialAccount($specialAccount);
-        if (!$cuenta->exists() || !$this->exercise->isOpened()) {
-            return $subcuenta;
-        }
-
-        $subcuenta->codcuenta = $cuenta->codcuenta;
-        $subcuenta->codejercicio = $cuenta->codejercicio;
-        $subcuenta->codsubcuenta = $customer->codsubcuenta;
-        $subcuenta->descripcion = $customer->razonsocial;
-        $subcuenta->idcuenta = $cuenta->idcuenta;
-        if ($subcuenta->save()) {
-            $customer->save();
-        }
-
-        return $subcuenta;
-    }
-
-    /**
-     *
-     * @param Proveedor $supplier
-     * @param string    $specialAccount
-     *
-     * @return Subcuenta
-     */
-    protected function createSupplierAccount(&$supplier, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
-    {
-        $subcuenta = new Subcuenta();
-        $cuenta = $this->getSpecialAccount($specialAccount);
-        if (!$cuenta->exists() || !$this->exercise->isOpened()) {
-            return $subcuenta;
-        }
-
-        $subcuenta->codcuenta = $cuenta->codcuenta;
-        $subcuenta->codejercicio = $cuenta->codejercicio;
-        $subcuenta->codsubcuenta = $supplier->codsubcuenta;
-        $subcuenta->descripcion = $supplier->razonsocial;
-        $subcuenta->idcuenta = $cuenta->idcuenta;
-        if ($subcuenta->save()) {
-            $supplier->save();
-        }
-
-        return $subcuenta;
     }
 
     /**
