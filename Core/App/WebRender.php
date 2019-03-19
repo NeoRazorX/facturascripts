@@ -53,7 +53,7 @@ class WebRender
     /**
      * Loads template from the filesystem.
      *
-     * @var Twig_Loader_Filesystem
+     * @var FilesystemLoader
      */
     private $loader;
 
@@ -92,7 +92,7 @@ class WebRender
     /**
      * Return Twig environment with default options for Twig.
      *
-     * @return Twig_Environment
+     * @return Environment
      */
     public function getTwig()
     {
