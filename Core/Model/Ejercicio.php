@@ -257,7 +257,29 @@ class Ejercicio extends Base\ModelClass
     {
         return 'codejercicio';
     }
-
+    
+   /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     * 
+     * @return bool
+     */
+    protected function saveInsert(array $values = []) {
+        $idempresa = $this->idempresa;
+        $where = [
+            new DataBaseWhere('idempresa', $idempresa),            
+            new DataBaseWhere('fechainicio', $this->fechainicio, '<='),            
+            new DataBaseWhere('fechafin', $this->fechainicio, '>=', 'AND'),
+        ];
+        
+        if(!empty($this->all($where, [], 0, 0))) {
+            self::$miniLog->alert(self::$i18n->trans('exercise-date-range-exists'));
+            return false;
+        }
+        return parent::saveInsert($values);
+    }
+        
     /**
      * Returns the name of the table that uses this model.
      *

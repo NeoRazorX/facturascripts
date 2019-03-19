@@ -335,6 +335,7 @@
     "exempt": "Exento",
     "exercise": "Ejercicio",
     "exercise-date-out-range": "La fecha no está en el periodo del ejercicio.",
+    "exercise-date-range-exists": "El rango de fechas del ejercicio ya existe en un ejercicio de la misma empresa.",
     "exercise-not-found": "Ejercicio no encontrado.",
     "exercises": "Ejercicios",
     "expiration": "Vencimiento",
