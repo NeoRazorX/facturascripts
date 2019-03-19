@@ -257,29 +257,29 @@ class Ejercicio extends Base\ModelClass
     {
         return 'codejercicio';
     }
-    
-   /**
+
+    /**
      * Insert the model data in the database.
      *
      * @param array $values
      * 
      * @return bool
      */
-    protected function saveInsert(array $values = []) {
-        $idempresa = $this->idempresa;
+    protected function saveInsert(array $values = [])
+    {
         $where = [
-            new DataBaseWhere('idempresa', $idempresa),            
-            new DataBaseWhere('fechainicio', $this->fechainicio, '<='),            
-            new DataBaseWhere('fechafin', $this->fechainicio, '>=', 'AND'),
+            new DataBaseWhere('idempresa', $this->idempresa),
         ];
-        
-        if(!empty($this->all($where, [], 0, 0))) {
-            self::$miniLog->alert(self::$i18n->trans('exercise-date-range-exists'));
-            return false;
+        $ejercicios = $this->all($where, [], 0, 0);
+        foreach ($ejercicios as $ejercicio) {
+            if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
+                self::$miniLog->alert(self::$i18n->trans('exercise-date-range-exists'));
+                return false;
+            }
         }
         return parent::saveInsert($values);
     }
-        
+
     /**
      * Returns the name of the table that uses this model.
      *
