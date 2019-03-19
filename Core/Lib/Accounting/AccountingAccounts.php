@@ -153,11 +153,10 @@ class AccountingAccounts
     public function getExpenseAccount(string $code, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
     {
         $bankAccount = new CuentaBanco();
-        if ($bankAccount->loadFromCode($code)) {
-            if (!empty($bankAccount->codsubcuentagastos)) {
-                return $this->getSubAccount($bankAccount->codsubcuentagastos);
-            }
+        if ($bankAccount->loadFromCode($code) && !empty($bankAccount->codsubcuentagasto)) {
+            return $this->getSubAccount($bankAccount->codsubcuentagasto);
         }
+
         return $this->getSpecialSubAccount($specialAccount);
     }
 
