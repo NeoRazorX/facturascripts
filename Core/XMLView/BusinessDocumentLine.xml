@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,14 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
  * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
-        <column name="id" display="none" order="100">
+        <column name="code" display="none" order="90">
             <widget type="text" fieldname="idlinea" />
+        </column>
+        <column name="product" display="none" order="100">
+            <widget type="text" fieldname="idproducto" />
         </column>
         <column name="reference" order="110">
             <widget type="autocomplete" fieldname="referencia">
