@@ -72,7 +72,7 @@ class TransferenciaStock extends Base\ModelClass
      * @var string
      */
     public $observaciones;
-        
+
     public function clear()
     {
         parent::clear();
@@ -123,14 +123,6 @@ class TransferenciaStock extends Base\ModelClass
     {
         return 'transferenciasstock';
     }
-    
-    public function getEmpresaDeAlmacen($almacen)
-    {
-        $almacenEmpresa = new Almacen;
-        if($almacenEmpresa->loadFromCode($almacen)){
-            return $almacenEmpresa->idempresa;           
-        }      
-    }
 
     /**
      * 
@@ -143,13 +135,10 @@ class TransferenciaStock extends Base\ModelClass
         if ($this->codalmacenorigen == $this->codalmacendestino) {
             self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
             return false;
-        }       
-        
-        $idempresaorigen = $this->getEmpresaDeAlmacen($this->codalmacenorigen);        
-        $idempresadestino = $this->getEmpresaDeAlmacen($this->codalmacendestino);          
-                         
-        if ($idempresaorigen !== $idempresadestino) {
-            self::$miniLog->alert(self::$i18n->trans('warehouse-can-be-same-business'));
+        }
+
+        if ($this->getIdempresa($this->codalmacendestino) !== $this->getIdempresa($this->codalmacenorigen)) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-must-be-same-business'));
             return false;
         }
 
@@ -166,5 +155,18 @@ class TransferenciaStock extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListAlmacen?activetab=List');
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return int
+     */
+    protected function getIdempresa($codalmacen)
+    {
+        $warehouse = new Almacen;
+        $warehouse->loadFromCode($codalmacen);
+        return $warehouse->idempresa;
     }
 }
