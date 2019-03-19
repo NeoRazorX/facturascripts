@@ -342,4 +342,26 @@ class Ejercicio extends Base\ModelClass
 
         return $this->save();
     }
+
+    /**
+     * Insert the model data in the database.
+     *
+     *
+     * @return bool
+     */
+    protected function saveInsert() {
+
+        $idempresa = $this->idempresa;
+        $where = [
+            new DataBaseWhere('idempresa', $idempresa),
+            new DataBaseWhere('fechafin', $this->fechainicio, '>='),
+        ];
+        
+        if(!empty($this->all($where, [], 0, 0))) {
+            self::$miniLog->alert(self::$i18n->trans('excersice-date-into-range-existed'));
+            return false;
+        }
+
+        return parent::saveInsert();
+    }
 }
