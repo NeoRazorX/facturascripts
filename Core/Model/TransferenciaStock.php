@@ -137,6 +137,11 @@ class TransferenciaStock extends Base\ModelClass
             return false;
         }
 
+        if ($this->getIdempresa($this->codalmacendestino) !== $this->getIdempresa($this->codalmacenorigen)) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-must-be-same-business'));
+            return false;
+        }
+
         return parent::test();
     }
 
@@ -150,5 +155,18 @@ class TransferenciaStock extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListAlmacen?activetab=List');
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return int
+     */
+    protected function getIdempresa($codalmacen)
+    {
+        $warehouse = new Almacen;
+        $warehouse->loadFromCode($codalmacen);
+        return $warehouse->idempresa;
     }
 }

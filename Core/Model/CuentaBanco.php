@@ -37,6 +37,12 @@ class CuentaBanco extends Base\BankAccount
     public $codsubcuenta;
 
     /**
+     *
+     * @var string
+     */
+    public $codsubcuentagasto;
+    
+    /**
      * Foreign Key with Empresas table.
      *
      * @var int

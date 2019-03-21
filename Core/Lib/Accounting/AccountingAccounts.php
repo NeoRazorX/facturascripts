@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -41,13 +42,15 @@ class AccountingAccounts
 {
 
     const SPECIAL_CUSTOMER_ACCOUNT = 'CLIENT';
+    const SPECIAL_EXPENSE_ACCOUNT = 'GTOBAN';
+    const SPECIAL_PAYMENT_ACCOUNT = 'CAJA';
     const SPECIAL_SUPPLIER_ACCOUNT = 'PROVEE';
 
     /**
      *
      * @var Ejercicio
      */
-    protected $exercise;
+    public $exercise;
 
     /**
      * Class constructor
@@ -138,6 +141,41 @@ class AccountingAccounts
         }
 
         return new Subcuenta();
+    }
+
+    /**
+     * Get the banking expenses sub-account for payments in the fiscal year.
+     *
+     * @param string $code
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getExpenseAccount(string $code, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
+    {
+        $bankAccount = new CuentaBanco();
+        if ($bankAccount->loadFromCode($code) && !empty($bankAccount->codsubcuentagasto)) {
+            return $this->getSubAccount($bankAccount->codsubcuentagasto);
+        }
+
+        return $this->getSpecialSubAccount($specialAccount);
+    }
+
+    /**
+     * Get the accounting sub-account for payments in the fiscal year.
+     *
+     * @param string $code
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getPaymentAccount(string $code, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
+    {
+        $bankAccount = new CuentaBanco();
+        if ($bankAccount->loadFromCode($code)) {
+            if (!empty($bankAccount->codsubcuenta)) {
+                return $this->getSubAccount($bankAccount->codsubcuenta);
+            }
+        }
+        return $this->getSpecialSubAccount($specialAccount);
     }
 
     /**
@@ -242,36 +280,6 @@ class AccountingAccounts
     }
 
     /**
-     * Set the exercise from primary key
-     *
-     * @param string $code
-     *
-     * @return bool
-     */
-    public function setExerciseFromCode(string $code)
-    {
-        return $this->exercise->loadFromCode($code);
-    }
-
-    /**
-     * Set the exercise search from company and date
-     *
-     * @param int    $idCompany
-     * @param string $date
-     *
-     * @return bool
-     */
-    public function setExerciseFromCompany(int $idCompany, $date)
-    {
-        if (empty($date)) {
-            $date = date('d-m-Y');
-        }
-
-        $this->exercise->idempresa = $idCompany;
-        return $this->exercise->loadFromDate($date, false);
-    }
-
-    /**
      *
      * @param Cliente $customer
      * @param string  $specialAccount
@@ -326,7 +334,7 @@ class AccountingAccounts
     }
 
     /**
-     * 
+     *
      * @param int    $length
      * @param string $value
      * @param string $prefix

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,11 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
-use Twig_Environment;
-use Twig_Extension_Debug;
-use Twig_Filter;
-use Twig_Function;
-use Twig_Loader_Filesystem;
+use Twig\Environment;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Description of WebRender
@@ -53,7 +53,7 @@ class WebRender
     /**
      * Loads template from the filesystem.
      *
-     * @var Twig_Loader_Filesystem
+     * @var FilesystemLoader
      */
     private $loader;
 
@@ -84,7 +84,7 @@ class WebRender
 
         $this->i18n = new Translator();
         $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
-        $this->loader = new Twig_Loader_Filesystem($path);
+        $this->loader = new FilesystemLoader($path);
         $this->miniLog = new MiniLog();
         $this->pluginManager = new PluginManager();
     }
@@ -92,14 +92,14 @@ class WebRender
     /**
      * Return Twig environment with default options for Twig.
      *
-     * @return Twig_Environment
+     * @return Environment
      */
     public function getTwig()
     {
-        $twig = new Twig_Environment($this->loader, $this->getOptions());
+        $twig = new Environment($this->loader, $this->getOptions());
 
         /// asset functions
-        $assetFunction = new Twig_Function('asset', function ($string) {
+        $assetFunction = new TwigFunction('asset', function ($string) {
             $path = FS_ROUTE . '/';
             if (substr($string, 0, strlen($path)) == $path) {
                 return $string;
@@ -109,13 +109,13 @@ class WebRender
         $twig->addFunction($assetFunction);
 
         /// fixHtml functions
-        $fixHtmlFunction = new Twig_Filter('fixHtml', function ($string) {
+        $fixHtmlFunction = new TwigFilter('fixHtml', function ($string) {
             return Utils::fixHtml($string);
         });
         $twig->addFilter($fixHtmlFunction);
 
         /// debug extension
-        $twig->addExtension(new Twig_Extension_Debug());
+        $twig->addExtension(new DebugExtension());
 
         return $twig;
     }

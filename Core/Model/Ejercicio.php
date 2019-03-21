@@ -181,7 +181,7 @@ class Ejercicio extends Base\ModelClass
         $start = strtotime($this->fechainicio);
         $end = strtotime($this->fechafin);
         $date = strtotime($dateToCheck);
-        return (($date >= $start) && ($date <= $end));
+        return ($date >= $start) && ($date <= $end);
     }
 
     /**
@@ -341,5 +341,25 @@ class Ejercicio extends Base\ModelClass
         }
 
         return $this->save();
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     * 
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $where = [new DataBaseWhere('idempresa', $this->idempresa)];
+        foreach ($this->all($where, [], 0, 0) as $ejercicio) {
+            if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
+                self::$miniLog->alert(self::$i18n->trans('exercise-date-range-exists'));
+                return false;
+            }
+        }
+
+        return parent::saveInsert($values);
     }
 }
