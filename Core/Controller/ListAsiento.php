@@ -58,9 +58,9 @@ class ListAsiento extends ExtendedController\ListController
         /// accounting entries
         $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
-        $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
-        $this->addOrderBy('ListAsiento', ['numero'], 'number');
-        $this->addOrderBy('ListAsiento', ['importe'], 'ammount');
+        $this->addOrderBy('ListAsiento', ['fecha', 'idasiento'], 'date', 2);
+        $this->addOrderBy('ListAsiento', ['numero', 'idasiento'], 'number');
+        $this->addOrderBy('ListAsiento', ['importe', 'idasiento'], 'ammount');
 
         $this->addFilterPeriod('ListAsiento', 'date', 'period', 'fecha');
         $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');

@@ -228,6 +228,8 @@ class GridView extends EditView
             // Proccess detail document data (new)
             $this->model->initTotals(); // Master Model must implement GridModelInterface
             foreach ($data['lines'] as $newLine) {
+                $this->detailModel->clear();
+                $this->detailModel->loadFromData($newLine);
                 $this->detailView->model->loadFromData($newLine);
                 if (empty($this->detailView->model->primaryColumnValue())) {
                     $this->detailView->model->{$primaryKey} = $primaryKeyValue;
