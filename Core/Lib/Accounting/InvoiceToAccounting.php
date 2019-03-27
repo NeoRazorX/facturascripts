@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -44,13 +43,6 @@ class InvoiceToAccounting extends AccountingAccounts
      * @var FacturaCliente|FacturaProveedor
      */
     protected $document;
-
-    /**
-     * Accounting exercise model
-     *
-     * @var Ejercicio
-     */
-    protected $exercise;
 
     /**
      * Multi-language translator.
