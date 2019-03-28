@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -144,6 +144,18 @@ class AssetManager
     }
 
     /**
+     * 
+     * @param string $path
+     * @param int    $levels
+     *
+     * @return string
+     */
+    protected static function dirname($path, $levels = 1)
+    {
+        return str_replace('\\', '/', dirname($path, $levels));
+    }
+
+    /**
      *
      * @param string $data
      * @param string $url
@@ -157,9 +169,9 @@ class AssetManager
 
         // Replace relative paths in url()
         $replace = [
-            'url("' => 'url("' . dirname($url) . '/',
-            'url(../' => "url(" . dirname($url, 2) . '/',
-            "url('../" => "url('" . dirname($url, 2) . '/',
+            'url("' => 'url("' . self::dirname($url) . '/',
+            'url(../' => "url(" . self::dirname($url, 2) . '/',
+            "url('../" => "url('" . self::dirname($url, 2) . '/',
         ];
         $buffer = str_replace(array_keys($replace), $replace, $buffer);
 
