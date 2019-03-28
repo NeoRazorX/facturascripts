@@ -70,7 +70,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
         /// shipping address
         $columnShipping = $view->columnForName('shippingaddr');
-        $columnShipping->widget->setValuesFromArray($addresses, false);
+        $columnShipping->widget->setValuesFromArray($addresses, false, true);
     }
 
     /**

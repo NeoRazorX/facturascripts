@@ -70,7 +70,7 @@
         </group>
         <group name="shipaddresses" title="shipping-address" numcolumns="12">
             <column name="shippingaddr" title="shipping-address" order="100">
-                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto" required="true">
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>
