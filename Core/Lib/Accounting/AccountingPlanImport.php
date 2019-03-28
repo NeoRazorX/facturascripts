@@ -114,7 +114,7 @@ class AccountingPlanImport
         }
 
         $data = $this->getData($filePath);
-        if ($data->count() == 0) {
+        if (is_array($data) || $data->count() == 0) {
             return;
         }
 
