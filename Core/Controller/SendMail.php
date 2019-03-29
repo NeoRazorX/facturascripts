@@ -76,7 +76,7 @@ class SendMail extends Controller
 
         // Check if the email is configurate
         if (AppSettings::get('email', 'host', '') == "") {
-            $this->miniLog->alert('email-not-configure');
+            $this->miniLog->alert($this->i18n->trans('email-not-configure'));
         }
 
         $this->setAddressee();
@@ -251,9 +251,9 @@ class SendMail extends Controller
                 unlink(FS_FOLDER . '/MyFiles/' . $fileName);
             }
             $this->updateFemail();
-            $this->miniLog->notice('send-mail-ok');
+            $this->miniLog->notice($this->i18n->trans('send-mail-ok'));
         } else {
-            $this->miniLog->error('send-mail-error');
+            $this->miniLog->error($this->i18n->trans('send-mail-error'));
         }
     }
 
@@ -274,7 +274,7 @@ class SendMail extends Controller
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
             $model->femail = date('d-m-Y');
             if (!$model->save()) {
-                $this->miniLog->alert('error-saving-data');
+                $this->miniLog->alert($this->i18n->trans('error-saving-data'));
             }
         }
     }
