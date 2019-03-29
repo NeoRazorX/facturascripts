@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,6 +33,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 class EmailTools
 {
 
+    const DEFAULT_TEMPLATE = 'BasicTemplate.html.twig';
+
     /**
      * Settings properties for email
      *
@@ -53,7 +55,7 @@ class EmailTools
     /**
      * Add attachments to the email.
      *
-     * @param PHPMailer $mail
+     * @param PHPMailer    $mail
      * @param string|array $files
      */
     public function addAttachment(&$mail, $files)
@@ -72,9 +74,9 @@ class EmailTools
      * (List of email addresses separated by a comma)
      *
      * @param PHPMailer $mail
-     * @param string $emails
-     * @param string $emailsCC
-     * @param string $emailsBCC
+     * @param string    $emails
+     * @param string    $emailsCC
+     * @param string    $emailsBCC
      */
     public function addEmails(&$mail, string $emails, string $emailsCC = '', string $emailsBCC = '')
     {
@@ -82,30 +84,13 @@ class EmailTools
             $mail->addAddress($email);
         }
 
-        if (!empty($emailsCC)) {
-            foreach ($this->getEmails($emailsCC) as $email) {
-                $mail->addCC($email);
-            }
+        foreach ($this->getEmails($emailsCC) as $email) {
+            $mail->addCC($email);
         }
 
-        if (!empty($emailsBCC)) {
-            foreach ($this->getEmails($emailsBCC) as $email) {
-                $mail->addBCC($email);
-            }
+        foreach ($this->getEmails($emailsBCC) as $email) {
+            $mail->addBCC($email);
         }
-    }
-
-    /**
-     * Converts a mailing list string into an array.
-     *
-     * @param string $emails
-     *
-     * @return array
-     */
-    private function getEmails(string $emails): array
-    {
-        // Remove unneeded spaces and posible ending comma, before to convert into array
-        return explode(',', rtrim(trim($emails), ','));
     }
 
     /**
@@ -117,11 +102,10 @@ class EmailTools
      *
      * @return string
      */
-    public function getTemplateHtml(array $params, string $template = '', array $objects = []): string
+    public function getTemplateHtml(array $params, string $template = self::DEFAULT_TEMPLATE, array $objects = []): string
     {
         /// If it's a basic template, load basic data
-        if (empty($template)) {
-            $template = 'BasicTemplate.html.twig';
+        if ($template === self::DEFAULT_TEMPLATE) {
             $params['body'] = $params['body'] ?? '-';
             $params['company'] = $params['company'] ?? '-';
             $params['footer'] = $params['footer'] ?? '-';
@@ -133,25 +117,15 @@ class EmailTools
         $webRender->loadPluginFolders();
         $html = $webRender->render('Email/' . $template, $objects);
 
-        /// Load macros and set values
+        /// replace values
         $search = [];
         $replace = [];
         foreach ($params as $key => $value) {
             $search[] = '[[' . $key . ']]';
             $replace[] = $value;
         }
-        return str_replace($search, $replace, $html);
-    }
 
-    /**
-     * Get value from Application Email Settings
-     *
-     * @param string $key
-     * @return mixed
-     */
-    private function getSetting(string $key)
-    {
-        return isset(self::$settings[$key]) ? self::$settings[$key] : null;
+        return str_replace($search, $replace, $html);
     }
 
     /**
@@ -264,13 +238,58 @@ class EmailTools
                 unlink(FS_FOLDER . '/MyFiles/' . $data['fileName']);
             }
 
-            $i18n =new i18n();
+            $i18n = new i18n();
             $miniLog = new MiniLog();
             $miniLog->notice($i18n->trans('send-mail-ok'));
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Test the PHPMailer connection. Return the result of the connection.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        if (self::$settings['mailer'] === 'smtp') {
+            $mail = $this->newMail();
+
+            return $mail->smtpConnect($this->smtpOptions());
+        }
+
+        return true;
+    }
+
+    /**
+     * Converts a mailing list string into an array.
+     *
+     * @param string $emails
+     *
+     * @return array
+     */
+    private function getEmails(string $emails): array
+    {
+        if (empty($emails)) {
+            return [];
+        }
+
+        // Remove unneeded spaces and posible ending comma, before to convert into array
+        return explode(',', rtrim(trim($emails), ','));
+    }
+
+    /**
+     * Get value from Application Email Settings
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    private function getSetting(string $key)
+    {
+        return isset(self::$settings[$key]) ? self::$settings[$key] : null;
     }
 
     /**
@@ -292,21 +311,5 @@ class EmailTools
         }
 
         return $SMTPOptions;
-    }
-
-    /**
-     * Test the PHPMailer connection. Return the result of the connection.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (self::$settings['mailer'] === 'smtp') {
-            $mail = $this->newMail();
-
-            return $mail->smtpConnect($this->smtpOptions());
-        }
-
-        return true;
     }
 }

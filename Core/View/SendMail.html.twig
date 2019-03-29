@@ -1,74 +1,12 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('node_modules/summernote/dist/summernote-bs4.js') }}"></script>
-    <script type="text/javascript">
-        function split(val) {
-            return val.split(/,\s*/);
-        }
-        function extractLast(term) {
-            return split(term).pop();
-        }
-        $(document).ready(function () {
-            var cacheQuery = {};
-            $("#email,#email-cc,#email-bcc")
-                    // don't navigate away from the field on tab when selecting an item
-                    .on("keydown", function (event) {
-                        if (event.keyCode === $.ui.keyCode.TAB &&
-                                $(this).autocomplete("instance").menu.active) {
-                            event.preventDefault();
-                        }
-                    })
-                    .autocomplete({
-                        minLength: 0,
-                        source: function (request, response) {
-                            // Avoid re-query the same
-                            var term = request.term;
-                            if (term in cacheQuery) {
-                                response(cacheQuery[term]);
-                                return;
-                            }
-
-                            $.getJSON("SendMail", {
-                                action: 'autocomplete',
-                                source: '{{ fsc.addressee }}',
-                                field: 'email',
-                                title: 'email',
-                                term: extractLast(request.term)
-                            }, function (data) {
-                                cacheQuery[ term ] = data;
-                                response(data);
-                            });
-                        },
-                        focus: function () {
-                            // Prevent value inserted on focus
-                            return false;
-                        },
-                        select: function (event, ui) {
-                            var terms = split(this.value);
-                            // Remove the current input
-                            terms.pop();
-                            // Add the selected item
-                            terms.push(ui.item.value);
-                            // Add placeholder to get the comma-and-space at the end
-                            terms.push("");
-                            this.value = terms.join(", ");
-                            return false;
-                        }
-                    });
-        });
-    </script>
-{% endblock %}
-
 {% block body %}
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>
-                    <i class="fas fa-envelope" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
+                <h1 class="h2">
+                    <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
                 </h1>
-                <hr/>
             </div>
         </div>
         <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
@@ -80,7 +18,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ i18n.trans('to') }}</span>
                             </div>
-                            <input type="text" id="email" name="email" class="form-control" required="" placeholder="{{ i18n.trans('email-to') }}"/>
+                            <input type="text" id="email" name="email" value="{{ fsc.address }}" class="form-control" required="" placeholder="{{ i18n.trans('email-to') }}"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -126,4 +64,64 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        function split(val) {
+            return val.split(/,\s*/);
+        }
+        function extractLast(term) {
+            return split(term).pop();
+        }
+        $(document).ready(function () {
+            var cacheQuery = {};
+            $("#email,#email-cc,#email-bcc")
+                    // don't navigate away from the field on tab when selecting an item
+                    .on("keydown", function (event) {
+                        if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+                            event.preventDefault();
+                        }
+                    })
+                    .autocomplete({
+                        minLength: 0,
+                        source: function (request, response) {
+                            // Avoid re-query the same
+                            var term = request.term;
+                            if (term in cacheQuery) {
+                                response(cacheQuery[term]);
+                                return;
+                            }
+
+                            $.getJSON("SendMail", {
+                                action: 'autocomplete',
+                                source: 'contactos',
+                                field: 'email',
+                                title: 'email',
+                                term: extractLast(request.term)
+                            }, function (data) {
+                                cacheQuery[ term ] = data;
+                                response(data);
+                            });
+                        },
+                        focus: function () {
+                            // Prevent value inserted on focus
+                            return false;
+                        },
+                        select: function (event, ui) {
+                            var terms = split(this.value);
+                            // Remove the current input
+                            terms.pop();
+                            // Add the selected item
+                            terms.push(ui.item.value);
+                            // Add placeholder to get the comma-and-space at the end
+                            terms.push("");
+                            this.value = terms.join(", ");
+                            return false;
+                        }
+                    });
+        });
+    </script>
 {% endblock %}
