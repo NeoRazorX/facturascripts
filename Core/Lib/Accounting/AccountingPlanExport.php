@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Edit Description of AccountingPlanImport
@@ -82,7 +83,9 @@ class AccountingPlanExport
         }
         /// añadimos las cuentas
         $cuenta = new Model\Cuenta();
-        foreach ($cuenta->all() as $c) {
+        $where = [new DataBase\DataBaseWhere('codejercicio', $codejercicio)];
+        $order = ['codcuenta' => 'ASC'];
+        foreach ($cuenta->all($where, $order, 0, 0) as $c) {
             $aux = $archivo_xml->addChild("cuenta");
             $aux->addChild("parent_codcuenta", $c->parent_codcuenta);
             $aux->addChild("codcuenta", $c->codcuenta);
@@ -91,12 +94,14 @@ class AccountingPlanExport
         }
         /// añadimos las subcuentas
         $subcuenta = new Model\Subcuenta();
-        foreach ($subcuenta->all() as $sc) {
+        $where = [new DataBase\DataBaseWhere('codejercicio', $codejercicio)];
+        $order = ['codcuenta' => 'ASC'];
+        foreach ($subcuenta->all($where, $order, 0, 0) as $sc) {
             $aux = $archivo_xml->addChild("subcuenta");
             $aux->addChild("codcuenta", $sc->codcuenta);
             $aux->addChild("codsubcuenta", $sc->codsubcuenta);
             $aux->addChild("descripcion", base64_encode($sc->descripcion));
-            $aux->addChild("codcuentaesp", $c->codcuentaesp);
+            $aux->addChild("codcuentaesp", $c->codcuentaesp);           
         }
         /// volcamos el XML
         header("content-type: application/xml; charset=UTF-8");
