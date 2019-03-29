@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -102,6 +103,9 @@ class EditEjercicio extends ExtendedController\EditController
             case 'import-accounting':
                 $this->importAccountingPlan();
                 return true;
+            case 'export-accounting':
+                $this->exportAccountingPlan();
+                return true;
 
             default:
                 return parent::execPreviousAction($action);
@@ -143,5 +147,17 @@ class EditEjercicio extends ExtendedController\EditController
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
         return true;
+    }
+
+    /**
+     * Export AccountingPlan to XML.
+     *    
+     */
+    private function exportAccountingPlan()
+    {                   
+        $this->setTemplate(false); /// desactivamos el motor de plantillas
+        $accountingPlanExport = new AccountingPlanExport();      
+        $ejercicio = $this->request->get('code');
+        $accountingPlanExport->exportXML($ejercicio);
     }
 }
