@@ -158,17 +158,26 @@ class EditEjercicio extends ExtendedController\EditController
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                $accountingPlanImport->importXML($uploadFile->getPathname(), $code);
+                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $code)) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                }
                 break;
 
             case 'text/csv':
             case 'text/plain':
-                $accountingPlanImport->importCSV($uploadFile->getPathname(), $code);
+                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $code)) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                }
                 break;
 
             default:
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
+
         return true;
     }
 }

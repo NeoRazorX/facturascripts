@@ -75,16 +75,19 @@ class AccountingPlanImport
      *
      * @param string $filePath
      * @param string $codejercicio
+     *
+     * @return bool
      */
     public function importCSV(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
             $this->miniLog->error($this->i18n->trans('exercise-not-found'));
-            return;
+            return false;
         }
 
         // start transaction
         $this->dataBase->beginTransaction();
+        $return = true;
 
         try {
             $this->processCsvData($filePath);
@@ -93,11 +96,14 @@ class AccountingPlanImport
             $this->dataBase->commit();
         } catch (Exception $exp) {
             $this->miniLog->alert($exp->getMessage());
+            $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();
             }
         }
+
+        return $return;
     }
 
     /**
@@ -105,21 +111,24 @@ class AccountingPlanImport
      *
      * @param string $filePath
      * @param string $codejercicio
+     *
+     * @return bool
      */
     public function importXML(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
             $this->miniLog->error($this->i18n->trans('exercise-not-found'));
-            return;
+            return false;
         }
 
         $data = $this->getData($filePath);
         if (is_array($data) || $data->count() == 0) {
-            return;
+            return false;
         }
 
         // start transaction
         $this->dataBase->beginTransaction();
+        $return = true;
 
         try {
             $this->importEpigrafeGroup($data->grupo_epigrafes);
@@ -131,11 +140,14 @@ class AccountingPlanImport
             $this->dataBase->commit();
         } catch (Exception $exp) {
             $this->miniLog->alert($exp->getMessage());
+            $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();
             }
         }
+
+        return $return;
     }
 
     /**
