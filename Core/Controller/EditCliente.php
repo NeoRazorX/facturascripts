@@ -24,7 +24,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Dinamic\Lib\IDFiscal;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\TotalModel;
-use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -117,7 +116,7 @@ class EditCliente extends ExtendedController\EditController
         $this->views['ListPedidoCliente']->disableColumn('customer', true);
         $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
         $this->views['ListLineaFacturaCliente']->disableColumn('order', true);
-        
+
         /// Disable buttons
         $this->setSettings('ListSubcuenta', 'btnNew', false);
     }
@@ -132,12 +131,9 @@ class EditCliente extends ExtendedController\EditController
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         switch ($viewName) {
-            case 'ListCliente':
-                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
-                if (!empty($codgrupo)) {
-                    $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                    $view->loadData('', $where);
-                }
+            case 'EditCliente':
+                parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues();
                 break;
 
             case 'EditCuentaBancoCliente':
@@ -150,12 +146,20 @@ class EditCliente extends ExtendedController\EditController
                 $view->loadData('', $where);
                 break;
 
+            case 'ListCliente':
+                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
+                if (!empty($codgrupo)) {
+                    $where = [new DataBaseWhere('codgrupo', $codgrupo)];
+                    $view->loadData('', $where);
+                }
+                break;
+
             case 'ListLineaFacturaCliente':
                 $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
                 $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);
                 break;
-            
+
             case 'ListSubcuenta':
                 $codsubcuenta = $this->getViewModelValue('EditCliente', 'codsubcuenta');
                 $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
@@ -168,15 +172,12 @@ class EditCliente extends ExtendedController\EditController
         }
     }
 
-    /**
-     * 
-     * @param string $code
-     */
-    protected function setCustomWidgetValues($code)
+    protected function setCustomWidgetValues()
     {
         /// Search for client contacts
-        $where = [new DataBaseWhere('codcliente', $code)];
-        $contacts = CodeModel::all('contactos', 'idcontacto', 'descripcion', false, $where);
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $where = [new DataBaseWhere('codcliente', $codcliente)];
+        $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         /// Load values option to default billing address from client contacts list
         $columnBilling = $this->views['EditCliente']->columnForName('billing-address');
