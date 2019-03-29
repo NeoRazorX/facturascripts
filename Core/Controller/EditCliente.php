@@ -137,9 +137,9 @@ class EditCliente extends ExtendedController\EditController
                 break;
 
             case 'EditCuentaBancoCliente':
+            case 'ListAlbaranCliente':
             case 'ListContacto':
             case 'ListFacturaCliente':
-            case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
@@ -164,10 +164,6 @@ class EditCliente extends ExtendedController\EditController
                 $codsubcuenta = $this->getViewModelValue('EditCliente', 'codsubcuenta');
                 $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
                 break;
         }
     }
