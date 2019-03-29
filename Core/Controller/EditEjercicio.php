@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanExport;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -100,16 +100,39 @@ class EditEjercicio extends ExtendedController\EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'import-accounting':
-                $this->importAccountingPlan();
-                return true;
             case 'export-accounting':
                 $this->exportAccountingPlan();
+                return true;
+
+            case 'import-accounting':
+                $this->importAccountingPlan();
                 return true;
 
             default:
                 return parent::execPreviousAction($action);
         }
+    }
+
+    /**
+     * Export AccountingPlan to XML.
+     * 
+     * @return bool
+     */
+    private function exportAccountingPlan()
+    {
+        $code = $this->request->get('code', '');
+        if (empty($code)) {
+            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            return false;
+        }
+
+        $this->setTemplate(false);
+        $accountingPlanExport = new AccountingPlanExport();
+        $this->response->setContent($accountingPlanExport->exportXML($code));
+        $this->response->headers->set('Content-Type', 'text/xml; charset=utf-8');
+        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $code . '.xml');
+
+        return true;
     }
 
     /**
@@ -119,8 +142,8 @@ class EditEjercicio extends ExtendedController\EditController
      */
     private function importAccountingPlan()
     {
-        $exercise = $this->request->request->get('codejercicio', '');
-        if (empty($exercise)) {
+        $code = $this->request->request->get('codejercicio', '');
+        if (empty($code)) {
             $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
             return false;
         }
@@ -135,29 +158,17 @@ class EditEjercicio extends ExtendedController\EditController
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                $accountingPlanImport->importXML($uploadFile->getPathname(), $exercise);
+                $accountingPlanImport->importXML($uploadFile->getPathname(), $code);
                 break;
 
             case 'text/csv':
             case 'text/plain':
-                $accountingPlanImport->importCSV($uploadFile->getPathname(), $exercise);
+                $accountingPlanImport->importCSV($uploadFile->getPathname(), $code);
                 break;
 
             default:
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
         return true;
-    }
-
-    /**
-     * Export AccountingPlan to XML.
-     *    
-     */
-    private function exportAccountingPlan()
-    {                   
-        $this->setTemplate(false); /// desactivamos el motor de plantillas
-        $accountingPlanExport = new AccountingPlanExport();      
-        $ejercicio = $this->request->get('code');
-        $accountingPlanExport->exportXML($ejercicio);
     }
 }

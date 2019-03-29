@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,33 +18,57 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Dinamic\Model;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Dinamic\Model\Balance;
+use FacturaScripts\Dinamic\Model\BalanceCuenta;
+use FacturaScripts\Dinamic\Model\BalanceCuentaA;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaEspecial;
+use FacturaScripts\Dinamic\Model\Subcuenta;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Edit Description of AccountingPlanImport
+ * Class to export accounting plans.
  *
+ * @author Carlos García Gómez      <carlos@facturapascripts.com>
  * @author Oscar G. Villa González  <ogvilla@gmail.com>
- * 
  */
 class AccountingPlanExport
 {
 
-    function exportXML($codejercicio)
+    /**
+     * 
+     * @param string $code
+     *
+     * @return string
+     */
+    public function exportXML($code)
     {
-        /// creamos el xml
-        $cadena_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        $xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!--
-    Document   : ejercicio_" . $codejercicio . ".xml
+    Document   : ejercicio_" . $code . ".xml
     Description:
-        Estructura cuentas y subcuentas del ejercicio " . $codejercicio . ".
+        Estructura cuentas y subcuentas del ejercicio " . $code . ".
 -->
         <ejercicio></ejercicio>\n";
-        $archivo_xml = simplexml_load_string($cadena_xml);
-        /// añadimos los balances
-        $balance = new Model\Balance();
-        foreach ($balance->all() as $ba) {
-            $aux = $archivo_xml->addChild("balance");
+        $xml = simplexml_load_string($xmlString);
+
+        $this->addBalances($xml);
+        $this->addCuentasEspeciales($xml);
+        $this->addCuentas($xml, $code);
+        $this->addSubcuentas($xml, $code);
+
+        return $xml->asXML();
+    }
+
+    /**
+     * 
+     * @param object $xml
+     */
+    protected function addBalances(&$xml)
+    {
+        $balance = new Balance();
+        foreach ($balance->all([], [], 0, 0) as $ba) {
+            $aux = $xml->addChild("balance");
             $aux->addChild("codbalance", $ba->codbalance);
             $aux->addChild("naturaleza", $ba->naturaleza);
             $aux->addChild("nivel1", $ba->nivel1);
@@ -58,54 +82,73 @@ class AccountingPlanExport
             $aux->addChild("descripcion4", base64_encode($ba->descripcion4));
             $aux->addChild("descripcion4ba", base64_encode($ba->descripcion4ba));
         }
-        /// añadimos las cuentas de balances
-        $balance_cuenta = new Model\BalanceCuenta();
-        foreach ($balance_cuenta->all() as $ba) {
-            $aux = $archivo_xml->addChild("balance_cuenta");
+
+        $balanceCuenta = new BalanceCuenta();
+        foreach ($balanceCuenta->all([], [], 0, 0) as $ba) {
+            $aux = $xml->addChild("balance_cuenta");
             $aux->addChild("codbalance", $ba->codbalance);
             $aux->addChild("codcuenta", $ba->codcuenta);
             $aux->addChild("descripcion", base64_encode($ba->desccuenta));
         }
-        /// añadimos las cuentas de balance abreviadas
-        $balance_cuenta_a = new Model\BalanceCuentaA();
-        foreach ($balance_cuenta_a->all() as $ba) {
-            $aux = $archivo_xml->addChild("balance_cuenta_a");
+
+        $balanceCuentaA = new BalanceCuentaA();
+        foreach ($balanceCuentaA->all([], [], 0, 0) as $ba) {
+            $aux = $xml->addChild("balance_cuenta_a");
             $aux->addChild("codbalance", $ba->codbalance);
             $aux->addChild("codcuenta", $ba->codcuenta);
             $aux->addChild("descripcion", base64_encode($ba->desccuenta));
         }
-        /// añadimos las cuentas especiales
-        $cuenta_esp = new Model\CuentaEspecial();
-        foreach ($cuenta_esp->all() as $ce) {
-            $aux = $archivo_xml->addChild("cuenta_especial");
-            $aux->addChild("idcuentaesp", $ce->idcuentaesp);
-            $aux->addChild("descripcion", base64_encode($ce->descripcion));
-        }
-        /// añadimos las cuentas
-        $cuenta = new Model\Cuenta();
-        $where = [new DataBase\DataBaseWhere('codejercicio', $codejercicio)];
+    }
+
+    /**
+     * 
+     * @param object $xml
+     * @param string $code
+     */
+    protected function addCuentas(&$xml, $code)
+    {
+        $cuenta = new Cuenta();
+        $where = [new DataBaseWhere('codejercicio', $code)];
         $order = ['codcuenta' => 'ASC'];
         foreach ($cuenta->all($where, $order, 0, 0) as $c) {
-            $aux = $archivo_xml->addChild("cuenta");
+            $aux = $xml->addChild("cuenta");
             $aux->addChild("parent_codcuenta", $c->parent_codcuenta);
             $aux->addChild("codcuenta", $c->codcuenta);
             $aux->addChild("descripcion", base64_encode($c->descripcion));
             $aux->addChild("codcuentaesp", $c->codcuentaesp);
         }
-        /// añadimos las subcuentas
-        $subcuenta = new Model\Subcuenta();
-        $where = [new DataBase\DataBaseWhere('codejercicio', $codejercicio)];
+    }
+
+    /**
+     * 
+     * @param object $xml
+     */
+    protected function addCuentasEspeciales(&$xml)
+    {
+        $cuentaEsp = new CuentaEspecial();
+        foreach ($cuentaEsp->all([], [], 0, 0) as $ce) {
+            $aux = $xml->addChild("cuenta_especial");
+            $aux->addChild("idcuentaesp", $ce->idcuentaesp);
+            $aux->addChild("descripcion", base64_encode($ce->descripcion));
+        }
+    }
+
+    /**
+     * 
+     * @param object $xml
+     * @param string $code
+     */
+    protected function addSubcuentas(&$xml, $code)
+    {
+        $subcuenta = new Subcuenta();
+        $where = [new DataBaseWhere('codejercicio', $code)];
         $order = ['codcuenta' => 'ASC'];
         foreach ($subcuenta->all($where, $order, 0, 0) as $sc) {
-            $aux = $archivo_xml->addChild("subcuenta");
+            $aux = $xml->addChild("subcuenta");
             $aux->addChild("codcuenta", $sc->codcuenta);
             $aux->addChild("codsubcuenta", $sc->codsubcuenta);
             $aux->addChild("descripcion", base64_encode($sc->descripcion));
-            $aux->addChild("codcuentaesp", $c->codcuentaesp);           
+            $aux->addChild("codcuentaesp", $c->codcuentaesp);
         }
-        /// volcamos el XML
-        header("content-type: application/xml; charset=UTF-8");
-        header('Content-Disposition: attachment; filename="ejercicio_' . $codejercicio . '.xml"');
-        echo $archivo_xml->saveXML();
     }
 }
