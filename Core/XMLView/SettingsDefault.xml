@@ -26,12 +26,12 @@
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
             <column name="country" numcolumns="3" order="100">
-                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
+                <widget type="select" fieldname="codpais" onclick="EditPais" icon="fas fa-globe-americas" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="currency" numcolumns="3" order="100">
-                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" icon="fas fa-money-bill-alt" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
@@ -66,7 +66,7 @@
         </group>
         <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fas fa-info-circle">
             <column name="decimals" numcolumns="3" order="100">
-                <widget type="select" fieldname="decimals" required="true" icon="fas fa-sort-numeric-up">
+                <widget type="select" fieldname="decimals" required="true" icon="fas fa-calculator">
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
@@ -91,11 +91,8 @@
             </column>
         </group>
         <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database">
-            <column name="name" display="none" order="0">
-                <widget type="text" fieldname="name" readonly="true" required="true" />
-            </column>
             <column name="homepage" numcolumns="3" order="100">
-                <widget type="select" fieldname="homepage">
+                <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values source="pages" fieldcode="name" fieldtitle="name"></values>
                 </widget>
             </column>
@@ -104,9 +101,6 @@
             </column>
         </group>
         <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access">
-            <column name="name" display="none" order="0">
-                <widget type="text" fieldname="name" readonly="true" required="true" />
-            </column>
             <column name="enable-api" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="enable_api"/>
             </column>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the Mail Settings Options
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="email" numcolumns="12" icon="fas fa-envelope">
@@ -37,30 +33,30 @@
             </column>
         </group>
         <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server">
-            <column name="user" numcolumns="3" order="100">
+            <column name="user" numcolumns="2" order="100">
                 <widget type="text" fieldname="user" />
             </column>
-            <column name="host" numcolumns="3" order="100">
+            <column name="host" numcolumns="3" order="110">
                 <widget type="text" fieldname="host" icon="fas fa-server" />
             </column>
-            <column name="port" numcolumns="3" order="100">
+            <column name="port" numcolumns="2" order="120">
                 <widget type="number" fieldname="port" />
             </column>
-            <column name="enc" title="encrypt" numcolumns="3" order="110">
+            <column name="enc" title="encrypt" numcolumns="2" order="130">
                 <widget type="select" fieldname="enc" icon="fas fa-shield-alt" required="true">
                     <values title="SSL">ssl</values>
                     <values title="TLS">tls</values>
-                    <values title=""></values>
+                    <values title="no"></values>
                 </widget>
             </column>
-            <column name="mailer" title="mailer" numcolumns="3" order="110">
+            <column name="mailer" title="mailer" numcolumns="3" order="140">
                 <widget type="select" fieldname="mailer" required="true">
                     <values title="Mail">mail</values>
                     <values title="SendMail">sendmail</values>
                     <values title="SMTP">smtp</values>
                 </widget>
             </column>
-            <column name="lowsecure" title="low-security" numcolumns="6" order="130">
+            <column name="lowsecure" title="low-security" order="150">
                 <widget type="checkbox" fieldname="lowsecure" />
             </column>
         </group>
