@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
@@ -33,7 +34,7 @@ class EditEjercicio extends ExtendedController\EditController
 {
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -96,21 +97,42 @@ class EditEjercicio extends ExtendedController\EditController
         }
     }
 
-    /**
-     * Run the controller after actions
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'export-accounting':
+                $this->exportAccountingPlan();
+                return true;
+
             case 'import-accounting':
                 $this->importAccountingPlan();
-                break;
+                return true;
 
             default:
-                parent::execAfterAction($action);
+                return parent::execPreviousAction($action);
         }
+    }
+
+    /**
+     * Export AccountingPlan to XML.
+     * 
+     * @return bool
+     */
+    private function exportAccountingPlan()
+    {
+        $code = $this->request->get('code', '');
+        if (empty($code)) {
+            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            return false;
+        }
+
+        $this->setTemplate(false);
+        $accountingPlanExport = new AccountingPlanExport();
+        $this->response->setContent($accountingPlanExport->exportXML($code));
+        $this->response->headers->set('Content-Type', 'text/xml; charset=utf-8');
+        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $code . '.xml');
+
+        return true;
     }
 
     /**
@@ -120,27 +142,42 @@ class EditEjercicio extends ExtendedController\EditController
      */
     private function importAccountingPlan()
     {
-        $accountingPlanImport = new AccountingPlanImport();
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $code = $this->request->request->get('codejercicio', '');
+        if (empty($code)) {
+            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            return false;
+        }
+
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
             $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
             return false;
         }
 
+        $accountingPlanImport = new AccountingPlanImport();
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
+                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $code)) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                }
                 break;
 
             case 'text/csv':
             case 'text/plain':
-                $accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio);
+                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $code)) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                }
                 break;
 
             default:
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
+
+        return true;
     }
 }

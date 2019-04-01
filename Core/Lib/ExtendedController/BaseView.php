@@ -20,8 +20,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
-use FacturaScripts\Core\Lib\Widget\BaseWidget;
 use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Lib\Widget\GroupItem;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
@@ -38,12 +36,6 @@ use FacturaScripts\Core\Model\User;
  */
 abstract class BaseView
 {
-
-    /**
-     *
-     * @var array
-     */
-    protected static $assets = [];
 
     /**
      *
@@ -207,9 +199,36 @@ abstract class BaseView
             'btnDelete' => true,
             'btnNew' => true,
             'btnPrint' => false,
+            'btnSave' => true,
+            'btnUndo' => true,
         ];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = static::$i18n->trans($title);
+        $this->assets();
+    }
+
+    /**
+     * Gets the modal column by the column name
+     *
+     * @param string $columnName
+     *
+     * @return ColumnItem
+     */
+    public function columnModalForName(string $columnName)
+    {
+        return $this->getColumnForName($columnName, $this->modals);
+    }
+
+    /**
+     * Gets the column by the column name
+     *
+     * @param string $columnName
+     *
+     * @return ColumnItem
+     */
+    public function columnForName(string $columnName)
+    {
+        return $this->getColumnForName($columnName, $this->columns);
     }
 
     /**
@@ -233,26 +252,6 @@ abstract class BaseView
     }
 
     /**
-     * Gets the column by the column name
-     *
-     * @param string $columnName
-     *
-     * @return ColumnItem
-     */
-    public function columnForName(string $columnName)
-    {
-        foreach ($this->columns as $group) {
-            foreach ($group->columns as $key => $column) {
-                if ($key === $columnName) {
-                    return $column;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Establishes the column's edit state
      *
      * @param string $columnName
@@ -267,12 +266,24 @@ abstract class BaseView
     }
 
     /**
+     * Gets the column by the column name from source group
      *
-     * @return array
+     * @param string $columnName
+     * @param array  $source
+     *
+     * @return ColumnItem
      */
-    public static function getAssets()
+    public function getColumnForName(string $columnName, &$source)
     {
-        return array_merge_recursive(static::$assets, BaseFilter::getAssets(), BaseWidget::getAssets());
+        foreach ($source as $group) {
+            foreach ($group->columns as $key => $column) {
+                if ($key === $columnName) {
+                    return $column;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -296,7 +307,7 @@ abstract class BaseView
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getPagination()
@@ -380,26 +391,46 @@ abstract class BaseView
      */
     public function loadPageOptions($user = false)
     {
-        $orderby = ['nick' => 'ASC'];
-        $viewName = explode('-', $this->name)[0];
-        $where = [
-            new DataBaseWhere('name', $viewName),
-        ];
-
         if (!is_bool($user)) {
-            $where = [
-                new DataBaseWhere('name', $viewName),
-                new DataBaseWhere('nick', $user->nick),
-                new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            ];
             /// sets user security level for use in render
             VisualItem::setLevel($user->level);
         }
 
+        $orderby = ['nick' => 'ASC'];
+        $where = $this->getPageWhere($user);
         if (!$this->pageOption->loadFromCode('', $where, $orderby)) {
+            $viewName = explode('-', $this->name)[0];
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
 
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        ;
+    }
+
+    /**
+     * Returns DataBaseWhere[] for locate a pageOption model.
+     *
+     * @param User|false $user
+     */
+    protected function getPageWhere($user = false)
+    {
+        $viewName = explode('-', $this->name)[0];
+
+        if (is_bool($user)) {
+            return [new DataBaseWhere('name', $viewName)];
+        }
+
+        return [
+            new DataBaseWhere('name', $viewName),
+            new DataBaseWhere('nick', $user->nick),
+            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+        ];
     }
 }

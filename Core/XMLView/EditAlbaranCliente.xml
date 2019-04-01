@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,50 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditAlbaranCliente
- *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idalbaran" required="true" />
-            </column>
             <column name="date" title="date" numcolumns="2" order="100">
                 <widget type="date" fieldname="fecha" required="true" />
             </column>
             <column name="hour" title="hour" numcolumns="2" order="110">
-                <widget type="text" fieldname="hora" required="true" />
+                <widget type="text" fieldname="hora" icon="fas fa-clock" required="true" />
             </column>
-            <column name="number2" numcolumns="4" order="120">
-                <widget type="text" fieldname="numero2" />
+            <column name="number" order="120">
+                <widget type="text" fieldname="numero" icon="fas fa-hashtag" readonly="true" />
             </column>
-        </group>
-        <group name="addresses" title="addresses" numcolumns="12">
-            <column name="billingaddr" title="billing-address" numcolumns="6">
-                <widget type="select" fieldname="idcontactofact" required="true">
-                    <values></values>
-                </widget>
-            </column>
-            <column name="shippingaddr" title="shipping-address" numcolumns="6">
-                <widget type="select" fieldname="idcontactoenv" required="true">
-                    <values></values>
-                </widget>
+            <column name="number2" order="130">
+                <widget type="text" fieldname="numero2" icon="fas fa-hashtag" />
             </column>
         </group>
         <group name="billingaddr" title="billing-address" numcolumns="12">
-            <column name="customer" title="name-or-business-name" numcolumns="4" order="100">
+            <column name="billingaddr" title="billing-address" numcolumns="2" order="100">
+                <widget type="select" fieldname="idcontactofact" onclick="EditContacto" required="true">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="customer" title="name-or-business-name" numcolumns="2" order="110">
                 <widget type="text" fieldname="nombrecliente" required="true" />
             </column>
-            <column name="cifnif" title="cifnif" numcolumns="2" order="110">
-                <widget type="text" fieldname="cifnif" />
+            <column name="cifnif" title="cifnif" numcolumns="2" order="120">
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
             <column name="address" numcolumns="6" order="120">
-                <widget type="text" fieldname="direccion" />
+                <widget type="text" fieldname="direccion" icon="fas fa-map-marked" />
             </column>
             <column name="zip-code" numcolumns="2" order="130">
                 <widget type="text" fieldname="codpostal" />
@@ -74,38 +63,61 @@
                 <widget type="text" fieldname="provincia" />
             </column>
             <column name="country" numcolumns="2" order="170">
-                <widget type="select" fieldname="codpais">
+                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>
-        <group name="codattributes" title="attributes" numcolumns="12">
-            <column name="warehouse" numcolumns="3">
-                <widget type="select" fieldname="codalmacen">
+        <group name="shipaddresses" title="shipping-address" numcolumns="12">
+            <column name="shippingaddr" title="shipping-address" order="100">
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
+                    <values></values>
+                </widget>
+            </column>
+        </group>
+        <group name="attributes" title="attributes" numcolumns="12">
+            <column name="company" numcolumns="2" order="100">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="warehouse" numcolumns="2" order="110">
+                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true" readonly="dinamic">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="serie" numcolumns="2" order="100">
-                <widget type="select" fieldname="codserie">
+            <column name="serie" numcolumns="2" order="120">
+                <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment" title="method-payment" numcolumns="3" titleurl="ListFormaPago" order="120">
-                <widget type="select" fieldname="codpago">
+            <column name="payment" title="method-payment" numcolumns="2" order="130">
+                <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="currency" title="currency" numcolumns="2" titleurl="ListDivisa" order="120">
-                <widget type="select" fieldname="coddivisa">
+            <column name="currency" numcolumns="2" order="140">
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="tasaconv" numcolumns="2" order="150">
-                <widget type="number" fieldname="tasaconv" />
+                <widget type="number" fieldname="tasaconv" icon="fas fa-exchange-alt" />
+            </column>
+            <column name="agent" titleurl="ListAgente" numcolumns="2" order="160">
+                <widget type="select" fieldname="codagente" onclick="EditAgente">
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="email-sent" numcolumns="2" order="170">
+                <widget type="date" fieldname="femail" />
+            </column>
+            <column name="paid" numcolumns="2" order="180">
+                <widget type="checkbox" fieldname="pagado" />
             </column>
         </group>
         <group name="notes" numcolumns="12">
-            <column name="observations" numcolumns="12" order="110">
+            <column name="observations" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

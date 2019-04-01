@@ -70,7 +70,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
         /// shipping address
         $columnShipping = $view->columnForName('shippingaddr');
-        $columnShipping->widget->setValuesFromArray($addresses, false);
+        $columnShipping->widget->setValuesFromArray($addresses, false, true);
     }
 
     /**
@@ -83,7 +83,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
     protected function setSubject(&$view, $formData)
     {
         if (empty($formData['codcliente'])) {
-            return 'ERROR: NO CUSTOMER';
+            return 'ERROR: ' . $this->i18n->trans('customer-not-found');
         }
 
         if ($view->model->codcliente === $formData['codcliente']) {
@@ -96,6 +96,6 @@ abstract class SalesDocumentController extends BusinessDocumentController
             return 'OK';
         }
 
-        return 'ERROR: NO CUSTOMER';
+        return 'ERROR: ' . $this->i18n->trans('customer-not-found');
     }
 }

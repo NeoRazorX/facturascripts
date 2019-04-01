@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator as i18n;
 use FacturaScripts\Core\Model\Settings;
@@ -27,9 +28,12 @@ use PHPMailer\PHPMailer\PHPMailer;
  * Tools for send emails.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa    <jcuello@artextrading.com>
  */
 class EmailTools
 {
+
+    const DEFAULT_TEMPLATE = 'BasicTemplate.html.twig';
 
     /**
      * Settings properties for email
@@ -49,33 +53,77 @@ class EmailTools
     }
 
     /**
+     * Add attachments to the email.
+     *
+     * @param PHPMailer    $mail
+     * @param string|array $files
+     */
+    public function addAttachment(&$mail, $files)
+    {
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                $mail->addAttachment($file->getPathname(), $file->getClientOriginalName());
+            }
+        }
+
+        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $files);
+    }
+
+    /**
+     * Add the recipients of the emails
+     * (List of email addresses separated by a comma)
+     *
+     * @param PHPMailer $mail
+     * @param string    $emails
+     * @param string    $emailsCC
+     * @param string    $emailsBCC
+     */
+    public function addEmails(&$mail, string $emails, string $emailsCC = '', string $emailsBCC = '')
+    {
+        foreach ($this->getEmails($emails) as $email) {
+            $mail->addAddress($email);
+        }
+
+        foreach ($this->getEmails($emailsCC) as $email) {
+            $mail->addCC($email);
+        }
+
+        foreach ($this->getEmails($emailsBCC) as $email) {
+            $mail->addBCC($email);
+        }
+    }
+
+    /**
      * Returns the HTML code for the email from a template.
-     * 
+     *
      * @param array  $params
      * @param string $template
-     * 
+     * @param array  $objects
+     *
      * @return string
      */
-    public function getTemplateHtml(array $params, string $template = '/Dinamic/Assets/Email/BasicTemplate.html.twig'): string
+    public function getTemplateHtml(array $params, string $template = self::DEFAULT_TEMPLATE, array $objects = []): string
     {
-        $html = file_get_contents(FS_FOLDER . $template);
-        $title = isset($params['title']) ? $params['title'] : '-';
-        $company = isset($params['company']) ? $params['company'] : '-';
-        $body = isset($params['body']) ? $params['body'] : '-';
-        $footer = isset($params['footer']) ? $params['footer'] : '-';
+        /// If it's a basic template, load basic data
+        if ($template === self::DEFAULT_TEMPLATE) {
+            $params['body'] = $params['body'] ?? '-';
+            $params['company'] = $params['company'] ?? '-';
+            $params['footer'] = $params['footer'] ?? '-';
+            $params['title'] = $params['title'] ?? '-';
+        }
 
-        $search = [
-            '[[title]]',
-            '[[company]]',
-            '[[body]]',
-            '[[footer]]',
-        ];
-        $replace = [
-            $title,
-            $company,
-            $body,
-            $footer,
-        ];
+        /// Load template and render html
+        $webRender = new WebRender();
+        $webRender->loadPluginFolders();
+        $html = $webRender->render('Email/' . $template, $objects);
+
+        /// replace values
+        $search = [];
+        $replace = [];
+        foreach ($params as $key => $value) {
+            $search[] = '[[' . $key . ']]';
+            $replace[] = $value;
+        }
 
         return str_replace($search, $replace, $html);
     }
@@ -139,6 +187,67 @@ class EmailTools
     }
 
     /**
+     * Send an email according to the information provided
+     *
+     * @param array $data
+     *   subject: (string) Message Subject. (required)
+     *   body     : (string) Message Body. It can be an html text. (required if you do not use template)
+     *   email    : (string) List of email addresses separated by a comma. (required)
+     *   email-cc : (string) List of cc-email addresses separated by a comma.
+     *   email-bcc: (string) List of bcc-email (or cco-email) addresses separated by a comma.
+     *   files    : (string|array) Path file or List of "file" objects to attach to the mail.
+     *
+     *   template : (string) Template twig with which to make the body of the message. Filename into /Dinamic/Assets/Email/
+     *
+     *   template-data: (array) List of values to use in the template.
+     *      Custom data example: [ 'mydate' => '01/01/2019', 'myvalue' => 'custom value' ]
+     *
+     *   template-object: (array) List of objects to be passed to the template. These will be available in the Twig template
+     *      Object list example: [ 'fsc' => $this, 'company' => $company ]
+     *
+     * @return bool
+     */
+    public static function sendMail(array $data): bool
+    {
+        /// Prepare email object
+        $emailTools = new EmailTools();
+        $mail = $emailTools->newMail();
+        $mail->Subject = $data['subject'];
+
+        /// Set email list
+        $data['email-cc'] = $data['email-cc'] ?? '';
+        $data['email-bcc'] = $data['email-bcc'] ?? '';
+        $emailTools->addEmails($mail, $data['email'], $data['email-cc'], $data['email-bcc']);
+
+        /// Set attachment files
+        if (isset($data['files'])) {
+            $emailTools->addAttachment($mail, $data['files']);
+        }
+
+        /// Load template and set data.
+        $data['template-data'] = $data['template-data'] ?? [];
+        $data['template-object'] = $data['template-object'] ?? [];
+        $body = $emailTools->getTemplateHtml($data['template-data'], $data['template'], $data['template-object']);
+
+        $mail->msgHTML($body);
+
+        /// Send Email
+        if ($emailTools->send($mail)) {
+            /// Remove upload files
+            if (!empty($data['fileName']) && file_exists(FS_FOLDER . '/MyFiles/' . $data['fileName'])) {
+                unlink(FS_FOLDER . '/MyFiles/' . $data['fileName']);
+            }
+
+            $i18n = new i18n();
+            $miniLog = new MiniLog();
+            $miniLog->notice($i18n->trans('send-mail-ok'));
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Test the PHPMailer connection. Return the result of the connection.
      *
      * @return bool
@@ -154,6 +263,30 @@ class EmailTools
         return true;
     }
 
+    /**
+     * Converts a mailing list string into an array.
+     *
+     * @param string $emails
+     *
+     * @return array
+     */
+    private function getEmails(string $emails): array
+    {
+        if (empty($emails)) {
+            return [];
+        }
+
+        // Remove unneeded spaces and posible ending comma, before to convert into array
+        return explode(',', rtrim(trim($emails), ','));
+    }
+
+    /**
+     * Get value from Application Email Settings
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
     private function getSetting(string $key)
     {
         return isset(self::$settings[$key]) ? self::$settings[$key] : null;

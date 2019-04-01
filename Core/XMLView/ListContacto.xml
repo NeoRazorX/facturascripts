@@ -56,7 +56,10 @@
         <column name="level" display="none" order="180">
             <widget type="number" fieldname="level" decimal="0" />
         </column>
-        <column name="last-activity" display="none" order="190">
+        <column name="points" display="none" order="190">
+            <widget type="number" fieldname="puntos" decimal="0" />
+        </column>
+        <column name="last-activity" display="none" order="200">
             <widget type="date" fieldname="lastactivity" />
         </column>
     </columns>

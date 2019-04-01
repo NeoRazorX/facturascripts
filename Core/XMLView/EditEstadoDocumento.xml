@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,9 @@
  *
  * Initial description for the controller EditEstadoDocumento
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -42,6 +41,7 @@
                     <values title="supplier-order">PedidoProveedor</values>
                     <values title="supplier-delivery-note">AlbaranProveedor</values>
                     <values title="supplier-invoice">FacturaProveedor</values>
+                    <values title="service">Servicio</values>
                 </widget>
             </column>
             <column name="update-stock" order="130">
@@ -63,12 +63,16 @@
                     <values title="supplier-order">PedidoProveedor</values>
                     <values title="supplier-delivery-note">AlbaranProveedor</values>
                     <values title="supplier-invoice">FacturaProveedor</values>
+                    <values title="service">Servicio</values>
                 </widget>
             </column>
             <column name="editable" order="150">
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>
-            <column name="default" order="160">
+            <column name="locked" display="none" order="160">
+                <widget type="checkbox" fieldname="bloquear"></widget>
+            </column>
+            <column name="default" order="170">
                 <widget type="checkbox" fieldname="predeterminado"></widget>
             </column>
         </group>

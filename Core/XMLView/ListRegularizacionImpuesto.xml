@@ -27,11 +27,16 @@
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idregularizacion" onclick="EditRegularizacionImpuesto" />
         </column>
+        <column name="company" order="100">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="period" order="110">
-            <widget type="select" fieldname="periodo">
+            <widget type="select" fieldname="periodo" translate="true">
                 <values title="first-trimester">T1</values>
                 <values title="second-trimester">T2</values>
                 <values title="third-trimester">T3</values>
@@ -45,7 +50,7 @@
             <widget type="text" fieldname="fechafin" />
         </column>
         <column name="id-accounting" title="accounting-entry" order="140">
-            <widget type="select" fieldname="idasiento" onclick="EditAsiento">
+            <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento">
                 <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
             </widget>
         </column>

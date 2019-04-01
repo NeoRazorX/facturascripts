@@ -68,6 +68,18 @@ class WidgetCheckbox extends BaseWidget
     /**
      * 
      * @param object $model
+     *
+     * @return string
+     */
+    public function inputHidden($model)
+    {
+        $this->setValue($model);
+        return $this->value ? '<input type="hidden" name="' . $this->fieldname . '" value="TRUE"/>' : '';
+    }
+
+    /**
+     * 
+     * @param object $model
      */
     protected function setValue($model)
     {
@@ -102,9 +114,9 @@ class WidgetCheckbox extends BaseWidget
     protected function tableCellClass($initialClass = '', $alternativeClass = '')
     {
         if (false === $this->value) {
-            $alternativeClass = 'text-danger';
+            $alternativeClass = $this->colorToClass('danger', 'text-');
         } elseif (true === $this->value) {
-            $alternativeClass = 'text-success';
+            $alternativeClass = $this->colorToClass('success', 'text-');
         }
 
         return parent::tableCellClass($initialClass, $alternativeClass);

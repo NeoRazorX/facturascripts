@@ -41,7 +41,17 @@ class WidgetFile extends BaseWidget
      */
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
+        $this->setValue($model);
         $description = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]) . ' ' . $description;
+        if ($this->readonly()) {
+            $cssFormControl = $this->css('form-control');
+            return '<div class="form-group">'
+                . '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
+                . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+                . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>'
+                . '</div>';
+        }
+
         return parent::edit($model, $title, $description, $titleurl);
     }
 
@@ -56,9 +66,7 @@ class WidgetFile extends BaseWidget
 
         // get file uploads
         foreach ($request->files->all() as $key => $uploadFile) {
-            if ($key != $this->fieldname) {
-                continue;
-            } elseif (is_null($uploadFile)) {
+            if ($key != $this->fieldname || is_null($uploadFile)) {
                 continue;
             } elseif (!$uploadFile->isValid()) {
                 $minilog->error($uploadFile->getErrorMessage());
@@ -99,7 +107,7 @@ class WidgetFile extends BaseWidget
      */
     protected function inputHtml($type = 'file', $extraClass = '')
     {
-        $class = empty($extraClass) ? 'form-control-file' : 'form-control-file ' . $extraClass;
+        $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,16 +18,23 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Lib\ExtendedController\ListController;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
- * Controller to list the items in the Cuenta model
+ * Controller to list the items in the Cuenta model.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class ListCuenta extends ExtendedController\ListController
+class ListCuenta extends ListController
 {
+
+    /**
+     *
+     * @var CodeModel[]
+     */
+    protected $exerciseValues;
 
     /**
      * Returns basic page attributes
@@ -45,39 +52,64 @@ class ListCuenta extends ExtendedController\ListController
     }
 
     /**
+     * 
+     * @param string $name
+     */
+    protected function createViewCuentas($name = 'ListCuenta')
+    {
+        $this->addView($name, 'Cuenta', 'accounts', 'fas fa-book');
+        $this->addOrderBy($name, ['codejercicio desc, codcuenta'], 'code');
+        $this->addOrderBy($name, ['codejercicio desc, descripcion'], 'description');
+        $this->addSearchFields($name, ['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp']);
+
+        /// filters
+        $this->addFilterSelect($name, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
+
+        $specialAccountsValues = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
+        $this->addFilterSelect($name, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccountsValues);
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewCuentasEsp($name = 'ListCuentaEspecial')
+    {
+        $this->addView($name, 'CuentaEspecial', 'special-account', 'fas fa-newspaper');
+        $this->addOrderBy($name, ['descripcion'], 'description');
+        $this->addOrderBy($name, ['codcuentaesp'], 'code');
+        $this->addSearchFields($name, ['descripcion', 'codcuentaesp']);
+
+        /// disable new button
+        $this->setSettings($name, 'btnNew', false);
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewSubcuentas($name = 'ListSubcuenta')
+    {
+        $this->addView($name, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
+        $this->addOrderBy($name, ['codejercicio desc, codsubcuenta'], 'code');
+        $this->addOrderBy($name, ['codejercicio desc, descripcion'], 'description');
+        $this->addOrderBy($name, ['saldo'], 'balance');
+        $this->addSearchFields($name, ['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp']);
+
+        /// filters
+        $this->addFilterSelect($name, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
-        /* Sub-Accounts */
-        $this->addView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-th-list');
-        $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp']);
+        /// load exercises in class to use in filters
+        $this->exerciseValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
 
-        $exerciseValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'exercise', 'codejercicio', $exerciseValues);
-
-        $this->addOrderBy('ListSubcuenta', ['codejercicio desc, codsubcuenta'], 'code');
-        $this->addOrderBy('ListSubcuenta', ['codejercicio desc, descripcion'], 'description');
-        $this->addOrderBy('ListSubcuenta', ['saldo'], 'balance');
-
-        /* Accounts */
-        $this->addView('ListCuenta', 'Cuenta', 'accounts', 'fas fa-book');
-        $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp']);
-
-        $this->addFilterSelect('ListCuenta', 'codejercicio', 'exercise', 'codejercicio', $exerciseValues);
-        
-        $specialAccountsValues = $this->codeModel->all('cuentaespecial', 'codcuentaesp', 'descripcion');
-        $this->addFilterSelect('ListCuenta', 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccountsValues);
-
-        $this->addOrderBy('ListCuenta', ['codejercicio desc, codcuenta'], 'code');
-        $this->addOrderBy('ListCuenta', ['codejercicio desc, descripcion'], 'description');
-
-        /* Special account */
-        $this->addView('ListCuentaEspecial', 'CuentaEspecial', 'special-account', 'fas fa-newspaper');
-        $this->setSettings('ListCuentaEspecial', 'insert', false);
-        $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuentaesp']);
-
-        $this->addOrderBy('ListCuentaEspecial', ['descripcion'], 'description');
-        $this->addOrderBy('ListCuentaEspecial', ['codcuentaesp'], 'code');
+        $this->createViewSubcuentas();
+        $this->createViewCuentas();
+        $this->createViewCuentasEsp();
     }
 }

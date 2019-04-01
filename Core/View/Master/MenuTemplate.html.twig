@@ -36,12 +36,11 @@
         {% block css %}
             <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}" />
-            <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
         {% endblock %}
         {# Adds custom CSS assets #}
-        {% for css in fsc.assets['css'] %}
+        {% for css in assetManager.get('css') %}
             <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
         {% block javascripts %}
@@ -53,7 +52,7 @@
             <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
         {% endblock %}
         {# Adds custom JS assets #}
-        {% for js in fsc.assets['js'] %}
+        {% for js in assetManager.get('js') %}
             <script src="{{ js }}"></script>
         {% endfor %}
         {{ debugBarRender.renderHead() | raw }}
@@ -100,7 +99,7 @@
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="query" placeholder="{{ i18n.trans('search') }}"/>
                                             <div class="input-group-append">
-                                                <button class="btn btn-info" type="button">
+                                                <button class="btn btn-info" type="submit">
                                                     <i class="fas fa-search" aria-hidden="true"></i>
                                                 </button>
                                             </div>

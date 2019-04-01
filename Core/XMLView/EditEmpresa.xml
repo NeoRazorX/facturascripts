@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,29 +19,32 @@
  *
  * Initial description for the controller EditEmpresa
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
     <columns>
-        <group name="data" numcolumns="12" icon="fas fa-file" title="fiscal-data">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="idempresa" icon="fas fa-object-group" required="true" />
+        <group name="data" numcolumns="12">
+            <column name="short-name" numcolumns="2" order="100">
+                <widget type="text" fieldname="nombrecorto" maxlength="32" required="true" />
             </column>
             <column name="company-name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="short-name" numcolumns="3" order="120">
-                <widget type="text" fieldname="nombrecorto" />
-            </column>
             <column name="cifnif" numcolumns="3" order="120" >
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
-            <column name="administrator" numcolumns="4" order="125" description="administrator">
+            <column name="administrator" description="administrator" numcolumns="3" order="130">
                 <widget type="text" fieldname="administrador" hint="company-manager"/>
             </column>
-            <column name="address" numcolumns="6" order="130">
-                <widget type="text" fieldname="direccion"/>
+            <column name="fiscal-mode" title="is-person" order="140">
+                <widget type="checkbox" fieldname="personafisica" />
+            </column>
+        </group>
+        <group name="address" numcolumns="12">
+            <column name="address" numcolumns="10" order="130">
+                <widget type="text" fieldname="direccion" icon="fas fa-map-marked"/>
             </column>
             <column name="postalmail" numcolumns="2" order="135">
                 <widget type="text" fieldname="apartado"/>
@@ -63,30 +66,32 @@
         </group>
         <group name="contact-data" numcolumns="12" icon="fas fa-address-card" title="contact-data">
             <column name="phone" numcolumns="2" order="100">
-                <widget type="text" fieldname="telefono1"/>
+                <widget type="text" fieldname="telefono1" icon="fas fa-phone"/>
             </column>
             <column name="phone2" numcolumns="2" order="110">
-                <widget type="text" fieldname="telefono2"/>
+                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt"/>
             </column>
             <column name="fax" numcolumns="2" order="120">
                 <widget type="text" fieldname="fax"/>
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="text" fieldname="email" />
+                <widget type="text" fieldname="email" icon="fas fa-at" />
             </column>
             <column name="website" numcolumns="3" order="140">
                 <widget type="text" fieldname="web" />
             </column>
         </group>
-        <group name="management" columns="12" icon="fas fa-cog" title="advanced">
-            <column name="startdate" numcolumns="2" order="100">
+        <group name="management" numcolumns="12" icon="fas fa-cog" title="advanced">
+            <column name="startdate" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta"/>
             </column>
-            <column name="surcharge" numcolumns="1" order="110">
-                <widget type="checkbox" fieldname="recequivalencia"/>
+            <column name="vat-regime" numcolumns="3" order="110">
+                <widget type="select" fieldname="regimeniva" required="true">
+                    <values></values>
+                </widget>
             </column>
-             <column name="fiscal-mode" title="is-person" numcolumns="4" order="120">
-                <widget type="checkbox" fieldname="personafisica" />
+            <column name="observations" numcolumns="12" order="120">
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>

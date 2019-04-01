@@ -7,20 +7,9 @@
 -->
 <table>
     <column>
-        <name>idasientocierre</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>idasientopyg</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>idasientoapertura</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>longsubcuenta</name>
-        <type>integer</type>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
     </column>
     <column>
         <name>estado</name>
@@ -38,17 +27,36 @@
         <null>NO</null>
     </column>
     <column>
-        <name>nombre</name>
-        <type>character varying(100)</type>
-        <null>NO</null>
+        <name>idasientoapertura</name>
+        <type>integer</type>
     </column>
     <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
+        <name>idasientocierre</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idasientopyg</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>longsubcuenta</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
         <null>NO</null>
     </column>
     <constraint>
         <name>ejercicios_pkey</name>
         <type>PRIMARY KEY (codejercicio)</type>
+    </constraint>
+    <constraint>
+        <name>ca_ejercicios_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

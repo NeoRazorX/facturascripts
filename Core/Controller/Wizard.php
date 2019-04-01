@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -188,7 +188,7 @@ class Wizard extends Controller
      */
     private function enableLogs()
     {
-        $types = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
+        $types = ['error', 'critical', 'alert', 'emergency'];
         $appSettings = new AppSettings();
         foreach ($types as $type) {
             $appSettings->set('log', $type, 'true');
@@ -204,6 +204,7 @@ class Wizard extends Controller
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+        new Model\Provincia();
 
         $pluginManager = new PluginManager();
         $pluginManager->deploy(true, true);
@@ -239,23 +240,50 @@ class Wizard extends Controller
      */
     private function saveAddress(string $codpais)
     {
-        $this->empresa->codpais = $codpais;
-        $this->empresa->provincia = $this->request->request->get('provincia', '');
         $this->empresa->ciudad = $this->request->request->get('ciudad', '');
+        $this->empresa->codpais = $codpais;
+        $this->empresa->codpostal = $this->request->request->get('codpostal', '');
+        $this->empresa->direccion = $this->request->request->get('direccion', '');
+        $this->empresa->nombre = $this->empresa->nombrecorto = $this->request->request->get('empresa', '');
+        $this->empresa->provincia = $this->request->request->get('provincia', '');
         $this->empresa->save();
 
+        /// assignes warehouse?
         $almacenModel = new Model\Almacen();
-        foreach ($almacenModel->all() as $almacen) {
-            $almacen->codpais = $codpais;
-            $almacen->provincia = $this->empresa->provincia;
+        $where = [
+            new DataBaseWhere('idempresa', $this->empresa->idempresa),
+            new DataBaseWhere('idempresa', null, 'IS', 'OR'),
+        ];
+        foreach ($almacenModel->all($where) as $almacen) {
             $almacen->ciudad = $this->empresa->ciudad;
+            $almacen->codpais = $codpais;
+            $almacen->codpostal = $this->empresa->codpostal;
+            $almacen->direccion = $this->empresa->direccion;
+            $almacen->idempresa = $this->empresa->idempresa;
+            $almacen->nombre = $this->empresa->nombre;
+            $almacen->provincia = $this->empresa->provincia;
             $almacen->save();
 
             $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
             $this->appSettings->set('default', 'idempresa', $this->empresa->idempresa);
             $this->appSettings->save();
-            break;
+            return;
         }
+
+        /// no assigned warehouse? Create a new one
+        $almacen = new Model\Almacen();
+        $almacen->ciudad = $this->empresa->ciudad;
+        $almacen->codpais = $codpais;
+        $almacen->codpostal = $this->empresa->codpostal;
+        $almacen->direccion = $this->empresa->direccion;
+        $almacen->idempresa = $this->empresa->idempresa;
+        $almacen->nombre = $this->empresa->nombre;
+        $almacen->provincia = $this->empresa->provincia;
+        $almacen->save();
+
+        $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+        $this->appSettings->set('default', 'idempresa', $this->empresa->idempresa);
+        $this->appSettings->save();
     }
 
     /**

@@ -40,9 +40,20 @@ class LineaPresupuestoProveedor extends Base\BusinessDocumentLine
      * 
      * @return string
      */
+    public function documentColumn()
+    {
+        return 'idpresupuesto';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new PresupuestoProveedor();
+
         return parent::install();
     }
 

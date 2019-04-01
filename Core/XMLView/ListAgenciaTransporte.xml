@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListAgenciaTransporte
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -34,7 +34,7 @@
             <widget type="text" fieldname="telefono" />
         </column>
         <column name="web" order="130">
-            <widget type="text" fieldname="web" />
+            <widget type="link" fieldname="web" />
         </column>
         <column name="active" display="center" order="140">
             <widget type="checkbox" fieldname="activo" />

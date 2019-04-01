@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,7 +48,11 @@ $(document).ready(function () {
                     success: function (results) {
                         var values = [];
                         results.forEach(function (element) {
-                            values.push({key: element.key, value: element.key + " | " + element.value});
+                            if (element.key !== null) {
+                                values.push({key: element.key, value: element.key + " | " + element.value});
+                            } else {
+                                values.push({key: null, value: element.value});
+                            }
                         });
                         response(values);
                     },
@@ -58,8 +62,11 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                $("form[id=" + formId + "] input[name=" + field + "]").val(ui.item.key);
-                ui.item.value = ui.item.value.split(" | ")[1];
+                var value = ui.item.value.split(" | ");
+                if (value[0] !== null) {
+                    $("form[id=" + formId + "] input[name=" + field + "]").val(ui.item.key);
+                    ui.item.value = value[1];
+                }
             }
         });
     });

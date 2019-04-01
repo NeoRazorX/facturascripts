@@ -18,9 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -36,7 +36,7 @@ class BusinessDocumentView extends BaseView
 
     /**
      *
-     * @var array
+     * @var EstadoDocumento[]
      */
     public $documentStatus = [];
 
@@ -54,20 +54,11 @@ class BusinessDocumentView extends BaseView
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $icon = 'fas fa-file-alt')
+    public function __construct($name, $title, $modelName, $icon = 'fas fa-file')
     {
         parent::__construct($name, $title, $modelName, $icon);
-
-        // Loads document states
-        $estadoDocModel = new EstadoDocumento();
-        $modelClass = explode('\\', $modelName);
-        $this->documentStatus = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
-
-        // custom template
+        $this->documentStatus = $this->model->getAvaliableStatus();
         $this->template = 'Master/BusinessDocumentView.html.twig';
-        static::$assets['css'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css';
-        static::$assets['js'][] = FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js';
     }
 
     /**
@@ -156,10 +147,24 @@ class BusinessDocumentView extends BaseView
             $code = $this->newCode;
         }
 
+        if (empty($code) && empty($where)) {
+            return;
+        }
+
         $this->model->loadFromCode($code);
         $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
         $this->title = $this->model->codigo;
+    }
+
+    /**
+     * 
+     * @param array $data
+     */
+    public function loadFromData(array &$data)
+    {
+        parent::loadFromData($data);
+        $this->model->updateSubject();
     }
 
     /**
@@ -193,6 +198,25 @@ class BusinessDocumentView extends BaseView
      */
     public function processFormData($request, $case)
     {
-        ;
+        switch ($case) {
+            case 'load':
+                foreach ($request->query->all() as $key => $value) {
+                    if ($key != 'code') {
+                        $this->model->{$key} = $value;
+                    }
+                }
+                $this->model->updateSubject();
+                break;
+        }
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js');
     }
 }

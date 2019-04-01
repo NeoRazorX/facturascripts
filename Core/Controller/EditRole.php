@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,26 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * Controller to edit a single item from the Role model.
  *
- * @author Artex Trading sa <jferrer@artextrading.com>
+ * @author Artex Trading sa     <jferrer@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class EditRole extends ExtendedController\PanelController
+class EditRole extends EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Role';
+    }
 
     /**
      * Returns basic page attributes
@@ -68,7 +78,7 @@ class EditRole extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditRole', 'Role', 'rol', 'fas fa-id-card');
+        parent::createViews();
         $this->addEditListView('EditRoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
         $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fas fa-address-card');
 
@@ -132,26 +142,24 @@ class EditRole extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string $viewName
+     * @param object $view
      */
     protected function loadData($viewName, $view)
     {
         $order = [];
         switch ($viewName) {
-            case 'EditRole':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'EditRoleAccess':
                 $order['pagename'] = 'ASC';
             /// no break
             case 'EditRoleUser':
                 $codrole = $this->getViewModelValue('EditRole', 'codrole');
                 $where = [new DataBaseWhere('codrole', $codrole)];
-                $view->loadData('', $where, $order, 0, 0);
+                $view->loadData('', $where, $order);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 }

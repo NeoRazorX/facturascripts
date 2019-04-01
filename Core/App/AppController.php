@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base\DebugBar\PHPCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -102,8 +103,8 @@ class AppController extends App
      */
     public function close(string $nick = '')
     {
-        $nick = (false !== $this->user) ? $this->user->nick : '';
-        parent::close($nick);
+        $selectedNick = (false !== $this->user) ? $this->user->nick : '';
+        parent::close($selectedNick);
     }
 
     /**
@@ -225,7 +226,7 @@ class AppController extends App
                 $template = 'Error/ControllerError.html.twig';
             }
         } else {
-            $this->miniLog->alert($this->i18n->trans('controller-not-found'));
+            $this->miniLog->critical($this->i18n->trans('controller-not-found'));
         }
 
         $this->response->setStatusCode($httpStatus);
@@ -251,11 +252,11 @@ class AppController extends App
         /// HTML template variables
         $templateVars = [
             'appSettings' => $this->settings,
+            'assetManager' => new AssetManager(),
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'menuManager' => $this->menuManager,
-            'sql' => $this->miniLog->read(['sql']),
             'template' => $template,
         ];
 
@@ -306,12 +307,12 @@ class AppController extends App
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
-            $this->miniLog->alert($this->i18n->trans('login-password-fail'));
+            $this->miniLog->warning($this->i18n->trans('login-password-fail'));
             return false;
         }
 
         $this->ipFilter->setAttempt($this->request->getClientIp());
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
         return false;
     }
 
@@ -336,12 +337,12 @@ class AppController extends App
                 return $user;
             }
 
-            $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
+            $this->miniLog->warning($this->i18n->trans('login-cookie-fail'));
             $this->response->headers->clearCookie('fsNick');
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
         return false;
     }
 

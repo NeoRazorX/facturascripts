@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,9 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model\TotalModel;
-use FacturaScripts\Core\Model\CodeModel;
-use FacturaScripts\Core\Lib\IDFiscal;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\IDFiscal;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -62,7 +61,7 @@ class EditCliente extends ExtendedController\EditController
     {
         $where = [
             new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
-            new DataBaseWhere('pagada', false)
+            new DataBaseWhere('pagado', false)
         ];
 
         $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
@@ -103,12 +102,13 @@ class EditCliente extends ExtendedController\EditController
         parent::createViews();
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
+        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
         $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
+        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
         $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
         $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
         $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
-        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
+        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
 
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);
@@ -116,6 +116,9 @@ class EditCliente extends ExtendedController\EditController
         $this->views['ListPedidoCliente']->disableColumn('customer', true);
         $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
         $this->views['ListLineaFacturaCliente']->disableColumn('order', true);
+
+        /// Disable buttons
+        $this->setSettings('ListSubcuenta', 'btnNew', false);
     }
 
     /**
@@ -126,11 +129,21 @@ class EditCliente extends ExtendedController\EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         switch ($viewName) {
             case 'EditCliente':
                 parent::loadData($viewName, $view);
-                $code = $this->getViewModelValue('EditCliente', 'codcliente');
-                $this->setCustomWidgetValues($code);
+                $this->setCustomWidgetValues();
+                break;
+
+            case 'EditCuentaBancoCliente':
+            case 'ListAlbaranCliente':
+            case 'ListContacto':
+            case 'ListFacturaCliente':
+            case 'ListPedidoCliente':
+            case 'ListPresupuestoCliente':
+                $where = [new DataBaseWhere('codcliente', $codcliente)];
+                $view->loadData('', $where);
                 break;
 
             case 'ListCliente':
@@ -141,42 +154,33 @@ class EditCliente extends ExtendedController\EditController
                 }
                 break;
 
-            case 'EditCuentaBancoCliente':
-            case 'ListContacto':
-            case 'ListFacturaCliente':
-            case 'ListAlbaranCliente':
-            case 'ListPedidoCliente':
-            case 'ListPresupuestoCliente':
-                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-                $where = [new DataBaseWhere('codcliente', $codcliente)];
+            case 'ListLineaFacturaCliente':
+                $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
+                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);
                 break;
 
-            case 'ListLineaFacturaCliente':
-                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-                $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
-                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
+            case 'ListSubcuenta':
+                $codsubcuenta = $this->getViewModelValue('EditCliente', 'codsubcuenta');
+                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 break;
         }
     }
 
-    /**
-     * 
-     * @param string $code
-     */
-    protected function setCustomWidgetValues($code)
+    protected function setCustomWidgetValues()
     {
         /// Search for client contacts
-        $where = [new DataBaseWhere('codcliente', $code)];
-        $contacts = CodeModel::all('contactos', 'idcontacto', 'descripcion', true, $where);
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $where = [new DataBaseWhere('codcliente', $codcliente)];
+        $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         /// Load values option to default billing address from client contacts list
-        $columnBilling = $this->views['EditCliente']->columnForName('default-billing-address');
+        $columnBilling = $this->views['EditCliente']->columnForName('billing-address');
         $columnBilling->widget->setValuesFromCodeModel($contacts);
 
         /// Load values option to default shipping address from client contacts list
-        $columnShipping = $this->views['EditCliente']->columnForName('default-shipping-address');
+        $columnShipping = $this->views['EditCliente']->columnForName('shipping-address');
         $columnShipping->widget->setValuesFromCodeModel($contacts);
 
         /// Load values option to Fiscal ID select input
@@ -185,6 +189,6 @@ class EditCliente extends ExtendedController\EditController
 
         /// Load values option to VAT Type select input
         $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArray(RegimenIVA::all());
+        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
     }
 }

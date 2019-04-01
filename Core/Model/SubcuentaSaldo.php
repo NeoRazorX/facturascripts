@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,40 +23,13 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Description of SubcuentaSaldo
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos Garcí Gómez   <carlos@facturascripts.com>
  */
 class SubcuentaSaldo extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $id;
-
-    /**
-     * Month
-     *
-     * @var int
-     */
-    public $mes;
-
-    /**
-     * ID of the subaccount to which it belongs.
-     *
-     * @var int
-     */
-    public $idsubcuenta;
-
-    /**
-     * ID of the account to which it belongs.
-     *
-     * @var int
-     */
-    public $idcuenta;
 
     /**
      * Debit amount for the month.
@@ -73,6 +46,34 @@ class SubcuentaSaldo extends Base\ModelClass
     public $haber;
 
     /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $id;
+
+    /**
+     * ID of the account to which it belongs.
+     *
+     * @var int
+     */
+    public $idcuenta;
+
+    /**
+     * ID of the subaccount to which it belongs.
+     *
+     * @var int
+     */
+    public $idsubcuenta;
+
+    /**
+     * Month
+     *
+     * @var int
+     */
+    public $mes;
+
+    /**
      * Balance amount for the month.
      *
      * @var float|int
@@ -80,32 +81,11 @@ class SubcuentaSaldo extends Base\ModelClass
     public $saldo;
 
     /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'subcuentas_saldos';
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'id';
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
-
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
@@ -121,27 +101,28 @@ class SubcuentaSaldo extends Base\ModelClass
     public function install()
     {
         new Subcuenta();
-        return '';
+
+        return parent::install();
     }
 
     /**
-     * Returns True if there is no erros on properties values.
-     * Syncronize data from account
+     * Returns the name of the column that is the model's primary key.
      *
-     * @return bool
+     * @return string
      */
-    public function test()
+    public static function primaryColumn()
     {
-        $account = new Subcuenta();
-        if (!$account->loadFromCode($this->idsubcuenta)) {
-            self::$miniLog->alert(self::$i18n->trans('missing-data-subaccount'));
-            return false;
-        }
+        return 'id';
+    }
 
-        $this->idcuenta = $account->idcuenta;
-        $this->saldo = $this->debe - $this->haber;
-
-        return parent::test();
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'subcuentas_saldos';
     }
 
     /**
@@ -170,8 +151,9 @@ class SubcuentaSaldo extends Base\ModelClass
      * Load in an array "detail" the monthly balances of a sub-account
      * and return the sum of them.
      *
-     * @param int $idSubAccount
+     * @param int   $idSubAccount
      * @param array $detail
+     *
      * @return float
      */
     public function setSubAccountBalance($idSubAccount, &$detail): float

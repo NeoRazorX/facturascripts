@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,28 @@ namespace FacturaScripts\Core\Lib\Widget;
 /**
  * Description of WidgetTextarea
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class WidgetTextarea extends WidgetText
 {
+
+    /**
+     * Indicates the number of rows value
+     *
+     * @var int
+     */
+    protected $rows;
+
+    /**
+     *
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->rows = (int) ($data['rows'] ?? 3);
+    }
 
     /**
      * 
@@ -75,8 +93,9 @@ class WidgetTextarea extends WidgetText
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
-        return '<textarea name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>'
+        $cssFormControl = $this->css('form-control');
+        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
+        return '<textarea rows="' . $this->rows . '" name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>'
             . $this->value . '</textarea>';
     }
 }

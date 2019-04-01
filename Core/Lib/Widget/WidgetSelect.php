@@ -118,8 +118,8 @@ class WidgetSelect extends BaseWidget
      */
     public function processFormData(&$model, $request)
     {
-        $value = $request->request->get($this->fieldname);
-        $model->{$this->fieldname} = empty($value) ? null : $value;
+        $value = $request->request->get($this->fieldname, '');
+        $model->{$this->fieldname} = ('' === $value) ? null : $value;
     }
 
     /**
@@ -157,6 +157,31 @@ class WidgetSelect extends BaseWidget
             $this->values[] = [
                 'value' => $value,
                 'title' => '',
+            ];
+        }
+
+        if ($translate) {
+            $this->applyTranslations();
+        }
+    }
+
+    /**
+     * 
+     * @param array $values
+     * @param bool  $translate
+     * @param bool  $addEmpty
+     */
+    public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false)
+    {
+        $this->values = [];
+        if ($addEmpty) {
+            $this->values[] = ['value' => null, 'title' => '------'];
+        }
+
+        foreach ($values as $key => $value) {
+            $this->values[] = [
+                'value' => $key,
+                'title' => $value,
             ];
         }
 
@@ -221,16 +246,32 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        if ($this->readonly) {
-            return parent::inputHtml($type, $extraClass);
+        $cssFormControl = $this->css('form-control');
+        if ($this->readonly()) {
+            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+                . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>';
         }
 
-        $html = '<select name="' . $this->fieldname . '" class="form-control"' . $this->inputHtmlExtraParams() . '>';
+        $found = false;
+        $html = '<select name="' . $this->fieldname . '" class="' . $cssFormControl . '"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
-            /// don't use strict comparation (===)
-            $selected = ($option['value'] == $this->value) ? ' selected="selected" ' : '';
             $title = empty($option['title']) ? $option['value'] : $option['title'];
-            $html .= '<option value="' . $option['value'] . '" ' . $selected . '>' . $title . '</option>';
+
+            /// don't use strict comparation (===)
+            if ($option['value'] == $this->value) {
+                $found = true;
+                $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
+                continue;
+            }
+
+            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
+        }
+
+        /// value not found?
+        if (!$found && !empty($this->value)) {
+            $html .= '<option value="' . $this->value . '" selected="">'
+                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+                . '</option>';
         }
 
         $html .= '</select>';

@@ -102,6 +102,14 @@ class AppRouter
         $uri = $this->getUri();
         $filePath = FS_FOLDER . $uri;
 
+        /// favicon.ico
+        if ('/favicon.ico' == $uri) {
+            $filePath = FS_FOLDER . '/Dinamic/Assets/Images/favicon.ico';
+            header('Content-Type: ' . $this->getMime($filePath));
+            readfile($filePath);
+            return true;
+        }
+
         /// Not a file?
         if (!is_file($filePath)) {
             return false;

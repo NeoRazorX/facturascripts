@@ -18,18 +18,17 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the PresupuestoCliente model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListPresupuestoCliente extends ExtendedController\ListController
+class ListPresupuestoCliente extends ListBusinessDocument
 {
 
     /**
@@ -52,58 +51,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
-        $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
-        $this->addOrderBy('ListPresupuestoCliente', ['codigo'], 'code');
-        $this->addOrderBy('ListPresupuestoCliente', ['fecha'], 'date', 2);
-        $this->addOrderBy('ListPresupuestoCliente', ['total'], 'amount');
-
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'until-date', 'until-date', 'fecha', '<=');
-        $this->addFilterNumber('ListPresupuestoCliente', 'min-total', 'total', 'total', '>=');
-        $this->addFilterNumber('ListPresupuestoCliente', 'max-total', 'total', 'total', '<=');
-
-        $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListPresupuestoCliente', 'idestado', 'state', 'idestado', $statusValues);
-
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', 'codserie', $serieValues);
-
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
-
-        $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'customer', 'codcliente', 'Cliente');
-        $this->addFilterCheckbox('ListPresupuestoCliente', 'femail', 'email-not-sent', 'femail', 'IS', null);
-
-        // Delivery notes lines
-        $this->createViewLines();
-    }
-
-    protected function createViewLines()
-    {
-        $this->addView('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente', 'lines', 'fas fa-list');
-        $this->addSearchFields('ListLineaPresupuestoCliente', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaPresupuestoCliente', ['referencia'], 'reference');
-        $this->addOrderBy('ListLineaPresupuestoCliente', ['cantidad'], 'quantity');
-        $this->addOrderBy('ListLineaPresupuestoCliente', ['descripcion'], 'description');
-        $this->addOrderBy('ListLineaPresupuestoCliente', ['pvptotal'], 'ammount');
-        $this->addOrderBy('ListLineaPresupuestoCliente', ['idpresupuesto'], 'code', 2);
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect('ListLineaPresupuestoCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
-        $this->addFilterNumber('ListLineaPresupuestoCliente', 'cantidad', 'quantity', 'cantidad');
-        $this->addFilterNumber('ListLineaPresupuestoCliente', 'dtopor', 'discount', 'dtopor');
-        $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber('ListLineaPresupuestoCliente', 'pvptotal', 'ammount', 'pvptotal');
-
-        /// disable megasearch for this view
-        $this->setSettings('ListLineaPresupuestoCliente', 'megasearch', false);
-        $this->setSettings('ListLineaPresupuestoCliente', 'btnNew', false);
-        $this->setSettings('ListLineaPresupuestoCliente', 'btnDelete', false);
+        $this->createViewSales('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
     }
 }

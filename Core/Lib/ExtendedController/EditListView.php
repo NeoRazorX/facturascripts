@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,7 +44,6 @@ class EditListView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/EditListView.html.twig';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js';
     }
 
     /**
@@ -107,5 +107,13 @@ class EditListView extends BaseView
                 $this->offset = (int) $request->request->get('offset', 0);
                 break;
         }
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js');
     }
 }

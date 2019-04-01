@@ -108,7 +108,7 @@ class RowButton extends VisualItem
                     . '" title="' . $this->label . '">' . $icon . $label . '</button>';
 
             case 'link':
-                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->action . '"'
+                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $this->label . '">' . $icon . $label . '</a>';
 
             case 'modal':
@@ -121,5 +121,22 @@ class RowButton extends VisualItem
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $this->label . '">' . $icon . $label . '</button>';
         }
+    }
+
+    /**
+     * Fix url.
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    protected function asset($url)
+    {
+        $path = FS_ROUTE . '/';
+        if (substr($url, 0, strlen($path)) == $path) {
+            return $url;
+        }
+
+        return str_replace('//', '/', $path . $url);
     }
 }

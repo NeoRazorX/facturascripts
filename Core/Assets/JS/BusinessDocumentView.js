@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,8 @@ function beforeChange(changes, source) {
                 // apply for autocomplete columns
                 if (typeof changes[0][3] === "string") {
                     changes[0][3] = changes[0][3].split(" | ", 1)[0];
+                    var position = hsTable.getSelected();
+                    hsTable.setDataAtCell(position[0][0], 2, '');
                 }
             }
         }
@@ -181,11 +183,20 @@ $(document).ready(function () {
         dropdownMenu: true,
         preventOverflow: "horizontal",
         minSpareRows: 5,
-        enterMoves: {row: 0, col: 1}
+        enterMoves: {row: 0, col: 1},
+        modifyColWidth: function (width, col) {
+            if (width > 500) {
+                return 500;
+            }
+        }
     });
 
     Handsontable.hooks.add("beforeChange", beforeChange);
     Handsontable.hooks.add("afterChange", businessDocViewRecalculate);
+
+    $("#mainTabs li:first-child a").on('shown.bs.tab', function (e) {
+        hsTable.render();
+    });
 
     $("#doc_codserie").change(function () {
         businessDocViewRecalculate();
@@ -207,7 +218,11 @@ $(document).ready(function () {
                     success: function (results) {
                         var values = [];
                         results.forEach(function (element) {
-                            values.push({key: element.key, value: element.key + " | " + element.value});
+                            if (element.key !== null) {
+                                values.push({key: element.key, value: element.key + " | " + element.value});
+                            } else {
+                                values.push({key: null, value: element.value});
+                            }
                         });
                         response(values);
                     },
@@ -217,8 +232,11 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                $("#" + field + "Autocomplete").val(ui.item.key);
-                ui.item.value = ui.item.value.split(" | ")[1];
+                var value = ui.item.value.split(" | ");
+                if (value[0] !== null) {
+                    $("#" + field + "Autocomplete").val(ui.item.key);
+                    ui.item.value = value[1];
+                }
             }
         });
     });

@@ -36,8 +36,8 @@
         <column name="type" order="130">
             <widget type="text" fieldname="mimetype" />
         </column>
-        <column name="size" order="140">
-            <widget type="number" fieldname="size" />
+        <column name="size" display="right" order="140">
+            <widget type="number" fieldname="size" decimal="0" />
         </column>
         <column name="date" order="150">
             <widget type="date" fieldname="date" />

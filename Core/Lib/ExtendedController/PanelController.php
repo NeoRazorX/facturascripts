@@ -62,7 +62,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function getImageUrl()
@@ -99,7 +99,7 @@ abstract class PanelController extends BaseController
         $this->createViews();
 
         // Get any operations that have to be performed
-        $action = $this->request->get('action', '');
+        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Run operations on the data before reading it
         if (!$this->execPreviousAction($action)) {
@@ -111,6 +111,8 @@ abstract class PanelController extends BaseController
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
+            } else {
+                $view->processFormData($this->request, 'preload');
             }
 
             $this->loadData($viewName, $view);
@@ -129,9 +131,6 @@ abstract class PanelController extends BaseController
 
         // General operations with the loaded data
         $this->execAfterAction($action);
-
-        // final operations, like assets merge
-        $this->finalStep();
     }
 
     /**
@@ -181,7 +180,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list-alt')
+    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -189,20 +188,26 @@ abstract class PanelController extends BaseController
 
     /**
      * Adds a Grid type view to the controller.
+     * Master/Detail params:
+     *   ['name' = 'viewName', 'model' => 'modelName']
      *
-     * @param $viewName
-     * @param $parentView
-     * @param $modelName
-     * @param $viewTitle
+     * @param array  $master
+     * @param array  $detail
+     * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addGridView($viewName, $parentView, $modelName, $viewTitle, $viewIcon = 'fas fa-list')
+    protected function addGridView($master, $detail, $viewTitle, $viewIcon = 'fas fa-list-alt')
     {
-        $parent = $this->views[$parentView];
-        if (isset($parent)) {
-            $view = new GridView($parent, $viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
-            $this->addCustomView($viewName, $view);
-        }
+        // Create master and detail views
+        $master['model'] = self::MODEL_NAMESPACE . $master['model'];
+        $detail['model'] = self::MODEL_NAMESPACE . $detail['model'];
+        $view = new GridView($master, $detail, $viewTitle, $viewIcon);
+
+        // load columns definition for detail view
+        $view->detailView->loadPageOptions($this->user);
+
+        // Add view to views container
+        $this->addCustomView($master['name'], $view);
     }
 
     /**
@@ -314,13 +319,13 @@ abstract class PanelController extends BaseController
                 $this->response->setContent(json_encode($results));
                 return false;
 
-            case 'edit':
-                $this->editAction();
-                break;
-
             case 'delete':
             case 'delete-document':
                 $this->deleteAction();
+                break;
+
+            case 'edit':
+                $this->editAction();
                 break;
 
             case 'insert':
@@ -344,6 +349,8 @@ abstract class PanelController extends BaseController
 
     /**
      * Runs data insert action.
+     * 
+     * @return bool
      */
     protected function insertAction()
     {

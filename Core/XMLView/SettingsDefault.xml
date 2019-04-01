@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditFabricante
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>  
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="default" numcolumns="12">
@@ -30,12 +26,12 @@
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
             <column name="country" numcolumns="3" order="100">
-                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
+                <widget type="select" fieldname="codpais" onclick="EditPais" icon="fas fa-globe-americas" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="currency" numcolumns="3" order="100">
-                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" icon="fas fa-money-bill-alt" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
@@ -68,9 +64,9 @@
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
-        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fas fa-info-circle fa-lg">
+        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fas fa-info-circle">
             <column name="decimals" numcolumns="3" order="100">
-                <widget type="select" fieldname="decimals" required="true" icon="fas fa-sort-numeric-up">
+                <widget type="select" fieldname="decimals" required="true" icon="fas fa-calculator">
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
@@ -94,12 +90,9 @@
                 </widget>
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database fa-lg">
-            <column name="name" display="none" order="0">
-                <widget type="text" fieldname="name" readonly="true" required="true" />
-            </column>
+        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database">
             <column name="homepage" numcolumns="3" order="100">
-                <widget type="select" fieldname="homepage">
+                <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values source="pages" fieldcode="name" fieldtitle="name"></values>
                 </widget>
             </column>
@@ -107,10 +100,7 @@
                 <widget type="number" fieldname="item_limit" required="true" />
             </column>
         </group>
-        <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access fa-lg">
-            <column name="name" display="none" order="0">
-                <widget type="text" fieldname="name" readonly="true" required="true" />
-            </column>
+        <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access">
             <column name="enable-api" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="enable_api"/>
             </column>

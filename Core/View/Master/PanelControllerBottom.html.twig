@@ -38,24 +38,25 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <ul class="nav nav-pills d-print-none" id="mainTabs" role="tablist">
-                    {% for viewName, view in fsc.views %}
-                        {% set showView = view.settings.active and viewName != firstViewName %}
-                        {% if showView %}
-                            <li class="nav-item">
-                                {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and loop.index == 2) ? ' active' : '' %}
-                                <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                    <i class="{{ view.icon }}" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                                    {% if view.count > 0 %}
-                                        <span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>
-                                    {% endif %}
-                                </a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                <br/>
+                {% if fsc.views|length > 2 %}
+                    <ul class="nav nav-pills mb-3 d-print-none" id="mainTabs" role="tablist">
+                        {% for viewName, view in fsc.views %}
+                            {% set showView = view.settings.active and viewName != firstViewName %}
+                            {% if showView %}
+                                <li class="nav-item">
+                                    {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and loop.index == 2) ? ' active' : '' %}
+                                    <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                                        <i class="{{ view.icon }}" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
+                                        {% if view.count > 0 %}
+                                            <span class="badge badge-secondary">{{ fsc.numberTools.format(view.count, 0) }}</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
                         {% set showView = view.settings.active and viewName != firstViewName %}

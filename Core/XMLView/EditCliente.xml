@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,24 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditCliente
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcliente" icon="fas fa-user" />
+                <widget type="text" fieldname="codcliente" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" />
             </column>
             <column name="name" numcolumns="3" order="110" description="desc-customer-name">
                 <widget type="text" fieldname="nombre" required="true"/>
             </column>
             <column name="business-name" numcolumns="3" order="120" description="desc-business-name">
-                <widget type="text" fieldname="razonsocial" required="true" />
+                <widget type="text" fieldname="razonsocial" />
             </column>
             <column name="fiscal-id" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
@@ -41,10 +37,34 @@
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif"/>
+                <widget type="text" fieldname="cifnif" icon="fas fa-id-card"/>
             </column>
             <column name="fiscal-mode" title="is-person" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
+            </column>
+        </group>
+        <group name="contact" title="contact-info" numcolumns="12">
+            <column name="billing-address" titleurl="ListCliente?activetab=ListContacto" order="100">
+                <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" order="110">
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="phone" order="120">
+                <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
+            </column>
+            <column name="phone2" display="none" order="130">
+                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
+            </column>
+            <column name="fax" display="none" order="140">
+                <widget type="text" fieldname="fax" />
+            </column>
+            <column name="email" order="150">
+                <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
@@ -71,7 +91,7 @@
             </column>
             <column name="agent" numcolumns="3" titleurl="ListAgente" order="150">
                 <widget type="select" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="irpf" numcolumns="3" order="160">
@@ -79,33 +99,6 @@
             </column>
             <column name="vat-regime" numcolumns="3" order="170">
                 <widget type="select" fieldname="regimeniva" required="true">
-                    <values></values>
-                </widget>
-            </column>
-            <column name="surcharge" order="180">
-                <widget type="checkbox" fieldname="recargo" />
-            </column>
-        </group>
-        <group name="contact" title="contact-info" numcolumns="12">
-            <column name="phone" numcolumns="3" order="100">
-                <widget type="text" fieldname="telefono1" />
-            </column>
-            <column name="phone2" numcolumns="3" order="110">
-                <widget type="text" fieldname="telefono2" />
-            </column>
-            <column name="fax" numcolumns="3" order="120">
-                <widget type="text" fieldname="fax" />
-            </column>
-            <column name="email" numcolumns="3" order="130">
-                <widget type="email" fieldname="email" icon="fas fa-envelope" />
-            </column>
-            <column name="default-billing-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="140">
-                <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
-                    <values></values>
-                </widget>
-            </column>
-            <column name="default-shipping-address" titleurl="ListCliente?activetab=ListContacto" numcolumns="6" order="150">
-                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
                     <values></values>
                 </widget>
             </column>

@@ -75,7 +75,6 @@
     <column>
         <name>direccion</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>editable</name>
@@ -119,14 +118,10 @@
     <column>
         <name>irpf</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>neto</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>nick</name>
@@ -150,6 +145,12 @@
         <type>text</type>
     </column>
     <column>
+        <name>pagado</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>porcomision</name>
         <type>double precision</type>
     </column>
@@ -161,60 +162,49 @@
         <name>tasaconv</name>
         <type>double precision</type>
         <null>NO</null>
-        <default>1</default>
     </column>
     <column>
         <name>total</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>totaleuros</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>totalirpf</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>totaliva</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>totalrecargo</name>
         <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <constraint>
         <name>albaranescli_pkey</name>
         <type>PRIMARY KEY (idalbaran)</type>
     </constraint>
     <constraint>
-        <name>ca_albaranescli_series2</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_albaranescli_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_albaranescli_ejercicios2</name>
+        <name>ca_albaranescli_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_albaranescli2</name>
-        <type>UNIQUE (codigo,idempresa)</type>
+        <name>ca_albaranescli_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranescli_users</name>
-        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_albaranescli_almacenes</name>
-        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>uniq_codigo_albaranescli</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>

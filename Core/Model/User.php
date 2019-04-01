@@ -287,4 +287,37 @@ class User extends Base\ModelClass
             $this->level = 0;
         }
     }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $result = parent::saveInsert($values);
+        if ($result && !$this->admin) {
+            /// assign to some role
+            $roleModel = new Role();
+            foreach ($roleModel->all() as $role) {
+                $roleUser = new RoleUser();
+                $roleUser->codrole = $role->codrole;
+                $roleUser->nick = $this->nick;
+                $roleUser->save();
+
+                /// set user homepage
+                foreach ($roleUser->getRoleAccess() as $roleAccess) {
+                    $this->homepage = $roleAccess->pagename;
+                    if ('List' == substr($this->homepage, 0, 4)) {
+                        break;
+                    }
+                }
+                $this->save();
+                break;
+            }
+        }
+
+        return $result;
+    }
 }

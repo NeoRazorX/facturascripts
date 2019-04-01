@@ -1,11 +1,7 @@
 {#
    /**
-     * Admin Home view template.
-     *
-     * Main page for administration of plugins and addons.
-     *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -24,99 +20,86 @@
 #}
 
 {% extends "Master/MenuTemplate.html.twig" %}
+{% import _self as macros %}
+{% set pageData = fsc.getPageData() %}
 
 {% block body %}
-    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <h1 class="h3">
-                    <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }} {{ fsc.modelName }}
-                </h1>
-            </div>
-            <div class="col text-right">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="far fa-copy" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        {% for destinyDoc in fsc.approveTo %}
-                            <button class="dropdown-item" id="action" name="action" value="{{ destinyDoc.generadoc }}">{{ destinyDoc.generadoc }}</button>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <form name="fs_install" method="post" class="form">
-            <input type="hidden" name="model" value="{{ fsc.modelName }}" />
-            <div class="row">
-                <div class="col">&nbsp;</div>
-            </div>
-            <div class="row">
+    <form action="{{ fsc.url() }}" method="post">
+        <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
+        <div class="container-fluid">
+            <div class="row mb-2">
                 <div class="col">
-                    {% for iddoc,doc in fsc.docs %}
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="{{ doc.url }}" target="_blank">{{ doc.codigo }}</a> {{ doc.fecha }}</h5>
-                                <input type="hidden" id="doc" name="doc[]" value="{{ doc.primaryColumnValue() }}"/>
-                                <table class="table table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ i18n.trans('reference') }}</th>
-                                            <th>{{ i18n.trans('description') }}</th>
-                                            <th>{{ i18n.trans('quantity') }}</th>
-                                            <th>{{ i18n.trans('approve-quantity') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for lineDoc in fsc.linesDocs[iddoc] %}
-                                            <tr>
-                                                <td>
-                                                    {{ lineDoc.referencia }}
-                                                </td>
-                                                <td>
-                                                    {{ lineDoc.descripcion }}
-                                                </td>
-                                                <td class="text-right">
-                                                    {{ lineDoc.cantidad }}
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input class="form-control" type="hidden" id="prevline" name="prevline[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}"/>
-                                                        <input class="form-control" type="number" id="line" name="line[{{ lineDoc.primaryColumnValue() }}]" value="{{ lineDoc.cantidad }}" max="{{ lineDoc.cantidad }}" required="" />
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {% else %}
-                                            <tr class="table-warning">
-                                                <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    {% endfor %}
+                    <h1 class="h3">
+                        <i class="{{ pageData.icon }}" aria-hidden="true"></i>
+                        {{ i18n.trans(pageData.title) | capitalize }}
+                    </h1>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">&nbsp;</div>
-            </div>
-            <div class="row text-right">
-                <div class="col">
+                <div class="col text-right">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownApprove" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="far fa-copy" aria-hidden="true"></i>&nbsp; {{ i18n.trans('approve') }}
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for approve in fsc.approveTo %}
-                                <button class="dropdown-item" id="action" name="action" value="{{ approve.generadoc }}">{{ approve.generadoc }}</button>
+                            {% for option in fsc.getDestinyDocs() %}
+                                <button type="submit" name="destiny" value="{{ option }}" class="dropdown-item">
+                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ option }}
+                                </button>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
+            <div class="row">
+                <div class="col">
+                    {% for doc in fsc.documents %}
+                        <input type="hidden" name="code[]" value="{{ doc.primaryColumnValue() }}"/>
+                        {{ macros.documentCard(doc, fsc, i18n) }}
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ i18n.trans('no-data') }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock %}
+
+{% macro documentCard(doc, fsc, i18n) %}
+    <div class="card mb-2">
+        <div class="card-header">
+            <a href="{{ doc.url() }}">
+                <i class="fas fa-file" aria-hidden="true"></i> {{ fsc.modelName }} {{ doc.codigo }}
+            </a>
+            &nbsp;
+            <i class="fas fa-calendar-alt" aria-hidden="true"></i> {{ doc.fecha }}
+            <i class="fas fa-clock" aria-hidden="true"></i> {{ doc.hora }}
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ i18n.trans('reference') }}</th>
+                        <th>{{ i18n.trans('description') }}</th>
+                        <th class="text-right">{{ i18n.trans('quantity') }}</th>
+                        <th class="text-right">{{ i18n.trans('approve-quantity') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in doc.getLines() %}
+                        <tr>
+                            <td>{{ line.referencia }}</td>
+                            <td>{{ fsc.fixDescription(line.descripcion) | raw }}</td>
+                            <td>
+                                <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
+                            </td>
+                            <td class="table-warning">
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ fsc.getDefaultQuantity(line) }}" step="any" class="form-control text-right" autocomplete="off"/>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endmacro %}

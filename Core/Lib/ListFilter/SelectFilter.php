@@ -30,6 +30,12 @@ class SelectFilter extends BaseFilter
 
     /**
      *
+     * @var string
+     */
+    public $icon = '';
+
+    /**
+     *
      * @var array
      */
     public $values;
@@ -69,11 +75,28 @@ class SelectFilter extends BaseFilter
      */
     public function render()
     {
+        if (empty($this->icon)) {
+            return '<div class="col-sm-2">'
+                . '<div class="form-group">'
+                . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . '>'
+                . $this->getHtmlOptions()
+                . '</select>'
+                . '</div>'
+                . '</div>';
+        }
+
         return '<div class="col-sm-2">'
             . '<div class="form-group">'
+            . '<div class="input-group">'
+            . '<span class="input-group-prepend">'
+            . '<span class="input-group-text">'
+            . '<i class="' . $this->icon . ' fa-fw" aria-hidden="true"></i>'
+            . '</span>'
+            . '</span>'
             . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . '>'
             . $this->getHtmlOptions()
             . '</select>'
+            . '</div>'
             . '</div>'
             . '</div>';
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Model;
 use Symfony\Component\HttpFoundation\Cookie;
 
 /**
@@ -32,6 +32,10 @@ use Symfony\Component\HttpFoundation\Cookie;
 class EditUser extends ExtendedController\EditController
 {
 
+    /**
+     * 
+     * @return string
+     */
     public function getModelClassName()
     {
         return 'User';
@@ -46,7 +50,7 @@ class EditUser extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'user';
-        $pagedata['icon'] = 'fas fa-user';
+        $pagedata['icon'] = 'fas fa-user-tie';
         $pagedata['menu'] = 'admin';
         $pagedata['showonmenu'] = false;
 
@@ -59,27 +63,31 @@ class EditUser extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
+        $this->setTabsPosition('top');
 
-        /// Load values for input selects
-        $this->loadHomepageValues();
-        $this->loadLanguageValues();
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
 
         /// Disable column
         $this->views['EditRoleUser']->disableColumn('user', true);
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function editAction()
     {
-        parent::editAction();
+        $result = parent::editAction();
 
         // Are we changing user language?
-        if ($this->views['EditUser']->model->nick === $this->user->nick) {
+        if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
             $this->i18n->setLangCode($this->views['EditUser']->model->nick);
 
             $expire = time() + FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
         }
+
+        return $result;
     }
 
     /**
@@ -130,6 +138,12 @@ class EditUser extends ExtendedController\EditController
                 $view->loadData('', $where, [], 0, 0);
                 break;
 
+            case 'EditUser':
+                parent::loadData($viewName, $view);
+                $this->loadHomepageValues();
+                $this->loadLanguageValues();
+                break;
+
             default:
                 parent::loadData($viewName, $view);
         }
@@ -140,17 +154,8 @@ class EditUser extends ExtendedController\EditController
      */
     private function loadHomepageValues()
     {
-        $user = new Model\User();
-        $code = $this->request->get('code');
-
-        $userPages = [
-            ['value' => '', 'title' => '------'],
-        ];
-        if ($user->loadFromCode($code)) {
-            $userPages = $this->getUserPages($user);
-        }
-
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
+        $userPages = $this->getUserPages($this->views['EditUser']->model);
         $columnHomepage->widget->setValuesFromArray($userPages);
     }
 

@@ -25,14 +25,11 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idvariante" required="true" />
-            </column>
             <column name="product" display="none" order="110">
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
             <column name="reference" numcolumns="4" order="120">
-                <widget type="text" fieldname="referencia" icon="fas fa-key" />
+                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" />
             </column>
             <column name="attribute-value-1" numcolumns="4" order="130">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">

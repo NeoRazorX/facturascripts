@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,10 +18,14 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * The head of transfer.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class TransferenciaStock extends Base\ModelClass
 {
@@ -29,11 +33,11 @@ class TransferenciaStock extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key autoincremental.
+     * Warehouse of destination. Varchar (4).
      *
-     * @var int
+     * @var string
      */
-    public $idtrans;
+    public $codalmacendestino;
 
     /**
      * Warehouse of origin. Varchar (4).
@@ -43,11 +47,11 @@ class TransferenciaStock extends Base\ModelClass
     public $codalmacenorigen;
 
     /**
-     * Warehouse of destination. Varchar (4).
+     * Primary key autoincremental.
      *
-     * @var string
+     * @var int
      */
-    public $codalmacendestino;
+    public $idtrans;
 
     /**
      * Date of transfer.
@@ -61,17 +65,43 @@ class TransferenciaStock extends Base\ModelClass
      *
      * @var string
      */
-    public $usuario;
+    public $nick;
 
     /**
-     * * Reset the values of all model properties.
      *
-     * @return void
+     * @var string
      */
+    public $observaciones;
+
     public function clear()
     {
         parent::clear();
         $this->fecha = date('d-m-Y H:i:s');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        /// remove lines to force update stock
+        foreach ($this->getLines() as $line) {
+            $line->delete();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * 
+     * @return LineaTransferenciaStock[]
+     */
+    public function getLines()
+    {
+        $line = new LineaTransferenciaStock();
+        $where = [new DataBaseWhere('idtrans', $this->primaryColumnValue())];
+        return $line->all($where, [], 0, 0);
     }
 
     /**
@@ -95,14 +125,20 @@ class TransferenciaStock extends Base\ModelClass
     }
 
     /**
-     * If warehouse oirigin is diferent warehouse destination return true. If not, return false.
-     *
+     * 
      * @return bool
      */
     public function test()
     {
+        $this->observaciones = Utils::noHtml($this->observaciones);
+
         if ($this->codalmacenorigen == $this->codalmacendestino) {
             self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
+            return false;
+        }
+
+        if ($this->getIdempresa($this->codalmacendestino) !== $this->getIdempresa($this->codalmacenorigen)) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-must-be-same-business'));
             return false;
         }
 
@@ -119,5 +155,18 @@ class TransferenciaStock extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListAlmacen?activetab=List');
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return int
+     */
+    protected function getIdempresa($codalmacen)
+    {
+        $warehouse = new Almacen;
+        $warehouse->loadFromCode($codalmacen);
+        return $warehouse->idempresa;
     }
 }

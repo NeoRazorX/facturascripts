@@ -7,12 +7,6 @@
 -->
 <table>
     <column>
-        <name>anulada</name>
-        <type>boolean</type>
-        <null>NO</null>
-        <default>false</default>
-    </column>
-    <column>
         <name>apartado</name>
         <type>character varying(10)</type>
     </column>
@@ -85,7 +79,6 @@
     <column>
         <name>direccion</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>editable</name>
@@ -141,12 +134,10 @@
     <column>
         <name>irpf</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>neto</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>nick</name>
@@ -171,7 +162,7 @@
         <type>text</type>
     </column>
     <column>
-        <name>pagada</name>
+        <name>pagado</name>
         <type>boolean</type>
         <null>NO</null>
         <default>false</default>
@@ -192,22 +183,18 @@
     <column>
         <name>total</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totaleuros</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totalirpf</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totaliva</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totalrecargo</name>
@@ -222,15 +209,11 @@
         <type>PRIMARY KEY (idfactura)</type>
     </constraint>
     <constraint>
-        <name>ca_facturascli_series2</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_facturascli_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_facturascli_ejercicios2</name>
-        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_facturascli_asiento2</name>
+        <name>ca_facturascli_asiento</name>
         <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
@@ -238,15 +221,19 @@
         <type>FOREIGN KEY (idasientop) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_facturascli2</name>
-        <type>UNIQUE (codigo,idempresa)</type>
+        <name>ca_facturascli_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturascli_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_users</name>
-        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_facturascli_almacenes</name>
-        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>uniq_codigo_facturascli</name>
+        <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>

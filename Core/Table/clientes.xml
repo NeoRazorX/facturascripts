@@ -98,10 +98,6 @@
         <type>character varying(100)</type>
     </column>
     <column>
-        <name>recargo</name>
-        <type>boolean</type>
-    </column>
-    <column>
         <name>regimeniva</name>
         <type>character varying(20)</type>
     </column>
@@ -116,8 +112,6 @@
     <column>
         <name>tipoidfiscal</name>
         <type>character varying(25)</type>
-        <null>NO</null>
-        <default>'NIF'::character varying</default>
     </column>
     <column>
         <name>web</name>

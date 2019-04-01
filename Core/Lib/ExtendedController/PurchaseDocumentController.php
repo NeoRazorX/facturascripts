@@ -66,7 +66,7 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
     protected function setSubject(&$view, $formData)
     {
         if (empty($formData['codproveedor'])) {
-            return 'ERROR: NO SUPPLIER';
+            return 'ERROR: ' . $this->i18n->trans('supplier-not-found');
         }
 
         if ($view->model->codproveedor === $formData['codproveedor']) {
@@ -79,6 +79,6 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
             return 'OK';
         }
 
-        return 'ERROR: NO SUPPLIER';
+        return 'ERROR: ' . $this->i18n->trans('supplier-not-found');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,17 +64,19 @@ abstract class ListController extends BaseController
         $this->createViews();
 
         // Store action to execute
-        $action = $this->request->get('action', '');
+        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Operations with data, before execute action
         if (!$this->execPreviousAction($action)) {
             return;
         }
 
-        // Load data for every view
+        // Load filter saved and data for every view
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
+            } else {
+                $view->processFormData($this->request, 'preload');
             }
 
             $this->loadData($viewName, $view);
@@ -82,9 +84,18 @@ abstract class ListController extends BaseController
 
         // Operations with data, after execute action
         $this->execAfterAction($action);
+    }
 
-        // final operations, like assets merge
-        $this->finalStep();
+    /**
+     * Base method to add a filter to the view
+     *
+     * @param string                $viewName
+     * @param string                $key
+     * @param ListFilter\BaseFilter $filter
+     */
+    protected function addFilter($viewName, $key, $filter)
+    {
+        $this->views[$viewName]->filters[$key] = $filter;
     }
 
     /**
@@ -102,24 +113,24 @@ abstract class ListController extends BaseController
     protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
         $filter = new ListFilter\AutocompleteFilter($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
-        $this->views[$viewName]->filters[$key] = $filter;
+        $this->addFilter($viewName, $key, $filter);
     }
 
     /**
      * Adds a boolean condition type filter to the ListView.
      *
-     * @param string $viewName
-     * @param string $key        (Filter identifier)
-     * @param string $label      (Human reader description)
-     * @param string $field      (Field of the model to apply filter)
-     * @param string $operation  (operation to perform with match value)
-     * @param mixed  $matchValue (Value to match)
+     * @param string          $viewName
+     * @param string          $key        (Filter identifier)
+     * @param string          $label      (Human reader description)
+     * @param string          $field      (Field of the model to apply filter)
+     * @param string          $operation  (operation to perform with match value)
+     * @param mixed           $matchValue (Value to match)
      * @param DataBaseWhere[] $default (where to apply when filter is empty)
      */
     protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
     {
         $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
-        $this->views[$viewName]->filters[$key] = $filter;
+        $this->addFilter($viewName, $key, $filter);
     }
 
     /**
@@ -134,7 +145,7 @@ abstract class ListController extends BaseController
     protected function addFilterDatePicker($viewName, $key, $label = '', $field = '', $operation = '>=')
     {
         $filter = new ListFilter\DateFilter($key, $field, $label, $operation);
-        $this->views[$viewName]->filters[$key] = $filter;
+        $this->addFilter($viewName, $key, $filter);
     }
 
     /**
@@ -149,7 +160,22 @@ abstract class ListController extends BaseController
     protected function addFilterNumber($viewName, $key, $label = '', $field = '', $operation = '>=')
     {
         $filter = new ListFilter\NumberFilter($key, $field, $label, $operation);
-        $this->views[$viewName]->filters[$key] = $filter;
+        $this->addFilter($viewName, $key, $filter);
+    }
+
+    /**
+     * Adds a period type filter to the ListView.
+     * (period + start date + end date)
+     *
+     * @param string $viewName
+     * @param string $key       (Filter identifier)
+     * @param string $label     (Human reader description)
+     * @param string $field     (Field of the table to apply filter)
+     */
+    protected function addFilterPeriod($viewName, $key, $label, $field)
+    {
+        $filter = new ListFilter\PeriodFilter($key, $field, $label);
+        $this->addFilter($viewName, $key, $filter);
     }
 
     /**
@@ -164,7 +190,7 @@ abstract class ListController extends BaseController
     protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
         $filter = new ListFilter\SelectFilter($key, $field, $label, $values);
-        $this->views[$viewName]->filters[$key] = $filter;
+        $this->addFilter($viewName, $key, $filter);
     }
 
     /**
@@ -184,16 +210,16 @@ abstract class ListController extends BaseController
     protected function addFilterSelectWhere($viewName, $key, $values)
     {
         $filter = new ListFilter\SelectWhereFilter($key, $values);
-        $this->views[$viewName]->filters[$key] = $filter;
+        $this->addFilter($viewName, $key, $filter);
     }
 
     /**
      * Adds an order field to the ListView.
      *
-     * @param string       $viewName
-     * @param array        $fields
-     * @param string       $label
-     * @param int          $default   (0 = None, 1 = ASC, 2 = DESC)
+     * @param string $viewName
+     * @param array  $fields
+     * @param string $label
+     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
      */
     protected function addOrderBy(string $viewName, array $fields, string $label = '', int $default = 0)
     {
@@ -230,6 +256,21 @@ abstract class ListController extends BaseController
         $this->addCustomView($viewName, $view);
         $this->setSettings($viewName, 'btnPrint', true);
         $this->setSettings($viewName, 'megasearch', true);
+    }
+
+    /**
+     * Removes the selected page filter.
+     */
+    protected function deleteFilterAction()
+    {
+        $idfilter = $this->request->request->get('loadfilter', 0);
+        if ($this->views[$this->active]->deletePageFilter($idfilter)) {
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->request->request->remove('loadfilter');
+            return;
+        }
+
+        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
     }
 
     /**
@@ -271,6 +312,14 @@ abstract class ListController extends BaseController
 
             case 'delete':
                 $this->deleteAction();
+                break;
+
+            case 'delete-filter':
+                $this->deleteFilterAction();
+                break;
+
+            case 'save-filter':
+                $this->saveFilterAction();
                 break;
         }
 
@@ -344,5 +393,20 @@ abstract class ListController extends BaseController
         }
 
         return $result;
+    }
+
+    /**
+     * Saves filter values for active view and user.
+     */
+    protected function saveFilterAction()
+    {
+        $view = $this->views[$this->active];
+        $idFilter = $view->savePageFilter($this->request, $this->user);
+        if (!empty($idFilter)) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
+            /// load filters in request
+            $this->request->request->set('loadfilter', $idFilter);
+        }
     }
 }

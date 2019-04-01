@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,11 +18,14 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * A model to manage the transformations of documents. For example aprobe order to delibery note.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class DocTransformation extends Base\ModelClass
 {
@@ -77,6 +80,31 @@ class DocTransformation extends Base\ModelClass
      * @var string
      */
     public $model2;
+
+    /**
+     * Removes related data from this document.
+     * 
+     * @param string $tipoDoc
+     * @param int    $idDoc
+     */
+    public function deleteFrom($tipoDoc, $idDoc)
+    {
+        $where = [
+            new DataBaseWhere('model1', $tipoDoc),
+            new DataBaseWhere('iddoc1', $idDoc),
+        ];
+        foreach ($this->all($where, [], 0, 0) as $line) {
+            $line->delete();
+        }
+
+        $where2 = [
+            new DataBaseWhere('model2', $tipoDoc),
+            new DataBaseWhere('iddoc2', $idDoc),
+        ];
+        foreach ($this->all($where2, [], 0, 0) as $line) {
+            $line->delete();
+        }
+    }
 
     /**
      * Returns the name of the column that is the primary key of the model.

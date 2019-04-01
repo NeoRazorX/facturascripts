@@ -7,10 +7,6 @@
 -->
 <table>
     <column>
-        <name>apellidos</name>
-        <type>character varying(150)</type>
-    </column>
-    <column>
         <name>ciudad</name>
         <type>character varying(100)</type>
     </column>

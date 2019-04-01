@@ -19,39 +19,38 @@
  *
  * Initial description for the EditImpuestoZona tab of EditImpuesto controller
  *
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
 
 <view>
     <columns>
-        <column name="id" numcolumns="2" order="10">
-            <widget type="text" fieldname="id" icon="fas fa-dollar-sign" onclick="EditImpuestoZona" />
+        <column name="code" order="100">
+            <widget type="text" fieldname="id" />
         </column>
-        <column name="tax" numcolumns="2" order="20">
+        <column name="tax" order="110">
             <widget type="select" fieldname="codimpuesto">
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="country" numcolumns="2" order="30">
-            <widget type="select" fieldname="codpais" icon="fas fa-globe" >
+        <column name="country" order="120">
+            <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" >
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="province" numcolumns="2" order="40">
+        <column name="province" order="130">
             <widget type="select" fieldname="codisopro">
                 <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
             </widget>
         </column>
-        <column name="applied-tax" numcolumns="2" order="50">
+        <column name="applied-tax" order="140">
             <widget type="select" fieldname="codimpuestosel">
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="priority" numcolumns="2" order="60">
-            <widget type="number" fieldname="prioridad" />
+        <column name="priority" display="right" order="150">
+            <widget type="number" fieldname="prioridad" decimal="0" />
         </column>
     </columns>
-    <filters>
-    </filters>
 </view>
 

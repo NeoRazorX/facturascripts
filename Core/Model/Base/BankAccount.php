@@ -90,8 +90,7 @@ abstract class BankAccount extends ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (!$this->testBankAccount()) {
-            self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
-            return false;
+            self::$miniLog->warning(self::$i18n->trans('error-incorrect-bank-details'));
         }
 
         return parent::test();
@@ -150,6 +149,6 @@ abstract class BankAccount extends ModelClass
      */
     protected function testBankAccount()
     {
-        return (empty($this->iban) || $this->verificarIBAN($this->iban));
+        return empty($this->iban) || $this->verificarIBAN($this->iban);
     }
 }

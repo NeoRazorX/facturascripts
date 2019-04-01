@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\Pais;
 
 /**
  * Description of SalesDocument
@@ -107,13 +109,6 @@ abstract class SalesDocument extends BusinessDocument
     public $idcontactofact;
 
     /**
-     * User who created this document. User model.
-     *
-     * @var string
-     */
-    public $nick;
-
-    /**
      * Customer name.
      *
      * @var string
@@ -152,24 +147,58 @@ abstract class SalesDocument extends BusinessDocument
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function country()
+    {
+        $country = new Pais();
+        if ($country->loadFromCode($this->codpais)) {
+            return Utils::fixHtml($country->nombre);
+        }
+
+        return $this->codpais;
+    }
+
+    /**
      * Assign the customer to the document.
      * 
-     * @param Cliente $subject
+     * @param Cliente|Contacto $subject
      * 
-     * @return boolean
+     * @return bool
      */
     public function setSubject($subject)
     {
-        if (!isset($subject->codcliente)) {
-            return false;
+        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Contacto')) {
+            /// Contacto model
+            $this->apartado = $subject->apartado;
+            $this->cifnif = $subject->cifnif;
+            $this->ciudad = $subject->ciudad;
+            $this->codcliente = $subject->codcliente;
+            $this->codpais = $subject->codpais;
+            $this->codpostal = $subject->codpostal;
+            $this->direccion = $subject->direccion;
+            $this->idcontactoenv = $subject->idcontacto;
+            $this->idcontactofact = $subject->idcontacto;
+            $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
+            $this->provincia = $subject->provincia;
+            return true;
         }
 
-        $this->codcliente = $subject->codcliente;
-        $this->nombrecliente = $subject->razonsocial;
-        $this->cifnif = $subject->cifnif;
+        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Cliente')) {
+            /// Cliente model
+            $this->cifnif = $subject->cifnif;
+            $this->codcliente = $subject->codcliente;
+            $this->nombrecliente = $subject->razonsocial;
 
-        $billingAddress = $subject->getDefaultAddress('billing');
-        if ($billingAddress->exists()) {
+            /// commercial data
+            $this->codagente = $subject->codagente ?? $this->codagente;
+            $this->codpago = $subject->codpago ?? $this->codpago;
+            $this->codserie = $subject->codserie ?? $this->codserie;
+            $this->irpf = $subject->irpf;
+
+            /// billing address
+            $billingAddress = $subject->getDefaultAddress('billing');
             $this->codpais = $billingAddress->codpais;
             $this->provincia = $billingAddress->provincia;
             $this->ciudad = $billingAddress->ciudad;
@@ -177,14 +206,14 @@ abstract class SalesDocument extends BusinessDocument
             $this->codpostal = $billingAddress->codpostal;
             $this->apartado = $billingAddress->apartado;
             $this->idcontactofact = $billingAddress->idcontacto;
-        }
 
-        $shippingAddress = $subject->getDefaultAddress('shipping');
-        if ($shippingAddress->exists()) {
+            /// shipping address
+            $shippingAddress = $subject->getDefaultAddress('shipping');
             $this->idcontactoenv = $shippingAddress->idcontacto;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -209,7 +238,7 @@ abstract class SalesDocument extends BusinessDocument
     /**
      * Updates subjects data in this document.
      *
-     * @return boolean
+     * @return bool
      */
     public function updateSubject()
     {
@@ -223,5 +252,18 @@ abstract class SalesDocument extends BusinessDocument
         }
 
         return $this->setSubject($cliente);
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = [
+            'codalmacen', 'codcliente', 'coddivisa', 'codejercicio', 'codpago',
+            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado'
+        ];
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }

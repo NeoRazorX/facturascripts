@@ -78,13 +78,9 @@ abstract class ModelClass extends ModelCore
      */
     public function checkArrayData(array &$data)
     {
+        $dateTypes = ['date', 'datetime', 'timestamp'];
         foreach ($this->getModelFields() as $field => $values) {
-            if (in_array($values['type'], ['boolean', 'tinyint(1)']) && !isset($data[$field])) {
-                $data[$field] = false;
-            } elseif (isset($data[$field]) && $data[$field] === '---null---') {
-                /// ---null--- text comes from widgetItemSelect.
-                $data[$field] = null;
-            } elseif (in_array($values['type'], ['date', 'datetime', 'timestamp']) && isset($data[$field]) && '' === $data[$field]) {
+            if (in_array($values['type'], $dateTypes) && isset($data[$field]) && '' === $data[$field]) {
                 $data[$field] = null;
             }
         }

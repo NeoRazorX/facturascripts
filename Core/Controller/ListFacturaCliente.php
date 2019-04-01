@@ -18,18 +18,17 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the FacturaCliente model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListFacturaCliente extends ExtendedController\ListController
+class ListFacturaCliente extends ListBusinessDocument
 {
 
     /**
@@ -52,59 +51,7 @@ class ListFacturaCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
-        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
-        $this->addOrderBy('ListFacturaCliente', ['codigo'], 'code');
-        $this->addOrderBy('ListFacturaCliente', ['fecha'], 'date', 2);
-        $this->addOrderBy('ListFacturaCliente', ['total'], 'amount');
-
-        $this->addFilterDatePicker('ListFacturaCliente', 'from-date', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListFacturaCliente', 'until-date', 'until-date', 'fecha', '<=');
-        $this->addFilterNumber('ListFacturaCliente', 'min-total', 'total', 'total', '>=');
-        $this->addFilterNumber('ListFacturaCliente', 'max-total', 'total', 'total', '<=');
-
-        $where = [new DataBaseWhere('tipodoc', 'FacturaCliente')];
-        $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListFacturaCliente', 'idestado', 'state', 'idestado', $statusValues);
-
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', 'codserie', $serieValues);
-
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'payment-method', 'codpago', $paymentValues);
-
-        $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'customer', 'codcliente', 'Cliente');
-        $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
-        $this->addFilterCheckbox('ListFacturaCliente', 'femail', 'email-not-sent', 'femail', 'IS', null);
-
-        // Delivery notes lines
-        $this->createViewLines();
-    }
-
-    protected function createViewLines()
-    {
-        $this->addView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'lines', 'fas fa-list');
-        $this->addSearchFields('ListLineaFacturaCliente', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaFacturaCliente', ['referencia'], 'reference');
-        $this->addOrderBy('ListLineaFacturaCliente', ['cantidad'], 'quantity');
-        $this->addOrderBy('ListLineaFacturaCliente', ['descripcion'], 'description');
-        $this->addOrderBy('ListLineaFacturaCliente', ['pvptotal'], 'ammount');
-        $this->addOrderBy('ListLineaFacturaCliente', ['idfactura'], 'code', 2);
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect('ListLineaFacturaCliente', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
-        $this->addFilterNumber('ListLineaFacturaCliente', 'cantidad', 'quantity', 'cantidad');
-        $this->addFilterNumber('ListLineaFacturaCliente', 'dtopor', 'discount', 'dtopor');
-        $this->addFilterNumber('ListLineaFacturaCliente', 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber('ListLineaFacturaCliente', 'pvptotal', 'ammount', 'pvptotal');
-
-        /// disable megasearch for this view
-        $this->setSettings('ListLineaFacturaCliente', 'megasearch', false);
-        $this->setSettings('ListLineaFacturaCliente', 'btnNew', false);
-        $this->setSettings('ListLineaFacturaCliente', 'btnDelete', false);
+        $this->createViewSales('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
     }
 }

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\AssetManager;
+
 /**
  * Description of WidgetAutocomplete
  *
@@ -34,16 +36,6 @@ class WidgetAutocomplete extends WidgetSelect
      * @var bool
      */
     public $strict;
-
-    /**
-     *
-     * @param array $data
-     */
-    public function __construct($data)
-    {
-        parent::__construct($data);
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js';
-    }
 
     /**
      *
@@ -66,7 +58,7 @@ class WidgetAutocomplete extends WidgetSelect
                 . '<div class="form-group">'
                 . $labelHtml
                 . '<div class="input-group">'
-                . '<div class="input-group-prepend">'
+                . '<div class="' . $this->css('input-group-prepend') . '">'
                 . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
                 . '</div>'
                 . $inputHtml
@@ -79,14 +71,37 @@ class WidgetAutocomplete extends WidgetSelect
             . '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="input-group-prepend">'
-            . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
-            . '<i class="fas fa-times" aria-hidden="true"></i>'
-            . '</button>'
-            . '</div>'
+            . $this->inputGroupClearBtn()
             . $inputHtml
             . '</div>'
             . $descriptionHtml
+            . '</div>';
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function inputGroupClearBtn()
+    {
+        if ($this->readonly()) {
+            return '<div class="' . $this->css('input-group-prepend') . '">'
+                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
+                . '</div>';
+        }
+
+        return '<div class="' . $this->css('input-group-prepend') . '">'
+            . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
+            . '<i class="fas fa-times" aria-hidden="true"></i>'
+            . '</button>'
             . '</div>';
     }
 
@@ -99,7 +114,8 @@ class WidgetAutocomplete extends WidgetSelect
      */
     protected function inputHtml($type = 'text', $extraClass = 'widget-autocomplete')
     {
-        $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
+        $cssFormControl = $this->css('form-control');
+        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
         $selected = static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
         return '<input type="' . $type . '" value="' . $selected . '" class="' . $class . '" data-field="' . $this->fieldname
             . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle

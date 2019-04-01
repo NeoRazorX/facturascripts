@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\CodeModel;
 
@@ -123,7 +122,7 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */
@@ -142,7 +141,7 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
+     *
      * @return BaseView
      */
     public function getCurrentView()
@@ -164,7 +163,7 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     public function setCurrentView($viewName)
@@ -201,6 +200,10 @@ abstract class BaseController extends Base\Controller
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
+
+        if (empty($results)) {
+            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-data')];
+        }
         return $results;
     }
 
@@ -216,16 +219,10 @@ abstract class BaseController extends Base\Controller
             return false;
         }
 
-        // deleting a single row?
         $model = $this->views[$this->active]->model;
-        $code = $this->request->request->get($model->primaryColumn(), '');
-        if ($model->loadFromCode($code) && $model->delete()) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return true;
-        }
+        $codes = $this->request->request->get('code', '');
 
         // deleting multiples rows?
-        $codes = $this->request->request->get('code', '');
         if (is_array($codes)) {
             $numDeletes = 0;
             foreach ($codes as $cod) {
@@ -240,18 +237,14 @@ abstract class BaseController extends Base\Controller
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
                 return true;
             }
+        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+            // deleting a single row?
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            return true;
         }
 
         $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
         return false;
-    }
-
-    /**
-     * 
-     */
-    protected function finalStep()
-    {
-        AssetManager::merge($this->assets, BaseView::getAssets());
     }
 
     /**

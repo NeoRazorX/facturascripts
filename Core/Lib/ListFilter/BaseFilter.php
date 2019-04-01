@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Translator;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of BaseFilter
@@ -27,12 +28,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 abstract class BaseFilter
 {
-
-    /**
-     *
-     * @var array
-     */
-    protected static $assets = [];
 
     /**
      *
@@ -66,9 +61,15 @@ abstract class BaseFilter
 
     /**
      *
+     * @var bool
+     */
+    public $readonly = false;
+
+    /**
+     *
      * @var mixed
      */
-    public $value;
+    protected $value;
 
     abstract public function getDataBaseWhere(array &$where): bool;
 
@@ -89,15 +90,17 @@ abstract class BaseFilter
         $this->key = $key;
         $this->field = empty($field) ? $this->key : $field;
         $this->label = empty($label) ? $this->field : $label;
+        $this->assets();
     }
 
     /**
+     * Get the filter value
      *
-     * @return array
+     * @return mixed
      */
-    public static function getAssets()
+    public function getValue()
     {
-        return static::$assets;
+        return $this->value;
     }
 
     /**
@@ -110,11 +113,48 @@ abstract class BaseFilter
     }
 
     /**
-     * 
+     * Set value to filter
+     *
+     * @param mixed $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Set value to filter from form request
+     *
+     * @param Request $request
+     */
+    public function setValueFromRequest(&$request)
+    {
+        $this->setValue($request->request->get($this->name()));
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        ;
+    }
+
+    /**
+     *
      * @return string
      */
     protected function onChange()
     {
-        return $this->autoSubmit ? ' onchange="this.form.submit()"' : '';
+        return $this->autoSubmit ? ' onchange="this.form.submit();"' : '';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function readonly()
+    {
+        return $this->readonly ? ' readonly=""' : '';
     }
 }

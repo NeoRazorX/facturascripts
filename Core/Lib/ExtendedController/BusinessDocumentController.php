@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -160,11 +160,6 @@ abstract class BusinessDocumentController extends PanelController
                 $this->exportManager->show($this->response);
                 break;
 
-            case 'insert':
-                parent::execAfterAction($action);
-                $this->views['Document']->model->updateSubject();
-                break;
-
             default:
                 parent::execAfterAction($action);
         }
@@ -209,7 +204,8 @@ abstract class BusinessDocumentController extends PanelController
             case $documentView:
                 $view->loadData($code);
                 /// data not found?
-                if (!empty($code) && !$view->model->exists()) {
+                $action = $this->request->request->get('action', '');
+                if (!empty($code) && !$view->model->exists() && '' === $action) {
                     $this->miniLog->warning($this->i18n->trans('record-not-found'));
                 }
                 break;
@@ -299,6 +295,10 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         $exists = $view->model->exists();
+        if (!$exists) {
+            $view->model->nick = $this->user->nick;
+        }
+
         if ($view->model->save()) {
             $result = ($view->model->editable || !$exists) ? $this->saveLines($view, $newLines) : 'OK';
         } else {
@@ -321,7 +321,7 @@ abstract class BusinessDocumentController extends PanelController
      * Save the lines of the document.
      *
      * @param BusinessDocumentView $view
-     * @param array $newLines
+     * @param array                $newLines
      *
      * @return string
      */
@@ -384,8 +384,13 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function updateLine($oldLine, array $newLine)
     {
+        /// reload line data from database to get last changes
+        $oldLine->loadFromCode($oldLine->primaryColumnValue());
+
         foreach ($newLine as $key => $value) {
-            $oldLine->{$key} = $value;
+            if ($key != 'actualizastock') {
+                $oldLine->{$key} = $value;
+            }
         }
 
         $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;

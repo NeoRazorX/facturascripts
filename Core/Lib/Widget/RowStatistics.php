@@ -80,6 +80,6 @@ class RowStatistics extends VisualItem
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . '">' . $icon . $label . ' ' . $value . '</a>';
+        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . ' mb-2">' . $icon . $label . ' ' . $value . '</a>';
     }
 }

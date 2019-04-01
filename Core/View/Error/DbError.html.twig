@@ -1,26 +1,29 @@
 {% extends "Master/MicroTemplate.html.twig" %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <br/><br/>
-            <div class="jumbotron">
-                <h1>
-                    <i class="fas fa-database" aria-hidden="true"></i> {{ i18n.trans('cant-connect-database') }}:
-                </h1>
-                <hr class="my-4">
-                {% if sql|length > 0 %}
-                <div class="alert alert-warning">
-                    <ol>
-                        {% for msg in sql %}
-                        <li>{{ msg.message }}</li>
-                        {% endfor %}
-                    </ol>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <br/><br/>
+                <div class="jumbotron">
+                    <h1>
+                        <i class="fas fa-database fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans('cant-connect-database') }}:
+                    </h1>
+                    <hr class="my-4">
+                    {% if sql | length > 0 %}
+                        <div class="alert alert-warning">
+                            <ol>
+                                {% for msg in sql %}
+                                    <li>
+                                        {{ msg.message }}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

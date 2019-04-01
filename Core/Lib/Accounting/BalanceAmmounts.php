@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,8 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Description of BalanceAmmounts
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author nazca <comercial@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author nazca                <comercial@nazcanetworks.com>
  */
 class BalanceAmmounts extends AccountingBase
 {
@@ -96,6 +96,23 @@ class BalanceAmmounts extends AccountingBase
     }
 
     /**
+     * Gets the description of the subaccount with that ID.
+     *
+     * @param string $idsubcuenta
+     *
+     * @return string
+     */
+    private function getDescriptionSubcuenta($idsubcuenta)
+    {
+        $subcuenta = $this->subcuentaModel->get($idsubcuenta);
+        if ($subcuenta !== false) {
+            return $subcuenta->descripcion;
+        }
+
+        return '-';
+    }
+
+    /**
      * Process the line data to use the appropiate formats.
      *
      * @param array $line
@@ -113,22 +130,5 @@ class BalanceAmmounts extends AccountingBase
             'haber' => $this->divisaTools->format($line['haber'], FS_NF0, ''),
             'saldo' => $this->divisaTools->format($saldo, FS_NF0, ''),
         ];
-    }
-
-    /**
-     * Gets the description of the subaccount with that ID.
-     *
-     * @param string $idsubcuenta
-     *
-     * @return string
-     */
-    private function getDescriptionSubcuenta($idsubcuenta)
-    {
-        $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        if ($subcuenta !== false) {
-            return $subcuenta->descripcion;
-        }
-
-        return '-';
     }
 }

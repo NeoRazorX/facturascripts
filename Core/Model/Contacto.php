@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -185,6 +186,29 @@ class Contacto extends Base\Contact
     public $verificado;
 
     /**
+     * Returns an unique alias for this contact.
+     *
+     * @return string
+     */
+    public function alias()
+    {
+        if (empty($this->email) || strpos($this->email, '@') === false) {
+            return (string) $this->idcontacto;
+        }
+
+        $aux = explode('@', $this->email);
+        switch ($aux[0]) {
+            case 'admin':
+            case 'info':
+                $domain = explode('.', $aux[1]);
+                return $domain[0] . '_' . $this->idcontacto;
+
+            default:
+                return $aux[0] . '_' . $this->idcontacto;
+        }
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -198,6 +222,21 @@ class Contacto extends Base\Contact
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function country()
+    {
+        $country = new Pais();
+        $where = [new DataBaseWhere('codiso', $this->codpais)];
+        if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
+            return Utils::fixHtml($country->nombre);
+        }
+
+        return $this->codpais;
+    }
+
+    /**
      * Returns full name.
      *
      * @return string
@@ -205,6 +244,68 @@ class Contacto extends Base\Contact
     public function fullName()
     {
         return $this->nombre . ' ' . $this->apellidos;
+    }
+
+    /**
+     * 
+     * @return Cliente
+     */
+    public function getCustomer()
+    {
+        $cliente = new Cliente();
+        if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
+            return $cliente;
+        }
+
+        /// creates a new customer
+        $cliente->idcontactoenv = $this->idcontacto;
+        $cliente->idcontactofact = $this->idcontacto;
+        $cliente->cifnif = $this->cifnif;
+        $cliente->codproveedor = $this->codproveedor;
+        $cliente->email = $this->email;
+        $cliente->fax = $this->fax;
+        $cliente->nombre = $this->fullName();
+        $cliente->observaciones = $this->observaciones;
+        $cliente->personafisica = $this->personafisica;
+        $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
+        $cliente->telefono1 = $this->telefono1;
+        $cliente->telefono2 = $this->telefono2;
+        if ($cliente->save()) {
+            $this->codcliente = $cliente->codcliente;
+            $this->save();
+        }
+
+        return $cliente;
+    }
+
+    /**
+     * 
+     * @return Proveedor
+     */
+    public function getSupplier()
+    {
+        $proveedor = new Proveedor();
+        if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
+            return $proveedor;
+        }
+
+        /// creates a new supplier
+        $proveedor->cifnif = $this->cifnif;
+        $proveedor->codcliente = $this->codcliente;
+        $proveedor->email = $this->email;
+        $proveedor->fax = $this->fax;
+        $proveedor->nombre = $this->fullName();
+        $proveedor->observaciones = $this->observaciones;
+        $proveedor->personafisica = $this->personafisica;
+        $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
+        $proveedor->telefono1 = $this->telefono1;
+        $proveedor->telefono2 = $this->telefono2;
+        if ($proveedor->save()) {
+            $this->codproveedor = $proveedor->codproveedor;
+            $this->save();
+        }
+
+        return $proveedor;
     }
 
     /**
@@ -287,6 +388,10 @@ class Contacto extends Base\Contact
      */
     public function test()
     {
+        if (empty($this->descripcion)) {
+            $this->descripcion = $this->direccion ?? $this->fullName();
+        }
+
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->apellidos = Utils::noHtml($this->apellidos);
         $this->cargo = Utils::noHtml($this->cargo);
@@ -294,14 +399,6 @@ class Contacto extends Base\Contact
         $this->direccion = Utils::noHtml($this->direccion);
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
-
-        /// transform empty values in null
-        $fields = ['codagente', 'codcliente', 'codpais', 'codproveedor', 'lastactivity'];
-        foreach ($fields as $field) {
-            if (empty($this->{$field})) {
-                $this->{$field} = null;
-            }
-        }
 
         return parent::test();
     }

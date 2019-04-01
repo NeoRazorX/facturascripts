@@ -5,7 +5,7 @@
      * Main page for administration of plugins and addons.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -24,49 +24,15 @@
 #}
 
 {% extends "Master/MenuTemplate.html.twig" %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-        <script type="text/javascript">
-            function deletePlugin(pluginName) {
-                bootbox.confirm({
-                    title: "{{ i18n.trans('confirm-delete')|raw }}",
-                    message: "{{ i18n.trans('are-you-sure') }}",
-                    closeButton: false,
-                    buttons: {
-                        cancel: {
-                            label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
-                        },
-                        confirm: {
-                            label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
-                            className: 'btn-danger'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
-                        }
-                    }
-                });
-            }
-        </script>
-    {% endif %}
-{% endblock %}
+{% set refresh = i18n.trans('refresh-page') %}
+{% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
+{% set add = i18n.trans('add') %}
+{% set disable, enable, delete = i18n.trans('disable'), i18n.trans('enable'), i18n.trans('delete') %}
+{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 {% block body %}
-    {# Calculate texts according to language #}
-    {% set refresh = i18n.trans('refresh-page') %}
-    {% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
-    {% set add = i18n.trans('add') %}
-    {% set disable, enable, delete = i18n.trans('disable'), i18n.trans('enable'), i18n.trans('delete') %}
-    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
-
-    {# Page Header #}
     <div class="container-fluid">
         {{ parent() }}
-
-        {# Header Row #}
         <div class="row">
             <div class="col-5">
                 <div class="btn-group d-xs-none">
@@ -98,9 +64,7 @@
                 </h1>
             </div>
         </div>
-        <hr />
     </div>
-
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
@@ -135,7 +99,7 @@
                                     </a>
                                     {% if not constant('FS_DISABLE_RM_PLUGINS') %}
                                         <a class="btn btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
-                                            <i class="fas fa-trash" aria-hidden="true"></i>
+                                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
                                             <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
                                         </a>
                                     {% endif %}
@@ -151,7 +115,15 @@
             </tbody>
         </table>
     </div>
-
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <a href="https://www.facturascripts.com/plugins?activetab=ListWebProject" target="_blank" class="btn btn-info btn-block">
+                    <i class="fas fa-plug fa-fw"></i> {{ i18n.trans('more-plugins') }}
+                </a>
+            </div>
+        </div>
+    </div>
     {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
         {# Modal for add new plugins #}
         <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
@@ -180,5 +152,34 @@
                 </div>
             </div>
         </form>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if not constant('FS_DISABLE_RM_PLUGINS') %}
+        <script type="text/javascript">
+            function deletePlugin(pluginName) {
+                bootbox.confirm({
+                    title: "{{ i18n.trans('confirm-delete')|raw }}",
+                    message: "{{ i18n.trans('are-you-sure') }}",
+                    closeButton: false,
+                    buttons: {
+                        cancel: {
+                            label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
+                        },
+                        confirm: {
+                            label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
+                        }
+                    }
+                });
+            }
+        </script>
     {% endif %}
 {% endblock %}

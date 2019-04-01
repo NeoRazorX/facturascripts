@@ -62,8 +62,11 @@ class EditFamilia extends ExtendedController\EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fas fa-level-down-alt');
+        $this->setTabsPosition('bottom');
+
+        /// more tabs
         $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
+        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fas fa-level-down-alt');
     }
 
     /**
@@ -74,15 +77,14 @@ class EditFamilia extends ExtendedController\EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
         switch ($viewName) {
             case 'ListProducto':
-                $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListFamilia':
-                $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('madre', $codfamilia)];
                 $view->loadData('', $where);
                 break;

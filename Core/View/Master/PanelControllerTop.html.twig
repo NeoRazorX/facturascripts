@@ -30,7 +30,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+                <ul class="nav nav-tabs mb-3 d-print-none" id="mainTabs" role="tablist">
                     {% for viewName, view in fsc.views %}
                         <li class="nav-item">
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}

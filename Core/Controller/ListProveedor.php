@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -49,14 +50,7 @@ class ListProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Supplier */
-        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fas fa-users');
-        $this->addSearchFields('ListProveedor', ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
-        $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
-        $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
-        $this->addOrderBy('ListProveedor', ['fecha'], 'date');
-        $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
-
+        $this->createViewSuppliers();
         $this->createViewAdresses();
     }
 
@@ -87,5 +81,21 @@ class ListProveedor extends ExtendedController\ListController
 
         /// disable megasearch
         $this->setSettings('ListContacto', 'megasearch', false);
+    }
+
+    private function createViewSuppliers()
+    {
+        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fas fa-users');
+        $this->addSearchFields('ListProveedor', ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
+        $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
+        $this->addOrderBy('ListProveedor', ['fecha'], 'date');
+
+        $values = [
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $this->i18n->trans('all'), 'where' => []]
+        ];
+        $this->addFilterSelectWhere('ListProveedor', 'status', $values);
     }
 }

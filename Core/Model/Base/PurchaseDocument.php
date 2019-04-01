@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,7 +56,7 @@ abstract class PurchaseDocument extends BusinessDocument
      * 
      * @param Proveedor $subject
      *
-     * @return boolean
+     * @return bool
      */
     public function setSubject($subject)
     {
@@ -64,9 +64,16 @@ abstract class PurchaseDocument extends BusinessDocument
             return false;
         }
 
+        /// supplier model
         $this->codproveedor = $subject->codproveedor;
         $this->nombre = $subject->razonsocial;
         $this->cifnif = $subject->cifnif;
+
+        /// commercial data
+        $this->codpago = $subject->codpago ?? $this->codpago;
+        $this->codserie = $subject->codserie ?? $this->codserie;
+        $this->irpf = $subject->irpf ?? $this->irpf;
+
         return true;
     }
 
@@ -86,7 +93,7 @@ abstract class PurchaseDocument extends BusinessDocument
     /**
      * Updates subjects data in this document.
      *
-     * @return boolean
+     * @return bool
      */
     public function updateSubject()
     {
@@ -100,5 +107,18 @@ abstract class PurchaseDocument extends BusinessDocument
         }
 
         return $this->setSubject($proveedor);
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = [
+            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codproveedor',
+            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado'
+        ];
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }

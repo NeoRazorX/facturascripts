@@ -44,7 +44,7 @@
             <widget type="text" fieldname="observaciones" title="observations"/>
         </column>
         <column name="user" display="right" order="150">
-            <widget type="text" fieldname="usuario" />
+            <widget type="text" fieldname="nick" />
         </column>
     </columns>
 </view>

@@ -40,9 +40,20 @@ class LineaPedidoProveedor extends Base\BusinessDocumentLine
      * 
      * @return string
      */
+    public function documentColumn()
+    {
+        return 'idpedido';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new PedidoProveedor();
+
         return parent::install();
     }
 

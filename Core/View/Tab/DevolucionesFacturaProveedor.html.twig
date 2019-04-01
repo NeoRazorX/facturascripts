@@ -1,0 +1,102 @@
+{% import _self as macros %}
+{% set currentView = fsc.getCurrentView() %}
+
+{% if currentView.model.exists() %}
+    <form method="post">
+        <input type="hidden" name="action" value="new-refund"/>
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ i18n.trans('product') }}</th>
+                        <th>{{ i18n.trans('description') }}</th>
+                        <th class="text-right">{{ i18n.trans('quantity') }}</th>
+                        <th class="text-right">{{ i18n.trans('new-refund') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in currentView.model.getLines() %}
+                        {% set refunded = currentView.model.refundedItemAmount(line.referencia) %}
+                        <tr>
+                            <td>
+                                <div class="form-control">{{ line.referencia }}</div>
+                            </td>
+                            <td>
+                                <div class="form-control">{{ line.descripcion }}</div>
+                            </td>
+                            <td>
+                                <div class="form-control text-right">{{ line.cantidad }}</div>
+                            </td>
+                            <td class="table-warning">
+                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}" step="any" class="form-control text-right" autocomplete="off"/>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="container-fluid">
+            <div class="form-row">
+                <div class="col mb-2">
+                    <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                {{ macros.customSelect('codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
+                {{ macros.customInput('fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+                {{ macros.customInput('numproveedor', 'numproveedor', '', 'text', 'fas fa-hashtag') }}
+                <div class="col text-right">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endif %}
+
+{% macro customSelect(id, name, value, allValues = {}, allowHide = true) %}
+    {% if allowHide and allValues | length == 1 %}
+        {% for key, option in allValues %}
+            <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
+        {% endfor %}
+    {% else %}
+        <div class="col-sm-2 mb-2">
+            <select id="{{ id }}" name="{{ name }}" class="form-control">
+                {% for key, option in allValues %}
+                    <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
+                        {{ option }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro customInput(id, name, value, type = "text", icon = NULL, attributes = NULL) %}
+    <div class="col-sm-2 mb-2">
+        {% if icon %}
+            <div class="input-group">
+                <span class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
+                    </span>
+                </span>
+            {% endif %}
+
+            <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
+                   {% if attributes.class is not defined %}
+                       class="form-control"
+                   {% endif %}
+
+                   {% for attribute,attrValue in attributes %}
+                       {{ attribute }}="{{ attrValue }}"
+                   {% endfor %} /> {# end input #}
+
+            {% if icon %}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}

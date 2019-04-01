@@ -115,7 +115,8 @@ class AttachedFile extends Base\ModelClass
      */
     public function delete()
     {
-        if (!unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $this->path)) {
+        $fullPath = FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
+        if (file_exists($fullPath) && !unlink($fullPath)) {
             self::$miniLog->alert(self::$i18n->trans('cant-delete-file', ['%fileName%' => $this->path]));
             return false;
         }

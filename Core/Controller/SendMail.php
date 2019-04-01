@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,34 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Lib\EmailTools;
-use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Dinamic\Lib\EmailTools;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of SendMail
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Javier García Iceta <javigarciaiceta@gmail.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Javier García Iceta      <javigarciaiceta@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class SendMail extends Controller
 {
+
+    const MAX_FILE_AGE = 7200;
+
+    /**
+     *
+     * @var string
+     */
+    public $address;
 
     /**
      * Model to use with select and autocomplete filters.
@@ -39,13 +53,6 @@ class SendMail extends Controller
      * @var CodeModel
      */
     public $codeModel;
-
-    /**
-     * Table name where to look for email.
-     *
-     * @var string
-     */
-    public $addressee;
 
     /**
      * Return the basic data for this page.
@@ -66,32 +73,21 @@ class SendMail extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response      $response
-     * @param \FacturaScripts\Core\Model\User                 $user
-     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->address = $this->getEmailAddress();
 
-        // Check if the email is configurate
+        /// Check if the email is configurate
         if (AppSettings::get('email', 'host', '') == "") {
-            $this->miniLog->alert('email-not-configure');
+            $this->miniLog->alert($this->i18n->trans('email-not-configured'));
         }
 
-        $this->setAddressee();
-
-        // Get any operations that have to be performed
         $action = $this->request->get('action', '');
-        if (empty($action)) {
-            return;
-        }
-
-        // Run operations on the data before reading it
-        if (!$this->execPreviousAction($action)) {
-            return;
-        }
-
         $this->execAction($action);
     }
 
@@ -102,9 +98,7 @@ class SendMail extends Controller
      */
     public function url()
     {
-        $sendParams = [
-            'fileName' => $this->request->get('fileName', '')
-        ];
+        $sendParams = ['fileName' => $this->request->get('fileName', '')];
         if (empty($sendParams['fileName'])) {
             return parent::url();
         }
@@ -126,10 +120,12 @@ class SendMail extends Controller
     protected function autocompleteAction(): array
     {
         $results = [];
+
         $data = $this->requestGet(['source', 'field', 'title', 'term']);
         foreach ($this->codeModel::search($data['source'], $data['field'], $data['title'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
+
         return $results;
     }
 
@@ -137,29 +133,8 @@ class SendMail extends Controller
      * Execute main actions.
      *
      * @param string $action
-     *
-     * @return bool
      */
     protected function execAction(string $action)
-    {
-        switch ($action) {
-            case 'send':
-                return $this->send();
-
-            default:
-                $this->removeOld();
-                return false;
-        }
-    }
-
-    /**
-     * Run the actions that alter data before reading it.
-     *
-     * @param string $action
-     *
-     * @return bool
-     */
-    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'autocomplete':
@@ -167,24 +142,75 @@ class SendMail extends Controller
                 $this->codeModel = new CodeModel();
                 $results = $this->autocompleteAction();
                 $this->response->setContent(json_encode($results));
-                return false;
-        }
+                break;
 
-        return true;
+            case 'send':
+                $this->send();
+                break;
+
+            default:
+                $this->removeOld();
+                break;
+        }
     }
 
     /**
-     * Get emails about type specify.
+     * 
+     * @return string
+     */
+    protected function getEmailAddress()
+    {
+        $className = '\FacturaScripts\Dinamic\Model\\' . $this->request->get('modelClassName', '');
+        if (!class_exists($className)) {
+            return '';
+        }
+
+        $model = new $className();
+        $model->loadFromCode($this->request->get('modelCode', ''));
+        if (property_exists($model, 'email')) {
+            return $model->email;
+        }
+
+        if (property_exists($model, 'codproveedor')) {
+            $proveedor = new Proveedor();
+            $proveedor->loadFromCode($model->codproveedor);
+            return $proveedor->email;
+        }
+
+        if (property_exists($model, 'idcontactofact')) {
+            $contact = new Contacto();
+            $contact->loadFromCode($model->idcontactofact);
+            if (!empty($contact->email)) {
+                return $contact->email;
+            }
+
+            $cliente = new Cliente();
+            $cliente->loadFromCode($model->codcliente);
+            return $cliente->email;
+        }
+
+        return '';
+    }
+
+    /**
+     * Get emails from field.
      *
-     * @param string $typeEmail
+     * @param string $field
      *
      * @return array
      */
-    protected function getEmails(string $typeEmail): array
+    protected function getEmails(string $field): array
     {
-        // Remove unneeded spaces and posible ending comma ,
-        $emails = rtrim(trim($this->request->request->get($typeEmail, '')), ',');
-        return \explode(',', $emails);
+        $emails = [];
+
+        $string = trim($this->request->request->get($field, ''));
+        foreach (explode(',', $string) as $email) {
+            if (!empty($email)) {
+                $emails[] = $email;
+            }
+        }
+
+        return $emails;
     }
 
     /**
@@ -196,7 +222,7 @@ class SendMail extends Controller
         foreach (glob(FS_FOLDER . '/MyFiles/Mail_*.pdf') as $fileName) {
             $fileTime = [];
             preg_match($regex, $fileName, $fileTime);
-            if ($fileTime[1] < (time() - 3600)) {
+            if ($fileTime[1] < (time() - self::MAX_FILE_AGE)) {
                 unlink($fileName);
             }
         }
@@ -215,6 +241,7 @@ class SendMail extends Controller
         foreach ($keys as $value) {
             $result[$value] = $this->request->get($value);
         }
+
         return $result;
     }
 
@@ -223,15 +250,10 @@ class SendMail extends Controller
      */
     protected function send()
     {
-        $subject = $this->request->request->get('subject', '');
-        $body = $this->request->request->get('body', '');
-        $fileName = $this->request->get('fileName', '');
-
         $emailTools = new EmailTools();
         $mail = $emailTools->newMail();
-        $mail->Subject = $subject;
-        $mail->msgHTML($body);
-        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
+        $mail->Subject = $this->request->request->get('subject', '');
+        $mail->msgHTML($this->request->request->get('body', ''));
 
         foreach ($this->getEmails('email') as $email) {
             $mail->addAddress($email);
@@ -242,6 +264,9 @@ class SendMail extends Controller
         foreach ($this->getEmails('email-bcc') as $email) {
             $mail->addBCC($email);
         }
+
+        $fileName = $this->request->get('fileName', '');
+        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName);
         foreach ($this->request->files->get('uploads', []) as $file) {
             $mail->addAttachment($file->getPathname(), $file->getClientOriginalName());
         }
@@ -250,21 +275,20 @@ class SendMail extends Controller
             if (\file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
                 unlink(FS_FOLDER . '/MyFiles/' . $fileName);
             }
+
             $this->updateFemail();
-            $this->miniLog->notice('send-mail-ok');
+            $this->miniLog->notice($this->i18n->trans('send-mail-ok'));
         } else {
-            $this->miniLog->error('send-mail-error');
+            $this->miniLog->error($this->i18n->trans('send-mail-error'));
         }
     }
 
     /**
-     * Update the property femail with actual date if exist param ModelClassName and ModelCode
-     *
-     * @return void
+     * Update the property femail with actual date if exist param ModelClassName and ModelCode.
      */
     protected function updateFemail()
     {
-        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName');
+        $className = '\FacturaScripts\Dinamic\Model\\' . $this->request->get('modelClassName');
         if (!class_exists($className)) {
             return;
         }
@@ -274,22 +298,8 @@ class SendMail extends Controller
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
             $model->femail = date('d-m-Y');
             if (!$model->save()) {
-                $this->miniLog->alert('error-saving-data');
+                $this->miniLog->alert($this->i18n->trans('error-saving-data'));
             }
-        }
-    }
-
-    /**
-     * Set default table name where to look for email.
-     */
-    protected function setAddressee()
-    {
-        $className = '\FacturaScripts\Core\Model\\' . $this->request->get('modelClassName', '');
-
-        if (class_exists($className) && property_exists($className, 'codproveedor')) {
-            $this->addressee = 'proveedores';
-        } else {
-            $this->addressee = 'clientes';
         }
     }
 }

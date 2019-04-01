@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,11 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Core\Model\PageFilter;
+use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -34,12 +37,6 @@ class ListView extends BaseView
 {
 
     /**
-     * Order constants
-     */
-    const ICON_ASC = 'fas fa-arrow-up';
-    const ICON_DESC = 'fas fa-arrow-down';
-
-    /**
      * Filter configuration preset by the user
      *
      * @var BaseFilter[]
@@ -50,7 +47,7 @@ class ListView extends BaseView
      *
      * @var string
      */
-    public $orderKey;
+    public $orderKey = '';
 
     /**
      * List of fields available to order by.
@@ -58,6 +55,20 @@ class ListView extends BaseView
      * @var array
      */
     public $orderOptions = [];
+
+    /**
+     * Predefined filter values selected
+     *
+     * @var int
+     */
+    public $pageFilterKey = 0;
+
+    /**
+     * List of predefined filter values
+     *
+     * @var PageFilter[]
+     */
+    public $pageFilters = [];
 
     /**
      *
@@ -90,7 +101,6 @@ class ListView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = 'Master/ListView.html.twig';
-        static::$assets['js'][] = FS_ROUTE . '/Dinamic/Assets/JS/ListView.js';
     }
 
     /**
@@ -105,7 +115,6 @@ class ListView extends BaseView
         $key1 = strtolower(implode('|', $fields)) . '_asc';
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'icon' => self::ICON_ASC,
             'label' => static::$i18n->trans($label),
             'type' => 'ASC',
         ];
@@ -113,7 +122,6 @@ class ListView extends BaseView
         $key2 = strtolower(implode('|', $fields)) . '_desc';
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'icon' => self::ICON_DESC,
             'label' => static::$i18n->trans($label),
             'type' => 'DESC',
         ];
@@ -132,6 +140,46 @@ class ListView extends BaseView
                     $this->setSelectedOrderBy($key1);
                 }
         }
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function btnNewUrl()
+    {
+        $url = $this->model->url('new');
+        $params = [];
+        foreach (DataBaseWhere::getFieldsFilter($this->where) as $key => $value) {
+            if ($value !== false) {
+                $params[] = $key . '=' . $value;
+            }
+        }
+
+        return empty($params) ? $url : $url . '?' . implode('&', $params);
+    }
+
+    /**
+     * Removes a saved user filter.
+     *
+     * @param string $idfilter
+     *
+     * @return boolean
+     */
+    public function deletePageFilter($idfilter)
+    {
+        $pageFilter = new PageFilter();
+        if ($pageFilter->loadFromCode($idfilter) && $pageFilter->delete()) {
+            /// remove form the list
+            foreach ($this->pageFilters as $key => $pfil) {
+                if ($pfil->id == $idfilter) {
+                    unset($this->pageFilters[$key]);
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -177,17 +225,29 @@ class ListView extends BaseView
     {
         $this->offset = ($offset < 0) ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-
-        $finalWhere = empty($where) ? $this->where : $where;
-        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
+        $this->where = array_merge($where, $this->where);
+        $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
 
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
+            $this->cursor = $this->model->all($this->where, $this->order, $this->offset, $limit);
         }
+    }
 
-        $this->where = $finalWhere;
+    /**
+     *
+     * @param User|false $user
+     */
+    public function loadPageOptions($user = false)
+    {
+        parent::loadPageOptions($user);
+
+        // load saved filters
+        $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
+        $where = $this->getPageWhere($user);
+        $pageFilter = new PageFilter();
+        $this->pageFilters = $pageFilter->all($where, $orderby);
     }
 
     /**
@@ -198,10 +258,36 @@ class ListView extends BaseView
      */
     public function processFormData($request, $case)
     {
-        if ($case !== 'load') {
-            return;
-        }
+        switch ($case) {
+            case 'edit':
+                $name = $this->settings['modalInsert'] ?? '';
+                if (empty($name)) {
+                    break;
+                }
+                $modals = $this->getModals();
+                foreach ($modals[$name]->columns as $group) {
+                    $group->processFormData($this->model, $request);
+                }
+                break;
 
+            case 'load':
+                $this->processFormDataLoad($request);
+                break;
+
+            case 'preload':
+                foreach ($this->filters as $filter) {
+                    $filter->getDataBaseWhere($this->where);
+                }
+                break;
+        }
+    }
+
+    /**
+     * 
+     * @param Request $request
+     */
+    private function processFormDataLoad($request)
+    {
         $this->offset = (int) $request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
 
@@ -212,13 +298,74 @@ class ListView extends BaseView
             $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'LIKE');
         }
 
+        /// select saved filter
+        $this->pageFilterKey = $request->request->get('loadfilter', 0);
+        if (!empty($this->pageFilterKey)) {
+            // Load saved filter into page parameters
+            foreach ($this->pageFilters as $item) {
+                if ($item->id == $this->pageFilterKey) {
+                    $request->request->add($item->filters);
+                    break;
+                }
+            }
+        }
+
         /// filters
         foreach ($this->filters as $filter) {
-            $filter->value = $request->request->get($filter->name());
+            $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {
                 $this->showFilters = true;
             }
         }
+    }
+
+    /**
+     * Save filter values for user/s.
+     *
+     * @param Request $request
+     * @param User    $user
+     *
+     * @return int
+     */
+    public function savePageFilter($request, $user)
+    {
+        $pageFilter = new PageFilter();
+
+        // Set values data filter
+        foreach ($this->filters as $filter) {
+            $name = $filter->name();
+            $value = $request->request->get($name, null);
+            if (!empty($value)) {
+                $pageFilter->filters[$name] = $value;
+            }
+        }
+
+        // If filters values its empty, don't save filter
+        if (empty($pageFilter->filters)) {
+            return 0;
+        }
+
+        // Set basic data and save filter
+        $pageFilter->id = $request->request->get('filter-id', null);
+        $pageFilter->description = $request->request->get('filter-description', '');
+        $pageFilter->name = explode('-', $this->getViewName())[0];
+        $pageFilter->nick = $user->nick;
+
+        // Save and return it's all ok
+        if ($pageFilter->save()) {
+            $this->pageFilters[] = $pageFilter;
+            return $pageFilter->id;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
     }
 
     /**

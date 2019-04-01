@@ -30,12 +30,6 @@ class BaseWidget extends VisualItem
 
     /**
      *
-     * @var array
-     */
-    protected static $assets = [];
-
-    /**
-     *
      * @var string
      */
     public $fieldname;
@@ -60,7 +54,7 @@ class BaseWidget extends VisualItem
 
     /**
      *
-     * @var bool
+     * @var string
      */
     public $readonly;
 
@@ -90,12 +84,13 @@ class BaseWidget extends VisualItem
     {
         parent::__construct($data);
         $this->fieldname = $data['fieldname'];
-        $this->icon = isset($data['icon']) ? $data['icon'] : '';
-        $this->onclick = isset($data['onclick']) ? $data['onclick'] : '';
-        $this->readonly = isset($data['readonly']);
+        $this->icon = $data['icon'] ?? '';
+        $this->onclick = $data['onclick'] ?? '';
+        $this->readonly = $data['readonly'] ?? 'false';
         $this->required = isset($data['required']);
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
+        $this->assets();
     }
 
     /**
@@ -125,22 +120,13 @@ class BaseWidget extends VisualItem
         return '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="input-group-prepend">'
+            . '<div class="' . $this->css('input-group-prepend') . '">'
             . '<span class="input-group-text"><i class="' . $this->icon . ' fa-fw"></i></span>'
             . '</div>'
             . $inputHtml
             . '</div>'
             . $descriptionHtml
             . '</div>';
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public static function getAssets()
-    {
-        return static::$assets;
     }
 
     /**
@@ -202,6 +188,14 @@ class BaseWidget extends VisualItem
     }
 
     /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        ;
+    }
+
+    /**
      *
      * @param string $type
      * @param string $extraClass
@@ -210,7 +204,8 @@ class BaseWidget extends VisualItem
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = empty($extraClass) ? 'form-control' : 'form-control ' . $extraClass;
+        $cssFormControl = $this->css('form-control');
+        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
@@ -221,8 +216,8 @@ class BaseWidget extends VisualItem
      */
     protected function inputHtmlExtraParams()
     {
-        $params = $this->readonly ? ' readonly=""' : '';
-        $params .= $this->required ? ' required=""' : '';
+        $params = $this->required ? ' required=""' : '';
+        $params .= $this->readonly() ? ' readonly=""' : '';
 
         return $params;
     }
@@ -254,7 +249,21 @@ class BaseWidget extends VisualItem
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a href="' . $this->onclick . '?code=' . rawurlencode($this->value) . '" class="cancelClickable">' . $inside . '</a>';
+        return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value)
+            . '" class="cancelClickable">' . $inside . '</a>';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function readonly()
+    {
+        if ($this->readonly === 'dinamic') {
+            return !empty($this->value);
+        }
+
+        return $this->readonly === 'true';
     }
 
     /**
@@ -296,7 +305,7 @@ class BaseWidget extends VisualItem
         if (!empty($alternativeClass)) {
             $class[] = $alternativeClass;
         } elseif (is_null($this->value)) {
-            $class[] = 'table-warning';
+            $class[] = $this->colorToClass('warning', 'table-');
         }
 
         return implode(' ', $class);

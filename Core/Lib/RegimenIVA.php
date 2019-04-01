@@ -27,6 +27,20 @@ class RegimenIVA
 {
 
     /**
+     * Returns all the available options
+     *
+     * @return array
+     */
+    public static function all()
+    {
+        return [
+            'Exento' => 'Exento',
+            'General' => 'General',
+            'Recargo' => 'Recargo de equivalencia'
+        ];
+    }
+
+    /**
      * Returns the default value
      *
      * @return string
@@ -34,15 +48,5 @@ class RegimenIVA
     public static function defaultValue()
     {
         return 'General';
-    }
-
-    /**
-     * Returns all the available options
-     *
-     * @return array
-     */
-    public static function all()
-    {
-        return ['General', 'Exento'];
     }
 }

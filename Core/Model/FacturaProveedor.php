@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
-use FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting;
 
 /**
  * Invoice from a supplier.
@@ -34,13 +34,17 @@ class FacturaProveedor extends Base\PurchaseDocument
     use Base\InvoiceTrait;
 
     /**
-     * Reset the values of all model properties.
+     * 
+     * @return bool
      */
-    public function clear()
+    public function delete()
     {
-        parent::clear();
-        $this->anulada = false;
-        $this->pagada = false;
+        $asiento = $this->getAccountingEntry();
+        if ($asiento->exists()) {
+            return $asiento->delete() ? parent::delete() : false;
+        }
+
+        return parent::delete();
     }
 
     /**
@@ -68,6 +72,9 @@ class FacturaProveedor extends Base\PurchaseDocument
     {
         $newLine = new LineaFacturaProveedor($data);
         $newLine->idfactura = $this->idfactura;
+        if (empty($data)) {
+            $newLine->irpf = $this->irpf;
+        }
 
         $status = $this->getStatus();
         $newLine->actualizastock = $status->actualizastock;
@@ -86,6 +93,7 @@ class FacturaProveedor extends Base\PurchaseDocument
     {
         $sql = parent::install();
         new Asiento();
+
         return $sql;
     }
 
@@ -110,14 +118,33 @@ class FacturaProveedor extends Base\PurchaseDocument
     }
 
     /**
-     * Generates the accounting entry for the document
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        if (empty($this->vencimiento)) {
+            $this->setPaymentMethod($this->codpago);
+        }
+
+        return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $field
      *
      * @return bool
      */
-    private function accountingDocument()
+    protected function onChange($field)
     {
-        $accounting = new InvoiceToAccounting($this);
-        return $accounting->accountPurchase();
+        switch ($field) {
+            case 'codpago':
+                $this->setPaymentMethod($this->codpago);
+                break;
+        }
+
+        return parent::onChange($field);
     }
 
     /**
@@ -127,22 +154,14 @@ class FacturaProveedor extends Base\PurchaseDocument
      *
      * @return bool
      */
-    protected function saveInsert(array $values = array())
+    protected function saveInsert(array $values = [])
     {
-        $this->accountingDocument();
-        return parent::saveInsert($values);
-    }
+        if (parent::saveInsert($values)) {
+            $tool = new InvoiceToAccounting();
+            $tool->generate($this);
+            return true;
+        }
 
-    /**
-     * Update the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = array())
-    {
-        $this->accountingDocument();
-        return parent::saveUpdate($values);
+        return false;
     }
 }

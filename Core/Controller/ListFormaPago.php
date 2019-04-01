@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,11 +23,18 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the FormaPago model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class ListFormaPago extends ExtendedController\ListController
 {
+
+    /**
+     * List of companies to filter the views
+     *
+     * @var array
+     */
+    private $companyValues = [];
 
     /**
      * Returns basic page attributes
@@ -49,19 +56,58 @@ class ListFormaPago extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Payment Methods */
-        $this->addView('ListFormaPago', 'FormaPago', 'payment-methods', 'fas fa-credit-card');
-        $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
-        $this->addOrderBy('ListFormaPago', ['codpago'], 'code');
-        $this->addOrderBy('ListFormaPago', ['descripcion'], 'description');
+        // Get company list
+        $this->companyValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
 
-        $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied', 'domiciliado');
-        $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print', 'imprimir');
+        // Add views
+        $this->createViewsPaymentMethods();
+        $this->createViewsBankAccounts();
+    }
 
-        /* Bank accounts */
-        $this->addView('ListCuentaBanco', 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
-        $this->addOrderBy('ListCuentaBanco', ['codcuenta'], 'code');
-        $this->addOrderBy('ListCuentaBanco', ['descripcion'], 'description');
+    /**
+     * Add Bank Acounts view
+     * 
+     * @param string $viewName
+     */
+    private function createViewsBankAccounts($viewName = 'ListCuentaBanco')
+    {
+        $this->addView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addSearchFields($viewName, ['descripcion', 'codcuenta']);
+        $this->addOrderBy($viewName, ['codcuenta'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+
+        $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', $this->companyValues);
+    }
+
+    /**
+     * Add Payment Methods view
+     * 
+     * @param string $viewName
+     */
+    private function createViewsPaymentMethods($viewName = 'ListFormaPago')
+    {
+        $this->addView($viewName, 'FormaPago', 'payment-methods', 'fas fa-credit-card');
+        $this->addSearchFields($viewName, ['descripcion', 'codpago']);
+        $this->addOrderBy($viewName, ['codpago'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['idempresa', 'codpago'], 'company');
+
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
+        $this->addFilterSelect($viewName, 'genreceipt', 'generate-receipt', 'genrecibos', $this->getGenerateReceiptOptions());
+        $this->addFilterCheckbox($viewName, 'domiciliado', 'domicilied', 'domiciliado');
+        $this->addFilterCheckbox($viewName, 'imprimir', 'print', 'imprimir');
+    }
+
+    /**
+     * Return list of generate receipt availables
+     *
+     * @return array
+     */
+    private function getGenerateReceiptOptions()
+    {
+        return [
+            ['code' => 'Pagados', 'description' => $this->i18n->trans('paid')],
+            ['code' => 'Emitidos', 'description' => $this->i18n->trans('issued')],
+        ];
     }
 }

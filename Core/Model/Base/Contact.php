@@ -74,7 +74,7 @@ abstract class Contact extends ModelClass
      * True -> the customer is a natural person.
      * False -> the client is a legal person (company).
      *
-     * @var boolean
+     * @var bool
      */
     public $personafisica;
 
@@ -103,6 +103,18 @@ abstract class Contact extends ModelClass
     }
 
     /**
+     * Returns gravatar image url.
+     *
+     * @param int $size
+     *
+     * @return string
+     */
+    public function gravatar($size = 80)
+    {
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=' . $size;
+    }
+
+    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
@@ -110,7 +122,7 @@ abstract class Contact extends ModelClass
     public function test()
     {
         $this->cifnif = Utils::noHtml($this->cifnif);
-        $this->email = Utils::noHtml($this->email);
+        $this->email = Utils::noHtml(mb_strtolower($this->email, 'UTF8'));
         $this->fax = Utils::noHtml($this->fax);
         $this->nombre = Utils::noHtml($this->nombre);
         $this->observaciones = Utils::noHtml($this->observaciones);

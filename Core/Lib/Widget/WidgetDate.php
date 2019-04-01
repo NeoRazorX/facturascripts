@@ -58,11 +58,28 @@ class WidgetDate extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = 'datepicker')
     {
-        if ($this->readonly) {
+        if ($this->readonly()) {
             $extraClass = '';
         }
 
         return parent::inputHtml($type, $extraClass);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function show()
+    {
+        if (is_null($this->value)) {
+            return '-';
+        }
+
+        if (is_numeric($this->value)) {
+            return date('d-m-Y', $this->value);
+        }
+
+        return (string) $this->value;
     }
 
     /**

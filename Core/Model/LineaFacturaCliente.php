@@ -39,9 +39,20 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
+    public function documentColumn()
+    {
+        return 'idfactura';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new FacturaCliente();
+
         return parent::install();
     }
 

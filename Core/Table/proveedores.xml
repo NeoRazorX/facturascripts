@@ -63,6 +63,10 @@
         <type>date</type>
     </column>
     <column>
+        <name>idcontacto</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
         <null>NO</null>
@@ -101,8 +105,6 @@
     <column>
         <name>tipoidfiscal</name>
         <type>character varying(25)</type>
-        <null>NO</null>
-        <default>'NIF'::character varying</default>
     </column>
     <column>
         <name>web</name>

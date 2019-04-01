@@ -18,8 +18,10 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,13 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
-
-    /**
-     * Contains a list of extra files to load: javascript, css, etc.
-     *
-     * @var array
-     */
-    public $assets;
 
     /**
      * Cache access manager.
@@ -64,7 +59,7 @@ class Controller
     /**
      * Selected company.
      *
-     * @var Model\Empresa|false
+     * @var Empresa
      */
     public $empresa;
 
@@ -127,7 +122,7 @@ class Controller
     /**
      * User logged in.
      *
-     * @var Model\User|false
+     * @var User|false
      */
     public $user = false;
 
@@ -142,10 +137,10 @@ class Controller
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
-        $this->assets = AssetManager::getAssetsForPage($className);
         $this->cache = &$cache;
         $this->className = $className;
         $this->dataBase = new DataBase();
+        $this->empresa = new Empresa();
         $this->i18n = &$i18n;
         $this->miniLog = &$miniLog;
         $this->request = Request::createFromGlobals();
@@ -154,6 +149,9 @@ class Controller
 
         $pageData = $this->getPageData();
         $this->title = empty($pageData) ? $this->className : $this->i18n->trans($pageData['title']);
+
+        AssetManager::clear();
+        AssetManager::setAssetsForPage($className);
     }
 
     /**
@@ -198,7 +196,7 @@ class Controller
      * Runs the controller's private logic.
      *
      * @param Response              $response
-     * @param Model\User            $user
+     * @param User                  $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -208,8 +206,7 @@ class Controller
         $this->user = $user;
 
         /// Select the default company for the user
-        $empresaModel = new Model\Empresa();
-        $this->empresa = $empresaModel->get($this->user->idempresa);
+        $this->empresa->loadFromCode($this->user->idempresa);
 
         /// This user have default page setted?
         $defaultPage = $this->request->query->get('defaultPage', '');
@@ -233,6 +230,9 @@ class Controller
     {
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
+
+        $idempresa = AppSettings::get('default', 'idempresa');
+        $this->empresa->loadFromCode($idempresa);
     }
 
     /**

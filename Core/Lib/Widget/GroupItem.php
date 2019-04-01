@@ -90,21 +90,20 @@ class GroupItem extends VisualItem
      */
     public function edit($model)
     {
-        $divClass = ($this->numcolumns > 0) ? 'col-md-' . $this->numcolumns : 'col';
+        $divClass = ($this->numcolumns > 0) ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $html = '<div' . $divId . ' class="' . $divClass . '"><div class="form-row">';
+        $html = '<div' . $divId . ' class="' . $divClass . '">'
+            . '<div class="' . $this->css('form-row') . '">';
 
         if (!empty($this->title)) {
-            $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-            $html .= '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+            $html .= $this->legend();
         }
 
         foreach ($this->columns as $col) {
             $html .= $col->edit($model);
         }
 
-        $html .= '</div></div>';
-        return $html;
+        return $html . '</div></div>';
     }
 
     /**
@@ -117,7 +116,7 @@ class GroupItem extends VisualItem
     public function modal($model, $viewName)
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        $html = '<form method="post" enctype="multipart/form-data">'
+        $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
@@ -129,7 +128,7 @@ class GroupItem extends VisualItem
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">';
+            . '<div class="' . $this->css('row') . '">';
 
         foreach ($this->columns as $col) {
             $html .= $col->edit($model);
@@ -180,6 +179,16 @@ class GroupItem extends VisualItem
         }
 
         return ($column1->order < $column2->order) ? -1 : 1;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function legend()
+    {
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
+        return '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
     }
 
     /**

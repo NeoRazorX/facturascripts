@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,8 +45,19 @@ function listViewDelete(viewName) {
     return false;
 }
 
+function listViewPrintAction(viewName, option) {
+    $("#form" + viewName + " :input[name=\"action\"]").val('export');
+    $("#form" + viewName + "").append('<input type="hidden" name="option" value="' + option + '"/>');
+    $("#form" + viewName).submit();
+}
+
 function listViewSetAction(viewName, value) {
     $("#form" + viewName + " :input[name=\"action\"]").val(value);
+    $("#form" + viewName).submit();
+}
+
+function listViewSetLoadFilter(viewName, value) {
+    $("#form" + viewName + " :input[name=\"loadfilter\"]").val(value);
     $("#form" + viewName).submit();
 }
 
@@ -69,5 +80,9 @@ $(document).ready(function () {
     $(".listActionCB").click(function () {
         var checked = $(this).prop("checked");
         $(".listAction").prop("checked", checked);
+    });
+    // disable enter key press
+    $(".noEnterKey").keypress(function (e) {
+        return !(e.which == 13 || e.keyCode == 13);
     });
 });

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,8 +34,7 @@ class EditContacto extends ExtendedController\EditController
      */
     public function getImageUrl()
     {
-        $email = $this->getViewModelValue('EditContacto', 'email');
-        return empty($email) ? '' : $this->getGravatar($email);
+        return $this->views['EditContacto']->model->gravatar();
     }
 
     /**
@@ -64,15 +63,46 @@ class EditContacto extends ExtendedController\EditController
     }
 
     /**
-     * Return the gravatar url to show email avatar.
+     * Run the controller after actions
      *
-     * @param string $email
-     * @param int    $size
-     *
-     * @return string
+     * @param string $action
      */
-    protected function getGravatar(string $email, int $size = 80): string
+    protected function execAfterAction($action)
     {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=' . $size;
+        switch ($action) {
+            case 'convert-to-customer':
+                $customer = $this->views['EditContacto']->model->getCustomer();
+                if (empty($customer->codcliente)) {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                    break;
+                }
+
+                $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
+                $this->response->headers->set('Refresh', '0; ' . $customer->url());
+                break;
+        }
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditContacto':
+                parent::loadData($viewName, $view);
+                if ($this->views[$viewName]->model->exists() && empty($this->views[$viewName]->model->codcliente)) {
+                    $button = [
+                        'action' => 'convert-to-customer',
+                        'color' => 'success',
+                        'icon' => 'fas fa-plus',
+                        'label' => 'new-customer',
+                        'type' => 'action',
+                    ];
+                    $this->addButton($viewName, $button);
+                }
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

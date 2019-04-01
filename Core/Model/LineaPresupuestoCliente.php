@@ -40,9 +40,20 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
+    public function documentColumn()
+    {
+        return 'idpresupuesto';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new PresupuestoCliente();
+
         return parent::install();
     }
 

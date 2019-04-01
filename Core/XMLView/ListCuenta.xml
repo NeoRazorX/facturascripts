@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListCuenta
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <column name="id" order="100" display="none">
@@ -30,7 +27,7 @@
         <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column name="account" order="110">
+        <column name="code" order="110">
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column name="description" order="120">
@@ -40,7 +37,9 @@
             <widget type="text" fieldname="codcuentaesp" />
         </column>
         <column name="parent-account" order="140">
-            <widget type="text" fieldname="parent_codcuenta" />
+            <widget type="autocomplete" fieldname="parent_idcuenta">
+                <values source="cuentas" fieldcode="idcuenta" fieldtitle="descripcion"></values>
+            </widget>
         </column>
     </columns>
 </view>

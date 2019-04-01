@@ -7,10 +7,9 @@
 -->
 <table>
     <column>
-        <name>idtrans</name>
-        <type>serial</type>
+        <name>codalmacendestino</name>
+        <type>character varying(4)</type>
         <null>NO</null>
-        <default>nextval('transferenciasstock_id_seq'::regclass)</default>
     </column>
     <column>
         <name>codalmacenorigen</name>
@@ -18,38 +17,37 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codalmacendestino</name>
-        <type>character varying(4)</type>
+        <name>idtrans</name>
+        <type>serial</type>
         <null>NO</null>
+        <default>nextval('transferenciasstock_id_seq'::regclass)</default>
     </column>
     <column>
         <name>fecha</name>
         <type>timestamp</type>
-        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>observaciones</name>
         <type>text</type>
-    </column>
-    <column>
-        <name>usuario</name>
-        <type>character varying(50)</type>
-        <null>NO</null>
     </column>
     <constraint>
         <name>transferenciasstock_pkey</name>
         <type>PRIMARY KEY (idtrans)</type>
     </constraint>
     <constraint>
-        <name>ca_transferenciasstockorigen_almacenes</name>
-        <type>FOREIGN KEY (codalmacenorigen) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_transferenciasstock_almacenes_ori</name>
+        <type>FOREIGN KEY (codalmacenorigen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_transferenciasstockdestino_almacenes</name>
-        <type>FOREIGN KEY (codalmacendestino) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_transferenciasstock_almacenes_des</name>
+        <type>FOREIGN KEY (codalmacendestino) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_transferenciasstock_users</name>
-        <type>FOREIGN KEY (usuario) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

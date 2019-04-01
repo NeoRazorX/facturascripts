@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="id" icon="fas fa-file-alt" required="true" />
+                <widget type="text" fieldname="id" icon="fas fa-hashtag" required="true" />
             </column>
             <column name="time" numcolumns="4" order="110">
                 <widget type="text" fieldname="time" required="true" readonly="true" />

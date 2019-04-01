@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,29 +14,22 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\App\AppSettings;
 
 /**
  * A VAT regularization.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class RegularizacionImpuesto extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
-    public $idregularizacion;
 
     /**
      * Exercise code.
@@ -46,46 +39,11 @@ class RegularizacionImpuesto extends Base\ModelClass
     public $codejercicio;
 
     /**
-     * Period of regularization.
-     *
-     * @var string
-     */
-    public $periodo;
-
-    /**
-     * Start date.
-     *
-     * @var string
-     */
-    public $fechainicio;
-
-    /**
-     * End date.
-     *
-     * @var string
-     */
-    public $fechafin;
-
-    /**
-     * Related sub-account ID.
-     *
-     * @var int
-     */
-    public $idsubcuentaacreedora;
-
-    /**
      * Code, not ID, of the related sub-account.
      *
      * @var string
      */
     public $codsubcuentaacreedora;
-
-    /**
-     * Related sub-account ID.
-     *
-     * @var int
-     */
-    public $idsubcuentadeudora;
 
     /**
      * Code, not ID, of the related sub-account.
@@ -95,13 +53,6 @@ class RegularizacionImpuesto extends Base\ModelClass
     public $codsubcuentadeudora;
 
     /**
-     * ID of the generated accounting entry.
-     *
-     * @var int
-     */
-    public $idasiento;
-
-    /**
      * Date of entry.
      *
      * @var string
@@ -109,13 +60,143 @@ class RegularizacionImpuesto extends Base\ModelClass
     public $fechaasiento;
 
     /**
-     * Returns the name of the table that uses this model.
+     * End date.
+     *
+     * @var string
+     */
+    public $fechafin;
+
+    /**
+     * Start date.
+     *
+     * @var string
+     */
+    public $fechainicio;
+
+    /**
+     * ID of the generated accounting entry.
+     *
+     * @var int
+     */
+    public $idasiento;
+
+    /**
+     * Foreign Key with Empresas table.
+     *
+     * @var int
+     */
+    public $idempresa;
+
+    /**
+     * Primary key.
+     *
+     * @var int
+     */
+    public $idregularizacion;
+
+    /**
+     * Related sub-account ID.
+     *
+     * @var int
+     */
+    public $idsubcuentaacreedora;
+
+    /**
+     * Related sub-account ID.
+     *
+     * @var int
+     */
+    public $idsubcuentadeudora;
+
+    /**
+     * Period of regularization.
+     *
+     * @var string
+     */
+    public $periodo;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->idempresa = AppSettings::get('default', 'idempresa');
+    }
+
+    /**
+     * Deletes the regularization of VAT from the database.
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        $asiento = $this->getAsiento();
+        if ($asiento->exists()) {
+            $asiento->delete();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * 
+     * @return Asiento
+     */
+    public function getAsiento()
+    {
+        $asiento = new Asiento();
+        $asiento->loadFromCode($this->idasiento);
+        return $asiento;
+    }
+
+    /**
+     * Returns the VAT regularization corresponding to that date,
+     * that is, the regularization whose start date is earlier
+     * to the date provided and its end date is after the date
+     * provided. So you can know if the period is still open to be able
+     * check in.
+     *
+     * @param string $fecha
+     *
+     * @return bool|RegularizacionImpuesto
+     */
+    public function getFechaInside($fecha)
+    {
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE fechainicio <= ' . self::$dataBase->var2str($fecha)
+            . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
+
+        $data = self::$dataBase->select($sql);
+        if (!empty($data)) {
+            return new self($data[0]);
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the items per accounting entry.
+     *
+     * @return Partida[]
+     */
+    public function getPartidas()
+    {
+        $asiento = $this->getAsiento();
+        return $asiento->getLines();
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
-    public static function tableName()
+    public function install()
     {
-        return 'regularizacionimpuestos';
+        /// needed dependencies
+        new Ejercicio();
+        new Asiento();
+
+        return parent::install();
     }
 
     /**
@@ -139,208 +220,12 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
-     * Returns the items per accounting entry.
+     * Returns the name of the table that uses this model.
      *
-     * @return Partida[]|bool
+     * @return string
      */
-    public function getPartidas()
+    public static function tableName()
     {
-        if ($this->idasiento !== null) {
-            $partida = new Partida();
-
-            return $partida->all([new DataBaseWhere('idasiento', $this->idasiento)]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns the VAT regularization corresponding to that date,
-           * that is, the regularization whose start date is earlier
-           * to the date provided and its end date is after the date
-           * provided. So you can know if the period is still open to be able
-           * check in.
-     *
-     * @param string $fecha
-     *
-     * @return bool|RegularizacionImpuesto
-     */
-    public function getFechaInside($fecha)
-    {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fechainicio <= ' . self::$dataBase->var2str($fecha)
-            . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            return new self($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Deletes the regularization of VAT from the database.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        // TODO: Apply transactions
-        $sql = 'DELETE FROM ' . static::tableName()
-            . ' WHERE idregularizacion = ' . self::$dataBase->var2str($this->idregularizacion) . ';';
-        if (self::$dataBase->exec($sql)) {
-            /// si hay un asiento asociado lo eliminamos
-            if ($this->idasiento !== null) {
-                $asientoModel = new Asiento();
-                $asiento = $asientoModel->get($this->idasiento);
-                if ($asiento) {
-                    $asiento->delete();
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Calculate Period data
-     *
-     * @param string $period
-     * @param date|null $date
-     * @param bool $add
-     * @return array
-     */
-    private function getPeriod($period, $date = null, $add = false): array
-    {
-        /// Calculate next period
-        if (!empty($period) && $add) {
-            $period = 'T' . ((int) substr($period, -1) + 1);
-        }
-
-        /// Calculate actual year
-        if (empty($date)) {
-            $date = date('d-m-Y');
-        }
-        $year = explode('-', $date)[2];
-
-        /// Init values
-        $result = [
-            'period' => 'T1',
-            'start' => date('01-01-' . $year),
-            'end' => date('31-03-' . $year)
-        ];
-
-        // For valids periods set values
-        switch ($period) {
-            case 'T2':
-                $result['period'] = 'T2';
-                $result['start'] = '01-04-' . $year;
-                $result['end'] = '30-06-' . $year;
-                break;
-
-            case 'T3':
-                $result['period'] = 'T3';
-                $result['start'] = '01-07-' . $year;
-                $result['end'] = '30-09-' . $year;
-                break;
-
-            case 'T4':
-                $result['period'] = 'T4';
-                $result['start'] = '01-10-' . $year;
-                $result['end'] = '31-12-' . $year;
-                break;
-        }
-        return $result;
-    }
-
-    /**
-     * Load data from previous regularization for period
-     */
-    public function loadNextPeriod()
-    {
-        /// Search for current exercise
-        $exercise = Ejercicio::getByFecha(date('d-m-Y'), true, false);
-
-        /// If we do not have the exercise we take from the current date
-        if (empty($this->codejercicio)) {
-            $this->codejercicio = $exercise->codejercicio;
-        }
-
-        /// Look for the data of the last regularization
-        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
-        $regularization = new self();
-        if ($regularization->loadFromCode(null, $where, ['periodo' => 'DESC'])) {
-            /// Load next period regularization values
-            $period = $this->getPeriod($regularization->periodo, $regularization->fechainicio, true);
-            $this->periodo = $period['period'];
-            $this->fechainicio = $period['start'];
-            $this->fechafin = $period['end'];
-            $this->idsubcuentaacreedora = $regularization->idsubcuentaacreedora;
-            $this->codsubcuentaacreedora = $regularization->codsubcuentaacreedora;
-            $this->idsubcuentadeudora = $regularization->idsubcuentadeudora;
-            $this->codsubcuentadeudora = $regularization->codsubcuentadeudora;
-            return;
-        }
-
-        /// Load data from current exercise
-        $period = $this->getPeriod('T1', $exercise->fechainicio, false);
-        $this->periodo = $period['period'];
-        $this->fechainicio = $period['start'];
-        $this->fechafin = $period['end'];
-
-        $account = new Subcuenta();
-        $where1 = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuentaesp', 'IVAACR')
-        ];
-        if ($account->loadFromCode(null, $where1)) {
-            $this->idsubcuentaacreedora = $account->idsubcuenta;
-            $this->codsubcuentaacreedora = $account->codsubcuenta;
-        }
-
-        $where2 = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuentaesp', 'IVADEU')
-        ];
-        if ($account->loadFromCode(null, $where2)) {
-            $this->idsubcuentadeudora = $account->idsubcuenta;
-            $this->codsubcuentadeudora = $account->codsubcuenta;
-        }
-        return;
-    }
-
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     * It runs inside the save method.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (!parent::test()) {
-            return false;
-        }
-
-        if (!empty($this->codejercicio)) {
-            /// Calculate dates to selected period
-            $exercise = new Ejercicio();
-            $exercise->loadFromCode($this->codejercicio);
-            $period = $this->getPeriod($this->periodo, $exercise->fechainicio, false);
-
-            $this->fechainicio = $period['start'];
-            $this->fechafin = $period['end'];
-
-            /// Calculate Id Accounts
-            $account = new Subcuenta();
-            $account->codejercicio = $this->codejercicio;
-            $account->codsubcuenta = $this->codsubcuentaacreedora;
-            $this->idsubcuentaacreedora = $account->getIdSubaccount();
-
-            $account->codsubcuenta = $this->codsubcuentadeudora;
-            $this->idsubcuentadeudora = $account->getIdSubaccount();
-        }
-        return true;
+        return 'regularizacionimpuestos';
     }
 }
