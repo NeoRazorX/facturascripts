@@ -138,7 +138,7 @@
     </div>
     <div class="form-row">
         <div class="col">
-            <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones }}</textarea>
+            <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones | raw }}</textarea>
         </div>
     </div>
 </form>
