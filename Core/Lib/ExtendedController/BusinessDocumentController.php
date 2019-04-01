@@ -387,15 +387,7 @@ abstract class BusinessDocumentController extends PanelController
         /// reload line data from database to get last changes
         $oldLine->loadFromCode($oldLine->primaryColumnValue());
 
-        foreach ($newLine as $key => $value) {
-            if ($key != 'actualizastock') {
-                $oldLine->{$key} = $value;
-            }
-        }
-
-        $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;
-        $oldLine->pvptotal = $oldLine->pvpsindto * (100 - $oldLine->dtopor) / 100;
-
+        $oldLine->loadFromData($newLine, ['actualizastock']);
         if ($oldLine->save()) {
             return $oldLine->updateStock($this->views[$this->active]->model->codalmacen);
         }
