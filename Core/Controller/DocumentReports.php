@@ -124,6 +124,7 @@ class DocumentReports extends Controller
             'customer-orders' => $this->i18n->trans('customer-orders'),
             'customer-delivery-notes' => $this->i18n->trans('customer-delivery-notes'),
             'customer-invoices' => $this->i18n->trans('customer-invoices'),
+            'supplier-estimations' => $this->i18n->trans('supplier-estimations'),
             'supplier-orders' => $this->i18n->trans('supplier-orders'),
             'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
             'supplier-invoices' => $this->i18n->trans('supplier-invoices'),
