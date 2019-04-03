@@ -31,7 +31,7 @@ foreach (scandir(__DIR__, SCANDIR_SORT_ASCENDING) as $filename) {
 
 /// download json from facturascripts.com
 foreach ($files as $filename) {
-    $url = "https://beta.facturascripts.com/EditLanguage?action=json&code=";
+    $url = "https://www.facturascripts.com/EditLanguage?action=json&code=";
     $json = file_get_contents($url . substr($filename, 0, -5));
     if (empty($json) || strlen($json) < 10) {
         unlink($filename);

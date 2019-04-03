@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -31,12 +31,34 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class AdminPlugins extends Base\Controller
 {
 
+    const PLUGIN_LIST_URL = 'https://www.facturascripts.com/PluginInfoList';
+
     /**
      * Plugin Manager.
      *
      * @var Base\PluginManager
      */
     public $pluginManager;
+
+    /**
+     * 
+     * @return array
+     */
+    public function getAllPlugins()
+    {
+        $downloadTools = new Base\DownloadTools();
+        $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL), true);
+        if (empty($json)) {
+            return [];
+        }
+
+        $list = [];
+        foreach ($json as $item) {
+            $list[] = $item;
+        }
+
+        return $list;
+    }
 
     /**
      * Return the max file size that can be uploaded.
