@@ -117,7 +117,8 @@ abstract class PurchaseDocument extends BusinessDocument
     {
         $more = [
             'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codproveedor',
-            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado'
+            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado',
+            'total'
         ];
         parent::setPreviousData(array_merge($more, $fields));
     }
