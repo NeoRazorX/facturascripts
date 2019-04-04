@@ -188,7 +188,7 @@ abstract class BusinessDocumentController extends PanelController
          * but sometimes it's not.
          */
         $primaryKey = $this->request->request->get($view->model->primaryColumn());
-        $code = $this->request->get('code', $primaryKey);
+        $code = $this->request->query->get('code', $primaryKey);
         if (empty($code)) {
             return;
         }
