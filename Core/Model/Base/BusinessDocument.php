@@ -412,7 +412,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function getStatus()
     {
         foreach ($this->getAvaliableStatus() as $status) {
-            if ($status->idestado === $this->idestado) {
+            /// don't use ===
+            if ($status->idestado == $this->idestado) {
                 return $status;
             }
         }
@@ -491,7 +492,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         /// empty code?
-        if (is_null($this->codigo)) {
+        if (empty($this->codigo)) {
             BusinessDocumentCode::getNewCode($this);
         }
 
@@ -538,7 +539,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $almacen = new Almacen();
         if ($almacen->loadFromCode($codalmacen)) {
             $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa;
+            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
             return true;
         }
 
@@ -601,12 +602,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
                     $line->save();
                     $line->updateStock($this->codalmacen);
                 }
-
-                if (!empty($status->generadoc)) {
-                    $docGenerator = new BusinessDocumentGenerator();
-                    if (!$docGenerator->generate($this, $status->generadoc)) {
-                        return false;
-                    }
+                $docGenerator = new BusinessDocumentGenerator();
+                if (!empty($status->generadoc) && !$docGenerator->generate($this, $status->generadoc)) {
+                    return false;
                 }
                 break;
         }

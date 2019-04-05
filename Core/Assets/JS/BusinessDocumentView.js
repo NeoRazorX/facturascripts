@@ -107,6 +107,9 @@ function businessDocViewSave() {
             } else {
                 alert(results);
             }
+        },
+        error: function (msg) {
+            alert(msg.status + " " + msg.responseText);
         }
     });
 

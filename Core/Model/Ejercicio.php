@@ -206,28 +206,20 @@ class Ejercicio extends Base\ModelClass
      */
     public function loadFromDate($date, $onlyOpened = true, $create = true): bool
     {
-        /// Keep the current values in case it is necessary to register a new fiscal year
-        $idempresa = $this->idempresa;
-        /// It is possible that this value is not initialized correctly
-        $length = $this->longsubcuenta;
-
         /// Search for fiscal year for date
         $where = [
-            new DataBaseWhere('idempresa', $idempresa),
+            new DataBaseWhere('idempresa', $this->idempresa),
             new DataBaseWhere('fechainicio', $date, '<='),
             new DataBaseWhere('fechafin', $date, '>='),
         ];
 
-        if ($this->loadFromCode('', $where)) {
-            $length = $this->longsubcuenta;  /// Now have the correct value
-            if (($this->isOpened() && $onlyOpened) || !$onlyOpened) {
-                return true;
-            }
+        if ($this->loadFromCode('', $where) && ($this->isOpened() || !$onlyOpened)) {
+            return true;
         }
 
         /// If must be register
         if ($create && strtotime($date) >= 1) {
-            return $this->createNew($date, $idempresa, $length);
+            return $this->createNew($date);
         }
 
         return false;
@@ -308,20 +300,18 @@ class Ejercicio extends Base\ModelClass
     /**
      * 
      * @param string $date
-     * @param int    $idempresa
-     * @param int    $length
      *
      * @return bool
      */
-    protected function createNew($date, $idempresa, $length)
+    protected function createNew($date)
     {
         $date2 = strtotime($date);
 
         $this->codejercicio = date('Y', $date2);
         $this->fechainicio = date('1-1-Y', $date2);
         $this->fechafin = date('31-12-Y', $date2);
-        $this->idempresa = $idempresa;
-        $this->longsubcuenta = $length;
+        $this->idempresa = $this->idempresa;
+        $this->longsubcuenta = $this->longsubcuenta;
         $this->nombre = date('Y', $date2);
 
         /// for non-default companies we try to use range from 0001 to 9999

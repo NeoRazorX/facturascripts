@@ -20,8 +20,8 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use Symfony\Component\HttpFoundation\Request;
@@ -152,8 +152,9 @@ class BusinessDocumentView extends BaseView
         }
 
         $this->model->loadFromCode($code);
-        $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
+        
+        $this->count = count($this->lines);
         $this->title = $this->model->codigo;
     }
 

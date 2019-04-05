@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\DocTransformation;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
  * Description of BusinessDocumentGenerator

@@ -72,21 +72,6 @@ abstract class ModelClass extends ModelCore
     }
 
     /**
-     * Check an array of data so that it has the correct structure of the model.
-     *
-     * @param array $data
-     */
-    public function checkArrayData(array &$data)
-    {
-        $dateTypes = ['date', 'datetime', 'timestamp'];
-        foreach ($this->getModelFields() as $field => $values) {
-            if (in_array($values['type'], $dateTypes) && isset($data[$field]) && '' === $data[$field]) {
-                $data[$field] = null;
-            }
-        }
-    }
-
-    /**
      * Allows to use this model as source in CodeModel special model.
      * 
      * @param string $fieldcode
