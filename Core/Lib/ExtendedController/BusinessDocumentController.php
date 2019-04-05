@@ -238,7 +238,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function recalculateDocumentAction(): bool
+    protected function recalculateDocumentAction()
     {
         $this->setTemplate(false);
 
@@ -257,7 +257,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function saveDocumentAction(): bool
+    protected function saveDocumentAction()
     {
         $this->setTemplate(false);
         if (!$this->permissions->allowUpdate) {
@@ -298,7 +298,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return string
      */
-    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data): string
+    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data)
     {
         if (!$view->model->exists()) {
             $view->model->nick = $this->user->nick;
@@ -332,7 +332,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function saveLines(BusinessDocumentView &$view, array &$newLines): string
+    protected function saveLines(BusinessDocumentView &$view, array &$newLines)
     {
         if (!$view->model->editable) {
             return true;
