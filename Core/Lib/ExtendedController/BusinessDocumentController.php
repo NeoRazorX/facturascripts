@@ -356,7 +356,6 @@ abstract class BusinessDocumentController extends PanelController
 
             if (!$found) {
                 $oldLine->delete();
-                $oldLine->updateStock($view->model->codalmacen);
             }
         }
 
@@ -372,7 +371,6 @@ abstract class BusinessDocumentController extends PanelController
 
                 $newDocLine = $view->model->getNewLine($fLine);
                 if ($newDocLine->save()) {
-                    $newDocLine->updateStock($view->model->codalmacen);
                     continue;
                 }
 
@@ -398,10 +396,6 @@ abstract class BusinessDocumentController extends PanelController
         $oldLine->loadFromCode($oldLine->primaryColumnValue());
 
         $oldLine->loadFromData($newLine, ['actualizastock']);
-        if ($oldLine->save()) {
-            return $oldLine->updateStock($this->views[$this->active]->model->codalmacen);
-        }
-
-        return false;
+        return $oldLine->save();
     }
 }

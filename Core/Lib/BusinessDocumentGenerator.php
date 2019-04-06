@@ -130,9 +130,6 @@ class BusinessDocumentGenerator
                 return false;
             }
 
-            /// update stock
-            $newLine->updateStock($newDoc->codalmacen);
-
             /// save relation
             $docTrans->clear();
             $docTrans->model1 = $prototype->modelClassName();

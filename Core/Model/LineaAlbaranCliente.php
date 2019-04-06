@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,6 +42,17 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
     public function documentColumn()
     {
         return 'idalbaran';
+    }
+
+    /**
+     * 
+     * @return AlbaranCliente
+     */
+    public function getDocument()
+    {
+        $albaran = new AlbaranCliente();
+        $albaran->loadFromCode($this->idalbaran);
+        return $albaran;
     }
 
     /**

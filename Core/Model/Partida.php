@@ -208,21 +208,6 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * Deletes the data from the database record.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        /// update account balance
-        $asiento = $this->getAsiento();
-        $subcuenta = $this->getSubcuenta();
-        $subcuenta->updateBalance($asiento->fecha, ($this->debe * -1), ($this->haber * -1));
-
-        return parent::delete();
-    }
-
-    /**
      * 
      * @return Asiento
      */
@@ -317,6 +302,14 @@ class Partida extends Base\ModelOnChangeClass
         return parent::test();
     }
 
+    /**
+     * This mehtod is called before this record is save (update) in the database
+     * when some field value is changed.
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
     protected function onChange($field)
     {
         switch ($field) {
@@ -332,8 +325,7 @@ class Partida extends Base\ModelOnChangeClass
 
                 /// update account balance
                 $asiento = $this->getAsiento();
-                $subcuenta = $this->getSubcuenta();
-                $subcuenta->updateBalance($asiento->fecha, $debit, $credit);
+                $this->getSubcuenta()->updateBalance($asiento->fecha, $debit, $credit);
                 break;
         }
 
@@ -341,24 +333,23 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
+     * This method is called after this record is deleted from database.
      */
-    protected function saveInsert(array $values = [])
+    protected function onDelete()
     {
-        if (parent::saveInsert($values)) {
-            /// update account balance
-            $asiento = $this->getAsiento();
-            $subcuenta = $this->getSubcuenta();
-            $subcuenta->updateBalance($asiento->fecha, $this->debe, $this->haber);
+        /// update account balance
+        $asiento = $this->getAsiento();
+        $this->getSubcuenta()->updateBalance($asiento->fecha, ($this->debe * -1), ($this->haber * -1));
+    }
 
-            return true;
-        }
-
-        return false;
+    /**
+     * This method is called after this record is save (insert) in the database.
+     */
+    protected function onInsert()
+    {
+        /// update account balance
+        $asiento = $this->getAsiento();
+        $this->getSubcuenta()->updateBalance($asiento->fecha, $this->debe, $this->haber);
     }
 
     /**

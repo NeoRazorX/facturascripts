@@ -322,8 +322,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         /// update stock
         foreach ($lines as $line) {
-            $line->cantidad = 0;
-            $line->updateStock($this->codalmacen);
+            $line->delete();
         }
 
         /// change parent doc status
@@ -600,7 +599,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 foreach ($this->getLines() as $line) {
                     $line->actualizastock = $status->actualizastock;
                     $line->save();
-                    $line->updateStock($this->codalmacen);
                 }
                 $docGenerator = new BusinessDocumentGenerator();
                 if (!empty($status->generadoc) && !$docGenerator->generate($this, $status->generadoc)) {
