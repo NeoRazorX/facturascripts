@@ -22,15 +22,15 @@
   "author": "Carlos García Gómez",
   "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://www.facturascripts.com/errores"
+    "url": "https://www.facturascripts.com/contacto"
   },
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.7.0",
+    "@fortawesome/fontawesome-free": "^5.x",
     "bootbox": "^4.x",
-    "bootstrap": "^4.3.1",
-    "chart.js": "^2.8.0",
-    "handsontable": "^6.2.2",
+    "bootstrap": "^4.x",
+    "chart.js": "^2.8.x",
+    "handsontable": "^6.x",
     "jquery": "^3.x",
     "jquery-ui-dist": "^1.12.x",
     "popper.js": "^1.x"
