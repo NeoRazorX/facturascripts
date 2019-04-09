@@ -54,6 +54,21 @@ class Serie extends Base\ModelClass
     public $siniva;
 
     /**
+     *
+     * Associated with diario table
+     * @var integer
+     */
+    public $iddiario;
+
+    /**
+     *
+     * For clasificate series
+     * @var integer
+     *
+     */
+    public $idcanal;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
