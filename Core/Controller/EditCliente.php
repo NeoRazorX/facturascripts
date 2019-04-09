@@ -118,6 +118,8 @@ class EditCliente extends ExtendedController\EditController
         $this->views['ListLineaFacturaCliente']->disableColumn('order', true);
 
         /// Disable buttons
+        $this->setSettings('ListCliente', 'btnNew', false);
+        $this->setSettings('ListCliente', 'btnDelete', false);
         $this->setSettings('ListSubcuenta', 'btnNew', false);
     }
 
