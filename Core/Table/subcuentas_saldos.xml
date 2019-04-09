@@ -8,15 +8,22 @@
 -->
 <table>
     <column>
+        <name>debe</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>haber</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('subcuentas_saldos_id_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>mes</name>
-        <type>integer</type>
-        <null>NO</null>
     </column>
     <column>
         <name>idsubcuenta</name>
@@ -29,16 +36,9 @@
         <null>NO</null>
     </column>
     <column>
-        <name>debe</name>
-        <type>double precision</type>
+        <name>mes</name>
+        <type>integer</type>
         <null>NO</null>
-        <default>0</default>
-    </column>
-    <column>
-        <name>haber</name>
-        <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
     </column>
     <column>
         <name>saldo</name>

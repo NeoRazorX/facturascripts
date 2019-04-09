@@ -8,28 +8,17 @@
 -->
 <table>
     <column>
-        <name>name</name>
-        <type>character varying(40)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>title</name>
+        <name>icon</name>
         <type>character varying(50)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>menu</name>
         <type>character varying(20)</type>
     </column>
     <column>
-        <name>submenu</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
-        <name>showonmenu</name>
-        <type>boolean</type>
+        <name>name</name>
+        <type>character varying(40)</type>
         <null>NO</null>
-        <default>true</default>
     </column>
     <column>
         <name>ordernum</name>
@@ -38,8 +27,19 @@
         <default>100</default>
     </column>
     <column>
-        <name>icon</name>
+        <name>showonmenu</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>submenu</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
+        <name>title</name>
         <type>character varying(50)</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>pages_pkey</name>

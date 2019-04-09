@@ -7,33 +7,14 @@
 -->
 <table>
     <column>
-        <name>idpartida</name>
-        <type>serial</type>
+        <name>baseimponible</name>
+        <type>double precision</type>
         <null>NO</null>
-        <default>nextval('partidas_idpartida_seq'::regclass)</default>
+        <default>0</default>
     </column>
     <column>
-        <name>idasiento</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>idsubcuenta</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>codsubcuenta</name>
-        <type>character varying(15)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>concepto</name>
-        <type>character varying(255)</type>
-    </column>
-    <column>
-        <name>idcontrapartida</name>
-        <type>integer</type>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
     </column>
     <column>
         <name>codcontrapartida</name>
@@ -45,10 +26,17 @@
         <null>NO</null>
     </column>
     <column>
-        <name>tasaconv</name>
-        <type>double precision</type>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>codsubcuenta</name>
+        <type>character varying(15)</type>
         <null>NO</null>
-        <default>0</default>
+    </column>
+    <column>
+        <name>concepto</name>
+        <type>character varying(255)</type>
     </column>
     <column>
         <name>debe</name>
@@ -62,6 +50,14 @@
         <null>NO</null>
     </column>
     <column>
+        <name>documento</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>factura</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
         <name>haber</name>
         <type>double precision</type>
         <null>NO</null>
@@ -73,26 +69,24 @@
         <null>NO</null>
     </column>
     <column>
-        <name>documento</name>
-        <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>cifnif</name>
-        <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>codserie</name>
-        <type>character varying(4)</type>
-    </column>
-    <column>
-        <name>factura</name>
-        <type>character varying(15)</type>
-    </column>
-    <column>
-        <name>baseimponible</name>
-        <type>double precision</type>
+        <name>idasiento</name>
+        <type>integer</type>
         <null>NO</null>
-        <default>0</default>
+    </column>
+    <column>
+        <name>idcontrapartida</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idpartida</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('partidas_idpartida_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idsubcuenta</name>
+        <type>integer</type>
+        <null>NO</null>
     </column>
     <column>
         <name>iva</name>
@@ -101,8 +95,8 @@
         <default>0</default>
     </column>
     <column>
-        <name>recargo</name>
-        <type>double precision</type>
+        <name>orden</name>
+        <type>integer</type>
         <null>NO</null>
         <default>0</default>
     </column>
@@ -113,8 +107,14 @@
         <default>false</default>
     </column>
     <column>
-        <name>orden</name>
-        <type>integer</type>
+        <name>recargo</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>tasaconv</name>
+        <type>double precision</type>
         <null>NO</null>
         <default>0</default>
     </column>

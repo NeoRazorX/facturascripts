@@ -7,17 +7,15 @@
 -->
 <table>
     <column>
-        <name>iddiario</name>
-        <type>integer</type>
-        <null>NO</null>
-    </column>
-
-    <column>
         <name>descripcion</name>
         <type>character varying(100)</type>
         <null>NO</null>
     </column>
-
+    <column>
+        <name>iddiario</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
     <constraint>
         <name>diarios_pkey</name>
         <type>PRIMARY KEY (iddiario)</type>

@@ -7,19 +7,8 @@
 -->
 <table>
     <column>
-        <name>idprovincia</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('provincias_idprovincia_seq'::regclass)</default>
-    </column>
-    <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>provincia</name>
-        <type>character varying(100)</type>
         <null>NO</null>
     </column>
     <column>
@@ -29,6 +18,16 @@
     <column>
         <name>codpostal2d</name>
         <type>character varying(2)</type>
+    </column>
+    <column>
+        <name>fecha_revision</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>idprovincia</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('provincias_idprovincia_seq'::regclass)</default>
     </column>
     <column>
         <name>latitud</name>
@@ -41,8 +40,9 @@
         <default>0</default>
     </column>
     <column>
-        <name>fecha_revision</name>
-        <type>character varying(10)</type>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>provincias_pkey</name>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,13 +36,6 @@ class CuentaBancoCliente extends Base\BankAccount
     public $codcliente;
 
     /**
-     * Is it the customer's main account?
-     *
-     * @var boolean
-     */
-    public $principal;
-
-    /**
      * Date on which the mandate to authorize the direct debit of receipts was signed.
      *
      * @var string
@@ -50,13 +43,19 @@ class CuentaBancoCliente extends Base\BankAccount
     public $fmandato;
 
     /**
-     * Returns the name of the table that uses this model.
+     * Is it the customer's main account?
      *
-     * @return string
+     * @var boolean
      */
-    public static function tableName()
+    public $principal;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
     {
-        return 'cuentasbcocli';
+        parent::clear();
+        $this->principal = true;
     }
 
     /**
@@ -70,12 +69,13 @@ class CuentaBancoCliente extends Base\BankAccount
     }
 
     /**
-     * Reset the values of all model properties.
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
      */
-    public function clear()
+    public static function tableName()
     {
-        parent::clear();
-        $this->principal = true;
+        return 'cuentasbcocli';
     }
 
     /**
