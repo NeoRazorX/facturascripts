@@ -20,7 +20,7 @@
         <type>boolean</type>
     </column>
     <column>
-        <name>canal</name>
+        <name>idcanal</name>
         <type>integer</type>
         <null>NO</null>
     </column>
