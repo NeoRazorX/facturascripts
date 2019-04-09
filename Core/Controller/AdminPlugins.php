@@ -54,6 +54,15 @@ class AdminPlugins extends Base\Controller
 
         $list = [];
         foreach ($json as $item) {
+            /// plugin is already installed?
+            $item['installed'] = false;
+            foreach ($this->getPlugins() as $plug) {
+                if ($plug['name'] == $item['name']) {
+                    $item['installed'] = true;
+                    break;
+                }
+            }
+
             $list[] = $item;
         }
 

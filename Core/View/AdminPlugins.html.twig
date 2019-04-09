@@ -64,24 +64,32 @@
         </div>
     </div>
 
+    {% set allPlugins = fsc.getAllPlugins() %}
+    {% set installedPlugins = fsc.getPlugins() %}
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="installedPluginsTab" data-toggle="tab" href="#installed" role="tab">
                 <i class="fas fa-box-open fa-fw" aria-hidden="true"></i> {{ i18n.trans('installed-plugins') }}
+                {% if installedPlugins | length > 0 %}
+                    <span class="badge badge-secondary">{{ installedPlugins | length }}</span>
+                {% endif %}
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="allPluginsTab" data-toggle="tab" href="#all" role="tab">
                 <i class="fas fa-boxes fa-fw" aria-hidden="true"></i> {{ i18n.trans('more-plugins') }}
+                {% if allPlugins | length > 0 %}
+                    <span class="badge badge-secondary">{{ allPlugins | length }}</span>
+                {% endif %}
             </a>
         </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="installed" role="tabpanel">
-            {{ macros.showInstalledPlugins(fsc, i18n) }}
+            {{ macros.showInstalledPlugins(fsc, i18n, installedPlugins) }}
         </div>
         <div class="tab-pane fade" id="all" role="tabpanel">
-            {{ macros.showAllPlugins(fsc, i18n) }}
+            {{ macros.showAllPlugins(fsc, i18n, allPlugins) }}
         </div>
     </div>
 
@@ -145,24 +153,34 @@
     {% endif %}
 {% endblock %}
 
-{% macro showAllPlugins(fsc, i18n) %}
+{% macro showAllPlugins(fsc, i18n, allPlugins) %}
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>{{ i18n.trans('name') }}</th>
+                    <th class="text-right">{{ i18n.trans('version') }}</th>
                     <th>{{ i18n.trans('description') }}</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                {% for plugin in fsc.getAllPlugins() %}
-                    <tr class="clickableRow" data-href="{{ plugin.url }}" data-target="_blank">
-                        <td><b>{{ plugin.name }}</b> v{{ plugin.version }}</td>
+                {% for plugin in allPlugins %}
+                    {% set extraClass = plugin.version >= 1 ? 'table-info' : plugin.version == 0 ? 'table-danger' : 'table-warning' %}
+                    <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
+                        <td>{{ plugin.name }}</td>
+                        <td class="text-right">v{{ plugin.version }}</td>
                         <td>{{ plugin.description }}</td>
+                        <td class="text-center">
+                            {% if plugin.installed %}
+                                <i class="fas fa-box-open fa-fw" aria-hidden="true"></i>
+                                {{ i18n.trans('installed') }}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
+                        <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -170,18 +188,19 @@
     </div>
 {% endmacro %}
 
-{% macro showInstalledPlugins(fsc, i18n) %}
+{% macro showInstalledPlugins(fsc, i18n, installedPlugins) %}
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>{{ i18n.trans('name') }}</th>
+                    <th class="text-right">{{ i18n.trans('version') }}</th>
                     <th>{{ i18n.trans('description') }}</th>
                     <th class="text-right">{{ i18n.trans('actions') }}</th>
                 </tr>
             </thead>
             <tbody>
-                {% for plugin in fsc.getPlugins() %}
+                {% for plugin in installedPlugins %}
                     {% set trClass = ' class="table-danger"' %}
                     {% if plugin.enabled %}
                         {% set trClass = ' class="table-success"' %}
@@ -189,7 +208,14 @@
                         {% set trClass = '' %}
                     {% endif %}
                     <tr{{ trClass | raw }}>
-                        <td><b>{{ plugin.name }}</b> v{{ plugin.version }}</td>
+                        <td>{{ plugin.name }}</td>
+                        {% if plugin.version == 0 %}
+                            <td class="text-right text-danger">v{{ plugin.version }}</td>
+                        {% elseif plugin.version < 1 %}
+                            <td class="text-right text-warning">v{{ plugin.version }}</td>
+                        {% else %}
+                            <td class="text-right">v{{ plugin.version }}</td>
+                        {% endif %}
                         <td>{{ plugin.description }}</td>
                         <td class="text-right">
                             <span class="btn-group d-xs-none">
@@ -215,7 +241,7 @@
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
+                        <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
                     </tr>
                 {% endfor %}
             </tbody>
