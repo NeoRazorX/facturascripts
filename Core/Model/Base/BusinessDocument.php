@@ -513,7 +513,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function setDate(string $date, string $hour): bool
     {
         /// force check of warehouse-company relation
-        $this->setWarehouse($this->codalmacen);
+        if (!$this->setWarehouse($this->codalmacen)) {
+            return false;
+        }
 
         $ejercicio = new Ejercicio();
         $ejercicio->idempresa = $this->idempresa;
@@ -524,6 +526,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
+        self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
         return false;
     }
 
@@ -542,6 +545,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
+        self::$miniLog->warning(self::$i18n->trans('warehouse-not-found'));
         return false;
     }
 
