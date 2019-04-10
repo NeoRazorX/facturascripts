@@ -154,6 +154,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('purchases-subaccount-not-found'));
         return false;
     }
 
@@ -179,6 +180,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('sales-subaccount-not-found'));
         return false;
     }
 
@@ -204,6 +206,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->haber) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('irpfpr-subaccount-not-found'));
         return false;
     }
 
@@ -233,6 +236,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->debe) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('ivasop-subaccount-not-found'));
         return false;
     }
 
@@ -258,6 +262,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->debe) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('irpf-subaccount-not-found'));
         return false;
     }
 
@@ -287,6 +292,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->haber) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('ivarep-subaccount-not-found'));
         return false;
     }
 
