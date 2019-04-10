@@ -289,8 +289,11 @@ abstract class BusinessDocumentController extends PanelController
     protected function saveDocumentError($message)
     {
         foreach ($this->miniLog->read() as $msg) {
-            $message = $msg['message'];
+            $message .= "\n" . $msg['message'];
         }
+
+        /// undo transaction
+        $this->dataBase->rollback();
 
         return $message;
     }
@@ -319,10 +322,13 @@ abstract class BusinessDocumentController extends PanelController
             return $this->saveDocumentError($result);
         }
 
+        /// start transaction
+        $this->dataBase->beginTransaction();
+
         if ($view->model->save() && $this->saveLines($view, $data['lines'])) {
             $this->documentTools->recalculate($view->model);
             $view->model->idestado = $data['exclude']['idestado'];
-            return $view->model->save() ? 'OK:' . $view->model->url() : $this->saveDocumentError('ERROR');
+            return $view->model->save() && $this->dataBase->commit() ? 'OK:' . $view->model->url() : $this->saveDocumentError('ERROR');
         }
 
         return $this->saveDocumentError('ERROR');

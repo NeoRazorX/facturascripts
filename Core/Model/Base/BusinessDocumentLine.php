@@ -322,11 +322,18 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
-     * This mehtod is called after save (insert) this record in the database.
+     * 
+     * @param array $values
+     *
+     * @return bool
      */
-    protected function onInsert()
+    protected function saveInsert(array $values = [])
     {
-        $this->updateStock();
+        if ($this->updateStock()) {
+            return parent::saveInsert($values);
+        }
+
+        return false;
     }
 
     /**
@@ -379,6 +386,13 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
             $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $stock);
             $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
+
+            /// enough stock?
+            if (!$producto->ventasinstock && $stock->cantidad < 0) {
+                self::$miniLog->warning(self::$i18n->trans('not-enough-stock', ['%reference%' => $this->referencia]));
+                return false;
+            }
+
             return $stock->save();
         }
 
