@@ -388,7 +388,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
 
             /// enough stock?
-            if (!$producto->ventasinstock && $stock->cantidad < 0) {
+            if (!$producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
                 self::$miniLog->warning(self::$i18n->trans('not-enough-stock', ['%reference%' => $this->referencia]));
                 return false;
             }
