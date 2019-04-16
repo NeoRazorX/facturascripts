@@ -19,8 +19,22 @@
         <name>siniva</name>
         <type>boolean</type>
     </column>
+    <column>
+        <name>idcanal</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>iddiario</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
     <constraint>
         <name>series_pkey</name>
         <type>PRIMARY KEY (codserie)</type>
+        <constraint>
+            <name>ca_series_diarios</name>
+            <type>FOREIGN KEY (iddiario) REFERENCES diarios (iddiario) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        </constraint>
     </constraint>
 </table>
