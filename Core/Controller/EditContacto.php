@@ -78,7 +78,7 @@ class EditContacto extends ExtendedController\EditController
                 }
 
                 $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
-                $this->response->headers->set('Refresh', '0; ' . $customer->url());
+                $this->redirect($customer->url());
                 break;
         }
     }

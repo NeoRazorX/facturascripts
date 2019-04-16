@@ -186,7 +186,7 @@ class DocumentStitcher extends Controller
 
             /// redir to new document
             foreach ($generator->getLastDocs() as $doc) {
-                $this->response->headers->set('Refresh', '0; ' . $doc->url());
+                $this->redirect($doc->url());
                 break;
             }
             return;

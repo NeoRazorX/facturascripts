@@ -194,7 +194,7 @@ class EditAsiento extends EditController
                 $result = $this->cloneDocument($data);
                 if (!empty($result)) {
                     $this->setTemplate(false);
-                    $this->response->headers->set('Refresh', '0;' . $result);
+                    $this->redirect($result);
                     return false;
                 }
                 return true;
