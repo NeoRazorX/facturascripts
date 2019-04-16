@@ -1,8 +1,7 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,9 +27,16 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Serie extends Base\ModelClass {
+class Serie extends Base\ModelClass
+{
 
     use Base\ModelTrait;
+
+    /**
+     *
+     * @var int
+     */
+    public $canal;
 
     /**
      * Primary key. Varchar (4).
@@ -48,6 +53,12 @@ class Serie extends Base\ModelClass {
     public $descripcion;
 
     /**
+     *
+     * @var int
+     */
+    public $iddiario;
+
+    /**
      * If associated invoices are without tax True, else False.
      *
      * @var bool
@@ -55,24 +66,10 @@ class Serie extends Base\ModelClass {
     public $siniva;
 
     /**
-     *
-     * Associated with diario table
-     * @var integer
-     */
-    public $iddiario;
-
-    /**
-     *
-     * For clasificate series
-     * @var integer
-     *
-     */
-    public $idcanal;
-
-    /**
      * Reset the values of all model properties.
      */
-    public function clear() {
+    public function clear()
+    {
         parent::clear();
         $this->siniva = false;
     }
@@ -82,7 +79,8 @@ class Serie extends Base\ModelClass {
      *
      * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return $this->codserie === AppSettings::get('default', 'codserie');
     }
 
@@ -91,7 +89,8 @@ class Serie extends Base\ModelClass {
      *
      * @return string
      */
-    public static function primaryColumn() {
+    public static function primaryColumn()
+    {
         return 'codserie';
     }
 
@@ -100,7 +99,8 @@ class Serie extends Base\ModelClass {
      *
      * @return string
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'series';
     }
 
@@ -109,18 +109,21 @@ class Serie extends Base\ModelClass {
      *
      * @return bool
      */
-    public function test() {
+    public function test()
+    {
         $this->codserie = trim($this->codserie);
         $this->descripcion = Utils::noHtml($this->descripcion);
+
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codserie)) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codserie', '%min%' => '1', '%max%' => '4']));
             return false;
         }
+
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']));
             return false;
         }
+
         return parent::test();
     }
-
 }
