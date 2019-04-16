@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditCuentaBanco
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
@@ -49,11 +46,10 @@
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="expenses" numcolumns="5" order="130">
+            <column name="expense-subaccount" numcolumns="5" order="130">
                 <widget type="autocomplete" fieldname="codsubcuentagasto">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
-                <widget type="text" fieldname=""/>
             </column>
         </group>
     </columns>
