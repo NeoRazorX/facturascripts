@@ -105,4 +105,17 @@ class CronJob extends Base\ModelClass
         $this->pluginname = Utils::noHtml($this->pluginname);
         return parent::test();
     }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListLogMessage?activetab=List');
+    }
 }
