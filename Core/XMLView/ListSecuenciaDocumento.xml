@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller ListSecuenciaDocumento
+ *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>  
+ * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+-->
+
+<view>
+    <columns>
+        <column name="code-exercise" order="100">
+            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
+        </column>
+        <column name="code-serie" order="110">
+            <widget type="select" fieldname="codserie" onclick="EditSerie">
+                <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="longnumber" display="center" order="120">
+            <widget type="integer" fieldname="longnumero" />
+        </column>
+        <column name="number" display="center" order="130">
+            <widget type="integer" fieldname="numero" />
+        </column>
+        <column name="pattern" display="center" order="140">
+            <widget type="text" fieldname="patron" />
+        </column>
+        <column name="title" display="center" order="150">
+            <widget type="text" fieldname="titulo" />
+        </column>
+        <column name="type-document" display="center" order="160">
+            <widget type="text" fieldname="tipodoc" />
+        </column>
+    </columns>
+</view>
