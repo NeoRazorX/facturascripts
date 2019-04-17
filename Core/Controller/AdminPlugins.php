@@ -127,11 +127,7 @@ class AdminPlugins extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        /// For now, always deploy the contents of Dinamic, for testing purposes
         $this->pluginManager = new Base\PluginManager();
-        $this->pluginManager->deploy(true, true);
-        $this->cache->clear();
 
         $action = $this->request->get('action', '');
         $this->execAction($action);
@@ -175,8 +171,8 @@ class AdminPlugins extends Base\Controller
 
     /**
      * Execute main actions.
-     *
-     * @param $action
+     * 
+     * @param string $action
      */
     private function execAction($action)
     {
@@ -195,6 +191,12 @@ class AdminPlugins extends Base\Controller
 
             case 'upload':
                 $this->uploadPlugin($this->request->files->get('plugin', []));
+            /// no break, to make a deploy
+
+            default:
+                /// For now, always deploy the contents of Dinamic, for testing purposes
+                $this->pluginManager->deploy(true, true);
+                $this->cache->clear();
                 break;
         }
     }
