@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : secuenciasdocumento.xml
+    Author     : Carlos Garcia Gomez
+                 Cristo M. Estévez Hernández
+    Description:
+        Structure for the secuenciasdocumento table.
+-->
+<table>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>longnumero</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>patron</name>
+        <type>varchar(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>reutilizar</name>
+        <type>boolean</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>titulo</name>
+        <type>varchar(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>tipodoc</name>
+        <type>varchar(30)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>secuenciasdocumento_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_secdocumentos_ejercicio</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_secdocumentos_serie</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+</table>
