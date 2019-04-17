@@ -54,7 +54,7 @@ class EditLogMessage extends ExtendedController\EditController
     }
 
     /**
-     * 
+     *
      */
     protected function createViews()
     {
