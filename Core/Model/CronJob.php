@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Class to store log information when a plugin is executed from cron.
  *
- * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
  */
 class CronJob extends Base\ModelClass
 {
@@ -114,8 +115,8 @@ class CronJob extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List')
     {
-        return parent::url($type, 'ListLogMessage?activetab=List');
+        return parent::url($type, $list);
     }
 }

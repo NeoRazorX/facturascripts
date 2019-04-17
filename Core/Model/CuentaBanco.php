@@ -39,7 +39,7 @@ class CuentaBanco extends Base\BankAccount
      * @var string
      */
     public $codsubcuentagasto;
-    
+
     /**
      * Foreign Key with Empresas table.
      *
@@ -90,8 +90,8 @@ class CuentaBanco extends Base\BankAccount
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List')
     {
-        return parent::url($type, 'ListFormaPago?activetab=List');
+        return parent::url($type, $list);
     }
 }
