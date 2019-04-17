@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 /**
  * Personalize the numeration and code of sale and purchase documents.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class SecuenciaDocumento extends Base\ModelClass
 {
@@ -42,17 +42,17 @@ class SecuenciaDocumento extends Base\ModelClass
     public $codserie;
 
     /**
-     *
-     * @var int
-     */
-    public $longnumero;
-
-    /**
      * Primary key.
      *
      * @var int
      */
-    public $id;
+    public $idsecuencia;
+
+    /**
+     *
+     * @var int
+     */
+    public $longnumero;
 
     /**
      *
@@ -68,9 +68,9 @@ class SecuenciaDocumento extends Base\ModelClass
 
     /**
      *
-     * @var bool
+     * @var string
      */
-    public $reutilizar;
+    public $tipodoc;
 
     /**
      *
@@ -78,12 +78,26 @@ class SecuenciaDocumento extends Base\ModelClass
      */
     public $titulo;
 
-    /**
-     *
-     * @var string
-     */
-    public $tipodoc;
+    public function clear()
+    {
+        parent::clear();
+        $this->longnumero = 6;
+        $this->numero = 1;
+        $this->patron = '{EJE}{SERIE}{NUM}';
+    }
 
+    /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new Ejercicio();
+        new Serie();
+
+        return parent::install();
+    }
 
     /**
      * Returns the name of the column that is the primary key of the model.
@@ -92,7 +106,7 @@ class SecuenciaDocumento extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'id';
+        return 'idsecuencia';
     }
 
     /**
@@ -102,6 +116,6 @@ class SecuenciaDocumento extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'secuenciasdocumentos';
+        return 'secuencias_documentos';
     }
 }

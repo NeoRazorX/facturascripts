@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,23 +10,23 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the SecuenciaDocumento model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListSecuenciaDocumento extends ExtendedController\ListController
+class ListSecuenciaDocumento extends ListController
 {
 
     /**
@@ -39,7 +39,7 @@ class ListSecuenciaDocumento extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['menu'] = 'admin';
         $pagedata['title'] = 'document-sequences';
-        $pagedata['icon'] = 'fas fa-file-invoice';
+        $pagedata['icon'] = 'fas fa-code';
 
         return $pagedata;
     }
@@ -49,7 +49,7 @@ class ListSecuenciaDocumento extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-files-invoice');
+        $this->addView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
         $this->addSearchFields('ListSecuenciaDocumento', ['titulo', 'tipodoc']);
         $this->addOrderBy('ListSecuenciaDocumento', ['codejercicio'], 'exercise');
         $this->addOrderBy('ListSecuenciaDocumento', ['codserie'], 'serie');

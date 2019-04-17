@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,56 +16,49 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditSecuenciaDocumento
- *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" display="none" order="100">
-                <widget type="number" fieldname="id" />
+                <widget type="text" fieldname="idsecuencia" readonly="dinamic" />
             </column>
-            <column name="code-exercise" order="110">
+            <column name="doc-type" numcolumns="3" order="110">
+                <widget type="select" fieldname="tipodoc" translate="true">
+                    <values title="customer-estimation">PresupuestoCliente</values>
+                    <values title="customer-order">PedidoCliente</values>
+                    <values title="customer-delivery-note">AlbaranCliente</values>
+                    <values title="customer-invoice">FacturaCliente</values>
+                    <values title="supplier-estimation">PresupuestoProveedor</values>
+                    <values title="supplier-order">PedidoProveedor</values>
+                    <values title="supplier-delivery-note">AlbaranProveedor</values>
+                    <values title="supplier-invoice">FacturaProveedor</values>
+                    <values title="service">Servicio</values>
+                </widget>
+            </column>
+            <column name="exercise" numcolumns="3" order="120">
                 <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="code-serie" numcolumns="4" order="120">
+            <column name="serie" numcolumns="2" order="130">
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="longnumber" order="130">
-                <widget type="number" fieldname="longnumero" />
-            </column>
-            <column name="number" order="140">
+            <column name="number" numcolumns="2" order="140">
                 <widget type="number" fieldname="numero" />
             </column>
-            <column name="pattern" numcolumns="4" order="150">
-                <widget type="text" fieldname="patron" />
+            <column name="number-length" numcolumns="2" order="150">
+                <widget type="number" fieldname="longnumero" />
             </column>
-            <column name="title" numcolumns="4" order="170">
-                <widget type="text" fieldname="titulo" />
+            <column name="pattern" numcolumns="6" order="160">
+                <widget type="text" fieldname="patron" maxlength="20" />
             </column>
-            <column name="type-document" order="180">
-                <widget type="select" fieldname="tipodoc" translate="true">
-                        <values title="customer-estimation">PresupuestoCliente</values>
-                        <values title="customer-order">PedidoCliente</values>
-                        <values title="customer-delivery-note">AlbaranCliente</values>
-                        <values title="customer-invoice">FacturaCliente</values>
-                        <values title="supplier-estimation">PresupuestoProveedor</values>
-                        <values title="supplier-order">PedidoProveedor</values>
-                        <values title="supplier-delivery-note">AlbaranProveedor</values>
-                        <values title="supplier-invoice">FacturaProveedor</values>
-                        <values title="service">Servicio</values>
-                    </widget>
-            </column>
-            <column name="reuse"  numcolumns="2" order="190">
-                <widget type="checkbox" fieldname="reutilizar" />
+            <column name="title" numcolumns="6" order="170">
+                <widget type="text" fieldname="titulo" maxlength="50" />
             </column>
         </group>
     </columns>

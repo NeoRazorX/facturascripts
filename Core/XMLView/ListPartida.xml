@@ -14,15 +14,11 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Definición inicial para el controlador ListPartida
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com
 -->
-
 <view>
     <columns>
         <column name="id" order="100" display="none">
