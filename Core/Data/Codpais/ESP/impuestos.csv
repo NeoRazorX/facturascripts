@@ -3,3 +3,6 @@ codimpuesto;descripcion;iva;recargo
 "IVA10";"IVA 10%";"10";"1.4"
 "IVA21";"IVA 21%";"21";"5.2"
 "IVA4";"IVA 4%";"4";"0.5"
+"IGIC0";"IGIC 0%";"0";"0"
+"IGIC3";"IGIC 3%";"3";"0"
+"IGIC6.5";"IGIC 6.5%";"6.5";"0"
