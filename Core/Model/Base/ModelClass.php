@@ -43,7 +43,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    abstract public function modelName();
+    abstract protected function modelName();
 
     /**
      * Returns all models that correspond to the selected filters.

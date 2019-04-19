@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Personalize the numeration and code of sale and purchase documents.
  *
@@ -40,6 +42,12 @@ class SecuenciaDocumento extends Base\ModelClass
      * @var string
      */
     public $codserie;
+    
+    /**
+     *
+     * @var int
+     */
+    public $idempresa;
 
     /**
      * Primary key.
@@ -117,5 +125,17 @@ class SecuenciaDocumento extends Base\ModelClass
     public static function tableName()
     {
         return 'secuencias_documentos';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->patron = Utils::noHtml($this->patron);
+        $this->titulo = Utils::noHtml($this->titulo);
+
+        return parent::test();
     }
 }

@@ -34,6 +34,7 @@
                 <values title="supplier-order">PedidoProveedor</values>
                 <values title="supplier-delivery-note">AlbaranProveedor</values>
                 <values title="supplier-invoice">FacturaProveedor</values>
+                <values title="service">Servicio</values>
             </widget>
         </column>
         <column name="name" order="120">

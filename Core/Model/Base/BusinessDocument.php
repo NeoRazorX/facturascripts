@@ -160,7 +160,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     /**
      * Number of the document.
-     * Unique within the series + exercise.
+     * Unique within the series.
      *
      * @var string
      */

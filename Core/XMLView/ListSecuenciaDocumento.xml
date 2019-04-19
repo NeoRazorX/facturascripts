@@ -25,26 +25,41 @@
             <widget type="text" fieldname="idsecuencia" />
         </column>
         <column name="doc-type" order="110">
-            <widget type="text" fieldname="tipodoc" />
+            <widget type="select" fieldname="tipodoc" translate="true">
+                <values title="customer-estimation">PresupuestoCliente</values>
+                <values title="customer-order">PedidoCliente</values>
+                <values title="customer-delivery-note">AlbaranCliente</values>
+                <values title="customer-invoice">FacturaCliente</values>
+                <values title="supplier-estimation">PresupuestoProveedor</values>
+                <values title="supplier-order">PedidoProveedor</values>
+                <values title="supplier-delivery-note">AlbaranProveedor</values>
+                <values title="supplier-invoice">FacturaProveedor</values>
+                <values title="service">Servicio</values>
+            </widget>
         </column>
-        <column name="exercise" order="120">
-            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
+        <column name="company" order="120">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+            </widget>
         </column>
-        <column name="serie" order="130">
-            <widget type="select" fieldname="codserie" onclick="EditSerie">
+        <column name="exercise" order="130">
+            <widget type="text" fieldname="codejercicio" />
+        </column>
+        <column name="serie" order="140">
+            <widget type="select" fieldname="codserie">
                 <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="number" display="right" order="140">
-            <widget type="number" fieldname="numero" />
+        <column name="number" display="right" order="150">
+            <widget type="number" fieldname="numero" decimal="0" />
         </column>
-        <column name="number-length" display="right" order="150">
-            <widget type="number" fieldname="longnumero" />
+        <column name="number-length" display="right" order="160">
+            <widget type="number" fieldname="longnumero" decimal="0" />
         </column>
-        <column name="pattern" order="160">
+        <column name="pattern" order="170">
             <widget type="text" fieldname="patron" />
         </column>
-        <column name="title" order="170">
+        <column name="title" order="180">
             <widget type="text" fieldname="titulo" />
         </column>
     </columns>
