@@ -44,6 +44,7 @@ class BusinessDocumentCode
         $vars = [
             '{EJE}' => $document->codejercicio,
             '{SERIE}' => $document->codserie,
+            '{0SERIE}' => str_pad($document->codserie, 2, '0', STR_PAD_LEFT),
             '{NUM}' => $document->numero,
             '{0NUM}' => str_pad($document->numero, $sequence->longnumero, '0', STR_PAD_LEFT),
         ];
