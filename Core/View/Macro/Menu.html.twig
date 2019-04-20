@@ -3,7 +3,7 @@
      * Macros to generate app menu.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
      * You should have received a copy of the GNU Lesser General Public License
      * along with this program. If not, see <http://www.gnu.org/licenses/>.
      *
-    */
+     */
 #}
 
 
@@ -34,7 +34,7 @@
         {# Main level menu/submenu #}
         <li class="nav-item dropdown{{ active }}">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% set title = menuItem.title | capitalize %}
+                {% set title = menuItem.title %}
                 <span class="d-md-none">{{ title | slice(0, 2) }}</span>
                 <span class="d-none d-md-inline-block">{{ title }}</span>
             </a>
@@ -44,7 +44,7 @@
         <li class="dropdown-submenu">
             <a class="dropdown-item{{ active }}" href="#">
                 <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
-                &nbsp; {{ menuItem.title | capitalize }}
+                &nbsp;{{ menuItem.title }}
             </a>
             <ul class="dropdown-menu" aria-labelledby="{{ menuId }}">
     {% endif %}
@@ -55,7 +55,7 @@
         {% if item.menu is empty %}
             <li>
                 <a class="dropdown-item{{ extraClass }}" href="{{ item.url }}">
-                    <i class="{{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp; {{ item.title | capitalize }}
+                    <i class="{{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp;{{ item.title }}
                 </a>
             </li>
         {% else %}
