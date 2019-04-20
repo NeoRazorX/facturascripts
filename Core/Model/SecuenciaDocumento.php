@@ -91,7 +91,7 @@ class SecuenciaDocumento extends Base\ModelClass
         parent::clear();
         $this->longnumero = 6;
         $this->numero = 1;
-        $this->patron = '{EJE}{SERIE}{NUM}';
+        $this->patron = '{EJE}{SERIE}{0NUM}';
     }
 
     /**

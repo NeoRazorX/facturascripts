@@ -70,7 +70,7 @@ class BusinessDocumentCode
         }
 
         /// find maximum number for this sequence data
-        foreach ($document->all($where, ['numero' => 'DESC'], 0, 1) as $lastDoc) {
+        foreach ($document->all($where, ['CAST(numero as unsigned)' => 'DESC'], 0, 1) as $lastDoc) {
             $lastNumber = (int) $lastDoc->numero;
             if ($lastNumber >= $sequence->numero) {
                 $sequence->numero = 1 + $lastNumber;
