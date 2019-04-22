@@ -47,6 +47,13 @@ class Proveedor extends Base\ComercialContact
     public $codimpuestoportes;
 
     /**
+     * Code of retention
+     *
+     * @var string
+     */
+    public $codretencion;
+
+    /**
      * Default contact.
      *
      * @var int

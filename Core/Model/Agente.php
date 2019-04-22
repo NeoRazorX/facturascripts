@@ -76,6 +76,13 @@ class Agente extends Base\Contact
     public $codpostal;
 
     /**
+     * Code of retention
+     *
+     * @var string
+     */
+    public $codretencion;
+
+    /**
      * True -> the customer no longer buys us or we do not want anything with him.
      *
      * @var boolean
@@ -102,6 +109,13 @@ class Agente extends Base\Contact
      * @var string
      */
     public $fechanacimiento;
+
+    /**
+     * IRPF of the agent
+     *
+     * @var float|int
+     */
+    public $irpf;
 
     /**
      * Percentage of the agent's commission. It is used in budgets, orders, delivery notes and invoices.
@@ -131,6 +145,20 @@ class Agente extends Base\Contact
     {
         parent::clear();
         $this->porcomision = 0.00;
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Retencion();
+
+        return parent::install();
     }
 
     /**

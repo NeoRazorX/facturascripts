@@ -33,6 +33,10 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>codretencion</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>codserie</name>
         <type>character varying(4)</type>
     </column>
@@ -124,5 +128,9 @@
     <constraint>
         <name>ca_clientes_grupos</name>
         <type>FOREIGN KEY (codgrupo) REFERENCES gruposclientes (codgrupo) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_clientes_retenciones</name>
+        <type>FOREIGN KEY (codretencion) REFERENCES retenciones (codretencion) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

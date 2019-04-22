@@ -40,6 +40,11 @@
             <column name="commission" title="percentage-commission" numcolumns="4" order="150">
                 <widget type="number" fieldname="porcomision" />
             </column>
+            <column name="irpf" numcolumns="4" order="160">
+                <widget type="select" fieldname="irpf" icon="fas fa-percent" onclick="EditRetencion">
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="address" numcolumns="4" order="100">
