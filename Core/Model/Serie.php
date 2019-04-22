@@ -75,6 +75,18 @@ class Serie extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// neede dependencies
+        new Diario();
+
+        return parent::install();
+    }
+
+    /**
      * Returns True if is the default serie for the company.
      *
      * @return bool
