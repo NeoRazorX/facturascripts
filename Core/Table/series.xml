@@ -30,9 +30,9 @@
     <constraint>
         <name>series_pkey</name>
         <type>PRIMARY KEY (codserie)</type>
-        <constraint>
-            <name>ca_series_diarios</name>
-            <type>FOREIGN KEY (iddiario) REFERENCES diarios (iddiario) ON DELETE SET NULL ON UPDATE CASCADE</type>
-        </constraint>
+    </constraint>
+    <constraint>
+        <name>ca_series_diarios</name>
+        <type>FOREIGN KEY (iddiario) REFERENCES diarios (iddiario) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
