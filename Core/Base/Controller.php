@@ -239,10 +239,11 @@ class Controller
      * Redirect to an url or controller.
      * 
      * @param string $url
+     * @param int    $delay
      */
-    public function redirect($url)
+    public function redirect($url, $delay = 0)
     {
-        $this->response->headers->set('Refresh', '0; ' . $url);
+        $this->response->headers->set('Refresh', $delay . '; ' . $url);
     }
 
     /**
