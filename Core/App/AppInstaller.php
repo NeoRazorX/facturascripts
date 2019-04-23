@@ -112,7 +112,7 @@ class AppInstaller
                     return $this->testMysql($dbData);
                 }
 
-                $this->miniLog->alert($this->i18n->trans('mysqli-not-found'));
+                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => 'mysqli']));
                 break;
 
             case 'postgresql':
@@ -120,7 +120,7 @@ class AppInstaller
                     return $this->testPostgreSql($dbData);
                 }
 
-                $this->miniLog->alert($this->i18n->trans('postgresql-not-found'));
+                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => 'postgresql']));
                 break;
 
             default:
