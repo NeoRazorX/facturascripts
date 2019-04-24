@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,12 +24,23 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the SubCuenta model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author PC REDNET S.L.               <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class EditSubcuenta extends ExtendedController\PanelController
+class EditSubcuenta extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Subcuenta';
+    }
 
     /**
      * Returns basic page attributes
@@ -41,7 +52,7 @@ class EditSubcuenta extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'subaccount';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fas fa-th-list';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -52,8 +63,8 @@ class EditSubcuenta extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditSubcuenta', 'Subcuenta', 'subaccount');
-        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fa-balance-scale');
+        parent::createViews();
+        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
 
@@ -66,16 +77,15 @@ class EditSubcuenta extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditSubcuenta':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListAsiento':
                 $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
                 $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
                 $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
                 $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

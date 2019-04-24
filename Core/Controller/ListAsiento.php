@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@ class ListAsiento extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounting-entries';
-        $pagedata['icon'] = 'fa-balance-scale';
+        $pagedata['icon'] = 'fas fa-balance-scale';
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
@@ -48,33 +48,48 @@ class ListAsiento extends ExtendedController\ListController
      */
     protected function createViews()
     {
+        $this->createViewAccountEntries(); /// account entries tab
+        $this->createViewConcepts(); /// concepts tab
+        $this->createViewJournals(); /// journals tab
+    }
+
+    private function createViewAccountEntries()
+    {
         /// accounting entries
-        $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
+        $this->addOrderBy('ListAsiento', ['fecha', 'idasiento'], 'date', 2);
+        $this->addOrderBy('ListAsiento', ['numero', 'idasiento'], 'number');
+        $this->addOrderBy('ListAsiento', ['importe', 'idasiento'], 'ammount');
 
-        $this->addFilterDatePicker('ListAsiento', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListAsiento', 'importe', 'amount', 'importe');
+        $this->addFilterPeriod('ListAsiento', 'date', 'period', 'fecha');
+        $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');
+        $this->addFilterNumber('ListAsiento', 'max-total', 'amount', 'importe', '<=');
 
-        $selectValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->addFilterSelect('ListAsiento', 'codejercicio', 'exercise', 'codejercicio', $selectValues);
+        $selectCompany = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect('ListAsiento', 'idempresa', 'company', 'idempresa', $selectCompany);
+
+        $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+        $this->addFilterSelect('ListAsiento', 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $this->addOrderBy('ListAsiento', ['numero'], 'number');
-        $this->addOrderBy('ListAsiento', ['fecha'], 'date', 2);
+        $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal', '=');
+    }
 
-        /// concepts
-        $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fa-indent');
+    private function createViewConcepts()
+    {
+        $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
         $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
-
         $this->addOrderBy('ListConceptoPartida', ['codconcepto'], 'code');
         $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
+    }
 
-        /// journals
-        $this->addView('ListDiario', 'Diario', 'journals', 'fa fa-book');
+    private function createViewJournals()
+    {
+        $this->addView('ListDiario', 'Diario', 'journals', 'fas fa-book');
         $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
-
         $this->addOrderBy('ListDiario', ['iddiario'], 'code');
         $this->addOrderBy('ListDiario', ['descripcion'], 'description');
     }

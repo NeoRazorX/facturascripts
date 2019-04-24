@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 class Postgresql implements DataBaseEngine
 {
+
     /**
      * Link to the SQL statements for the connected database
      *
@@ -115,7 +115,7 @@ class Postgresql implements DataBaseEngine
             return null;
         }
 
-        $this->exec($result, 'SET DATESTYLE TO ISO, DMY;'); /// establecemos el formato de fecha para la conexión
+        $this->exec($result, 'SET DATESTYLE TO ISO, YMD;'); /// establecemos el formato de fecha para la conexión
 
         return $result;
     }
@@ -287,7 +287,7 @@ class Postgresql implements DataBaseEngine
      */
     public function dateStyle()
     {
-        return 'd-m-Y';
+        return 'Y-m-d';
     }
 
     /**

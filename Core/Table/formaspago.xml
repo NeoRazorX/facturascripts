@@ -7,6 +7,10 @@
 -->
 <table>
     <column>
+        <name>codcuentabanco</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>codpago</name>
         <type>character varying(10)</type>
         <null>NO</null>
@@ -17,17 +21,17 @@
         <null>NO</null>
     </column>
     <column>
+        <name>domiciliado</name>
+        <type>boolean</type>
+    </column>
+    <column>
         <name>genrecibos</name>
         <type>character varying(10)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>domiciliado</name>
-        <type>boolean</type>
+        <name>idempresa</name>
+        <type>integer</type>
     </column>
     <column>
         <name>imprimir</name>
@@ -35,12 +39,23 @@
         <default>true</default>
     </column>
     <column>
-        <name>vencimiento</name>
-        <type>character varying(20)</type>
-        <default>'+1 month'::character varying</default>
+        <name>plazovencimiento</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>tipovencimiento</name>
+        <type>character varying(10)</type>
     </column>
     <constraint>
         <name>formaspago_pkey</name>
         <type>PRIMARY KEY (codpago)</type>
+    </constraint>
+    <constraint>
+        <name>ca_formaspago_cuentasbanco</name>
+        <type>FOREIGN KEY (codcuentabanco) REFERENCES cuentasbanco (codcuenta) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_formaspago_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

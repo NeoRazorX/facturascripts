@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,26 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListEstadoDocumento
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
 -->
-
 <view>
     <columns>
-        <column name="register-symbol" order="100">
-            <widget type="text" fieldname="idestado" onclick="EditEstadoDocumento" />
+        <column name="id" display="none" order="100">
+            <widget type="text" fieldname="idestado" />
         </column>
         <column name="doc-type" order="110">
-            <widget type="text" fieldname="tipodoc" />
+            <widget type="select" fieldname="tipodoc" translate="true">
+                <values title="customer-estimation">PresupuestoCliente</values>
+                <values title="customer-order">PedidoCliente</values>
+                <values title="customer-delivery-note">AlbaranCliente</values>
+                <values title="customer-invoice">FacturaCliente</values>
+                <values title="supplier-estimation">PresupuestoProveedor</values>
+                <values title="supplier-order">PedidoProveedor</values>
+                <values title="supplier-delivery-note">AlbaranProveedor</values>
+                <values title="supplier-invoice">FacturaProveedor</values>
+                <values title="service">Servicio</values>
+            </widget>
         </column>
         <column name="name" order="120">
             <widget type="text" fieldname="nombre" />
@@ -40,7 +47,7 @@
             <widget type="checkbox" fieldname="editable"></widget>
         </column>
         <column name="update-stock" display="center" order="150">
-            <widget type="select" fieldname="actualizastock">
+            <widget type="select" fieldname="actualizastock" translate="true">
                 <values title="book">-2</values>
                 <values title="subtract">-1</values>
                 <values title="do-nothing">0</values>
@@ -49,15 +56,24 @@
             </widget>
         </column>
         <column name="generate-doc-type" display="right" order="160">
-            <widget type="text" fieldname="generadoc" />
+            <widget type="select" fieldname="generadoc" translate="true">
+                <values title="customer-estimation">PresupuestoCliente</values>
+                <values title="customer-order">PedidoCliente</values>
+                <values title="customer-delivery-note">AlbaranCliente</values>
+                <values title="customer-invoice">FacturaCliente</values>
+                <values title="supplier-estimation">PresupuestoProveedor</values>
+                <values title="supplier-order">PedidoProveedor</values>
+                <values title="supplier-delivery-note">AlbaranProveedor</values>
+                <values title="supplier-invoice">FacturaProveedor</values>
+            </widget>
         </column>
     </columns>
     <rows>
         <row type="status" fieldname="actualizastock">
-            <option color="table-warning">-2</option>
-            <option color="table-danger">-1</option>
-            <option color="table-success">1</option>
-            <option color="table-warning">2</option>
+            <option color="warning">-2</option>
+            <option color="danger">-1</option>
+            <option color="success">1</option>
+            <option color="warning">2</option>
         </row>
     </rows>
 </view>

@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use SplPriorityQueue;
-
 /**
  * Description of EventManager
  *
@@ -29,27 +27,67 @@ class EventManager
 {
 
     /**
-     * @var SplPriorityQueue[]
+     * @var array
      */
     private static $listeners = [];
 
-    public static function attach(string $eventName, callable $callable, $priority = 0)
+    /**
+     * 
+     * @param string   $eventName
+     * @param callable $callable
+     * @param int      $priority
+     */
+    public static function attach(string $eventName, $callable, $priority = 0)
     {
         if (!isset(self::$listeners[$eventName])) {
-            self::$listeners[$eventName] = new SplPriorityQueue();
+            self::$listeners[$eventName] = [];
         }
 
-        self::$listeners[$eventName]->insert($callable, $priority);
+        self::$listeners[$eventName][] = ['callable' => $callable, 'priority' => $priority];
     }
 
+    /**
+     * 
+     * @param string $eventName
+     * @param object $object
+     */
     public static function trigger(string $eventName, &$object)
     {
         if (!isset(self::$listeners[$eventName])) {
             return;
         }
 
-        foreach (self::$listeners[$eventName] as $listener) {
-            call_user_func($listener, $object);
+        foreach (static::get($eventName) as $listener) {
+            /// event ends if false is returned
+            if (false === call_user_func($listener, $object)) {
+                break;
+            }
         }
+    }
+
+    /**
+     * 
+     * @param string $eventName
+     *
+     * @return array
+     */
+    private static function get(string $eventName)
+    {
+        /// sort by priority
+        uasort(self::$listeners[$eventName], function ($item1, $item2) {
+            if ($item1['priority'] > $item2['priority']) {
+                return -1;
+            } elseif ($item1['priority'] < $item2['priority']) {
+                return 1;
+            }
+
+            return 0;
+        });
+
+        $listeners = [];
+        foreach (self::$listeners[$eventName] as $item) {
+            $listeners[] = $item['callable'];
+        }
+        return $listeners;
     }
 }

@@ -151,7 +151,6 @@ ol.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
     padding: 3px 0px;
     border-bottom: 1px solid #eee;
     position: relative;
-    /*overflow: hidden;*/
 }
 
 ol.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover {

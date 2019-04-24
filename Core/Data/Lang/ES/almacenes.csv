@@ -1,2 +1,2 @@
-codalmacen;nombre;ciudad;direccion;codpostal;telefono
-"ALG";"ALMACEN GENERAL";"";"";"";""
+codalmacen;nombre;ciudad;direccion;codpostal;telefono;idempresa
+"ALG";"ALMACEN GENERAL";"";"";"";"";1

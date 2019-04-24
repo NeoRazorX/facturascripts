@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,33 +76,61 @@ class MegaSearch extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        $this->query = mb_strtolower($this->request->request->get('query', ''), 'UTF8');
-        $this->results = ['pages' => []];
+        $this->results = [];
         $this->sections = [];
 
+        $query = $this->request->request->get('query', '');
+        $this->query = Base\Utils::noHtml(mb_strtolower($query, 'UTF8'));
         if ($this->query !== '') {
-            $this->pageSearch();
+            $this->search();
         }
     }
 
     /**
      * Proceeds to search in the whole page
      */
-    private function pageSearch()
+    protected function pageSearch()
     {
+        $results = [];
         $pageModel = new Model\Page();
         foreach ($pageModel->all([], [], 0, 500) as $page) {
+            if (!$page->showonmenu) {
+                continue;
+            }
+
             /// Does the page title coincide with the search $query?
-            $title = mb_strtolower($this->i18n->trans($page->title), 'UTF8');
-            if ($page->showonmenu && strpos($title, $this->query) !== false) {
-                $this->results['pages'][] = $page;
+            $translation = mb_strtolower($this->i18n->trans($page->title), 'UTF8');
+            if (stripos($page->title, $this->query) !== false || stripos($translation, $this->query) !== false) {
+                $results[] = [
+                    'icon' => $page->icon,
+                    'link' => $page->url(),
+                    'menu' => $this->i18n->trans($page->menu),
+                    'submenu' => $this->i18n->trans($page->submenu),
+                    'title' => $this->i18n->trans($page->title),
+                ];
             }
 
             /// Is it a ListController that could return more results?
-            if ($page->showonmenu && strpos($page->name, 'List') === 0) {
+            if (strpos($page->name, 'List') === 0) {
                 $this->sections[$page->name] = $page->url() . '?action=megasearch&query=' . $this->query;
             }
         }
+
+        if (!empty($results)) {
+            $this->results['pages'] = [
+                'columns' => ['icon' => 'icon', 'menu' => 'menu', 'submenu' => 'submenu', 'title' => 'title'],
+                'icon' => 'fas fa-mouse-pointer',
+                'title' => 'pages',
+                'results' => $results,
+            ];
+        }
+    }
+
+    /**
+     * Presform all initial searches.
+     */
+    protected function search()
+    {
+        $this->pageSearch();
     }
 }

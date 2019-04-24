@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListAgente
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -29,9 +29,6 @@
         </column>
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
-        </column>
-        <column name="surname" order="120">
-            <widget type="text" fieldname="apellidos" />
         </column>
         <column name="cifnif" order="125">
             <widget type="text" fieldname="cifnif" />
@@ -53,10 +50,8 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="debaja">
-            <option color="table-danger">1</option>
+        <row type="status">
+            <option fieldname="debaja" color="danger">1</option>
         </row>
     </rows>
-    <filters>
-    </filters>
 </view>

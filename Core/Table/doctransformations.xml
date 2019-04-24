@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : doctransformations.xml
+    Author     : Cristo M. Estévez Hernández
+    Author     : Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+    Description:
+        Structure for the doctransformations table.
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('doctransformations_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>iddoc1</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>iddoc2</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idlinea1</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idlinea2</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>model1</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>model2</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>doctransformations_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>

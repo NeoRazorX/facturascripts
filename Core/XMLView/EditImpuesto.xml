@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditImpuesto
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codimpuesto" icon="fa-credit-card" required="true" />
+                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" required="true" />
             </column>
             <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
@@ -37,6 +34,16 @@
             </column>
             <column name="percentage-surcharge" numcolumns="2" order="130">
                 <widget type="number" decimal="2" fieldname="recargo" />
+            </column>
+            <column name="impacted-tax-subaccount" numcolumns="3" order="140">
+                <widget type="autocomplete" fieldname="codsubcuentarep">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="supported-tax-subaccount" numcolumns="3" order="150">
+                <widget type="autocomplete" fieldname="codsubcuentasop">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
     </columns>

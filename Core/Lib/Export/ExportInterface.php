@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,42 @@ interface ExportInterface
 {
 
     /**
+     * Adds a new page with the document data.
+     *
+     * @param mixed $model
+     */
+    public function generateBusinessDocPage($model);
+
+    /**
+     * Adds a new page with a table listing the models data.
+     *
+     * @param mixed           $model
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param array           $columns
+     * @param string          $title
+     */
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '');
+
+    /**
+     * Adds a new page with the model data.
+     *
+     * @param mixed  $model
+     * @param array  $columns
+     * @param string $title
+     */
+    public function generateModelPage($model, $columns, $title = '');
+
+    /**
+     * Adds a new page with the table.
+     *
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows);
+
+    /**
      * Return the full document.
      *
      * @return mixed
@@ -47,40 +83,4 @@ interface ExportInterface
      * @param Response $response
      */
     public function show(Response &$response);
-
-    /**
-     * Adds a new page with the model data.
-     *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
-     */
-    public function generateModelPage($model, $columns, $title = '');
-
-    /**
-     * Adds a new page with a table listing the models data.
-     *
-     * @param mixed           $model
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
-     */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '');
-
-    /**
-     * Adds a new page with the document data.
-     *
-     * @param mixed $model
-     */
-    public function generateDocumentPage($model);
-
-    /**
-     * Adds a new page with the table.
-     *
-     * @param array $headers
-     * @param array $rows
-     */
-    public function generateTablePage($headers, $rows);
 }

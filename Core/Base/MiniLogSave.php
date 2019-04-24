@@ -47,8 +47,9 @@ class MiniLogSave
      * 
      * @param string $ip
      * @param string $nick
+     * @param string $uri
      */
-    public function __construct(string $ip = '', string $nick = '')
+    public function __construct(string $ip = '', string $nick = '', string $uri = '')
     {
         $miniLog = new MiniLog();
         foreach ($miniLog->read($this->getActiveSettingsLog()) as $value) {
@@ -58,6 +59,7 @@ class MiniLogSave
             $logMessage->message = $value["message"];
             $logMessage->ip = empty($ip) ? null : $ip;
             $logMessage->nick = empty($nick) ? null : $nick;
+            $logMessage->uri = empty($uri) ? null : $uri;
             $logMessage->save();
         }
     }

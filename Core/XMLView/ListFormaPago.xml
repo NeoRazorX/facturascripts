@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,45 +19,45 @@
  *
  * Initial description for the controller ListFormaPago
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
+        <column name="company" display="none" order="90">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="code" order="100">
             <widget type="text" fieldname="codpago" onclick="EditFormaPago" />
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="expiration" display="center" order="120">
-            <widget type="select" fieldname="vencimiento">
-                <values title="0-day">+0day</values>
-                <values title="1-day">+1day</values>
-                <values title="1-week">+1week</values>
-                <values title="2-weeks">+2weeks</values>
-                <values title="1-month">+1month</values>
-                <values title="2-months">+2months</values>
-                <values title="3-months">+3months</values>
-                <values title="6-months">+6months</values>
-                <values title="1-year">+1year</values>
+        <column name="expiration" order="120">
+            <widget type="number" fieldname="plazovencimiento" decimal="0" />
+        </column>
+        <column name="expiration-type" numcolumns="4" order="125">
+            <widget type="select" fieldname="tipovencimiento" translate="true">
+                <values title="days">days</values>
+                <values title="weeks">weeks</values>
+                <values title="months">months</values>
+                <values title="years">years</values>
             </widget>
         </column>
-        <column name="account-code" titleurl="ListEmpresa" order="125">
-            <widget type="text" fieldname="codcuenta" />
-        </column>
-        <column name="generate-receipt" display="center" order="130">
-            <widget type="select" fieldname="genrecibos">
+        <column name="generate-receipt" display="center" order="135">
+            <widget type="select" fieldname="genrecibos" translate="true">
                 <values title="paid">Pagados</values>
                 <values title="issued">Emitidos</values>
                 <option color="green">Pagados</option>
                 <option color="brown">Emitidos</option>
             </widget>
         </column>
-        <column name="domicilied" display="center" order="140">
+        <column name="domicilied" display="center" order="145">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
-        <column name="print" display="center" order="150">
+        <column name="print" display="center" order="155">
             <widget type="checkbox" fieldname="imprimir" />
         </column>
     </columns>

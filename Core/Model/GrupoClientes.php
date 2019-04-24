@@ -45,6 +45,13 @@ class GrupoClientes extends Base\ModelClass
     public $codtarifa;
 
     /**
+     * Accounting code.
+     *
+     * @var string
+     */
+    public $codsubcuenta;
+
+    /**
      * Group name.
      *
      * @var string
@@ -129,7 +136,7 @@ class GrupoClientes extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return parent::url($type, 'ListCliente?active=List');
+        return parent::url($type, 'ListCliente?activetab=List');
     }
 
     /**

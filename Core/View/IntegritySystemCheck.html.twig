@@ -14,7 +14,7 @@
      *
      * This program is distributed in the hope that it will be useful,
      * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
@@ -43,22 +43,22 @@
             <div class="col-sm-7 col-6">
                 <div class="btn-group d-xs-none">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
                         <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE">
-                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                            <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
                         <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE">
-                            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
                 <div class="btn-group d-xs-none">
                     {% if constant('FS_DEBUG') %}
                         <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=system">
-                            <i class="fa fa-retweet" aria-hidden="true"></i>
+                            <i class="fas fa-retweet" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">&nbsp;{{ recreateSystem }}</span>
                         </a>
                     {% endif %}
@@ -66,7 +66,7 @@
             </div>
             <div class="col-sm-5 col-6 text-right">
                 <h1 style="margin-top: 0; margin-bottom: 0;">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                    <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
             </div>
         </div>

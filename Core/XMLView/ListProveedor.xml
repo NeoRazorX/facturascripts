@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,8 +42,8 @@
         <column name="phone2" display="none" order="160">
             <widget type="text" fieldname="telefono2" />
         </column>
-        <column name="notes" order="180">
-            <widget type="text" fieldname="observaciones" />
+        <column name="observations" order="180">
+            <widget type="textarea" fieldname="observaciones" />
         </column>
         <column name="blocked" display="none" order="190">
             <widget type="checkbox" fieldname="debaja" />
@@ -51,7 +51,7 @@
     </columns>
     <rows>
         <row type="status" fieldname="debaja">
-            <option color="table-danger">1</option>
+            <option color="danger">1</option>
         </row>
     </rows>
 </view>

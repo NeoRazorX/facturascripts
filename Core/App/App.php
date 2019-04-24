@@ -102,6 +102,13 @@ abstract class App
     protected $uri;
 
     /**
+     * Selects and runs the corresponding controller.
+     *
+     * @return bool
+     */
+    abstract public function run();
+
+    /**
      * Initializes the app.
      *
      * @param string $uri
@@ -153,16 +160,12 @@ abstract class App
      */
     public function close(string $nick = '')
     {
-        new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick);
+        new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick, $this->uri);
         $this->dataBase->close();
+        if (FS_DEBUG) {
+            ///$this->cache->clear();
+        }
     }
-
-    /**
-     * Selects and runs the corresponding controller.
-     *
-     * @return bool
-     */
-    abstract public function run();
 
     /**
      * Returns the data into the standard output.
@@ -195,6 +198,9 @@ abstract class App
         return $this->ipFilter->isBanned($this->request->getClientIp());
     }
 
+    /**
+     * Initialize plugins.
+     */
     private function loadPlugins()
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {

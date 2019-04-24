@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,15 +18,15 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\SalesDocumentController;
 
 /**
  * Controller to edit a single item from the PresupuestoCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditPresupuestoCliente extends ExtendedController\BusinessDocumentController
+class EditPresupuestoCliente extends SalesDocumentController
 {
 
     /**
@@ -39,22 +39,10 @@ class EditPresupuestoCliente extends ExtendedController\BusinessDocumentControll
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail');
     }
 
     /**
@@ -65,21 +53,5 @@ class EditPresupuestoCliente extends ExtendedController\BusinessDocumentControll
     protected function getModelClassName()
     {
         return 'PresupuestoCliente';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditPresupuestoCliente') {
-            $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
-            $view->loadData($idpresupuesto);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

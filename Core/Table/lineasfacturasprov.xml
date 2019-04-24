@@ -18,10 +18,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codcombinacion</name>
-        <type>character varying(18)</type>
-    </column>
-    <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
     </column>
@@ -39,10 +35,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>idalbaran</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idfactura</name>
         <type>integer</type>
         <null>NO</null>
@@ -54,7 +46,7 @@
         <default>nextval('lineasfacturasprov_idlinea_seq'::regclass)</default>
     </column>
     <column>
-        <name>idlineaalbaran</name>
+        <name>idproducto</name>
         <type>integer</type>
     </column>
     <column>
@@ -79,6 +71,7 @@
     <column>
         <name>pvptotal</name>
         <type>double precision</type>
+        <null>NO</null>
     </column>
     <column>
         <name>pvpunitario</name>
@@ -94,12 +87,26 @@
         <name>referencia</name>
         <type>character varying(30)</type>
     </column>
+    <column>
+        <name>servido</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <constraint>
+        <name>lineasfacturasprov_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
     <constraint>
         <name>ca_linea_facturasprov2</name>
         <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>lineasfacturasprov_pkey</name>
-        <type>PRIMARY KEY (idlinea)</type>
+        <name>ca_lineasfacturasprov_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineasfacturasprov_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

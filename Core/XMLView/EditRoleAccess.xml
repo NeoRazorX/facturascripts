@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditUser
- *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -34,8 +30,8 @@
                 </widget>
             </column>
             <column name="pagename" order="120">
-                <widget type="select" fieldname="pagename" required="true">
-                    <values source="pages" fieldcode="name" fieldtitle="title" translate="true"></values>
+                <widget type="select" fieldname="pagename" required="true" translate="true">
+                    <values source="pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>
             </column>
             <column name="allow-update" order="130">
@@ -49,12 +45,12 @@
     <rows>
         <row type="footer">
             <group name="footer_actions" footer="specials-actions">
-                <button type="modal" label="add" color="info" action="add-rol-access" icon="fa-user-plus" />
+                <button type="modal" label="add" color="info" action="add-rol-access" icon="fas fa-user-plus" />
             </group>
         </row>
     </rows>
     <modals>
-        <group name="add-rol-access" icon="fa-user-plus">
+        <group name="add-rol-access" icon="fas fa-user-plus">
             <column name="select-menu" title="menu">
                 <widget type="select" fieldname="menu">
                     <values source="pages" fieldcode="menu" fieldtitle="menu" translate="true"></values>

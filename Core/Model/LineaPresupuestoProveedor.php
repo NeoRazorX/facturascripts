@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,6 +37,38 @@ class LineaPresupuestoProveedor extends Base\BusinessDocumentLine
     public $idpresupuesto;
 
     /**
+     * 
+     * @return string
+     */
+    public function documentColumn()
+    {
+        return 'idpresupuesto';
+    }
+
+    /**
+     * 
+     * @return PresupuestoProveedor
+     */
+    public function getDocument()
+    {
+        $presupuesto = new PresupuestoProveedor();
+        $presupuesto->loadFromCode($this->idpresupuesto);
+        return $presupuesto;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependency
+        new PresupuestoProveedor();
+
+        return parent::install();
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -44,5 +76,21 @@ class LineaPresupuestoProveedor extends Base\BusinessDocumentLine
     public static function tableName()
     {
         return 'lineaspresupuestosprov';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idpresupuesto) {
+            return 'EditPresupuestoProveedor?code=' . $this->idpresupuesto;
+        }
+
+        return parent::url($type, $list);
     }
 }

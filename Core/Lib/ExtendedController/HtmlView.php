@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,34 +19,31 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class HtmlView extends BaseView
 {
 
     /**
-     * Filename
-     *
-     * @var string
-     */
-    public $fileName;
-
-    /**
      * HtmlView constructor and initialization.
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
      * @param string $fileName
+     * @param string $icon
      */
-    public function __construct($title, $modelName, $fileName)
+    public function __construct($name, $title, $modelName, $fileName, $icon)
     {
-        parent::__construct($title, $modelName);
-        $this->fileName = $fileName . '.html.twig';
+        parent::__construct($name, $title, $modelName, $icon);
+        $this->template = $fileName . '.html.twig';
     }
 
     /**
@@ -56,6 +53,42 @@ class HtmlView extends BaseView
      */
     public function export(&$exportManager)
     {
-        /// TODO: complete this method
+        ;
+    }
+
+    /**
+     * 
+     * @param string $code
+     * @param array  $where
+     * @param array  $order
+     * @param int    $offset
+     * @param int    $limit
+     */
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        if (empty($code) && empty($where)) {
+            return;
+        }
+
+        $this->model->loadFromCode($code, $where, $order);
+    }
+
+    /**
+     * 
+     * @param User $user
+     */
+    public function loadPageOptions($user = false)
+    {
+        ;
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
+    {
+        ;
     }
 }

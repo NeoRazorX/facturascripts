@@ -45,8 +45,6 @@
     <column>
         <name>level</name>
         <type>integer</type>
-        <null>NO</null>
-        <default>1</default>
     </column>
     <column>
         <name>logkey</name>

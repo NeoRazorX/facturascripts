@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,16 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditBalance extends ExtendedController\PanelController
+class EditBalance extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the model name
+     */
+    public function getModelClassName()
+    {
+        return 'Balance';
+    }
 
     /**
      * Returns basic page attributes
@@ -39,7 +47,7 @@ class EditBalance extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'balance';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-clipboard';
+        $pagedata['icon'] = 'fas fa-clipboard';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -50,7 +58,7 @@ class EditBalance extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditBalance', 'Balance', 'balance');
+        parent::createViews();
         $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account');
         $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated');
     }

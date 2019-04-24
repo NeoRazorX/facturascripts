@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -31,12 +31,43 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class AdminPlugins extends Base\Controller
 {
 
+    const PLUGIN_LIST_URL = 'https://www.facturascripts.com/PluginInfoList';
+
     /**
      * Plugin Manager.
      *
      * @var Base\PluginManager
      */
     public $pluginManager;
+
+    /**
+     * 
+     * @return array
+     */
+    public function getAllPlugins()
+    {
+        $downloadTools = new Base\DownloadTools();
+        $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL), true);
+        if (empty($json)) {
+            return [];
+        }
+
+        $list = [];
+        foreach ($json as $item) {
+            /// plugin is already installed?
+            $item['installed'] = false;
+            foreach ($this->getPlugins() as $plug) {
+                if ($plug['name'] == $item['name']) {
+                    $item['installed'] = true;
+                    break;
+                }
+            }
+
+            $list[] = $item;
+        }
+
+        return $list;
+    }
 
     /**
      * Return the max file size that can be uploaded.
@@ -59,7 +90,7 @@ class AdminPlugins extends Base\Controller
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
         $pageData['title'] = 'plugins';
-        $pageData['icon'] = 'fa-plug';
+        $pageData['icon'] = 'fas fa-plug';
 
         return $pageData;
     }
@@ -96,11 +127,7 @@ class AdminPlugins extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        /// For now, always deploy the contents of Dinamic, for testing purposes
         $this->pluginManager = new Base\PluginManager();
-        $this->pluginManager->deploy(true, true);
-        $this->cache->clear();
 
         $action = $this->request->get('action', '');
         $this->execAction($action);
@@ -144,8 +171,8 @@ class AdminPlugins extends Base\Controller
 
     /**
      * Execute main actions.
-     *
-     * @param $action
+     * 
+     * @param string $action
      */
     private function execAction($action)
     {
@@ -164,6 +191,12 @@ class AdminPlugins extends Base\Controller
 
             case 'upload':
                 $this->uploadPlugin($this->request->files->get('plugin', []));
+            /// no break, to make a deploy
+
+            default:
+                /// For now, always deploy the contents of Dinamic, for testing purposes
+                $this->pluginManager->deploy(true, true);
+                $this->cache->clear();
                 break;
         }
     }

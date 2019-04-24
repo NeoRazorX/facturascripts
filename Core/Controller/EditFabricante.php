@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,11 +24,20 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Fabricante model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class EditFabricante extends ExtendedController\PanelController
+class EditFabricante extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Fabricante';
+    }
 
     /**
      * Returns basic page attributes
@@ -40,7 +49,7 @@ class EditFabricante extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'manufacturer';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['icon'] = 'fas fa-columns';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -51,8 +60,11 @@ class EditFabricante extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditFabricante', 'Fabricante', 'manufacturer');
-        $this->addListView('EditFabricanteListArticulos', 'Articulo', 'products');
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        /// products tab
+        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
     }
 
     /**
@@ -64,15 +76,14 @@ class EditFabricante extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditFabricante':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'EditFabricanteListArticulos':
+            case 'ListProducto':
                 $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
                 $where = [new DataBaseWhere('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 
 /**
@@ -133,6 +132,29 @@ abstract class ModelCore
     }
 
     /**
+     * Change the value of the primary column in the model and the database.
+     *
+     * @param mixed $newValue
+     *
+     * @return boolean
+     */
+    public function changePrimaryColumnValue($newValue)
+    {
+        if (empty($newValue) || $newValue == $this->primaryColumnValue()) {
+            return true;
+        }
+
+        $sql = "UPDATE " . $this->tableName() . " SET " . $this->primaryColumn() . " = " . self::$dataBase->var2str($newValue)
+            . " WHERE " . $this->primaryColumn() . " = " . self::$dataBase->var2str($this->primaryColumnValue()) . ";";
+        if (self::$dataBase->exec($sql)) {
+            $this->{$this->primaryColumn()} = $newValue;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -178,7 +200,7 @@ abstract class ModelCore
             switch ($type) {
                 case 'tinyint':
                 case 'boolean':
-                    $this->{$key} = Utils::str2bool($value);
+                    $this->{$key} = $this->getBoolValueForField($field, $value);
                     break;
 
                 case 'integer':
@@ -189,7 +211,7 @@ abstract class ModelCore
                 case 'double':
                 case 'double precision':
                 case 'float':
-                    $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                    $this->{$key} = $this->getFloatValueForField($field, $value);
                     break;
 
                 case 'date':
@@ -247,12 +269,48 @@ abstract class ModelCore
     }
 
     /**
+     * Returns the boolean value for the field.
+     *
+     * @param array  $field
+     * @param string $value
+     *
+     * @return bool|null
+     */
+    private function getBoolValueForField($field, $value)
+    {
+        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
+            return true;
+        } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
+            return false;
+        }
+
+        return ($field['is_nullable'] === 'NO') ? false : null;
+    }
+
+    /**
+     * Returns the float value for the field.
+     *
+     * @param array  $field
+     * @param string $value
+     *
+     * @return float|null
+     */
+    private function getFloatValueForField($field, $value)
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        return ($field['is_nullable'] === 'NO') ? 0.0 : null;
+    }
+
+    /**
      * Returns the integer value by controlling special cases for the PK and FK.
      *
      * @param array  $field
      * @param string $value
      *
-     * @return integer|NULL
+     * @return integer|null
      */
     private function getIntergerValueForField($field, $value)
     {

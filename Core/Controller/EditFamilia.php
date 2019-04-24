@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,12 +24,21 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Familia model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antobnio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditFamilia extends ExtendedController\PanelController
+class EditFamilia extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Familia';
+    }
 
     /**
      * Returns basic page attributes
@@ -41,7 +50,7 @@ class EditFamilia extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'family';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['icon'] = 'fas fa-object-group';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -52,9 +61,12 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditFamilia', 'Familia', 'family');
-        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fa-level-down');
-        $this->addListView('ListArticulo', 'Articulo', 'products', 'fa-cubes');
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        /// more tabs
+        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
+        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fas fa-level-down-alt');
     }
 
     /**
@@ -65,22 +77,20 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
+        $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
         switch ($viewName) {
-            case 'EditFamilia':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'ListArticulo':
-                $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
+            case 'ListProducto':
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
                 $view->loadData('', $where);
                 break;
 
             case 'ListFamilia':
-                $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('madre', $codfamilia)];
                 $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

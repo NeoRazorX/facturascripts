@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
 
@@ -73,6 +73,12 @@ class LogMessage extends Base\ModelClass
     public $time;
 
     /**
+     *
+     * @var string
+     */
+    public $uri;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -109,6 +115,8 @@ class LogMessage extends Base\ModelClass
     public function test()
     {
         $this->message = Utils::noHtml($this->message);
+        $this->uri = Utils::noHtml($this->uri);
+
         return empty($this->message) ? false : parent::test();
     }
 }

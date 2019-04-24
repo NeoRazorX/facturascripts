@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,28 +10,29 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Initial description for the controller ListRegularizacionImpuesto
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
 -->
-
 <view>
     <columns>
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idregularizacion" onclick="EditRegularizacionImpuesto" />
         </column>
+        <column name="company" order="100">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
         <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="period" order="110">
-            <widget type="select" fieldname="periodo">
+            <widget type="select" fieldname="periodo" translate="true">
                 <values title="first-trimester">T1</values>
                 <values title="second-trimester">T2</values>
                 <values title="third-trimester">T3</values>
@@ -45,7 +46,7 @@
             <widget type="text" fieldname="fechafin" />
         </column>
         <column name="id-accounting" title="accounting-entry" order="140">
-            <widget type="select" fieldname="idasiento" onclick="EditAsiento">
+            <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento">
                 <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
             </widget>
         </column>

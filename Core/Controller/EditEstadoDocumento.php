@@ -48,7 +48,7 @@ class EditEstadoDocumento extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'status-document';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-tag';
+        $pagedata['icon'] = 'fas fa-tag';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

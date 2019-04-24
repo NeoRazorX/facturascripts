@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@ class ListFabricante extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'manufacturers';
-        $pagedata['icon'] = 'fa-columns';
+        $pagedata['icon'] = 'fas fa-columns';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -49,9 +49,8 @@ class ListFabricante extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFabricante', 'Fabricante');
+        $this->addView('ListFabricante', 'Fabricante', 'manufacturers', 'fas fa-columns');
         $this->addSearchFields('ListFabricante', ['nombre', 'codfabricante']);
-
         $this->addOrderBy('ListFabricante', ['codfabricante'], 'code');
         $this->addOrderBy('ListFabricante', ['nombre'], 'name');
     }

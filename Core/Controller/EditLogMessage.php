@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Controller;
 
@@ -23,7 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the LogMessage model
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  */
 class EditLogMessage extends ExtendedController\EditController
 {
@@ -46,9 +47,18 @@ class EditLogMessage extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'log';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-file-text-o';
+        $pagedata['icon'] = 'fas fa-file-medical-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     *
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setSettings('Edit' . $this->getModelClassName(), 'btnNew', false);
     }
 }

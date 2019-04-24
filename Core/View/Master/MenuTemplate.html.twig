@@ -1,10 +1,5 @@
 {#
-   /**
-     * Menu Template.
-     *
-     * Load basic structure for pages
-     * Establishes the basic characteristics of the Facturascripts.
-     *
+    /**
      * This file is part of FacturaScripts
      * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
@@ -19,17 +14,16 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
-    */
+     */
 #}
-
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG')|slice(0, 2) }}" xml:lang="{{ constant('FS_LANG')|slice(0, 2) }}" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}" xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}" >
     <head>
         {% block meta %}
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <title>{{ i18n.trans(fsc.title) | capitalize }}</title>
+            <title>{{ fsc.title | capitalize }}</title>
             <meta name="description" content="{{ i18n.trans('meta-description') }}" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta name="generator" content="FacturaScripts" />
@@ -41,12 +35,12 @@
         {% endblock %}
         {% block css %}
             <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
-            <link rel="stylesheet" href="{{ asset('node_modules/font-awesome/css/font-awesome.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
         {% endblock %}
-        {# Add Specific Controller CSS #}
-        {% for css in fsc.assets['css'] %}
+        {# Adds custom CSS assets #}
+        {% for css in assetManager.get('css') %}
             <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
         {% block javascripts %}
@@ -54,15 +48,14 @@
             <script src="{{ asset('node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
             <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
             <script src="{{ asset('node_modules/bootbox/bootbox.min.js') }}"></script>
-            <script src="{{ asset('node_modules/jscolor-picker/jscolor.min.js') }}"></script>
             <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
             <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
         {% endblock %}
-        {# Add Specific Controller JS #}
-        {% for js in fsc.assets['js'] %}
+        {# Adds custom JS assets #}
+        {% for js in assetManager.get('js') %}
             <script src="{{ js }}"></script>
         {% endfor %}
-        {{ debugBarRender.renderHead()|raw }}
+        {{ debugBarRender.renderHead() | raw }}
     </head>
     {% block fullBody %}
         <body>
@@ -83,16 +76,16 @@
                             <ul class="navbar-nav flex-row ml-auto">
                                 <li class="nav-item dropdown">
                                     <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                        <i class="fas fa-user-circle" aria-hidden="true"></i>
                                         <span class="d-none d-xl-inline">&nbsp;{{ fsc.user.nick }}</span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
                                         <a class="dropdown-item" href="{{ fsc.user.url() }}">
-                                            <i class="fa fa-user-circle fa-fw" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
+                                            <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
                                         </a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="?logout=TRUE">
-                                            <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
+                                            <i class="fas fa-sign-out-alt fa-fw" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
                                         </a>
                                     </div>
                                 </li>
@@ -100,14 +93,14 @@
                             {% if template != 'MegaSearch.html.twig' %}
                                 <form action="MegaSearch" method="post" class="form-inline">
                                     <button class="btn btn-info d-xl-none" type="submit">
-                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                        <i class="fas fa-search" aria-hidden="true"></i>
                                     </button>
                                     <div class="d-none d-xl-inline">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="query" placeholder="{{ i18n.trans('search') }}"/>
                                             <div class="input-group-append">
-                                                <button class="btn btn-info" type="button">
-                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                <button class="btn btn-info" type="submit">
+                                                    <i class="fas fa-search" aria-hidden="true"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -132,10 +125,12 @@
                     </div>
                 </div>
             {% endblock %}
-        {% block bodyHeaderOptions %}{% endblock %}
-    {% block body %}{% endblock %}
-    <br/>
-    {{ debugBarRender.render()|raw }}
-</body>
-{% endblock %}
+            {% block bodyHeaderOptions %}
+            {% endblock %}
+            {% block body %}
+            {% endblock %}
+            <br/>
+            {{ debugBarRender.render()|raw }}
+        </body>
+    {% endblock %}
 </html>

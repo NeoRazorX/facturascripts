@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller EditProducto
+ *
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+-->
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="idproducto" display="none" order="100">
+                <widget type="text" fieldname="idproducto" />
+            </column>
+            <column name="reference" numcolumns="3" order="100">
+                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" readonly="dinamic" />
+            </column>
+            <column name="manufacturer" numcolumns="3" order="110">
+                <widget type="select" fieldname="codfabricante" onclick="EditFabricante">
+                    <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="family" numcolumns="3" order="120">
+                <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="tax" numcolumns="3" order="130">
+                <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
+        <group name="descripcion" numcolumns="12">
+            <column name="description" order="100">
+                <widget type="textarea" fieldname="descripcion" required="true" />
+            </column>
+        </group>
+        <group name="stock" numcolumns="4">
+            <column name="stockfis" title="physical-stock" order="100">
+                <widget type="number" fieldname="stockfis" readonly="true"/>
+            </column>
+            <column name="nostock" title="no-stock" order="110">
+                <widget type="checkbox" fieldname="nostock" />
+            </column>
+        </group>
+        <group name="options" numcolumns="8">
+            <column name="secompra" title="for-purchase" order="100">
+                <widget type="checkbox" fieldname="secompra" />
+            </column>
+            <column name="sevende" title="for-sale" order="110">
+                <widget type="checkbox" fieldname="sevende" />
+            </column>
+            <column name="publico" title="public" order="120">
+                <widget type="checkbox" fieldname="publico" />
+            </column> 
+            <column name="bloqueado" title="blocked" order="130">
+                <widget type="checkbox" fieldname="bloqueado"/>
+            </column>
+            <column name="ventasinstock" title="allow-sale-without-stock" order="140">
+                <widget type="checkbox" fieldname="ventasinstock"/>
+            </column>
+        </group>
+        <group name="observations" numcolumns="12">
+            <column name="observations" order="100">
+                <widget type="textarea" fieldname="observaciones" />
+            </column>
+        </group>
+        <group name="accounts" title="accounting" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" numcolumns="4" order="100">
+                <widget type="autocomplete" fieldname="codsubcuentacom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="codsubcuentaven" title="subaccount-sales" numcolumns="4" order="110">
+                <widget type="autocomplete" fieldname="codsubcuentaven">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" numcolumns="4" order="120">
+                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
+    </columns>
+</view>

@@ -1,40 +1,69 @@
+{#
+    /**
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     *
+     */
+#}
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG')|slice(0, 2) }}" xml:lang="{{ constant('FS_LANG')|slice(0, 2) }}" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}" xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}" >
     <head>
         {% block meta %}
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>{{ i18n.trans(fsc.title) | capitalize }}</title>
-        <meta name="description" content="{{ i18n.trans('meta-description') }}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="generator" content="FacturaScripts" />
-        <meta name="robots" content="noindex" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title>{{ fsc.title | capitalize }}</title>
+            <meta name="description" content="{{ i18n.trans('meta-description') }}" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta name="generator" content="FacturaScripts" />
+            <meta name="robots" content="noindex" />
         {% endblock %}
         {% block icons %}
-        <link rel="shortcut icon" href="{{ asset('Dinamic/Assets/Images/favicon.ico') }}" />
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}" />
+            <link rel="shortcut icon" href="{{ asset('Dinamic/Assets/Images/favicon.ico') }}" />
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}" />
         {% endblock %}
         {% block css %}
-        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('node_modules/font-awesome/css/font-awesome.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
+            <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}" />
         {% endblock %}
+        {# Adds custom CSS assets #}
+        {% for css in assetManager.get('css') %}
+            <link rel="stylesheet" href="{{ css }}" />
+        {% endfor %}
         {% block javascripts %}
-        <script type="text/javascript" src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('node_modules/popper.js/dist/umd/popper.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         {% endblock %}
-        {{ debugBarRender.renderHead()|raw }}
+        {# Adds custom JS assets #}
+        {% for js in assetManager.get('js') %}
+            <script src="{{ js }}"></script>
+        {% endfor %}
+        {{ debugBarRender.renderHead() | raw }}
     </head>
     {% block fullBody %}
-    <body>
-        {% block messages %}
-        {% from 'Macro/Utils.html.twig' import message as show_message %}
-        {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
-        {{ show_message(log, ['warning'], 'warning') }}
-        {{ show_message(log, ['notice'], 'success') }}
-        {{ show_message(log, ['info'], 'info') }}
-        {% endblock %}
-        {% block body %}{% endblock %}
-        {{ debugBarRender.render()|raw }}
-    </body>
+        <body>
+            {% block messages %}
+                {% from 'Macro/Utils.html.twig' import message as show_message %}
+                {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+                {{ show_message(log, ['warning'], 'warning') }}
+                {{ show_message(log, ['notice'], 'success') }}
+                {{ show_message(log, ['info'], 'info') }}
+            {% endblock %}
+            {% block body %}
+            {% endblock %}
+            {{ debugBarRender.render() | raw }}
+        </body>
     {% endblock %}
 </html>

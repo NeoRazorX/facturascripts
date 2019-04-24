@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,10 +18,9 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\IDFiscal;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\IDFiscal;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * Description of ComercialContact
@@ -136,7 +135,7 @@ abstract class ComercialContact extends Contact
      *
      * @return mixed
      */
-    abstract public function getDirecciones();
+    abstract public function getAdresses();
 
     /**
      * ComercialContact constructor.
@@ -159,7 +158,7 @@ abstract class ComercialContact extends Contact
     public function clear()
     {
         parent::clear();
-        $this->codpago = AppSettings::get('default', 'codpago');
+        $this->irpf = 0.0;
         $this->debaja = false;
         $this->regimeniva = self::$regimenIVA->defaultValue();
         $this->tipoidfiscal = self::$idFiscal->defaultValue();

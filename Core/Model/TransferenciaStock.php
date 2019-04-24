@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,10 +18,14 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
+
 /**
- * Description of transferencia_stock
+ * The head of transfer.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class TransferenciaStock extends Base\ModelClass
 {
@@ -29,55 +33,75 @@ class TransferenciaStock extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Código de almacén de destino
+     * Warehouse of destination. Varchar (4).
      *
      * @var string
      */
-    public $codalmadestino;
+    public $codalmacendestino;
 
     /**
-     * Código de almacén de origen
+     * Warehouse of origin. Varchar (4).
      *
      * @var string
      */
-    public $codalmaorigen;
+    public $codalmacenorigen;
 
     /**
-     * Fecha de la transferencia
+     * Date of transfer.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Hora de la transferencia
-     *
-     * @var string
-     */
-    public $hora;
-
-    /**
-     * Primary key. integer
+     * Primary key autoincremental.
      *
      * @var int
      */
     public $idtrans;
 
     /**
-     * Usuario que realiza la transferencia
+     * User of transfer action. Varchar (50).
      *
      * @var string
      */
-    public $usuario;
+    public $nick;
 
     /**
-     * Reset the values of all model properties.
+     *
+     * @var string
      */
+    public $observaciones;
+
     public function clear()
     {
         parent::clear();
-        $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
+        $this->fecha = date('d-m-Y H:i:s');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        /// remove lines to force update stock
+        foreach ($this->getLines() as $line) {
+            $line->delete();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * 
+     * @return LineaTransferenciaStock[]
+     */
+    public function getLines()
+    {
+        $line = new LineaTransferenciaStock();
+        $where = [new DataBaseWhere('idtrans', $this->primaryColumnValue())];
+        return $line->all($where, [], 0, 0);
     }
 
     /**
@@ -97,21 +121,52 @@ class TransferenciaStock extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'transstock';
+        return 'transferenciasstock';
     }
 
     /**
-     * Returns True if there is no errors on properties values.
-     *
+     * 
      * @return bool
      */
     public function test()
     {
-        if ($this->codalmadestino === $this->codalmaorigen) {
+        $this->observaciones = Utils::noHtml($this->observaciones);
+
+        if ($this->codalmacenorigen == $this->codalmacendestino) {
             self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
             return false;
         }
 
+        if ($this->getIdempresa($this->codalmacendestino) !== $this->getIdempresa($this->codalmacenorigen)) {
+            self::$miniLog->alert(self::$i18n->trans('warehouse-must-be-same-business'));
+            return false;
+        }
+
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     * 
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListAlmacen?activetab=List');
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return int
+     */
+    protected function getIdempresa($codalmacen)
+    {
+        $warehouse = new Almacen;
+        $warehouse->loadFromCode($codalmacen);
+        return $warehouse->idempresa;
     }
 }

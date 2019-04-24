@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,44 +20,31 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class EditView extends BaseView implements DataViewInterface
+class EditView extends BaseView
 {
+
+    const EDITVIEW_TEMPLATE = 'Master/EditView.html.twig';
 
     /**
      * EditView constructor and initialization.
      *
+     * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct($name, $title, $modelName, $icon)
     {
-        parent::__construct($title, $modelName);
-
-        // Loads the view configuration for the user
-        $this->pageOption->getForUser($viewName, $userNick);
-    }
-
-    /**
-     * Establishes the column edit state
-     *
-     * @param string $columnName
-     * @param bool   $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
+        parent::__construct($name, $title, $modelName, $icon);
+        $this->template = self::EDITVIEW_TEMPLATE;
     }
 
     /**
@@ -68,36 +55,6 @@ class EditView extends BaseView implements DataViewInterface
     public function export(&$exportManager)
     {
         $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
-    }
-
-    /**
-     * Returns the column configuration
-     *
-     * @return GroupItem[]
-     */
-    public function getColumns()
-    {
-        return $this->pageOption->columns;
-    }
-
-    /**
-     * Returns the text for the data panel header
-     *
-     * @return string
-     */
-    public function getPanelHeader()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Returns the text for the data panel footer
-     *
-     * @return string
-     */
-    public function getPanelFooter()
-    {
-        return '';
     }
 
     /**
@@ -115,23 +72,36 @@ class EditView extends BaseView implements DataViewInterface
             $code = $this->newCode;
         }
 
-        if (is_array($code)) {
-            $where = [];
-            foreach ($code as $fieldName => $value) {
-                $where[] = new DataBaseWhere($fieldName, $value);
-            }
-            $this->model->loadFromCode('', $where);
-        } else {
-            $this->model->loadFromCode($code);
+        if (empty($code) && empty($where)) {
+            return;
         }
 
-        $fieldName = $this->model->primaryColumn();
-        $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
+        if ($this->model->loadFromCode($code, $where, $order)) {
+            $this->count = 1;
+        }
+    }
 
-        /// if not a new reg. we lock primary key
-        $column = $this->columnForField($fieldName);
-        if (!empty($column)) {
-            $column->widget->readOnly = ($this->count > 0);
+    /**
+     *
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
+    {
+        switch ($case) {
+            case 'edit':
+                foreach ($this->getColumns() as $group) {
+                    $group->processFormData($this->model, $request);
+                }
+                break;
+
+            case 'load':
+                foreach ($request->query->all() as $key => $value) {
+                    if ($key != 'code') {
+                        $this->model->{$key} = $value;
+                    }
+                }
+                break;
         }
     }
 }

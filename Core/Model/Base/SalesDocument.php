@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\Pais;
 
 /**
  * Description of SalesDocument
@@ -37,20 +39,6 @@ abstract class SalesDocument extends BusinessDocument
     public $apartado;
 
     /**
-     * Post box of the shipping address.
-     *
-     * @var string
-     */
-    public $apartadoenv;
-
-    /**
-     * Last name of the shipping address.
-     *
-     * @var string
-     */
-    public $apellidosenv;
-
-    /**
      * Customer's city
      *
      * @var string
@@ -58,14 +46,7 @@ abstract class SalesDocument extends BusinessDocument
     public $ciudad;
 
     /**
-     * City of the shipping address.
-     *
-     * @var string
-     */
-    public $ciudadenv;
-
-    /**
-     * Employee who created this document. Agent model.
+     * Agent who created this document. Agente model.
      *
      * @var string
      */
@@ -77,13 +58,6 @@ abstract class SalesDocument extends BusinessDocument
      * @var string
      */
     public $codcliente;
-
-    /**
-     * ID of the customer's address. Customer_address model.
-     *
-     * @var int
-     */
-    public $coddir;
 
     /**
      * Shipping tracking code.
@@ -100,25 +74,11 @@ abstract class SalesDocument extends BusinessDocument
     public $codpais;
 
     /**
-     * Country code of the shipping address.
-     *
-     * @var string
-     */
-    public $codpaisenv;
-
-    /**
      * Customer's postal code.
      *
      * @var string
      */
     public $codpostal;
-
-    /**
-     * Postal code of the shipping address.
-     *
-     * @var string
-     */
-    public $codpostalenv;
 
     /**
      * Shipping code for the shipment.
@@ -135,11 +95,18 @@ abstract class SalesDocument extends BusinessDocument
     public $direccion;
 
     /**
-     * Address of the shipping address.
+     * ID of contact for shippment.
      *
-     * @var string
+     * @var int
      */
-    public $direccionenv;
+    public $idcontactoenv;
+
+    /**
+     * ID of contact for invoice.
+     *
+     * @var int
+     */
+    public $idcontactofact;
 
     /**
      * Customer name.
@@ -147,13 +114,6 @@ abstract class SalesDocument extends BusinessDocument
      * @var string
      */
     public $nombrecliente;
-
-    /**
-     * Name of the shipping address.
-     *
-     * @var string
-     */
-    public $nombreenv;
 
     /**
      * Optional number available to the user.
@@ -177,13 +137,6 @@ abstract class SalesDocument extends BusinessDocument
     public $provincia;
 
     /**
-     * Province of the shipping address.
-     *
-     * @var string
-     */
-    public $provinciaenv;
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -193,41 +146,74 @@ abstract class SalesDocument extends BusinessDocument
         $this->porcomision = 0.0;
     }
 
-    public function getSubjectColumns()
+    /**
+     * 
+     * @return string
+     */
+    public function country()
     {
-        return ['codcliente'];
+        $country = new Pais();
+        if ($country->loadFromCode($this->codpais)) {
+            return Utils::fixHtml($country->nombre);
+        }
+
+        return $this->codpais;
     }
 
     /**
      * Assign the customer to the document.
      * 
-     * @param Cliente[] $subjects
+     * @param Cliente|Contacto $subject
      * 
-     * @return boolean
+     * @return bool
      */
-    public function setSubject($subjects)
+    public function setSubject($subject)
     {
-        if (!isset($subjects[0]->codcliente)) {
-            return false;
+        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Contacto')) {
+            /// Contacto model
+            $this->apartado = $subject->apartado;
+            $this->cifnif = $subject->cifnif;
+            $this->ciudad = $subject->ciudad;
+            $this->codcliente = $subject->codcliente;
+            $this->codpais = $subject->codpais;
+            $this->codpostal = $subject->codpostal;
+            $this->direccion = $subject->direccion;
+            $this->idcontactoenv = $subject->idcontacto;
+            $this->idcontactofact = $subject->idcontacto;
+            $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
+            $this->provincia = $subject->provincia;
+            return true;
         }
 
-        $this->codcliente = $subjects[0]->codcliente;
-        $this->nombrecliente = $subjects[0]->razonsocial;
-        $this->cifnif = $subjects[0]->cifnif;
-        foreach ($subjects[0]->getDirecciones() as $dir) {
-            $this->coddir = $dir->id;
-            $this->codpais = $dir->codpais;
-            $this->provincia = $dir->provincia;
-            $this->ciudad = $dir->ciudad;
-            $this->direccion = $dir->direccion;
-            $this->codpostal = $dir->codpostal;
-            $this->apartado = $dir->apartado;
-            if ($dir->domfacturacion) {
-                break;
-            }
+        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Cliente')) {
+            /// Cliente model
+            $this->cifnif = $subject->cifnif;
+            $this->codcliente = $subject->codcliente;
+            $this->nombrecliente = $subject->razonsocial;
+
+            /// commercial data
+            $this->codagente = $subject->codagente ?? $this->codagente;
+            $this->codpago = $subject->codpago ?? $this->codpago;
+            $this->codserie = $subject->codserie ?? $this->codserie;
+            $this->irpf = $subject->irpf;
+
+            /// billing address
+            $billingAddress = $subject->getDefaultAddress('billing');
+            $this->codpais = $billingAddress->codpais;
+            $this->provincia = $billingAddress->provincia;
+            $this->ciudad = $billingAddress->ciudad;
+            $this->direccion = $billingAddress->direccion;
+            $this->codpostal = $billingAddress->codpostal;
+            $this->apartado = $billingAddress->apartado;
+            $this->idcontactofact = $billingAddress->idcontacto;
+
+            /// shipping address
+            $shippingAddress = $subject->getDefaultAddress('shipping');
+            $this->idcontactoenv = $shippingAddress->idcontacto;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -238,20 +224,13 @@ abstract class SalesDocument extends BusinessDocument
     public function test()
     {
         $this->apartado = Utils::noHtml($this->apartado);
-        $this->apartadoenv = Utils::noHtml($this->apartadoenv);
-        $this->apellidosenv = Utils::noHtml($this->apellidosenv);
         $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->ciudadenv = Utils::noHtml($this->ciudadenv);
         $this->codigoenv = Utils::noHtml($this->codigoenv);
         $this->codpostal = Utils::noHtml($this->codpostal);
-        $this->codpostalenv = Utils::noHtml($this->codpostalenv);
         $this->direccion = Utils::noHtml($this->direccion);
-        $this->direccionenv = Utils::noHtml($this->direccionenv);
         $this->nombrecliente = Utils::noHtml($this->nombrecliente);
-        $this->nombreenv = Utils::noHtml($this->nombreenv);
         $this->numero2 = Utils::noHtml($this->numero2);
         $this->provincia = Utils::noHtml($this->provincia);
-        $this->provinciaenv = Utils::noHtml($this->provinciaenv);
 
         return parent::test();
     }
@@ -259,7 +238,7 @@ abstract class SalesDocument extends BusinessDocument
     /**
      * Updates subjects data in this document.
      *
-     * @return boolean
+     * @return bool
      */
     public function updateSubject()
     {
@@ -272,6 +251,20 @@ abstract class SalesDocument extends BusinessDocument
             return false;
         }
 
-        return $this->setSubject([$cliente]);
+        return $this->setSubject($cliente);
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = [
+            'codalmacen', 'codcliente', 'coddivisa', 'codejercicio', 'codpago',
+            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado',
+            'total'
+        ];
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }

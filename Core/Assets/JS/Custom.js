@@ -19,7 +19,12 @@
 $(document).ready(function () {
     $(".datepicker").datepicker({
         dateFormat: "dd-mm-yy",
-        firstDay: 1
+        firstDay: 1,
+        beforeShow: function () {
+            setTimeout(function () {
+                $(".ui-datepicker").css("z-index", 99999999999999);
+            }, 0);
+        }
     });
 
     // Adds a delay to help messages

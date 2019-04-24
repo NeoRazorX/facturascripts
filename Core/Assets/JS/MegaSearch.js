@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,7 +73,7 @@ function searchOnSection(url) {
                 $("#v-pills-tab").append("<a class='nav-link' id='v-pills-" + key + "-tab' data-toggle='pill' href='#v-pills-"
                         + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
                     <span class='badge badge-secondary float-right'>" + items.length + "</span>\n\
-                    <i class='fa " + val.icon + " fa-fw'></i>\n\
+                    <i class='" + val.icon + " fa-fw'></i>\n\
                     " + val.title + "\n\
                 </a>");
                 var tableHTML = "<thead><tr>";

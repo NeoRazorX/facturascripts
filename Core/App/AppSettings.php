@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,9 +56,9 @@ class AppSettings
     /**
      * Return the value of property in group.
      *
-     * @param string      $group
-     * @param string      $property
-     * @param mixed       $default
+     * @param string $group
+     * @param string $property
+     * @param mixed  $default
      *
      * @return mixed
      */
@@ -93,11 +93,7 @@ class AppSettings
      */
     public function load()
     {
-        $settingsModel = new Settings();
-        foreach ($settingsModel->all() as $group) {
-            self::$data[$group->name] = $group->properties;
-        }
-
+        $this->reload();
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],
@@ -115,13 +111,23 @@ class AppSettings
     }
 
     /**
+     * Reloads settings from database.
+     */
+    public static function reload()
+    {
+        $settingsModel = new Settings();
+        foreach ($settingsModel->all() as $group) {
+            self::$data[$group->name] = $group->properties;
+        }
+    }
+
+    /**
      * Store the model data in the database.
      */
     public function save()
     {
         foreach (self::$data as $key => $value) {
             $settings = new Settings();
-            $settings->description = 'default';
             $settings->name = (string) $key;
             $settings->properties = $value;
             $settings->save();

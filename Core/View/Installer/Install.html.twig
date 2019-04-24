@@ -7,7 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+        <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css" />
         <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -50,7 +51,7 @@
             <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
                 <li class="nav-item">
                     <a class="nav-link" href="?phpinfo=TRUE">
-                        <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
+                        <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
                     </a>
                 </li>
             </ul>
@@ -81,17 +82,17 @@
                             <ul class="nav nav-tabs card-header-tabs" role="tablist">
                                 <li role="presentation" class="nav-item">
                                     <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">
-                                        <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
+                                        <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
                                     </a>
                                 </li>
                                 <li role="presentation" class="nav-item">
                                     <a class="nav-link" href="#memcache" aria-controls="memcache" role="tab" data-toggle="tab">
-                                        <i class="fa fa-flask"></i>&nbsp; {{ i18n.trans('memcache') }}
+                                        <i class="fas fa-flask"></i>&nbsp; {{ i18n.trans('memcache') }}
                                     </a>
                                 </li>
                                 <li role="presentation" class="nav-item">
                                     <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
-                                        <i class="fa fa-file-text-o"></i>&nbsp; {{ i18n.trans('license') }}
+                                        <i class="far fa-file-alt"></i>&nbsp; {{ i18n.trans('license') }}
                                     </a>
                                 </li>
                             </ul>
@@ -107,7 +108,7 @@
                                                     <div class="input-group">
                                                         <span class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <i class="fa fa-language"></i>
+                                                                <i class="fas fa-language"></i>
                                                             </span>
                                                         </span>
                                                         <select id="fs_lang" name="fs_lang" class="form-control">
@@ -128,7 +129,7 @@
                                                     <div class="input-group">
                                                         <span class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <i class="fa fa-clock-o"></i>
+                                                                <i class="far fa-clock"></i>
                                                             </span>
                                                         </span>
                                                         <select name="fs_timezone" class="form-control">
@@ -166,7 +167,7 @@
                                                     <div class="input-group">
                                                         <span class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <i class="fa fa-database"></i>
+                                                                <i class="fas fa-database"></i>
                                                             </span>
                                                         </span>
                                                         <input type="text" name="fs_db_name" value="facturascripts" class="form-control" required=""/>
@@ -185,7 +186,7 @@
                                                     <div class="input-group">
                                                         <span class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <i class="fa fa-key"></i>
+                                                                <i class="fas fa-key"></i>
                                                             </span>
                                                         </span>
                                                         <input type="password" name="fs_db_pass" class="form-control"/>
@@ -244,7 +245,7 @@
                                     </div>
                                     <div class="col-sm-6 text-right">
                                         <button type="submit" class="btn btn-primary">
-                                            <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
+                                            <i class="fas fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                                         </button>
                                     </div>
                                 </div>
@@ -252,7 +253,7 @@
                         </div>
                         <div class="card-footer">
                             &COPY; 2013-{{ 'now'|date('Y')}}
-                            <a href="https://beta.facturascripts.com" target="_blank">FacturaScripts</a>
+                            <a href="https://www.facturascripts.com" target="_blank">FacturaScripts</a>
                         </div>
                     </div>
                 </div>

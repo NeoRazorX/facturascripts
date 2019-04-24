@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
+class EditPedidoProveedor extends ExtendedController\PurchaseDocumentController
 {
 
     /**
@@ -39,22 +39,10 @@ class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'order';
         $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
     }
 
     /**
@@ -65,21 +53,5 @@ class EditPedidoProveedor extends ExtendedController\BusinessDocumentController
     protected function getModelClassName()
     {
         return 'PedidoProveedor';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditPedidoProveedor') {
-            $idpedido = $this->getViewModelValue('Document', 'idpedido');
-            $view->loadData($idpedido);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

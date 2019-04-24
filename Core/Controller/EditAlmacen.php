@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,7 +48,7 @@ class EditAlmacen extends ExtendedController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'warehouse';
         $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['icon'] = 'fas fa-building';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : impuestoszonas.xml
+    Author     : Cristo M. Estévez Hernández
+    Description:
+        Structure for the impuestoszonas table.
+-->
+<table>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codimpuestosel</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codisopro</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('impuestoszonas_idimpuestozona_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>prioridad</name>
+        <type>integer</type>
+    </column>
+    <constraint>
+        <name>impuestoszonas_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_impuestoszonas_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_impuestoszonas_impuestos2</name>
+        <type>FOREIGN KEY (codimpuestosel) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+</table>

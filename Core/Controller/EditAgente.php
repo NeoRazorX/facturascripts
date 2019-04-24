@@ -26,8 +26,16 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Raul
  */
-class EditAgente extends ExtendedController\PanelController
+class EditAgente extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     */
+    public function getModelClassName()
+    {
+        return 'Agente';
+    }
 
     /**
      * Returns basic page attributes
@@ -38,8 +46,8 @@ class EditAgente extends ExtendedController\PanelController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agent';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-id-badge';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fas fa-id-badge';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -50,12 +58,11 @@ class EditAgente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditAgente', 'Agente', 'agent');
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fa-files-o');
-        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fa-cubes');
+        parent::createViews();
+        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
+        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
+        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
+        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
     }
 
     /**
@@ -67,12 +74,7 @@ class EditAgente extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditAgente':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
-            case 'ListAlbaraneCliente':
+            case 'ListAlbaranCliente':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
@@ -80,6 +82,9 @@ class EditAgente extends ExtendedController\PanelController
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 }

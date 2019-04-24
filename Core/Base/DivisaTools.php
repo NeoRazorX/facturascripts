@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -109,6 +109,15 @@ class DivisaTools extends NumberTools
             default:
                 return $txt;
         }
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getSymbol()
+    {
+        return (string) self::$selectedDivisa->simbolo;
     }
 
     /**

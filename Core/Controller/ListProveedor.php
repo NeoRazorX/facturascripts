@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -38,7 +39,7 @@ class ListProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'suppliers';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fas fa-users';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -49,32 +50,52 @@ class ListProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Supplier */
-        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fa-users');
-        $this->addSearchFields('ListProveedor', ['nombre', 'razonsocial', 'codproveedor', 'email']);
-        $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
-        $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
-        $this->addOrderBy('ListProveedor', ['fecha'], 'date');
-        $this->addFilterCheckbox('ListProveedor', 'debaja', 'suspended', 'debaja');
-
+        $this->createViewSuppliers();
         $this->createViewAdresses();
     }
 
     private function createViewAdresses()
     {
-        $this->addView('ListDireccionProveedor', 'DireccionProveedor', 'addresses', 'fa-road');
-        $this->addSearchFields('ListDireccionProveedor', ['codproveedor', 'descripcion', 'direccion', 'ciudad', 'provincia', 'codpostal']);
-        $this->addOrderBy('ListDireccionProveedor', ['codproveedor'], 'supplier');
-        $this->addOrderBy('ListDireccionProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListDireccionProveedor', ['codpostal'], 'postalcode');
+        $this->addView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addSearchFields('ListContacto', ['nombre', 'apellidos', 'email']);
+        $this->addOrderBy('ListContacto', ['email'], 'email');
+        $this->addOrderBy('ListContacto', ['nombre'], 'name');
+        $this->addOrderBy('ListContacto', ['empresa'], 'company');
+        $this->addOrderBy('ListContacto', ['level'], 'level');
+        $this->addOrderBy('ListContacto', ['lastactivity'], 'last-activity', 2);
 
-        $cities = $this->codeModel->all('dirproveedores', 'ciudad', 'ciudad');
-        $this->addFilterSelect('ListDireccionProveedor', 'ciudad', 'city', 'ciudad', $cities);
+        $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
+        $this->addFilterSelect('ListContacto', 'cargo', 'position', 'cargo', $cargoValues);
 
-        $provinces = $this->codeModel->all('dirproveedores', 'provincia', 'provincia');
-        $this->addFilterSelect('ListDireccionProveedor', 'provincia', 'province', 'provincia', $provinces);
+        $counties = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect('ListContacto', 'codpais', 'country', 'codpais', $counties);
 
-        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
-        $this->addFilterSelect('ListDireccionProveedor', 'codpais', 'country', 'codpais', $countries);
+        $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
+        $this->addFilterSelect('ListContacto', 'provincia', 'province', 'provincia', $provinces);
+
+        $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
+        $this->addFilterSelect('ListContacto', 'ciudad', 'city', 'ciudad', $cities);
+
+        $this->addFilterCheckbox('ListContacto', 'verificado', 'verified', 'verificado');
+        $this->addFilterCheckbox('ListContacto', 'admitemarketing', 'allow-marketing', 'admitemarketing');
+
+        /// disable megasearch
+        $this->setSettings('ListContacto', 'megasearch', false);
+    }
+
+    private function createViewSuppliers()
+    {
+        $this->addView('ListProveedor', 'Proveedor', 'suppliers', 'fas fa-users');
+        $this->addSearchFields('ListProveedor', ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->addOrderBy('ListProveedor', ['codproveedor'], 'code');
+        $this->addOrderBy('ListProveedor', ['nombre'], 'name', 1);
+        $this->addOrderBy('ListProveedor', ['fecha'], 'date');
+
+        $values = [
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $this->i18n->trans('all'), 'where' => []]
+        ];
+        $this->addFilterSelectWhere('ListProveedor', 'status', $values);
     }
 }

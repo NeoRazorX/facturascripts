@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to manage the data editing
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class EditController extends PanelController
 {
@@ -31,21 +31,6 @@ abstract class EditController extends PanelController
      * Returns the class name of the model to use in the editView.
      */
     abstract public function getModelClassName();
-
-    /**
-     * Starts all the objects and properties.
-     *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
-     * @param string          $uri
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->setTabsPosition('bottom');
-    }
 
     /**
      * Pointer to the data model.
@@ -60,8 +45,6 @@ abstract class EditController extends PanelController
 
     /**
      * Create the view to display.
-     *
-     * @return EditView
      */
     protected function createViews()
     {
@@ -81,7 +64,19 @@ abstract class EditController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->request->get('code');
+        /**
+         * We need the identifier to load the model. It's almost always code,
+         * but sometimes it's not.
+         */
+        $primaryKey = $this->request->request->get($view->model->primaryColumn());
+        $code = $this->request->query->get('code', $primaryKey);
         $view->loadData($code);
+
+        /// data not found?
+        $action = $this->request->request->get('action', '');
+        $mainViewName = 'Edit' . $this->getModelClassName();
+        if (!empty($code) && !$view->model->exists() && $viewName === $mainViewName && '' === $action) {
+            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+        }
     }
 }

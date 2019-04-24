@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,31 +53,66 @@ class Cliente extends Base\ComercialContact
     public $diaspago;
 
     /**
-     * True -> equivalence surcharge is applied to the client.
+     * Default contact for sending documentation
      *
-     * @var boolean
+     * @var integer
      */
-    public $recargo;
+    public $idcontactofact;
 
     /**
-     * Reset the values of all model properties.
+     * Default contact for the shipment of products
+     *
+     * @var integer
      */
-    public function clear()
+    public $idcontactoenv;
+
+    /**
+     * 
+     * @param string $query
+     * @param string $fieldcode
+     *
+     * @return CodeModel[]
+     */
+    public function codeModelSearch(string $query, string $fieldcode = '')
     {
-        parent::clear();
-        $this->recargo = false;
+        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $fields = 'cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2';
+        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
+        return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**
      * Returns an array with the addresses associated with the client.
      *
-     * @return DireccionCliente[]
+     * @return Contacto[]
      */
-    public function getDirecciones()
+    public function getAdresses()
     {
-        $dirModel = new DireccionCliente();
+        $contactModel = new Contacto();
+        return $contactModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
+    }
 
-        return $dirModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
+    /**
+     * Return the default billing or shipping address.
+     *
+     * @return Contacto
+     */
+    public function getDefaultAddress($type = 'billing')
+    {
+        $contact = new Contacto();
+        switch ($type) {
+            case 'shipping':
+                $where = [new DataBaseWhere('idcontacto', $this->idcontactoenv)];
+                $contact->loadFromCode('', $where);
+                break;
+
+            default:
+                $where = [new DataBaseWhere('idcontacto', $this->idcontactofact)];
+                $contact->loadFromCode('', $where);
+                break;
+        }
+
+        return $contact;
     }
 
     /**
@@ -89,10 +124,11 @@ class Cliente extends Base\ComercialContact
      */
     public function install()
     {
+        /// we need exits Contacto before, but we can't check it because it would create a cyclic check
         /// we need to check model GrupoClientes before
         new GrupoClientes();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -144,5 +180,37 @@ class Cliente extends Base\ComercialContact
         $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $return = parent::saveInsert($values);
+        if ($return && empty($this->idcontactofact)) {
+            /// creates new contact
+            $contact = new Contacto();
+            $contact->cifnif = $this->cifnif;
+            $contact->codcliente = $this->codcliente;
+            $contact->descripcion = $this->nombre;
+            $contact->email = $this->email;
+            $contact->empresa = $this->razonsocial;
+            $contact->fax = $this->fax;
+            $contact->nombre = $this->nombre;
+            $contact->personafisica = $this->personafisica;
+            $contact->telefono1 = $this->telefono1;
+            $contact->telefono2 = $this->telefono2;
+            if ($contact->save()) {
+                $this->idcontactoenv = $contact->idcontacto;
+                $this->idcontactofact = $contact->idcontacto;
+                return $this->save();
+            }
+        }
+
+        return $return;
     }
 }

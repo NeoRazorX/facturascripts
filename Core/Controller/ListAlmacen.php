@@ -23,8 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  *  Controller to list the items in the Almacen model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class ListAlmacen extends ExtendedController\ListController
 {
@@ -38,7 +38,7 @@ class ListAlmacen extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'warehouses';
-        $pagedata['icon'] = 'fa-building';
+        $pagedata['icon'] = 'fas fa-building';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -49,13 +49,42 @@ class ListAlmacen extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAlmacen', 'Almacen');
-        $this->addSearchFields('ListAlmacen', ['nombre', 'codalmacen']);
+        $this->createViewAlmacen();
+        $this->createViewTransfer();
+    }
 
-        $this->addOrderBy('ListAlmacen', ['codalmacen'], 'code');
-        $this->addOrderBy('ListAlmacen', ['nombre'], 'name');
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewAlmacen($name = 'ListAlmacen')
+    {
+        $this->addView($name, 'Almacen', 'warehouses', 'fas fa-building');
+        $this->addSearchFields($name, ['nombre', 'codalmacen']);
+        $this->addOrderBy($name, ['codalmacen'], 'code');
+        $this->addOrderBy($name, ['nombre'], 'name');
 
+        /// Filters
         $selectValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect('ListAlmacen', 'idempresa', 'company', 'idempresa', $selectValues);
+        $this->addFilterSelect($name, 'idempresa', 'company', 'idempresa', $selectValues);
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewTransfer($name = 'ListTransferenciaStock')
+    {
+        $this->addView($name, 'TransferenciaStock', 'stock-transfers', 'fas fa-exchange-alt');
+        $this->addSearchFields($name, ['observaciones']);
+        $this->addOrderBy($name, ['codalmacenorigen'], 'origin-warehouse');
+        $this->addOrderBy($name, ['codalmacendestino'], 'destination-warehouse');
+        $this->addOrderBy($name, ['fecha'], 'date');
+        $this->addOrderBy($name, ['usuario'], 'user');
+
+        /// Filters
+        $this->addFilterDatePicker($name, 'fromfecha', 'from-date', 'fecha', '>=');
+        $this->addFilterDatePicker($name, 'untilfecha', 'until-date', 'fecha', '<=');
+        $this->addFilterAutocomplete($name, 'nick', 'user', 'nick', 'users', 'nick', 'nick');
     }
 }

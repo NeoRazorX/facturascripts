@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@ class ListDivisa extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'currency';
-        $pagedata['icon'] = 'fa-money';
+        $pagedata['icon'] = 'fas fa-money-bill-alt';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListDivisa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListDivisa', 'Divisa');
+        $this->addView('ListDivisa', 'Divisa', 'currency', 'fas fa-money-bill-alt');
         $this->addSearchFields('ListDivisa', ['descripcion', 'coddivisa']);
 
         $this->addOrderBy('ListDivisa', ['coddivisa'], 'code');

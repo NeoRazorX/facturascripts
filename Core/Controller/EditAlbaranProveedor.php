@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * Controller to edit a single item from the AlbaranCliente model
+ * Controller to edit a single item from the AlbaranProveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
+class EditAlbaranProveedor extends ExtendedController\PurchaseDocumentController
 {
 
     /**
@@ -39,22 +39,10 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-note';
         $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail');
     }
 
     /**
@@ -65,21 +53,5 @@ class EditAlbaranProveedor extends ExtendedController\BusinessDocumentController
     protected function getModelClassName()
     {
         return 'AlbaranProveedor';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditAlbaranProveedor') {
-            $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
-            $view->loadData($idalbaran);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

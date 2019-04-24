@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,68 +18,47 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of BusinessDocumentView
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BusinessDocumentView extends BaseView
 {
 
     /**
      *
-     * @var array
+     * @var EstadoDocumento[]
      */
-    public $documentStates;
-
-    /**
-     * Line columns from xmlview.
-     *
-     * @var array
-     */
-    private $lineOptions;
+    public $documentStatus = [];
 
     /**
      * Lines of document, the body.
      *
      * @var BusinessDocumentLine[]
      */
-    public $lines;
+    public $lines = [];
 
     /**
-     * DocumentView constructor and initialization.
-     *
+     * 
+     * @param string $name
      * @param string $title
      * @param string $modelName
-     * @param string $lineXMLView
-     * @param string $userNick
+     * @param string $icon
      */
-    public function __construct(string $title, string $modelName, string $lineXMLView, string $userNick)
+    public function __construct($name, $title, $modelName, $icon = 'fas fa-file')
     {
-        parent::__construct($title, $modelName);
-        $this->documentStates = [];
-
-        // Loads the view configuration for the user
-        $this->pageOption->getForUser($lineXMLView, $userNick);
-
-        $this->lineOptions = [];
-        foreach ($this->pageOption->columns['root']->columns as $col) {
-            $this->lineOptions[] = $col;
-        }
-
-        $this->lines = [];
-
-        // Loads document states
-        $estadoDocModel = new EstadoDocumento();
-        $modelClass = explode('\\', $modelName);
-        $this->documentStates = $estadoDocModel->all([new DataBaseWhere('tipodoc', end($modelClass))], ['nombre' => 'ASC'], 0, 0);
+        parent::__construct($name, $title, $modelName, $icon);
+        $this->documentStatus = $this->model->getAvaliableStatus();
+        $this->template = 'Master/BusinessDocumentView.html.twig';
     }
 
     /**
@@ -89,7 +68,22 @@ class BusinessDocumentView extends BaseView
      */
     public function export(&$exportManager)
     {
-        $exportManager->generateDocumentPage($this->model);
+        $exportManager->generateBusinessDocPage($this->model);
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getColumns()
+    {
+        $keys = array_keys($this->columns);
+        if (empty($keys)) {
+            return [];
+        }
+
+        $key = $keys[0];
+        return $this->columns[$key]->columns;
     }
 
     /**
@@ -105,23 +99,23 @@ class BusinessDocumentView extends BaseView
             'rows' => []
         ];
 
-        foreach ($this->lineOptions as $col) {
+        foreach ($this->getColumns() as $col) {
             $item = [
-                'data' => $col->widget->fieldName,
-                'type' => $col->widget->type,
+                'data' => $col->widget->fieldname,
+                'type' => $col->widget->getType(),
             ];
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = DivisaTools::gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
-                $item['source'] = $col->widget->values[0];
+                $item['source'] = $col->widget->getDataSource();
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
             }
 
-            if ($col->display !== 'none') {
+            if (!$col->hidden()) {
                 $data['columns'][] = $item;
                 $data['headers'][] = self::$i18n->trans($col->title);
             }
@@ -140,21 +134,38 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * Load the data in the cursor property, according to the where filter specified.
-     * Adds an empty row/model at the end of the loaded data.
-     *
-     * @param string $code
+     * 
+     * @param string|bool $code
+     * @param array       $where
+     * @param int         $order
+     * @param int         $offset
+     * @param int         $limit
      */
-    public function loadData(string $code)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
         }
 
+        if (empty($code) && empty($where)) {
+            return;
+        }
+
         $this->model->loadFromCode($code);
-        $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLines();
+        
+        $this->count = count($this->lines);
         $this->title = $this->model->codigo;
+    }
+
+    /**
+     * 
+     * @param array $data
+     */
+    public function loadFromData(array &$data)
+    {
+        parent::loadFromData($data);
+        $this->model->updateSubject();
     }
 
     /**
@@ -171,13 +182,42 @@ class BusinessDocumentView extends BaseView
         $order = count($formLines);
         foreach ($formLines as $data) {
             $line = ['orden' => $order];
-            foreach ($this->lineOptions as $col) {
-                $line[$col->widget->fieldName] = isset($data[$col->widget->fieldName]) ? $data[$col->widget->fieldName] : null;
+            foreach ($this->getColumns() as $col) {
+                $line[$col->widget->fieldname] = isset($data[$col->widget->fieldname]) ? $data[$col->widget->fieldname] : null;
             }
             $newLines[] = $line;
             $order--;
         }
 
         return $newLines;
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param string  $case
+     */
+    public function processFormData($request, $case)
+    {
+        switch ($case) {
+            case 'load':
+                foreach ($request->query->all() as $key => $value) {
+                    if ($key != 'code') {
+                        $this->model->{$key} = $value;
+                    }
+                }
+                $this->model->updateSubject();
+                break;
+        }
+    }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js');
     }
 }

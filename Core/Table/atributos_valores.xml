@@ -7,15 +7,19 @@
 -->
 <table>
     <column>
+        <name>codatributo</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('atributos_valores_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>codatributo</name>
-        <type>character varying(20)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>valor</name>
@@ -28,8 +32,6 @@
     </constraint>
     <constraint>
         <name>ca_atributos_valores</name>
-        <type>FOREIGN KEY (codatributo)
-            REFERENCES atributos (codatributo)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codatributo) REFERENCES atributos (codatributo) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -32,18 +32,18 @@ class DataBase
 {
 
     /**
-     * The link with de database.
-     *
-     * @var resource
-     */
-    private static $link;
-
-    /**
      * Link to the database engine selected in the configuration.
      *
      * @var DataBaseEngine
      */
     private static $engine;
+
+    /**
+     * The link with de database.
+     *
+     * @var resource
+     */
+    private static $link;
 
     /**
      * Manage the log of all controllers, models and database.
@@ -87,39 +87,171 @@ class DataBase
     }
 
     /**
-     * Return the database engine used
+     * Start a transaction in the database.
      *
-     * @return DataBaseEngine
+     * @return bool
      */
-    public function getEngine()
+    public function beginTransaction()
     {
-        return self::$engine;
+        if ($this->inTransaction()) {
+            return true;
+        }
+
+        self::$miniLog->sql('Begin Transaction');
+        return self::$engine->beginTransaction(self::$link);
     }
 
     /**
-     * Gets the operator for the database engine
+     * Make extra checks on the table.
      *
-     * @param string $operator
+     * @param string $tableName
+     *
+     * @return bool
+     */
+    public function checkTableAux($tableName)
+    {
+        $error = '';
+        $result = self::$engine->checkTableAux(self::$link, $tableName, $error);
+        if (!$result) {
+            self::$miniLog->critical($error);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Disconnect from the database.
+     *
+     * @return bool
+     */
+    public function close(): bool
+    {
+        if (!$this->connected()) {
+            return true;
+        }
+
+        if (self::$engine->inTransaction(self::$link) && !$this->rollback()) {
+            return false;
+        }
+
+        if (self::$engine->close(self::$link)) {
+            self::$link = null;
+        }
+
+        return !$this->connected();
+    }
+
+    /**
+     * Record the statements executed in the database.
+     *
+     * @return bool
+     */
+    public function commit()
+    {
+        $result = self::$engine->commit(self::$link);
+        if ($result) {
+            self::$miniLog->sql('Commit Transaction');
+        }
+
+        return $result;
+    }
+
+    /**
+     * Connect to the database.
+     *
+     * @return bool
+     */
+    public function connect(): bool
+    {
+        if ($this->connected()) {
+            return true;
+        }
+
+        $error = '';
+        self::$link = self::$engine->connect($error);
+
+        if ($error !== '') {
+            self::$miniLog->critical($error);
+        }
+
+        return $this->connected();
+    }
+
+    /**
+     * Returns True if it is connected to the database.
+     *
+     * @return bool
+     */
+    public function connected(): bool
+    {
+        return (bool) self::$link;
+    }
+
+    /**
+     * Returns the date style of the database engine.
      *
      * @return string
      */
-    public function getOperator($operator)
+    public function dateStyle()
     {
-        return self::$engine->getOperator($operator);
+        return self::$engine->dateStyle();
     }
 
     /**
-     * Returns an array with the names of the tables in the database.
+     * Escape the quotes from the text string.
      *
-     * @return array
+     * @param string $str
+     *
+     * @return string
      */
-    public function getTables()
+    public function escapeString($str)
     {
-        if (empty(self::$tables)) {
-            self::$tables = self::$engine->listTables(self::$link);
+        return (null === self::$engine) ? $str : self::$engine->escapeString(self::$link, $str);
+    }
+
+    /**
+     * Execute SQL statements on the database (inserts, updates or deletes).
+     * To make selects, it is better to use select () or selecLimit ().
+     * If there is no open transaction, one starts, queries are executed
+     * If the transaction has opened it in the call, it closes it confirming
+     * or discarding according to whether it has gone well or has given an error
+     *
+     * @param string $sql
+     *
+     * @return bool
+     */
+    public function exec($sql)
+    {
+        $result = $this->connected();
+        if ($result) {
+            /// clean the list of tables, since there could be changes when executing this sql.
+            self::$tables = [];
+
+            $inTransaction = $this->inTransaction();
+            $this->beginTransaction();
+
+            /// adds the sql query to the history
+            self::$miniLog->sql($sql);
+
+            /// execute sql
+            $result = self::$engine->exec(self::$link, $sql);
+            if (!$result) {
+                self::$miniLog->error(self::$engine->errorMessage(self::$link));
+            }
+
+            if ($inTransaction) {
+                return $result;
+            }
+
+            /// We only operate if the transaction has been initiated in this call
+            if ($result) {
+                return $this->commit();
+            }
+
+            $this->rollback();
         }
 
-        return self::$tables;
+        return $result;
     }
 
     /**
@@ -164,6 +296,16 @@ class DataBase
     }
 
     /**
+     * Return the database engine used
+     *
+     * @return DataBaseEngine
+     */
+    public function getEngine()
+    {
+        return self::$engine;
+    }
+
+    /**
      * Returns an array with the indices of a given table.
      *
      * @param string $tableName
@@ -184,56 +326,29 @@ class DataBase
     }
 
     /**
-     * Returns True if it is connected to the database.
+     * Gets the operator for the database engine
      *
-     * @return bool
+     * @param string $operator
+     *
+     * @return string
      */
-    public function connected(): bool
+    public function getOperator($operator)
     {
-        return (bool) self::$link;
+        return self::$engine->getOperator($operator);
     }
 
     /**
-     * Connect to the database.
+     * Returns an array with the names of the tables in the database.
      *
-     * @return bool
+     * @return array
      */
-    public function connect(): bool
+    public function getTables()
     {
-        if ($this->connected()) {
-            return true;
+        if (empty(self::$tables)) {
+            self::$tables = self::$engine->listTables(self::$link);
         }
 
-        $error = '';
-        self::$link = self::$engine->connect($error);
-
-        if ($error !== '') {
-            self::$miniLog->critical($error);
-        }
-
-        return $this->connected();
-    }
-
-    /**
-     * Disconnect from the database.
-     *
-     * @return bool
-     */
-    public function close(): bool
-    {
-        if (!$this->connected()) {
-            return true;
-        }
-
-        if (self::$engine->inTransaction(self::$link) && !$this->rollback()) {
-            return false;
-        }
-
-        if (self::$engine->close(self::$link)) {
-            self::$link = null;
-        }
-
-        return !$this->connected();
+        return self::$tables;
     }
 
     /**
@@ -247,34 +362,14 @@ class DataBase
     }
 
     /**
-     * Start a transaction in the database.
+     * Returns the last ID assigned when doing an INSERT in the database.
      *
-     * @return bool
+     * @return integer|bool
      */
-    public function beginTransaction()
+    public function lastval()
     {
-        $result = $this->inTransaction();
-        if (!$result) {
-            self::$miniLog->sql('Begin Transaction');
-            $result = self::$engine->beginTransaction(self::$link);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Record the statements executed in the database.
-     *
-     * @return bool
-     */
-    public function commit()
-    {
-        $result = self::$engine->commit(self::$link);
-        if ($result) {
-            self::$miniLog->sql('Commit Transaction');
-        }
-
-        return $result;
+        $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
+        return $aux ? $aux[0]['num'] : false;
     }
 
     /**
@@ -284,9 +379,7 @@ class DataBase
      */
     public function rollback()
     {
-        self::$miniLog->error(self::$engine->errorMessage(self::$link));
         self::$miniLog->sql('Rollback Transaction');
-
         return self::$engine->rollback(self::$link);
     }
 
@@ -329,70 +422,29 @@ class DataBase
         /// add the sql query to the history
         self::$miniLog->sql($sql);
         $result = self::$engine->select(self::$link, $sql);
-        if (empty($result)) {
-            self::$miniLog->critical(self::$engine->errorMessage(self::$link));
-            return [];
+        if (!empty($result)) {
+            return $result;
         }
 
-        return $result;
-    }
-
-    /**
-     * Execute SQL statements on the database (inserts, updates or deletes).
-     * To make selects, it is better to use select () or selecLimit ().
-     * If there is no open transaction, one starts, queries are executed
-     * If the transaction has opened it in the call, it closes it confirming
-     * or discarding according to whether it has gone well or has given an error
-     *
-     * @param string $sql
-     *
-     * @return bool
-     */
-    public function exec($sql)
-    {
-        $result = $this->connected();
-        if ($result) {
-            /// clean the list of tables, since there could be changes when executing this sql.
-            self::$tables = [];
-
-            $inTransaction = $this->inTransaction();
-            $this->beginTransaction();
-
-            /// add the sql query to the history
-            self::$miniLog->sql($sql);
-            $result = self::$engine->exec(self::$link, $sql);
-            if (!$inTransaction) {
-                /// We only operate if the transaction has been initiated in this call
-                if ($result) {
-                    $result = $this->commit();
-                } else {
-                    $this->rollback();
-                }
-            }
+        /// some error?
+        $error = self::$engine->errorMessage(self::$link);
+        if (!empty($error)) {
+            self::$miniLog->critical($error);
         }
 
-        return $result;
+        return [];
     }
 
     /**
-     * Returns the last ID assigned when doing an INSERT in the database.
+     * Returns the SQL needed to convert the column to integer.
      *
-     * @return integer|bool
-     */
-    public function lastval()
-    {
-        $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
-        return $aux ? $aux[0]['num'] : false;
-    }
-
-    /**
-     * Returns the used database engine and the version.
+     * @param string $colName
      *
      * @return string
      */
-    public function version()
+    public function sql2Int($colName)
     {
-        return $this->connected() ? self::$engine->version(self::$link) : '';
+        return self::$engine->getSQL()->sql2Int($colName);
     }
 
     /**
@@ -410,24 +462,6 @@ class DataBase
         }
 
         return in_array($tableName, $list, false);
-    }
-
-    /**
-     * Make extra checks on the table.
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     */
-    public function checkTableAux($tableName)
-    {
-        $error = '';
-        $result = self::$engine->checkTableAux(self::$link, $tableName, $error);
-        if (!$result) {
-            self::$miniLog->critical($error);
-        }
-
-        return $result;
     }
 
     /**
@@ -461,40 +495,12 @@ class DataBase
     }
 
     /**
-     * Escape the quotes from the text string.
-     *
-     * @param string $str
+     * Returns the used database engine and the version.
      *
      * @return string
      */
-    public function escapeString($str)
+    public function version()
     {
-        if (self::$engine) {
-            $str = self::$engine->escapeString(self::$link, $str);
-        }
-
-        return $str;
-    }
-
-    /**
-     * Returns the date style of the database engine.
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return self::$engine->dateStyle();
-    }
-
-    /**
-     * Returns the SQL needed to convert the column to integer.
-     *
-     * @param string $colName
-     *
-     * @return string
-     */
-    public function sql2Int($colName)
-    {
-        return self::$engine->getSQL()->sql2Int($colName);
+        return $this->connected() ? self::$engine->version(self::$link) : '';
     }
 }

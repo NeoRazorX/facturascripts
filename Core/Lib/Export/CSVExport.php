@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,108 +40,25 @@ class CSVExport implements ExportInterface
     private $csv;
 
     /**
-     * Separator value
-     *
-     * @var string
-     */
-    private $separator;
-
-    /**
      * Text delimiter value
      *
      * @var string
      */
-    private $delimiter;
+    private $delimiter = '"';
 
     /**
-     * CSVExport constructor.
-     */
-    public function __construct()
-    {
-        $this->separator = ';';
-        $this->delimiter = '"';
-    }
-
-    /**
-     * Assigns the received separator.
-     * By default it will use ';' semicolons.
+     * Separator value
      *
-     * @param string $sep
+     * @var string
      */
-    public function setSeparator($sep)
-    {
-        $this->separator = $sep;
-    }
+    private $separator = ';';
 
     /**
-     * Assigns the received text delimiter
-     * By default it will use '"' quotes.
+     * Adds a new page with the document data.
      *
-     * @param string $del
+     * @param mixed $model
      */
-    public function setDelimiter($del)
-    {
-        $this->delimiter = $del;
-    }
-
-    /**
-     * Returns the assigned separator
-     *
-     * @return string
-     */
-    public function getSeparator()
-    {
-        return $this->separator;
-    }
-
-    /**
-     * Returns the received text delimiter assigned
-     *
-     * @return string
-     */
-    public function getDelimiter()
-    {
-        return $this->delimiter;
-    }
-
-    /**
-     * Return the full document.
-     *
-     * @return string
-     */
-    public function getDoc()
-    {
-        return \implode(PHP_EOL, $this->csv);
-    }
-
-    /**
-     * Blank document.
-     */
-    public function newDoc()
-    {
-        $this->csv = [];
-    }
-
-    /**
-     * Set headers and output document content to response.
-     *
-     * @param Response $response
-     */
-    public function show(Response &$response)
-    {
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
-        $response->setContent($this->getDoc());
-    }
-
-    /**
-     * Adds a new page with the model data.
-     *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
-     */
-    public function generateModelPage($model, $columns, $title = '')
+    public function generateBusinessDocPage($model)
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
@@ -174,8 +91,12 @@ class CSVExport implements ExportInterface
 
         /// Get the columns
         foreach ($columns as $col) {
-            $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-            $sheetHeaders[$col->widget->fieldName] = 'string';
+            if ($col->hidden()) {
+                continue;
+            }
+
+            $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
+            $sheetHeaders[$col->widget->fieldname] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
@@ -193,11 +114,13 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Adds a new page with the document data.
+     * Adds a new page with the model data.
      *
-     * @param mixed $model
+     * @param mixed  $model
+     * @param array  $columns
+     * @param string $title
      */
-    public function generateDocumentPage($model)
+    public function generateModelPage($model, $columns, $title = '')
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
@@ -233,6 +156,101 @@ class CSVExport implements ExportInterface
     }
 
     /**
+     * Returns the received text delimiter assigned
+     *
+     * @return string
+     */
+    public function getDelimiter()
+    {
+        return $this->delimiter;
+    }
+
+    /**
+     * Return the full document.
+     *
+     * @return string
+     */
+    public function getDoc()
+    {
+        return \implode(PHP_EOL, $this->csv);
+    }
+
+    /**
+     * Returns the assigned separator
+     *
+     * @return string
+     */
+    public function getSeparator()
+    {
+        return $this->separator;
+    }
+
+    /**
+     * Blank document.
+     */
+    public function newDoc()
+    {
+        $this->csv = [];
+    }
+
+    /**
+     * Assigns the received text delimiter
+     * By default it will use '"' quotes.
+     *
+     * @param string $del
+     */
+    public function setDelimiter($del)
+    {
+        $this->delimiter = $del;
+    }
+
+    /**
+     * Assigns the received separator.
+     * By default it will use ';' semicolons.
+     *
+     * @param string $sep
+     */
+    public function setSeparator($sep)
+    {
+        $this->separator = $sep;
+    }
+
+    /**
+     * Set headers and output document content to response.
+     *
+     * @param Response $response
+     */
+    public function show(Response &$response)
+    {
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
+        $response->setContent($this->getDoc());
+    }
+
+    /**
+     * Fills an array with the CSV data
+     *
+     * @param $tableData
+     * @param $sheetHeaders
+     */
+    public function writeSheet($tableData, $sheetHeaders)
+    {
+        $this->csv = [];
+        $header = [];
+        $body = [];
+
+        foreach ($sheetHeaders as $key => $value) {
+            $header[] = $key;
+        }
+        $this->csv[] = \implode($this->separator, $header);
+
+        foreach ($tableData as $line) {
+            $body[] = \implode($this->separator, $line);
+        }
+        $this->csv[] = \implode(PHP_EOL, $body);
+    }
+
+    /**
      * Returns the table data
      *
      * @param array $cursor
@@ -260,28 +278,5 @@ class CSVExport implements ExportInterface
         }
 
         return $tableData;
-    }
-
-    /**
-     * Fills an array with the CSV data
-     *
-     * @param $tableData
-     * @param $sheetHeaders
-     */
-    public function writeSheet($tableData, $sheetHeaders)
-    {
-        $this->csv = [];
-        $header = [];
-        $body = [];
-
-        foreach ($sheetHeaders as $key => $value) {
-            $header[] = $key;
-        }
-        $this->csv[] = \implode($this->separator, $header);
-
-        foreach ($tableData as $line) {
-            $body[] = \implode($this->separator, $line);
-        }
-        $this->csv[] = \implode(PHP_EOL, $body);
     }
 }

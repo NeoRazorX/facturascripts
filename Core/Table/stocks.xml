@@ -9,7 +9,6 @@
     <column>
         <name>cantidad</name>
         <type>double precision</type>
-        <null>NO</null>
         <default>0</default>
     </column>
     <column>
@@ -20,6 +19,11 @@
     <column>
         <name>disponible</name>
         <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>idproducto</name>
+        <type>integer</type>
         <null>NO</null>
     </column>
     <column>
@@ -31,7 +35,7 @@
     <column>
         <name>pterecibir</name>
         <type>double precision</type>
-        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>referencia</name>
@@ -41,38 +45,36 @@
     <column>
         <name>reservada</name>
         <type>double precision</type>
-        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>stockmax</name>
         <type>double precision</type>
-        <null>NO</null>
         <default>0</default>
     </column>
     <column>
         <name>stockmin</name>
         <type>double precision</type>
-        <null>NO</null>
         <default>0</default>
     </column>
-    <column>
-        <name>ubicacion</name>
-        <type>character varying(100)</type>
-    </column>
     <constraint>
-        <name>ca_stocks_articulos2</name>
-        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>stocks_pkey</name>
+        <type>PRIMARY KEY (idstock)</type>
     </constraint>
     <constraint>
-        <name>ca_stocks_almacenes3</name>
+        <name>ca_stocks_almacenes</name>
         <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE </type>
+    </constraint>
+    <constraint>
+        <name>ca_stocks_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_stocks_variantes</name>
+        <type>FOREIGN KEY (referencia) REFERENCES variantes (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_stocks_almacen_referencia</name>
         <type>UNIQUE (codalmacen, referencia)</type>
-    </constraint>
-    <constraint>
-        <name>stocks_pkey</name>
-        <type>PRIMARY KEY (idstock)</type>
     </constraint>
 </table>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,9 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * This class stores the main data of the company.
@@ -74,13 +75,6 @@ class Empresa extends Base\Contact
     public $direccion;
 
     /**
-     * Physical person.
-     *
-     * @var int
-     */
-    public $personafisica;
-
-    /**
      * Primary key. Integer.
      *
      * @var int
@@ -102,18 +96,18 @@ class Empresa extends Base\Contact
     public $provincia;
 
     /**
-     * True -> activates the use of an equivalence surcharge on delivery notes and purchase invoices.
-     *
-     * @var bool
-     */
-    public $recequivalencia;
-
-    /**
-     * VAT regime of the company.
+     * Taxation regime of the provider. For now they are only implemented general and exempt.
      *
      * @var string
      */
     public $regimeniva;
+
+    /**
+     * Type of VAT regime
+     *
+     * @var RegimenIVA
+     */
+    private static $regimenIVA;
 
     /**
      * Website of the person.
@@ -123,14 +117,40 @@ class Empresa extends Base\Contact
     public $web;
 
     /**
+     * 
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        if (self::$regimenIVA === null) {
+            self::$regimenIVA = new RegimenIVA();
+        }
+
+        parent::__construct($data);
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
+        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->regimeniva = self::$regimenIVA->defaultValue();
+    }
 
-        $regimenIVA = new RegimenIVA();
-        $this->regimeniva = $regimenIVA::defaultValue();
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->idempresa == AppSettings::get('default', 'idempresa')) {
+            self::$miniLog->alert('you-cant-not-remove-default-company');
+            return false;
+        }
+
+        return parent::delete();
     }
 
     /**
@@ -144,11 +164,11 @@ class Empresa extends Base\Contact
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono1,codpais,apartado,'
-            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto,personafisica)'
-            . "VALUES (1,NULL,'https://www.facturascripts.com',"
-            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
-            . "'Empresa " . $num . " S.L.','E-" . $num . "','0');";
+        return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
+            . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
+            . "VALUES (1,'https://www.facturascripts.com','ESP','C/ Falsa, 123',"
+            . "'','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "','0',"
+            . "'" . self::$regimenIVA->defaultValue() . "');";
     }
 
     /**
@@ -202,5 +222,47 @@ class Empresa extends Base\Contact
         }
 
         return parent::test();
+    }
+
+    protected function createPaymentMethods()
+    {
+        $formaPago = new FormaPago();
+        $formaPago->codpago = $formaPago->newCode();
+        $formaPago->descripcion = self::$i18n->trans('default');
+        $formaPago->idempresa = $this->idempresa;
+        $formaPago->save();
+    }
+
+    protected function createWarehouse()
+    {
+        $almacen = new Almacen();
+        $almacen->apartado = $this->apartado;
+        $almacen->codalmacen = $almacen->newCode();
+        $almacen->ciudad = $this->ciudad;
+        $almacen->codpais = $this->codpais;
+        $almacen->codpostal = $this->codpostal;
+        $almacen->direccion = $this->direccion;
+        $almacen->idempresa = $this->idempresa;
+        $almacen->nombre = $this->nombrecorto;
+        $almacen->provincia = $this->provincia;
+        $almacen->telefono = $this->telefono1;
+        $almacen->save();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            $this->createPaymentMethods();
+            $this->createWarehouse();
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,7 +58,7 @@ class AccountingReports extends Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'reports';
         $pageData['title'] = 'accounting-reports';
-        $pageData['icon'] = 'fa-balance-scale';
+        $pageData['icon'] = 'fas fa-balance-scale';
 
         return $pageData;
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model\Base;
 
@@ -37,7 +37,7 @@ abstract class ModelView
      *
      * @var DataBase
      */
-    private static $dataBase;
+    protected static $dataBase;
 
     /**
      * List of values for record view
@@ -119,9 +119,53 @@ abstract class ModelView
     }
 
     /**
+     * Load data for the indicated where.
+     *
+     * @param DataBaseWhere[] $where  filters to apply to model records.
+     * @param array           $order  fields to use in the sorting. For example ['code' => 'ASC']
+     * @param int             $offset
+     * @param int             $limit
+     *
+     * @return self[]
+     */
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
+    {
+        $result = [];
+        if ($this->checkTables()) {
+            $class = get_class($this);
+            $sql = 'SELECT ' . $this->fieldsList()
+                . ' FROM ' . $this->getSQLFrom()
+                . DataBaseWhere::getSQLWhere($where)
+                . $this->getGroupBy()
+                . $this->getOrderBy($order);
+            foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
+                $result[] = new $class($d);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Check list of tables required.
+     *
+     * @return bool
+     */
+    private function checkTables(): bool
+    {
+        $result = true;
+        foreach ($this->getTables() as $tableName) {
+            if (!self::$dataBase->tableExists($tableName)) {
+                $result = false;
+                break;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Reset the values of all model properties.
      */
-    protected function clear()
+    public function clear()
     {
         foreach (array_keys($this->getFields()) as $field) {
             $this->values[$field] = null;
@@ -129,15 +173,43 @@ abstract class ModelView
     }
 
     /**
-     * Assign the values of the $data array to the model view properties.
+     * Returns the number of records that meet the condition.
      *
-     * @param array $data
+     * @param DataBaseWhere[] $where filters to apply to records.
+     *
+     * @return int
      */
-    protected function loadFromData($data)
+    public function count(array $where = [])
     {
-        foreach ($data as $field => $value) {
-            $this->values[$field] = $value;
+        $groupFields = $this->getGroupFields();
+        if (!empty($groupFields)) {
+            $groupFields .= ', ';
         }
+
+        $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
+            . ' FROM ' . $this->getSQLFrom()
+            . DataBaseWhere::getSQLWhere($where)
+            . $this->getGroupBy();
+
+        $data = self::$dataBase->select($sql);
+        $count = count($data);
+        return ($count == 1) ? $data[0]['count_total'] : $count;
+    }
+
+    /**
+     * Convert the list of fields into a string to use as a select clause
+     *
+     * @return string
+     */
+    private function fieldsList(): string
+    {
+        $result = '';
+        $comma = '';
+        foreach ($this->getFields() as $key => $value) {
+            $result = $result . $comma . $value . ' ' . $key;
+            $comma = ',';
+        }
+        return $result;
     }
 
     /**
@@ -146,6 +218,17 @@ abstract class ModelView
      * @return string
      */
     protected function getGroupBy(): string
+    {
+        $fields = $this->getGroupFields();
+        return empty($fields) ? '' : ' GROUP BY ' . $fields;
+    }
+
+    /**
+     * Return Group By fields
+     *
+     * @return string
+     */
+    protected function getGroupFields(): string
     {
         return '';
     }
@@ -169,80 +252,59 @@ abstract class ModelView
     }
 
     /**
-     * Check list of tables required.
+     * Fill the class with the registry values
+     * whose primary column corresponds to the value $cod, or according to the condition
+     * where indicated, if value is not reported in $cod.
+     * Initializes the values of the class if there is no record that
+     * meet the above conditions.
+     * Returns True if the record exists and False otherwise.
+     *
+     * @param string $cod
+     * @param array  $where
+     * @param array  $orderby
      *
      * @return bool
      */
-    private function checkTables(): bool
+    public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
-        $result = true;
-        foreach ($this->getTables() as $tableName) {
-            if (!self::$dataBase->tableExists($tableName)) {
-                $result = false;
-                break;
-            }
+        $sql = 'SELECT ' . $this->fieldsList()
+            . ' FROM ' . $this->getSQLFrom()
+            . DataBaseWhere::getSQLWhere($where)
+            . $this->getGroupBy()
+            . $this->getOrderBy($orderby);
+
+        $data = self::$dataBase->selectLimit($sql, 1);
+        if (empty($data)) {
+            $this->clear();
+            return false;
         }
-        return $result;
+
+        $this->loadFromData($data[0]);
+        return true;
     }
 
     /**
-     * Returns the number of records that meet the condition.
+     * Assign the values of the $data array to the model view properties.
      *
-     * @param DataBaseWhere[] $where filters to apply to records.
-     *
-     * @return int
+     * @param array $data
      */
-    public function count(array $where = [])
+    protected function loadFromData($data)
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
-        $data = self::$dataBase->select($sql);
-        return empty($data) ? 0 : $data[0]['total'];
+        foreach ($data as $field => $value) {
+            $this->values[$field] = $value;
+        }
     }
 
     /**
-     * Convert the list of fields into a string to use as a select clause
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    private function fieldsList(): string
+    public function url(string $type = 'auto', string $list = 'List')
     {
-        $result = '';
-        $comma = '';
-        foreach ($this->getFields() as $key => $value) {
-            $result = $result . $comma . $value . ' ' . $key;
-            $comma = ',';
-        }
-        return $result;
-    }
-
-    /**
-     * Load data for the indicated where.
-     *
-     * @param DataBaseWhere[] $where  filters to apply to model records.
-     * @param array           $order  fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int             $offset
-     * @param int             $limit
-     *
-     * @return self[]
-     */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
-    {
-        $result = [];
-        if ($this->checkTables()) {
-            $class = get_class($this);
-            $sqlWhere = DataBaseWhere::getSQLWhere($where);
-            $sqlOrderBy = $this->getOrderBy($order);
-            $sql = 'SELECT ' . $this->fieldsList()
-                . ' FROM ' . $this->getSQLFrom()
-                . $sqlWhere
-                . ' '
-                . $this->getGroupBy()
-                . ' '
-                . $sqlOrderBy;
-            foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
-                $result[] = new $class($d);
-            }
-        }
-        return $result;
+        return '';
     }
 }

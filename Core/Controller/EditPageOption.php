@@ -20,15 +20,16 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Edit option for any page.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class EditPageOption extends Base\Controller
 {
@@ -71,33 +72,10 @@ class EditPageOption extends Base\Controller
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'page-configuration';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-wrench';
+        $pagedata['icon'] = 'fas fa-wrench';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Returns the text for the data main panel header
-     *
-     * @return string
-     */
-    public function getPanelHeader()
-    {
-        return $this->i18n->trans('configure-columns');
-    }
-
-    /**
-     * Returns the text for the data main panel footer
-     *
-     * @return string
-     */
-    public function getPanelFooter()
-    {
-        return '<strong>'
-            . $this->i18n->trans('page') . ':&nbsp;' . $this->selectedViewName . '<br>'
-            . $this->i18n->trans('user') . ':&nbsp;' . $this->selectedUser
-            . '</strong>';
     }
 
     /**
@@ -110,9 +88,7 @@ class EditPageOption extends Base\Controller
         $result = [];
         $users = Model\CodeModel::all(Model\User::tableName(), 'nick', 'nick', false);
         foreach ($users as $codeModel) {
-            if ($codeModel->code != 'admin') {
-                $result[$codeModel->code] = $codeModel->description;
-            }
+            $result[$codeModel->code] = $codeModel->description;
         }
 
         return $result;
@@ -128,10 +104,11 @@ class EditPageOption extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        $this->getParams();
         $this->model = new Model\PageOption();
-        $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+        $this->selectedViewName = $this->request->get('code', '');
+        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
+        $this->loadPageOptions();
 
         $action = $this->request->get('action', '');
         switch ($action) {
@@ -143,6 +120,24 @@ class EditPageOption extends Base\Controller
                 $this->deleteData();
                 break;
         }
+    }
+
+    /**
+     * Checks and fix GroupItem array.
+     *
+     * @param array $group
+     *
+     * @return array
+     */
+    private function checkGroupItem($group)
+    {
+        foreach ($group['children'] as $key => $child) {
+            if (!isset($child['level'])) {
+                $group['children'][$key]['level'] = 0;
+            }
+        }
+
+        return $group;
     }
 
     /**
@@ -172,30 +167,54 @@ class EditPageOption extends Base\Controller
             new DataBaseWhere('name', $this->selectedViewName)
         ];
 
-        if (empty($nick)) {
-            $where[] = new DataBaseWhere('nick', 'null', 'IS');
-        } else {
-            $where[] = new DataBaseWhere('nick', $nick);
-        }
-
+        $where[] = empty($nick) ? new DataBaseWhere('nick', 'null', 'IS') : new DataBaseWhere('nick', $nick);
         $rows = $this->model->all($where, [], 0, 1);
         if ($rows[0] && $rows[0]->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+            $this->loadPageOptions();
         } else {
             $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
         }
     }
 
     /**
-     * Load and initialize the parameters sent by the form
+     * 
      */
-    private function getParams()
+    protected function loadPageOptions()
     {
-        $this->selectedViewName = $this->request->get('code', '');
-        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
+        $orderby = ['nick' => 'ASC'];
+        $where = [
+            new DataBaseWhere('name', $this->selectedViewName),
+            new DataBaseWhere('nick', $this->selectedUser),
+            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+        ];
 
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
+        if (!$this->model->loadFromCode('', $where, $orderby)) {
+            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+        }
+
+        // there always need to be groups of columns
+        $groups = [];
+        $newGroupArray = [
+            'children' => [],
+            'name' => 'main',
+            'tag' => 'group',
+        ];
+
+        foreach ($this->model->columns as $key => $item) {
+            if ($item['tag'] === 'group') {
+                $groups[$key] = $this->checkGroupItem($item);
+            } else {
+                $newGroupArray['children'][$key] = $item;
+            }
+        }
+
+        /// is there are loose columns, then we put it on a new group
+        if (!empty($newGroupArray['children'])) {
+            $groups['main'] = $this->checkGroupItem($newGroupArray);
+        }
+
+        $this->model->columns = $groups;
     }
 
     /**
@@ -208,7 +227,7 @@ class EditPageOption extends Base\Controller
         foreach ($data as $key => $value) {
             if (strpos($key, '+')) {
                 $path = explode('+', $key);
-                $this->model->columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
+                $this->model->columns[$path[0]]['children'][$path[1]][$path[2]] = $value;
             }
         }
 

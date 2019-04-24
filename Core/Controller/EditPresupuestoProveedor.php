@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
 
 /**
  * Controller to edit a single item from the PresupuestoProveedor model
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Luis Miguel Pérez <luismi@pcrednet.com>
  */
-class EditPresupuestoProveedor extends ExtendedController\BusinessDocumentController
+class EditPresupuestoProveedor extends PurchaseDocumentController
 {
 
     /**
@@ -39,22 +39,10 @@ class EditPresupuestoProveedor extends ExtendedController\BusinessDocumentContro
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
     }
 
     /**
@@ -65,21 +53,5 @@ class EditPresupuestoProveedor extends ExtendedController\BusinessDocumentContro
     protected function getModelClassName()
     {
         return 'PresupuestoProveedor';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditPresupuestoProveedor') {
-            $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
-            $view->loadData($idpresupuesto);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

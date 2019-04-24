@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,40 +18,23 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Lib\EmailTools;
-use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Lib\EmailTools;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Controller to edit main settings
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  */
 class EditSettings extends ExtendedController\PanelController
 {
 
     const KEY_SETTINGS = 'Settings';
-
-    /**
-     * Returns the configuration property value for a specified $field
-     *
-     * @param ModelClass $model
-     * @param string     $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        if (isset($model->{$field})) {
-            return $model->{$field};
-        }
-
-        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
-            return $model->properties[$field];
-        }
-
-        return null;
-    }
 
     /**
      * Returns basic page attributes
@@ -62,7 +45,7 @@ class EditSettings extends ExtendedController\PanelController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'app-preferences';
-        $pagedata['icon'] = 'fa-cogs';
+        $pagedata['icon'] = 'fas fa-cogs';
         $pagedata['menu'] = 'admin';
         $pagedata['submenu'] = 'control-panel';
 
@@ -70,35 +53,14 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the url for a specified $type
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getURL($type)
-    {
-        switch ($type) {
-            case 'list':
-                return 'AdminPlugins';
-
-            case 'edit':
-                return 'EditSettings';
-        }
-
-        return FS_ROUTE;
-    }
-
-    /**
-     * Return a list of all XML view files on XMLView folder.
+     * Return a list of all XML settings files on XMLView folder.
      *
      * @return array
      */
     private function allSettingsXMLViews()
     {
         $names = [];
-        $files = array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.', '..']);
-        foreach ($files as $fileName) {
+        foreach (FileManager::scanFolder(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
             if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }
@@ -107,19 +69,101 @@ class EditSettings extends ExtendedController\PanelController
         return $names;
     }
 
+    protected function checkPaymentMethod()
+    {
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+
+        $idempresa = $appSettings->get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $values = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
+        foreach ($values as $value) {
+            if ($value->code == $appSettings->get('default', 'codpago')) {
+                /// perfect
+                return true;
+            }
+        }
+
+        /// assign a new payment method
+        foreach ($values as $value) {
+            $appSettings->set('default', 'codpago', $value->code);
+            $appSettings->save();
+            return true;
+        }
+
+        /// assign no payment method
+        $appSettings->set('default', 'codpago', null);
+        $appSettings->save();
+    }
+
+    protected function checkWarehouse()
+    {
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+
+        $idempresa = $appSettings->get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $values = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
+        foreach ($values as $value) {
+            if ($value->code == $appSettings->get('default', 'codalmacen')) {
+                /// perfect
+                return true;
+            }
+        }
+
+        /// assign a new warehouse
+        foreach ($values as $value) {
+            $appSettings->set('default', 'codalmacen', $value->code);
+            $appSettings->save();
+            return true;
+        }
+
+        /// assign no warehouse
+        $appSettings->set('default', 'codalmacen', null);
+        $appSettings->save();
+    }
+
     /**
      * Load views
      */
     protected function createViews()
     {
+        $this->setTemplate('EditSettings');
+
         $modelName = 'Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
-            $title = strtolower(substr($name, 8));
+            $title = $this->getKeyFromViewName($name);
             $this->addEditView($name, $modelName, $title, $icon);
+
+            /// change icon
+            $groups = $this->views[$name]->getColumns();
+            foreach ($groups as $group) {
+                if (!empty($group->icon)) {
+                    $this->views[$name]->icon = $group->icon;
+                    break;
+                }
+            }
+
+            /// disable delete
+            $this->setSettings($name, 'btnDelete', false);
+        }
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        if (!parent::editAction()) {
+            return false;
         }
 
-        $this->testViews();
+        /// check warehouse-company and payment-method-company relations
+        $this->checkPaymentMethod();
+        $this->checkWarehouse();
+        return true;
     }
 
     /**
@@ -131,8 +175,6 @@ class EditSettings extends ExtendedController\PanelController
     {
         switch ($action) {
             case 'export':
-                $this->setTemplate(false);
-                $this->exportAction();
                 break;
 
             case 'testmail':
@@ -144,31 +186,6 @@ class EditSettings extends ExtendedController\PanelController
                 }
                 break;
         }
-    }
-
-    /**
-     * Exports data from views.
-     */
-    private function exportAction()
-    {
-        $this->exportManager->newDoc($this->request->get('option'));
-        foreach ($this->views as $view) {
-            if ($view->model === null || !isset($view->model->properties)) {
-                continue;
-            }
-
-            $headers = ['key' => 'key', 'value' => 'value'];
-            $rows = [];
-            foreach ($view->model->properties as $key => $value) {
-                $rows[] = ['key' => $key, 'value' => $value];
-            }
-
-            if (count($rows) > 0) {
-                $this->exportManager->generateTablePage($headers, $rows);
-            }
-        }
-
-        $this->exportManager->show($this->response);
     }
 
     /**
@@ -191,48 +208,45 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
-        if (empty($view->model)) {
-            return;
-        }
-
         $code = $this->getKeyFromViewName($viewName);
         $view->loadData($code);
+        if (empty($view->model->name)) {
+            $view->model->name = $code;
+        }
 
-        if ($view->model->name === null) {
-            $view->model->description = $view->model->name = strtolower(substr($viewName, 8));
-            $view->model->save();
+        switch ($viewName) {
+            case 'SettingsDefault':
+                $this->loadPaymentMethodValues($viewName);
+                $this->loadWarehouseValues($viewName);
+                break;
         }
     }
 
     /**
-     * Test all view to show usefull errors.
+     * 
+     * @param string $viewName
      */
-    private function testViews()
+    protected function loadPaymentMethodValues($viewName)
     {
-        foreach ($this->views as $viewName => $view) {
-            if (!$view->model) {
-                continue;
-            }
+        $idempresa = AppSettings::get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $methods = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
 
-            $error = true;
-            foreach ($view->getColumns() as $group) {
-                if (!isset($group->columns)) {
-                    break;
-                }
+        $columnPayment = $this->views[$viewName]->columnForName('payment-method');
+        $columnPayment->widget->setValuesFromCodeModel($methods);
+    }
 
-                foreach ($group->columns as $col) {
-                    if ($col->name === 'name') {
-                        $error = false;
-                        break;
-                    }
-                }
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function loadWarehouseValues($viewName)
+    {
+        $idempresa = AppSettings::get('default', 'idempresa');
+        $where = [new DataBaseWhere('idempresa', $idempresa)];
+        $almacenes = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
 
-                break;
-            }
-
-            if ($error) {
-                $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
-            }
-        }
+        $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
+        $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
     }
 }

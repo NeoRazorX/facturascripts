@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -14,14 +14,10 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Initial description for the controller ListLogMessage
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
 -->
-
 <view>
     <columns>
         <column name="code" order="100">
@@ -31,27 +27,33 @@
             <widget type="text" fieldname="level" />
         </column>
         <column name="message" order="120">
-            <widget type="text" fieldname="message" />
+            <widget type="textarea" fieldname="message" />
         </column>
         <column name="user" order="130">
             <widget type="text" fieldname="nick" />
         </column>
-        <column name="ip" order="140">
+        <column name="url" order="140">
+            <widget type="link" fieldname="uri" />
+        </column>
+        <column name="ip" order="150">
             <widget type="text" fieldname="ip" />
         </column>
-        <column name="date" display="right" order="150">
+        <column name="date" display="right" order="160">
             <widget type="text" fieldname="time" />
         </column>
     </columns>
     <rows>
         <row type="status" fieldname="level">
-            <option color="table-info">info</option>
-            <option color="table-success">notice</option>
-            <option color="table-warning">warning</option>
-            <option color="table-danger">error</option>
-            <option color="table-danger">critical</option>
-            <option color="table-danger">alert</option>
-            <option color="table-danger">emergency</option>
+            <option color="info">info</option>
+            <option color="success">notice</option>
+            <option color="warning">warning</option>
+            <option color="danger">error</option>
+            <option color="danger">critical</option>
+            <option color="danger">alert</option>
+            <option color="danger">emergency</option>
+        </row>
+        <row type="actions">
+            <button type="action" label="delete-selected-filters" color="warning" action="delete-selected-filters" icon="fas fa-trash-alt" />
         </row>
     </rows>
 </view>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@ class ListTarifa extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'rates';
-        $pagedata['icon'] = 'fa-money';
+        $pagedata['icon'] = 'fas fa-money-bill-alt';
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListTarifa extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListTarifa', 'Tarifa');
+        $this->addView('ListTarifa', 'Tarifa', 'rates', 'fas fa-money-bill-alt');
         $this->addSearchFields('ListTarifa', ['nombre', 'codtarifa']);
 
         $this->addOrderBy('ListTarifa', ['codtarifa'], 'code');

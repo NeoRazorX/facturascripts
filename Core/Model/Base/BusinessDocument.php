@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,18 +19,24 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\Serie;
-use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of BusinessDocument
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocument extends ModelClass
+abstract class BusinessDocument extends ModelOnChangeClass
 {
 
     /**
@@ -124,17 +130,11 @@ abstract class BusinessDocument extends ModelClass
     public $idempresa;
 
     /**
-     * Document state, from EstadoDocumento model.
+     * Document status, from EstadoDocumento model.
      *
      * @var int
      */
     public $idestado;
-
-    /**
-     *
-     * @var int
-     */
-    private $idestadoAnt;
 
     /**
      * % IRPF retention of the document. It is obtained from the series.
@@ -152,8 +152,15 @@ abstract class BusinessDocument extends ModelClass
     public $neto;
 
     /**
+     * User who created this document. User model.
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
      * Number of the document.
-     * Unique within the series + exercise.
+     * Unique within the series.
      *
      * @var string
      */
@@ -165,6 +172,13 @@ abstract class BusinessDocument extends ModelClass
      * @var string
      */
     public $observaciones;
+
+    /**
+     * Paid.
+     *
+     * @var bool
+     */
+    public $pagado;
 
     /**
      * Rate of conversion to Euros of the selected currency.
@@ -212,31 +226,18 @@ abstract class BusinessDocument extends ModelClass
 
     /**
      * Returns the lines associated with the document.
-     *
-     * @return mixed
      */
     abstract public function getLines();
 
     /**
      * Returns a new line for this business document.
-     * 
-     * @param array $data
-     * 
-     * @return BusinessDocumentLine[]
      */
     abstract public function getNewLine(array $data = []);
 
     /**
-     * Returns an array with the column for identify the subject(s),
-     * 
-     * @return BusinessDocumentLine
+     * Sets subject for this document.
      */
-    abstract public function getSubjectColumns();
-
-    /**
-     * Sets subjects for this document.
-     */
-    abstract public function setSubject($subjects);
+    abstract public function setSubject($subject);
 
     /**
      * Updates subjects data in this document.
@@ -244,13 +245,34 @@ abstract class BusinessDocument extends ModelClass
     abstract public function updateSubject();
 
     /**
-     * 
-     * @param array $data
+     *
+     * @return BusinessDocument[]
      */
-    public function __construct(array $data = [])
+    public function childrenDocuments()
     {
-        parent::__construct($data);
-        $this->idestadoAnt = $this->idestado;
+        $children = [];
+
+        $keys = [];
+        $docTransformation = new DocTransformation();
+        $where = [
+            new DataBaseWhere('model1', $this->modelClassName()),
+            new DataBaseWhere('iddoc1', $this->primaryColumnValue())
+        ];
+        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+            $key = $docTrans->model2 . '|' . $docTrans->iddoc2;
+            if (in_array($key, $keys, true)) {
+                continue;
+            }
+
+            $newModelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $docTrans->model2;
+            $newModel = new $newModelClass();
+            if ($newModel->loadFromCode($docTrans->iddoc2)) {
+                $children[] = $newModel;
+                $keys[] = $key;
+            }
+        }
+
+        return $children;
     }
 
     /**
@@ -269,6 +291,7 @@ abstract class BusinessDocument extends ModelClass
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
+        $this->pagado = false;
         $this->tasaconv = 1.0;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
@@ -276,45 +299,121 @@ abstract class BusinessDocument extends ModelClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
 
-        if (!isset(self::$estados)) {
-            $estadoDocModel = new EstadoDocumento();
-            self::$estados = $estadoDocModel->all([], [], 0, 0);
-        }
-
         /// select default status
-        foreach (self::$estados as $estado) {
-            if ($estado->tipodoc === $this->modelClassName() && $estado->predeterminado) {
-                $this->idestado = $estado->idestado;
-                $this->editable = $estado->editable;
+        foreach ($this->getAvaliableStatus() as $status) {
+            if ($status->predeterminado) {
+                $this->idestado = $status->idestado;
+                $this->editable = $status->editable;
                 break;
             }
         }
     }
 
+    /**
+     *
+     * @return bool
+     */
     public function delete()
     {
         $lines = $this->getLines();
-        if (parent::delete()) {
-            foreach ($lines as $line) {
-                $line->cantidad = 0;
-                $line->updateStock($this->codalmacen);
-            }
-
-            return true;
+        if (!parent::delete()) {
+            return false;
         }
 
-        return false;
+        /// update stock
+        foreach ($lines as $line) {
+            $line->delete();
+        }
+
+        /// change parent doc status
+        foreach ($this->parentDocuments() as $parent) {
+            foreach ($parent->getAvaliableStatus() as $status) {
+                if ($status->predeterminado) {
+                    $parent->idestado = $status->idestado;
+                    $parent->save();
+                    break;
+                }
+            }
+        }
+
+        /// remove data from DocTransformation
+        $docTransformation = new DocTransformation();
+        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
+
+        return true;
     }
 
     /**
-     * 
+     *
+     * @return EstadoDocumento[]
+     */
+    public function getAvaliableStatus()
+    {
+        if (!isset(self::$estados)) {
+            $statusModel = new EstadoDocumento();
+            self::$estados = $statusModel->all([], [], 0, 0);
+        }
+
+        $avaliables = [];
+        foreach (self::$estados as $status) {
+            if ($status->tipodoc === $this->modelClassName()) {
+                $avaliables[] = $status;
+            }
+        }
+
+        return $avaliables;
+    }
+
+    /**
+     *
+     * @return Empresa
+     */
+    public function getCompany()
+    {
+        $empresa = new Empresa();
+        $empresa->loadFromCode($this->idempresa);
+        return $empresa;
+    }
+
+    /**
+     *
+     * @param string $reference
+     *
+     * @return BusinessDocumentLine
+     */
+    public function getNewProductLine($reference)
+    {
+        $newLine = $this->getNewLine();
+
+        $variant = new Variante();
+        $where = [new DataBaseWhere('referencia', $reference)];
+        if ($variant->loadFromCode('', $where)) {
+            $product = $variant->getProducto();
+            $impuesto = $product->getImpuesto();
+
+            $newLine->cantidad = 1;
+            $newLine->codimpuesto = $impuesto->codimpuesto;
+            $newLine->descripcion = $variant->description();
+            $newLine->idproducto = $product->idproducto;
+            $newLine->iva = $impuesto->iva;
+            $newLine->pvpunitario = $variant->precio;
+            $newLine->recargo = $impuesto->recargo;
+            $newLine->referencia = $variant->referencia;
+        }
+
+        return $newLine;
+    }
+
+    /**
+     *
      * @return EstadoDocumento
      */
-    public function getState()
+    public function getStatus()
     {
-        foreach (self::$estados as $state) {
-            if ($state->idestado === $this->idestado) {
-                return $state;
+        foreach ($this->getAvaliableStatus() as $status) {
+            /// don't use ===
+            if ($status->idestado == $this->idestado) {
+                return $status;
             }
         }
 
@@ -330,28 +429,43 @@ abstract class BusinessDocument extends ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new Serie();
         new Ejercicio();
+        new Almacen();
 
-        return '';
+        return parent::install();
     }
 
     /**
-     * 
-     * @param string $cod
-     * @param array  $where
-     * @param array  $orderby
-     * 
-     * @return boolean
+     *
+     * @return BusinessDocument[]
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function parentDocuments()
     {
-        if (parent::loadFromCode($cod, $where, $orderby)) {
-            $this->idestadoAnt = $this->idestado;
-            return true;
+        $parents = [];
+
+        $keys = [];
+        $docTransformation = new DocTransformation();
+        $where = [
+            new DataBaseWhere('model2', $this->modelClassName()),
+            new DataBaseWhere('iddoc2', $this->primaryColumnValue())
+        ];
+        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+            $key = $docTrans->model1 . '|' . $docTrans->iddoc1;
+            if (in_array($key, $keys, true)) {
+                continue;
+            }
+
+            $newModelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $docTrans->model1;
+            $newModel = new $newModelClass();
+            if ($newModel->loadFromCode($docTrans->iddoc1)) {
+                $parents[] = $newModel;
+                $keys[] = $key;
+            }
         }
 
-        return false;
+        return $parents;
     }
 
     /**
@@ -371,40 +485,67 @@ abstract class BusinessDocument extends ModelClass
      */
     public function save()
     {
-        if (is_null($this->codigo)) {
-            $this->newCodigo();
+        /// check accounting exercise
+        if (empty($this->codejercicio)) {
+            $this->setDate($this->fecha, $this->hora);
         }
 
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->checkState() ? $this->saveUpdate() : false;
-            }
-
-            return $this->saveInsert();
+        /// empty code?
+        if (empty($this->codigo)) {
+            BusinessDocumentCode::getNewCode($this);
         }
 
-        return false;
+        /// match editable with status
+        $status = $this->getStatus();
+        $this->editable = $status->editable;
+
+        return parent::save();
     }
 
     /**
      * Assign the date and find an accounting exercise.
-     * 
+     *
      * @param string $date
      * @param string $hour
-     * 
+     *
      * @return bool
      */
     public function setDate(string $date, string $hour): bool
     {
-        $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->getByFecha($date);
-        if ($ejercicio) {
+        /// force check of warehouse-company relation
+        if (!$this->setWarehouse($this->codalmacen)) {
+            return false;
+        }
+
+        $ejercicio = new Ejercicio();
+        $ejercicio->idempresa = $this->idempresa;
+        if ($ejercicio->loadFromDate($date)) {
             $this->codejercicio = $ejercicio->codejercicio;
             $this->fecha = $date;
             $this->hora = $hour;
             return true;
         }
 
+        self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse($codalmacen)
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
+            return true;
+        }
+
+        self::$miniLog->warning(self::$i18n->trans('warehouse-not-found'));
         return false;
     }
 
@@ -423,59 +564,53 @@ abstract class BusinessDocument extends ModelClass
          * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
+
+        /// check ammount
         if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
             self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
             return false;
         }
 
-        $estadoDoc = new EstadoDocumento();
-        if ($estadoDoc->loadFromCode($this->idestado)) {
-            $this->editable = $estadoDoc->editable;
-        }
-
         return parent::test();
     }
 
-    private function checkState()
-    {
-        if ($this->idestado == $this->idestadoAnt) {
-            return true;
-        }
-
-        $state = $this->getState();
-        foreach ($this->getLines() as $line) {
-            $line->actualizastock = $state->actualizastock;
-            $line->save();
-            $line->updateStock($this->codalmacen);
-        }
-
-        if (!empty($state->generadoc)) {
-            $docGenerator = new BusinessDocumentGenerator();
-            if (!$docGenerator->generate($this, $state->generadoc)) {
-                return false;
-            }
-        }
-
-        $this->idestadoAnt = $this->idestado;
-        return true;
-    }
-
     /**
-     * Generates a new code.
+     *
+     * @param string $field
+     *
+     * @return bool
      */
-    private function newCodigo()
+    protected function onChange($field)
     {
-        $this->numero = '1';
-        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . static::tableName()
-            . " WHERE codejercicio = " . self::$dataBase->var2str($this->codejercicio)
-            . " AND codserie = " . self::$dataBase->var2str($this->codserie)
-            . " AND idempresa = " . self::$dataBase->var2str($this->idempresa) . ";";
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            $this->numero = (string) (1 + (int) $data[0]['num']);
+        if (!$this->editable && !$this->previousData['editable'] && $field != 'idestado') {
+            self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
+            return false;
         }
 
-        $this->codigo = $this->codejercicio . $this->codserie . $this->numero;
+        switch ($field) {
+            case 'codalmacen':
+            case 'idempresa':
+                self::$miniLog->warning(self::$i18n->trans('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']));
+                return false;
+
+            case 'codejercicio':
+            case 'codserie':
+                BusinessDocumentCode::getNewCode($this);
+                break;
+
+            case 'idestado':
+                $status = $this->getStatus();
+                foreach ($this->getLines() as $line) {
+                    $line->actualizastock = $status->actualizastock;
+                    $line->save();
+                }
+                $docGenerator = new BusinessDocumentGenerator();
+                if (!empty($status->generadoc) && !$docGenerator->generate($this, $status->generadoc)) {
+                    return false;
+                }
+                break;
+        }
+
+        return parent::onChange($field);
     }
 }

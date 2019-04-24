@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of PDFCore
@@ -98,40 +96,6 @@ class PDFCore
     }
 
     /**
-     * Gets the name of the country with that code.
-     *
-     * @param string $code
-     *
-     * @return string
-     */
-    protected function getCountryName($code): string
-    {
-        if (empty($code)) {
-            return '';
-        }
-
-        $country = new Model\Pais();
-        return $country->loadFromCode($code) ? $country->nombre : '';
-    }
-
-    /**
-     * Gets the name of an specify divisa
-     *
-     * @param string $code
-     *
-     * @return string
-     */
-    protected function getDivisaName($code): string
-    {
-        if (empty($code)) {
-            return '';
-        }
-
-        $divisa = new Model\Divisa();
-        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
-    }
-
-    /**
      * Returns the table data
      *
      * @param array $cursor
@@ -153,17 +117,8 @@ class PDFCore
                 }
 
                 $value = $row->{$col};
-                if ($tableOptions['cols'][$col]['col-type'] === 'number') {
-                    $value = $this->numberTools->format($value);
-                } elseif ($tableOptions['cols'][$col]['col-type'] === 'money') {
-                    $this->divisaTools->findDivisa($row);
-                    $value = $this->divisaTools->format($value, FS_NF0, 'coddivisa');
-                } elseif (is_bool($value)) {
-                    $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
-                } elseif (null === $value) {
-                    $value = '';
-                } elseif ($tableOptions['cols'][$col]['col-type'] === 'text') {
-                    $value = Base\Utils::fixHtml($value);
+                if (isset($tableOptions['cols'][$col]['widget'])) {
+                    $value = $tableOptions['cols'][$col]['widget']->plainText($row);
                 }
 
                 $tableData[$key][$col] = $value;
@@ -171,106 +126,6 @@ class PDFCore
         }
 
         return $tableData;
-    }
-
-    /**
-     * Insert footer details.
-     */
-    protected function insertFooter()
-    {
-        $now = $this->i18n->trans('generated-at', ['%when%' => date('d-m-Y H:i')]);
-        $this->pdf->addText($this->tableWidth + self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, $now, 0, 'right');
-    }
-
-    /**
-     * Insert header details.
-     *
-     * @param int $idempresa
-     */
-    protected function insertHeader($idempresa = null)
-    {
-        if ($this->insertedHeader) {
-            return;
-        }
-
-        $this->insertedHeader = true;
-        $this->insertCompanyLogo();
-
-        $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
-        $company = new Model\Empresa();
-        if ($company->loadFromCode($code)) {
-            $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9);
-            $address = $company->direccion;
-            $address .= empty($company->codpostal) ? '' : ' - CP: ' . $company->codpostal . ' - ';
-            $address .= empty($company->ciudad) ? '' : $company->ciudad;
-            $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
-            $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';
-            $contactData .= empty($company->telefono2) ? '' : $company->telefono2 . ' ';
-            $contactData .= empty($company->email) ? '' : $company->email . ' ';
-            $contactData .= empty($company->web) ? '' : $company->web;
-
-            $lineText = $company->cifnif . ' - ' . $address . ' - ' . $contactData;
-            $this->pdf->ezText($lineText . "\n", self::FONT_SIZE);
-        }
-    }
-
-    /**
-     * Insert company logo to PDF document or dies with a message to try to solve the problem.
-     */
-    protected function insertCompanyLogo()
-    {
-        if (!\function_exists('imagecreatefromstring')) {
-            die('ERROR: function imagecreatefromstring() not founded. '
-                . ' Do you have installed php-gd package and enabled support to allow us render images? .'
-                . 'Note that the package name can differ between operating system or PHP version.');
-        }
-
-        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
-        $logoSize = $this->calcLogoSize($logoPath);
-
-        $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
-        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
-        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
-    }
-
-    /**
-     * Calculate logo size and return as array of width and height
-     *
-     * @param $logo
-     *
-     * @return array|bool
-     */
-    protected function calcLogoSize($logo)
-    {
-        $logoSize = $size = getimagesize($logo);
-        if ($size[0] > 200) {
-            $logoSize[0] = 200;
-            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
-            $size[0] = $logoSize[0];
-            $size[1] = $logoSize[1];
-        }
-        if ($size[1] > 80) {
-            $logoSize[1] = 80;
-            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
-        }
-        return [
-            'width' => $logoSize[0],
-            'height' => $logoSize[1],
-        ];
-    }
-
-    /**
-     * Generate a table with two key => value per row.
-     *
-     * @param        $tableData
-     * @param string $title
-     * @param array  $options
-     */
-    protected function insertParalellTable($tableData, $title = '', $options = [])
-    {
-        $headers = ['data1' => 'data1', 'data2' => 'data2'];
-        $rows = $this->paralellTableData($tableData);
-        $this->pdf->ezTable($rows, $headers, $title, $options);
     }
 
     /**
@@ -300,30 +155,6 @@ class PDFCore
 
         if ($txt !== '') {
             $this->pdf->ezText($txt);
-        }
-    }
-
-    /**
-     * Adds a new page.
-     *
-     * @param string $orientation
-     */
-    protected function newPage($orientation = 'portrait')
-    {
-        if ($this->pdf === null) {
-            $this->pdf = new \Cezpdf('a4', $orientation);
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
-
-            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
-
-            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } elseif ($this->pdf->y < 200) {
-            $this->pdf->ezNewPage();
-            $this->insertedHeader = false;
-        } else {
-            $this->pdf->ezText("\n");
         }
     }
 
@@ -422,38 +253,13 @@ class PDFCore
                 continue;
             }
 
-            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
-                $tableOptions['cols'][$col->widget->fieldName] = [
+            if (!$col->hidden()) {
+                $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
+                $tableColsTitle[$col->widget->fieldname] = $this->i18n->trans($col->title);
+                $tableOptions['cols'][$col->widget->fieldname] = [
                     'justification' => $col->display,
-                    'col-type' => $col->widget->type,
+                    'widget' => $col->widget,
                 ];
-            }
-        }
-    }
-
-    /**
-     * Set table data as key => value.
-     *
-     * @param array $tableColsTitle
-     * @param array $tableDataAux
-     * @param mixed $model
-     */
-    protected function setTablaData(&$tableColsTitle, &$tableDataAux, $model)
-    {
-        foreach ($tableColsTitle as $key => $colTitle) {
-            $value = null;
-            if (isset($model->{$key})) {
-                $value = $model->{$key};
-            }
-
-            if (\is_bool($value)) {
-                $txt = $this->i18n->trans($value ? 'yes' : 'no');
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
-            } elseif ($value !== null && $value !== '') {
-                $value = \is_string($value) ? Base\Utils::fixHtml($value) : $value;
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
             }
         }
     }

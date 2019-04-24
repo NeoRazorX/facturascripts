@@ -26,9 +26,38 @@ namespace FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
  * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+ * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
  */
 class FileManager
 {
+
+    /**
+     * Default permissions to create new folders
+     */
+    const DEFAULT_FOLDER_PERMS = 0755;
+
+    /**
+     * Folders to exclude in scanFolder.
+     */
+    const EXCLUDE_FOLDERS = ['.', '..', '.DS_Store', '.well-known'];
+
+    /**
+     * Create the folder.
+     *
+     * @param string $folder    Path to folder to create
+     * @param bool   $recursive If needs to be created recursively
+     * @param int    $mode      Perms mode in octal format
+     *
+     * @return bool
+     */
+    public static function createFolder(string $folder, $recursive = false, $mode = self::DEFAULT_FOLDER_PERMS): bool
+    {
+        if (!file_exists($folder) && !@mkdir($folder, $mode, $recursive) && !is_dir($folder)) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Recursive delete directory.
@@ -69,7 +98,7 @@ class FileManager
             return $result;
         }
 
-        $markerData = explode(\PHP_EOL, file_get_contents($fileName));
+        $markerData = explode("\n", file_get_contents($fileName));
         $state = false;
         foreach ($markerData as $markerLine) {
             if (false !== strpos($markerLine, '# END ' . $marker)) {
@@ -189,7 +218,7 @@ class FileManager
     {
         $notwritable = [];
         foreach (static::scanFolder(FS_FOLDER, true) as $folder) {
-            if (!is_writable($folder)) {
+            if (is_dir($folder) && !is_writable($folder)) {
                 $notwritable[] = $folder;
             }
         }
@@ -202,11 +231,17 @@ class FileManager
      *
      * @param string $src
      * @param string $dst
+     * 
+     * @return bool
      */
-    public static function recurseCopy(string $src, string $dst)
+    public static function recurseCopy(string $src, string $dst): bool
     {
         $folder = opendir($src);
-        @mkdir($dst);
+
+        if (!static::createFolder($dst)) {
+            return false;
+        }
+
         while (false !== ($file = readdir($folder))) {
             if ($file === '.' || $file === '..') {
                 continue;
@@ -217,6 +252,8 @@ class FileManager
             }
         }
         closedir($folder);
+
+        return true;
     }
 
     /**
@@ -228,7 +265,7 @@ class FileManager
      *
      * @return array
      */
-    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = ['.', '..']): array
+    public static function scanFolder(string $folder, bool $recursive = false, array $exclude = self::EXCLUDE_FOLDERS): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (!is_array($scan)) {

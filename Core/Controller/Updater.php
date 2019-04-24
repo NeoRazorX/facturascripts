@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
 
@@ -36,7 +36,7 @@ class Updater extends Controller
 {
 
     const CORE_PROJECT_ID = 1;
-    const UPDATE_CORE_URL = 'https://beta.facturascripts.com/DownloadBuild';
+    const UPDATE_CORE_URL = 'https://www.facturascripts.com/DownloadBuild';
 
     /**
      *
@@ -55,7 +55,7 @@ class Updater extends Controller
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
         $pageData['title'] = 'updater';
-        $pageData['icon'] = 'fa-cloud-download';
+        $pageData['icon'] = 'fas fa-cloud-download-alt';
 
         return $pageData;
     }
@@ -206,11 +206,14 @@ class Updater extends Controller
             $dest = FS_FOLDER . DIRECTORY_SEPARATOR . $folder;
             if (!file_exists($origin)) {
                 $this->miniLog->critical('COPY ERROR: ' . $origin);
-                break;
+                return false;
             }
 
             FileManager::delTree($dest);
-            FileManager::recurseCopy($origin, $dest);
+            if (!FileManager::recurseCopy($origin, $dest)) {
+                $this->miniLog->critical('COPY ERROR2: ' . $origin);
+                return false;
+            }
         }
 
         FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');

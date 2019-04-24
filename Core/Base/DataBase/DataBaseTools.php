@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase as db;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 class DataBaseTools
 {
+
     /**
      * DataBase object.
      *
@@ -118,7 +118,7 @@ class DataBaseTools
      * @param array  $xmlCols
      * @param array  $xmlCons
      *
-     * @return bool
+     * @return string
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)
     {
@@ -126,64 +126,83 @@ class DataBaseTools
     }
 
     /**
-     * Compare two arrays with restrictions, return a SQL statement if founded differencies.
+     * Extract columns and restrictions form the XML definition file of a Table.
      *
      * @param string $tableName
-     * @param array  $xmlCons
-     * @param array  $dbCons
-     * @param bool   $deleteOnly
+     * @param array  $columns
+     * @param array  $constraints
      *
-     * @return string
+     * @return bool
      */
-    private function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
+    public function getXmlTable($tableName, &$columns, &$constraints)
     {
-        $result = '';
-
-        foreach ($dbCons as $db_con) {
-            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
-                $column = $this->searchInArray($xmlCons, 'name', $db_con['name']);
-                if (empty($column)) {
-                    $result .= self::$sql->sqlDropConstraint($tableName, $db_con);
-                }
-            }
+        $filename = $this->getXmlTableLocation($tableName);
+        if (!file_exists($filename)) {
+            self::$miniLog->critical(self::$i18n->trans('file-not-found', ['%fileName%' => $filename]));
+            return false;
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
-            foreach ($xmlCons as $xml_con) {
-                if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
-                    continue;
-                }
-
-                $column = $this->searchInArray($dbCons, 'name', $xml_con['name']);
-                if (empty($column)) {
-                    $result .= self::$sql->sqlAddConstraint($tableName, $xml_con['name'], $xml_con['constraint']);
-                }
-            }
+        $xml = simplexml_load_string(file_get_contents($filename, true));
+        if (false === $xml) {
+            self::$miniLog->critical(self::$i18n->trans('error-reading-file', ['%fileName%' => $filename]));
+            return false;
         }
 
-        return $result;
+        /// columns must exists or function must return false
+        if (!isset($xml->column)) {
+            return false;
+        }
+
+        $this->checkXmlColumns($columns, $xml);
+        if ($xml->constraint) {
+            $this->checkXmlConstraints($constraints, $xml);
+        }
+
+        return true;
     }
 
     /**
-     * Look for a column with a value by his name in array.
+     * Update the name and type foreach column from the XML
      *
-     * @param array  $items
-     * @param string $index
-     * @param string $value
-     *
-     * @return array
+     * @param $columns
+     * @param $xml
      */
-    private function searchInArray($items, $index, $value)
+    private function checkXmlColumns(&$columns, $xml)
     {
-        $result = [];
-        foreach ($items as $column) {
-            if ($column[$index] === $value) {
-                $result = $column;
-                break;
-            }
-        }
+        $key = 0;
+        foreach ($xml->column as $col) {
+            $columns[$key]['name'] = (string) $col->name;
+            $columns[$key]['type'] = (string) $col->type;
 
-        return $result;
+            $columns[$key]['null'] = 'YES';
+            if ($col->null && strtolower($col->null) === 'no') {
+                $columns[$key]['null'] = 'NO';
+            }
+
+            if ($col->default === '') {
+                $columns[$key]['default'] = null;
+            } else {
+                $columns[$key]['default'] = (string) $col->default;
+            }
+
+            ++$key;
+        }
+    }
+
+    /**
+     * Update the name and constraint foreach constraint from the XML
+     *
+     * @param array             $constraints
+     * @param \SimpleXMLElement $xml
+     */
+    private function checkXmlConstraints(&$constraints, $xml)
+    {
+        $key = 0;
+        foreach ($xml->constraint as $col) {
+            $constraints[$key]['name'] = (string) $col->name;
+            $constraints[$key]['constraint'] = (string) $col->type;
+            ++$key;
+        }
     }
 
     /**
@@ -229,6 +248,45 @@ class DataBaseTools
     }
 
     /**
+     * Compare two arrays with restrictions, return a SQL statement if founded differencies.
+     *
+     * @param string $tableName
+     * @param array  $xmlCons
+     * @param array  $dbCons
+     * @param bool   $deleteOnly
+     *
+     * @return string
+     */
+    private function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
+    {
+        $result = '';
+
+        foreach ($dbCons as $db_con) {
+            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
+                $column = $this->searchInArray($xmlCons, 'name', $db_con['name']);
+                if (empty($column)) {
+                    $result .= self::$sql->sqlDropConstraint($tableName, $db_con);
+                }
+            }
+        }
+
+        if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
+            foreach ($xmlCons as $xml_con) {
+                if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
+                    continue;
+                }
+
+                $column = $this->searchInArray($dbCons, 'name', $xml_con['name']);
+                if (empty($column)) {
+                    $result .= self::$sql->sqlAddConstraint($tableName, $xml_con['name'], $xml_con['constraint']);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Compares data types from a column.
      * Returns True if they are the same.
      *
@@ -256,43 +314,6 @@ class DataBaseTools
     }
 
     /**
-     * Extract columns and restrictions form the XML definition file of a Table.
-     *
-     * @param string $tableName
-     * @param array  $columns
-     * @param array  $constraints
-     *
-     * @return bool
-     */
-    public function getXmlTable($tableName, &$columns, &$constraints)
-    {
-        $return = false;
-        $filename = $this->getXmlTableLocation($tableName);
-
-        if (file_exists($filename)) {
-            $xml = simplexml_load_string(file_get_contents($filename, true));
-            if ($xml) {
-                if ($xml->column) {
-                    $this->checkXmlColumns($columns, $xml);
-
-                    /// columns must exists or function must return false
-                    $return = true;
-                }
-
-                if ($xml->constraint) {
-                    $this->checkXmlConstraints($constraints, $xml);
-                }
-            } else {
-                self::$miniLog->critical(self::$i18n->trans('error-reading-file', ['%fileName%' => $filename]));
-            }
-        } else {
-            self::$miniLog->critical(self::$i18n->trans('file-not-found', ['%fileName%' => $filename]));
-        }
-
-        return $return;
-    }
-
-    /**
      * Return the full file path for table XML file.
      *
      * @param string $tableName
@@ -310,46 +331,24 @@ class DataBaseTools
     }
 
     /**
-     * Update the name and type foreach column from the XML
+     * Look for a column with a value by his name in array.
      *
-     * @param $columns
-     * @param $xml
-     */
-    private function checkXmlColumns(&$columns, $xml)
-    {
-        $key = 0;
-        foreach ($xml->column as $col) {
-            $columns[$key]['name'] = (string) $col->name;
-            $columns[$key]['type'] = (string) $col->type;
-
-            $columns[$key]['null'] = 'YES';
-            if ($col->null && strtolower($col->null) === 'no') {
-                $columns[$key]['null'] = 'NO';
-            }
-
-            if ($col->default === '') {
-                $columns[$key]['default'] = null;
-            } else {
-                $columns[$key]['default'] = (string) $col->default;
-            }
-
-            ++$key;
-        }
-    }
-
-    /**
-     * Update the name and constraint foreach constraint from the XML
+     * @param array  $items
+     * @param string $index
+     * @param string $value
      *
-     * @param array             $constraints
-     * @param \SimpleXMLElement $xml
+     * @return array
      */
-    private function checkXmlConstraints(&$constraints, $xml)
+    private function searchInArray($items, $index, $value)
     {
-        $key = 0;
-        foreach ($xml->constraint as $col) {
-            $constraints[$key]['name'] = (string) $col->name;
-            $constraints[$key]['constraint'] = (string) $col->type;
-            ++$key;
+        $result = [];
+        foreach ($items as $column) {
+            if ($column[$index] === $value) {
+                $result = $column;
+                break;
+            }
         }
+
+        return $result;
     }
 }

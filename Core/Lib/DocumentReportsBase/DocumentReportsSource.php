@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -68,7 +68,7 @@ class DocumentReportsSource
     {
         $this->source = $source;
         $this->color = $color;
-        $this->dateFrom = new \DateTime(date('01-m-Y'));
+        $this->dateFrom = new \DateTime(date('01-01-Y'));
         $this->dateTo = new \DateTime(date('t-m-Y'));
     }
 
@@ -91,6 +91,9 @@ class DocumentReportsSource
 
             case 'customer-invoices':
                 return Model\FacturaCliente::tableName();
+                
+            case 'supplier-estimations':
+                return Model\PresupuestoProveedor::tableName();
 
             case 'supplier-orders':
                 return Model\PedidoProveedor::tableName();

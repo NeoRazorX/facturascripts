@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,12 +29,10 @@
             <widget type="text" fieldname="codserie" onclick="EditSerie" />
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="without-taxation" display="center" order="140">
-            <widget type="checkbox" fieldname="siniva">
-                <option color="red">0</option>
-            </widget>
+            <widget type="checkbox" fieldname="siniva" />
         </column>
     </columns>
 </view>

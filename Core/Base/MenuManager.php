@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,14 +18,14 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model;
 use FacturaScripts\Dinamic\Lib\MenuItem;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * Manage the use of the Facturascripts menu.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class MenuManager
 {
@@ -95,7 +95,9 @@ class MenuManager
     public function reload()
     {
         self::$menu = $this->loadUserMenu();
-        $this->setActiveMenu(self::$menuPageActive);
+        if (null !== self::$menuPageActive) {
+            $this->setActiveMenu(self::$menuPageActive);
+        }
     }
 
     /**
@@ -185,7 +187,7 @@ class MenuManager
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
             'ordernum' => 'ASC',
-            'title' => 'ASC',
+            'lower(title)' => 'ASC',
         ];
 
         $pages = self::$pageModel->all($where, $order, 0, 0);
@@ -222,7 +224,6 @@ class MenuManager
 
         /// We load the list of pages for the user
         $pages = $this->loadPages();
-        $sortMenu = [];
         foreach ($pages as $page) {
             if ($page->menu === '') {
                 continue;
@@ -234,7 +235,6 @@ class MenuManager
                 $submenuValue = null;
                 $result[$menuValue] = new MenuItem($menuValue, $i18n->trans($menuValue), '#');
                 $menuItem = &$result[$menuValue]->menu;
-                $sortMenu[$menuValue][] = $result[$menuValue]->title;
             }
 
             /// Submenu break control
@@ -249,7 +249,7 @@ class MenuManager
             $menuItem[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
         }
 
-        return $this->sortMenu($sortMenu, $result);
+        return $this->sortMenu($result);
     }
 
     /**
@@ -309,23 +309,22 @@ class MenuManager
     /**
      * Sorts menu and submenus by title.
      *
-     * @param array $sortMenu
      * @param array $result
      *
      * @return array
      */
-    private function sortMenu(&$sortMenu, &$result)
+    private function sortMenu(&$result)
     {
-        /// Reorder menu by title
-        array_multisort($sortMenu, SORT_ASC, $result);
+        /// sort this menu
+        uasort($result, function ($menu1, $menu2) {
+            return strcasecmp($menu1->title, $menu2->title);
+        });
 
-        /// Reorder submenu by title
-        foreach ($result as $posM => $menu) {
-            $sortSubMenu = [];
-            foreach ($menu->menu as $submenu) {
-                $sortSubMenu[$submenu->name] = $submenu->title;
+        /// sort submenus
+        foreach ($result as $key => $value) {
+            if (!empty($value->menu)) {
+                $result[$key]->menu = $this->sortMenu($value->menu);
             }
-            array_multisort($sortSubMenu, SORT_ASC, $result[$posM]->menu);
         }
 
         return $result;

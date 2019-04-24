@@ -19,20 +19,12 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     * along with this program. If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
 
-{% extends "Master/GridController.html.twig" %}
-
-{% block javascripts %}
-{{ parent() }}
-{% set masterView = fsc.views|keys|first %}
-{% if fsc.views[masterView].count > 0 %}
-<script src="node_modules/chart.js/dist/Chart.min.js"></script>
-{% endif %}
-{% endblock %}
+{% extends "Master/GridView.html.twig" %}
 
 {% block gridcard %}
     {# Grid data panel #}
@@ -42,19 +34,20 @@
                 <span><small id="account-description"></small></span>
                 <span class="float-right"><small><strong>{{ i18n.trans('unbalance') }}:&nbsp;<span id="unbalance">0.00</span></strong></small></span>
             </div>
-            <div class="body">
+            <div class="card-body p-0">
                 <div id="document-lines"></div>
             </div>
         </div>
     </div>
     {# Graphic panel #}
+    <script src="node_modules/chart.js/dist/Chart.min.js"></script>
     <div class="col">
         <div class="card h-100">
             <div class="card-header">
                 <small><strong>{{ i18n.trans('account-balance') }}:&nbsp;<span id="account-balance">0.00</span></strong></small>
             </div>
             {# Graphic Subaccount Balance panel #}
-            <div class="card-body">
+            <div class="card-body p-0">
                 <canvas id="detail-balance" class="w-100"></canvas>
             </div>
         </div>

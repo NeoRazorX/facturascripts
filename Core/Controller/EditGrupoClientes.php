@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,17 +19,28 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Lib\ExtendedController;
 
 /**
  * Controller to edit a single item from the GrupoClientes model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Nazca Networks <comercial@nazcanetworks.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Nazca Networks               <comercial@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class EditGrupoClientes extends ExtendedController\PanelController
+class EditGrupoClientes extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'GrupoClientes';
+    }
 
     /**
      * Returns basic page attributes
@@ -41,7 +52,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customer-group';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['icon'] = 'fas fa-folder-open';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -52,12 +63,15 @@ class EditGrupoClientes extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditGrupoClientes', 'GrupoClientes', 'customer-group');
-        $this->addListView('ListCliente', 'Cliente', 'customers', 'fa-users');
+        parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// Disable columns
+        $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
+
+        /// settings
         $this->views['ListCliente']->disableColumn('group', true);
+        $this->views['ListCliente']->settings['btnNew'] = false;
+        $this->views['ListCliente']->settings['btnDelete'] = false;
     }
 
     /**
@@ -69,15 +83,14 @@ class EditGrupoClientes extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditGrupoClientes':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListCliente':
                 $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
                 $where = [new DataBaseWhere('codgrupo', $codgrupo)];
                 $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

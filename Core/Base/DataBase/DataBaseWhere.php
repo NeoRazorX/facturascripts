@@ -24,8 +24,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Structure that defines a WHERE condition to filter the model data
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class DataBaseWhere
 {
@@ -113,11 +113,12 @@ class DataBaseWhere
     /**
      * Returns a string to apply to the WHERE clause.
      *
-     * @param bool $applyOperation
+     * @param bool   $applyOperation
+     * @param string $prefix
      *
      * @return string
      */
-    public function getSQLWhereItem($applyOperation = false): string
+    public function getSQLWhereItem($applyOperation = false, $prefix = ''): string
     {
         $fields = explode('|', $this->fields);
         $value = ($this->operator === 'LIKE') ? $this->value : $this->getValue($this->value);
@@ -130,6 +131,7 @@ class DataBaseWhere
             $result = '(' . $result . ')';
         }
 
+        $result = $prefix . $result;
         if ($applyOperation) {
             $result = ' ' . $this->operation . ' ' . $result;
         }
@@ -148,10 +150,23 @@ class DataBaseWhere
     {
         $result = '';
         $join = false;
-        foreach ($whereItems as $item) {
-            if (isset($item)) {
-                $result .= $item->getSQLWhereItem($join);
-                $join = true;
+        $group = false;
+
+        $keys = array_keys($whereItems);
+        foreach ($keys as $num => $key) {
+            $next = isset($keys[$num + 1]) ? $keys[$num + 1] : null;
+
+            // Calculate the logical grouping
+            $prefix = is_null($next) ? '' : self::getGroupPrefix($whereItems[$next], $group);
+
+            // Calculate the sql clause for the condition
+            $result .= $whereItems[$key]->getSQLWhereItem($join, $prefix);
+            $join = true;
+
+            // Closes the logical condition of grouping if it exists
+            if (!is_null($next) && $group && $whereItems[$next]->operation != 'OR') {
+                $result .= ')';
+                $group = false;
             }
         }
 
@@ -159,25 +174,29 @@ class DataBaseWhere
             return '';
         }
 
+        // Closes the logical condition of grouping
+        if ($group == true) {
+            $result .= ')';
+        }
+
         return ' WHERE ' . $result;
     }
 
     /**
      * Apply one value to a field list.
-     * 
+     *
      * @param string $value
      * @param array  $fields
-     * 
+     *
      * @return string
      */
     private function applyValueToFields($value, $fields): string
     {
         $result = '';
-        $union = '';
         foreach ($fields as $field) {
+            $union = empty($result) ? '' : ' OR ';
             if ($this->operator !== 'LIKE') {
                 $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $value;
-                $union = ' OR ';
                 continue;
             }
 
@@ -189,8 +208,6 @@ class DataBaseWhere
                 $union = ' AND ';
             }
             $result .= ')';
-
-            $union = ' OR ';
         }
 
         return $result;
@@ -206,15 +223,33 @@ class DataBaseWhere
     private function format2Date($addTime = false)
     {
         $time = $addTime ? ' H:i:s' : '';
-
         return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";
     }
 
     /**
+     * Calculate if you need grouping of conditions.
+     * It is necessary for logical conditions of type 'OR'
+     *
+     * @param DataBaseWhere $item
+     * @param bool          $group
+     *
+     * @return string
+     */
+    private static function getGroupPrefix(&$item, &$group): string
+    {
+        if ($item->operation == 'OR' && $group == false) {
+            $group = true;
+            return '(';
+        }
+
+        return '';
+    }
+
+    /**
      * Return list values for IN operator.
-     * 
+     *
      * @param string $values
-     * 
+     *
      * @return string
      */
     private function getValueFromOperatorIn($values): string
@@ -234,9 +269,9 @@ class DataBaseWhere
 
     /**
      * Return value for LIKE operator.
-     * 
+     *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValueFromOperatorLike($value): string
@@ -256,7 +291,7 @@ class DataBaseWhere
      * Returns the value for the operator.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValueFromOperator($value): string
@@ -284,7 +319,7 @@ class DataBaseWhere
      * Returns the value for the type.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValueFromType($value)
@@ -315,7 +350,7 @@ class DataBaseWhere
      * Returns the filter value formatted according to the type.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function getValue($value): string

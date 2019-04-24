@@ -11,24 +11,12 @@
         <type>character varying(10)</type>
     </column>
     <column>
-        <name>apartadoenv</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>apellidosenv</name>
-        <type>character varying(200)</type>
-    </column>
-    <column>
         <name>cifnif</name>
         <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <column>
         <name>ciudad</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>ciudadenv</name>
         <type>character varying(100)</type>
     </column>
     <column>
@@ -42,10 +30,6 @@
     <column>
         <name>codcliente</name>
         <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>coddir</name>
-        <type>integer</type>
     </column>
     <column>
         <name>coddivisa</name>
@@ -76,15 +60,7 @@
         <type>character varying(20)</type>
     </column>
     <column>
-        <name>codpaisenv</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
         <name>codpostal</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
-        <name>codpostalenv</name>
         <type>character varying(10)</type>
     </column>
     <column>
@@ -98,11 +74,6 @@
     </column>
     <column>
         <name>direccion</name>
-        <type>character varying(100)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>direccionenv</name>
         <type>character varying(100)</type>
     </column>
     <column>
@@ -127,7 +98,11 @@
         <type>time without time zone</type>
     </column>
     <column>
-        <name>idalbaran</name>
+        <name>idcontactoenv</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idcontactofact</name>
         <type>integer</type>
     </column>
     <column>
@@ -147,20 +122,18 @@
     <column>
         <name>irpf</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>neto</name>
         <type>double precision</type>
-        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>nombrecliente</name>
         <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>nombreenv</name>
-        <type>character varying(200)</type>
     </column>
     <column>
         <name>numero</name>
@@ -176,15 +149,17 @@
         <type>text</type>
     </column>
     <column>
+        <name>pagado</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>porcomision</name>
         <type>double precision</type>
     </column>
     <column>
         <name>provincia</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>provinciaenv</name>
         <type>character varying(100)</type>
     </column>
     <column>
@@ -195,22 +170,18 @@
     <column>
         <name>total</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totaleuros</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totalirpf</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totaliva</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>totalrecargo</name>
@@ -221,19 +192,23 @@
         <type>PRIMARY KEY (idpedido)</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_series</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_pedidoscli_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_pedidoscli_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_albaranes</name>
-        <type>FOREIGN KEY (idalbaran) REFERENCES albaranescli (idalbaran) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <name>ca_pedidoscli_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_codigo_pedidoscli2</name>
+        <name>ca_pedidoscli_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_pedidoscli</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
 </table>

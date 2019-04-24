@@ -62,7 +62,7 @@ trait ModelTrait
      *
      * @return string
      */
-    public function modelName()
+    protected function modelName()
     {
         return get_class($this);
     }

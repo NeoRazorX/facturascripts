@@ -88,7 +88,7 @@ class User extends Base\ModelClass
     public $lastip;
 
     /**
-     * Indicates the level of security that the user can access
+     * Indicates the level of security that the user can access.
      *
      * @var integer
      */
@@ -138,7 +138,7 @@ class User extends Base\ModelClass
         $this->enabled = true;
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
-        $this->level = 1;
+        $this->level = 2;
     }
 
     /**
@@ -265,6 +265,12 @@ class User extends Base\ModelClass
             return true;
         }
 
+        // To ensure that any user of facturascripts_2015 can login and rehash its password
+        if (sha1($value) === $this->password) {
+            $this->setPassword($value);
+            return true;
+        }
+
         return false;
     }
 
@@ -280,5 +286,38 @@ class User extends Base\ModelClass
         if ($this->level === null) {
             $this->level = 0;
         }
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $result = parent::saveInsert($values);
+        if ($result && !$this->admin) {
+            /// assign to some role
+            $roleModel = new Role();
+            foreach ($roleModel->all() as $role) {
+                $roleUser = new RoleUser();
+                $roleUser->codrole = $role->codrole;
+                $roleUser->nick = $this->nick;
+                $roleUser->save();
+
+                /// set user homepage
+                foreach ($roleUser->getRoleAccess() as $roleAccess) {
+                    $this->homepage = $roleAccess->pagename;
+                    if ('List' == substr($this->homepage, 0, 4)) {
+                        break;
+                    }
+                }
+                $this->save();
+                break;
+            }
+        }
+
+        return $result;
     }
 }

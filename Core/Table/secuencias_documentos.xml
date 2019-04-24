@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : secuencias_documentos.xml
+    Author     : Carlos Garcia Gomez
+                 Cristo M. Estévez Hernández
+    Description:
+        Structure for the secuencias_documentos table.
+-->
+<table>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idsecuencia</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('estados_documentos_idestado_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>longnumero</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>patron</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>tipodoc</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>titulo</name>
+        <type>character varying(50)</type>
+    </column>
+    <constraint>
+        <name>secuencias_documentos_pkey</name>
+        <type>PRIMARY KEY (idsecuencia)</type>
+    </constraint>
+    <constraint>
+        <name>ca_secuencias_documentos_ejercicio</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_secuencias_documentos_serie</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_secuencias_documentos_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

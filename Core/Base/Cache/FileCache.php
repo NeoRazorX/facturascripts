@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Base\Cache;
 
+use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 
@@ -71,7 +72,7 @@ class FileCache implements AdaptorInterface
         $this->minilog = new MiniLog();
 
         $dir = self::$config['cache_path'];
-        if (!file_exists($dir) && !@mkdir($dir, 0775, true) && !is_dir($dir)) {
+        if (!FileManager::createFolder($dir, true)) {
             $this->minilog->critical($this->i18n->trans('cant-create-folder', ['%folderName%' => $dir]));
         }
         $this->minilog->debug($this->i18n->trans('using-filecache'));

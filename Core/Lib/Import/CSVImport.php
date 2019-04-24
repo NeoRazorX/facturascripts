@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,19 +30,14 @@ class CSVImport
 {
 
     /**
-     * Return the insert SQL reading a CSV file for the specific table
+     * Return the insert SQL reading a CSV file for the specific file
      *
      * @param string $table
-     *
+     * @param string $filePath
      * @return string
      */
-    public static function importTableSQL(string $table): string
+    public static function importFileSQL(string $table, string $filePath): string
     {
-        $filePath = static::getTableFilePath($table);
-        if ($filePath === '') {
-            return '';
-        }
-
         $csv = new Csv();
         $csv->auto($filePath);
         $dataBase = new DataBase();
@@ -65,11 +60,28 @@ class CSVImport
     }
 
     /**
+     * Return the insert SQL reading a CSV file for the specific table
+     *
+     * @param string $table
+     *
+     * @return string
+     */
+    public static function importTableSQL(string $table): string
+    {
+        $filePath = static::getTableFilePath($table);
+        if ($filePath === '') {
+            return '';
+        }
+
+        return static::importFileSQL($table, $filePath);
+    }
+
+    /**
      * Returns a value to SQL format.
-     * 
+     *
      * @param DataBase $dataBase
      * @param string   $value
-     * 
+     *
      * @return string
      */
     private static function valueToSql(DataBase &$dataBase, string $value): string

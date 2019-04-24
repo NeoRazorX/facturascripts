@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,12 +24,23 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to edit a single item from the Cuenta model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author PC REDNET S.L.               <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class EditCuenta extends ExtendedController\PanelController
+class EditCuenta extends ExtendedController\EditController
 {
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Cuenta';
+    }
 
     /**
      * Returns basic page attributes
@@ -39,9 +50,9 @@ class EditCuenta extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounts';
+        $pagedata['title'] = 'account';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-bar-chart';
+        $pagedata['icon'] = 'fas fa-book';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -52,7 +63,7 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditCuenta', 'Cuenta', 'account');
+        parent::createViews();
         $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts');
         $this->addListView('ListCuenta', 'Cuenta', 'children-accounts');
         $this->setTabsPosition('bottom');
@@ -66,22 +77,20 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function loadData($viewName, $view)
     {
+        $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
         switch ($viewName) {
-            case 'EditCuenta':
-                $code = $this->request->get('code');
-                $view->loadData($code);
+            case 'ListCuenta':
+                $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
+                $view->loadData('', $where);
                 break;
 
             case 'ListSubcuenta':
-                $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
                 break;
 
-            case 'ListCuenta':
-                $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
-                $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
-                $view->loadData('', $where);
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }

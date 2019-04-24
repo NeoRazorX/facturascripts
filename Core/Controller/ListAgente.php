@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to list the items in the Agentes model
@@ -38,8 +39,8 @@ class ListAgente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agents';
-        $pagedata['icon'] = 'fa-id-badge';
-        $pagedata['menu'] = 'admin';
+        $pagedata['icon'] = 'fas fa-id-badge';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
@@ -49,11 +50,11 @@ class ListAgente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAgente', 'Agente');
-        $this->addSearchFields('ListAgente', ['nombre', 'apellidos', 'codagente', 'email']);
+        $this->addView('ListAgente', 'Agente', 'agents', 'fas fa-id-badge');
+        $this->addSearchFields('ListAgente', ['nombre', 'codagente', 'email']);
 
         $this->addOrderBy('ListAgente', ['codagente'], 'code');
-        $this->addOrderBy('ListAgente', ['concat(nombre,apellidos)'], 'name', 1);
+        $this->addOrderBy('ListAgente', ['nombre'], 'name', 1);
         $this->addOrderBy('ListAgente', ['provincia'], 'province');
 
         $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
@@ -62,6 +63,11 @@ class ListAgente extends ExtendedController\ListController
         $cityValues = $this->codeModel->all('agentes', 'ciudad', 'ciudad');
         $this->addFilterSelect('ListAgente', 'ciudad', 'city', 'ciudad', $cityValues);
 
-        $this->addFilterCheckbox('ListAgente', 'debaja', 'suspended', 'debaja');
+        $values = [
+            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $this->i18n->trans('all'), 'where' => []]
+        ];
+        $this->addFilterSelectWhere('ListAgente', 'status', $values);
     }
 }

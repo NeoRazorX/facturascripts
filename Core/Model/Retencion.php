@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Utils;
  * Class to manage the data of retenciones table
  *
  * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
  */
 class Retencion extends Base\ModelClass
 {
@@ -102,5 +103,18 @@ class Retencion extends Base\ModelClass
         }
 
         return parent::test();
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return parent::url($type, 'ListImpuesto?activetab=List');
     }
 }

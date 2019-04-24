@@ -21,7 +21,7 @@
  */
 
 var mainForm, accountDescription, accountBalance, total, unbalance, vatRegister;
-var vatModal, vatForm;
+var vatModal, vatBody;
 var accountData = {"subaccount": ""};
 var accountGraph = null;
 /*
@@ -62,7 +62,7 @@ function clearAccountData() {
     // Update data labels
     accountDescription.textContent = "";
     accountBalance.textContent = "";
-    vatRegister.disabled = true;
+    vatRegister.prop("disabled", true);
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
         dataset.data.lenght = 0;
@@ -82,7 +82,7 @@ function setAccountData(data) {
     // Update data labels and buttons
     accountDescription.textContent = data.description;
     accountBalance.textContent = data.balance;
-    vatRegister.disabled = (!data.codevat);
+    vatRegister.prop("disabled", !data.codevat);
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
         dataset.data.lenght = 0; // Force delete old data
@@ -107,11 +107,11 @@ function saveVatRegister() {
     var selectedRow = getRowSelected();
     if (selectedRow !== null) {
         var values = [
-            {"field": "documento", "value": vatForm.find(".modal-body [name=\"documento\"]").val()},
-            {"field": "cifnif", "value": vatForm.find(".modal-body [name=\"cifnif\"]").val()},
-            {"field": "baseimponible", "value": vatForm.find(".modal-body [name=\"baseimponible\"]").val()},
-            {"field": "iva", "value": vatForm.find(".modal-body [name=\"iva\"]").val()},
-            {"field": "recargo", "value": vatForm.find(".modal-body [name=\"recargo\"]").val()}
+            {"field": "documento", "value": vatBody.find(".form-group input[name=\"documento\"]").val()},
+            {"field": "cifnif", "value": vatBody.find(".form-group input[name=\"cifnif\"]").val()},
+            {"field": "baseimponible", "value": vatBody.find(".form-group input[name=\"baseimponible\"]").val()},
+            {"field": "iva", "value": vatBody.find(".form-group input[name=\"iva\"]").val()},
+            {"field": "recargo", "value": vatBody.find(".form-group input[name=\"recargo\"]").val()}
         ];
         setGridRowValues(selectedRow, values);
     }
@@ -122,28 +122,32 @@ function saveVatRegister() {
 /**
  * Show VAT Register for account entry
  *
- * @param {string} mainForm
- * @param {string} action
+ * @param {string} idmodal
  */
-function showVatRegister(action, mainForm) {
+function showVatRegister(idmodal) {
     var selectedRow = getRowSelected();
     if (selectedRow !== null) {
         // Set form object, first time
         if (vatModal === undefined) {
-            vatModal = $("#" + action);
-            vatForm = vatModal.find(".modal-content form");
+            vatModal = $("#modal" + idmodal);
+            vatBody = vatModal.find(".modal-body");
+
+            // Redired submit action
+            vatFooter = vatModal.find(".modal-footer");
+            vatSubmit = vatFooter.find("button[value=\"" + idmodal + "\"]");
+            vatSubmit.prop("type", "button");
+            vatSubmit.attr("onclick", "saveVatRegister()");
         }
 
         // Load data from documentLineData and master document to modal form
         var values = getGridRowValues(selectedRow);
-        var docForm = vatForm.find(".modal-body [name=\"documento\"]");
+        var docForm = vatBody.find(".form-group input[name=\"documento\"]");
         docForm.val(values["documento"]);
-        vatForm.find(".modal-body [name=\"cifnif\"]").val(values["cifnif"]);
-        vatForm.find(".modal-body [name=\"baseimponible\"]").val(values["baseimponible"]);
-        vatForm.find(".modal-body [name=\"iva\"]").val(values["iva"]);
-        vatForm.find(".modal-body [name=\"recargo\"]").val(values["recargo"]);
-        // Redired submit action
-        vatForm[0].onsubmit = saveVatRegister;
+        vatBody.find(".form-group input[name=\"cifnif\"]").val(values["cifnif"]);
+        vatBody.find(".form-group input[name=\"baseimponible\"]").val(values["baseimponible"]);
+        vatBody.find(".form-group input[name=\"iva\"]").val(values["iva"]);
+        vatBody.find(".form-group input[name=\"recargo\"]").val(values["recargo"]);
+
         // Show VAT modal form
         deselectCell(); // Force deselect grid data
         vatModal.modal("show");
@@ -163,7 +167,7 @@ function customAfterSelection(row1, col1, row2, col2, preventScrolling) {
                 return;
             }
 
-            var exercise = $("input[name=codejercicio]")[0];
+            var exercise = $("#formGridEditAsiento input[name=codejercicio]")[0];
             var data = {
                 action: "account-data",
                 codsubcuenta: subAccount,
@@ -223,7 +227,7 @@ function customAfterChange(changes) {
             total.val(results.total);
             // show VAT Register, if needed
             if (Object.keys(results.vat).length > 0) {
-                showVatRegister("VAT-register", "EditAsiento");
+                showVatRegister("vat-register", "EditAsiento");
             }
         },
         error: function (xhr, status, error) {
@@ -241,16 +245,17 @@ function customAfterChange(changes) {
 $(document).ready(function () {
     if (document.getElementById("document-lines")) {
         // Init Working variables
-        mainForm = $("form[name=EditAsiento]");
+        mainForm = $("#formGridEditAsiento");
         accountDescription = document.getElementById("account-description");
         accountBalance = document.getElementById("account-balance");
         unbalance = document.getElementById("unbalance");
-        total = $("form[name=EditAsiento] input[name=importe]");
-        vatRegister = document.getElementById("vat-register-btn");
-        vatRegister.disabled = true;
+        total = $("#formGridEditAsiento input[name=importe]");
+        vatRegister = $("#vat-register-btn");
+        vatRegister.prop("disabled", true);
+
         // Set initial clone state
         if (getGridFieldData(0, "idpartida") === undefined) {
-            document.getElementById("clone-btn").disabled = true;
+            $("#clone-btn").prop("disabled", true);
         }
 
         // Calculate initial unbalance
@@ -278,7 +283,6 @@ $(document).ready(function () {
                 options: {}
             });
         }
-
         selectCell(0, 0);
     }
 });

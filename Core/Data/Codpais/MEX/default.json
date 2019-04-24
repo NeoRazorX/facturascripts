@@ -1,0 +1,8 @@
+{
+    "default": {
+        "coddivisa": "MXN",
+        "codserie": "A",
+        "codpago": "CONT",
+        "codimpuesto": "002"
+    }
+}

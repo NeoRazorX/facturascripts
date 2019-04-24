@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,17 +19,27 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Model;
+use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Controller to edit a single item from the User model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class EditUser extends ExtendedController\PanelController
+class EditUser extends ExtendedController\EditController
 {
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'User';
+    }
 
     /**
      * Returns basic page attributes
@@ -40,7 +50,7 @@ class EditUser extends ExtendedController\PanelController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'user';
-        $pagedata['icon'] = 'fa-user';
+        $pagedata['icon'] = 'fas fa-user-tie';
         $pagedata['menu'] = 'admin';
         $pagedata['showonmenu'] = false;
 
@@ -52,16 +62,32 @@ class EditUser extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        /// Add all views
-        $this->addEditView('EditUser', 'User', 'user', 'fa-user');
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fa-address-card-o');
+        parent::createViews();
+        $this->setTabsPosition('top');
 
-        /// Load values for input selects
-        $this->loadHomepageValues();
-        $this->loadLanguageValues();
+        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
 
         /// Disable column
         $this->views['EditRoleUser']->disableColumn('user', true);
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        $result = parent::editAction();
+
+        // Are we changing user language?
+        if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
+            $this->i18n->setLangCode($this->views['EditUser']->model->nick);
+
+            $expire = time() + FS_COOKIES_EXPIRE;
+            $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
+        }
+
+        return $result;
     }
 
     /**
@@ -106,16 +132,20 @@ class EditUser extends ExtendedController\PanelController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditUser':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'EditRoleUser':
                 $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData('', $where, [], 0, 0);
                 break;
+
+            case 'EditUser':
+                parent::loadData($viewName, $view);
+                $this->loadHomepageValues();
+                $this->loadLanguageValues();
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 
@@ -124,17 +154,8 @@ class EditUser extends ExtendedController\PanelController
      */
     private function loadHomepageValues()
     {
-        $user = new Model\User();
-        $code = $this->request->get('code');
-
-        $userPages = [
-            ['value' => '---null---', 'title' => '------'],
-        ];
-        if ($user->loadFromCode($code)) {
-            $userPages = $this->getUserPages($user);
-        }
-
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
+        $userPages = $this->getUserPages($this->views['EditUser']->model);
         $columnHomepage->widget->setValuesFromArray($userPages);
     }
 

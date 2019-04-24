@@ -7,6 +7,10 @@
 -->
 <table>
     <column>
+        <name>canal</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>codserie</name>
         <type>character varying(4)</type>
         <null>NO</null>
@@ -16,11 +20,19 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>iddiario</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>siniva</name>
         <type>boolean</type>
     </column>
     <constraint>
         <name>series_pkey</name>
         <type>PRIMARY KEY (codserie)</type>
+    </constraint>
+    <constraint>
+        <name>ca_series_diarios</name>
+        <type>FOREIGN KEY (iddiario) REFERENCES diarios (iddiario) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

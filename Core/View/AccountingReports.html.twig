@@ -5,7 +5,7 @@
      * Annual accounts and accounting reports.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -47,15 +47,15 @@
             <div class="col-sm-7 col-6">
                 <div class="btn-group d-xs-none">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
                         <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
-                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                            <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
                         <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                            <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
@@ -63,7 +63,7 @@
 
             <div class="col-sm-5 col-6 text-right">
                 <h1 style="margin-top: 0px; margin-bottom: 0px;">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                    <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
             </div>
         </div>
@@ -75,7 +75,7 @@
                 <div class="nav flex-column nav-pills" id="mainTabs" role="tablist" aria-orientation="vertical">
                     {% for ejercicio in fsc.ejercicios %}
                         <a class="nav-link{% if loop.first %} active{% endif %}" id="tab-{{ ejercicio.codejercicio }}" data-toggle="pill" href="#data-{{ ejercicio.codejercicio }}" role="tab" aria-controls="data-{{ ejercicio.codejercicio }}" aria-selected="{{ loop.first }}">
-                            <i class="fa fa-calendar fa-fw" aria-hidden="true"></i> {{ ejercicio.nombre }}
+                            <i class="fas fa-calendar fa-fw" aria-hidden="true"></i> {{ ejercicio.nombre }}
                         </a>
                     {% endfor %}
                 </div>
@@ -97,7 +97,7 @@
                                                 {# -- Document Title -- #}
                                                 <div class="col-12">
                                                     <h3 class="text-capitalize">
-                                                        <i class="fa fa-book fa-fw" aria-hidden="true"></i> {{ i18n.trans(report.description) }}
+                                                        <i class="fas fa-book fa-fw" aria-hidden="true"></i> {{ i18n.trans(report.description) }}
                                                     </h3>
                                                 </div>
                                             </div>
@@ -138,7 +138,7 @@
 
                                                 <div class="col-3">
                                                     <button type="submit" class="btn btn-primary" {{ popoverTitle(generate_title, 'bottom') }}>
-                                                        <i class="fa fa-eye fa-fw" aria-hidden="true"></i> {{ generate }}
+                                                        <i class="fas fa-eye fa-fw" aria-hidden="true"></i> {{ generate }}
                                                     </button>
                                                 </div>
                                             </div>

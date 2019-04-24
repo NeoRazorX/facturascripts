@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,6 +88,13 @@ class CodeModel
             $result[] = new self(['code' => null, 'description' => '------']);
         }
 
+        /// is a table or a model?
+        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
+            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+            $model = new $modelClass();
+            return $model->codeModelAll($fieldCode);
+        }
+
         if (self::$dataBase === null) {
             self::$dataBase = new Base\DataBase();
         }
@@ -109,14 +116,21 @@ class CodeModel
      * @param string $tableName
      * @param string $fieldCode
      * @param string $fieldDescription
-     * @param string $search
+     * @param string $query
      *
      * @return self[]
      */
-    public static function search($tableName, $fieldCode, $fieldDescription, $search)
+    public static function search($tableName, $fieldCode, $fieldDescription, $query)
     {
+        /// is a table or a model?
+        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
+            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+            $model = new $modelClass();
+            return $model->codeModelSearch($query, $fieldCode);
+        }
+
         $fields = $fieldCode . '|' . $fieldDescription;
-        $where = [new DataBaseWhere($fields, mb_strtolower($search), 'LIKE')];
+        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
@@ -132,6 +146,18 @@ class CodeModel
      */
     public function get($tableName, $fieldCode, $code, $fieldDescription)
     {
+        /// is a table or a model?
+        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
+            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+            $model = new $modelClass();
+            $where = [new DataBaseWhere($fieldCode, $code)];
+            if ($model->loadFromCode('', $where)) {
+                return new self(['code' => $model->{$fieldCode}, 'description' => $model->primaryDescription()]);
+            }
+
+            return new self();
+        }
+
         if (self::$dataBase === null) {
             self::$dataBase = new Base\DataBase();
         }
@@ -161,7 +187,6 @@ class CodeModel
     public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
-
-        return $model->description;
+        return empty($model->description) ? $code : $model->description;
     }
 }

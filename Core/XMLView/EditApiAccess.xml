@@ -53,8 +53,8 @@
     <rows>
         <row type="footer">
             <group name="footer_actions" footer="specials-actions">
-                <button type="action" label="add-all-enabled" color="info" action="add-api-access-enabled" icon="fa-plus" />
-                <button type="action" label="add-all-disabled" color="info" action="add-api-access-disabled" icon="fa-plus" />
+                <button type="action" label="add-all-enabled" color="info" action="add-api-access-enabled" icon="fas fa-plus" />
+                <button type="action" label="add-all-disabled" color="info" action="add-api-access-disabled" icon="fas fa-plus" />
             </group>
         </row>
     </rows>

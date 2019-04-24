@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
+class EditAlbaranCliente extends ExtendedController\SalesDocumentController
 {
 
     /**
@@ -38,22 +38,10 @@ class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-note';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
     }
 
     /**
@@ -64,21 +52,5 @@ class EditAlbaranCliente extends ExtendedController\BusinessDocumentController
     protected function getModelClassName()
     {
         return 'AlbaranCliente';
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        if ($viewName === 'EditAlbaranCliente') {
-            $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
-            $view->loadData($idalbaran);
-        }
-
-        parent::loadData($viewName, $view);
     }
 }

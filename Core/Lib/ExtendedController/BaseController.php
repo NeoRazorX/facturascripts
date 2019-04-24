@@ -47,6 +47,13 @@ abstract class BaseController extends Base\Controller
     public $codeModel;
 
     /**
+     * Indicates current view, when drawing.
+     *
+     * @var string
+     */
+    private $current;
+
+    /**
      * Object to export data.
      *
      * @var ExportManager
@@ -54,27 +61,31 @@ abstract class BaseController extends Base\Controller
     public $exportManager;
 
     /**
-     * List of views displayed by the controller.
+     * Tools to work with numbers.
      *
-     * @var mixed
+     * @var Base\NumberTools
      */
-    public $views;
+    public $numberTools;
 
     /**
-     * List of configuration options for each of the views.
-     * [
-     *   'keyView1' => ['icon' => 'fa-icon1', 'active' => TRUE],
-     *   'keyView2' => ['icon' => 'fa-icon2', 'active' => TRUE]
-     * ]
+     * List of views displayed by the controller.
      *
-     * @var array
+     * @var BaseView[]
      */
-    private $settings;
+    public $views;
 
     /**
      * Inserts the views to display.
      */
     abstract protected function createViews();
+
+    /**
+     * Loads the data to display.
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    abstract protected function loadData($viewName, $view);
 
     /**
      * Initializes all the objects and properties.
@@ -88,32 +99,76 @@ abstract class BaseController extends Base\Controller
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->active = $this->request->get('active', '');
+        $activeTabGet = $this->request->query->get('activetab', '');
+        $this->active = $this->request->request->get('activetab', $activeTabGet);
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
+        $this->numberTools = new Base\NumberTools();
         $this->views = [];
-        $this->settings = [];
+    }
+
+    /**
+     * Adds a new button to the tab.
+     *
+     * @param string $viewName
+     * @param array  $btnArray
+     */
+    public function addButton($viewName, $btnArray)
+    {
+        $row = $this->views[$viewName]->getRow('actions');
+        if ($row) {
+            $row->addButton($btnArray);
+        }
+    }
+
+    /**
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    public function addCustomView($viewName, $view)
+    {
+        if ($viewName !== $view->getViewName()) {
+            $this->miniLog->error('$viewName must be equals to $view->name');
+            return;
+        }
+
+        $view->loadPageOptions($this->user);
+        $this->views[$viewName] = $view;
+        if (empty($this->active)) {
+            $this->active = $viewName;
+        }
+    }
+
+    /**
+     *
+     * @return BaseView
+     */
+    public function getCurrentView()
+    {
+        return $this->views[$this->current];
     }
 
     /**
      * Returns the configuration value for the indicated view.
      *
-     * @param string|null $viewName
-     * @param string|null $property
+     * @param string $viewName
+     * @param string $property
      *
      * @return mixed
      */
     public function getSettings($viewName, $property)
     {
-        if (empty($viewName)) {
-            return $this->settings;
-        }
+        return isset($this->views[$viewName]->settings[$property]) ? $this->views[$viewName]->settings[$property] : null;
+    }
 
-        if (empty($property)) {
-            return $this->settings[$viewName];
-        }
-
-        return $this->settings[$viewName][$property];
+    /**
+     *
+     * @param string $viewName
+     */
+    public function setCurrentView($viewName)
+    {
+        $this->current = $viewName;
     }
 
     /**
@@ -121,24 +176,11 @@ abstract class BaseController extends Base\Controller
      *
      * @param string $viewName
      * @param string $property
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function setSettings($viewName, $property, $value)
     {
-        $this->settings[$viewName][$property] = $value;
-    }
-
-    /**
-     * Returns the configuration property value for a specified $field.
-     *
-     * @param mixed  $model
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        return isset($model->{$field}) ? $model->{$field} : null;
+        $this->views[$viewName]->settings[$property] = $value;
     }
 
     /**
@@ -150,7 +192,6 @@ abstract class BaseController extends Base\Controller
     protected function autocompleteAction(): array
     {
         $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'formname']);
-
         if ($data['source'] == '') {
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }
@@ -159,7 +200,51 @@ abstract class BaseController extends Base\Controller
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
         }
+
+        if (empty($results)) {
+            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-data')];
+        }
         return $results;
+    }
+
+    /**
+     * Action to delete data.
+     *
+     * @return bool
+     */
+    protected function deleteAction()
+    {
+        if (!$this->permissions->allowDelete) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            return false;
+        }
+
+        $model = $this->views[$this->active]->model;
+        $codes = $this->request->request->get('code', '');
+
+        // deleting multiples rows?
+        if (is_array($codes)) {
+            $numDeletes = 0;
+            foreach ($codes as $cod) {
+                if ($model->loadFromCode($cod) && $model->delete()) {
+                    ++$numDeletes;
+                } else {
+                    break;
+                }
+            }
+
+            if ($numDeletes > 0) {
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                return true;
+            }
+        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+            // deleting a single row?
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            return true;
+        }
+
+        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+        return false;
     }
 
     /**
@@ -167,6 +252,7 @@ abstract class BaseController extends Base\Controller
      *
      * @param string $viewName
      * @param string $fieldName
+     *
      * @return array
      */
     protected function getAutocompleteValues(string $viewName, string $fieldName): array
@@ -179,33 +265,6 @@ abstract class BaseController extends Base\Controller
             }
         }
         return $result;
-    }
-
-    protected function getFormData(): array
-    {
-        $data = $this->request->request->all();
-
-        /// get file uploads
-        foreach ($this->request->files->all() as $key => $uploadFile) {
-            if (is_null($uploadFile)) {
-                continue;
-            } elseif (!$uploadFile->isValid()) {
-                $this->miniLog->error($uploadFile->getErrorMessage());
-                continue;
-            }
-
-            /// exclude php files
-            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $this->miniLog->error($this->i18n->trans('php-files-blocked'));
-                continue;
-            }
-
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $data[$key] = $uploadFile->getClientOriginalName();
-            }
-        }
-
-        return $data;
     }
 
     /**

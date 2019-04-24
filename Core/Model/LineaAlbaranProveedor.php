@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,13 +29,6 @@ class LineaAlbaranProveedor extends Base\BusinessDocumentLine
     use Base\ModelTrait;
 
     /**
-     * Order line ID, if any.
-     *
-     * @var int
-     */
-    public $idlineapedido;
-
-    /**
      * Delivery note ID of this line.
      *
      * @var int
@@ -43,11 +36,39 @@ class LineaAlbaranProveedor extends Base\BusinessDocumentLine
     public $idalbaran;
 
     /**
-     * Order ID related to the delivery note, if any.
-     *
-     * @var int
+     * 
+     * @return string
      */
-    public $idpedido;
+    public function documentColumn()
+    {
+        return 'idalbaran';
+    }
+
+    /**
+     * 
+     * @return AlbaranProveedor
+     */
+    public function getDocument()
+    {
+        $albaran = new AlbaranProveedor();
+        $albaran->loadFromCode($this->idalbaran);
+        return $albaran;
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependency
+        new AlbaranProveedor();
+
+        return parent::install();
+    }
 
     /**
      * Returns the name of the table that uses this model.
@@ -60,16 +81,18 @@ class LineaAlbaranProveedor extends Base\BusinessDocumentLine
     }
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
+     * 
+     * @param string $type
+     * @param string $list
      *
      * @return string
      */
-    public function install()
+    public function url(string $type = 'auto', string $list = 'List')
     {
-        new AlbaranProveedor();
+        if (null !== $this->idalbaran) {
+            return 'EditAlbaranProveedor?code=' . $this->idalbaran;
+        }
 
-        return '';
+        return parent::url($type, $list);
     }
 }

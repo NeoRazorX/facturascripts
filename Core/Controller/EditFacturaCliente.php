@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,18 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 
 /**
  * Controller to edit a single item from the FacturaCliente model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Luis Miguel Pérez <luismi@pcrednet.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Luis Miguel Pérez        <luismi@pcrednet.com>
+ * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
  */
-class EditFacturaCliente extends ExtendedController\BusinessDocumentController
+class EditFacturaCliente extends ExtendedController\SalesDocumentController
 {
 
     /**
@@ -39,7 +43,7 @@ class EditFacturaCliente extends ExtendedController\BusinessDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoice';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -52,9 +56,27 @@ class EditFacturaCliente extends ExtendedController\BusinessDocumentController
     {
         parent::createViews();
 
-        $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $modelName;
-        $this->addEditView($viewName, $modelName, 'detail', 'fa-edit');
+        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->setSettings('ListAsiento', 'btnNew', false);
+
+        $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+    }
+
+    /**
+     * 
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'new-refund':
+                $this->newRefundAction();
+                break;
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -75,11 +97,65 @@ class EditFacturaCliente extends ExtendedController\BusinessDocumentController
      */
     protected function loadData($viewName, $view)
     {
-        if ($viewName === 'EditFacturaCliente') {
-            $idfactura = $this->getViewModelValue('Document', 'idfactura');
-            $view->loadData($idfactura);
+        switch ($viewName) {
+            case 'Devoluciones':
+                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListAsiento':
+                $where = [
+                    new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento')),
+                    new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasientop'), '=', 'OR')
+                ];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
+    }
+
+    protected function newRefundAction()
+    {
+        $invoice = new FacturaCliente();
+        if (!$invoice->loadFromCode($this->request->request->get('idfactura'))) {
+            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            return;
         }
 
-        parent::loadData($viewName, $view);
+        $lines = [];
+        $quantities = [];
+        foreach ($invoice->getLines() as $line) {
+            $quantity = (float) $this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            if (empty($quantity)) {
+                continue;
+            }
+
+            $quantities[$line->primaryColumnValue()] = 0 - $quantity;
+            $lines[] = $line;
+        }
+
+        $generator = new BusinessDocumentGenerator();
+        if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities)) {
+            foreach ($generator->getLastDocs() as $doc) {
+                $doc->codigorect = $invoice->codigo;
+                $doc->codserie = $this->request->request->get('codserie');
+                $doc->fecha = $this->request->request->get('fecha');
+                $doc->idfacturarect = $invoice->idfactura;
+                $doc->observaciones = $this->request->request->get('observaciones');
+                if ($doc->save()) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->redirect($doc->url());
+                    continue;
+                }
+
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
+            }
+
+            return;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
     }
 }

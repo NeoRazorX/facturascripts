@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>  
+ * @author Artex Trading sa     <jcuello@artextrading.com>  
+-->
+<view>
+    <columns>
+        <column name="code" display="none" order="90">
+            <widget type="text" fieldname="idproducto" onclick="EditProducto" />
+        </column>
+        <column name="reference" order="100">
+            <widget type="text" fieldname="referencia" />
+        </column>
+        <column name="description" order="110">
+            <widget type="textarea" fieldname="descripcion" />
+        </column>
+        <column name="manufacturer" order="120">
+            <widget type="autocomplete" fieldname="codfabricante" onclick="EditFabricante">
+                <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
+            </widget>
+        </column>
+        <column name="family" order="130">
+            <widget type="autocomplete" fieldname="codfamilia" onclick="EditFamilia">
+                <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="price" title="price" display="right" order="140">
+            <widget type="money" fieldname="precio" />
+        </column>
+        <column name="stock" display="right" order="150">
+            <widget type="number" fieldname="stockfis">
+                <option color="danger">&lt;0</option>
+            </widget>
+        </column>
+    </columns>
+    <rows>
+        <row type="status">
+            <option color="info" fieldname="nostock">1</option>
+            <option color="danger" fieldname="bloqueado">1</option>
+            <option color="success" fieldname="stockfis">&gt;0</option>
+            <option color="warning" fieldname="stockfis">&lt;1</option>
+        </row>
+    </rows>
+</view>

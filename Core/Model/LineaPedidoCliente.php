@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019    Carlos Garcia Gomez        <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,13 +30,6 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
     use Base\ModelTrait;
 
     /**
-     * Related line ID in the related order, if any.
-     *
-     * @var integer
-     */
-    public $idlineapresupuesto;
-
-    /**
      * Order ID.
      *
      * @var integer
@@ -44,14 +37,32 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
     public $idpedido;
 
     /**
-     * Estimation ID, if any.
-     *
-     * @var integer
+     * 
+     * @return string
      */
-    public $idpresupuesto;
+    public function documentColumn()
+    {
+        return 'idpedido';
+    }
 
+    /**
+     * 
+     * @return PedidoCliente
+     */
+    public function getDocument()
+    {
+        $pedido = new PedidoCliente();
+        $pedido->loadFromCode($this->idpedido);
+        return $pedido;
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new PedidoCliente();
 
         return parent::install();
@@ -65,5 +76,21 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
     public static function tableName()
     {
         return 'lineaspedidoscli';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idpedido) {
+            return 'EditPedidoCliente?code=' . $this->idpedido;
+        }
+
+        return parent::url($type, $list);
     }
 }

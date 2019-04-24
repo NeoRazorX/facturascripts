@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,13 +29,6 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     use Base\ModelTrait;
 
     /**
-     * Delivery note ID line, if any.
-     *
-     * @var int
-     */
-    public $idlineaalbaran;
-
-    /**
      * Invoice ID of this line.
      *
      * @var int
@@ -43,11 +36,36 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     public $idfactura;
 
     /**
-     * Delivery note ID related to this invoice, if there is one.
-     *
-     * @var int
+     * 
+     * @return string
      */
-    public $idalbaran;
+    public function documentColumn()
+    {
+        return 'idfactura';
+    }
+
+    /**
+     * 
+     * @return FacturaCliente
+     */
+    public function getDocument()
+    {
+        $factura = new FacturaCliente();
+        $factura->loadFromCode($this->idfactura);
+        return $factura;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependency
+        new FacturaCliente();
+
+        return parent::install();
+    }
 
     /**
      * Returns the name of the table that uses this model.
@@ -57,5 +75,21 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     public static function tableName()
     {
         return 'lineasfacturascli';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if (null !== $this->idfactura) {
+            return 'EditFacturaCliente?code=' . $this->idfactura;
+        }
+
+        return parent::url($type, $list);
     }
 }

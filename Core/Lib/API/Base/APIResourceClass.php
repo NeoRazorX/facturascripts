@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,21 +16,30 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\API\Base;
 
+use Exception;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * APIResource is an abstract class for any API Resource.
  *
- * @author Rafael San José Tovar (http://www.x-netdigital.com) <rsanjoseo@gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Rafael San José Tovar (http://www.x-netdigital.com)  <rsanjoseo@gmail.com>
+ * @author Carlos García Gómez                                  <carlos@facturascripts.com>
  */
 abstract class APIResourceClass
 {
+
+    /**
+     * Translation engine.
+     *
+     * @var Translator
+     */
+    protected $i18n;
+
     /**
      * Contains the HTTP method (GET, PUT, PATCH, POST, DELETE).
      * PUT, PATCH and POST used in the same way.
@@ -38,55 +47,70 @@ abstract class APIResourceClass
      * @var string $method
      */
     protected $method;
-    /**
-     * HTTP response object.
-     *
-     * @var \Symfony\Component\HttpFoundation\Response
-     */
-    protected $response;
-
-    /**
-     * Gives us access to the HTTP request parameters.
-     *
-     * @var \Symfony\Component\HttpFoundation\Request
-     */
-    protected $request;
 
     /**
      * App log manager.
      *
-     * @var \FacturaScripts\Core\Base\MiniLog
+     * @var MiniLog
      */
     protected $miniLog;
 
     /**
-     * Translation engine.
      *
-     * @var \FacturaScripts\Core\Base\Translator
-     */
-    protected $i18n;
-
-    /**
-     * @var array params passed in the URI
+     * @var array
      */
     protected $params;
 
     /**
+     * Gives us access to the HTTP request parameters.
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * HTTP response object.
+     *
+     * @var Response
+     */
+    protected $response;
+
+    /**
+     * Returns an associative array with the resources, where the index is
+     * the public name of the resource.
+     *
+     * @return array
+     */
+    abstract public function getResources(): array;
+
+    /**
      * APIResourceClass constructor.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param MiniLog $miniLog
+     * @param Response   $response
+     * @param Request    $request
+     * @param MiniLog    $miniLog
      * @param Translator $i18n
-     * @param array $params is an array with URI parameters
+     * @param array      $params
      */
     public function __construct($response, $request, MiniLog $miniLog, Translator $i18n, array $params)
     {
-        $this->response = $response;
-        $this->request = $request;
-        $this->miniLog = $miniLog;
         $this->i18n = $i18n;
+        $this->miniLog = $miniLog;
         $this->params = $params;
+        $this->request = $request;
+        $this->response = $response;
+    }
+
+    /**
+     * Process the DELETE request. Overwrite this function to implement is functionality.
+     * It is not defined as abstract because descendants may not need this method if
+     * they overwrite processResource.
+     *
+     * @return bool
+     */
+    public function doDELETE(): bool
+    {
+        return true;
     }
 
     /**
@@ -97,18 +121,6 @@ abstract class APIResourceClass
      * @return bool
      */
     public function doGET(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Process the PUT request. Overwrite this function to implement is functionality.
-     * It is not defined as abstract because descendants may not need this method if
-     * they overwrite processResource.
-     *
-     * @return bool
-     */
-    public function doPUT(): bool
     {
         return true;
     }
@@ -126,13 +138,13 @@ abstract class APIResourceClass
     }
 
     /**
-     * Process the DELETE request. Overwrite this function to implement is functionality.
+     * Process the PUT request. Overwrite this function to implement is functionality.
      * It is not defined as abstract because descendants may not need this method if
      * they overwrite processResource.
      *
      * @return bool
      */
-    public function doDELETE(): bool
+    public function doPUT(): bool
     {
         return true;
     }
@@ -141,32 +153,35 @@ abstract class APIResourceClass
      * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
      *
      * @param string $name of resource, used only if are several.
-     * @param array $params . Params are URI segments. Can be an empty array, not null.
+     * @param array  $params are URI segments. Can be an empty array, not null.
      *
      * @return bool
      */
     public function processResource(string $name): bool
     {
-        try {
-            $this->method = $this->request->getMethod();
+        $this->method = $this->request->getMethod();
 
+        try {
             // http://www.restapitutorial.com/lessons/httpmethods.html
             switch ($this->method) {
-                case 'POST':
-                    return $this->doPOST();
-                case 'GET':
-                    return $this->doGET();
-                case 'PUT':
-                    return $this->doPUT();
                 case 'DELETE':
                     return $this->doDELETE();
+
+                case 'GET':
+                    return $this->doGET();
+
+                case 'PATCH':
+                case 'PUT':
+                    return $this->doPUT();
+
+                case 'POST':
+                    return $this->doPOST();
             }
-            $this->setError("Unknown method {$this->method} in {$name}");
-            return false;
-        } catch (\Exception $ex) {
-            $this->setError('API-ERROR', null, Response::HTTP_INTERNAL_SERVER_ERROR);
-            return false;
+        } catch (Exception $exc) {
+            $this->setError('API-ERROR: ' . $exc->getMessage(), null, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
+        return false;
     }
 
     /**
@@ -182,23 +197,14 @@ abstract class APIResourceClass
     }
 
     /**
-     * Returns an associative array with the resources, where the index is
-     * the public name of the resource.
-     *
-     * @return array
-     */
-    abstract public function getResources(): array;
-
-    /**
      * Return the array with the result, and HTTP_OK status code.
      *
      * @param array $data
-     * @return void
      */
     protected function returnResult(array $data)
     {
-        $this->response->setStatusCode(Response::HTTP_OK);
         $this->response->setContent(json_encode($data));
+        $this->response->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -206,18 +212,17 @@ abstract class APIResourceClass
      * Can return an array with additional information.
      *
      * @param string $string is an informative text of the confirmation message
-     * @param array $data with additional information.
-     * @return void
+     * @param array  $data with additional information.
      */
-    protected function setOk(string $string, array $data = null)
+    protected function setOk(string $string, $data = null)
     {
-        $this->response->setStatusCode(Response::HTTP_OK);
-        $res = array();
-        $res['ok'] = $string;
+        $res = ['ok' => $string];
         if ($data !== null) {
             $res['data'] = $data;
         }
+
         $this->response->setContent(json_encode($res));
+        $this->response->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -225,18 +230,17 @@ abstract class APIResourceClass
      * Can also return an array with additional information.
      *
      * @param string $message
-     * @param array $data
-     * @param int $status
-     * @return void
+     * @param array  $data
+     * @param int    $status
      */
-    protected function setError(string $message, array $data = null, int $status = Response::HTTP_BAD_REQUEST)
+    protected function setError(string $message, $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
-        $this->response->setStatusCode($status);
-        $res = array();
-        $res['error'] = $message;
+        $res = ['error' => $message];
         if ($data !== null) {
             $res['data'] = $data;
         }
+
         $this->response->setContent(json_encode($res));
+        $this->response->setStatusCode($status);
     }
 }

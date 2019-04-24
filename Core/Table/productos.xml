@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : productos.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the productos table.
+-->
+<table>
+    <column>
+        <name>actualizado</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>bloqueado</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>codfabricante</name>
+        <type>character varying(8)</type>
+    </column>
+    <column>
+        <name>codfamilia</name>
+        <type>character varying(8)</type>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codsubcuentacom</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
+        <name>codsubcuentairpfcom</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
+        <name>codsubcuentaven</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>idproducto</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('productos_idproducto_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>nostock</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>precio</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>publico</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>secompra</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>sevende</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>stockfis</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>ventasinstock</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <constraint>
+        <name>productos_pkey</name>
+        <type>PRIMARY KEY (idproducto)</type>
+    </constraint>
+    <constraint>
+        <name>ca_productos_fabricantes</name>
+        <type>FOREIGN KEY (codfabricante) REFERENCES fabricantes (codfabricante) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_productos_familias</name>
+        <type>FOREIGN KEY (codfamilia) REFERENCES familias (codfamilia) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_productos_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_productos_referencia</name>
+        <type>UNIQUE (referencia)</type>
+    </constraint>
+</table>

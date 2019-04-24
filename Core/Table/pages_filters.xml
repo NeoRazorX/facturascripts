@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : pages_filters.xml
+    Created on : 16 de octubre de 2018
+    Author     : jcuello@artextrading.com
+    Description:
+        Structure for the pages_filters table.
+-->
+
+<table>
+    <column>
+        <name>description</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>filters</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('pages_filters_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>name</name>
+        <type>character varying(40)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <constraint>
+        <name>pages_filters_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_pagesfilters_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

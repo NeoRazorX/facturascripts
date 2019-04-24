@@ -40,7 +40,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <widget type="check" fieldname="swift"/>
             </column>
             <column name="bank-fmandato" numcolumns="3" order="150">
-                <widget type="datepicker" fieldname="fmandato" />
+                <widget type="date" fieldname="fmandato" />
             </column>
         </group>
     </columns>

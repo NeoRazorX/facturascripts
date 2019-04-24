@@ -1,0 +1,145 @@
+{% import _self as macros %}
+{% set currentView = fsc.getCurrentView() %}
+
+<script type="text/javascript">
+    var editListViewDeleteCancel = "{{ i18n.trans('cancel') }}";
+    var editListViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
+    var editListViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";
+    var editListViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
+</script>
+
+{# -- Row header -- #}
+<div class="row">
+    {% set row = currentView.getRow('header') %}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
+</div>
+
+{# -- New form -- #}
+{% if currentView.settings.btnNew %}
+    {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
+    <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="insert"/>
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <div class="card bg-light mb-2">
+            <div class="card-header">
+                <button class="btn btn-sm btn-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                    {{ i18n.trans('new') }}
+                </button>
+            </div>
+            <div class="collapse" id="{{ formName }}Collapse">
+                <div class="card-body">
+                    <div class="row">
+                        {% for group in currentView.getColumns() %}
+                            {{ group.edit(currentView.model) | raw }}
+                        {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <button class="btn btn-sm btn-primary" type="submit">
+                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endif %}
+
+{# -- Row statistics -- #}
+<div>
+    {% set row = currentView.getRow('statistics') %}
+    {{ row.render(fsc) | raw }}
+</div>
+
+{# -- Forms -- #}
+{% for counter, model in currentView.cursor %}
+    {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
+    <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="edit"/>
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    {% for group in currentView.getColumns() %}
+                        {{ group.edit(model) | raw }}
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% if currentView.settings.btnDelete %}
+                        <div class="col">
+                            <button type="button" class="btn btn-sm btn-danger" onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
+                                <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                    <div class="col">
+                        {# -- Row actions -- #}
+                        {% set row = currentView.getRow('actions') %}
+                        {{ row.render() | raw }}
+                    </div>
+                    <div class="col text-right">
+                        {% if currentView.settings.btnUndo %}
+                            <button class="btn btn-sm btn-secondary" type="reset">
+                                <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
+                            </button>
+                        {% endif %}
+                        {% if currentView.settings.btnSave %}
+                            <button class="btn btn-sm btn-primary" type="submit">
+                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% else %}
+    <div class="alert alert-warning">
+        {{ i18n.trans('no-data') }}
+    </div>
+{% endfor %}
+
+<br/>
+
+{# -- Pagination -- #}
+{% if currentView.getPagination() | length > 0 %}
+    {% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}
+    <form id="{{ formName }}" method="post">
+        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
+        <div class="text-center">
+            <div class="btn-group">
+                {% for page in currentView.getPagination() %}
+                    {% if page.active %}
+                        <button type="button" class="btn btn-light active" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                            {{ page.num }}
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-light" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                            {{ page.num }}
+                        </button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+    <br/>
+{% endif %}
+
+{# -- Row footer -- #}
+<div class="row">
+    {% set row = currentView.getRow('footer') %}
+    {{ row.render(currentView.getViewName(), '', fsc) | raw }}
+</div>
+
+{# -- Modals -- #}
+{% for group in currentView.getModals() %}
+    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+{% endfor %}

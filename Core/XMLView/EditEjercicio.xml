@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,32 +16,34 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditEjercicio
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" title="exercise" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codejercicio" required="true" />
+                <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dinamic" />
             </column>
-            <column name="name" numcolumns="2" order="110">
+            <column name="name" numcolumns="5" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="start-date" numcolumns="2" order="120">
-                <widget type="datepicker" fieldname="fechainicio" />
+            <column name="company" numcolumns="5" order="120">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                </widget>
             </column>
-            <column name="end-date" numcolumns="2" order="130">
-                <widget type="datepicker" fieldname="fechafin" />
+            <column name="start-date" numcolumns="3" order="130">
+                <widget type="date" fieldname="fechainicio" />
             </column>
-            <column name="account-length" numcolumns="2" order="140">
-                <widget type="text" fieldname="longsubcuenta" required="true" />
+            <column name="end-date" numcolumns="3" order="140">
+                <widget type="date" fieldname="fechafin" />
             </column>
-            <column name="status" numcolumns="2" order="150">
-                <widget type="select" fieldname="estado" required="true">
+            <column name="account-length" numcolumns="3" order="150">
+                <widget type="number" fieldname="longsubcuenta" required="true" />
+            </column>
+            <column name="status" numcolumns="3" order="160">
+                <widget type="select" fieldname="estado" translate="true" required="true">
                     <values title="opened">ABIERTO</values>
                     <values title="closed">CERRADO</values>
                 </widget>
@@ -51,14 +53,21 @@
     <rows>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
-                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fa-file" />
+                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fas fa-file-import" />
+                <button type="action" label="export" color="info" action="export-accounting" icon="fas fa-file-export" />
             </group>
         </row>
     </rows>
     <modals>
-        <group name="import-accounting" title="import-accounting-plan" icon="fa-file">
-            <column name="accounting-file" numcolumns="12">
-                <widget type="filechooser" fieldname="accountingfile" required="true" />
+        <group name="import-accounting" title="import-accounting-plan" icon="fas fa-file-import">
+            <column name="exercise" numcolumns="4" order="100">
+                <widget type="text" fieldname="codejercicio" readonly="true" />
+            </column>
+            <column name="name" numcolumns="8" order="110">
+                <widget type="text" fieldname="nombre" readonly="true" />
+            </column>
+            <column name="accounting-plan" titleurl="https://www.facturascripts.com/doc/1/configuracion/plan-contable" numcolumns="12" order="120">
+                <widget type="file" fieldname="accountingfile" required="true" />
             </column>
         </group>
     </modals>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use Exception;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
@@ -27,11 +29,17 @@ use ParseCsv\Csv;
 /**
  * Description of AccountingPlanImport
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Raul Jimenez <comercial@nazcanetworks.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Raul Jimenez         <comercial@nazcanetworks.com>
  */
 class AccountingPlanImport
 {
+
+    /**
+     *
+     * @var DataBase
+     */
+    private $dataBase;
 
     /**
      * Exercise related to the accounting plan.
@@ -56,6 +64,7 @@ class AccountingPlanImport
 
     public function __construct()
     {
+        $this->dataBase = new DataBase();
         $this->ejercicio = new Model\Ejercicio();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
@@ -66,15 +75,35 @@ class AccountingPlanImport
      *
      * @param string $filePath
      * @param string $codejercicio
+     *
+     * @return bool
      */
     public function importCSV(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('error'));
-            return;
+            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
+            return false;
         }
 
-        $this->processCsvData($filePath);
+        // start transaction
+        $this->dataBase->beginTransaction();
+        $return = true;
+
+        try {
+            $this->processCsvData($filePath);
+
+            // confirm data
+            $this->dataBase->commit();
+        } catch (Exception $exp) {
+            $this->miniLog->alert($exp->getMessage());
+            $return = false;
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -82,57 +111,85 @@ class AccountingPlanImport
      *
      * @param string $filePath
      * @param string $codejercicio
+     *
+     * @return bool
      */
     public function importXML(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('error'));
-            return;
+            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
+            return false;
         }
 
         $data = $this->getData($filePath);
-        if ($data->count() > 0) {
+        if (is_array($data) || $data->count() == 0) {
+            return false;
+        }
+
+        // start transaction
+        $this->dataBase->beginTransaction();
+        $return = true;
+
+        try {
             $this->importEpigrafeGroup($data->grupo_epigrafes);
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
             $this->importSubcuenta($data->subcuenta);
+
+            // confirm data
+            $this->dataBase->commit();
+        } catch (Exception $exp) {
+            $this->miniLog->alert($exp->getMessage());
+            $return = false;
+        } finally {
+            if ($this->dataBase->inTransaction()) {
+                $this->dataBase->rollback();
+            }
         }
+
+        return $return;
     }
 
     /**
      * Insert/update and account in accounting plan.
-     * 
+     *
      * @param string $code
      * @param string $definition
      * @param string $parentCode
+     * @param string $idcuentaesp
      */
-    private function createAccount(string $code, string $definition, string $parentCode = '')
+    private function createAccount(string $code, string $definition, string $parentCode = '', string $idcuentaesp = '')
     {
         $account = new Model\Cuenta();
-        $parent = new Model\Cuenta();
+        $account->disableAditionalTest();
 
         /// the account exists?
         $where = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $code)
         ];
-        $account->loadFromCode('', $where);
+        if ($account->loadFromCode('', $where)) {
+            return;
+        }
 
         if (!empty($parentCode)) {
             $whereParent = [
                 new DatabaseWhere('codejercicio', $this->ejercicio->codejercicio),
                 new DataBaseWhere('codcuenta', $parentCode)
             ];
-            if ($parent->loadFromCode('', $whereParent)) {
-                $account->parent_codcuenta = $parent->codcuenta;
-                $account->parent_idcuenta = $parent->idcuenta;
-            } else {
+            $parent = new Model\Cuenta();
+            if (!$parent->loadFromCode('', $whereParent)) {
                 $this->miniLog->alert($this->i18n->trans('parent-error'));
+                return;
             }
+
+            $account->parent_codcuenta = $parent->codcuenta;
+            $account->parent_idcuenta = $parent->idcuenta;
         }
 
         $account->codejercicio = $this->ejercicio->codejercicio;
         $account->codcuenta = $code;
+        $account->codcuentaesp = empty($idcuentaesp) ? null : $idcuentaesp;
         $account->descripcion = $definition;
         $account->save();
     }
@@ -147,6 +204,17 @@ class AccountingPlanImport
     private function createSubaccount(string $code, string $description, string $parentCode)
     {
         $subaccount = new Model\Subcuenta();
+        $subaccount->disableAditionalTest();
+
+        /// the subaccount exists?
+        $where = [
+            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+            new DataBaseWhere('codsubcuenta', $code)
+        ];
+        if ($subaccount->loadFromCode('', $where)) {
+            return;
+        }
+
         $account = new Model\Cuenta();
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
@@ -155,16 +223,9 @@ class AccountingPlanImport
 
         /// the account exist?
         if (!$account->loadFromCode('', $whereAccount)) {
-            $this->miniLog->error($this->i18n->trans('error'));
+            $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'account "' . $parentCode . '" not found']));
             return;
         }
-
-        /// the subaccount exists?
-        $where = [
-            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
-        ];
-        $subaccount->loadFromCode('', $where);
 
         $subaccount->codejercicio = $this->ejercicio->codejercicio;
         $subaccount->idcuenta = $account->idcuenta;
@@ -191,15 +252,15 @@ class AccountingPlanImport
     }
 
     /**
-     * Insert Groups of accounting plan
+     * insert Cuenta of accounting plan
      *
      * @param \SimpleXMLElement $data
      */
-    private function importEpigrafeGroup($data)
+    private function importCuenta($data)
     {
-        foreach ($data as $xmlEpigrafeGroup) {
-            $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
-            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
+        foreach ($data as $xmlAccount) {
+            $accountElement = (array) $xmlAccount;
+            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
         }
     }
 
@@ -217,15 +278,15 @@ class AccountingPlanImport
     }
 
     /**
-     * insert Cuenta of accounting plan
+     * Insert Groups of accounting plan
      *
      * @param \SimpleXMLElement $data
      */
-    private function importCuenta($data)
+    private function importEpigrafeGroup($data)
     {
-        foreach ($data as $xmlAccount) {
-            $accountElement = (array) $xmlAccount;
-            $this->createSubaccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe']);
+        foreach ($data as $xmlEpigrafeGroup) {
+            $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
+            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
         }
     }
 
@@ -250,7 +311,7 @@ class AccountingPlanImport
     private function processCsvData(string $filePath)
     {
         if (!file_exists($filePath)) {
-            $this->miniLog->error($this->i18n->trans('error'));
+            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
         }
 
         $csv = new Csv();
@@ -271,7 +332,7 @@ class AccountingPlanImport
         $maxLength = max($lengths);
         $keys = array_keys($accountPlan);
         ksort($accountPlan);
-        
+
         foreach ($accountPlan as $key => $value) {
             switch (strlen($key)) {
                 case $minLength:
@@ -293,10 +354,10 @@ class AccountingPlanImport
 
     /**
      * Search the parent of account in a accounting Plan.
-     * 
+     *
      * @param array  $accountCodes
      * @param string $account
-     * 
+     *
      * @return string
      */
     private function searchParent(array &$accountCodes, string $account): string

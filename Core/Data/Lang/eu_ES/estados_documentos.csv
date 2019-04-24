@@ -1,0 +1,23 @@
+"idestado";"tipodoc";"nombre";"predeterminado";"bloquear";"editable";"actualizastock";"generadoc"
+1;"PresupuestoCliente";"Berria";"true";"true";"true";0;
+2;"PresupuestoCliente";"Onartua";"false";"true";"false";0;"PedidoCliente"
+3;"PresupuestoCliente";"Baztertua";"false";"true";"false";0;
+4;"PedidoCliente";"Berria";"true";"true";"true";-2;
+5;"PedidoCliente";"Onartua";"false";"true";"false";0;"AlbaranCliente"
+6;"PedidoCliente";"Bertan behera";"false";"true";"false";0;
+7;"AlbaranCliente";"Berria";"true";"true";"true";-1;
+8;"AlbaranCliente";"Onartua";"false";"true";"false";0;"FacturaCliente"
+9;"AlbaranCliente";"Itzulia";"false";"true";"false";0;
+10;"FacturaCliente";"Berria";"true";"true";"true";-1;
+11;"FacturaCliente";"Burutua";"false";"true";"false";-1;
+12;"PresupuestoProveedor";"Berria";"true";"true";"true";0;
+13;"PresupuestoProveedor";"Onartua";"false";"true";"false";0;"PedidoProveedor"
+14;"PresupuestoProveedor";"Bertan behera";"false";"true";"false";0;
+15;"PedidoProveedor";"Berria";"true";"true";"true";2;
+16;"PedidoProveedor";"Onartua";"false";"true";"false";0;"AlbaranProveedor"
+17;"PedidoProveedor";"Bertan behera";"false";"true";"false";0;
+18;"AlbaranProveedor";"Berria";"true";"true";"true";1;
+19;"AlbaranProveedor";"Onartua";"false";"true";"false";0;"FacturaProveedor"
+20;"AlbaranProveedor";"Itzulia";"false";"true";"false";0;
+21;"FacturaProveedor";"Berria";"true";"true";"true";1;
+22;"FacturaProveedor";"Burutua";"false";"true";"false";1;

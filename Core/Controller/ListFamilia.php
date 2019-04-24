@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@ class ListFamilia extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'families';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['icon'] = 'fas fa-object-group';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
@@ -49,9 +49,8 @@ class ListFamilia extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFamilia', 'Familia');
+        $this->addView('ListFamilia', 'Familia', 'families', 'fas fa-object-group');
         $this->addSearchFields('ListFamilia', ['descripcion', 'codfamilia', 'madre']);
-
         $this->addOrderBy('ListFamilia', ['codfamilia'], 'code');
         $this->addOrderBy('ListFamilia', ['descripcion'], 'description');
         $this->addOrderBy('ListFamilia', ['madre'], 'parent');

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,41 +20,27 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Dinamic\Model\Contacto;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * PDF export data.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Carlos Jiménez Gómez <carlos@evolunext.es>
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos Jiménez Gómez         <carlos@evolunext.es>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class PDFExport extends PDFCore implements ExportInterface
+class PDFExport extends PDFDocument implements ExportInterface
 {
 
     const LIST_LIMIT = 500;
-
-    /**
-     * Return the full document.
-     *
-     * @return mixed
-     */
-    public function getDoc()
-    {
-        if ($this->pdf === null) {
-            $this->newPage();
-            $this->pdf->ezText('');
-        }
-
-        return $this->pdf->ezStream(['Content-Disposition' => 'doc_' . mt_rand(1, 999999) . '.pdf']);
-    }
 
     /**
      * Adds a new page with the document data.
      *
      * @param BusinessDocument $model
      */
-    public function generateDocumentPage($model)
+    public function generateBusinessDocPage($model)
     {
         $this->newPage();
         $this->insertHeader($model->idempresa);
@@ -82,7 +68,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $tableData = [];
         $longTitles = [];
 
-        /// Get the columns
+        /// turns widget columns into needed arrays
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
         if (count($tableCols) > 5) {
             $orientation = 'landscape';
@@ -174,6 +160,21 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->insertHeader();
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         $this->insertFooter();
+    }
+
+    /**
+     * Return the full document.
+     *
+     * @return mixed
+     */
+    public function getDoc()
+    {
+        if ($this->pdf === null) {
+            $this->newPage();
+            $this->pdf->ezText('');
+        }
+
+        return $this->pdf->ezStream(['Content-Disposition' => 'doc_' . mt_rand(1, 999999) . '.pdf']);
     }
 
     /**
@@ -337,13 +338,8 @@ class PDFExport extends PDFCore implements ExportInterface
             ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif],
         ];
 
-        if (isset($model->direccion)) {
-            $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccion)];
-            $tableData[] = ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv];
-            $tableData[] = ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostal,];
-            $tableData[] = ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudad)];
-            $tableData[] = ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provincia)];
-            $tableData[] = ['key' => $this->i18n->trans('country'), 'value' => $this->getCountryName($model->codpais)];
+        if (!empty($model->direccion)) {
+            $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
         }
 
         $tableOptions = [
@@ -356,7 +352,7 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->insertParalellTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
 
-        if (isset($model->direccionenv) && $model->direccionenv !== '') {
+        if (!empty($model->idcontactoenv)) {
             $this->insertBusinessDocShipping($model);
         }
     }
@@ -371,24 +367,42 @@ class PDFExport extends PDFCore implements ExportInterface
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
-        $tableData = [
-            ['key' => $this->i18n->trans('name'), 'value' => Base\Utils::fixHtml($model->nombreenv)],
-            ['key' => $this->i18n->trans('surname'), 'value' => Base\Utils::fixHtml($model->apellidosenv)],
-            ['key' => $this->i18n->trans('address'), 'value' => Base\Utils::fixHtml($model->direccionenv)],
-            ['key' => $this->i18n->trans('post-office-box'), 'value' => $model->apartadoenv],
-            ['key' => $this->i18n->trans('zip-code'), 'value' => $model->codpostalenv],
-            ['key' => $this->i18n->trans('city'), 'value' => Base\Utils::fixHtml($model->ciudadenv)],
-            ['key' => $this->i18n->trans('province'), 'value' => Base\Utils::fixHtml($model->provinciaenv)],
-        ];
+        $contacto = new Contacto();
+        if ($contacto->loadFromCode($model->idcontactoenv)) {
+            $name = Base\Utils::fixHtml($contacto->nombre) . ' ' . Base\Utils::fixHtml($contacto->apellidos);
+            $tableData = [
+                ['key' => $this->i18n->trans('name'), 'value' => $name],
+                ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($contacto)],
+            ];
 
-        $tableOptions = [
-            'width' => $this->tableWidth,
-            'showHeadings' => 0,
-            'shaded' => 0,
-            'lineCol' => [1, 1, 1],
-            'cols' => [],
-        ];
-        $this->insertParalellTable($tableData, '', $tableOptions);
-        $this->pdf->ezText('');
+            $tableOptions = [
+                'width' => $this->tableWidth,
+                'showHeadings' => 0,
+                'shaded' => 0,
+                'lineCol' => [1, 1, 1],
+                'cols' => [],
+            ];
+            $this->insertParalellTable($tableData, '', $tableOptions);
+            $this->pdf->ezText('');
+        }
+    }
+
+    /**
+     * Combine address if the parameters don´t empty
+     *
+     * @param BusinessDocument|Contacto $model
+     *
+     * @return string
+     */
+    private function combineAddress($model): string
+    {
+        $completeAddress = Base\Utils::fixHtml($model->direccion);
+        $completeAddress .= isset($model->apartado) ? ', ' . $this->i18n->trans('box') . ' ' . $model->apartado : '';
+        $completeAddress .= isset($model->codpostal) ? ', ' . $model->codpostal : '';
+        $completeAddress .= isset($model->ciudad) ? ', ' . Base\Utils::fixHtml($model->ciudad) : '';
+        $completeAddress .= isset($model->provincia) ? ' (' . Base\Utils::fixHtml($model->provincia) . ')' : '';
+        $completeAddress .= isset($model->codpais) ? ' ' . $this->getCountryName($model->codpais) : ',';
+
+        return $completeAddress;
     }
 }

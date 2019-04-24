@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@ class ListAttachedFile extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'attached-files';
         $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-paperclip';
+        $pagedata['icon'] = 'fas fa-paperclip';
 
         return $pagedata;
     }
@@ -48,15 +48,17 @@ class ListAttachedFile extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAttachedFile', 'AttachedFile');
+        $this->addView('ListAttachedFile', 'AttachedFile', 'attached-files', 'fas fa-paperclip');
         $this->addSearchFields('ListAttachedFile', ['filename', 'mimetype']);
         $this->addOrderBy('ListAttachedFile', ['idfile'], 'code');
+        $this->addOrderBy('ListAttachedFile', ['date'], 'date', 2);
         $this->addOrderBy('ListAttachedFile', ['filename'], 'file-name');
         $this->addOrderBy('ListAttachedFile', ['size'], 'size');
 
         $types = $this->codeModel->all('attached_files', 'mimetype', 'mimetype');
         $this->addFilterSelect('ListAttachedFile', 'mimetype', 'mime-type', 'mimetype', $types);
 
-        $this->addFilterDatePicker('ListAttachedFile', 'date', 'date', 'date');
+        $this->addFilterDatePicker('ListAttachedFile', 'fromdate', 'from-date', 'date', '>=');
+        $this->addFilterDatePicker('ListAttachedFile', 'untildate', 'until-date', 'date', '<=');
     }
 }

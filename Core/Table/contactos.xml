@@ -15,6 +15,10 @@
         <type>character varying(150)</type>
     </column>
     <column>
+        <name>apartado</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>cargo</name>
         <type>character varying(100)</type>
     </column>
@@ -31,6 +35,10 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>codpais</name>
         <type>character varying(20)</type>
     </column>
@@ -39,13 +47,20 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
         <name>direccion</name>
         <type>character varying(100)</type>
     </column>
     <column>
         <name>email</name>
         <type>character varying(100)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>empresa</name>
@@ -68,6 +83,10 @@
     <column>
         <name>lastip</name>
         <type>character varying(40)</type>
+    </column>
+    <column>
+        <name>level</name>
+        <type>integer</type>
     </column>
     <column>
         <name>logkey</name>
@@ -95,6 +114,10 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>puntos</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>telefono1</name>
         <type>character varying(30)</type>
     </column>
@@ -112,7 +135,11 @@
         <type>PRIMARY KEY (idcontacto)</type>
     </constraint>
     <constraint>
-        <name>uniq_email_contactos</name>
-        <type>UNIQUE (email)</type>
+        <name>ca_contactos_clientes</name>
+        <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_contactos_proveedores</name>
+        <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

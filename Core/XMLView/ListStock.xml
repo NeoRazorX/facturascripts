@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +17,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller ListArticulo
+ * Initial description for the controller ListStock
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
 -->
 
 <view>
     <columns>
+        <column name="product" display="none" order="90">
+            <widget type="text" fieldname="idproducto" onclick="EditProducto" />
+        </column>
         <column name="reference" order="100">
-            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
+            <widget type="text" fieldname="referencia" />
         </column>
         <column name="warehouse" order="110">
-            <widget type="text" fieldname="codalmacen" />
-        </column>
-        <column name="location" order="120">
-            <widget type="text" fieldname="ubicacion" />
+            <widget type="select" fieldname="codalmacen" required="true">
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
@@ -54,9 +56,9 @@
     </columns>
     <rows>
         <row type="status" fieldname="cantidad">
-            <option color="table-danger">&lt;0</option>
-            <option color="table-success">&gt;1</option>
-            <option color="table-warning">&lt;1</option>
+            <option color="danger">&lt;0</option>
+            <option color="success">&gt;1</option>
+            <option color="warning">&lt;1</option>
         </row>
     </rows>
 </view>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,17 +18,17 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the FacturaProveedor model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListFacturaProveedor extends ExtendedController\ListController
+class ListFacturaProveedor extends ListBusinessDocument
 {
 
     /**
@@ -40,7 +40,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoices';
-        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['icon'] = 'fas fa-copy';
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
@@ -51,55 +51,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFacturaProveedor', 'FacturaProveedor');
-        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        $this->addOrderBy('ListFacturaProveedor', ['codigo'], 'code');
-        $this->addOrderBy('ListFacturaProveedor', ['fecha'], 'date', 2);
-        $this->addOrderBy('ListFacturaProveedor', ['total'], 'amount');
-
-        $this->addFilterDatePicker('ListFacturaProveedor', 'fecha', 'date', 'fecha');
-        $this->addFilterNumber('ListFacturaProveedor', 'total', 'total', 'total');
-
-        $where = [new DataBaseWhere('tipodoc', 'FacturaProveedor')];
-        $stateValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
-        $this->addFilterSelect('ListFacturaProveedor', 'idestado', 'state', 'idestado', $stateValues);
-
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
-
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', 'codserie', $serieValues);
-
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'payment-method', 'codpago', $paymentValues);
-
-        $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
-        $this->addFilterCheckbox('ListFacturaProveedor', 'paid', 'paid', 'pagada');
-        $this->addFilterCheckbox('ListFacturaProveedor', 'femail', 'email-not-sent', 'femail', false, null);
-
-        // Delivery notes lines
-        $this->createViewLines();
-    }
-
-    protected function createViewLines()
-    {
-        $this->addView('ListLineaFacturaProveedor', 'LineaFacturaProveedor', 'lines', 'fa-list');
-        $this->addSearchFields('ListLineaFacturaProveedor', ['referencia', 'descripcion']);
-        $this->addOrderBy('ListLineaFacturaProveedor', ['referencia'], 'reference');
-        $this->addOrderBy('ListLineaFacturaProveedor', ['cantidad'], 'quantity');
-        $this->addOrderBy('ListLineaFacturaProveedor', ['descripcion'], 'description');
-        $this->addOrderBy('ListLineaFacturaProveedor', ['pvptotal'], 'ammount');
-        $this->addOrderBy('ListLineaFacturaProveedor', ['idfactura'], 'code', 2);
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect('ListLineaFacturaProveedor', 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
-        $this->addFilterNumber('ListLineaFacturaProveedor', 'cantidad', 'quantity', 'cantidad');
-        $this->addFilterNumber('ListLineaFacturaProveedor', 'dtopor', 'discount', 'dtopor');
-        $this->addFilterNumber('ListLineaFacturaProveedor', 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber('ListLineaFacturaProveedor', 'pvptotal', 'ammount', 'pvptotal');
-
-        /// disable megasearch for this view
-        $this->setSettings('ListLineaFacturaProveedor', 'megasearch', false);
+        $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
+        $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
     }
 }

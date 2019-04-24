@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,18 +19,28 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Controller to edit a single item from the Ejercicio model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class EditEjercicio extends ExtendedController\PanelController
+class EditEjercicio extends ExtendedController\EditController
 {
+
+    /**
+     *
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'Ejercicio';
+    }
 
     /**
      * Returns basic page attributes
@@ -42,7 +52,7 @@ class EditEjercicio extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'exercise';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-calendar';
+        $pagedata['icon'] = 'fas fa-calendar-alt';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -53,8 +63,8 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditEjercicio', 'Ejercicio', 'exercise');
-        $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fa-book');
+        parent::createViews();
+        $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fas fa-book');
         $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccount');
 
         /// Disable columns
@@ -74,11 +84,6 @@ class EditEjercicio extends ExtendedController\PanelController
         $where = [new DataBaseWhere('codejercicio', $codejercicio)];
 
         switch ($viewName) {
-            case 'EditEjercicio':
-                $code = $this->request->get('code');
-                $view->loadData($code);
-                break;
-
             case 'ListCuenta':
                 $view->loadData(false, $where, ['codcuenta' => 'ASC']);
                 break;
@@ -86,24 +91,48 @@ class EditEjercicio extends ExtendedController\PanelController
             case 'ListSubcuenta':
                 $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
+    }
+
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'export-accounting':
+                $this->exportAccountingPlan();
+                return true;
+
+            case 'import-accounting':
+                $this->importAccountingPlan();
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
         }
     }
 
     /**
-     * Run the controller after actions
-     *
-     * @param string $action
+     * Export AccountingPlan to XML.
+     * 
+     * @return bool
      */
-    protected function execAfterAction($action)
+    private function exportAccountingPlan()
     {
-        switch ($action) {
-            case 'import-accounting':
-                $this->importAccountingPlan();
-                break;
-
-            default:
-                parent::execAfterAction($action);
+        $code = $this->request->get('code', '');
+        if (empty($code)) {
+            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            return false;
         }
+
+        $this->setTemplate(false);
+        $accountingPlanExport = new AccountingPlanExport();
+        $this->response->setContent($accountingPlanExport->exportXML($code));
+        $this->response->headers->set('Content-Type', 'text/xml; charset=utf-8');
+        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $code . '.xml');
+
+        return true;
     }
 
     /**
@@ -113,27 +142,42 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     private function importAccountingPlan()
     {
-        $accountingPlanImport = new AccountingPlanImport();
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $code = $this->request->request->get('codejercicio', '');
+        if (empty($code)) {
+            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            return false;
+        }
+
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
             $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
-
             return false;
         }
+
+        $accountingPlanImport = new AccountingPlanImport();
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
+                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $code)) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                }
                 break;
 
             case 'text/csv':
             case 'text/plain':
-                $accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio);
+                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $code)) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                }
                 break;
 
             default:
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
+
+        return true;
     }
 }

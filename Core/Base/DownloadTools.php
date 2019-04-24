@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\MiniLog;
 use Exception;
+use FacturaScripts\Core\Base\MiniLog;
 
 /**
  * Description of DownloadTools
@@ -39,7 +39,7 @@ class DownloadTools
      * 
      * @return string
      */
-    public function getContents(string $url, int $timeout = 30): string
+    public function getContents(string $url, int $timeout = 30)
     {
         if (function_exists('curl_init')) {
             $ch = curl_init();
@@ -47,28 +47,31 @@ class DownloadTools
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
             curl_setopt($ch, CURLOPT_USERAGENT, self::USERAGENT);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            if (ini_get('open_basedir') === NULL) {
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            }
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
 
             $data = curl_exec($ch);
-            $info = curl_getinfo($ch);
-            if ($info['http_code'] == 200) {
-                curl_close($ch);
-                return $data;
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            switch ($httpCode) {
+                case 200:
+                    curl_close($ch);
+                    return $data;
+
+                case 301:
+                case 302:
+                case 303:
+                    $redirs = 0;
+                    return $this->curlRedirectExec($ch, $redirs);
+
+                case 404:
+                    curl_close($ch);
+                    return 'ERROR';
             }
 
-            if ($info['http_code'] == 301 || $info['http_code'] == 302) {
-                $redirs = 0;
-                return $this->curlRedirectExec($ch, $redirs);
-            }
-
-            /// guardamos en el log
-            if ($info['http_code'] != 404) {
-                $error = (curl_error($ch) === '') ? 'ERROR ' . $info['http_code'] : curl_error($ch);
-                $minilog = new MiniLog();
-                $minilog->alert($error);
-            }
+            /// save in log
+            $error = curl_error($ch) === '' ? 'ERROR ' . $httpCode : curl_error($ch);
+            $minilog = new MiniLog();
+            $minilog->alert($error . ' - ' . $url);
 
             curl_close($ch);
             return 'ERROR';
@@ -82,32 +85,34 @@ class DownloadTools
      * 
      * @param resource $ch
      * @param int      $redirects
-     * @param bool     $curlopt_header
      * 
      * @return string
      */
-    private function curlRedirectExec($ch, &$redirects, $curlopt_header = false): string
+    private function curlRedirectExec(&$ch, &$redirects)
     {
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+
         $data = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($http_code == 301 || $http_code == 302) {
-            list($header) = explode("\r\n\r\n", $data, 2);
-            $matches = [];
-            preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
-            $url = trim(str_replace($matches[1], "", $matches[0]));
-            $url_parsed = parse_url($url);
-            if (isset($url_parsed)) {
-                curl_setopt($ch, CURLOPT_URL, $url);
-                $redirects++;
-                return $this->curlRedirectExec($ch, $redirects, $curlopt_header);
-            }
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        switch ($httpCode) {
+            case 301:
+            case 302:
+            case 303:
+                list($header) = explode("\r\n\r\n", $data, 2);
+                $matches = [];
+                preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+                $url = trim(str_replace($matches[1], "", $matches[0]));
+                $url_parsed = parse_url($url);
+                if (isset($url_parsed)) {
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $redirects++;
+                    return $this->curlRedirectExec($ch, $redirects);
+                }
         }
 
-        if ($curlopt_header) {
+        if (empty($data)) {
             curl_close($ch);
-            return $data;
+            return 'ERROR';
         }
 
         list(, $body) = explode("\r\n\r\n", $data, 2);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Lib\ExtendedController;
 
 /**
  * Controller to list the items in the User model
@@ -37,10 +37,22 @@ class ListUser extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fas fa-users';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewRoles($name = 'ListRole')
+    {
+        $this->addView($name, 'Role', 'roles', 'fas fa-address-card');
+        $this->addSearchFields($name, ['codrole', 'descripcion']);
+        $this->addOrderBy($name, ['descripcion'], 'description');
+        $this->addOrderBy($name, ['codrole'], 'code');
     }
 
     /**
@@ -48,18 +60,31 @@ class ListUser extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('ListUser', 'User', 'users', 'fa-users');
-        $this->addSearchFields('ListUser', ['nick', 'email']);
+        $this->createViewUsers();
+        $this->createViewRoles();
+    }
 
-        $this->addOrderBy('ListUser', ['nick']);
-        $this->addOrderBy('ListUser', ['email']);
-        $this->addOrderBy('ListUser', ['lastactivity'], 'last-activity');
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewUsers($name = 'ListUser')
+    {
+        $this->addView($name, 'User', 'users', 'fas fa-users');
+        $this->addSearchFields($name, ['nick', 'email']);
+        $this->addOrderBy($name, ['nick'], 'nick', 1);
+        $this->addOrderBy($name, ['email'], 'email');
+        $this->addOrderBy($name, ['level'], 'level');
+        $this->addOrderBy($name, ['lastactivity'], 'last-activity');
 
-        /* Roles */
-        $this->addView('ListRole', 'Role', 'roles', 'fa-address-card-o');
-        $this->addSearchFields('ListRole', ['codrole', 'descripcion']);
+        /// filters
+        $levels = $this->codeModel->all('users', 'level', 'level');
+        $this->addFilterSelect($name, 'level', 'level', 'level', $levels);
 
-        $this->addOrderBy('ListRole', ['descripcion'], 'description');
-        $this->addOrderBy('ListRole', ['codrole'], 'code');
+        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect($name, 'company', 'company', 'idempresa', $companies);
+
+        $languages = $this->codeModel->all('users', 'langcode', 'langcode');
+        $this->addFilterSelect($name, 'langcode', 'lang-code', 'langcode', $languages);
     }
 }

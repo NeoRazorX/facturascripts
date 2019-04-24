@@ -87,7 +87,7 @@ class AppInstaller
     /**
      * Check database connection and creates the database if needed.
      *
-     * @return boolean
+     * @return bool
      */
     private function createDataBase()
     {
@@ -99,13 +99,20 @@ class AppInstaller
             'name' => $this->request->request->get('fs_db_name'),
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
-        switch ($this->request->request->get('fs_db_type')) {
+
+        $dbType = $this->request->request->get('fs_db_type');
+        if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
+            $this->miniLog->alert($this->i18n->trans('database-name-must-be-lowercase'));
+            return false;
+        }
+
+        switch ($dbType) {
             case 'mysql':
                 if (class_exists('mysqli')) {
                     return $this->testMysql($dbData);
                 }
 
-                $this->miniLog->alert($this->i18n->trans('mysqli-not-found'));
+                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => 'mysqli']));
                 break;
 
             case 'postgresql':
@@ -113,7 +120,7 @@ class AppInstaller
                     return $this->testPostgreSql($dbData);
                 }
 
-                $this->miniLog->alert($this->i18n->trans('postgresql-not-found'));
+                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => 'postgresql']));
                 break;
 
             default:
@@ -132,13 +139,12 @@ class AppInstaller
     {
         // Check each needed folder to deploy
         foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
-            if (!file_exists($folder) && !mkdir($folder) && !is_dir($folder)) {
+            if (!FileManager::createFolder($folder)) {
                 $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['%folder%' => $folder]));
                 return false;
             }
         }
 
-        chmod('Plugins', (int) octdec(777));
         $pluginManager = new PluginManager();
         $hiddenPlugins = \explode(',', $this->request->request->get('hidden_plugins', ''));
         foreach ($hiddenPlugins as $pluginName) {
@@ -211,7 +217,7 @@ class AppInstaller
     {
         /// HTML template variables
         $templateVars = [
-            'license' => file_get_contents(FS_FOLDER . '/COPYING'),
+            'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => $this->randomString(8),
             'timezones' => $this->getTimezoneList()
         ];
@@ -231,8 +237,8 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . '/htaccess-sample', 'FacturaScripts code');
-        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . '/.htaccess', 'FacturaScripts code');
+        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
+        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
 
     /**
@@ -291,16 +297,16 @@ class AppInstaller
             $errors = true;
         }
 
-        if (!function_exists('mb_substr')) {
-            $this->miniLog->critical($this->i18n->trans('mb-string-not-fount'));
-            $errors = true;
-        }
-
-        foreach (['bcmath', 'curl', 'simplexml', 'openssl', 'zip'] as $extension) {
+        foreach (['bcmath', 'curl', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
             if (!extension_loaded($extension)) {
                 $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => $extension]));
                 $errors = true;
             }
+        }
+
+        if (function_exists('apache_get_modules') && !in_array('mod_rewrite', apache_get_modules())) {
+            $this->miniLog->critical($this->i18n->trans('apache-module-not-found', ['%module%' => 'mod_rewrite']));
+            $errors = true;
         }
 
         if (!is_writable(FS_FOLDER)) {
