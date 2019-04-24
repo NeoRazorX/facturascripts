@@ -272,7 +272,8 @@ class DataBaseTools
 
         if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
             foreach ($xmlCons as $xml_con) {
-                if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
+                /// exclude primary keys on mysql because of fail
+                if (strpos($xml_con['constraint'], 'PRIMARY') === 0 && strtolower(FS_DB_TYPE) === 'mysql') {
                     continue;
                 }
 
