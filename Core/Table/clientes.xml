@@ -98,6 +98,16 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>riesgoalcanzado</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>riesgomax</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>regimeniva</name>
         <type>character varying(20)</type>
     </column>
