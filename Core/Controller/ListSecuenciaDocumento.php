@@ -54,5 +54,15 @@ class ListSecuenciaDocumento extends ListController
         $this->addOrderBy('ListSecuenciaDocumento', ['codejercicio'], 'exercise');
         $this->addOrderBy('ListSecuenciaDocumento', ['codserie'], 'serie');
         $this->addOrderBy('ListSecuenciaDocumento', ['numero'], 'number');
+
+        /// Filters
+        $warehouses = $this->codeModel->all('empresas', 'idempresa', 'nombre');
+        $this->addFilterSelect('ListSecuenciaDocumento', 'idempresa', 'company', 'idempresa', $warehouses);
+
+        $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+        $this->addFilterSelect('ListSecuenciaDocumento', 'codejercicio', 'exercise', 'codejercicio', $exercises);
+
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect('ListSecuenciaDocumento', 'codserie', 'serie', 'codserie', $series);
     }
 }
