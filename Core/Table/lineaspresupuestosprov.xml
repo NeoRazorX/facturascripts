@@ -18,12 +18,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>servido</name>
-        <type>double precision</type>
-        <null>NO</null>
-        <default>0</default>
-    </column>
-    <column>
         <name>codimpuesto</name>
         <type>character varying(10)</type>
     </column>
@@ -88,6 +82,12 @@
     <column>
         <name>referencia</name>
         <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>servido</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
     </column>
     <constraint>
         <name>lineaspresupuestosprov_pkey</name>

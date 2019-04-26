@@ -147,7 +147,7 @@ class EditFacturaProveedor extends ExtendedController\PurchaseDocumentController
                 $doc->observaciones = $this->request->request->get('observaciones');
                 if ($doc->save()) {
                     $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-                    $this->response->headers->set('Refresh', '0; ' . $doc->url());
+                    $this->redirect($doc->url());
                     continue;
                 }
 

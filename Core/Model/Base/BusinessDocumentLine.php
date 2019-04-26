@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,22 +31,15 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocumentLine extends ModelClass
+abstract class BusinessDocumentLine extends ModelOnChangeClass
 {
 
     /**
-     * True if this state must update product stock.
+     * Update stock status.
      *
      * @var int
      */
     public $actualizastock;
-
-    /**
-     * Previus value of $actualizastock.
-     *
-     * @var int
-     */
-    private $actualizastockAnt;
 
     /**
      * Quantity.
@@ -54,19 +47,6 @@ abstract class BusinessDocumentLine extends ModelClass
      * @var float|int
      */
     public $cantidad;
-
-    /**
-     * Served.
-     *
-     * @var float|int
-     */
-    public $servido;
-
-    /**
-     *
-     * @var float|int
-     */
-    private $cantidadAnt;
 
     /**
      * Code of the related tax.
@@ -83,14 +63,7 @@ abstract class BusinessDocumentLine extends ModelClass
     public $descripcion;
 
     /**
-     * % of the related tax.
-     *
-     * @var float|int
-     */
-    public $iva;
-
-    /**
-     * % off.
+     * % off discount.
      *
      * @var float|int
      */
@@ -115,6 +88,13 @@ abstract class BusinessDocumentLine extends ModelClass
      * @var float|int
      */
     public $irpf;
+
+    /**
+     * % of the related tax.
+     *
+     * @var float|int
+     */
+    public $iva;
 
     /**
      * Position of the line in the document. The higher down.
@@ -159,21 +139,21 @@ abstract class BusinessDocumentLine extends ModelClass
     public $referencia;
 
     /**
+     * Served.
+     *
+     * @var float|int
+     */
+    public $servido;
+
+    /**
+     * Returns the parent document of this line.
+     */
+    abstract public function getDocument();
+
+    /**
      * Returns the name of the column to store the document's identifier.
      */
     abstract public function documentColumn();
-
-    /**
-     * Class constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->actualizastockAnt = isset($this->actualizastock) ? $this->actualizastock : 0;
-        $this->cantidadAnt = isset($this->cantidad) ? $this->cantidad : 0;
-    }
 
     /**
      * Reset the values of all model properties.
@@ -197,21 +177,6 @@ abstract class BusinessDocumentLine extends ModelClass
         $this->codimpuesto = $impuesto->codimpuesto;
         $this->iva = $impuesto->iva;
         $this->recargo = $impuesto->recargo;
-    }
-
-    /**
-     * Removed this row from the database table.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        if (parent::delete()) {
-            $this->cantidad = 0;
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -274,44 +239,6 @@ abstract class BusinessDocumentLine extends ModelClass
     }
 
     /**
-     * Updates stock according to line data and $codalmacen warehouse.
-     *
-     * @param string $codalmacen
-     * 
-     * @return boolean
-     */
-    public function updateStock(string $codalmacen)
-    {
-        if ($this->actualizastock === $this->actualizastockAnt && $this->cantidad === $this->cantidadAnt) {
-            return true;
-        }
-
-        $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
-        if (!empty($this->referencia) && $variante->loadFromCode('', $where)) {
-            $producto = $variante->getProducto();
-            if ($producto->nostock) {
-                return true;
-            }
-
-            $stock = new Stock();
-            if (!$stock->loadFromCode('', [new DataBaseWhere('codalmacen', $codalmacen), new DataBaseWhere('referencia', $this->referencia)])) {
-                $stock->codalmacen = $codalmacen;
-                $stock->idproducto = $producto->idproducto;
-                $stock->referencia = $this->referencia;
-            }
-
-            $this->applyStockChanges($this->actualizastockAnt, $this->cantidadAnt * -1, $stock);
-            $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
-            $this->actualizastockAnt = $this->actualizastock;
-            $this->cantidadAnt = $this->cantidad;
-            return $stock->save();
-        }
-
-        return true;
-    }
-
-    /**
      * Custom url method.
      *
      * @param string $type
@@ -364,5 +291,111 @@ abstract class BusinessDocumentLine extends ModelClass
         $impuesto = new Impuesto();
         $impuesto->loadFromCode($codimpuesto);
         return $impuesto;
+    }
+
+    /**
+     * This method is called before save (update) in the database this record
+     * data when some field value has changed.
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'actualizastock':
+            case 'cantidad':
+                return $this->updateStock();
+        }
+
+        return parent::onChange($field);
+    }
+
+    /**
+     * This method is called after this record is deleted from database.
+     */
+    protected function onDelete()
+    {
+        $this->cantidad = 0;
+        $this->updateStock();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if ($this->updateStock()) {
+            return parent::saveInsert($values);
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = [
+            'actualizastock', 'cantidad', 'descripcion', 'dtopor', 'irpf',
+            'iva', 'pvptotal', 'recargo'
+        ];
+        parent::setPreviousData(array_merge($more, $fields));
+
+        if (null === $this->previousData['actualizastock']) {
+            $this->previousData['actualizastock'] = 0;
+        }
+
+        if (null === $this->previousData['cantidad']) {
+            $this->previousData['cantidad'] = 0.0;
+        }
+    }
+
+    /**
+     * Updates stock according to line data and $codalmacen warehouse.
+     * 
+     * @return bool
+     */
+    protected function updateStock()
+    {
+        $variante = new Variante();
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if (!empty($this->referencia) && $variante->loadFromCode('', $where)) {
+            $producto = $variante->getProducto();
+            if ($producto->nostock) {
+                return true;
+            }
+
+            $stock = new Stock();
+            $codalmacen = $this->getDocument()->codalmacen;
+            $where2 = [
+                new DataBaseWhere('codalmacen', $codalmacen),
+                new DataBaseWhere('referencia', $this->referencia)
+            ];
+            if (!$stock->loadFromCode('', $where2)) {
+                $stock->codalmacen = $codalmacen;
+                $stock->idproducto = $producto->idproducto;
+                $stock->referencia = $this->referencia;
+            }
+
+            $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $stock);
+            $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
+
+            /// enough stock?
+            if (!$producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
+                self::$miniLog->warning(self::$i18n->trans('not-enough-stock', ['%reference%' => $this->referencia]));
+                return false;
+            }
+
+            return $stock->save();
+        }
+
+        return true;
     }
 }

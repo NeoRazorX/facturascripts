@@ -7,18 +7,6 @@
 -->
 <table>
     <column>
-        <name>descripcion</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>swift</name>
-        <type>character varying(11)</type>
-    </column>
-    <column>
-        <name>iban</name>
-        <type>character varying(34)</type>
-    </column>
-    <column>
         <name>codcliente</name>
         <type>character varying(10)</type>
         <null>NO</null>
@@ -29,12 +17,24 @@
         <null>NO</null>
     </column>
     <column>
-        <name>principal</name>
-        <type>boolean</type>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
     </column>
     <column>
         <name>fmandato</name>
         <type>date</type>
+    </column>
+    <column>
+        <name>iban</name>
+        <type>character varying(34)</type>
+    </column>
+    <column>
+        <name>principal</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>swift</name>
+        <type>character varying(11)</type>
     </column>
     <constraint>
         <name>cuentasbcocli_pkey</name>

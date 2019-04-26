@@ -90,16 +90,17 @@ class InvoiceToAccounting extends AccountingAccounts
             $this->miniLog->warning($this->i18n->trans('closed-exercise'));
             return;
         } elseif (!$this->loadSubtotals()) {
+            $this->miniLog->warning('invoice-subtotals-error');
             return;
         }
 
         switch ($model->modelClassName()) {
             case 'FacturaCliente':
-                $this->salesAccountingEntry();
+                $this->salesAccountingEntry($model);
                 break;
 
             case 'FacturaProveedor':
-                $this->purchaseAccountingEntry();
+                $this->purchaseAccountingEntry($model);
                 break;
         }
     }
@@ -153,6 +154,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('purchases-subaccount-not-found'));
         return false;
     }
 
@@ -178,6 +180,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('sales-subaccount-not-found'));
         return false;
     }
 
@@ -203,6 +206,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->haber) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('irpfpr-subaccount-not-found'));
         return false;
     }
 
@@ -232,6 +236,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->debe) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('ivasop-subaccount-not-found'));
         return false;
     }
 
@@ -257,6 +262,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->debe) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('irpf-subaccount-not-found'));
         return false;
     }
 
@@ -286,6 +292,7 @@ class InvoiceToAccounting extends AccountingAccounts
             return empty($line->haber) ? true : $line->save();
         }
 
+        $this->miniLog->alert($this->i18n->trans('ivarep-subaccount-not-found'));
         return false;
     }
 
@@ -329,8 +336,10 @@ class InvoiceToAccounting extends AccountingAccounts
 
     /**
      * Generate the accounting entry for a purchase document.
+     * 
+     * @param FacturaProveedor $model
      */
-    protected function purchaseAccountingEntry()
+    protected function purchaseAccountingEntry(&$model)
     {
         $accountEntry = new Asiento();
         $accountEntry->codejercicio = $this->document->codejercicio;
@@ -340,22 +349,25 @@ class InvoiceToAccounting extends AccountingAccounts
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
         if (!$accountEntry->save()) {
+            $this->miniLog->warning('accounting-entry-error');
             return;
         }
 
         if ($this->addSupplierLine($accountEntry) && $this->addPurchaseTaxLines($accountEntry) && $this->addGoodsPurchaseLine($accountEntry)) {
-            $this->document->idasiento = $accountEntry->primaryColumnValue();
-            $this->document->save();
+            $model->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
 
+        $this->miniLog->warning('accounting-lines-error');
         $accountEntry->delete();
     }
 
     /**
      * Generate the accounting entry for a sales document.
+     * 
+     * @param FacturaCliente $model
      */
-    protected function salesAccountingEntry()
+    protected function salesAccountingEntry(&$model)
     {
         $accountEntry = new Asiento();
         $accountEntry->codejercicio = $this->document->codejercicio;
@@ -365,15 +377,16 @@ class InvoiceToAccounting extends AccountingAccounts
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
         if (!$accountEntry->save()) {
+            $this->miniLog->warning('accounting-entry-error');
             return;
         }
 
         if ($this->addCustomerLine($accountEntry) && $this->addSalesTaxLines($accountEntry) && $this->addGoodsSalesLine($accountEntry)) {
-            $this->document->idasiento = $accountEntry->primaryColumnValue();
-            $this->document->save();
+            $model->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
 
+        $this->miniLog->warning('accounting-lines-error');
         $accountEntry->delete();
     }
 }

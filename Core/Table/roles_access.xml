@@ -7,22 +7,6 @@
 -->
 <table>
     <column>
-        <name>id</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('roles_access_id_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>codrole</name>
-        <type>character varying(20)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>pagename</name>
-        <type>character varying(40)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>allowdelete</name>
         <type>boolean</type>
         <null>NO</null>
@@ -33,6 +17,22 @@
         <type>boolean</type>
         <null>NO</null>
         <default>true</default>
+    </column>
+    <column>
+        <name>codrole</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('roles_access_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>pagename</name>
+        <type>character varying(40)</type>
+        <null>NO</null>
     </column>
     <constraint>
         <name>roles_access_pkey</name>

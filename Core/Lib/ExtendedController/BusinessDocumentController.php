@@ -136,10 +136,9 @@ abstract class BusinessDocumentController extends PanelController
 
             case 'save-document':
                 return $this->saveDocumentAction();
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -160,9 +159,39 @@ abstract class BusinessDocumentController extends PanelController
                 $this->exportManager->show($this->response);
                 break;
 
-            default:
-                parent::execAfterAction($action);
+            case 'save-ok':
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                break;
         }
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    protected function getBusinessFormData()
+    {
+        $data = ['exclude' => [], 'form' => [], 'lines' => []];
+        foreach ($this->request->request->all() as $field => $value) {
+            switch ($field) {
+                case 'codcliente':
+                case 'codproveedor':
+                case 'fecha':
+                case 'idestado':
+                    $data['exclude'][$field] = $value;
+                    break;
+
+                case 'lines':
+                    $data['lines'] = $this->views[$this->active]->processFormLines($value);
+                    break;
+
+                default:
+                    $data['form'][$field] = $value;
+                    break;
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -183,12 +212,8 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        /**
-         * We need the identifier to load the model. It's almost always code,
-         * but sometimes it's not.
-         */
         $primaryKey = $this->request->request->get($view->model->primaryColumn());
-        $code = $this->request->get('code', $primaryKey);
+        $code = $this->request->query->get('code', $primaryKey);
         if (empty($code)) {
             return;
         }
@@ -217,21 +242,16 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function recalculateDocumentAction(): bool
+    protected function recalculateDocumentAction()
     {
         $this->setTemplate(false);
-        $view = $this->views[$this->active];
-
-        /// gets data form and separate lines data
-        $data = $this->request->request->all();
-        $newLines = isset($data['lines']) ? $view->processFormLines($data['lines']) : [];
-        unset($data['lines']);
 
         /// loads model
-        $view->loadFromData($data);
+        $data = $this->getBusinessFormData();
+        $this->views[$this->active]->loadFromData($data['form']);
 
         /// recalculate
-        $result = $this->documentTools->recalculateForm($view->model, $newLines);
+        $result = $this->documentTools->recalculateForm($this->views[$this->active]->model, $data['lines']);
         $this->response->setContent($result);
         return false;
     }
@@ -241,7 +261,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function saveDocumentAction(): bool
+    protected function saveDocumentAction()
     {
         $this->setTemplate(false);
         if (!$this->permissions->allowUpdate) {
@@ -249,72 +269,69 @@ abstract class BusinessDocumentController extends PanelController
             return false;
         }
 
-        $view = $this->views[$this->active];
-
-        /// gets data form and separate date, hour, codcliente, codproveedor and lines data
-        $data = $this->request->request->all();
-        $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
-        $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
-        $fecha = isset($data['fecha']) ? $data['fecha'] : $view->model->fecha;
-        $hora = isset($data['hora']) ? $data['hora'] : $view->model->hora;
-        $newLines = isset($data['lines']) ? $view->processFormLines($data['lines']) : [];
-        unset($data['fecha'], $data['hora'], $data['codcliente'], $data['codproveedor'], $data['lines']);
-
-        /// loads model and lines
-        $view->loadFromData($data);
-        $view->lines = empty($view->model->primaryColumnValue()) ? [] : $view->model->getLines();
+        /// loads model
+        $data = $this->getBusinessFormData();
+        $this->views[$this->active]->loadFromData($data['form']);
+        $this->views[$this->active]->lines = $this->views[$this->active]->model->getLines();
 
         /// save
-        $data['fecha'] = $fecha;
-        $data['hora'] = $hora;
-        $data['codcliente'] = $codcliente;
-        $data['codproveedor'] = $codproveedor;
-        $result = $this->saveDocumentResult($view, $data, $newLines);
+        $result = $this->saveDocumentResult($this->views[$this->active], $data);
         $this->response->setContent($result);
         return false;
     }
 
     /**
      * 
-     * @param BusinessDocumentView $view
-     * @param array                $data
-     * @param array                $newLines
+     * @param string $message
      *
      * @return string
      */
-    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data, array &$newLines): string
+    protected function saveDocumentError($message)
     {
-        if (!$view->model->setDate($data['fecha'], $data['hora'])) {
-            return 'ERROR: BAD DATE';
+        foreach ($this->miniLog->read() as $msg) {
+            $message .= "\n" . $msg['message'];
         }
 
-        /// sets subjects
-        $result = $this->setSubject($view, $data);
-        if ($result !== 'OK') {
-            return $result;
-        }
+        /// undo transaction
+        $this->dataBase->rollback();
 
-        $exists = $view->model->exists();
-        if (!$exists) {
+        return $message;
+    }
+
+    /**
+     * 
+     * @param BusinessDocumentView $view
+     * @param array                $data
+     *
+     * @return string
+     */
+    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data)
+    {
+        if (!$view->model->exists()) {
             $view->model->nick = $this->user->nick;
         }
 
-        if ($view->model->save()) {
-            $result = ($view->model->editable || !$exists) ? $this->saveLines($view, $newLines) : 'OK';
-        } else {
-            $result = 'ERROR';
+        /// sets date, hour and accounting exercise
+        if (!$view->model->setDate($data['exclude']['fecha'], $view->model->hora)) {
+            return $this->saveDocumentError('ERROR: BAD DATE');
         }
 
-        if ($result === 'OK') {
+        /// sets subjects
+        $result = $this->setSubject($view, $data['exclude']);
+        if ('OK' !== $result) {
+            return $this->saveDocumentError($result);
+        }
+
+        /// start transaction
+        $this->dataBase->beginTransaction();
+
+        if ($view->model->save() && $this->saveLines($view, $data['lines'])) {
             $this->documentTools->recalculate($view->model);
-            return $view->model->save() ? 'OK:' . $view->model->url() : 'ERROR';
+            $view->model->idestado = $data['exclude']['idestado'];
+            return $view->model->save() && $this->dataBase->commit() ? 'OK:' . $view->model->url() : $this->saveDocumentError('ERROR');
         }
 
-        foreach ($this->miniLog->read() as $msg) {
-            $result = $msg['message'];
-        }
-
-        return $result;
+        return $this->saveDocumentError('ERROR');
     }
 
     /**
@@ -323,11 +340,13 @@ abstract class BusinessDocumentController extends PanelController
      * @param BusinessDocumentView $view
      * @param array                $newLines
      *
-     * @return string
+     * @return bool
      */
-    protected function saveLines(BusinessDocumentView &$view, array &$newLines): string
+    protected function saveLines(BusinessDocumentView &$view, array &$newLines)
     {
-        $result = 'OK';
+        if (!$view->model->editable) {
+            return true;
+        }
 
         /// remove or modify old lines
         foreach ($view->lines as $oldLine) {
@@ -339,14 +358,14 @@ abstract class BusinessDocumentController extends PanelController
 
                 $found = true;
                 if (!$this->updateLine($oldLine, $newLine)) {
-                    $result = 'ERROR ON LINE: ' . $oldLine->idlinea;
+                    $this->miniLog->warning('ERROR IN LINE: ' . $oldLine->idlinea);
+                    return false;
                 }
                 break;
             }
 
             if (!$found) {
                 $oldLine->delete();
-                $oldLine->updateStock($view->model->codalmacen);
             }
         }
 
@@ -358,20 +377,19 @@ abstract class BusinessDocumentController extends PanelController
             }
 
             if (empty($fLine['idlinea'])) {
-                $newDocLine = $view->model->getNewLine($fLine);
-                $newDocLine->pvpsindto = $newDocLine->pvpunitario * $newDocLine->cantidad;
-                $newDocLine->pvptotal = $newDocLine->pvpsindto * (100 - $newDocLine->dtopor) / 100;
-
-                if ($newDocLine->save()) {
-                    $newDocLine->updateStock($view->model->codalmacen);
-                } else {
-                    $result = "ERROR ON NEW LINE";
-                }
                 $skip = false;
+
+                $newDocLine = $view->model->getNewLine($fLine);
+                if ($newDocLine->save()) {
+                    continue;
+                }
+
+                $this->miniLog->warning('ERROR IN NEW LINE');
+                return false;
             }
         }
 
-        return $result;
+        return true;
     }
 
     /**
@@ -387,19 +405,7 @@ abstract class BusinessDocumentController extends PanelController
         /// reload line data from database to get last changes
         $oldLine->loadFromCode($oldLine->primaryColumnValue());
 
-        foreach ($newLine as $key => $value) {
-            if ($key != 'actualizastock') {
-                $oldLine->{$key} = $value;
-            }
-        }
-
-        $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;
-        $oldLine->pvptotal = $oldLine->pvpsindto * (100 - $oldLine->dtopor) / 100;
-
-        if ($oldLine->save()) {
-            return $oldLine->updateStock($this->views[$this->active]->model->codalmacen);
-        }
-
-        return false;
+        $oldLine->loadFromData($newLine, ['actualizastock']);
+        return $oldLine->save();
     }
 }

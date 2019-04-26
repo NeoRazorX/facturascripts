@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,19 +29,11 @@ class Page extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key. Varchar (30).
-     * Name of the page (controller).
+     * Icon of the page.
      *
      * @var string
      */
-    public $name;
-
-    /**
-     * Page title.
-     *
-     * @var string
-     */
-    public $title;
+    public $icon;
 
     /**
      * Title of the menu option where it is displayed.
@@ -51,11 +43,19 @@ class Page extends Base\ModelClass
     public $menu;
 
     /**
-     * Title of the menu sub-option where it is displayed (if it uses 2 levels).
+     * Primary key. Varchar (30).
+     * Name of the page (controller).
      *
      * @var string
      */
-    public $submenu;
+    public $name;
+
+    /**
+     * Position where it is placed in the menu.
+     *
+     * @var int
+     */
+    public $ordernum;
 
     /**
      * Indicates if it is displayed in the menu.
@@ -66,18 +66,18 @@ class Page extends Base\ModelClass
     public $showonmenu;
 
     /**
-     * Position where it is placed in the menu.
-     *
-     * @var int
-     */
-    public $ordernum;
-
-    /**
-     * Icon of the page.
+     * Title of the menu sub-option where it is displayed (if it uses 2 levels).
      *
      * @var string
      */
-    public $icon;
+    public $submenu;
+
+    /**
+     * Page title.
+     *
+     * @var string
+     */
+    public $title;
 
     /**
      * Reset the values of all model properties.
@@ -85,8 +85,8 @@ class Page extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->showonmenu = true;
         $this->ordernum = 100;
+        $this->showonmenu = true;
     }
 
     /**

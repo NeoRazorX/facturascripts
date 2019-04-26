@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,6 +43,17 @@ class LineaPedidoProveedor extends Base\BusinessDocumentLine
     public function documentColumn()
     {
         return 'idpedido';
+    }
+
+    /**
+     * 
+     * @return PedidoProveedor
+     */
+    public function getDocument()
+    {
+        $pedido = new PedidoProveedor();
+        $pedido->loadFromCode($this->idpedido);
+        return $pedido;
     }
 
     /**

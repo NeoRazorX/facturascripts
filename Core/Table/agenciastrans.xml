@@ -7,6 +7,12 @@
 -->
 <table>
     <column>
+        <name>activo</name>
+        <type>boolean</type>
+        <default>true</default>
+        <null>NO</null>
+    </column>
+    <column>
         <name>codtrans</name>
         <type>character varying(8)</type>
         <null>NO</null>
@@ -23,12 +29,6 @@
     <column>
         <name>web</name>
         <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>activo</name>
-        <type>boolean</type>
-        <default>true</default>
-        <null>NO</null>
     </column>
     <constraint>
         <name>agenciastrans_pkey</name>

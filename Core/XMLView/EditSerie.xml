@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditSerie
- *
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
@@ -26,12 +23,20 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codserie" icon="fas fa-hashtag" maxlength="4" required="true" />
+                <widget type="text" fieldname="codserie" icon="fas fa-hashtag" maxlength="4" required="true" readonly="dinamic" />
             </column>
-            <column name="description" numcolumns="10" order="110">
+            <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="without-taxation" numcolumns="2" order="120">
+            <column name="journal" numcolumns="2" order="120">
+                <widget type="select" fieldname="iddiario">
+                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="channel" numcolumns="2" order="130">
+                <widget type="number" fieldname="canal" min="0"/>
+            </column>
+            <column name="without-taxation" numcolumns="2" order="140">
                 <widget type="checkbox" fieldname="siniva" />
             </column>
         </group>

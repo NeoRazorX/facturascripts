@@ -103,10 +103,14 @@ function businessDocViewSave() {
         data: data,
         success: function (results) {
             if (results.substring(0, 3) === "OK:") {
-                location.href = results.substring(3);
+                $("#" + businessDocViewFormName + " :input[name=\"action\"]").val('save-ok');
+                $("#" + businessDocViewFormName).attr('action', results.substring(3)).submit();
             } else {
                 alert(results);
             }
+        },
+        error: function (msg) {
+            alert(msg.status + " " + msg.responseText);
         }
     });
 

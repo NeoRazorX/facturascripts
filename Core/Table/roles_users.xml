@@ -7,15 +7,15 @@
 -->
 <table>
     <column>
+        <name>codrole</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('roles_users_id_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>codrole</name>
-        <type>character varying(20)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>nick</name>

@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\DocTransformation;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
  * Description of BusinessDocumentGenerator
@@ -48,7 +48,10 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [])
     {
-        $exclude = ['codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado', 'numero', $prototype->primaryColumn()];
+        $exclude = [
+            'codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado',
+            'neto', 'numero', 'total', 'totalirpf', 'totaliva', 'totalrecargo', $prototype->primaryColumn()
+        ];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
@@ -126,9 +129,6 @@ class BusinessDocumentGenerator
             if (!$newLine->save()) {
                 return false;
             }
-
-            /// update stock
-            $newLine->updateStock($newDoc->codalmacen);
 
             /// save relation
             $docTrans->clear();

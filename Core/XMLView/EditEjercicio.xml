@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * @author Carlos García Gómez     <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="company" numcolumns="5" order="120">
-                <widget type="select" fieldname="idempresa" required="true" readonly="dinamic">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
                 </widget>
             </column>

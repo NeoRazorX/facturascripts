@@ -27,7 +27,7 @@
         <column name="id" order="100" display="none">
             <widget type="number" fieldname="idcron" />
         </column>
-        <column name="pluginname" title="plugin" order="110">
+        <column name="plugin" order="110">
             <widget type="text" fieldname="pluginname" />
         </column>
         <column name="jobname" title="job-name" order="120">

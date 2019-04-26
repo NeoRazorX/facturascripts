@@ -100,7 +100,7 @@ class AccountingAccounts
         /// assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
         if ($account->exists()) {
-            $customer->codsubcuenta = $this->fillToLength($this->exercise->longsubcuenta, $customer->primaryColumnValue(), $account->codcuenta);
+            $customer->codsubcuenta = $this->getFreeCustomerSubaccount($customer, $account);
             return $this->createCustomerAccount($customer, $specialAccount);
         }
 
@@ -148,6 +148,7 @@ class AccountingAccounts
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getExpenseAccount(string $code, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
@@ -161,20 +162,70 @@ class AccountingAccounts
     }
 
     /**
+     * 
+     * @param Cliente $customer
+     * @param Cuenta  $account
+     *
+     * @return string
+     */
+    public function getFreeCustomerSubaccount($customer, $account)
+    {
+        $numbers = array_merge([$customer->primaryColumnValue()], range(1, 999));
+        foreach ($numbers as $num) {
+            $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
+
+            /// is this code used in other customer?
+            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
+            $count = $customer->count($where);
+
+            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
+                return $newCode;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * 
+     * @param Proveedor $supplier
+     * @param Cuenta    $account
+     *
+     * @return string
+     */
+    public function getFreeSupplierSubaccount($supplier, $account)
+    {
+        $numbers = array_merge([$supplier->primaryColumnValue()], range(1, 999));
+        foreach ($numbers as $num) {
+            $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
+
+            /// is this code used in other supplier?
+            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
+            $count = $supplier->count($where);
+
+            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
+                return $newCode;
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * Get the accounting sub-account for payments in the fiscal year.
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     public function getPaymentAccount(string $code, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
     {
         $bankAccount = new CuentaBanco();
-        if ($bankAccount->loadFromCode($code)) {
-            if (!empty($bankAccount->codsubcuenta)) {
-                return $this->getSubAccount($bankAccount->codsubcuenta);
-            }
+        if ($bankAccount->loadFromCode($code) && !empty($bankAccount->codsubcuenta)) {
+            return $this->getSubAccount($bankAccount->codsubcuenta);
         }
+
         return $this->getSpecialSubAccount($specialAccount);
     }
 
@@ -272,7 +323,7 @@ class AccountingAccounts
         /// assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
         if ($account->exists()) {
-            $supplier->codsubcuenta = $this->fillToLength($this->exercise->longsubcuenta, $supplier->primaryColumnValue(), $account->codcuenta);
+            $supplier->codsubcuenta = $this->getFreeSupplierSubaccount($supplier, $account);
             return $this->createSupplierAccount($supplier, $specialAccount);
         }
 
@@ -345,10 +396,12 @@ class AccountingAccounts
     {
         $value2 = trim($value);
         $count = $length - strlen($prefix) - strlen($value2);
-        if ($count < 1) {
+        if ($count > 0) {
+            return $prefix . str_repeat('0', $count) . $value2;
+        } elseif ($count == 0) {
             return $prefix . $value2;
         }
 
-        return $prefix . str_repeat('0', $count) . $value2;
+        return '';
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -233,6 +233,17 @@ class Controller
 
         $idempresa = AppSettings::get('default', 'idempresa');
         $this->empresa->loadFromCode($idempresa);
+    }
+
+    /**
+     * Redirect to an url or controller.
+     * 
+     * @param string $url
+     * @param int    $delay
+     */
+    public function redirect($url, $delay = 0)
+    {
+        $this->response->headers->set('Refresh', $delay . '; ' . $url);
     }
 
     /**

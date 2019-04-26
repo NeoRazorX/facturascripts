@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos Garcia Gomez          <carlos@facturascripts.com>
  */
-class LineaTransferenciaStock extends Base\ModelClass
+class LineaTransferenciaStock extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
@@ -38,12 +38,6 @@ class LineaTransferenciaStock extends Base\ModelClass
      * @var float|int
      */
     public $cantidad;
-
-    /**
-     *
-     * @var float|int
-     */
-    private $cantidadAnt;
 
     /**
      * Primary key of line transfer stock. Autoincremental
@@ -73,37 +67,12 @@ class LineaTransferenciaStock extends Base\ModelClass
     public $referencia;
 
     /**
-     * 
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->cantidadAnt = isset($this->cantidad) ? $this->cantidad : 0;
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
         $this->cantidad = 0.0;
-    }
-
-    /**
-     * 
-     * @return bool
-     */
-    public function delete()
-    {
-        if (parent::delete()) {
-            $this->cantidad = 0.0;
-            $this->updateStock();
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -121,7 +90,7 @@ class LineaTransferenciaStock extends Base\ModelClass
      * 
      * @return Variante
      */
-    public function getVariant()
+    public function getVariante()
     {
         $variant = new Variante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
@@ -143,24 +112,6 @@ class LineaTransferenciaStock extends Base\ModelClass
     }
 
     /**
-     * 
-     * @param string $cod
-     * @param array  $where
-     * @param array  $orderby
-     * 
-     * @return bool
-     */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
-    {
-        if (parent::loadFromCode($cod, $where, $orderby)) {
-            $this->cantidadAnt = $this->cantidad;
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -168,20 +119,6 @@ class LineaTransferenciaStock extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'idlinea';
-    }
-
-    /**
-     * 
-     * @return bool
-     */
-    public function save()
-    {
-        if (parent::save()) {
-            $this->updateStock();
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -208,25 +145,68 @@ class LineaTransferenciaStock extends Base\ModelClass
         return 'lineastransferenciasstock';
     }
 
+    /**
+     * This methos is called before save (update) when some field value has changes.
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'cantidad':
+                $this->updateStock();
+                return true;
+        }
+
+        return parent::onChange($field);
+    }
+
+    /**
+     * This method is called after remove this data from the database.
+     */
+    protected function onDelete()
+    {
+        $this->cantidad = 0.0;
+        $this->updateStock();
+    }
+
+    /**
+     * This method is called after insert this record in the database.
+     */
+    protected function onInsert()
+    {
+        $this->updateStock();
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = ['cantidad'];
+        parent::setPreviousData(array_merge($more, $fields));
+    }
+
     protected function updateStock()
     {
         $transfer = $this->getTransference();
-        $variant = $this->getVariant();
-
-        $stock1 = new Stock();
-        $where1 = [
-            new DataBaseWhere('referencia', $this->referencia),
+        $stock = new Stock();
+        $where = [
             new DataBaseWhere('codalmacen', $transfer->codalmacenorigen),
+            new DataBaseWhere('referencia', $this->referencia),
         ];
 
-        if (!$stock1->loadFromCode('', $where1)) {
-            $stock1->codalmacen = $transfer->codalmacenorigen;
-            $stock1->idproducto = $variant->idproducto;
-            $stock1->referencia = $this->referencia;
-            $stock1->save();
+        if (!$stock->loadFromCode('', $where)) {
+            $stock->codalmacen = $transfer->codalmacenorigen;
+            $stock->idproducto = $this->getVariante()->idproducto;
+            $stock->referencia = $this->referencia;
+            $stock->save();
         }
 
-        $quantity = $this->cantidad - $this->cantidadAnt;
-        $stock1->transferTo($transfer->codalmacendestino, $quantity);
+        $quantity = $this->cantidad - $this->previousData['cantidad'];
+        $stock->transferTo($transfer->codalmacendestino, $quantity);
     }
 }

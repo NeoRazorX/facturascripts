@@ -87,7 +87,7 @@
                 <widget type="text" fieldname="diaspago" />
             </column>
             <column name="subaccount" numcolumns="3" order="140">
-                <widget type="text" fieldname="codsubcuenta" />
+                <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
             <column name="agent" numcolumns="3" titleurl="ListAgente" order="150">
                 <widget type="select" fieldname="codagente" onclick="EditAgente">

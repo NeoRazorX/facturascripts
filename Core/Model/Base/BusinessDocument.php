@@ -160,7 +160,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     /**
      * Number of the document.
-     * Unique within the series + exercise.
+     * Unique within the series.
      *
      * @var string
      */
@@ -322,8 +322,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         /// update stock
         foreach ($lines as $line) {
-            $line->cantidad = 0;
-            $line->updateStock($this->codalmacen);
+            $line->delete();
         }
 
         /// change parent doc status
@@ -412,7 +411,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function getStatus()
     {
         foreach ($this->getAvaliableStatus() as $status) {
-            if ($status->idestado === $this->idestado) {
+            /// don't use ===
+            if ($status->idestado == $this->idestado) {
                 return $status;
             }
         }
@@ -491,7 +491,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         /// empty code?
-        if (is_null($this->codigo)) {
+        if (empty($this->codigo)) {
             BusinessDocumentCode::getNewCode($this);
         }
 
@@ -513,7 +513,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function setDate(string $date, string $hour): bool
     {
         /// force check of warehouse-company relation
-        $this->setWarehouse($this->codalmacen);
+        if (!$this->setWarehouse($this->codalmacen)) {
+            return false;
+        }
 
         $ejercicio = new Ejercicio();
         $ejercicio->idempresa = $this->idempresa;
@@ -524,6 +526,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
+        self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
         return false;
     }
 
@@ -538,10 +541,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $almacen = new Almacen();
         if ($almacen->loadFromCode($codalmacen)) {
             $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa;
+            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
             return true;
         }
 
+        self::$miniLog->warning(self::$i18n->trans('warehouse-not-found'));
         return false;
     }
 
@@ -599,14 +603,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 foreach ($this->getLines() as $line) {
                     $line->actualizastock = $status->actualizastock;
                     $line->save();
-                    $line->updateStock($this->codalmacen);
                 }
-
-                if (!empty($status->generadoc)) {
-                    $docGenerator = new BusinessDocumentGenerator();
-                    if (!$docGenerator->generate($this, $status->generadoc)) {
-                        return false;
-                    }
+                $docGenerator = new BusinessDocumentGenerator();
+                if (!empty($status->generadoc) && !$docGenerator->generate($this, $status->generadoc)) {
+                    return false;
                 }
                 break;
         }

@@ -47,18 +47,18 @@ class TransferenciaStock extends Base\ModelClass
     public $codalmacenorigen;
 
     /**
-     * Primary key autoincremental.
-     *
-     * @var int
-     */
-    public $idtrans;
-
-    /**
      * Date of transfer.
      *
      * @var string
      */
     public $fecha;
+
+    /**
+     * Primary key autoincremental.
+     *
+     * @var int
+     */
+    public $idtrans;
 
     /**
      * User of transfer action. Varchar (50).

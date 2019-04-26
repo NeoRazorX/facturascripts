@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -130,7 +130,7 @@ abstract class Contact extends ModelClass
         $this->telefono2 = Utils::noHtml($this->telefono2);
 
         if (empty($this->nombre)) {
-            self::$miniLog->alert(self::$i18n->trans('"not-valid-contact-name"', ['%contactName%' => $this->nombre, '%fieldName%' => 'nombre']));
+            self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]));
             return false;
         }
 

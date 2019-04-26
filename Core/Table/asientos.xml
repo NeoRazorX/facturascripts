@@ -9,7 +9,6 @@
     <column>
         <name>canal</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codejercicio</name>
@@ -43,7 +42,6 @@
     <column>
         <name>iddiario</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idempresa</name>

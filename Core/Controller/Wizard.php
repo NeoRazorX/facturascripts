@@ -351,7 +351,7 @@ class Wizard extends Controller
         $appRouter = new AppRouter();
         $appRouter->clear();
 
-        /// redir to EditSettings
-        $this->response->headers->set('Refresh', '0; EditSettings');
+        /// redirect to EditSettings
+        $this->redirect('EditSettings');
     }
 }

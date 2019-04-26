@@ -18,8 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\SecuenciaDocumento;
 
 /**
  * Description of BusinessDocumentCode
@@ -37,30 +38,87 @@ class BusinessDocumentCode
      */
     public static function getNewCode(&$document)
     {
-        $document->numero = static::getNewNumero($document->tableName(), $document->codejercicio, $document->codserie);
-        $document->codigo = $document->codejercicio . $document->codserie . $document->numero;
+        $sequence = static::getSequence($document);
+
+        $document->numero = static::getNewNumber($sequence, $document);
+        $vars = [
+            '{EJE}' => $document->codejercicio,
+            '{SERIE}' => $document->codserie,
+            '{0SERIE}' => str_pad($document->codserie, 2, '0', STR_PAD_LEFT),
+            '{NUM}' => $document->numero,
+            '{0NUM}' => str_pad($document->numero, $sequence->longnumero, '0', STR_PAD_LEFT),
+        ];
+
+        $document->codigo = strtr($sequence->patron, $vars);
     }
 
     /**
      * 
-     * @param string $tableName
-     * @param string $codejercicio
-     * @param string $codserie
+     * @param SecuenciaDocumento $sequence
+     * @param BusinessDocument   $document
      *
      * @return string
      */
-    private static function getNewNumero($tableName, $codejercicio, $codserie)
+    protected static function getNewNumber(&$sequence, $document)
     {
-        $dataBase = new DataBase();
-        $sql = "SELECT MAX(" . $dataBase->sql2Int('numero') . ") as num FROM " . $tableName
-            . " WHERE codejercicio = " . $dataBase->var2str($codejercicio)
-            . " AND codserie = " . $dataBase->var2str($codserie) . ";";
+        $where = [
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idempresa', $sequence->idempresa)
+        ];
 
-        $data = $dataBase->select($sql);
-        if (!empty($data)) {
-            return (string) (1 + (int) $data[0]['num']);
+        if (!empty($sequence->codejercicio)) {
+            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
 
-        return '1';
+        /// find maximum number for this sequence data
+        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
+        foreach ($document->all($where, $order, 0, 1) as $lastDoc) {
+            $lastNumber = (int) $lastDoc->numero;
+            if ($lastNumber >= $sequence->numero) {
+                $sequence->numero = 1 + $lastNumber;
+                $sequence->save();
+            }
+        }
+
+        return $sequence->numero;
+    }
+
+    /**
+     * Finds sequence for this document.
+     * 
+     * @param BusinessDocument $document
+     *
+     * @return SecuenciaDocumento
+     */
+    protected static function getSequence(&$document)
+    {
+        $selectedSequence = new SecuenciaDocumento();
+
+        /// find sequence for this document and serie
+        $sequence = new SecuenciaDocumento();
+        $where = [
+            new DataBaseWhere('codserie', $document->codserie),
+            new DataBaseWhere('idempresa', $document->idempresa),
+            new DataBaseWhere('tipodoc', $document->modelClassName()),
+        ];
+        foreach ($sequence->all($where) as $seq) {
+            if (empty($seq->codejercicio)) {
+                /// sequence for all exercises
+                $selectedSequence = $seq;
+            } elseif ($seq->codejercicio == $document->codejercicio) {
+                /// sequence for this exercise
+                return $seq;
+            }
+        }
+
+        /// sequence not found? Then create
+        if (!$selectedSequence->exists()) {
+            $selectedSequence->codserie = $document->codserie;
+            $selectedSequence->idempresa = $document->idempresa;
+            $selectedSequence->tipodoc = $document->modelClassName();
+            $selectedSequence->save();
+        }
+
+        return $selectedSequence;
     }
 }

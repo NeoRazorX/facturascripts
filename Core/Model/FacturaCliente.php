@@ -138,30 +138,25 @@ class FacturaCliente extends Base\SalesDocument
      */
     protected function onChange($field)
     {
+        if (!parent::onChange($field)) {
+            return false;
+        }
+
         switch ($field) {
             case 'codpago':
                 $this->setPaymentMethod($this->codpago);
-                break;
+                return true;
+
+            case 'total':
+                $asiento = $this->getAccountingEntry();
+                if ($asiento->exists() && $asiento->delete()) {
+                    $this->idasiento = null;
+                }
+                $tool = new InvoiceToAccounting();
+                $tool->generate($this);
+                return true;
         }
 
-        return parent::onChange($field);
-    }
-
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        if (parent::saveInsert($values)) {
-            $tool = new InvoiceToAccounting();
-            $tool->generate($this);
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

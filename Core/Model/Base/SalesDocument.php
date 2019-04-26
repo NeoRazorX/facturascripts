@@ -262,7 +262,8 @@ abstract class SalesDocument extends BusinessDocument
     {
         $more = [
             'codalmacen', 'codcliente', 'coddivisa', 'codejercicio', 'codpago',
-            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado'
+            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado',
+            'total'
         ];
         parent::setPreviousData(array_merge($more, $fields));
     }

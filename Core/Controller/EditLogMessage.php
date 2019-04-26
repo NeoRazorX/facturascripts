@@ -14,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Controller;
 
@@ -54,7 +54,7 @@ class EditLogMessage extends ExtendedController\EditController
     }
 
     /**
-     * 
+     *
      */
     protected function createViews()
     {

@@ -34,6 +34,12 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     use Base\ModelTrait;
 
     /**
+     *
+     * @var int
+     */
+    public $canal;
+
+    /**
      * Exercise code of the accounting entry.
      *
      * @var string
@@ -74,6 +80,12 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      * @var int
      */
     public $idasiento;
+
+    /**
+     *
+     * @var int
+     */
+    public $iddiarion;
 
     /**
      * Foreign Key with Empresas table.

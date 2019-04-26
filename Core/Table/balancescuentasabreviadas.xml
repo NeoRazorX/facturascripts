@@ -7,12 +7,6 @@
 -->
 <table>
     <column>
-        <name>id</name>
-        <type>serial</type>
-        <null>NO</null>
-        <default>nextval('balancescuentasabreviadas_id_seq'::regclass)</default>
-    </column>
-    <column>
         <name>codbalance</name>
         <type>character varying(15)</type>
         <null>NO</null>
@@ -25,6 +19,12 @@
     <column>
         <name>desccuenta</name>
         <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('balancescuentasabreviadas_id_seq'::regclass)</default>
     </column>
     <constraint>
         <name>balancescuentasabreviadas_pkey</name>

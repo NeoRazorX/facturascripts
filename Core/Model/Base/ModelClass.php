@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Model\CodeModel;
 
@@ -43,7 +43,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    abstract public function modelName();
+    abstract protected function modelName();
 
     /**
      * Returns all models that correspond to the selected filters.
@@ -58,7 +58,7 @@ abstract class ModelClass extends ModelCore
     public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
     {
         $modelList = [];
-        $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($order);
         $data = self::$dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
@@ -69,21 +69,6 @@ abstract class ModelClass extends ModelCore
         }
 
         return $modelList;
-    }
-
-    /**
-     * Check an array of data so that it has the correct structure of the model.
-     *
-     * @param array $data
-     */
-    public function checkArrayData(array &$data)
-    {
-        $dateTypes = ['date', 'datetime', 'timestamp'];
-        foreach ($this->getModelFields() as $field => $values) {
-            if (in_array($values['type'], $dateTypes) && isset($data[$field]) && '' === $data[$field]) {
-                $data[$field] = null;
-            }
-        }
     }
 
     /**
@@ -119,20 +104,20 @@ abstract class ModelClass extends ModelCore
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
-        $where = [new DataBase\DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
+        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**
      * Returns the number of records in the model that meet the condition.
      *
-     * @param DataBase\DataBaseWhere[] $where filters to apply to model records.
+     * @param DataBaseWhere[] $where filters to apply to model records.
      *
      * @return int
      */
     public function count(array $where = [])
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
+        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
         $data = self::$dataBase->select($sql);
         return empty($data) ? 0 : (int) $data[0]['total'];
     }
@@ -162,14 +147,10 @@ abstract class ModelClass extends ModelCore
      */
     public function exists()
     {
-        if ($this->primaryColumnValue() === null) {
-            return false;
-        }
-
         $sql = 'SELECT 1 FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return (bool) self::$dataBase->select($sql);
+        return empty($this->primaryColumnValue()) ? false : (bool) self::$dataBase->select($sql);
     }
 
     /**
@@ -237,12 +218,12 @@ abstract class ModelClass extends ModelCore
         /// Set Cast to Integer if field it's not
         if (!in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
             /// Set Where to Integers values only
-            $where[] = new DataBase\DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
+            $where[] = new DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
             $field = self::$dataBase->sql2Int($field);
         }
 
         /// Search for new code value
-        $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
         $cod = self::$dataBase->select($sql);
         return empty($cod) ? 1 : 1 + (int) $cod[0]['cod'];
@@ -450,9 +431,8 @@ abstract class ModelClass extends ModelCore
      */
     private function getRecord($cod, array $where = [], array $orderby = [])
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
-
         return self::$dataBase->selectLimit($sql, 1);
     }
 }

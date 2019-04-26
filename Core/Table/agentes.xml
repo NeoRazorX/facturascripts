@@ -7,6 +7,18 @@
 -->
 <table>
     <column>
+        <name>banco</name>
+        <type>character varying(34)</type>
+    </column>
+    <column>
+        <name>cargo</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
         <name>ciudad</name>
         <type>character varying(100)</type>
     </column>
@@ -20,54 +32,17 @@
         <type>character varying(10)</type>
     </column>
     <column>
+        <name>debaja</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>direccion</name>
         <type>character varying(100)</type>
     </column>
     <column>
-        <name>cifnif</name>
-        <type>character varying(30)</type>
-    </column>
-    <column>
         <name>email</name>
         <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>nombre</name>
-        <type>character varying(100)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>porcomision</name>
-        <type>double precision</type>
-    </column>
-    <column>
-        <name>provincia</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>telefono1</name>
-        <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>telefono2</name>
-        <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>seg_social</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>cargo</name>
-        <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>banco</name>
-        <type>character varying(34)</type>
-    </column>
-    <column>
-        <name>debaja</name>
-        <type>boolean</type>
-        <default>false</default>
     </column>
     <column>
         <name>fechaalta</name>
@@ -82,8 +57,33 @@
         <type>date</type>
     </column>
     <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
         <name>observaciones</name>
         <type>text</type>
+    </column>
+    <column>
+        <name>porcomision</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>seg_social</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>telefono1</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>telefono2</name>
+        <type>character varying(30)</type>
     </column>
     <constraint>
         <name>agentes_pkey</name>

@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Description of ModelOnChangeClass
+ * ModelOnChangeClass is a class with methods to model the changes of values in the properties of the model.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -27,12 +27,14 @@ abstract class ModelOnChangeClass extends ModelClass
 {
 
     /**
+     * Previous data array.
      *
      * @var array
      */
     protected $previousData;
 
     /**
+     * Class constructor.
      * 
      * @param array $data
      */
@@ -43,6 +45,22 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if (parent::delete()) {
+            $this->onDelete();
+            $this->setPreviousData();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Loads a record from database.
      * 
      * @param string $cod
      * @param array  $where
@@ -59,8 +77,9 @@ abstract class ModelOnChangeClass extends ModelClass
 
         return false;
     }
-    
+
     /**
+     * This methos is called before save (update) when some field has changed.
      * 
      * @param string $field
      *
@@ -72,6 +91,23 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
+     * This method is called after a record is removed from the database.
+     */
+    protected function onDelete()
+    {
+        ;
+    }
+
+    /**
+     * This methos is called after a new record is saved on the database (saveInsert).
+     */
+    protected function onInsert()
+    {
+        ;
+    }
+
+    /**
+     * Inserts this data as a new record in database.
      * 
      * @param array $values
      *
@@ -80,6 +116,7 @@ abstract class ModelOnChangeClass extends ModelClass
     protected function saveInsert(array $values = [])
     {
         if (parent::saveInsert($values)) {
+            $this->onInsert();
             $this->setPreviousData();
             return true;
         }
@@ -88,6 +125,7 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
+     * Updates the data of this record in the database.
      * 
      * @param array $values
      *
@@ -110,6 +148,7 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
+     * Saves previous values.
      * 
      * @param array $fields
      */
