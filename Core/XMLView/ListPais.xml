@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListPais
- *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <column name="code" title="alfa-code-3" order="100" titleurl="https://es.wikipedia.org/wiki/ISO_3166-1">
@@ -32,12 +29,6 @@
         </column>
         <column name="name" order="120">
             <widget type="text" fieldname="nombre" />
-        </column>
-        <column name="validate-provider" title="validate-prov" display="center" order="130">
-            <widget type="checkbox" fieldname="validarprov" />
-        </column>
-        <column name="flag" display="none" order="140">
-            <widget type="text" fieldname="bandera" />
         </column>
     </columns>
 </view>

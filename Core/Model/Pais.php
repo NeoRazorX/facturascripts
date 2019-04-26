@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,20 +32,20 @@ class Pais extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Primary key. Varchar(3).
-     *
-     * @var string Alpha-3 code of the country.
-     *             http://es.wikipedia.org/wiki/ISO_3166-1
-     */
-    public $codpais;
-
-    /**
      * Alpha-2 code of the country.
      * http://es.wikipedia.org/wiki/ISO_3166-1
      *
      * @var string
      */
     public $codiso;
+
+    /**
+     * Primary key. Varchar(3). Alpha-3 code of the country.
+     * http://es.wikipedia.org/wiki/ISO_3166-1
+     *
+     * @var string
+     */
+    public $codpais;
 
     /**
      * Country name.

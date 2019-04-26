@@ -17,7 +17,7 @@
     </column>
     <column>
         <name>porcentaje</name>
-        <type>integer</type>
+        <type>double precision</type>
         <null>NO</null>
     </column>
     <constraint>
