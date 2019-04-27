@@ -7,10 +7,6 @@
 -->
 <table>
     <column>
-        <name>bandera</name>
-        <type>text</type>
-    </column>
-    <column>
         <name>codiso</name>
         <type>character varying(2)</type>
     </column>
@@ -22,10 +18,6 @@
     <column>
         <name>nombre</name>
         <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>validarprov</name>
-        <type>boolean</type>
     </column>
     <constraint>
         <name>paises_pkey</name>

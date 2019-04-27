@@ -58,7 +58,7 @@
         <default>0</default>
     </column>
     <constraint>
-        <name>stocks_pkey</name>
+        <name>stocks_pkey2</name>
         <type>PRIMARY KEY (idstock)</type>
     </constraint>
     <constraint>
