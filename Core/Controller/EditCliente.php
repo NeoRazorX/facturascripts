@@ -95,26 +95,26 @@ class EditCliente extends ExtendedController\EditController
     }
 
     /**
-     * Create views
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     * @param string $icon
      */
-    protected function createViews()
+    protected function createContactsView($name, $model, $label, $icon)
     {
-        parent::createViews();
-        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
-        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
+        $this->addListView($name, $model, $label, $icon);
 
-        $this->createListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
-        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
-        $this->createListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->createListView('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->createListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
+        /// sort options
+        $this->views[$name]->addOrderBy(['fechaalta'], 'date');
+        $this->views[$name]->addOrderBy(['descripcion'], 'descripcion', 2);
 
-        /// Disable buttons
-        $this->setSettings('ListCliente', 'btnNew', false);
-        $this->setSettings('ListCliente', 'btnDelete', false);
-        $this->setSettings('ListSubcuenta', 'btnNew', false);
+        /// search columns
+        $this->views[$name]->searchFields[] = 'apellidos';
+        $this->views[$name]->searchFields[] = 'descripcion';
+        $this->views[$name]->searchFields[] = 'direccion';
+        $this->views[$name]->searchFields[] = 'email';
+        $this->views[$name]->searchFields[] = 'nombre';
     }
 
     /**
@@ -135,6 +135,10 @@ class EditCliente extends ExtendedController\EditController
         /// search columns
         $this->views[$name]->searchFields[] = 'referencia';
         $this->views[$name]->searchFields[] = 'descripcion';
+
+        /// Disable buttons
+        $this->setSettings($name, 'btnDelete', false);
+        $this->setSettings($name, 'btnNew', false);
     }
 
     /**
@@ -150,6 +154,8 @@ class EditCliente extends ExtendedController\EditController
         /// sort options
         $this->views[$name]->addOrderBy(['codigo'], 'code');
         $this->views[$name]->addOrderBy(['fecha', 'hora'], 'date', 2);
+        $this->views[$name]->addOrderBy(['numero'], 'number');
+        $this->views[$name]->addOrderBy(['numero2'], 'number2');
         $this->views[$name]->addOrderBy(['total'], 'amount');
 
         /// search columns
@@ -158,6 +164,53 @@ class EditCliente extends ExtendedController\EditController
 
         /// Disable columns
         $this->views[$name]->disableColumn('customer', true);
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     * @param string $icon
+     */
+    protected function createSubaccountsView($name, $model, $label, $icon)
+    {
+        $this->addListView($name, $model, $label, $icon);
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['codigo'], 'code');
+        $this->views[$name]->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views[$name]->addOrderBy(['descripcion'], 'descripcion');
+        $this->views[$name]->addOrderBy(['saldo'], 'balance');
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'codigo';
+        $this->views[$name]->searchFields[] = 'description';
+
+        /// Disable buttons
+        $this->setSettings('ListSubcuenta', 'btnNew', false);
+    }
+
+    /**
+     * Create views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->createContactsView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
+        $this->createSubaccountsView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
+
+        $this->createListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products');
+        $this->createListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createListView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
+
+        /// Disable buttons
+        $this->setSettings('ListCliente', 'btnNew', false);
+        $this->setSettings('ListCliente', 'btnDelete', false);
     }
 
     /**

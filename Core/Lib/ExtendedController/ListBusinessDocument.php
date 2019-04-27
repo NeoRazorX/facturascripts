@@ -109,6 +109,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addSearchFields($name, ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy($name, ['codigo'], 'code');
         $this->addOrderBy($name, ['fecha', 'hora'], 'date', 2);
+        $this->addOrderBy($name, ['numero'], 'number');
+        $this->addOrderBy($name, ['numproveedor'], 'numsupplier');
         $this->addOrderBy($name, ['total'], 'amount');
 
         /// filters
@@ -130,6 +132,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addSearchFields($name, ['codigo', 'numero2', 'observaciones']);
         $this->addOrderBy($name, ['codigo'], 'code');
         $this->addOrderBy($name, ['fecha', 'hora'], 'date', 2);
+        $this->addOrderBy($name, ['numero'], 'number');
+        $this->addOrderBy($name, ['numero2'], 'number2');
         $this->addOrderBy($name, ['total'], 'amount');
 
         /// filters
