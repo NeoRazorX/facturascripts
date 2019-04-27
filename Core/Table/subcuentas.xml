@@ -64,7 +64,7 @@
         <default>0</default>
     </column>
     <constraint>
-        <name>subcuentas_pkey2</name>
+        <name>subcuentas_pkey</name>
         <type>PRIMARY KEY (idsubcuenta)</type>
     </constraint>
     <constraint>

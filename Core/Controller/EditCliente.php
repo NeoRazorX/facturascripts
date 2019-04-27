@@ -103,24 +103,61 @@ class EditCliente extends ExtendedController\EditController
         $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
         $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
-        $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
 
-        /// Disable columns
-        $this->views['ListFacturaCliente']->disableColumn('customer', true);
-        $this->views['ListAlbaranCliente']->disableColumn('customer', true);
-        $this->views['ListPedidoCliente']->disableColumn('customer', true);
-        $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
-        $this->views['ListLineaFacturaCliente']->disableColumn('order', true);
+        $this->createListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
+        $this->createListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createListView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
 
         /// Disable buttons
         $this->setSettings('ListCliente', 'btnNew', false);
         $this->setSettings('ListCliente', 'btnDelete', false);
         $this->setSettings('ListSubcuenta', 'btnNew', false);
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     */
+    protected function createLineView($name, $model, $label)
+    {
+        $this->addListView($name, $model, $label, 'fas fa-cubes');
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['idlinea'], 'code', 2);
+        $this->views[$name]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$name]->addOrderBy(['pvptotal'], 'amount');
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'referencia';
+        $this->views[$name]->searchFields[] = 'descripcion';
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     */
+    protected function createListView($name, $model, $label)
+    {
+        $this->addListView($name, $model, $label, 'fas fa-copy');
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['codigo'], 'code');
+        $this->views[$name]->addOrderBy(['fecha', 'hora'], 'date', 2);
+        $this->views[$name]->addOrderBy(['total'], 'amount');
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'numero2';
+        $this->views[$name]->searchFields[] = 'observaciones';
+
+        /// Disable columns
+        $this->views[$name]->disableColumn('customer', true);
     }
 
     /**
