@@ -182,13 +182,18 @@ class DocumentStitcher extends Controller
 
         $generator = new BusinessDocumentGenerator();
         if ($generator->generate($prototype, $destiny, $newLines, $quantities)) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-
-            /// redir to new document
             foreach ($generator->getLastDocs() as $doc) {
-                $this->redirect($doc->url());
-                break;
+                $doc->fecha = $this->request->request->get('date_doc');
+                if ($doc->save()) {
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    /// redir to new document
+                    $this->redirect($doc->url());
+                    continue;
+                }
+
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
             }
+
             return;
         }
 
