@@ -85,10 +85,11 @@ class GroupItem extends VisualItem
     /**
      *
      * @param object $model
+     * @param bool $forceReadOnly
      *
      * @return string
      */
-    public function edit($model)
+    public function edit($model, $forceReadOnly = false)
     {
         $divClass = ($this->numcolumns > 0) ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
@@ -100,6 +101,9 @@ class GroupItem extends VisualItem
         }
 
         foreach ($this->columns as $col) {
+            if ($forceReadOnly) {
+                $col->widget->readonly = 'true';
+            }
             $html .= $col->edit($model);
         }
 
@@ -153,7 +157,7 @@ class GroupItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param object  $model
      * @param Request $request
      */
@@ -182,7 +186,7 @@ class GroupItem extends VisualItem
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function legend()

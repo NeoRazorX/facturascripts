@@ -95,28 +95,117 @@ class EditProveedor extends ExtendedController\EditController
     }
 
     /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     * @param string $icon
+     */
+    protected function createContactsView($name, $model, $label, $icon)
+    {
+        $this->addListView($name, $model, $label, $icon);
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['fechaalta'], 'date');
+        $this->views[$name]->addOrderBy(['descripcion'], 'descripcion', 2);
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'apellidos';
+        $this->views[$name]->searchFields[] = 'descripcion';
+        $this->views[$name]->searchFields[] = 'direccion';
+        $this->views[$name]->searchFields[] = 'email';
+        $this->views[$name]->searchFields[] = 'nombre';
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     */
+    protected function createLineView($name, $model, $label)
+    {
+        $this->addListView($name, $model, $label, 'fas fa-cubes');
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['idlinea'], 'code', 2);
+        $this->views[$name]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$name]->addOrderBy(['pvptotal'], 'amount');
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'referencia';
+        $this->views[$name]->searchFields[] = 'descripcion';
+
+        /// Disable buttons
+        $this->setSettings($name, 'btnDelete', false);
+        $this->setSettings($name, 'btnNew', false);
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     */
+    protected function createListView($name, $model, $label)
+    {
+        $this->addListView($name, $model, $label, 'fas fa-copy');
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['codigo'], 'code');
+        $this->views[$name]->addOrderBy(['fecha', 'hora'], 'date', 2);
+        $this->views[$name]->addOrderBy(['numero'], 'number');
+        $this->views[$name]->addOrderBy(['numproveedor'], 'numsupplier');
+        $this->views[$name]->addOrderBy(['total'], 'amount');
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'numproveedor';
+        $this->views[$name]->searchFields[] = 'observaciones';
+
+        /// Disable columns
+        $this->views[$name]->disableColumn('customer', true);
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $model
+     * @param string $label
+     * @param string $icon
+     */
+    protected function createSubaccountsView($name, $model, $label, $icon)
+    {
+        $this->addListView($name, $model, $label, $icon);
+
+        /// sort options
+        $this->views[$name]->addOrderBy(['codigo'], 'code');
+        $this->views[$name]->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views[$name]->addOrderBy(['descripcion'], 'descripcion');
+        $this->views[$name]->addOrderBy(['saldo'], 'balance');
+
+        /// search columns
+        $this->views[$name]->searchFields[] = 'codigo';
+        $this->views[$name]->searchFields[] = 'description';
+
+        /// Disable buttons
+        $this->setSettings('ListSubcuenta', 'btnNew', false);
+    }
+
+    /**
      * Create views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->createContactsView('ListContacto', 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
-        $this->addListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices', 'fas fa-copy');
-        $this->addListView('ListLineaFacturaProveedor', 'LineaFacturaCliente', 'products', 'fas fa-cubes');
-        $this->addListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes', 'fas fa-copy');
-        $this->addListView('ListPedidoProveedor', 'PedidoProveedor', 'orders', 'fas fa-copy');
-        $this->addListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations', 'fas fa-copy');
+        $this->createSubaccountsView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
 
-        /// Disable columns
-        $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
-        $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
-        $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
-        $this->views['ListPresupuestoProveedor']->disableColumn('supplier', true);
-
-        /// Disable buttons
-        $this->setSettings('ListSubcuenta', 'btnNew', false);
+        $this->createListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
+        $this->createLineView('ListLineaFacturaProveedor', 'LineaFacturaCliente', 'products');
+        $this->createListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        $this->createListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        $this->createListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
     }
 
     /**

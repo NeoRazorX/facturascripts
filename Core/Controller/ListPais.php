@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to list the items in the Pais model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class ListPais extends ExtendedController\ListController
 {
@@ -51,19 +51,16 @@ class ListPais extends ExtendedController\ListController
     {
         /// Countries
         $this->addView('ListPais', 'Pais', 'countries', 'fas fa-globe-americas');
-        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
-
-        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states', 'validarprov');
         $this->addOrderBy('ListPais', ['codpais'], 'code');
         $this->addOrderBy('ListPais', ['nombre'], 'name');
         $this->addOrderBy('ListPais', ['codiso'], 'codiso');
+        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
         /// States
         $this->addView('ListProvincia', 'Provincia', 'province', 'fas fa-map-signs');
-        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
-
         $this->addOrderBy('ListProvincia', ['provincia'], 'province');
         $this->addOrderBy('ListProvincia', ['codpais'], 'alfa-code-3', 1);
         $this->addOrderBy('ListProvincia', ['codpostal2d'], 'postalcode');
+        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
     }
 }

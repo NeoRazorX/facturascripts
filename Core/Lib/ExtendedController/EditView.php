@@ -32,6 +32,7 @@ class EditView extends BaseView
 {
 
     const EDITVIEW_TEMPLATE = 'Master/EditView.html.twig';
+    const EDITREADONLYVIEW_TEMPLATE = 'Master/EditReadOnlyView.html.twig';
 
     /**
      * EditView constructor and initialization.
@@ -102,6 +103,20 @@ class EditView extends BaseView
                     }
                 }
                 break;
+        }
+    }
+
+    /**
+     * Allows you to set the view as read only
+     *
+     * @param bool $readOnly
+     */
+    public function setReadOnly(bool $readOnly)
+    {
+        if ($readOnly) {
+            $this->template = self::EDITREADONLYVIEW_TEMPLATE;
+        } else {
+            $this->template = self::EDITVIEW_TEMPLATE;
         }
     }
 }

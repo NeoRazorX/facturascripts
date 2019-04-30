@@ -113,6 +113,7 @@ class BusinessDocumentCode
 
         /// sequence not found? Then create
         if (!$selectedSequence->exists()) {
+            $selectedSequence->codejercicio = $document->codejercicio;
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
             $selectedSequence->tipodoc = $document->modelClassName();
