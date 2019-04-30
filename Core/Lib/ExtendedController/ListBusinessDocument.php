@@ -144,4 +144,45 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
         $this->addFilterCheckbox($name, 'paid', 'paid', 'pagado');
     }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'group-document':
+                $this->groupDocumentAction();
+                break;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    /**
+     * Recalculate the document total based on lines.
+     *
+     * @return bool
+     */
+    protected function groupDocumentAction()
+    {   
+        $baseUrl = 'DocumentStitcher?model=';     
+        $codes = $this->request->request->get('code');
+        $viewName = $this->request->request->get('activetab');        
+        $modelName = $this->views[$viewName]->model->modelClassName();
+
+        if (!empty($codes) && modelName) {
+            $codes = implode(',', $codes);
+            $url = $baseUrl . $modelName . '&codes=' . $codes;            
+            
+            return $this->redirect($url);
+        }
+
+        $this->miniLog->warning('any-document-selected');        
+        return false;
+    }
 }
