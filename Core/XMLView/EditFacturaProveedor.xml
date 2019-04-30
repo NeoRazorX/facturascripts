@@ -63,7 +63,7 @@
         <group name="attributes" title="attributes" numcolumns="12">
             <column name="company" order="100">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
             <column name="warehouse" order="110">
