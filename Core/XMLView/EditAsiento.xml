@@ -38,7 +38,7 @@
                 <widget type="number" fieldname="numero" decimal="0" step="1" readonly="true" />
             </column>
         </group>
-        <group name="analytical" title="analytical-data" numcolumns="6" icon="fas fa-chart-line">
+        <group name="advanced" title="advanced" numcolumns="6" icon="fas fa-chart-line">
             <column name="journal" numcolumns="5" order="210">
                 <widget type="select" fieldname="iddiario">
                     <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
