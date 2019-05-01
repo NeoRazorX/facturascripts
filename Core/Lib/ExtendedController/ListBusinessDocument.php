@@ -170,14 +170,12 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function groupDocumentAction()
     {   
-        $baseUrl = 'DocumentStitcher?model=';     
-        $codes = $this->request->request->get('code');
-        $viewName = $this->request->request->get('activetab');        
-        $modelName = $this->views[$viewName]->model->modelClassName();
+        $codes = $this->request->request->get('code');      
+        $model =  $this->views[$this->active]->model;
 
-        if (!empty($codes) && modelName) {
+        if (!empty($codes) && model) {
             $codes = implode(',', $codes);
-            $url = $baseUrl . $modelName . '&codes=' . $codes;            
+            $url = "DocumentStitcher?model={$model->modelClassName()}&codes={$codes}";            
             
             return $this->redirect($url);
         }
