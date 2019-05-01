@@ -171,7 +171,7 @@ abstract class ListBusinessDocument extends ListController
     protected function groupDocumentAction()
     {   
         $codes = $this->request->request->get('code');      
-        $model =  $this->views[$this->active]->model;
+        $model = $this->views[$this->active]->model;
 
         if (!empty($codes) && model) {
             $codes = implode(',', $codes);
