@@ -164,7 +164,7 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * Recalculate the document total based on lines.
+     * Send the selected codes to the DocumentStitcher controller.
      *
      * @return bool
      */
@@ -173,7 +173,7 @@ abstract class ListBusinessDocument extends ListController
         $codes = $this->request->request->get('code');      
         $model = $this->views[$this->active]->model;
 
-        if (!empty($codes) && model) {
+        if (!empty($codes) && $model) {
             $codes = implode(',', $codes);
             $url = "DocumentStitcher?model={$model->modelClassName()}&codes={$codes}";            
             
