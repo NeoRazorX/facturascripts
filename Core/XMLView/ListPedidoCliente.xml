@@ -55,6 +55,9 @@
         </column>
     </columns>
     <rows>
+        <row type='actions'>
+            <button type='action' label='group-document' color='warning' action='group-document' icon='fas fa-object-group' />
+        </row>
         <row type="status">
             <option color="warning" fieldname="editable">1</option>
             <option color="success" fieldname="pagado">1</option>
