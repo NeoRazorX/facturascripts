@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Cache;
 /**
- * Asset Manager for easy add extra assets.
  *
  * @author Juan José Prieto Dzul <juanjoseprieto88@gmail.com>
  */
