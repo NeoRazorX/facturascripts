@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -52,5 +53,36 @@ class EditSerie extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->addListView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
+        $this->setTabsPosition('bottom');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string                      $viewName
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListSecuenciaDocumento':
+                $codserie = $this->getViewModelValue('EditSerie', 'codserie');
+                $where = [new DataBaseWhere('codserie', $codserie)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }
