@@ -29,6 +29,21 @@ abstract class ListBusinessDocument extends ListController
 {
 
     /**
+     * 
+     * @param string $name
+     */
+    protected function addButtonGroupDocument($name)
+    {
+        $newButton = [
+            'action' => 'group-document',
+            'icon' => 'fas fa-magic',
+            'label' => 'group-or-split',
+            'type' => 'action',
+        ];
+        $this->addButton($name, $newButton);
+    }
+
+    /**
      *
      * @param string $name
      * @param string $model
@@ -169,18 +184,18 @@ abstract class ListBusinessDocument extends ListController
      * @return bool
      */
     protected function groupDocumentAction()
-    {   
-        $codes = $this->request->request->get('code');      
+    {
+        $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
 
         if (!empty($codes) && $model) {
             $codes = implode(',', $codes);
-            $url = "DocumentStitcher?model={$model->modelClassName()}&codes={$codes}";            
-            
+            $url = "DocumentStitcher?model={$model->modelClassName()}&codes={$codes}";
+
             return $this->redirect($url);
         }
 
-        $this->miniLog->warning('any-document-selected');        
+        $this->miniLog->warning('any-document-selected');
         return false;
     }
 }

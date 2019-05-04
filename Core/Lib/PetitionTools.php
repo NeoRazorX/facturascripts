@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,38 +19,53 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Cache;
+
 /**
+ * Toolkit to prevent duplicated petitions.
  *
- * @author Juan José Prieto Dzul <juanjoseprieto88@gmail.com>
+ * @author Juan José Prieto Dzul    <juanjoseprieto88@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  */
 class PetitionTools
 {
-    /**
-     * Generate a random token.
-     *
-     * @return string
-     */
-    public static function newToken()
-    {
-        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $token = substr(str_shuffle($chars), 0, 20);
 
-        return $token;
+    const CACHE_KEY = 'PetitionTools';
+    const MAX_TOKENS = 100;
+    const TOKEN_LENGTH = 20;
+
+    /**
+     *
+     * @var Cache
+     */
+    protected $cache;
+
+    public function __construct()
+    {
+        $this->cache = new Cache();
     }
 
     /**
-     * Validate if petition token exist, otherwise save it.
+     * Generates a random token.
+     *
+     * @return string
+     */
+    public function newToken()
+    {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return substr(str_shuffle($chars), 0, self::TOKEN_LENGTH);
+    }
+
+    /**
+     * Validates if a petition token exist, otherwise save it.
      *
      * @param string $token
      *
      * @return bool
      */
-    public static function tokenExist(string $token)
+    public function tokenExist(string $token)
     {
-        $cacheObject = new Cache();
-        $storedToken = $cacheObject->get('token');
-
-        if (isset($storedToken) && $storedToken == $token) {
+        $tokens = $this->getTokens();
+        if (in_array($token, $tokens)) {
             return true;
         }
 
@@ -59,16 +74,34 @@ class PetitionTools
     }
 
     /**
-     * Save new token to cache.
+     * 
+     * @return array
+     */
+    protected function getTokens()
+    {
+        $values = $this->cache->get(self::CACHE_KEY);
+        $tokens = is_array($values) ? $values : [];
+        if (count($tokens) < self::MAX_TOKENS) {
+            return $tokens;
+        }
+
+        /// reduce tokens
+        return array_slice($tokens, -10);
+    }
+
+    /**
+     * Saves the new token to cache.
      * 
      * @param string $token
      *
      * @return bool
      */
-    protected static function saveToken(string $token)
+    protected function saveToken(string $token)
     {
-        $cacheObject = new Cache();
+        $tokens = $this->getTokens();
 
-        return $cacheObject->set('token', $token);
+        /// save new token
+        $tokens[] = $token;
+        return $this->cache->set(self::CACHE_KEY, $tokens);
     }
 }
