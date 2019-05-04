@@ -34,6 +34,16 @@
                         {{ i18n.trans(pageData.title) | capitalize }}
                     </h1>
                 </div>
+                <div class="col">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <input type="text" name="date_doc" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
+                    </div>
+                </div>
                 <div class="col text-right">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -71,19 +81,11 @@
             <div class="row mb-2 align-items-center">
                 <div class="col">
                     <a href="{{ doc.url() }}">
-                        <i class="fas fa-file" aria-hidden="true"></i> {{ fsc.modelName }} {{ doc.codigo }}
+                        <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ fsc.modelName }} {{ doc.codigo }}
                     </a>
                     &nbsp;
-                    <i class="fas fa-calendar-alt" aria-hidden="true"></i> {{ doc.fecha }}
-                    <i class="fas fa-clock" aria-hidden="true"></i> {{ doc.hora }}
-                </div>
-                <div class="col text-right">
-                    <div class="form-inline">
-                        <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-                        &nbsp;
-                        <label for="date_doc" class="col-4 text-right">{{ i18n.trans('Date-of-the-document') }}</label>                    
-                        <input type="text" name="date_doc" value="{{ task.end|date('d-m-Y') }}" id="date_doc" class="form-control datepicker col-2 text-right" autocomplete="off"/>             
-                    </div>
+                    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
+                    <i class="fas fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                 </div>
             </div>        
         </div>
