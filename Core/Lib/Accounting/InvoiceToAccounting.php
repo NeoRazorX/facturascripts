@@ -336,7 +336,7 @@ class InvoiceToAccounting extends AccountingAccounts
 
     /**
      * Generate the accounting entry for a purchase document.
-     * 
+     *
      * @param FacturaProveedor $model
      */
     protected function purchaseAccountingEntry(&$model)
@@ -348,6 +348,12 @@ class InvoiceToAccounting extends AccountingAccounts
         $accountEntry->fecha = $this->document->fecha;
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
+        $serie = new \FacturaScripts\Core\Model\Serie();
+        $serie->loadFromCode($this->document->codserie);
+        if ($serie) {
+            $accountEntry->iddiario = $serie->iddiario;
+            $accountEntry->canal = $serie->canal;
+        }
         if (!$accountEntry->save()) {
             $this->miniLog->warning('accounting-entry-error');
             return;
@@ -364,7 +370,7 @@ class InvoiceToAccounting extends AccountingAccounts
 
     /**
      * Generate the accounting entry for a sales document.
-     * 
+     *
      * @param FacturaCliente $model
      */
     protected function salesAccountingEntry(&$model)
@@ -376,17 +382,22 @@ class InvoiceToAccounting extends AccountingAccounts
         $accountEntry->fecha = $this->document->fecha;
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
+        $serie = new \FacturaScripts\Core\Model\Serie();
+        $serie->loadFromCode($this->document->codserie);
+        if ($serie) {
+            $accountEntry->iddiario = $serie->iddiario;
+            $accountEntry->canal = $serie->canal;
+        }
         if (!$accountEntry->save()) {
             $this->miniLog->warning('accounting-entry-error');
             return;
-        }
+            if ($this->addCustomerLine($accountEntry) && $this->addSalesTaxLines($accountEntry) && $this->addGoodsSalesLine($accountEntry)) {
+                $model->idasiento = $accountEntry->primaryColumnValue();
+                return;
+            }
 
-        if ($this->addCustomerLine($accountEntry) && $this->addSalesTaxLines($accountEntry) && $this->addGoodsSalesLine($accountEntry)) {
-            $model->idasiento = $accountEntry->primaryColumnValue();
-            return;
+            $this->miniLog->warning('accounting-lines-error');
+            $accountEntry->delete();
         }
-
-        $this->miniLog->warning('accounting-lines-error');
-        $accountEntry->delete();
     }
 }
