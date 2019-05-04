@@ -190,9 +190,9 @@ abstract class ListBusinessDocument extends ListController
 
         if (!empty($codes) && $model) {
             $codes = implode(',', $codes);
-            $url = "DocumentStitcher?model={$model->modelClassName()}&codes={$codes}";
-
-            return $this->redirect($url);
+            $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
+            $this->redirect($url);
+            return true;
         }
 
         $this->miniLog->warning('any-document-selected');
