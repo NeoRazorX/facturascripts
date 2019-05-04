@@ -69,7 +69,7 @@ class PetitionTools
             return true;
         }
 
-        self::saveToken($token);
+        $this->saveToken($token);
         return false;
     }
 
