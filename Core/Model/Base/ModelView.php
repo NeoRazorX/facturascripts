@@ -192,6 +192,8 @@ abstract class ModelView
     public function delete()
     {
         if (isset(self::$masterModel)) {
+            $primaryColumn = self::$masterModel->primaryColumn();
+            self::$masterModel->{$primaryColumn} = $this->primaryColumnValue();
             return self::$masterModel->delete();
         }
 
@@ -278,6 +280,28 @@ abstract class ModelView
     }
 
     /**
+     * Create a database where for the master key of the master model
+     *
+     * @param string $cod
+     * @return DataBaseWhere[]
+     */
+    private function getWhereFromCode($cod): array
+    {
+        /// If dont define master model cant load from code
+        if (!isset(self::$masterModel)) {
+            return [new DataBaseWhere('1', '0')];
+        }
+
+        /// Search primary key from field list
+        $primaryColumn = self::$masterModel->primaryColumn();
+        foreach ($this->getFields() as $field => $sqlField) {
+            if ($field == $primaryColumn) {
+                return [new DataBaseWhere($sqlField, $cod)];
+            }
+        }
+    }
+
+    /**
      * Fill the class with the registry values
      * whose primary column corresponds to the value $cod, or according to the condition
      * where indicated, if value is not reported in $cod.
@@ -293,9 +317,10 @@ abstract class ModelView
      */
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
+        $sqlWhere = empty($where) ? $this->getWhereFromCode($cod) : $where;
         $sql = 'SELECT ' . $this->fieldsList()
             . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($where)
+            . DataBaseWhere::getSQLWhere($sqlWhere)
             . $this->getGroupBy()
             . $this->getOrderBy($orderby);
 
