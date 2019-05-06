@@ -39,7 +39,7 @@
         </column>
         <column name="company" order="120">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>
         </column>
         <column name="exercise" order="130">

@@ -30,6 +30,7 @@ class DownloadTools
 {
 
     const USERAGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
+    const TIMEOUT = 30;
 
     /**
      * Downloads and returns url content with curl or file_get_contents.
@@ -39,7 +40,7 @@ class DownloadTools
      * 
      * @return string
      */
-    public function getContents(string $url, int $timeout = 30)
+    public function getContents(string $url, int $timeout = self::TIMEOUT)
     {
         if (function_exists('curl_init')) {
             $ch = curl_init();
@@ -129,7 +130,7 @@ class DownloadTools
      * 
      * @return bool
      */
-    public function download(string $url, string $filename, int $timeout = 30): bool
+    public function download(string $url, string $filename, int $timeout = self::TIMEOUT): bool
     {
         try {
             $data = $this->getContents($url, $timeout);

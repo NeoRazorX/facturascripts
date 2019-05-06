@@ -57,7 +57,7 @@ class GridView extends EditView
      *
      * @var string
      */
-    public $editTemplate = self::EDITVIEW_TEMPLATE;
+    public $editTemplate = self::EDIT_TEMPLATE;
 
     /**
      * Grid data configuration and data
@@ -126,12 +126,12 @@ class GridView extends EditView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = '', $where = array(), $order = array(), $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         parent::loadData($code, $where, $order, $offset, $limit);
 
         if ($this->count == 0) {
-            $this->template = self::EDITVIEW_TEMPLATE;
+            $this->template = self::EDIT_TEMPLATE;
             return;
         }
 
@@ -139,9 +139,9 @@ class GridView extends EditView
             $code = $this->newCode;
         }
 
-        $where = [new DataBaseWhere($this->model->primaryColumn(), $code)];
-        $orderby = [$this->detailView->model->primaryColumn() => 'ASC'];
-        $this->loadGridData($where, $orderby);
+        $where[] = new DataBaseWhere($this->model->primaryColumn(), $code);
+        $order[$this->detailView->model->primaryColumn()] = 'ASC';
+        $this->loadGridData($where, $order);
     }
 
     /**

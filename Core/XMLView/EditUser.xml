@@ -56,7 +56,7 @@
             </column>
             <column name="company" numcolumns="3" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
             <column name="lang-code" numcolumns="3" order="130">

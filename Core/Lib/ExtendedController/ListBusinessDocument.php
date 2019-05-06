@@ -29,6 +29,21 @@ abstract class ListBusinessDocument extends ListController
 {
 
     /**
+     * 
+     * @param string $name
+     */
+    protected function addButtonGroupDocument($name)
+    {
+        $newButton = [
+            'action' => 'group-document',
+            'icon' => 'fas fa-magic',
+            'label' => 'group-or-split',
+            'type' => 'action',
+        ];
+        $this->addButton($name, $newButton);
+    }
+
+    /**
      *
      * @param string $name
      * @param string $model
@@ -143,5 +158,44 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterautocomplete($name, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
         $this->addFilterCheckbox($name, 'paid', 'paid', 'pagado');
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'group-document':
+                $this->groupDocumentAction();
+                break;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    /**
+     * Send the selected codes to the DocumentStitcher controller.
+     *
+     * @return bool
+     */
+    protected function groupDocumentAction()
+    {
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+
+        if (!empty($codes) && $model) {
+            $codes = implode(',', $codes);
+            $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
+            $this->redirect($url);
+            return true;
+        }
+
+        $this->miniLog->warning('any-document-selected');
+        return false;
     }
 }
