@@ -192,7 +192,6 @@ abstract class ModelView
     public function delete()
     {
         if (isset(self::$masterModel)) {
-            $this->setPrimaryColumnValue();
             return self::$masterModel->delete();
         }
 
@@ -333,7 +332,8 @@ abstract class ModelView
     public function url(string $type = 'auto', string $list = 'List')
     {
         if (isset(self::$masterModel)) {
-            $this->setPrimaryColumnValue();
+            $primaryColumn = self::$masterModel->primaryColumn();
+            self::$masterModel->{$primaryColumn} = $this->primaryColumnValue();
             return self::$masterModel->url($type, $list);
         }
         return '';
@@ -354,11 +354,14 @@ abstract class ModelView
     }
 
     /**
-     * Set value to master model primary key
+     * Get value from modal view cursor of the master model primary key
      */
-    private function setPrimaryColumnValue()
+    public function primaryColumnValue()
     {
-        $primaryColumn = self::$masterModel->primaryColumn();
-        self::$masterModel->{$primaryColumn} = $this->{$primaryColumn};
+        if (isset(self::$masterModel)) {
+            $primaryColumn = self::$masterModel->primaryColumn();
+            return $this->{$primaryColumn};
+        }
+        return null;
     }
 }
