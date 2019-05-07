@@ -22,10 +22,14 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * The class from which all model views inherit.
- * It allows the visualization of data of several models.
- * This type of model is only for reading data,
- * it does not allow modification or deletion.
+ * The class from which all views of the model are inherited.
+ * It allows the visualization of data of several tables of the database.
+ * This type of model is only for reading data, it does not allow modification
+ * or deletion of data directly.
+ *
+ * A main model ("master") must be indicated, which will be responsible for executing
+ * the data modification actions. This means that when inserting, modifying or deleting,
+ * only the operation on the indicated master model is performed.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -38,6 +42,13 @@ abstract class ModelView
      * @var DataBase
      */
     protected static $dataBase;
+
+    /**
+     * Master model
+     *
+     * @var ModelClass
+     */
+    private static $masterModel;
 
     /**
      * List of values for record view
@@ -72,6 +83,7 @@ abstract class ModelView
             self::$dataBase = new DataBase();
         }
 
+        self::$masterModel = null;
         $this->values = [];
 
         if (empty($data)) {
@@ -173,6 +185,22 @@ abstract class ModelView
     }
 
     /**
+     * Remove the model master data from the database.
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        if (isset(self::$masterModel)) {
+            $primaryColumn = self::$masterModel->primaryColumn();
+            self::$masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            return self::$masterModel->delete();
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the number of records that meet the condition.
      *
      * @param DataBaseWhere[] $where filters to apply to records.
@@ -252,6 +280,28 @@ abstract class ModelView
     }
 
     /**
+     * Create a database where for the master key of the master model
+     *
+     * @param string $cod
+     * @return DataBaseWhere[]
+     */
+    private function getWhereFromCode($cod): array
+    {
+        /// If dont define master model cant load from code
+        if (!isset(self::$masterModel)) {
+            return [new DataBaseWhere('1', '0')];
+        }
+
+        /// Search primary key from field list
+        $primaryColumn = self::$masterModel->primaryColumn();
+        foreach ($this->getFields() as $field => $sqlField) {
+            if ($field == $primaryColumn) {
+                return [new DataBaseWhere($sqlField, $cod)];
+            }
+        }
+    }
+
+    /**
      * Fill the class with the registry values
      * whose primary column corresponds to the value $cod, or according to the condition
      * where indicated, if value is not reported in $cod.
@@ -267,9 +317,10 @@ abstract class ModelView
      */
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
+        $sqlWhere = empty($where) ? $this->getWhereFromCode($cod) : $where;
         $sql = 'SELECT ' . $this->fieldsList()
             . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($where)
+            . DataBaseWhere::getSQLWhere($sqlWhere)
             . $this->getGroupBy()
             . $this->getOrderBy($orderby);
 
@@ -305,6 +356,37 @@ abstract class ModelView
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
+        if (isset(self::$masterModel)) {
+            $primaryColumn = self::$masterModel->primaryColumn();
+            self::$masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            return self::$masterModel->url($type, $list);
+        }
         return '';
+    }
+
+    /**
+     * Sets the master model for data operations
+     *
+     * @param ModelClass $model
+     */
+    protected function setMasterModel($model)
+    {
+        if (isset(self::$masterModel)) {
+            unset(self::$masterModel);
+            self::$masterModel = null;
+        }
+        self::$masterModel = $model;
+    }
+
+    /**
+     * Get value from modal view cursor of the master model primary key
+     */
+    public function primaryColumnValue()
+    {
+        if (isset(self::$masterModel)) {
+            $primaryColumn = self::$masterModel->primaryColumn();
+            return $this->{$primaryColumn};
+        }
+        return null;
     }
 }
