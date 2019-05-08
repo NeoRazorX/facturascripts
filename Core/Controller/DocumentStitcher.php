@@ -160,6 +160,7 @@ class DocumentStitcher extends Controller
         $newLines = [];
         $prototype = null;
         $quantities = [];
+        $properties = [];
         foreach ($this->documents as $doc) {
             foreach ($doc->getLines() as $line) {
                 $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
@@ -180,20 +181,15 @@ class DocumentStitcher extends Controller
             return;
         }
 
+        $properties["fecha"] = $this->request->request->get('date_doc');
         $generator = new BusinessDocumentGenerator();
-        if ($generator->generate($prototype, $destiny, $newLines, $quantities)) {
+        if ($generator->generate($prototype, $destiny, $newLines, $quantities, $properties)) {           
+            /// redir to new document
             foreach ($generator->getLastDocs() as $doc) {
-                $doc->fecha = $this->request->request->get('date_doc');
-                if ($doc->save()) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-                    /// redir to new document
-                    $this->redirect($doc->url());
-                    continue;
-                }
-
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->redirect($doc->url());
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                break;
             }
-
             return;
         }
 
