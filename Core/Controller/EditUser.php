@@ -154,6 +154,11 @@ class EditUser extends ExtendedController\EditController
      */
     private function loadHomepageValues()
     {
+        if (!$this->views['EditUser']->model->exists()) {
+            $this->views['EditUser']->disableColumn('homepage');
+            return;
+        }
+
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
         $userPages = $this->getUserPages($this->views['EditUser']->model);
         $columnHomepage->widget->setValuesFromArray($userPages);

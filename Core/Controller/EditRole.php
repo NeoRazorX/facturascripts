@@ -79,6 +79,8 @@ class EditRole extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+        
         $this->addEditListView('EditRoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
         $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fas fa-address-card');
 
