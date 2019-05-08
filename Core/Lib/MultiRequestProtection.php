@@ -21,15 +21,15 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Cache;
 
 /**
- * Toolkit to prevent duplicated petitions.
+ * Class to prevent duplicated petitions.
  *
  * @author Juan José Prieto Dzul    <juanjoseprieto88@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  */
-class PetitionTools
+class MultiRequestProtection
 {
 
-    const CACHE_KEY = 'PetitionTools';
+    const CACHE_KEY = 'MultiRequestProtection';
     const MAX_TOKENS = 100;
     const TOKEN_LENGTH = 20;
 

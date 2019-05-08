@@ -269,6 +269,12 @@ abstract class BusinessDocumentController extends PanelController
             return false;
         }
 
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->response->setContent($this->i18n->trans('duplicated-request'));
+            return false;
+        }
+
         /// loads model
         $data = $this->getBusinessFormData();
         $this->views[$this->active]->loadFromData($data['form']);

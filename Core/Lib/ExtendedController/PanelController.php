@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -251,6 +251,12 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            return false;
+        }
+
         // loads model data
         $code = $this->request->request->get('code', '');
         if (!$this->views[$this->active]->model->loadFromCode($code)) {
@@ -356,6 +362,12 @@ abstract class PanelController extends BaseController
     {
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
             return false;
         }
 

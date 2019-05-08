@@ -37,6 +37,7 @@
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="{{ currentView.model.primaryColumn() }}" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="idestado" value="{{ currentView.model.idestado }}" id="doc_idestado"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="form-row">
         {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, fsc.getSelectValues('Almacen')) }}
         {% if 'codcliente' in fsc.getSubjectColumns() %}
