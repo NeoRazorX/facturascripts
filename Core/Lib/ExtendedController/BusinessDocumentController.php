@@ -158,10 +158,6 @@ abstract class BusinessDocumentController extends PanelController
                 }
                 $this->exportManager->show($this->response);
                 break;
-
-            case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-                break;
         }
     }
 

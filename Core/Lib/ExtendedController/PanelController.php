@@ -306,6 +306,10 @@ abstract class PanelController extends BaseController
                 }
                 $this->exportManager->show($this->response);
                 break;
+
+            case 'save-ok':
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                break;
         }
     }
 
@@ -387,6 +391,7 @@ abstract class PanelController extends BaseController
 
         // save in database
         if ($this->views[$this->active]->model->save()) {
+            $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->views[$this->active]->model->clear();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
