@@ -44,6 +44,7 @@ class BusinessDocumentGenerator
      * @param array            $lines
      * @param array            $quantity
      * @param array            $properties
+     *
      * @return bool
      */
     public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [], $properties = [])
@@ -51,7 +52,7 @@ class BusinessDocumentGenerator
         $exclude = [
             'codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado',
             'neto', 'numero', 'total', 'totalirpf', 'totaliva', 'totalrecargo', $prototype->primaryColumn()
-        ];        
+        ];
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
@@ -59,27 +60,22 @@ class BusinessDocumentGenerator
             if (in_array($field, $exclude) || !property_exists($newDocClass, $field)) {
                 continue;
             }
-            
+
             /// copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
-        
-        if (!empty($properties)) {
-            if($properties['fecha']){
-                $newDoc->setDate($properties['fecha'], $newDoc->hora);
-            }            
-        }else{
-        /// sets date, hour and codejercicio
-        $newDoc->setDate($newDoc->fecha, $newDoc->hora);  
+
+        foreach ($properties as $key => $value) {
+            $newDoc->{$key} = $value;
         }
-        
+
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
             /// recalculate totals on new document
             $tool = new BusinessDocumentTools();
-            $tool->recalculate($newDoc);            
+            $tool->recalculate($newDoc);
             $newDoc->save();
-            
+
             /// add to last doc list
             $this->lastDocs[] = $newDoc;
             return true;

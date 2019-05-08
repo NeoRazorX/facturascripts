@@ -158,18 +158,20 @@ class DocumentStitcher extends Controller
     protected function generateNewDocument($destiny)
     {
         $newLines = [];
+        $properties = [
+            'fecha' => $this->request->request->get('fecha', '')
+        ];
         $prototype = null;
         $quantities = [];
-        $properties = [];
         foreach ($this->documents as $doc) {
+            if (null === $prototype) {
+                $prototype = $doc;
+            }
+
             foreach ($doc->getLines() as $line) {
                 $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
                 if (empty($quantity)) {
                     continue;
-                }
-
-                if (null === $prototype) {
-                    $prototype = $doc;
                 }
 
                 $quantities[$line->primaryColumnValue()] = $quantity;
@@ -177,13 +179,12 @@ class DocumentStitcher extends Controller
             }
         }
 
-        if (null === $prototype) {
+        if (null === $prototype || empty($newLines)) {
             return;
         }
 
-        $properties["fecha"] = $this->request->request->get('date_doc');
         $generator = new BusinessDocumentGenerator();
-        if ($generator->generate($prototype, $destiny, $newLines, $quantities, $properties)) {           
+        if ($generator->generate($prototype, $destiny, $newLines, $quantities, $properties)) {
             /// redir to new document
             foreach ($generator->getLastDocs() as $doc) {
                 $this->redirect($doc->url());
