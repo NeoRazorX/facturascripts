@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,7 +55,7 @@ abstract class ModelView
      *
      * @var array
      */
-    private $values;
+    private $values = [];
 
     /**
      * List of tables required for the execution of the view.
@@ -83,9 +83,6 @@ abstract class ModelView
             self::$dataBase = new DataBase();
         }
 
-        $this->masterModel = null;
-        $this->values = [];
-
         if (empty($data)) {
             $this->clear();
         } else {
@@ -94,9 +91,26 @@ abstract class ModelView
     }
 
     /**
+     * Return modal view field value
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (!isset($this->values[$name])) {
+            $this->values[$name] = null;
+        }
+
+        return $this->values[$name];
+    }
+
+    /**
      * Check if exits value to property
      *
      * @param string $name
+     *
      * @return bool
      */
     public function __isset($name)
@@ -108,26 +122,11 @@ abstract class ModelView
      * Set value to modal view field
      *
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __set($name, $value)
     {
         $this->values[$name] = $value;
-    }
-
-    /**
-     * Return modal view field value
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        if (!isset($this->values[$name])) {
-            $this->values[$name] = null;
-        }
-
-        return $this->values[$name];
     }
 
     /**
@@ -164,14 +163,13 @@ abstract class ModelView
      */
     private function checkTables(): bool
     {
-        $result = true;
         foreach ($this->getTables() as $tableName) {
             if (!self::$dataBase->tableExists($tableName)) {
-                $result = false;
-                break;
+                return false;
             }
         }
-        return $result;
+
+        return true;
     }
 
     /**
@@ -284,7 +282,8 @@ abstract class ModelView
      * the master key of the master model.
      *
      * @param string $cod
-     * @param DataBaseWhere $where
+     * @param array  $where
+     *
      * @return bool
      */
     private function loadFilterWhere($cod, &$where): bool
