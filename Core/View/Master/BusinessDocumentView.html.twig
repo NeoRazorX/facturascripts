@@ -88,7 +88,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="row mb-2">
+    <div class="row">
         {% for parentDoc in currentView.model.parentDocuments() %}
             <div class="col">
                 <div class="alert alert-warning text-center">
@@ -116,8 +116,12 @@
     {% block extras %}
     {% endblock %}
     <div id="document-lines"></div>
-    <br/>
-    <div class="form-row mb-2">
+    <div class="form-row mt-2 mb-2">
+        <div class="col">
+            <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones | raw }}</textarea>
+        </div>
+    </div>
+    <div class="form-row">
         <div class="col">
             {% if fsc.hasData and currentView.settings.btnDelete %}
                 <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ currentView.getViewName() }}');">
@@ -126,20 +130,12 @@
                 </button>
             {% endif %}
         </div>
-        {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
-        {{ macros.customSelect('doc_codpago', 'codpago', currentView.model.codpago, fsc.getSelectValues('FormaPago')) }}
-        {{ macros.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, fsc.getSelectValues('Divisa')) }}
         <div class="col text-right">
             {% if currentView.settings.btnSave %}
                 <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
                     <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
                 </button>
             {% endif %}
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col">
-            <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones | raw }}</textarea>
         </div>
     </div>
 </form>

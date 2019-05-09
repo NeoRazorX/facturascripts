@@ -58,7 +58,7 @@ abstract class BusinessDocumentController extends PanelController
     abstract public function getSubjectColumns();
 
     /**
-     * 
+     * Loads custom contact data for additional address details.
      */
     abstract protected function loadCustomContactsWidget(&$view);
 
@@ -246,7 +246,8 @@ abstract class BusinessDocumentController extends PanelController
 
         /// loads model
         $data = $this->getBusinessFormData();
-        $this->views[$this->active]->loadFromData($data['form']);
+        $merged = array_merge($data['form'], $data['exclude']);
+        $this->views[$this->active]->loadFromData($merged);
 
         /// recalculate
         $result = $this->documentTools->recalculateForm($this->views[$this->active]->model, $data['lines']);
@@ -315,15 +316,15 @@ abstract class BusinessDocumentController extends PanelController
             $view->model->nick = $this->user->nick;
         }
 
-        /// sets date, hour and accounting exercise
-        if (!$view->model->setDate($data['exclude']['fecha'], $view->model->hora)) {
-            return $this->saveDocumentError('ERROR: BAD DATE');
-        }
-
         /// sets subjects
         $result = $this->setSubject($view, $data['exclude']);
         if ('OK' !== $result) {
             return $this->saveDocumentError($result);
+        }
+
+        /// sets date, hour and accounting exercise
+        if (!$view->model->setDate($data['exclude']['fecha'], $view->model->hora)) {
+            return $this->saveDocumentError('ERROR: BAD DATE');
         }
 
         /// start transaction
