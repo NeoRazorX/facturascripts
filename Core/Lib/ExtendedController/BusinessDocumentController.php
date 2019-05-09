@@ -160,7 +160,7 @@ abstract class BusinessDocumentController extends PanelController
                 break;
         }
 
-        return parent::execAfterAction($action);
+        parent::execAfterAction($action);
     }
 
     /**
