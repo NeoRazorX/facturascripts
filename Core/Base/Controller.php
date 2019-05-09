@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
@@ -76,6 +77,12 @@ class Controller
      * @var MiniLog
      */
     protected $miniLog;
+
+    /**
+     *
+     * @var MultiRequestProtection
+     */
+    public $multiRequestProtection;
 
     /**
      * User permissions on this controller.
@@ -143,6 +150,7 @@ class Controller
         $this->empresa = new Empresa();
         $this->i18n = &$i18n;
         $this->miniLog = &$miniLog;
+        $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;

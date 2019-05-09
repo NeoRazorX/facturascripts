@@ -158,17 +158,20 @@ class DocumentStitcher extends Controller
     protected function generateNewDocument($destiny)
     {
         $newLines = [];
+        $properties = [
+            'fecha' => $this->request->request->get('fecha', '')
+        ];
         $prototype = null;
         $quantities = [];
         foreach ($this->documents as $doc) {
+            if (null === $prototype) {
+                $prototype = $doc;
+            }
+
             foreach ($doc->getLines() as $line) {
                 $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
                 if (empty($quantity)) {
                     continue;
-                }
-
-                if (null === $prototype) {
-                    $prototype = $doc;
                 }
 
                 $quantities[$line->primaryColumnValue()] = $quantity;
@@ -176,24 +179,18 @@ class DocumentStitcher extends Controller
             }
         }
 
-        if (null === $prototype) {
+        if (null === $prototype || empty($newLines)) {
             return;
         }
 
         $generator = new BusinessDocumentGenerator();
-        if ($generator->generate($prototype, $destiny, $newLines, $quantities)) {
+        if ($generator->generate($prototype, $destiny, $newLines, $quantities, $properties)) {
+            /// redir to new document
             foreach ($generator->getLastDocs() as $doc) {
-                $doc->fecha = $this->request->request->get('date_doc');
-                if ($doc->save()) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-                    /// redir to new document
-                    $this->redirect($doc->url());
-                    continue;
-                }
-
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->redirect($doc->url());
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                break;
             }
-
             return;
         }
 

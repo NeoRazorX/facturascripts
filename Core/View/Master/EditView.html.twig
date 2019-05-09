@@ -39,6 +39,7 @@
     <input type="hidden" name="action" value="{{ action }}"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="card">
         <div class="card-body">
             <div class="row">

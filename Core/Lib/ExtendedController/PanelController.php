@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -251,6 +251,12 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            return false;
+        }
+
         // loads model data
         $code = $this->request->request->get('code', '');
         if (!$this->views[$this->active]->model->loadFromCode($code)) {
@@ -299,6 +305,10 @@ abstract class PanelController extends BaseController
                     $selectedView->export($this->exportManager);
                 }
                 $this->exportManager->show($this->response);
+                break;
+
+            case 'save-ok':
+                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
                 break;
         }
     }
@@ -359,6 +369,12 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            return false;
+        }
+
         // loads form data
         $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->exists()) {
@@ -375,6 +391,7 @@ abstract class PanelController extends BaseController
 
         // save in database
         if ($this->views[$this->active]->model->save()) {
+            $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->views[$this->active]->model->clear();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));

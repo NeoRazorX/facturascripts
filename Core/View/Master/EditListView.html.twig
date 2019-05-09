@@ -20,6 +20,7 @@
     <form id="{{ formName }}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="insert"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <div class="card bg-light mb-2">
             <div class="card-header">
                 <button class="btn btn-sm btn-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
@@ -61,6 +62,7 @@
         <input type="hidden" name="action" value="edit"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
+        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <div class="card mb-2">
             <div class="card-body">
                 <div class="row">

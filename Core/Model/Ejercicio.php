@@ -217,7 +217,8 @@ class Ejercicio extends Base\ModelClass
             new DataBaseWhere('fechafin', $date, '>='),
         ];
 
-        if ($this->loadFromCode('', $where) && ($this->isOpened() || !$onlyOpened)) {
+        $order = [$this->primaryColumn() => 'DESC'];
+        if ($this->loadFromCode('', $where, $order) && ($this->isOpened() || !$onlyOpened)) {
             return true;
         }
 

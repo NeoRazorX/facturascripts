@@ -158,11 +158,9 @@ abstract class BusinessDocumentController extends PanelController
                 }
                 $this->exportManager->show($this->response);
                 break;
-
-            case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-                break;
         }
+
+        return parent::execAfterAction($action);
     }
 
     /**
@@ -266,6 +264,12 @@ abstract class BusinessDocumentController extends PanelController
         $this->setTemplate(false);
         if (!$this->permissions->allowUpdate) {
             $this->response->setContent($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->response->setContent($this->i18n->trans('duplicated-request'));
             return false;
         }
 

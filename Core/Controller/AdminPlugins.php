@@ -191,7 +191,7 @@ class AdminPlugins extends Base\Controller
 
             case 'upload':
                 $this->uploadPlugin($this->request->files->get('plugin', []));
-            /// no break, to make a deploy
+                break;
 
             default:
                 /// For now, always deploy the contents of Dinamic, for testing purposes

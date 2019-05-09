@@ -43,10 +43,11 @@ class BusinessDocumentGenerator
      * @param string           $newClass
      * @param array            $lines
      * @param array            $quantity
+     * @param array            $properties
      *
      * @return bool
      */
-    public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [])
+    public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [], $properties = [])
     {
         $exclude = [
             'codejercicio', 'codigo', 'fecha', 'femail', 'hora', 'idestado',
@@ -64,8 +65,9 @@ class BusinessDocumentGenerator
             $newDoc->{$field} = $prototype->{$field};
         }
 
-        /// sets date, hour and codejercicio
-        $newDoc->setDate($newDoc->fecha, $newDoc->hora);
+        foreach ($properties as $key => $value) {
+            $newDoc->{$key} = $value;
+        }
 
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {

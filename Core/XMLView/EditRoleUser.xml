@@ -16,26 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditUser
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="id" display="none" order="100">
-                <widget type="text" fieldname="id"/>
-            </column>
             <column name="user" order="100">
-                <widget type="select" fieldname="nick" required="true">
+                <widget type="select" fieldname="nick" onclick="EditUser" required="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick"></values>
                 </widget>
             </column>
-            <column name="role" order="100">
-                <widget type="select" fieldname="codrole" required="true" onclick="EditRole">
+            <column name="role" order="110">
+                <widget type="select" fieldname="codrole" onclick="EditRole" required="true">
                     <values source="roles" fieldcode="codrole" fieldtitle="descripcion"></values>
                 </widget>
             </column>
