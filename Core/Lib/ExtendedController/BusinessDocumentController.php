@@ -159,6 +159,8 @@ abstract class BusinessDocumentController extends PanelController
                 $this->exportManager->show($this->response);
                 break;
         }
+
+        return parent::execAfterAction($action);
     }
 
     /**
