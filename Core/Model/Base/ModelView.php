@@ -48,7 +48,7 @@ abstract class ModelView
      *
      * @var ModelClass
      */
-    private static $masterModel;
+    private $masterModel;
 
     /**
      * List of values for record view
@@ -83,7 +83,7 @@ abstract class ModelView
             self::$dataBase = new DataBase();
         }
 
-        self::$masterModel = null;
+        $this->masterModel = null;
         $this->values = [];
 
         if (empty($data)) {
@@ -191,10 +191,10 @@ abstract class ModelView
      */
     public function delete()
     {
-        if (isset(self::$masterModel)) {
-            $primaryColumn = self::$masterModel->primaryColumn();
-            self::$masterModel->{$primaryColumn} = $this->primaryColumnValue();
-            return self::$masterModel->delete();
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
+            $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            return $this->masterModel->delete();
         }
 
         return false;
@@ -221,7 +221,7 @@ abstract class ModelView
 
         $data = self::$dataBase->select($sql);
         $count = count($data);
-        return ($count == 1) ? $data[0]['count_total'] : $count;
+        return ($count == 1) ? (int) $data[0]['count_total'] : $count;
     }
 
     /**
@@ -280,25 +280,36 @@ abstract class ModelView
     }
 
     /**
-     * Create a database where for the master key of the master model
+     * If a value is reported for the PK create a database where for
+     * the master key of the master model.
      *
      * @param string $cod
-     * @return DataBaseWhere[]
+     * @param DataBaseWhere $where
+     * @return bool
      */
-    private function getWhereFromCode($cod): array
+    private function loadFilterWhere($cod, &$where): bool
     {
+        /// If there is no search by code we use the where informed
+        if (empty($cod)) {
+            return true;
+        }
+
         /// If dont define master model cant load from code
-        if (!isset(self::$masterModel)) {
-            return [new DataBaseWhere('1', '0')];
+        if (!isset($this->masterModel)) {
+            return false;
         }
 
         /// Search primary key from field list
-        $primaryColumn = self::$masterModel->primaryColumn();
+        $primaryColumn = $this->masterModel->primaryColumn();
         foreach ($this->getFields() as $field => $sqlField) {
             if ($field == $primaryColumn) {
-                return [new DataBaseWhere($sqlField, $cod)];
+                $where = [new DataBaseWhere($sqlField, $cod)];
+                return true;
             }
         }
+
+        /// The PK field is not defined in the field list. No posible search by PK
+        return false;
     }
 
     /**
@@ -317,10 +328,14 @@ abstract class ModelView
      */
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
-        $sqlWhere = empty($where) ? $this->getWhereFromCode($cod) : $where;
+        if (!$this->loadFilterWhere($cod, $where)) {
+            $this->clear();
+            return false;
+        }
+
         $sql = 'SELECT ' . $this->fieldsList()
             . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($sqlWhere)
+            . DataBaseWhere::getSQLWhere($where)
             . $this->getGroupBy()
             . $this->getOrderBy($orderby);
 
@@ -356,10 +371,10 @@ abstract class ModelView
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        if (isset(self::$masterModel)) {
-            $primaryColumn = self::$masterModel->primaryColumn();
-            self::$masterModel->{$primaryColumn} = $this->primaryColumnValue();
-            return self::$masterModel->url($type, $list);
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
+            $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
+            return $this->masterModel->url($type, $list);
         }
         return '';
     }
@@ -371,11 +386,7 @@ abstract class ModelView
      */
     protected function setMasterModel($model)
     {
-        if (isset(self::$masterModel)) {
-            unset(self::$masterModel);
-            self::$masterModel = null;
-        }
-        self::$masterModel = $model;
+        $this->masterModel = $model;
     }
 
     /**
@@ -383,8 +394,8 @@ abstract class ModelView
      */
     public function primaryColumnValue()
     {
-        if (isset(self::$masterModel)) {
-            $primaryColumn = self::$masterModel->primaryColumn();
+        if (isset($this->masterModel)) {
+            $primaryColumn = $this->masterModel->primaryColumn();
             return $this->{$primaryColumn};
         }
         return null;
