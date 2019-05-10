@@ -44,7 +44,7 @@ class DocumentStitcher extends Controller
 
     /**
      *
-     * @var Model\Base\BusinessDocument[]
+     * @var Model\Base\TransformerDocument[]
      */
     public $documents = [];
 
