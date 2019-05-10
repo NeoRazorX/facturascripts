@@ -47,7 +47,6 @@
         {% endif %}
         {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
         {{ macros.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
-        {{ macros.statusSelect(currentView.model, currentView, i18n) }}
         <div class="col">
             <div class="input-group">
                 <span class="input-group-prepend">
@@ -65,28 +64,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            {% if currentView.model.nick %}
-                <span class="badge badge-light">
-                    <i class="fas fa-user-tie fa-fw" aria-hidden="true"></i> {{ currentView.model.nick }}
-                </span>
-            {% endif %}
-        </div>
-        <div class="col text-right">
-            {% if currentView.model.femail %}
-                <span class="badge badge-info">
-                    <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('email-sent') }}
-                    {{ currentView.model.femail }}
-                </span>
-            {% endif %}
-            {% if currentView.model.pagado %}
-                <span class="badge badge-success">
-                    <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ i18n.trans('paid') }}
-                </span>
-            {% endif %}
-        </div>
+        {{ macros.statusSelect(currentView.model, currentView, i18n) }}
     </div>
     <div class="row">
         {% for parentDoc in currentView.model.parentDocuments() %}
@@ -97,9 +75,31 @@
                 </div>
             </div>
         {% endfor %}
-        {% if currentView.model.editable == false and currentView.model.exists() %}
+        {% if currentView.model.nick %}
+            <div class="col">
+                <div class="alert alert-secondary text-center">
+                    <i class="fas fa-user-tie fa-fw" aria-hidden="true"></i> {{ currentView.model.nick }}
+                </div>
+            </div>
+        {% endif %}
+        {% if currentView.model.femail %}
             <div class="col">
                 <div class="alert alert-info text-center">
+                    <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('email-sent') }}
+                    {{ currentView.model.femail }}
+                </div>
+            </div>
+        {% endif %}
+        {% if currentView.model.pagado %}
+            <div class="col">
+                <div class="alert alert-success text-center">
+                    <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ i18n.trans('paid') }}
+                </div>
+            </div>
+        {% endif %}
+        {% if currentView.model.editable == false and currentView.model.exists() %}
+            <div class="col">
+                <div class="alert alert-danger text-center">
                     <i class="fas fa-lock fa-fw"></i> {{ i18n.trans('non-editable-document') }}
                 </div>
             </div>
@@ -231,17 +231,9 @@
 {% macro statusSelect(model, view, i18n) %}
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {% for status in view.documentStatus %}
-                {% if model.idestado == status.idestado %}
-                    {% if status.editable %}
-                        <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                    {% else %}
-                        <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
+            <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ model.getStatus().nombre }}
         </button>
-        <div class="dropdown-menu">
+        <div class="dropdown-menu dropdown-menu-right">
             {% for status in view.documentStatus %}
                 {% if model.idestado == status.idestado %}
                     <a class="dropdown-item active" href="#">
