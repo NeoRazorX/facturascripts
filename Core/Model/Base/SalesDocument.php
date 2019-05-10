@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Pais;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class SalesDocument extends BusinessDocument
+abstract class SalesDocument extends TransformerDocument
 {
 
     /**

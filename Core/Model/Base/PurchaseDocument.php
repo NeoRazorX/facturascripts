@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class PurchaseDocument extends BusinessDocument
+abstract class PurchaseDocument extends TransformerDocument
 {
 
     /**
