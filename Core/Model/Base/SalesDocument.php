@@ -18,9 +18,11 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**
@@ -144,6 +146,13 @@ abstract class SalesDocument extends BusinessDocument
         parent::clear();
         $this->direccion = '';
         $this->porcomision = 0.0;
+
+        /// select default currency
+        $divisa = new Divisa();
+        if ($divisa->loadFromCode(AppSettings::get('default', 'coddivisa'))) {
+            $this->coddivisa = $divisa->coddivisa;
+            $this->tasaconv = $divisa->tasaconv;
+        }
     }
 
     /**
@@ -217,6 +226,15 @@ abstract class SalesDocument extends BusinessDocument
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function subjectColumn()
+    {
+        return 'codcliente';
+    }
+
+    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
@@ -260,11 +278,7 @@ abstract class SalesDocument extends BusinessDocument
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = [
-            'codalmacen', 'codcliente', 'coddivisa', 'codejercicio', 'codpago',
-            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado',
-            'total'
-        ];
+        $more = ['codcliente'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }

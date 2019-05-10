@@ -39,15 +39,6 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
-     * @return array
-     */
-    public function getSubjectColumns()
-    {
-        return ['codcliente'];
-    }
-
-    /**
      * Loads custom contact data for additional address details.
      *
      * @param mixed $view

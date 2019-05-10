@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -51,6 +53,18 @@ abstract class PurchaseDocument extends BusinessDocument
      */
     public $numproveedor;
 
+    public function clear()
+    {
+        parent::clear();
+
+        /// select default currency
+        $divisa = new Divisa();
+        if ($divisa->loadFromCode(AppSettings::get('default', 'coddivisa'))) {
+            $this->coddivisa = $divisa->coddivisa;
+            $this->tasaconv = $divisa->tasaconvcompra;
+        }
+    }
+
     /**
      * Assign the supplier to the document.
      * 
@@ -75,6 +89,15 @@ abstract class PurchaseDocument extends BusinessDocument
         $this->irpf = $subject->irpf ?? $this->irpf;
 
         return true;
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function subjectColumn()
+    {
+        return 'codproveedor';
     }
 
     /**
@@ -115,11 +138,7 @@ abstract class PurchaseDocument extends BusinessDocument
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = [
-            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codproveedor',
-            'codserie', 'editable', 'fecha', 'hora', 'idempresa', 'idestado',
-            'total'
-        ];
+        $more = ['codproveedor'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }

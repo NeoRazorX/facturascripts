@@ -53,11 +53,6 @@ abstract class BusinessDocumentController extends PanelController
     abstract public function getNewSubjectUrl();
 
     /**
-     * Returns an array of columns needed for subject.
-     */
-    abstract public function getSubjectColumns();
-
-    /**
      * Loads custom contact data for additional address details.
      */
     abstract protected function loadCustomContactsWidget(&$view);
@@ -169,18 +164,23 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function getBusinessFormData()
     {
-        $data = ['exclude' => [], 'form' => [], 'lines' => []];
+        $data = ['custom' => [], 'final' => [], 'form' => [], 'lines' => [], 'subject' => []];
         foreach ($this->request->request->all() as $field => $value) {
             switch ($field) {
-                case 'codcliente':
-                case 'codproveedor':
-                case 'fecha':
+                case 'codserie':
+                    $data['custom'][$field] = $value;
+                    break;
+
                 case 'idestado':
-                    $data['exclude'][$field] = $value;
+                    $data['final'][$field] = $value;
                     break;
 
                 case 'lines':
                     $data['lines'] = $this->views[$this->active]->processFormLines($value);
+                    break;
+
+                case $this->views[$this->active]->model->subjectColumn():
+                    $data['subject'][$field] = $value;
                     break;
 
                 default:
@@ -246,7 +246,7 @@ abstract class BusinessDocumentController extends PanelController
 
         /// loads model
         $data = $this->getBusinessFormData();
-        $merged = array_merge($data['form'], $data['exclude']);
+        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
         /// recalculate
@@ -316,23 +316,27 @@ abstract class BusinessDocumentController extends PanelController
             $view->model->nick = $this->user->nick;
         }
 
+        /// start transaction
+        $this->dataBase->beginTransaction();
+
         /// sets subjects
-        $result = $this->setSubject($view, $data['exclude']);
+        $result = $this->setSubject($view, $data['subject']);
         if ('OK' !== $result) {
             return $this->saveDocumentError($result);
         }
 
-        /// sets date, hour and accounting exercise
-        if (!$view->model->setDate($data['exclude']['fecha'], $view->model->hora)) {
-            return $this->saveDocumentError('ERROR: BAD DATE');
+        /// custom data fields
+        foreach ($data['custom'] as $key => $value) {
+            $view->model->{$key} = $value;
         }
 
-        /// start transaction
-        $this->dataBase->beginTransaction();
-
         if ($view->model->save() && $this->saveLines($view, $data['lines'])) {
+            /// final data fields
+            foreach ($data['final'] as $key => $value) {
+                $view->model->{$key} = $value;
+            }
+
             $this->documentTools->recalculate($view->model);
-            $view->model->idestado = $data['exclude']['idestado'];
             return $view->model->save() && $this->dataBase->commit() ? 'OK:' . $view->model->url() : $this->saveDocumentError('ERROR');
         }
 

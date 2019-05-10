@@ -240,6 +240,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
     abstract public function setSubject($subject);
 
     /**
+     * Returns an array of columns needed for subject.
+     */
+    abstract public function subjectColumn();
+
+    /**
      * Updates subjects data in this document.
      */
     abstract public function updateSubject();
@@ -282,7 +287,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         parent::clear();
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
-        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->editable = true;
@@ -292,7 +296,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->pagado = false;
-        $this->tasaconv = 1.0;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
@@ -503,53 +506,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Assign the date and find an accounting exercise.
-     *
-     * @param string $date
-     * @param string $hour
-     *
-     * @return bool
-     */
-    public function setDate(string $date, string $hour): bool
-    {
-        /// force check of warehouse-company relation
-        if (!$this->setWarehouse($this->codalmacen)) {
-            return false;
-        }
-
-        $ejercicio = new Ejercicio();
-        $ejercicio->idempresa = $this->idempresa;
-        if ($ejercicio->loadFromDate($date)) {
-            $this->codejercicio = $ejercicio->codejercicio;
-            $this->fecha = $date;
-            $this->hora = $hour;
-            return true;
-        }
-
-        self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
-        return false;
-    }
-
-    /**
-     * 
-     * @param string $codalmacen
-     *
-     * @return bool
-     */
-    public function setWarehouse($codalmacen)
-    {
-        $almacen = new Almacen();
-        if ($almacen->loadFromCode($codalmacen)) {
-            $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
-            return true;
-        }
-
-        self::$miniLog->warning(self::$i18n->trans('warehouse-not-found'));
-        return false;
-    }
-
-    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
@@ -598,6 +554,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 BusinessDocumentCode::getNewCode($this);
                 break;
 
+            case 'fecha':
+                return $this->setDate($this->fecha, $this->hora);
+
             case 'idestado':
                 $status = $this->getStatus();
                 foreach ($this->getLines() as $line) {
@@ -612,5 +571,65 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         return parent::onChange($field);
+    }
+
+    /**
+     * Assign the date and find an accounting exercise.
+     *
+     * @param string $date
+     * @param string $hour
+     *
+     * @return bool
+     */
+    protected function setDate(string $date, string $hour): bool
+    {
+        /// force check of warehouse-company relation
+        if (!$this->setWarehouse($this->codalmacen)) {
+            return false;
+        }
+
+        $ejercicio = new Ejercicio();
+        $ejercicio->idempresa = $this->idempresa;
+        if ($ejercicio->loadFromDate($date)) {
+            $this->codejercicio = $ejercicio->codejercicio;
+            $this->fecha = $date;
+            $this->hora = $hour;
+            return true;
+        }
+
+        self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = [
+            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie',
+            'editable', 'fecha', 'hora', 'idempresa', 'idestado', 'total'
+        ];
+        parent::setPreviousData(array_merge($more, $fields));
+    }
+
+    /**
+     * 
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    protected function setWarehouse($codalmacen)
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
+            return true;
+        }
+
+        self::$miniLog->warning(self::$i18n->trans('warehouse-not-found'));
+        return false;
     }
 }

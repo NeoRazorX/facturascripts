@@ -40,15 +40,6 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
 
     /**
      * 
-     * @return array
-     */
-    public function getSubjectColumns()
-    {
-        return ['codproveedor'];
-    }
-
-    /**
-     * 
      * @param mixed $view
      */
     protected function loadCustomContactsWidget(&$view)

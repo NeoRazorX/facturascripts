@@ -51,8 +51,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="info" fieldname="nostock">1</option>
             <option color="danger" fieldname="bloqueado">1</option>
+            <option color="info" fieldname="nostock">1</option>
             <option color="success" fieldname="stockfis">&gt;0</option>
             <option color="warning" fieldname="stockfis">&lt;1</option>
         </row>
