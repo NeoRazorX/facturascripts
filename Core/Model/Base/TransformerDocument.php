@@ -32,6 +32,12 @@ abstract class TransformerDocument extends BusinessDocument
 {
 
     /**
+     *
+     * @var bool
+     */
+    private static $documentGeneration = true;
+
+    /**
      * Indicates whether the document can be modified
      *
      * @var bool
@@ -222,6 +228,15 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
+     * 
+     * @param bool $value
+     */
+    public function setDocumentGeneration($value)
+    {
+        self::$documentGeneration = $value;
+    }
+
+    /**
      * Check changed fields before updata the database.
      * 
      * @param string $field
@@ -235,18 +250,16 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
-        switch ($field) {
-            case 'idestado':
-                $status = $this->getStatus();
-                foreach ($this->getLines() as $line) {
-                    $line->actualizastock = $status->actualizastock;
-                    $line->save();
-                }
-                $docGenerator = new BusinessDocumentGenerator();
-                if (!empty($status->generadoc) && !$docGenerator->generate($this, $status->generadoc)) {
-                    return false;
-                }
-                break;
+        if ($field === 'idestado') {
+            $status = $this->getStatus();
+            foreach ($this->getLines() as $line) {
+                $line->actualizastock = $status->actualizastock;
+                $line->save();
+            }
+            $docGenerator = new BusinessDocumentGenerator();
+            if (!empty($status->generadoc) && self::$documentGeneration && !$docGenerator->generate($this, $status->generadoc)) {
+                return false;
+            }
         }
 
         return parent::onChange($field);
