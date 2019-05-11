@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos García Gómez      <carlos@facturascripts.com>
- * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018-2019  Carlos García Gómez     <carlos@facturascripts.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,15 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the EstadoDocumento model
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class ListEstadoDocumento extends ExtendedController\ListController
+class ListEstadoDocumento extends ListController
 {
 
     /**
@@ -65,6 +66,10 @@ class ListEstadoDocumento extends ExtendedController\ListController
         $this->addFilterCheckbox('ListEstadoDocumento', 'editable', 'editable', 'editable');
     }
 
+    /**
+     * 
+     * @return array
+     */
     private function getActualizastockValues()
     {
         return [

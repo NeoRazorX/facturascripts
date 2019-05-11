@@ -18,14 +18,14 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Dinamic\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the User model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ListUser extends ExtendedController\ListController
+class ListUser extends ListController
 {
 
     /**

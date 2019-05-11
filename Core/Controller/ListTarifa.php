@@ -18,15 +18,15 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the Tarifa model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class ListTarifa extends ExtendedController\ListController
+class ListTarifa extends ListController
 {
 
     /**
@@ -51,7 +51,6 @@ class ListTarifa extends ExtendedController\ListController
     {
         $this->addView('ListTarifa', 'Tarifa', 'rates', 'fas fa-money-bill-alt');
         $this->addSearchFields('ListTarifa', ['nombre', 'codtarifa']);
-
         $this->addOrderBy('ListTarifa', ['codtarifa'], 'code');
         $this->addOrderBy('ListTarifa', ['nombre'], 'name', 1);
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,14 +18,14 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the Asiento model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ListAsiento extends ExtendedController\ListController
+class ListAsiento extends ListController
 {
 
     /**
@@ -53,51 +53,65 @@ class ListAsiento extends ExtendedController\ListController
         $this->createViewJournals(); /// journals tab
     }
 
-    private function createViewAccountEntries()
+    /**
+     * 
+     * @param string $name
+     */
+    private function createViewAccountEntries($name = 'ListAsiento')
     {
         /// accounting entries
-        $this->addView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
-        $this->addOrderBy('ListAsiento', ['fecha', 'idasiento'], 'date', 2);
-        $this->addOrderBy('ListAsiento', ['numero', 'idasiento'], 'number');
-        $this->addOrderBy('ListAsiento', ['importe', 'idasiento'], 'ammount');
+        $this->addView($name, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addSearchFields($name, ['CAST(numero AS CHAR(10))', 'concepto']);
+        $this->addOrderBy($name, ['fecha', 'idasiento'], 'date', 2);
+        $this->addOrderBy($name, ['numero', 'idasiento'], 'number');
+        $this->addOrderBy($name, ['importe', 'idasiento'], 'ammount');
 
-        $this->addFilterPeriod('ListAsiento', 'date', 'period', 'fecha');
-        $this->addFilterNumber('ListAsiento', 'min-total', 'amount', 'importe', '>=');
-        $this->addFilterNumber('ListAsiento', 'max-total', 'amount', 'importe', '<=');
+        $this->addFilterPeriod($name, 'date', 'period', 'fecha');
+        $this->addFilterNumber($name, 'min-total', 'amount', 'importe', '>=');
+        $this->addFilterNumber($name, 'max-total', 'amount', 'importe', '<=');
 
         $selectCompany = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->addFilterSelect('ListAsiento', 'idempresa', 'company', 'idempresa', $selectCompany);
+        $this->addFilterSelect($name, 'idempresa', 'company', 'idempresa', $selectCompany);
 
         $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->addFilterSelect('ListAsiento', 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
+        $this->addFilterSelect($name, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
-        $this->addFilterSelect('ListAsiento', 'iddiario', 'journals', 'iddiario', $selectJournals);
+        $this->addFilterSelect($name, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $this->addFilterNumber('ListAsiento', 'canal', 'channel', 'canal', '=');
+        $this->addFilterNumber($name, 'canal', 'channel', 'canal', '=');
     }
 
-    private function createViewConcepts()
+    /**
+     * 
+     * @param string $name
+     */
+    private function createViewConcepts($name = 'ListConceptoPartida')
     {
-        $this->addView('ListConceptoPartida', 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
-        $this->addSearchFields('ListConceptoPartida', ['codconcepto', 'descripcion']);
-        $this->addOrderBy('ListConceptoPartida', ['codconcepto'], 'code');
-        $this->addOrderBy('ListConceptoPartida', ['descripcion'], 'description');
+        $this->addView($name, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
+        $this->addSearchFields($name, ['codconcepto', 'descripcion']);
+        $this->addOrderBy($name, ['codconcepto'], 'code');
+        $this->addOrderBy($name, ['descripcion'], 'description');
     }
 
-    private function createViewJournals()
+    /**
+     * 
+     * @param string $name
+     */
+    private function createViewJournals($name = 'ListDiario')
     {
-        $this->addView('ListDiario', 'Diario', 'journals', 'fas fa-book');
-        $this->addSearchFields('ListDiario', ['iddiario', 'descripcion']);
-        $this->addOrderBy('ListDiario', ['iddiario'], 'code');
-        $this->addOrderBy('ListDiario', ['descripcion'], 'description');
+        $this->addView($name, 'Diario', 'journals', 'fas fa-book');
+        $this->addSearchFields($name, ['iddiario', 'descripcion']);
+        $this->addOrderBy($name, ['iddiario'], 'code');
+        $this->addOrderBy($name, ['descripcion'], 'description');
     }
 
     /**
      * Run the actions that alter data before reading it.
      *
      * @param string $action
+     *
+     * @return bool
      */
     protected function execPreviousAction($action)
     {

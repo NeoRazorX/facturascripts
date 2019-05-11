@@ -23,6 +23,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 
 /**
@@ -95,7 +96,7 @@ class EditUser extends EditController
     /**
      * Return a list of pages where user has access.
      *
-     * @param Model\User $user
+     * @param User $user
      *
      * @return array
      */
