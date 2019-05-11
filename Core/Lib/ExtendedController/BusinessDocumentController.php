@@ -45,7 +45,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return string
      */
-    abstract protected function getModelClassName();
+    abstract public function getModelClassName();
 
     /**
      * Retuns an url to create a new subject.

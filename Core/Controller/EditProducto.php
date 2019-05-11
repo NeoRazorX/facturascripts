@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -28,7 +29,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditProducto extends ExtendedController\EditController
+class EditProducto extends EditController
 {
 
     /**
@@ -66,9 +67,6 @@ class EditProducto extends ExtendedController\EditController
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-tasks');
     }
 
-    /**
-     * 
-     */
     protected function loadCustomStockWidget()
     {
         $references = [];
@@ -85,8 +83,8 @@ class EditProducto extends ExtendedController\EditController
     /**
      * Load view data procedure
      *
-     * @param string                      $viewName
-     * @param ExtendedController\BaseView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {

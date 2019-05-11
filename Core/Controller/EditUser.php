@@ -19,8 +19,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\ExtendedController;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Page;
+use FacturaScripts\Dinamic\Model\RoleUser;
 use Symfony\Component\HttpFoundation\Cookie;
 
 /**
@@ -29,7 +31,7 @@ use Symfony\Component\HttpFoundation\Cookie;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class EditUser extends ExtendedController\EditController
+class EditUser extends EditController
 {
 
     /**
@@ -101,7 +103,7 @@ class EditUser extends ExtendedController\EditController
     {
         $pageList = [];
         if ($user->admin) {
-            $pageModel = new Model\Page();
+            $pageModel = new Page();
             foreach ($pageModel->all([], ['name' => 'ASC'], 0, 0) as $page) {
                 if (!$page->showonmenu) {
                     continue;
@@ -113,7 +115,7 @@ class EditUser extends ExtendedController\EditController
             return $pageList;
         }
 
-        $roleUserModel = new Model\RoleUser();
+        $roleUserModel = new RoleUser();
         foreach ($roleUserModel->all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $pageList[] = ['value' => $roleAccess->pagename, 'title' => $roleAccess->pagename];
@@ -126,8 +128,8 @@ class EditUser extends ExtendedController\EditController
     /**
      * Load view data proedure
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {

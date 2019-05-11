@@ -19,9 +19,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Accounting\AccountingPlanExport;
-use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 
 /**
  * Controller to edit a single item from the Ejercicio model
@@ -30,7 +31,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Artex Trading sa         <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class EditEjercicio extends ExtendedController\EditController
+class EditEjercicio extends EditController
 {
 
     /**
@@ -75,8 +76,8 @@ class EditEjercicio extends ExtendedController\EditController
     /**
      * Load view data procedure
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
@@ -97,6 +98,12 @@ class EditEjercicio extends ExtendedController\EditController
         }
     }
 
+    /**
+     * 
+     * @param string $action
+     *
+     * @return bool
+     */
     protected function execPreviousAction($action)
     {
         switch ($action) {

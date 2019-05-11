@@ -18,14 +18,15 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
  * Controller to edit a single item from the Contacto model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class EditContacto extends ExtendedController\EditController
+class EditContacto extends EditController
 {
 
     /**
@@ -83,6 +84,11 @@ class EditContacto extends ExtendedController\EditController
         }
     }
 
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {

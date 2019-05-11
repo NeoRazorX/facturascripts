@@ -18,8 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\SalesDocumentController;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 
@@ -30,8 +31,18 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
  * @author Luis Miguel Pérez        <luismi@pcrednet.com>
  * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
  */
-class EditFacturaCliente extends ExtendedController\SalesDocumentController
+class EditFacturaCliente extends SalesDocumentController
 {
+
+    /**
+     * Return the document class name.
+     *
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'FacturaCliente';
+    }
 
     /**
      * Returns basic page attributes
@@ -80,20 +91,10 @@ class EditFacturaCliente extends ExtendedController\SalesDocumentController
     }
 
     /**
-     * Return the document class name.
-     *
-     * @return string
-     */
-    protected function getModelClassName()
-    {
-        return 'FacturaCliente';
-    }
-
-    /**
      * Load data view procedure
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {

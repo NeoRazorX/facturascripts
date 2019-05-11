@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,10 +18,10 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
  * Controller to list the items in the RegularizacionImpuesto model
@@ -30,7 +30,7 @@ use FacturaScripts\Core\Model\CodeModel;
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class EditRegularizacionImpuesto extends ExtendedController\PanelController
+class EditRegularizacionImpuesto extends EditController
 {
 
     /**
@@ -41,13 +41,6 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     public $previousBalance;
 
     /**
-     * Sum of all sales
-     *
-     * @var float
-     */
-    public $sales;
-
-    /**
      * Sum of all purchases
      *
      * @var float
@@ -55,11 +48,56 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     public $purchases;
 
     /**
+     * Sum of all sales
+     *
+     * @var float
+     */
+    public $sales;
+
+    /**
      * total amount of regularization: (sales - purchases - previousBalance)
      *
      * @var float
      */
     public $total;
+
+    /**
+     * Formats the amount of the indicated field to currency
+     *
+     * @param string $field
+     *
+     * @return string
+     */
+    public function getAmount($field)
+    {
+        $divisaTools = new DivisaTools();
+        return $divisaTools->format($this->{$field}, 2);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'RegularizacionImpuesto';
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData(): array
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'vat-regularization';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fas fa-map-signs';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 
     /**
      * Run the autocomplete action with exercise filter
@@ -77,7 +115,7 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
         ];
 
-        foreach (CodeModel::all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
             $results[] = ['key' => $row->code, 'value' => $row->description];
         }
 
@@ -118,12 +156,13 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('EditRegularizacionImpuesto', 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-map-signs');
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
         $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fas fa-list-alt');
         $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fas fa-sign-in-alt');
         $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fas fa-sign-out-alt');
         $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fas fa-balance-scale');
-        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -143,40 +182,6 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
             default:
                 return parent::execPreviousAction($action);
         }
-    }
-
-    /**
-     * Formats the amount of the indicated field to currency
-     *
-     * @param string $field
-     * @return string
-     */
-    public function getAmount($field)
-    {
-        $divisaTools = new DivisaTools();
-        return $divisaTools->format($this->{$field}, 2);
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData(): array
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'vat-regularization';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-map-signs';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
-    }
-
-    private function getEditRegularizacionImpuesto($view)
-    {
-        $code = $this->request->get('code');
-        $view->loadData($code);
     }
 
     private function getListPartida($view)
@@ -249,24 +254,28 @@ class EditRegularizacionImpuesto extends ExtendedController\PanelController
     /**
      * Load data view procedure
      *
-     * @param string                      $viewName
-     * @param ExtendedController\BaseView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
             case 'EditRegularizacionImpuesto':
-                $this->getEditRegularizacionImpuesto($view);
+                parent::loadData($viewName, $view);
                 break;
+
             case 'ListPartida':
                 $this->getListPartida($view);
                 break;
+
             case 'ListPartidaImpuestoResumen':
                 $this->getListPartidaImpuestoResumen($view);
                 break;
+
             case 'ListPartidaImpuesto-1':
                 $this->getListPartidaImpuesto1($view);
                 break;
+
             case 'ListPartidaImpuesto-2':
                 $this->getListPartidaImpuesto2($view);
                 break;

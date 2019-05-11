@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,16 @@ class EditPresupuestoCliente extends SalesDocumentController
 {
 
     /**
+     * Return the document class name.
+     *
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'PresupuestoCliente';
+    }
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -43,15 +53,5 @@ class EditPresupuestoCliente extends SalesDocumentController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Return the document class name.
-     *
-     * @return string
-     */
-    protected function getModelClassName()
-    {
-        return 'PresupuestoCliente';
     }
 }

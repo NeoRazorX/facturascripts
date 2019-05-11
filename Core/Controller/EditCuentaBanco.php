@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
  * Controller to edit a single item from the CuentaBanco model
@@ -27,11 +28,13 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jferrer@artextrading.com>
  */
-class EditCuentaBanco extends ExtendedController\EditController
+class EditCuentaBanco extends EditController
 {
 
     /**
-     * Returns the model name
+     * Returns the model name.
+     * 
+     * @return string
      */
     public function getModelClassName()
     {
@@ -63,6 +66,11 @@ class EditCuentaBanco extends ExtendedController\EditController
         $this->setSettings('ListSubcuenta', 'btnNew', false);
     }
 
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {

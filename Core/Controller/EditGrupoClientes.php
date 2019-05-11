@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\ExtendedController;
+use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
+use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 
 /**
  * Controller to edit a single item from the GrupoClientes model
@@ -29,7 +30,7 @@ use FacturaScripts\Dinamic\Lib\ExtendedController;
  * @author Nazca Networks               <comercial@nazcanetworks.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class EditGrupoClientes extends ExtendedController\EditController
+class EditGrupoClientes extends EditController
 {
 
     /**
@@ -77,8 +78,8 @@ class EditGrupoClientes extends ExtendedController\EditController
     /**
      * Procedure responsible for loading the data to be displayed.
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
