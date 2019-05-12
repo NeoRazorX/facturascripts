@@ -58,6 +58,7 @@
     </columns>
     <rows>
         <row type="status">
+            <option color="danger" fieldname="idfacturarect">&gt;0</option>
             <option color="success" fieldname="pagado">1</option>
             <option color="info" fieldname="editable">0</option>
             <option color="warning" fieldname="editable">1</option>

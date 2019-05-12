@@ -60,7 +60,7 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * Returns all children documents of this one.
      *
-     * @return BusinessDocument[]
+     * @return TransformerDocument[]
      */
     public function childrenDocuments()
     {
@@ -184,7 +184,7 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * Returns all parent document of this one.
      *
-     * @return BusinessDocument[]
+     * @return TransformerDocument[]
      */
     public function parentDocuments()
     {
