@@ -107,6 +107,7 @@ function businessDocViewSave() {
                 $("#" + businessDocViewFormName).attr('action', results.substring(3)).submit();
             } else {
                 alert(results);
+                $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val(randomString(20));
             }
         },
         error: function (msg) {
@@ -115,19 +116,6 @@ function businessDocViewSave() {
     });
 
     $("#btn-document-save").prop("disabled", false);
-}
-
-function getGridData() {
-    var rowIndex, lines = [];
-    for (var i = 0, max = businessDocViewLineData.rows.length; i < max; i++) {
-        rowIndex = hsTable.toVisualRow(i);
-        if (hsTable.isEmptyRow(rowIndex)) {
-            continue;
-        }
-
-        lines[rowIndex] = businessDocViewLineData.rows[i];
-    }
-    return lines;
 }
 
 function businessDocViewSetAutocompletes(columns) {
@@ -167,6 +155,29 @@ function businessDocViewSetAutocompletes(columns) {
     }
 
     return columns;
+}
+
+function getGridData() {
+    var rowIndex, lines = [];
+    for (var i = 0, max = businessDocViewLineData.rows.length; i < max; i++) {
+        rowIndex = hsTable.toVisualRow(i);
+        if (hsTable.isEmptyRow(rowIndex)) {
+            continue;
+        }
+
+        lines[rowIndex] = businessDocViewLineData.rows[i];
+    }
+    return lines;
+}
+
+function randomString(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 $(document).ready(function () {
