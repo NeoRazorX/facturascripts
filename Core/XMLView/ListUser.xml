@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListUser
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <column name="nick" order="100">
@@ -49,4 +45,10 @@
             <widget type="text" fieldname="lastactivity" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="danger" fieldname="enabled">0</option>
+            <option color="warning" fieldname="admin">1</option>
+        </row>
+    </rows>
 </view>

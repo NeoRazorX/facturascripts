@@ -67,6 +67,8 @@ class EditSerie extends EditController
         $this->setTabsPosition('bottom');
 
         $this->addListView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
+        $this->views['ListSecuenciaDocumento']->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views['ListSecuenciaDocumento']->disableColumn('serie');
     }
 
     /**

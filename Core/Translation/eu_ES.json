@@ -590,6 +590,7 @@
     "nick": "Goitizena",
     "no": "Ez",
     "no-data": "Ez dago daturik",
+    "no-selected-item": "no-selected-item",
     "no-stock": "Ez dago stockik",
     "non-editable-columns": "Zutabe ez editagarriak: %columns%",
     "non-editable-document": "Dokumentu ez editagarria",
