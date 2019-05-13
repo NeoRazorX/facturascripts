@@ -236,6 +236,7 @@
             <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ model.getStatus().nombre }}
         </button>
         <div class="dropdown-menu dropdown-menu-right">
+            {% set showDocumentStitcher = false %}
             {% for status in view.documentStatus %}
                 {% if model.idestado == status.idestado %}
                     <a class="dropdown-item active" href="#">
@@ -255,8 +256,11 @@
                         {% endif %}
                     </a>
                 {% endif %}
+                {% if status.generadoc %}
+                    {% set showDocumentStitcher = true %}
+                {% endif %}
             {% endfor %}
-            {% if model.exists() %}
+            {% if model.exists() and showDocumentStitcher %}
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="DocumentStitcher?model={{ model.modelClassName() }}&codes={{ model.primaryColumnValue() }}">
                     <i class="fas fa-magic fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-or-split') }}
