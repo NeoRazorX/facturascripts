@@ -24,8 +24,10 @@
 {% set pageData = fsc.getPageData() %}
 
 {% block body %}
-    <form action="{{ fsc.url() }}" method="post">
+    <form name="formDocStitcher" action="{{ fsc.url() }}" method="post">
         <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
+        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+        <input type="hidden" name="status"/>
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col">
@@ -50,9 +52,9 @@
                             <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for option in fsc.getDestinyDocs() %}
-                                <button type="submit" name="destiny" value="{{ option }}" class="dropdown-item">
-                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ option }}
+                            {% for status in fsc.getAvaliableStatus() %}
+                                <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');" class="dropdown-item">
+                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ status.generadoc }}
                                 </button>
                             {% endfor %}
                         </div>
@@ -73,6 +75,16 @@
             </div>
         </div>
     </form>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        function sendFormData(status) {
+            document.formDocStitcher.status.value = status;
+            document.formDocStitcher.submit();
+        }
+    </script>
 {% endblock %}
 
 {% macro documentCard(doc, fsc, i18n) %}

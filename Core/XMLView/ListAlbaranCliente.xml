@@ -36,25 +36,32 @@
         <column name="observations" order="140">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="email-sent" display="center" order="150">
+        <column name="status" display="right" order="150">
+            <widget type="autocomplete" fieldname="idestado">
+                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"></values>
+            </widget>
+        </column>
+        <column name="email-sent" display="center" order="160">
             <widget type="checkbox" fieldname="femail" />
         </column>
-        <column name="paid" display="center" order="160">
+        <column name="paid" display="center" order="170">
             <widget type="checkbox" fieldname="pagado" />
         </column>
-        <column name="amount" display="right" order="170">
+        <column name="amount" display="right" order="180">
             <widget type="money" fieldname="total">
                 <option color="danger">&lt;0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="180">
+        <column name="date" display="right" order="190">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="warning" fieldname="editable">1</option>
+            <option color="danger" fieldname="idestado">9</option>
             <option color="success" fieldname="pagado">1</option>
+            <option color="info" fieldname="editable">0</option>
+            <option color="warning" fieldname="editable">1</option>
         </row>
     </rows>
 </view>

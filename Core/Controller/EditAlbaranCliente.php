@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,18 +18,28 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\SalesDocumentController;
 
 /**
  * Controller to edit a single item from the AlbaranCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class EditAlbaranCliente extends ExtendedController\SalesDocumentController
+class EditAlbaranCliente extends SalesDocumentController
 {
 
     /**
-     * Returns basic page attributes
+     * Return the document class name.
+     *
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'AlbaranCliente';
+    }
+
+    /**
+     * Returns basic page attributes.
      *
      * @return array
      */
@@ -42,15 +52,5 @@ class EditAlbaranCliente extends ExtendedController\SalesDocumentController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Return the document class name.
-     *
-     * @return string
-     */
-    protected function getModelClassName()
-    {
-        return 'AlbaranCliente';
     }
 }

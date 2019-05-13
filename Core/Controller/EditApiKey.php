@@ -18,8 +18,10 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model;
 
 /**
@@ -64,7 +66,7 @@ class EditApiKey extends EditController
      * @param array $apiAccess
      * @param bool  $state
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function addResourcesToApiKey($idApiKey, $apiAccess, $state = false)
     {
@@ -128,7 +130,7 @@ class EditApiKey extends EditController
         try {
             $this->addResourcesToApiKey((int) $idApiKey, $resources, $state);
             $this->dataBase->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->dataBase->rollback();
             $this->miniLog->notice($e->getMessage());
         }
@@ -168,8 +170,8 @@ class EditApiKey extends EditController
     /**
      * Load view data.
      *
-     * @param string $viewName
-     * @param object $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {

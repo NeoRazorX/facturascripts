@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
@@ -91,6 +92,21 @@ trait InvoiceTrait
     abstract public function getLines();
 
     /**
+     * Returns all children documents of this one.
+     *
+     * @return TransformerDocument[]
+     */
+    public function childrenDocuments()
+    {
+        $children = parent::childrenDocuments();
+        foreach ($this->getRefunds() as $invoice) {
+            $children[] = $invoice;
+        }
+
+        return $children;
+    }
+
+    /**
      * 
      * @return Asiento
      */
@@ -113,6 +129,22 @@ trait InvoiceTrait
 
         $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
         return $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+    }
+
+    /**
+     * Returns all parent document of this one.
+     *
+     * @return TransformerDocument[]
+     */
+    public function parentDocuments()
+    {
+        $parents = parent::parentDocuments();
+        $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
+        foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
+            $parents[] = $invoice;
+        }
+
+        return $parents;
     }
 
     /**

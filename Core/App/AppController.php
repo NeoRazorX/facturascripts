@@ -27,8 +27,8 @@ use FacturaScripts\Core\Base\DebugBar\PHPCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
-use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 

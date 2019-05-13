@@ -192,11 +192,15 @@ class BusinessDocumentView extends BaseView
         switch ($case) {
             case 'load':
                 foreach ($request->query->all() as $key => $value) {
-                    if ($key != 'code') {
-                        $this->model->{$key} = $value;
+                    if ($key == 'code') {
+                        continue;
+                    }
+
+                    $this->model->{$key} = $value;
+                    if ($key == $this->model->subjectColumn()) {
+                        $this->model->updateSubject();
                     }
                 }
-                $this->model->updateSubject();
                 break;
         }
     }

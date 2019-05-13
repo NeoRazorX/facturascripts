@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,16 +18,26 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
 
 /**
  * Controller to edit a single item from the PedidoProveedor model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Luis Miguel Pérez <luismi@pcrednet.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Luis Miguel Pérez    <luismi@pcrednet.com>
  */
-class EditPedidoProveedor extends ExtendedController\PurchaseDocumentController
+class EditPedidoProveedor extends PurchaseDocumentController
 {
+
+    /**
+     * Return the document class name.
+     *
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'PedidoProveedor';
+    }
 
     /**
      * Returns basic page attributes
@@ -43,15 +53,5 @@ class EditPedidoProveedor extends ExtendedController\PurchaseDocumentController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Return the document class name.
-     *
-     * @return string
-     */
-    protected function getModelClassName()
-    {
-        return 'PedidoProveedor';
     }
 }

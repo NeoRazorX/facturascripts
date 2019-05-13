@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,10 +18,13 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\PageOption;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -31,7 +34,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditPageOption extends Base\Controller
+class EditPageOption extends Controller
 {
 
     /**
@@ -44,7 +47,7 @@ class EditPageOption extends Base\Controller
     /**
      * Details of the view configuration
      *
-     * @var Model\PageOption
+     * @var PageOption
      */
     public $model;
 
@@ -86,7 +89,7 @@ class EditPageOption extends Base\Controller
     public function getUserList()
     {
         $result = [];
-        $users = Model\CodeModel::all(Model\User::tableName(), 'nick', 'nick', false);
+        $users = CodeModel::all(User::tableName(), 'nick', 'nick', false);
         foreach ($users as $codeModel) {
             $result[$codeModel->code] = $codeModel->description;
         }
@@ -97,14 +100,14 @@ class EditPageOption extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param Model\User                 $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->model = new Model\PageOption();
+        $this->model = new PageOption();
         $this->selectedViewName = $this->request->get('code', '');
         $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
         $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;

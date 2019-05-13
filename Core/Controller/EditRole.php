@@ -18,9 +18,12 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Page;
+use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
  * Controller to edit a single item from the Role model.
@@ -60,16 +63,16 @@ class EditRole extends EditController
      * Add the indicated page list to the Role group
      * and all users who are in that group
      *
-     * @param string       $codrole
-     * @param Model\Page[] $pages
+     * @param string $codrole
+     * @param Page[] $pages
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function addRoleAccess($codrole, $pages)
     {
         // add Pages to Rol
-        if (!Model\RoleAccess::addPagesToRole($codrole, $pages)) {
-            throw new \Exception($this->i18n->trans('cancel-process'));
+        if (!RoleAccess::addPagesToRole($codrole, $pages)) {
+            throw new Exception($this->i18n->trans('cancel-process'));
         }
     }
 
@@ -92,7 +95,7 @@ class EditRole extends EditController
     /**
      * Run the actions that alter data before reading it
      *
-     * @param string   $action
+     * @param string $action
      *
      * @return bool
      */
@@ -110,11 +113,10 @@ class EditRole extends EditController
                 try {
                     $this->addRoleAccess($codrole, $pages);
                     $this->dataBase->commit();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->dataBase->rollback();
                     $this->miniLog->notice($e->getMessage());
                 }
-
                 return true;
 
             default:
@@ -126,7 +128,7 @@ class EditRole extends EditController
      * List of all the pages included in a menu option
      * and, optionally, included in a submenu option
      *
-     * @return Model\Page[]
+     * @return Page[]
      */
     private function getPages()
     {
@@ -135,17 +137,16 @@ class EditRole extends EditController
             return [];
         }
 
-        $page = new Model\Page();
+        $page = new Page();
         $where = [new DataBaseWhere('menu', $menu)];
-
         return $page->all($where);
     }
 
     /**
      * Load view data
      *
-     * @param string $viewName
-     * @param object $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {

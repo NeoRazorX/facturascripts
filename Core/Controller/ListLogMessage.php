@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Dinamic\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\LogMessage;
  * @author Francesc Pineda Segarra      <francesc.pineda.segarra@gmail.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListLogMessage extends ExtendedController\ListController
+class ListLogMessage extends ListController
 {
 
     /**

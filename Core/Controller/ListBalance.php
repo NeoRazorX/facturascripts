@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,17 +18,18 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the Balance model
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
  */
-class ListBalance extends ExtendedController\ListController
+class ListBalance extends ListController
 {
 
     /**
@@ -87,8 +88,8 @@ class ListBalance extends ExtendedController\ListController
 
     /**
      * 
-     * @param string                      $viewName
-     * @param ExtendedController\BaseView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
