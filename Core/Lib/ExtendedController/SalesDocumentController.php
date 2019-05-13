@@ -30,6 +30,21 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
     /**
      * 
+     * @return array
+     */
+    public function getCustomFields()
+    {
+        return [
+            [
+                'icon' => 'fas fa-hashtag',
+                'label' => 'number2',
+                'name' => 'numero2'
+            ]
+        ];
+    }
+
+    /**
+     * 
      * @return string
      */
     public function getNewSubjectUrl()

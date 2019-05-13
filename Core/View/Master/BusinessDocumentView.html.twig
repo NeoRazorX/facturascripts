@@ -47,6 +47,9 @@
         {% endif %}
         {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
         {{ macros.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+        {% for field in fsc.getCustomFields() %}
+            {{ macros.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(currentView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
+        {% endfor %}
         <div class="col">
             <div class="input-group">
                 <span class="input-group-prepend">

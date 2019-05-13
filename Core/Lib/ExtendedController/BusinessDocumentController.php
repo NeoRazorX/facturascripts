@@ -39,6 +39,11 @@ abstract class BusinessDocumentController extends PanelController
      * @var BusinessDocumentTools
      */
     private $documentTools;
+    
+    /**
+     * Returns an array of custom fields to add on the header.
+     */
+    abstract public function getCustomFields();
 
     /**
      * Returns the document class name.
