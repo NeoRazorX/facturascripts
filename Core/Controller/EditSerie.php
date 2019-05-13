@@ -52,7 +52,7 @@ class EditSerie extends EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'serie';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-file-alt';
+        $pagedata['icon'] = 'fas fa-layer-group';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
