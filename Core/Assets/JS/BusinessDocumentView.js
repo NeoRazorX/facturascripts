@@ -53,6 +53,31 @@ function businessDocViewAutocompleteGetData(formId, field, source, fieldcode, fi
     return formData;
 }
 
+function businessDocViewSubjectChanged() {
+    var data = {};
+    $.each($("#" + businessDocViewFormName).serializeArray(), function (key, value) {
+        data[value.name] = value.value;
+    });
+    data.action = "subject-changed";
+    console.log("data", data);
+
+    $.ajax({
+        type: "POST",
+        url: businessDocViewUrl,
+        dataType: "json",
+        data: data,
+        success: function (results) {
+            $("#doc_codserie").val(results.codserie);
+            console.log("results", results);
+
+            businessDocViewRecalculate()
+        },
+        error: function (xhr, status, error) {
+            alert(xhr.responseText);
+        }
+    });
+}
+
 function businessDocViewRecalculate() {
     var data = {};
     $.each($("#" + businessDocViewFormName).serializeArray(), function (key, value) {
@@ -251,6 +276,7 @@ $(document).ready(function () {
                 if (value[0] !== null) {
                     $("#" + field + "Autocomplete").val(ui.item.key);
                     ui.item.value = value[1];
+                    businessDocViewSubjectChanged();
                 }
             }
         });

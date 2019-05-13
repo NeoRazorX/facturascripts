@@ -131,6 +131,9 @@ abstract class BusinessDocumentController extends PanelController
 
             case 'save-document':
                 return $this->saveDocumentAction();
+
+            case 'subject-changed':
+                return $this->subjectChangedAction();
         }
 
         return parent::execPreviousAction($action);
@@ -399,6 +402,28 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function subjectChangedAction()
+    {
+        $this->setTemplate(false);
+
+        /// loads model
+        $data = $this->getBusinessFormData();
+        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $this->views[$this->active]->loadFromData($merged);
+
+        if (!$this->views[$this->active]->model->exists()) {
+            $this->views[$this->active]->model->updateSubject();
+        }
+
+        $result = json_encode($this->views[$this->active]->model);
+        $this->response->setContent($result);
+        return false;
     }
 
     /**
