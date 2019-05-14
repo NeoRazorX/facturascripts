@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,7 +55,22 @@ class Pais extends Base\ModelClass
     public $nombre;
 
     /**
-     * Returns True if the country is the default of the company.
+     * Removed country from database.
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->isDefault()) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-country'));
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * Returns True if this the default country.
      *
      * @return bool
      */

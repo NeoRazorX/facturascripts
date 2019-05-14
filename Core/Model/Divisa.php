@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -86,7 +86,22 @@ class Divisa extends Base\ModelClass
     }
 
     /**
-     * Returns True if is the default currency for the company.
+     * Removed currency from database.
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->isDefault()) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-currency'));
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * Returns True if this is the default currency.
      *
      * @return bool
      */
