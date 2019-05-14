@@ -140,13 +140,14 @@ class Empresa extends Base\Contact
     }
 
     /**
+     * Removes company from database.
      * 
      * @return bool
      */
     public function delete()
     {
-        if ($this->idempresa == AppSettings::get('default', 'idempresa')) {
-            self::$miniLog->alert('you-cant-not-remove-default-company');
+        if ($this->isDefault()) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-company'));
             return false;
         }
 
@@ -169,6 +170,16 @@ class Empresa extends Base\Contact
             . "VALUES (1,'https://www.facturascripts.com','ESP','C/ Falsa, 123',"
             . "'','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "','0',"
             . "'" . self::$regimenIVA->defaultValue() . "');";
+    }
+
+    /**
+     * Returns True if this is the default company.
+     *
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->idempresa === (int) AppSettings::get('default', 'idempresa');
     }
 
     /**

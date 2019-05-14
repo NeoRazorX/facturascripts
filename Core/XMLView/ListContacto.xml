@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of CRM plugin for FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListContacto
- *
  * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <column name="code" display="none" order="100">
@@ -66,6 +62,7 @@
     <rows>
         <row type="status" fieldname="verificado">
             <option color="success">1</option>
+            <option color="info" fieldname="personafisica">0</option>
         </row>
     </rows>
 </view>

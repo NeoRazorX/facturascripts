@@ -52,7 +52,7 @@ class EditSerie extends EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'serie';
         $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-file-alt';
+        $pagedata['icon'] = 'fas fa-layer-group';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
@@ -67,6 +67,8 @@ class EditSerie extends EditController
         $this->setTabsPosition('bottom');
 
         $this->addListView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
+        $this->views['ListSecuenciaDocumento']->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views['ListSecuenciaDocumento']->disableColumn('serie');
     }
 
     /**

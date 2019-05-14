@@ -75,6 +75,21 @@ class Serie extends Base\ModelClass
     }
 
     /**
+     * Removed payment method from database.
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->isDefault()) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-serie'));
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * 
      * @return string
      */
@@ -87,7 +102,7 @@ class Serie extends Base\ModelClass
     }
 
     /**
-     * Returns True if is the default serie for the company.
+     * Returns True if this is the default serie.
      *
      * @return bool
      */

@@ -47,6 +47,9 @@
         {% endif %}
         {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
         {{ macros.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+        {% for field in fsc.getCustomFields() %}
+            {{ macros.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(currentView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
+        {% endfor %}
         <div class="col">
             <div class="input-group">
                 <span class="input-group-prepend">
@@ -233,6 +236,7 @@
             <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ model.getStatus().nombre }}
         </button>
         <div class="dropdown-menu dropdown-menu-right">
+            {% set showDocumentStitcher = false %}
             {% for status in view.documentStatus %}
                 {% if model.idestado == status.idestado %}
                     <a class="dropdown-item active" href="#">
@@ -252,8 +256,11 @@
                         {% endif %}
                     </a>
                 {% endif %}
+                {% if status.generadoc %}
+                    {% set showDocumentStitcher = true %}
+                {% endif %}
             {% endfor %}
-            {% if model.exists() %}
+            {% if model.exists() and showDocumentStitcher %}
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="DocumentStitcher?model={{ model.modelClassName() }}&codes={{ model.primaryColumnValue() }}">
                     <i class="fas fa-magic fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-or-split') }}

@@ -85,7 +85,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      *
      * @var int
      */
-    public $iddiarion;
+    public $iddiario;
 
     /**
      * Foreign Key with Empresas table.

@@ -590,6 +590,7 @@
     "nick": "Apodo",
     "no": "Non",
     "no-data": "Non hai datos",
+    "no-selected-item": "no-selected-item",
     "no-stock": "Ningún stock",
     "non-editable-columns": "Non se permite editar as columnas",
     "non-editable-document": "Documento non editable",

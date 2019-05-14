@@ -102,6 +102,14 @@
         <type>character varying(20)</type>
     </column>
     <column>
+        <name>riesgoalcanzado</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>riesgomax</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>telefono1</name>
         <type>character varying(30)</type>
     </column>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListCliente
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
 -->
-
 <view>
     <columns>
         <column name="code" order="100">
@@ -42,27 +39,34 @@
         <column name="phone2" display="none" order="150">
             <widget type="text" fieldname="telefono2" />
         </column>
-        <column name="group" order="160">
+        <column name="reach-warning" display="right" numcolumns="2" order="160">
+            <widget type="number" fieldname="riesgoalcanzado" />
+        </column>
+        <column name="max-warning" display="right" numcolumns="2" order="170">
+            <widget type="number" fieldname="riesgomax" />
+        </column>
+        <column name="group" order="180">
             <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes">
                 <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="observations" order="180">
+        <column name="observations" order="190">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="blocked" display="none" order="190">
+        <column name="blocked" display="none" order="200">
             <widget type="checkbox" fieldname="debaja" />
         </column>
-        <column name="create-date" display="none" order="200">
+        <column name="create-date" display="none" order="210">
             <widget type="text" fieldname="fechaalta" />
         </column>
-        <column name="block-date" display="none" order="210">
+        <column name="block-date" display="none" order="220">
             <widget type="text" fieldname="fechabaja" />
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="debaja">
-            <option color="danger">1</option>
+        <row type="status">
+            <option color="danger" fieldname="debaja">1</option>
+            <option color="info" fieldname="personafisica">0</option>
         </row>
     </rows>
 </view>

@@ -30,6 +30,21 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
 
     /**
      * 
+     * @return array
+     */
+    public function getCustomFields()
+    {
+        return [
+            [
+                'icon' => 'fas fa-hashtag',
+                'label' => 'numsupplier',
+                'name' => 'numproveedor'
+            ]
+        ];
+    }
+
+    /**
+     * 
      * @return string
      */
     public function getNewSubjectUrl()
