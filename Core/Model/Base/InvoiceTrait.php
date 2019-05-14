@@ -100,7 +100,18 @@ trait InvoiceTrait
     {
         $children = parent::childrenDocuments();
         foreach ($this->getRefunds() as $invoice) {
-            $children[] = $invoice;
+            /// is this invoice in children?
+            $found = false;
+            foreach ($children as $child) {
+                if ($child->primaryColumnValue() == $invoice->primaryColumnValue()) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $children[] = $invoice;
+            }
         }
 
         return $children;
@@ -141,7 +152,18 @@ trait InvoiceTrait
         $parents = parent::parentDocuments();
         $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
         foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
-            $parents[] = $invoice;
+            /// is this invoice in parents?
+            $found = false;
+            foreach ($parents as $parent) {
+                if ($parent->primaryColumnValue() == $invoice->primaryColumnValue()) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $parents[] = $invoice;
+            }
         }
 
         return $parents;

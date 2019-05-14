@@ -590,6 +590,7 @@
     "nick": "Nick",
     "no": "No",
     "no-data": "No data",
+    "no-selected-item": "No selected item",
     "no-stock": "No stock",
     "non-editable-columns": "Non editable columns: %columns%",
     "non-editable-document": "Non editable document",

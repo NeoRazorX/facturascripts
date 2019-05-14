@@ -54,7 +54,7 @@ class EditFacturaCliente extends SalesDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoice';
         $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fas fa-copy';
+        $pagedata['icon'] = 'fas fa-file-invoice-dollar';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

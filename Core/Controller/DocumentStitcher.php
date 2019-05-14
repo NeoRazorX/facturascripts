@@ -149,7 +149,8 @@ class DocumentStitcher extends Controller
         $this->setDocuments();
 
         // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        $token = $this->request->request->get('multireqtoken', '');
+        if (!empty($token) && $this->multiRequestProtection->tokenExist($token)) {
             $this->miniLog->alert($this->i18n->trans('duplicated-request'));
             return false;
         }

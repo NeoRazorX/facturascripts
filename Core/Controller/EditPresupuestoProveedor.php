@@ -49,7 +49,7 @@ class EditPresupuestoProveedor extends PurchaseDocumentController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fas fa-copy';
+        $pagedata['icon'] = 'fas fa-file-invoice';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
