@@ -67,6 +67,18 @@ class Cliente extends Base\ComercialContact
     public $idcontactoenv;
 
     /**
+     *
+     * @var float
+     */
+    public $riesgoalcanzado;
+
+    /**
+     *
+     * @var float
+     */
+    public $riesgomax;
+
+    /**
      * 
      * @param string $query
      * @param string $fieldcode
