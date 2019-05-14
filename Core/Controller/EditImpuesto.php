@@ -55,4 +55,13 @@ class EditImpuesto extends EditController
 
         return $pagedata;
     }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->addListView('ListImpuestoZona', 'ImpuestoZona', 'zone-tax', 'fas fa-percent');
+    }
 }
