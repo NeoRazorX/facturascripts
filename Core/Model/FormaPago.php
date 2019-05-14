@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -108,6 +109,21 @@ class FormaPago extends Base\ModelClass
     }
 
     /**
+     * Removes payment method from database.
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->isDefault()) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-payment-method'));
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * 
      * @return string
      */
@@ -117,6 +133,16 @@ class FormaPago extends Base\ModelClass
         new CuentaBanco();
 
         return parent::install();
+    }
+
+    /**
+     * Returns True if this is the default payment method.
+     *
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->codpago === AppSettings::get('default', 'codpago');
     }
 
     /**
