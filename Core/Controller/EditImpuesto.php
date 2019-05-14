@@ -64,7 +64,8 @@ class EditImpuesto extends EditController
         $this->setTabsPosition('bottom');
 
         $this->addListView('ListImpuestoZona', 'ImpuestoZona', 'zone-tax', 'fas fa-percent');
-        $this->views['ListImpuestoZona']->addOrderBy(['id'], 'code', 2);
+        $this->views['ListImpuestoZona']->addOrderBy(['id'], 'code');
+        $this->views['ListImpuestoZona']->addOrderBy(['prioridad'], 'priority', 2);
         $this->views['ListImpuestoZona']->disableColumn('tax');
     }
 
