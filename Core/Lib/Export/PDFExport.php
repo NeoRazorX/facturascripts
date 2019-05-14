@@ -397,11 +397,11 @@ class PDFExport extends PDFDocument implements ExportInterface
     private function combineAddress($model): string
     {
         $completeAddress = Base\Utils::fixHtml($model->direccion);
-        $completeAddress .= empty($model->apartado) ? ', ' . $this->i18n->trans('box') . ' ' . $model->apartado : '';
-        $completeAddress .= empty($model->codpostal) ? ', ' . $model->codpostal : '';
-        $completeAddress .= empty($model->ciudad) ? ', ' . Base\Utils::fixHtml($model->ciudad) : '';
-        $completeAddress .= empty($model->provincia) ? ' (' . Base\Utils::fixHtml($model->provincia) . ')' : '';
-        $completeAddress .= empty($model->codpais) ? ' ' . $this->getCountryName($model->codpais) : ',';
+        $completeAddress .= empty($model->apartado) ?  '' : ', ' . $this->i18n->trans('box') . ' ' . $model->apartado;
+        $completeAddress .= empty($model->codpostal) ? '' : ', ' . $model->codpostal;
+        $completeAddress .= empty($model->ciudad) ?  '' : ', ' . Base\Utils::fixHtml($model->ciudad);
+        $completeAddress .= empty($model->provincia) ? '' : ' (' . Base\Utils::fixHtml($model->provincia) . ')';
+        $completeAddress .= empty($model->codpais) ?  ',' : ' ' . $this->getCountryName($model->codpais);
 
         return $completeAddress;
     }
