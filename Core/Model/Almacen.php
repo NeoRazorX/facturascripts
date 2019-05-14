@@ -61,6 +61,21 @@ class Almacen extends Base\Address
     public $telefono;
 
     /**
+     * Removed warehouse from database.
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->isDefault()) {
+            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-warehouse'));
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * 
      * @return string
      */
@@ -72,7 +87,7 @@ class Almacen extends Base\Address
     }
 
     /**
-     * Returns True if is the default wharehouse for the company.
+     * Returns True if this is the default wharehouse.
      *
      * @return bool
      */
@@ -121,10 +136,6 @@ class Almacen extends Base\Address
         $this->nombre = Utils::noHtml($this->nombre);
         $this->telefono = Utils::noHtml($this->telefono);
 
-        if (empty($this->codalmacen)) {
-            return false;
-        }
-
-        return parent::test();
+        return empty($this->codalmacen) ? false : parent::test();
     }
 }
