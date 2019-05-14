@@ -102,8 +102,8 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="max-warning" display="right" numcolumns="2" order="180">
-                <widget type="number" fieldname="riesgomax" />
+            <column name="max-risk" display="right" numcolumns="3" order="180">
+                <widget type="number" fieldname="riesgomax" icon="fas fa-funnel-dollar" />
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
