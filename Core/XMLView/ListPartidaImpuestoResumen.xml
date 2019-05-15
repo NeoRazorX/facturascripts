@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
 -->
 <view>
     <columns>
@@ -34,7 +35,7 @@
         </column>
         <column name="tax-base" display="right" order="130">
             <widget type="money" fieldname="baseimponible">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
         <column name="pct-vat" display="right" order="140">
@@ -42,7 +43,7 @@
         </column>
         <column name="vat" display="right" order="150">
             <widget type="money" fieldname="cuotaiva">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
         <column name="surcharge" display="right" order="160">
@@ -50,16 +51,15 @@
         </column>
         <column name="surcharge" display="right" order="160">
             <widget type="money" fieldname="cuotarecargo">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
         <column name="total" display="right" order="170">
             <widget type="money" fieldname="total">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
     </columns>
-
     <rows>
         <row type="footer">
             <group name="actions">

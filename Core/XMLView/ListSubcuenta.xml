@@ -49,8 +49,8 @@
     </columns>
     <rows>
         <row type="status" fieldname="saldo">
-            <option color="danger">&lt;0</option>
-            <option color="success">&gt;0</option>
+            <option color="danger">lt:0</option>
+            <option color="success">gt:0</option>
         </row>
     </rows>
 </view>

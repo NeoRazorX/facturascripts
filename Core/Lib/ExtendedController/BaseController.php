@@ -70,7 +70,7 @@ abstract class BaseController extends Base\Controller
     /**
      * List of views displayed by the controller.
      *
-     * @var BaseView[]
+     * @var BaseView[]|ListView[]
      */
     public $views;
 
@@ -123,8 +123,8 @@ abstract class BaseController extends Base\Controller
 
     /**
      *
-     * @param string   $viewName
-     * @param BaseView $view
+     * @param string            $viewName
+     * @param BaseView|ListView $view
      */
     public function addCustomView($viewName, $view)
     {
@@ -142,7 +142,7 @@ abstract class BaseController extends Base\Controller
 
     /**
      *
-     * @return BaseView
+     * @return BaseView|ListView
      */
     public function getCurrentView()
     {

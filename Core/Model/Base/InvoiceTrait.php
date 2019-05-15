@@ -103,7 +103,7 @@ trait InvoiceTrait
             /// is this invoice in children?
             $found = false;
             foreach ($children as $child) {
-                if ($child->primaryColumnValue() == $invoice->primaryColumnValue()) {
+                if ($child->idfactura == $invoice->idfactura) {
                     $found = true;
                     break;
                 }

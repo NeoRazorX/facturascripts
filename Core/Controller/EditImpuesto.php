@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -54,5 +56,35 @@ class EditImpuesto extends EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addListView('ListImpuestoZona', 'ImpuestoZona', 'zone-tax', 'fas fa-percent');
+        $this->views['ListImpuestoZona']->addOrderBy(['id'], 'code');
+        $this->views['ListImpuestoZona']->addOrderBy(['prioridad'], 'priority', 2);
+        $this->views['ListImpuestoZona']->disableColumn('tax');
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListImpuestoZona':
+                $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
+                $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }
