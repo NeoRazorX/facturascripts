@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Definición inicial para el controlador EditProvincia
- *
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
 -->
@@ -45,14 +42,10 @@
         </group>
         <group name="data-aux" numcolumns="12">
             <column name="latitude" numcolumns="4" display="right" order="150">
-                <widget type="number" decimal="4" fieldname="latitud" icon="fas fa-map-marker">
-                    <option>&lt;1</option>
-                </widget>
+                <widget type="number" decimal="4" fieldname="latitud" icon="fas fa-map-marker" />
             </column>
             <column name="longitude" numcolumns="4" display="right" order="160">
-                <widget type="number" decimal="4" fieldname="longitud" icon="fas fa-map-marker">
-                    <option>&lt;1</option>
-                </widget>
+                <widget type="number" decimal="4" fieldname="longitud" icon="fas fa-map-marker" />
             </column>
             <column name="review-date" numcolumns="4" order="170">
                 <widget type="date" fieldname="fecha_revision" icon="fas fa-calendar-alt" />

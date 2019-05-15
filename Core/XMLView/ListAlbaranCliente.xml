@@ -49,7 +49,7 @@
         </column>
         <column name="amount" display="right" order="180">
             <widget type="money" fieldname="total">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
         <column name="date" display="right" order="190">
@@ -58,6 +58,7 @@
     </columns>
     <rows>
         <row type="status">
+            <option color="secondary" fieldname="codcliente">null:</option>
             <option color="danger" fieldname="idestado">9</option>
             <option color="success" fieldname="pagado">1</option>
             <option color="info" fieldname="editable">0</option>

@@ -42,7 +42,7 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="warning" fieldname="tasaconv">&gt;1</option>
+            <option color="warning" fieldname="tasaconv">gt:1</option>
         </row>
     </rows>
 </view>

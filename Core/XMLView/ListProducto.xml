@@ -45,7 +45,7 @@
         </column>
         <column name="stock" display="right" order="150">
             <widget type="number" fieldname="stockfis">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
     </columns>
@@ -53,8 +53,8 @@
         <row type="status">
             <option color="danger" fieldname="bloqueado">1</option>
             <option color="info" fieldname="nostock">1</option>
-            <option color="success" fieldname="stockfis">&gt;0</option>
-            <option color="warning" fieldname="stockfis">&lt;1</option>
+            <option color="warning" fieldname="stockfis">lte:0</option>
+            <option color="success" fieldname="stockfis">gt:0</option>
         </row>
     </rows>
 </view>

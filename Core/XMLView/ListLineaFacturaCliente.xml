@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListLineaFacturaCliente
- *
  * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <column name="id" display="none" order="100">
@@ -61,7 +57,7 @@
         </column>
         <column name="ammount" display="right" order="200">
             <widget type="money" fieldname="pvptotal">
-                <option color="danger">&lt;0</option>
+                <option color="danger">lt:0</option>
             </widget>
         </column>
         <column name="tax" display="right" order="210">
@@ -80,4 +76,11 @@
             <widget type="checkbox" fieldname="mostrar_precio" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="info" fieldname="referencia">null:</option>
+            <option color="danger" fieldname="cantidad">lt:0</option>
+            <option color="success" fieldname="cantidad">gt:0</option>
+        </row>
+    </rows>
 </view>

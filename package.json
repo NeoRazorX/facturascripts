@@ -1,6 +1,5 @@
 {
   "name": "facturascripts",
-  "version": "2018.020",
   "description": "Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.",
   "main": "index.php",
   "scripts": {
