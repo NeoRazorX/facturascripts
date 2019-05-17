@@ -269,7 +269,7 @@ abstract class PanelController extends BaseController
 
         // has PK value been changed?
         $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-        if ($code != $this->views[$this->active]->newCode) {
+        if ($code != $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
             $pkColumn = $this->views[$this->active]->model->primaryColumn();
             $this->views[$this->active]->model->{$pkColumn} = $code;
             // change in database
