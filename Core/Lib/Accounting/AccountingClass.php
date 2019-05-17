@@ -21,11 +21,13 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Model\Base\ModelClass;
 
 /**
  * Base class for creation of accounting processes
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 abstract class AccountingClass extends AccountingAccounts
 {
