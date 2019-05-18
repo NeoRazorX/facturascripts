@@ -103,31 +103,11 @@ class Empresa extends Base\Contact
     public $regimeniva;
 
     /**
-     * Type of VAT regime
-     *
-     * @var RegimenIVA
-     */
-    private static $regimenIVA;
-
-    /**
      * Website of the person.
      *
      * @var string
      */
     public $web;
-
-    /**
-     * 
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        if (self::$regimenIVA === null) {
-            self::$regimenIVA = new RegimenIVA();
-        }
-
-        parent::__construct($data);
-    }
 
     /**
      * Reset the values of all model properties.
@@ -136,7 +116,7 @@ class Empresa extends Base\Contact
     {
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
-        $this->regimeniva = self::$regimenIVA->defaultValue();
+        $this->regimeniva = RegimenIVA::defaultValue();
     }
 
     /**
@@ -169,7 +149,7 @@ class Empresa extends Base\Contact
             . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
             . "VALUES (1,'https://www.facturascripts.com','ESP','C/ Falsa, 123',"
             . "'','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "','0',"
-            . "'" . self::$regimenIVA->defaultValue() . "');";
+            . "'" . RegimenIVA::defaultValue() . "');";
     }
 
     /**

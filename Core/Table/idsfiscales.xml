@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : idsfiscales.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the idsfiscales table.
+-->
+<table>
+    <column>
+        <name>tipoidfiscal</name>
+        <type>character varying(25)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>idsfiscales_pkey</name>
+        <type>PRIMARY KEY (tipoidfiscal)</type>
+    </constraint>
+</table>

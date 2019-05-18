@@ -22,7 +22,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Lib\IDFiscal;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
@@ -275,10 +274,6 @@ class EditCliente extends EditController
         /// Load values option to default shipping address from client contacts list
         $columnShipping = $this->views['EditCliente']->columnForName('shipping-address');
         $columnShipping->widget->setValuesFromCodeModel($contacts);
-
-        /// Load values option to Fiscal ID select input
-        $columnFiscalID = $this->views['EditCliente']->columnForName('fiscal-id');
-        $columnFiscalID->widget->setValuesFromArray(IDFiscal::all());
 
         /// Load values option to VAT Type select input
         $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');

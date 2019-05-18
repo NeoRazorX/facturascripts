@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Dinamic\Lib\IDFiscal;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -80,13 +79,6 @@ abstract class ComercialContact extends Contact
     public $fechabaja;
 
     /**
-     * Type of fiscal identifier.
-     *
-     * @var IDFiscal
-     */
-    private static $idFiscal;
-
-    /**
      * % IRPF retention of the document. It is obtained from the series.
      * Each line can have a different%.
      * 
@@ -107,13 +99,6 @@ abstract class ComercialContact extends Contact
      * @var string
      */
     public $regimeniva;
-
-    /**
-     * Type of VAT regime
-     *
-     * @var RegimenIVA
-     */
-    private static $regimenIVA;
 
     /**
      * Type of tax identification of the client.
@@ -138,21 +123,6 @@ abstract class ComercialContact extends Contact
     abstract public function getAdresses();
 
     /**
-     * ComercialContact constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        if (self::$idFiscal === null) {
-            self::$idFiscal = new IDFiscal();
-            self::$regimenIVA = new RegimenIVA();
-        }
-
-        parent::__construct($data);
-    }
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -160,8 +130,7 @@ abstract class ComercialContact extends Contact
         parent::clear();
         $this->irpf = 0.0;
         $this->debaja = false;
-        $this->regimeniva = self::$regimenIVA->defaultValue();
-        $this->tipoidfiscal = self::$idFiscal->defaultValue();
+        $this->regimeniva = RegimenIVA::defaultValue();
     }
 
     /**
