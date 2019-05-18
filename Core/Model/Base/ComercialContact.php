@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
@@ -131,6 +132,7 @@ abstract class ComercialContact extends Contact
         $this->irpf = 0.0;
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
+        $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
     }
 
     /**
