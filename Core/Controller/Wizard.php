@@ -202,6 +202,7 @@ class Wizard extends Controller
     private function initModels()
     {
         new Model\FormaPago();
+        new Model\IdentificadorFiscal();
         new Model\Impuesto();
         new Model\Serie();
         new Model\Provincia();
