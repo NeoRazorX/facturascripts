@@ -45,7 +45,7 @@
             <widget type="checkbox" fieldname="femail" />
         </column>
         <column name="paid" display="center" order="170">
-            <widget type="checkbox" fieldname="pagado" />
+            <widget type="checkbox" fieldname="pagada" />
         </column>
         <column name="amount" display="right" order="180">
             <widget type="money" fieldname="total">
@@ -60,9 +60,8 @@
         <row type="status">
             <option color="secondary" fieldname="codproveedor">null:</option>
             <option color="danger" fieldname="idfacturarect">notnull:</option>
-            <option color="success" fieldname="pagado">1</option>
-            <option color="info" fieldname="editable">0</option>
-            <option color="warning" fieldname="editable">1</option>
+            <option color="success" fieldname="pagada">1</option>
+            <option color="warning" fieldname="editable">0</option>
         </row>
     </rows>
 </view>

@@ -56,7 +56,7 @@
         <row type="status">
             <option color="success" fieldname="importe">gt:1000</option>
             <option color="danger" fieldname="importe">lt:0</option>
-            <option color="warning" fieldname="editable">1</option>
+            <option color="warning" fieldname="editable">0</option>
         </row>
         <row type="actions">
             <button type="action" label="renumber-accounting" color="warning" action="renumber" icon="fas fa-sort-numeric-down" />

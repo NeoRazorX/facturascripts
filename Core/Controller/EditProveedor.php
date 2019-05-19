@@ -61,7 +61,7 @@ class EditProveedor extends EditController
     {
         $where = [
             new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
-            new DataBaseWhere('pagado', false)
+            new DataBaseWhere('pagada', false)
         ];
 
         $totalModel = TotalModel::all('facturasprov', $where, ['total' => 'SUM(total)'], '')[0];

@@ -92,7 +92,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if currentView.model.pagado %}
+        {% if currentView.model.paid() %}
             <div class="col">
                 <div class="alert alert-success text-center">
                     <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ i18n.trans('paid') }}

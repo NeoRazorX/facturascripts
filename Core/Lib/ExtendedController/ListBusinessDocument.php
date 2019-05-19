@@ -132,7 +132,6 @@ abstract class ListBusinessDocument extends ListController
         $this->addCommonViewFilters($name, $model);
         $this->addFilterAutocomplete($name, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
-        $this->addFilterCheckbox($name, 'paid', 'paid', 'pagado');
     }
 
     /**
@@ -157,7 +156,6 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterAutocomplete($name, 'idcontactofact', 'billing-address', 'idcontacto', 'contacto');
         $this->addFilterautocomplete($name, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
-        $this->addFilterCheckbox($name, 'paid', 'paid', 'pagado');
     }
 
     /**
