@@ -79,7 +79,13 @@ class Cliente extends Base\ComercialContact
     public $riesgomax;
 
     /**
-     * 
+     * Type of fiscal retention
+     * @var string
+     */
+    public $codretencion;
+
+    /**
+     *
      * @param string $query
      * @param string $fieldcode
      *
@@ -195,7 +201,7 @@ class Cliente extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

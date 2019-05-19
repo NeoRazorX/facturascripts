@@ -125,6 +125,19 @@ class Agente extends Base\Contact
     public $seg_social;
 
     /**
+     * Type of fiscal retention
+     * @var string
+     */
+    public $codretencion;
+
+    /**
+     *
+     * irpf percentaje
+     * @var double
+     */
+    public $irpf;
+
+    /**
      * Reset values of all model properties.
      */
     public function clear()

@@ -54,6 +54,12 @@ class Proveedor extends Base\ComercialContact
     public $idcontacto;
 
     /**
+     * Type of fiscal retention
+     * @var string
+     */
+    public $codretencion;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -64,7 +70,7 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param string $query
      * @param string $fieldcode
      *
@@ -132,7 +138,7 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

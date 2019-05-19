@@ -31,12 +31,21 @@
             <column name="fiscal-number" numcolumns="4" order="130">
                 <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
-            <column name="position" numcolumns="4" order="140">
+            <column name="position" numcolumns="2" order="140">
                 <widget type="text" fieldname="cargo" />
             </column>
-            <column name="commission" title="percentage-commission" numcolumns="4" order="150">
+            <column name="commission" title="percentage-commission" numcolumns="2" order="150">
                 <widget type="number" fieldname="porcomision" />
             </column>
+            <column name="codretencion" numcolumns="3" titleurl="ListImpuesto#ListRetencion" title="retention-type" order="160">
+                <widget type="select" fieldname="codretencion" onclick="EditRetencion">
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="irpf" numcolumns="2">
+                <widget type="number" fieldname="irpf"/>
+            </column>
+
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="address" numcolumns="4" order="100">

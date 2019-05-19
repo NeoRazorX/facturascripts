@@ -94,8 +94,10 @@
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="irpf" numcolumns="3" order="160">
-                <widget type="number" fieldname="irpf" icon="fas fa-percent" />
+            <column name="codretencion" numcolumns="3" titleurl="ListImpuesto#ListRetencion" title="retention-type" order="160">
+                <widget type="select" fieldname="codretencion" onclick="EditRetencion">
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                </widget>
             </column>
             <column name="vat-regime" numcolumns="3" order="170">
                 <widget type="select" fieldname="regimeniva" required="true">
