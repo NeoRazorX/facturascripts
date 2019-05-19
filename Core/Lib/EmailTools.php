@@ -130,10 +130,12 @@ class EmailTools
 
     /**
      * Create new PHPMailer connection with stored settings.
+     * 
+     * @param string $fromName
      *
      * @return PHPMailer
      */
-    public function newMail()
+    public function newMail($fromName = '')
     {
         $mail = new PHPMailer();
         $mail->CharSet = 'UTF-8';
@@ -145,7 +147,7 @@ class EmailTools
         $mail->Port = $this->getSetting('port');
         $mail->Username = $this->getSetting('user') ? $this->getSetting('user') : $this->getSetting('email');
         $mail->Password = $this->getSetting('password');
-        $mail->setFrom($this->getSetting('email'));
+        $mail->setFrom($this->getSetting('email'), $fromName);
 
         return $mail;
     }
