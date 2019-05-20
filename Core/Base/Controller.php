@@ -252,6 +252,9 @@ class Controller
     public function redirect($url, $delay = 0)
     {
         $this->response->headers->set('Refresh', $delay . '; ' . $url);
+        if ($delay === 0) {
+            $this->setTemplate(false);
+        }
     }
 
     /**
