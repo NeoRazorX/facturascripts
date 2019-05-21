@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
@@ -32,8 +34,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class InvoiceToAccounting extends AccountingClass
-{
+class InvoiceToAccounting extends AccountingClass {
 
     /**
      * Document Subtotals Lines array
@@ -46,8 +47,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @param FacturaCliente|FacturaProveedor $model
      */
-    public function generate($model)
-    {
+    public function generate($model) {
         parent::generate($model);
 
         if (!empty($model->idasiento)) {
@@ -77,8 +77,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addCustomerLine($accountEntry)
-    {
+    protected function addCustomerLine($accountEntry) {
         $cliente = new Cliente();
         if (!$cliente->loadFromCode($this->document->codcliente)) {
             $this->miniLog->warning($this->i18n->trans('customer-not-found'));
@@ -104,8 +103,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addGoodsPurchaseLine($accountEntry)
-    {
+    protected function addGoodsPurchaseLine($accountEntry) {
         $cuenta = $this->getSpecialAccount('COMPRA');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('purchases-account-not-found'));
@@ -130,8 +128,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addGoodsSalesLine($accountEntry)
-    {
+    protected function addGoodsSalesLine($accountEntry) {
         $cuenta = $this->getSpecialAccount('VENTAS');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('sales-account-not-found'));
@@ -156,8 +153,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addPurchaseIrpfLines($accountEntry)
-    {
+    protected function addPurchaseIrpfLines($accountEntry) {
         $cuenta = $this->getSpecialAccount('IRPFPR');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('irpfpr-account-not-found'));
@@ -182,8 +178,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addPurchaseTaxLines($accountEntry)
-    {
+    protected function addPurchaseTaxLines($accountEntry) {
         if (!$this->addPurchaseIrpfLines($accountEntry)) {
             return false;
         }
@@ -212,8 +207,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addSalesIrpfLines($accountEntry)
-    {
+    protected function addSalesIrpfLines($accountEntry) {
         $cuenta = $this->getSpecialAccount('IRPF');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('irpf-account-not-found'));
@@ -238,8 +232,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addSalesTaxLines($accountEntry)
-    {
+    protected function addSalesTaxLines($accountEntry) {
         if (!$this->addSalesIrpfLines($accountEntry)) {
             return false;
         }
@@ -268,8 +261,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addSupplierLine($accountEntry)
-    {
+    protected function addSupplierLine($accountEntry) {
         $proveedor = new Proveedor();
         if (!$proveedor->loadFromCode($this->document->codproveedor)) {
             $this->miniLog->warning($this->i18n->trans('supplier-not-found'));
@@ -293,8 +285,7 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function loadSubtotals(): bool
-    {
+    protected function loadSubtotals(): bool {
         $tools = new BusinessDocumentTools();
         $this->subtotals = $tools->getSubtotals($this->document->getLines());
         return !empty($this->document->total);
@@ -305,20 +296,12 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @param FacturaProveedor $model
      */
-    protected function purchaseAccountingEntry(&$model)
-    {
-        $accountEntry = new Asiento();
-        $accountEntry->codejercicio = $this->document->codejercicio;
-        $accountEntry->concepto = $this->i18n->trans('supplier-invoice') . ' ' . $this->document->codigo;
-        $accountEntry->documento = $this->document->codigo;
-        $accountEntry->fecha = $this->document->fecha;
-        $accountEntry->idempresa = $this->document->idempresa;
-        $accountEntry->importe = $this->document->total;
-        if (!$accountEntry->save()) {
+    protected function purchaseAccountingEntry(&$model) {
+        $accountEntry = $this->saveAccountEntry('supplier-invoice');
+        if (!$accountEntry) {
             $this->miniLog->warning('accounting-entry-error');
             return;
         }
-
         if ($this->addSupplierLine($accountEntry) && $this->addPurchaseTaxLines($accountEntry) && $this->addGoodsPurchaseLine($accountEntry)) {
             $model->idasiento = $accountEntry->primaryColumnValue();
             return;
@@ -333,20 +316,12 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @param FacturaCliente $model
      */
-    protected function salesAccountingEntry(&$model)
-    {
-        $accountEntry = new Asiento();
-        $accountEntry->codejercicio = $this->document->codejercicio;
-        $accountEntry->concepto = $this->i18n->trans('customer-invoice') . ' ' . $this->document->codigo;
-        $accountEntry->documento = $this->document->codigo;
-        $accountEntry->fecha = $this->document->fecha;
-        $accountEntry->idempresa = $this->document->idempresa;
-        $accountEntry->importe = $this->document->total;
-        if (!$accountEntry->save()) {
+    protected function salesAccountingEntry(&$model) {
+        $accountEntry = $this->saveAccountEntry('customer-invoice');
+        if (!$accountEntry) {
             $this->miniLog->warning('accounting-entry-error');
             return;
         }
-
         if ($this->addCustomerLine($accountEntry) && $this->addSalesTaxLines($accountEntry) && $this->addGoodsSalesLine($accountEntry)) {
             $model->idasiento = $accountEntry->primaryColumnValue();
             return;
@@ -355,4 +330,21 @@ class InvoiceToAccounting extends AccountingClass
         $this->miniLog->warning('accounting-lines-error');
         $accountEntry->delete();
     }
+
+    private function saveAccountEntry($type = 'customer-invoice') {
+        $accountEntry = new Asiento();
+        $accountEntry->codejercicio = $this->document->codejercicio;
+        $accountEntry->concepto = $this->i18n->trans($type) . ' ' . $this->document->codigo;
+
+        $accountEntry->documento = $this->document->codigo;
+        $accountEntry->fecha = $this->document->fecha;
+        $accountEntry->idempresa = $this->document->idempresa;
+        $accountEntry->importe = $this->document->total;
+        if (!$accountEntry->save()) {
+            $this->miniLog->warning('accounting-entry-error');
+            return False;
+        }
+        return $accountEntry;
+    }
+
 }
