@@ -146,7 +146,7 @@ class DocumentStitcher extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
-        $this->setDocuments();
+        $this->loadDocuments();
 
         // duplicated request?
         $token = $this->request->request->get('multireqtoken', '');
@@ -159,6 +159,25 @@ class DocumentStitcher extends Controller
         if (!empty($status)) {
             $this->generateNewDocument((int) $status);
         }
+    }
+
+    /**
+     * 
+     * @param Model\Base\TransformerDocument $newDoc
+     *
+     * @return bool
+     */
+    protected function addDocument($newDoc)
+    {
+        foreach ($this->documents as $doc) {
+            if ($doc->coddivisa != $newDoc->coddivisa || $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
+                $this->miniLog->warning($this->i18n->trans('incompatible-document', ['%code%' => $newDoc->codigo]));
+                return false;
+            }
+        }
+
+        $this->documents[] = $newDoc;
+        return true;
     }
 
     /**
@@ -280,13 +299,13 @@ class DocumentStitcher extends Controller
     /**
      * Loads selected documents.
      */
-    protected function setDocuments()
+    protected function loadDocuments()
     {
+        $modelClass = 'FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
         foreach ($this->codes as $code) {
-            $modelClass = 'FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
             $doc = new $modelClass();
             if ($doc->loadFromCode($code)) {
-                $this->documents[] = $doc;
+                $this->addDocument($doc);
             }
         }
     }
