@@ -193,7 +193,7 @@ abstract class ListBusinessDocument extends ListController
             return true;
         }
 
-        $this->miniLog->warning('no-selected-item');
+        $this->miniLog->warning($this->i18n->trans('no-selected-item'));
         return false;
     }
 }
