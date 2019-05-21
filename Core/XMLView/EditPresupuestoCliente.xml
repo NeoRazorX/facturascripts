@@ -112,9 +112,6 @@
             <column name="email-sent" numcolumns="2" order="170">
                 <widget type="date" fieldname="femail" />
             </column>
-            <column name="paid" numcolumns="2" order="180">
-                <widget type="checkbox" fieldname="pagado" />
-            </column>
         </group>
         <group name="notes" numcolumns="12">
             <column name="observations" numcolumns="12" order="100">

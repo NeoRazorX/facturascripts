@@ -57,7 +57,7 @@
                 <widget type="number" fieldname="tasaconv" icon="fas fa-exchange-alt" />
             </column>
             <column name="paid" numcolumns="12" order="140">
-                <widget type="checkbox" fieldname="pagado" />
+                <widget type="checkbox" fieldname="pagada" />
             </column>
         </group>
         <group name="attributes" title="attributes" numcolumns="12">

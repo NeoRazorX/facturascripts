@@ -52,6 +52,8 @@ class ListFacturaCliente extends ListBusinessDocument
     protected function createViews()
     {
         $this->createViewSales('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->addFilterCheckbox('ListFacturaCliente', 'pagada', 'paid');
+
         $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
     }
 }

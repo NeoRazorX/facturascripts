@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -15,17 +15,42 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Model\Base;
+
+/**
+ * Description of IdentificadorFiscal
  *
- * @author Artex Trading sa     <jferrer@artextrading.com>  
- * @author Carlos García Gómez  <carlos@facturascripts.com>  
--->
-<view>
-    <columns>
-        <column name="code" order="100" numcolumns="3">
-            <widget type="text" fieldname="codrole" icon="fas fa-hashtag" maxlength="20" required="true" readonly="dinamic" />
-        </column>
-        <column name="description" order="100" numcolumns="9">
-            <widget type="text" fieldname="descripcion" required="true"/>
-        </column>
-    </columns>
-</view>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
+class IdentificadorFiscal extends Base\ModelClass
+{
+
+    use Base\ModelTrait;
+
+    /**
+     *
+     * @var string
+     */
+    public $tipoidfiscal;
+
+    /**
+     * 
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'tipoidfiscal';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function tableName()
+    {
+        return 'idsfiscales';
+    }
+}

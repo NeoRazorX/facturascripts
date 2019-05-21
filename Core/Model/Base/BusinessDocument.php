@@ -149,13 +149,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $observaciones;
 
     /**
-     * Paid.
-     *
-     * @var bool
-     */
-    public $pagado;
-
-    /**
      * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
@@ -238,7 +231,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
-        $this->pagado = false;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
@@ -301,6 +293,15 @@ abstract class BusinessDocument extends ModelOnChangeClass
         new Almacen();
 
         return parent::install();
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function paid()
+    {
+        return false;
     }
 
     /**

@@ -162,10 +162,14 @@
         <type>text</type>
     </column>
     <column>
+        <name>pagada</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <!--TODO: remove on next update-->
         <name>pagado</name>
         <type>boolean</type>
-        <null>NO</null>
-        <default>false</default>
     </column>
     <column>
         <name>porcomision</name>

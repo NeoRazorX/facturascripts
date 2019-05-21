@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,33 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Lib;
+namespace FacturaScripts\Core\Controller;
+
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
- * This class centralizes all common method for fiscal id.
+ * Description of EditIdentificadorFiscal
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class IDFiscal
+class EditIdentificadorFiscal extends EditController
 {
 
     /**
-     * Returns the default value
-     *
-     * @return string
+     * 
+     * @return array
      */
-    public static function defaultValue()
+    public function getPageData()
     {
-        return 'CIF/NIF';
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'fiscal-id';
+        $data['icon'] = 'far fa-id-card';
+        $data['showonmenu'] = false;
+
+        return $data;
     }
 
     /**
-     * Returns all the available options
-     *
-     * @return array
+     * 
+     * @return string
      */
-    public static function all()
+    public function getModelClassName()
     {
-        return ['CIF/NIF', 'CIF', 'CUIT', 'DNI', 'NIF', 'Pasaporte', 'RUC', 'VAT'];
+        return 'IdentificadorFiscal';
     }
 }

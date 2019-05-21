@@ -33,7 +33,7 @@
             </column>
             <column name="fiscal-id" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values></values>
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="140">

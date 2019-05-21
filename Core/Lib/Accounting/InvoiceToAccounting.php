@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -34,29 +32,8 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class InvoiceToAccounting extends AccountingAccounts
+class InvoiceToAccounting extends AccountingClass
 {
-
-    /**
-     * Document Model with data to process
-     *
-     * @var FacturaCliente|FacturaProveedor
-     */
-    protected $document;
-
-    /**
-     * Multi-language translator.
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     * Manage the log of all controllers, models and database.
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
 
     /**
      * Document Subtotals Lines array
@@ -66,23 +43,12 @@ class InvoiceToAccounting extends AccountingAccounts
     protected $subtotals;
 
     /**
-     * Class constructor and initializate auxiliar model class.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
-    }
-
-    /**
      *
      * @param FacturaCliente|FacturaProveedor $model
      */
-    public function generate(&$model)
+    public function generate($model)
     {
-        $this->document = $model;
-        $this->exercise->idempresa = $model->idempresa;
+        parent::generate($model);
 
         if (!empty($model->idasiento)) {
             return;
@@ -336,7 +302,7 @@ class InvoiceToAccounting extends AccountingAccounts
 
     /**
      * Generate the accounting entry for a purchase document.
-     * 
+     *
      * @param FacturaProveedor $model
      */
     protected function purchaseAccountingEntry(&$model)
@@ -364,7 +330,7 @@ class InvoiceToAccounting extends AccountingAccounts
 
     /**
      * Generate the accounting entry for a sales document.
-     * 
+     *
      * @param FacturaCliente $model
      */
     protected function salesAccountingEntry(&$model)

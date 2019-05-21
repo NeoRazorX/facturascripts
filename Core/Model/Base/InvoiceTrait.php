@@ -81,6 +81,12 @@ trait InvoiceTrait
     public $idfacturarect;
 
     /**
+     *
+     * @var bool
+     */
+    public $pagada;
+
+    /**
      * Due date of the invoice.
      *
      * @var string
@@ -118,6 +124,15 @@ trait InvoiceTrait
     }
 
     /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->pagada = false;
+    }
+
+    /**
      * 
      * @return Asiento
      */
@@ -140,6 +155,15 @@ trait InvoiceTrait
 
         $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
         return $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function paid()
+    {
+        return $this->pagada;
     }
 
     /**
