@@ -21,7 +21,7 @@
 -->
 <view>
     <columns>
-        <column name="id" order="100" display="none">
+        <column name="id" order="90" display="none">
             <widget type="text" fieldname="idcuenta" onclick="EditCuenta" />
         </column>
         <column name="fiscal-exercise" order="100">
@@ -33,8 +33,10 @@
         <column name="description" order="120">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="id-account-special" order="130">
-            <widget type="text" fieldname="codcuentaesp" />
+        <column name="special-account" order="130">
+            <widget type="autocomplete" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
+                <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
+            </widget>
         </column>
         <column name="parent-account" order="140">
             <widget type="autocomplete" fieldname="parent_idcuenta">

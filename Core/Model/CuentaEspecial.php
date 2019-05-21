@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Allows to relate special accounts (SALES, for example)
  * with the real account or sub-account.
@@ -30,18 +32,18 @@ class CuentaEspecial extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     * Special account identifier.
+     *
+     * @var string
+     */
+    public $codcuentaesp;
+
+    /**
      * Description of the special account.
      *
      * @var string
      */
     public $descripcion;
-
-    /**
-     * Special account identifier.
-     *
-     * @var string
-     */
-    public $idcuentaesp;
 
     /**
      * Return the name of the column that is the model's primary key.
@@ -71,6 +73,12 @@ class CuentaEspecial extends Base\ModelClass
     public static function tableName()
     {
         return 'cuentasesp';
+    }
+
+    public function test()
+    {
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        return parent::test();
     }
 
     /**

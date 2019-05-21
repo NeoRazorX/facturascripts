@@ -75,7 +75,7 @@ class ListCuenta extends ListController
      */
     protected function createViewCuentasEsp($name = 'ListCuentaEspecial')
     {
-        $this->addView($name, 'CuentaEspecial', 'special-account', 'fas fa-newspaper');
+        $this->addView($name, 'CuentaEspecial', 'special-accounts', 'fas fa-newspaper');
         $this->addOrderBy($name, ['descripcion'], 'description');
         $this->addOrderBy($name, ['codcuentaesp'], 'code');
         $this->addSearchFields($name, ['descripcion', 'codcuentaesp']);

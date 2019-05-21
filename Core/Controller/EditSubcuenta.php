@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Partida;
 
 /**
  * Controller to edit a single item from the SubCuenta model
@@ -80,6 +81,9 @@ class EditSubcuenta extends EditController
     {
         switch ($viewName) {
             case 'ListAsiento':
+                /// needed dependency
+                new Partida();
+
                 $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
                 $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
                 $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
