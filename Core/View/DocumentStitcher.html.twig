@@ -48,9 +48,15 @@
                 </div>
                 <div class="col text-right">
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
-                        </button>
+                        {% if fsc.verifyDocuments() == false %}
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                                <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
+                            </button>
+                        {% else %}
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
+                            </button>
+                        {% endif %}
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for status in fsc.getAvaliableStatus() %}
                                 <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');" class="dropdown-item">

@@ -148,6 +148,11 @@ class DocumentStitcher extends Controller
         $this->modelName = $this->getModelName();
         $this->setDocuments();
 
+        //verify customer, supplier or currency in selected documents; 
+        if ($this->verifyDocuments() == false) {
+            $this->miniLog->alert($this->i18n->trans('error-verify-then-go-back'));
+        }
+
         // duplicated request?
         $token = $this->request->request->get('multireqtoken', '');
         if (!empty($token) && $this->multiRequestProtection->tokenExist($token)) {
@@ -289,5 +294,25 @@ class DocumentStitcher extends Controller
                 $this->documents[] = $doc;
             }
         }
+    }
+
+    /**
+     * Verify customer, supplier or currency in selected documents.
+     * 
+     * @return boolean
+     */
+    public function verifyDocuments()
+    {
+        $divisa = $this->documents[0]->coddivisa;
+        $customer = $this->documents[0]->codcliente;
+        $supplier = $this->documents[0]->codproveedor;
+        $verify = true;
+        foreach ($this->documents as $document) {
+            if ($divisa != $document->coddivisa || $customer != $document->codcliente || $supplier != $document->codproveedor) {
+                $verify = false;
+                break;
+            }
+        }
+        return $verify;
     }
 }
