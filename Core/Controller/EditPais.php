@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -53,5 +55,32 @@ class EditPais extends EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addListView('ListProvincia', 'Provincia', 'provinces');
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListProvincia':
+                $codpais = $this->getViewModelValue('EditPais', 'codpais');
+                $where = [new DataBaseWhere('codpais', $codpais)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }
