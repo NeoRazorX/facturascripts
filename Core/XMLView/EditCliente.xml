@@ -31,7 +31,7 @@
             <column name="business-name" numcolumns="3" order="120" description="desc-business-name">
                 <widget type="text" fieldname="razonsocial" />
             </column>
-            <column name="fiscal-id" numcolumns="2" order="130">
+            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
                 </widget>
@@ -68,12 +68,12 @@
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="group" numcolumns="3" order="100">
+            <column name="group" titleurl="ListGrupoCliente" numcolumns="3" order="100">
                 <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes" icon="fas fa-folder" >
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="serie" numcolumns="3" order="110">
+            <column name="serie" titleurl="ListSerie" numcolumns="3" order="110">
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>

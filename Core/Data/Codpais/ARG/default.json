@@ -1,0 +1,8 @@
+{
+    "default": {
+        "coddivisa": "ARS",
+        "codserie": "A",
+        "codpago": "CONT",
+        "codimpuesto": "AR21"
+    }
+}
