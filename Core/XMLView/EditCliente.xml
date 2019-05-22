@@ -102,7 +102,7 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="retencion" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
+            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
                 </widget>
