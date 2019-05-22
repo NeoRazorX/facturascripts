@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,26 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Raúl Jiménez <raljopa@gmail.com>
+ * @author Raúl Jiménez         <raljopa@gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
-        <column name="code" order="100" numcolumns="2">
-            <widget type="text" fieldname="id" onclick="EditEmailSent" />
-        </column>
-        <column name="date" display="left" order="110" numcolumns="3">
-            <widget type="text" fieldname="date" />
-        </column>
-        <column name="user" display="left" order="110" numcolumns="2">
+        <column name="from" order="100">
             <widget type="text" fieldname="user" />
         </column>
-        <column name="addressee" display="left" order="120" numcolumns="5">
+        <column name="to" order="110">
             <widget type="text" fieldname="addressee" />
         </column>
-       
-        <column name="subject" display="left" order="130">
+        <column name="subject" order="120">
             <widget type="text" fieldname="subject" />
         </column>
+        <column name="date" display="right" order="130">
+            <widget type="date" fieldname="date" />
+        </column>
     </columns>
-    
 </view>

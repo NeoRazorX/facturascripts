@@ -1,11 +1,21 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
@@ -15,9 +25,24 @@ use FacturaScripts\Core\Base\Utils;
  *
  * @author Raul Jimenez <raljopa@gmail.com>
  */
-class EmailSent extends Base\ModelClass {
+class EmailSent extends Base\ModelClass
+{
 
     use Base\ModelTrait;
+
+    /**
+     * Electronic address of addressee
+     *
+     * @var string
+     */
+    public $addressee;
+
+    /**
+     * date and time of send
+     *
+     * @var date
+     */
+    public $date;
 
     /**
      * Primary key.
@@ -27,41 +52,33 @@ class EmailSent extends Base\ModelClass {
     public $id;
 
     /**
-     * date of send
-     * @var date
-     */
-    public $date;
-
-    /**
-     * User than sent email
-     * @var string
-     */
-    public $user;
-
-    /**
      * Subject of email
+     *
      * @var string
      */
     public $subject;
 
     /**
      * Text of email
+     *
      * @var text
      */
     public $text;
 
     /**
-     * Electronic address of addressee
+     * User than sent email
+     *
      * @var string
      */
-    public $addressee;
+    public $user;
 
     /**
      * Reset the values of all model properties.
      */
-    public function clear() {
+    public function clear()
+    {
         parent::clear();
-        $this->date = date('d-m-Y');
+        $this->date = date('d-m-Y H:i:s');
     }
 
     /**
@@ -69,7 +86,8 @@ class EmailSent extends Base\ModelClass {
      *
      * @return string
      */
-    public static function primaryColumn() {
+    public static function primaryColumn()
+    {
         return 'id';
     }
 
@@ -78,8 +96,20 @@ class EmailSent extends Base\ModelClass {
      *
      * @return string
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'emails_sent';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->subject = Utils::noHtml($this->subject);
+        $this->text = Utils::noHtml($this->text);
+        return parent::test();
     }
 
     /**
@@ -90,8 +120,8 @@ class EmailSent extends Base\ModelClass {
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List') {
+    public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List')
+    {
         return parent::url($type, $list);
     }
-
 }

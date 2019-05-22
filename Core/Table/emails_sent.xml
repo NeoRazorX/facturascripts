@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
+    Document   : emails_sent.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the emails_sent table.
 -->
 <table>
-<column>
+    <column>
+        <name>addressee</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>date</name>
+        <type>timestamp</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('emailsent_id_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>date</name>
-        <type>date</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>user</name>
-        <type>character varying(50)</type>
     </column>
     <column>
         <name>subject</name>
@@ -29,8 +29,8 @@ and open the template in the editor.
         <type>text</type>
     </column>
     <column>
-        <name>addressee</name>
-        <type>character varying(100)</type>
+        <name>user</name>
+        <type>character varying(50)</type>
     </column>
     <constraint>
         <name>emails_sent_pkey</name>

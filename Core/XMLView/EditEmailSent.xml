@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Raúl Jiménez <raljopa@gmail.com>
+ * @author Raúl Jiménez         <raljopa@gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code " numcolumns="2" order="100" readonly = "True">
-                <widget type="text" fieldname="id" icon="fas fa-at" required="true" />
-            </column>
             <column name="date" numcolumns="4" order="110">
                 <widget type="date" fieldname="date" required="true" readonly="true" />
             </column>
-            <column name="user" numcolumns="2" order="130">
-                <widget type="text" fieldname="nick" required="true" readonly="true" />
+            <column name="from" numcolumns="4" order="110">
+                <widget type="text" fieldname="user" required="true" readonly="true" />
             </column>
-            </group>
-            <group name="content" numcolumns = "12"> 
-                 <column name="addressee" numcolumns="12" order="120">
+            <column name="to" numcolumns="4" order="120">
                 <widget type="text" fieldname="addressee" required="true" readonly="true" />
             </column>
-            <column name="subject" numcolumns="12" order="120">
-                <widget type="text" fieldname="level" required="true" readonly="true" />
+        </group>
+        <group name="content" numcolumns="12"> 
+            <column name="subject" numcolumns="12" order="100">
+                <widget type="text" fieldname="subject" required="true" readonly="true" />
             </column>
-           
-            <column name="message" numcolumns="12" order="150">
+            <column name="message" numcolumns="12" order="110">
                 <widget type="textarea" fieldname="text" required="true" readonly="true" />
             </column>
         </group>

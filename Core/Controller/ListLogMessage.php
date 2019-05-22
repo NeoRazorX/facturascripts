@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -17,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
@@ -30,14 +29,16 @@ use FacturaScripts\Dinamic\Model\LogMessage;
  * @author Francesc Pineda Segarra      <francesc.pineda.segarra@gmail.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListLogMessage extends ListController {
+class ListLogMessage extends ListController
+{
 
     /**
      * Returns basic page attributes
      *
      * @return array
      */
-    public function getPageData() {
+    public function getPageData()
+    {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'logs';
         $pagedata['icon'] = 'fas fa-file-medical-alt';
@@ -50,7 +51,8 @@ class ListLogMessage extends ListController {
     /**
      * Load views
      */
-    protected function createViews() {
+    protected function createViews()
+    {
         $this->createLogMessageView();
         $this->createCronJobView();
         $this->createEmailSentView();
@@ -61,7 +63,8 @@ class ListLogMessage extends ListController {
      * 
      * @param string $name
      */
-    private function createCronJobView($name = 'ListCronJob') {
+    private function createCronJobView($name = 'ListCronJob')
+    {
         $this->addView($name, 'CronJob', 'crons', 'fas fa-cogs');
         $this->addSearchFields($name, ['jobname', 'pluginname']);
         $this->addOrderBy($name, ['jobname'], 'job-name');
@@ -81,7 +84,8 @@ class ListLogMessage extends ListController {
      * 
      * @param string $name
      */
-    private function createLogMessageView($name = 'ListLogMessage') {
+    private function createLogMessageView($name = 'ListLogMessage')
+    {
         $this->addView($name, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
         $this->addSearchFields($name, ['message', 'uri']);
         $this->addOrderBy($name, ['time'], 'date', 2);
@@ -104,7 +108,12 @@ class ListLogMessage extends ListController {
         $this->setSettings($name, 'btnNew', false);
     }
 
-    private function createEmailSentView($name = 'ListEmailSent') {
+    /**
+     * 
+     * @param string $name
+     */
+    private function createEmailSentView($name = 'ListEmailSent')
+    {
         $this->addView($name, 'EmailSent', 'email-sent', 'fas fa-envelope-open');
         $this->addSearchFields($name, ['subject', 'text', 'addressee']);
 
@@ -123,7 +132,8 @@ class ListLogMessage extends ListController {
      *
      * @return bool
      */
-    protected function execPreviousAction($action) {
+    protected function execPreviousAction($action)
+    {
         switch ($action) {
             case 'delete-selected-filters':
                 $this->deleteWithFilters();
@@ -137,7 +147,8 @@ class ListLogMessage extends ListController {
     /**
      * Delete logs based on active filters.
      */
-    private function deleteWithFilters() {
+    private function deleteWithFilters()
+    {
         // start transaction
         $this->dataBase->beginTransaction();
 
@@ -162,7 +173,7 @@ class ListLogMessage extends ListController {
             if ($counter > 0) {
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->miniLog->alert($e->getMessage());
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -170,5 +181,4 @@ class ListLogMessage extends ListController {
             }
         }
     }
-
 }
