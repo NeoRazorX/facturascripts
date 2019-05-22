@@ -27,8 +27,8 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="percentage" numcolumns="2" order="120">
-            <widget type="number" decimal="2" fieldname="porcentaje" required="true" />
+        <column name="percentage" display="right" order="120">
+            <widget type="number" decimal="2" fieldname="porcentaje" />
         </column>
     </columns>
 </view>

@@ -65,7 +65,12 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="ventasinstock" title="allow-sale-without-stock" numcolumns="3" order="180">
+            <column name="codretencion" title="default-retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
+                <widget type="select" fieldname="codretencion" onclick="EditRetencion">
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="ventasinstock" title="allow-sale-without-stock" numcolumns="3" order="190">
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
