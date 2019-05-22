@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Retencion;
 
 /**
  * Description of ComercialContact
@@ -52,6 +53,13 @@ abstract class ComercialContact extends Contact
     public $codproveedor;
 
     /**
+     * Identifier code of the retention applied to this contact.
+     *
+     * @var string
+     */
+    public $codretencion;
+
+    /**
      * Default series for this customer.
      *
      * @var string
@@ -78,14 +86,6 @@ abstract class ComercialContact extends Contact
      * @var string
      */
     public $fechabaja;
-
-    /**
-     * % IRPF retention of the document. It is obtained from the series.
-     * Each line can have a different%.
-     * 
-     * @var float|int
-     */
-    public $irpf;
 
     /**
      * Social reason of the client, that is, the official name. The one that appears on the invoices.
@@ -129,10 +129,29 @@ abstract class ComercialContact extends Contact
     public function clear()
     {
         parent::clear();
-        $this->irpf = 0.0;
+        $this->codretencion = AppSettings::get('default', 'codretencion');
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
         $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
+    }
+
+    /**
+     * Returns default contact retention value.
+     * 
+     * @return float
+     */
+    public function irpf()
+    {
+        if (empty($this->codretencion)) {
+            return 0.0;
+        }
+
+        $retention = new Retencion();
+        if ($retention->loadFromCode($this->codretencion)) {
+            return $retention->porcentaje;
+        }
+
+        return 0.0;
     }
 
     /**

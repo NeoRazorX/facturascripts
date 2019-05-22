@@ -88,12 +88,14 @@
             <column name="subaccount" numcolumns="3" order="130">
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
-            <column name="irpf" numcolumns="3" order="140">
-                <widget type="number" fieldname="irpf" icon="fas fa-percent" />
-            </column>
-            <column name="vat-regime" numcolumns="3" order="150">
+            <column name="vat-regime" numcolumns="3" order="140">
                 <widget type="select" fieldname="regimeniva" required="true">
                     <values></values>
+                </widget>
+            </column>
+            <column name="retencion" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="150">
+                <widget type="select" fieldname="codretencion" onclick="EditRetencion">
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
                 </widget>
             </column>
         </group>

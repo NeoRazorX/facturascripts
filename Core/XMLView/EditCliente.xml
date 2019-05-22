@@ -68,42 +68,44 @@
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="group" titleurl="ListGrupoCliente" numcolumns="3" order="100">
-                <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes" icon="fas fa-folder" >
-                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="serie" titleurl="ListSerie" numcolumns="3" order="110">
-                <widget type="select" fieldname="codserie" onclick="EditSerie">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="120">
-                <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="payment-days" description="desc-payment-days" numcolumns="3" order="130">
-                <widget type="text" fieldname="diaspago" />
-            </column>
-            <column name="subaccount" numcolumns="3" order="140">
-                <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
-            </column>
-            <column name="agent" numcolumns="3" titleurl="ListAgente" order="150">
+            <column name="agent" numcolumns="3" titleurl="ListAgente" order="100">
                 <widget type="select" fieldname="codagente" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="irpf" numcolumns="3" order="160">
-                <widget type="number" fieldname="irpf" icon="fas fa-percent" />
+            <column name="group" titleurl="ListGrupoCliente" numcolumns="3" order="110">
+                <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes" icon="fas fa-folder" >
+                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="serie" titleurl="ListSerie" numcolumns="3" order="120">
+                <widget type="select" fieldname="codserie" onclick="EditSerie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="subaccount" numcolumns="3" order="130">
+                <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
+            </column>
+            <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="140">
+                <widget type="select" fieldname="codpago" onclick="EditFormaPago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="payment-days" description="desc-payment-days" numcolumns="3" order="150">
+                <widget type="text" fieldname="diaspago" icon="fas fa-calendar-alt" />
+            </column>
+            <column name="max-risk" display="right" numcolumns="3" order="160">
+                <widget type="number" fieldname="riesgomax" icon="fas fa-funnel-dollar" />
             </column>
             <column name="vat-regime" numcolumns="3" order="170">
                 <widget type="select" fieldname="regimeniva" required="true">
                     <values></values>
                 </widget>
             </column>
-            <column name="max-risk" display="right" numcolumns="3" order="180">
-                <widget type="number" fieldname="riesgomax" icon="fas fa-funnel-dollar" />
+            <column name="retencion" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
+                <widget type="select" fieldname="codretencion" onclick="EditRetencion">
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">

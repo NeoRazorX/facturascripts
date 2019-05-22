@@ -181,14 +181,14 @@ class BusinessDocumentTools
         if (isset($doc->codcliente)) {
             $cliente = new Cliente();
             if ($cliente->loadFromCode($doc->codcliente)) {
-                $doc->irpf = $cliente->irpf;
+                $doc->irpf = $cliente->irpf();
                 $this->loadRegimenIva($cliente->regimeniva);
                 $this->loadTaxZones($doc);
             }
         } elseif (isset($doc->codproveedor)) {
             $proveedor = new Proveedor();
             if ($proveedor->loadFromCode($doc->codproveedor)) {
-                $doc->irpf = $proveedor->irpf;
+                $doc->irpf = $proveedor->irpf();
                 $this->loadRegimenIva($proveedor->regimeniva);
             }
 
