@@ -51,9 +51,6 @@
             <column name="domicilied" title="domicilied" numcolumns="2" order="110">
                 <widget type="checkbox" fieldname="domiciliado"></widget>
             </column>
-            <column name="print" title="print" numcolumns="2" order="120">
-                <widget type="checkbox" fieldname="imprimir"></widget>
-            </column>
         </group>
         <group name="data3" numcolumns="12">
             <column name="company" numcolumns="2" order="100">

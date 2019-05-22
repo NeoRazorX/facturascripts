@@ -74,14 +74,6 @@ class FormaPago extends Base\ModelClass
     public $idempresa;
 
     /**
-     * True (default) -> display the data in sales documents,
-     * including the associated bank account.
-     *
-     * @var bool
-     */
-    public $imprimir;
-
-    /**
      * Expiration period.
      *
      * @var int
@@ -103,7 +95,6 @@ class FormaPago extends Base\ModelClass
         parent::clear();
         $this->domiciliado = false;
         $this->genrecibos = 'Emitidos';
-        $this->imprimir = true;
         $this->plazovencimiento = 0;
         $this->tipovencimiento = 'days';
     }
