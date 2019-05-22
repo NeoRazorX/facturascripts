@@ -194,6 +194,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     {
         /// needed dependencies
         new Ejercicio();
+        new Subcuenta();
         new Asiento();
 
         return parent::install();

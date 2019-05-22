@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\App\AppRouter;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
@@ -172,11 +173,11 @@ class Wizard extends Controller
             $pages = $page->all($where, [], 0, 0);
             // add Pages to Rol
             if (!$roleAccess->addPagesToRole($codrole, $pages)) {
-                throw new \Exception($this->i18n->trans('cancel-process'));
+                throw new Exception($this->i18n->trans('cancel-process'));
             }
             $this->dataBase->commit();
             return true;
-        } catch (\Exception $exc) {
+        } catch (Exception $exc) {
             $this->dataBase->rollback();
             $this->miniLog->error($exc->getMessage());
             return false;
@@ -201,9 +202,10 @@ class Wizard extends Controller
      */
     private function initModels()
     {
-        new Model\FormaPago();
         new Model\IdentificadorFiscal();
+        new Model\FormaPago();
         new Model\Impuesto();
+        new Model\Retencion();
         new Model\Serie();
         new Model\Provincia();
 
