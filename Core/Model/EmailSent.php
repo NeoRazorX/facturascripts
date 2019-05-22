@@ -23,7 +23,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Model EmailSent
  *
- * @author Raul Jimenez <raljopa@gmail.com>
+ * @author Raul Jimenez         <raljopa@gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class EmailSent extends Base\ModelClass
 {
@@ -31,16 +32,16 @@ class EmailSent extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Electronic address of addressee
+     * Email addressee
      *
      * @var string
      */
     public $addressee;
 
     /**
-     * date and time of send
+     * Date and time of send
      *
-     * @var date
+     * @var string
      */
     public $date;
 
@@ -61,7 +62,7 @@ class EmailSent extends Base\ModelClass
     /**
      * Text of email
      *
-     * @var text
+     * @var string
      */
     public $text;
 
