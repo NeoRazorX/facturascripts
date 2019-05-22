@@ -228,4 +228,16 @@ class RegularizacionImpuesto extends Base\ModelClass
     {
         return 'regularizacionimpuestos';
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
+    {
+        return parent::url($type, $list);
+    }
 }
