@@ -11,6 +11,10 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>body</name>
+        <type>text</type>
+    </column>
+    <column>
         <name>date</name>
         <type>timestamp</type>
     </column>
@@ -21,16 +25,12 @@
         <default>nextval('emailsent_id_seq'::regclass)</default>
     </column>
     <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
         <name>subject</name>
         <type>character varying(300)</type>
-    </column>
-    <column>
-        <name>text</name>
-        <type>text</type>
-    </column>
-    <column>
-        <name>user</name>
-        <type>character varying(50)</type>
     </column>
     <constraint>
         <name>emails_sent_pkey</name>

@@ -39,6 +39,13 @@ class EmailSent extends Base\ModelClass
     public $addressee;
 
     /**
+     * Text of email
+     *
+     * @var string
+     */
+    public $body;
+
+    /**
      * Date and time of send
      *
      * @var string
@@ -53,25 +60,18 @@ class EmailSent extends Base\ModelClass
     public $id;
 
     /**
+     * User than sent email
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
      * Subject of email
      *
      * @var string
      */
     public $subject;
-
-    /**
-     * Text of email
-     *
-     * @var string
-     */
-    public $text;
-
-    /**
-     * User than sent email
-     *
-     * @var string
-     */
-    public $user;
 
     /**
      * Reset the values of all model properties.
@@ -108,8 +108,8 @@ class EmailSent extends Base\ModelClass
      */
     public function test()
     {
+        $this->body = Utils::noHtml($this->body);
         $this->subject = Utils::noHtml($this->subject);
-        $this->text = Utils::noHtml($this->text);
         return parent::test();
     }
 
