@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -53,5 +55,33 @@ class EditCuentaEspecial extends EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addListView('ListCuenta', 'Cuenta', 'accounts');
+        $this->views['ListCuenta']->disableColumn('special-account');
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListCuenta':
+                $codcuentaesp = $this->getViewModelValue('EditCuentaEspecial', 'codcuentaesp');
+                $where = [new DataBaseWhere('codcuentaesp', $codcuentaesp)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }

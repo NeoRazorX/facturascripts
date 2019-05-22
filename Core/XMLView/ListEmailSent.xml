@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>  
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Raúl Jiménez         <raljopa@gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
-        <column name="code" order="100">
-            <widget type="text" fieldname="codretencion" onclick="EditRetencion" />
+        <column name="from" order="100">
+            <widget type="text" fieldname="user" />
         </column>
-        <column name="description" order="110">
-            <widget type="textarea" fieldname="descripcion" />
+        <column name="to" order="110">
+            <widget type="text" fieldname="addressee" />
         </column>
-        <column name="percentage" display="right" order="120">
-            <widget type="number" decimal="2" fieldname="porcentaje" />
+        <column name="subject" order="120">
+            <widget type="text" fieldname="subject" />
+        </column>
+        <column name="date" display="right" order="130">
+            <widget type="date" fieldname="date" />
         </column>
     </columns>
 </view>

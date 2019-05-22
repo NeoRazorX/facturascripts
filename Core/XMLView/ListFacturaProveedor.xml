@@ -62,6 +62,7 @@
             <option color="danger" fieldname="idfacturarect">notnull:</option>
             <option color="success" fieldname="pagada">1</option>
             <option color="warning" fieldname="editable">0</option>
+            <option color="info" fieldname="femail">notnull:</option>
         </row>
     </rows>
 </view>

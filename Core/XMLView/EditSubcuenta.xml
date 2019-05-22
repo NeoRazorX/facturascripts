@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,23 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditSubcuenta
- *
- * @author Artex Trading sa <jferrer@artextrading.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Artex Trading sa             <jferrer@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="primary-data" numcolumns="12">
             <column name="id" order="100" display="none">
                 <widget type="text" fieldname="idsubcuenta" />
             </column>
-            <column name="subaccount" numcolumns="2" order="100">
+            <column name="subaccount" numcolumns="2" order="110">
                 <widget type="text" fieldname="codsubcuenta" required="true" />
             </column>
-            <column name="description" numcolumns="10" order="110">
+            <column name="description" numcolumns="10" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
         </group>
@@ -40,18 +37,18 @@
             <column name="account" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcuenta" required="true" />
             </column>
-            <column name="fiscal-exercise" numcolumns="3" order="100">
+            <column name="fiscal-exercise" numcolumns="3" order="110">
                 <widget type="select" fieldname="codejercicio" required="true" onclick="EditEjercicio">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="taxes" numcolumns="4" order="100">
-                <widget type="select" fieldname="codimpuesto">
+            <column name="taxes" numcolumns="4" order="120">
+                <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="special-account-id" numcolumns="3" order="120">
-                <widget type="select" fieldname="codcuentaesp">
+            <column name="special-account" numcolumns="3" order="130">
+                <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
                     <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
                 </widget>
             </column>
@@ -60,10 +57,10 @@
             <column name="debit" numcolumns="4" order="100">
                 <widget type="money" fieldname="debe" readonly="true" />
             </column>
-            <column name="credit" numcolumns="4" order="100">
+            <column name="credit" numcolumns="4" order="110">
                 <widget type="money" fieldname="haber" readonly="true" />
             </column>
-            <column name="balance" numcolumns="4" order="100">
+            <column name="balance" numcolumns="4" order="120">
                 <widget type="money" fieldname="saldo" readonly="true" />
             </column>
         </group>

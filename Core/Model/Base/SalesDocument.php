@@ -204,7 +204,7 @@ abstract class SalesDocument extends TransformerDocument
             $this->codagente = $subject->codagente ?? $this->codagente;
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
-            $this->irpf = $subject->irpf;
+            $this->irpf = $subject->irpf() ?? $this->irpf;
 
             /// billing address
             $billingAddress = $subject->getDefaultAddress('billing');

@@ -194,6 +194,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     {
         /// needed dependencies
         new Ejercicio();
+        new Subcuenta();
         new Asiento();
 
         return parent::install();
@@ -227,5 +228,17 @@ class RegularizacionImpuesto extends Base\ModelClass
     public static function tableName()
     {
         return 'regularizacionimpuestos';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
+    {
+        return parent::url($type, $list);
     }
 }

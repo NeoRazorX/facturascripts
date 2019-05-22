@@ -41,7 +41,6 @@ class ListImpuesto extends ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['menu'] = 'accounting';
-        $pagedata['submenu'] = 'taxes';
         $pagedata['title'] = 'taxes';
         $pagedata['icon'] = 'fas fa-plus-square';
 
@@ -56,6 +55,19 @@ class ListImpuesto extends ListController
         $this->createViewTax();
         $this->createViewTaxZone();
         $this->createViewRetention();
+        $this->createViewRegularization();
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    protected function createViewRegularization($name = 'ListRegularizacionImpuesto')
+    {
+        $this->addView($name, 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-map-signs');
+        $this->addSearchFields($name, ['periodo', 'fechainicio']);
+        $this->addOrderBy($name, ['codejercicio||periodo'], 'period');
+        $this->addOrderBy($name, ['fechainicio'], 'start-date');
     }
 
     /**
@@ -117,14 +129,17 @@ class ListImpuesto extends ListController
     {
         switch ($action) {
             case 'generate-zones':
-                $this->generateTaxZones();
-                return true;
+                return $this->generateTaxZones();
 
             default:
                 return parent::execPreviousAction($action);
         }
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function generateTaxZones()
     {
         $impuesto = new Impuesto();
@@ -144,5 +159,7 @@ class ListImpuesto extends ListController
             $impZona2->prioridad = 0;
             $impZona2->save();
         }
+
+        return true;
     }
 }

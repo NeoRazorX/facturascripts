@@ -208,7 +208,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     abstract public function setSubject($subject);
 
     /**
-     * Returns an array of columns needed for subject.
+     * Returns the name of the column for subject.
      */
     abstract public function subjectColumn();
 
@@ -360,6 +360,15 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
         return false;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function subjectColumnValue()
+    {
+        return $this->{$this->subjectColumn()};
     }
 
     /**

@@ -36,8 +36,8 @@
         <column name="longitude" display="right" order="150">
             <widget type="number" decimal="4" fieldname="longitud" />
         </column>
-        <column name="review-date" order="160">
-            <widget type="text" fieldname="fecha_revision" />
+        <column name="review-date" display="right" order="160">
+            <widget type="date" fieldname="fecha_revision" />
         </column>
     </columns>
 </view>

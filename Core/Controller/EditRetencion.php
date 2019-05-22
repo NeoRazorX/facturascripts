@@ -47,7 +47,7 @@ class EditRetencion extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'retentions';
+        $pagedata['title'] = 'retention';
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fas fa-plus-square';
         $pagedata['showonmenu'] = false;

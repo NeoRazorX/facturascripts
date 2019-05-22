@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Raúl Jiménez         <raljopa@gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+-->
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="date" numcolumns="4" order="110">
+                <widget type="date" fieldname="date" required="true" readonly="true" />
+            </column>
+            <column name="from" numcolumns="4" order="110">
+                <widget type="text" fieldname="user" required="true" readonly="true" />
+            </column>
+            <column name="to" numcolumns="4" order="120">
+                <widget type="text" fieldname="addressee" required="true" readonly="true" />
+            </column>
+        </group>
+        <group name="content" numcolumns="12"> 
+            <column name="subject" numcolumns="12" order="100">
+                <widget type="text" fieldname="subject" required="true" readonly="true" />
+            </column>
+            <column name="message" numcolumns="12" order="110">
+                <widget type="textarea" fieldname="text" required="true" readonly="true" />
+            </column>
+        </group>
+    </columns>
+</view>

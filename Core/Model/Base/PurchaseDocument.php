@@ -86,7 +86,7 @@ abstract class PurchaseDocument extends TransformerDocument
         /// commercial data
         $this->codpago = $subject->codpago ?? $this->codpago;
         $this->codserie = $subject->codserie ?? $this->codserie;
-        $this->irpf = $subject->irpf ?? $this->irpf;
+        $this->irpf = $subject->irpf() ?? $this->irpf;
 
         return true;
     }

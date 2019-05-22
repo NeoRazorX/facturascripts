@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
@@ -54,6 +55,7 @@ class ListLogMessage extends ListController
     {
         $this->createLogMessageView();
         $this->createCronJobView();
+        $this->createEmailSentView();
     }
 
     /**
@@ -107,6 +109,23 @@ class ListLogMessage extends ListController
     }
 
     /**
+     * 
+     * @param string $name
+     */
+    private function createEmailSentView($name = 'ListEmailSent')
+    {
+        $this->addView($name, 'EmailSent', 'email-sent', 'fas fa-envelope-open');
+        $this->addSearchFields($name, ['subject', 'text', 'addressee']);
+
+        /// filters
+        $users = $this->codeModel->all('users', 'nick', 'nick');
+        $this->addFilterSelect($name, 'nick', 'user', 'nick', $users);
+
+        /// settings
+        $this->setSettings($name, 'btnNew', false);
+    }
+
+    /**
      * Run the actions that alter data before reading it.
      *
      * @param string $action
@@ -154,7 +173,7 @@ class ListLogMessage extends ListController
             if ($counter > 0) {
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->miniLog->alert($e->getMessage());
         } finally {
             if ($this->dataBase->inTransaction()) {
