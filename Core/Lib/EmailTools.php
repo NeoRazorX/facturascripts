@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator as i18n;
+use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Model\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -178,13 +179,18 @@ class EmailTools
         }
 
         if ($mail->smtpConnect($this->smtpOptions()) && $mail->send()) {
+            /// save email sent
+            $emailSent = new EmailSent();
+            $emailSent->addressee = $mail->From;
+            $emailSent->body = $mail->Body;
+            $emailSent->subject = $mail->Subject;
+            $emailSent->save();
             return true;
         }
 
         $i18n = new i18n();
         $miniLog = new MiniLog();
         $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
-
         return false;
     }
 
