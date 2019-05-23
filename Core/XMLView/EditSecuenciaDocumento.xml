@@ -62,9 +62,6 @@
             <column name="pattern" numcolumns="4" order="170" required="true">
                 <widget type="text" fieldname="patron" maxlength="30" />
             </column>
-            <column name="title" numcolumns="4" order="180">
-                <widget type="text" fieldname="titulo" maxlength="50" />
-            </column>
         </group>
     </columns>
 </view>

@@ -76,6 +76,7 @@ class ListFormaPago extends ListController
         $this->addOrderBy($viewName, ['codcuenta'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
 
+        /// filters
         $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', $this->companyValues);
     }
 
@@ -92,10 +93,10 @@ class ListFormaPago extends ListController
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['idempresa', 'codpago'], 'company');
 
+        /// filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
         $this->addFilterSelect($viewName, 'genreceipt', 'generate-receipt', 'genrecibos', $this->getGenerateReceiptOptions());
         $this->addFilterCheckbox($viewName, 'domiciliado', 'domicilied', 'domiciliado');
-        $this->addFilterCheckbox($viewName, 'imprimir', 'print', 'imprimir');
     }
 
     /**

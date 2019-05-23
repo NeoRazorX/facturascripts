@@ -22,7 +22,7 @@
 <view>
     <columns>
         <column name="from" order="100">
-            <widget type="text" fieldname="user" />
+            <widget type="text" fieldname="nick" />
         </column>
         <column name="to" order="110">
             <widget type="text" fieldname="addressee" />
