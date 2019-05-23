@@ -50,7 +50,7 @@ class ListSecuenciaDocumento extends ListController
     protected function createViews()
     {
         $this->addView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
-        $this->addSearchFields('ListSecuenciaDocumento', ['titulo', 'tipodoc']);
+        $this->addSearchFields('ListSecuenciaDocumento', ['patron', 'tipodoc']);
         $this->addOrderBy('ListSecuenciaDocumento', ['codejercicio'], 'exercise');
         $this->addOrderBy('ListSecuenciaDocumento', ['codserie'], 'serie');
         $this->addOrderBy('ListSecuenciaDocumento', ['numero'], 'number');

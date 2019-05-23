@@ -34,11 +34,6 @@
         <type>integer</type>
     </column>
     <column>
-        <name>imprimir</name>
-        <type>boolean</type>
-        <default>true</default>
-    </column>
-    <column>
         <name>plazovencimiento</name>
         <type>integer</type>
     </column>

@@ -47,10 +47,6 @@
         <type>character varying(30)</type>
         <null>NO</null>
     </column>
-    <column>
-        <name>titulo</name>
-        <type>character varying(50)</type>
-    </column>
     <constraint>
         <name>secuencias_documentos_pkey</name>
         <type>PRIMARY KEY (idsecuencia)</type>

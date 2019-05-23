@@ -42,7 +42,7 @@ class SecuenciaDocumento extends Base\ModelClass
      * @var string
      */
     public $codserie;
-    
+
     /**
      *
      * @var int
@@ -79,12 +79,6 @@ class SecuenciaDocumento extends Base\ModelClass
      * @var string
      */
     public $tipodoc;
-
-    /**
-     *
-     * @var string
-     */
-    public $titulo;
 
     public function clear()
     {
@@ -134,8 +128,6 @@ class SecuenciaDocumento extends Base\ModelClass
     public function test()
     {
         $this->patron = Utils::noHtml($this->patron);
-        $this->titulo = Utils::noHtml($this->titulo);
-
         return parent::test();
     }
 }

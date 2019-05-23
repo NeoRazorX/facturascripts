@@ -26,7 +26,7 @@
                 <widget type="date" fieldname="date" required="true" readonly="true" />
             </column>
             <column name="from" numcolumns="4" order="110">
-                <widget type="text" fieldname="user" required="true" readonly="true" />
+                <widget type="text" fieldname="nick" required="true" readonly="true" />
             </column>
             <column name="to" numcolumns="4" order="120">
                 <widget type="text" fieldname="addressee" required="true" readonly="true" />
@@ -37,7 +37,7 @@
                 <widget type="text" fieldname="subject" required="true" readonly="true" />
             </column>
             <column name="message" numcolumns="12" order="110">
-                <widget type="textarea" fieldname="text" required="true" readonly="true" />
+                <widget type="textarea" fieldname="body" required="true" readonly="true" />
             </column>
         </group>
     </columns>
