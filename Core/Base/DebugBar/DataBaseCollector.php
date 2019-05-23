@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2019   Carlos García Gómez     <carlos@facturascripts.com>
+ * Copyright (C) 2017   Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +27,8 @@ use FacturaScripts\Core\Base\MiniLog;
 /**
  * This class traces the SQL queries
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class DataBaseCollector extends DataCollector implements Renderable, AssetProvider
 {
@@ -57,9 +59,9 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
     {
         $queries = [];
         $totalExecTime = 0;
-        foreach ($this->miniLog->read(['sql']) as $q) {
+        foreach ($this->miniLog->read(['sql']) as $log) {
             $queries[] = [
-                'sql' => $q['message'],
+                'sql' => $log['message'],
                 'duration' => 0,
                 'duration_str' => 0,
             ];
@@ -70,6 +72,21 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
             'nb_statements' => count($queries),
             'accumulated_duration' => $totalExecTime,
             'statements' => $queries,
+        ];
+    }
+
+    /**
+     * Returns the needed assets
+     *
+     * @return array
+     */
+    public function getAssets()
+    {
+        $basePath = '../../../../../../';
+
+        return [
+            'css' => $basePath . 'Core/Assets/CSS/phpdebugbar.custom-widget.css',
+            'js' => $basePath . 'Core/Assets/JS/phpdebugbar.custom-widget.js',
         ];
     }
 
@@ -103,21 +120,6 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
                 'map' => 'db.nb_statements',
                 'default' => 0,
             ],
-        ];
-    }
-
-    /**
-     * Returns the needed assets
-     *
-     * @return array
-     */
-    public function getAssets()
-    {
-        $basePath = '../../../../../../';
-
-        return [
-            'css' => $basePath . 'Core/Assets/CSS/phpdebugbar.custom-widget.css',
-            'js' => $basePath . 'Core/Assets/JS/phpdebugbar.custom-widget.js',
         ];
     }
 }

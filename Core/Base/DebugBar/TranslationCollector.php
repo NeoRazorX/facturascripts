@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2019   Carlos García Gómez     <carlos@facturascripts.com>
+ * Copyright (C) 2017   Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,25 +27,26 @@ use FacturaScripts\Core\Base\Translator;
 /**
  * This class collects the translations
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  * @source Based on: https://github.com/spiroski/laravel-debugbar-translations
  */
 class TranslationCollector extends DataCollector implements Renderable, AssetProvider
 {
 
     /**
-     * Array containing the translations
-     *
-     * @var array
-     */
-    protected $translations;
-
-    /**
      * Translation engine
      *
      * @var Translator
      */
-    protected static $i18n;
+    protected $i18n;
+
+    /**
+     * Array containing the translations
+     *
+     * @var array
+     */
+    protected $translations = [];
 
     /**
      * TranslationCollector constructor.
@@ -53,8 +55,42 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
      */
     public function __construct(&$i18n)
     {
-        static::$i18n = $i18n;
-        $this->translations = [];
+        $this->i18n = $i18n;
+    }
+
+    /**
+     * Called by the DebugBar when data needs to be collected
+     *
+     * @return array Collected data
+     */
+    public function collect()
+    {
+        foreach ($this->i18n->getMissingStrings() as $key => $value) {
+            $this->translations[] = [
+                'key' => $key,
+                'value' => $value,
+            ];
+        }
+
+        return [
+            'nb_statements' => count($this->translations),
+            'translations' => $this->translations,
+        ];
+    }
+
+    /**
+     * Returns the needed assets
+     *
+     * @return array
+     */
+    public function getAssets()
+    {
+        $basePath = '../../../../../../';
+
+        return [
+            'css' => $basePath . 'Core/Assets/CSS/phpdebugbar.custom-widget.css',
+            'js' => $basePath . 'Core/Assets/JS/phpdebugbar.custom-widget.js',
+        ];
     }
 
     /**
@@ -87,49 +123,6 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
                 'map' => 'translations.nb_statements',
                 'default' => 0,
             ],
-        ];
-    }
-
-    /**
-     * Returns the needed assets
-     *
-     * @return array
-     */
-    public function getAssets()
-    {
-        $basePath = '../../../../../../';
-
-        return [
-            'css' => $basePath . 'Core/Assets/CSS/phpdebugbar.custom-widget.css',
-            'js' => $basePath . 'Core/Assets/JS/phpdebugbar.custom-widget.js',
-        ];
-    }
-
-    /**
-     * Add a translation key to the collector
-     */
-    private function addTranslations()
-    {
-        foreach (static::$i18n->getMissingStrings() as $key => $value) {
-            $this->translations[] = [
-                'key' => $key,
-                'value' => $value,
-            ];
-        }
-    }
-
-    /**
-     * Called by the DebugBar when data needs to be collected
-     *
-     * @return array Collected data
-     */
-    public function collect()
-    {
-        $this->addTranslations();
-
-        return [
-            'nb_statements' => count($this->translations),
-            'translations' => $this->translations,
         ];
     }
 }

@@ -23,7 +23,6 @@ use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
-use FacturaScripts\Core\Base\DebugBar\PHPCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
@@ -90,7 +89,6 @@ class AppController extends App
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
             $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
             $this->debugBar->addCollector(new TranslationCollector($this->i18n));
-            $this->debugBar->addCollector(new PHPCollector());
         }
 
         $this->menuManager = new MenuManager();
