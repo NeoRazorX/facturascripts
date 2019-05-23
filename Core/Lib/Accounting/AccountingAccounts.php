@@ -56,8 +56,6 @@ class AccountingAccounts
 
     /**
      * Class constructor
-     *
-     * @param string $exercise
      */
     public function __construct()
     {
