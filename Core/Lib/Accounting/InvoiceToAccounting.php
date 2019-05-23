@@ -215,6 +215,10 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addSalesIrpfLines($accountEntry)
     {
+        if (empty($this->document->totalirpf)) {
+            return true;
+        }
+
         $cuenta = $this->getSpecialAccount('IRPF');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('irpf-account-not-found'));
