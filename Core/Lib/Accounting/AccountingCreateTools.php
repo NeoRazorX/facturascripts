@@ -19,8 +19,10 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -156,19 +158,26 @@ class AccountingCreateTools
      */
     public function getFreeBusinessSubaccount($business, $account)
     {
+        if (!$this->checkExercise($account->codejercicio)) {
+            return '';
+        }
+
+        $subAccount = new Subcuenta();
         $numbers = array_merge([$business->primaryColumnValue()], range(1, 999));
         foreach ($numbers as $num) {
             $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
+            if (empty($newCode) || ($business->count([new DataBaseWhere('codsubcuenta', $newCode)]) > 0)) {
+                continue;
+            }
 
-            /// is this code used in other record?
-            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
-            $count = $business->count($where);
-
-            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
+            $where = [
+                new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
+                new DataBaseWhere('codsubcuenta', $newCode)
+            ];
+            if ($subAccount->loadFromCode('', $where)) {
                 return $newCode;
             }
         }
-
         return '';
     }
 }
