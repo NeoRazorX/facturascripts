@@ -19,12 +19,10 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
-use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -34,6 +32,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *   - Customer
  *   - Customer Group
  *   - Supplier
+ *   - Payment
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -84,8 +83,12 @@ class AccountingAccounts
                 return $subaccount;
             }
 
+            /// search parent account
+            $account = $this->getSpecialAccount($specialAccount);
+
             /// create sub-account
-            return $this->createCustomerAccount($customer, $specialAccount);
+            $createTools = new AccountingCreateTools();
+            return $createTools->createBusinessAccount($customer, $account);
         }
 
         /// group has sub-account?
@@ -97,14 +100,10 @@ class AccountingAccounts
             }
         }
 
-        /// assign a new sub-account code
+        /// create and assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
-        if ($account->exists()) {
-            $customer->codsubcuenta = $this->getFreeCustomerSubaccount($customer, $account);
-            return $this->createCustomerAccount($customer, $specialAccount);
-        }
-
-        return new Subcuenta();
+        $createTools = new AccountingCreateTools();
+        return $createTools->createBusinessAccount($customer, $account);
     }
 
     /**
@@ -117,30 +116,21 @@ class AccountingAccounts
      */
     public function getCustomerGroupAccount($group, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
     {
-        if (!empty($group->codsubcuenta)) {
-            $subaccount = $this->getSubAccount($group->codsubcuenta);
-            if ($subaccount->exists()) {
-                return $subaccount;
-            }
-
-            $account = $this->getSpecialAccount($specialAccount);
-            if (!$account->exists() || !$this->exercise->isOpened()) {
-                return new Subcuenta();
-            }
-
-            /// create in this exercise
-            $newSubaccount = new Subcuenta();
-            $newSubaccount->codcuenta = $account->codcuenta;
-            $newSubaccount->codejercicio = $account->codejercicio;
-            $newSubaccount->codsubcuenta = $group->codsubcuenta;
-            $newSubaccount->descripcion = $group->nombre;
-            $newSubaccount->idcuenta = $account->idcuenta;
-            $newSubaccount->save();
-
-            return $newSubaccount;
+        if (empty($group->codsubcuenta)) {
+            return new Subcuenta();
         }
 
-        return new Subcuenta();
+        $subaccount = $this->getSubAccount($group->codsubcuenta);
+        if ($subaccount->exists()) {
+            return $subaccount;
+        }
+
+        /// search parent account
+        $account = $this->getSpecialAccount($specialAccount);
+
+        /// create in this exercise
+        $createTools = new AccountingCreateTools();
+        return $createTools->createFromAccount($account, $group->codsubcuenta, $group->nombre);
     }
 
     /**
@@ -159,56 +149,6 @@ class AccountingAccounts
         }
 
         return $this->getSpecialSubAccount($specialAccount);
-    }
-
-    /**
-     * 
-     * @param Cliente $customer
-     * @param Cuenta  $account
-     *
-     * @return string
-     */
-    public function getFreeCustomerSubaccount($customer, $account)
-    {
-        $numbers = array_merge([$customer->primaryColumnValue()], range(1, 999));
-        foreach ($numbers as $num) {
-            $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
-
-            /// is this code used in other customer?
-            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
-            $count = $customer->count($where);
-
-            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
-                return $newCode;
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * 
-     * @param Proveedor $supplier
-     * @param Cuenta    $account
-     *
-     * @return string
-     */
-    public function getFreeSupplierSubaccount($supplier, $account)
-    {
-        $numbers = array_merge([$supplier->primaryColumnValue()], range(1, 999));
-        foreach ($numbers as $num) {
-            $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
-
-            /// is this code used in other supplier?
-            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
-            $count = $supplier->count($where);
-
-            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
-                return $newCode;
-            }
-        }
-
-        return '';
     }
 
     /**
@@ -316,92 +256,17 @@ class AccountingAccounts
                 return $subaccount;
             }
 
+            /// search parent account
+            $account = $this->getSpecialAccount($specialAccount);
+
             /// create sub-account
-            return $this->createSupplierAccount($supplier, $specialAccount);
+            $createTools = new AccountingCreateTools();
+            return $createTools->createBusinessAccount($supplier, $account);
         }
 
         /// assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
-        if ($account->exists()) {
-            $supplier->codsubcuenta = $this->getFreeSupplierSubaccount($supplier, $account);
-            return $this->createSupplierAccount($supplier, $specialAccount);
-        }
-
-        return new Subcuenta();
-    }
-
-    /**
-     *
-     * @param Cliente $customer
-     * @param string  $specialAccount
-     *
-     * @return Subcuenta
-     */
-    protected function createCustomerAccount(&$customer, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
-    {
-        $subcuenta = new Subcuenta();
-        $cuenta = $this->getSpecialAccount($specialAccount);
-        if (!$cuenta->exists() || !$this->exercise->isOpened()) {
-            return $subcuenta;
-        }
-
-        $subcuenta->codcuenta = $cuenta->codcuenta;
-        $subcuenta->codejercicio = $cuenta->codejercicio;
-        $subcuenta->codsubcuenta = $customer->codsubcuenta;
-        $subcuenta->descripcion = $customer->razonsocial;
-        $subcuenta->idcuenta = $cuenta->idcuenta;
-        if ($subcuenta->save()) {
-            $customer->save();
-        }
-
-        return $subcuenta;
-    }
-
-    /**
-     *
-     * @param Proveedor $supplier
-     * @param string    $specialAccount
-     *
-     * @return Subcuenta
-     */
-    protected function createSupplierAccount(&$supplier, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
-    {
-        $subcuenta = new Subcuenta();
-        $cuenta = $this->getSpecialAccount($specialAccount);
-        if (!$cuenta->exists() || !$this->exercise->isOpened()) {
-            return $subcuenta;
-        }
-
-        $subcuenta->codcuenta = $cuenta->codcuenta;
-        $subcuenta->codejercicio = $cuenta->codejercicio;
-        $subcuenta->codsubcuenta = $supplier->codsubcuenta;
-        $subcuenta->descripcion = $supplier->razonsocial;
-        $subcuenta->idcuenta = $cuenta->idcuenta;
-        if ($subcuenta->save()) {
-            $supplier->save();
-        }
-
-        return $subcuenta;
-    }
-
-    /**
-     *
-     * @param int    $length
-     * @param string $value
-     * @param string $prefix
-     *
-     * @return string
-     */
-    protected function fillToLength(int $length, string $value, string $prefix = ''): string
-    {
-        $value2 = trim($value);
-        $count = $length - strlen($prefix) - strlen($value2);
-        if ($count > 0) {
-            return $prefix . str_repeat('0', $count) . $value2;
-        } elseif ($count == 0) {
-            return $prefix . $value2;
-        }
-
-        return '';
+        $createTools = new AccountingCreateTools();
+        return $createTools->createBusinessAccount($supplier, $account);
     }
 }
