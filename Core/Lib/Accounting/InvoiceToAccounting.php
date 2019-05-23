@@ -24,6 +24,7 @@ use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Class for the generation of accounting entries of a sale/purchase document
@@ -214,6 +215,10 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addSalesIrpfLines($accountEntry)
     {
+        if (empty($this->document->totalirpf)) {
+            return true;
+        }
+
         $cuenta = $this->getSpecialAccount('IRPF');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('irpf-account-not-found'));
@@ -308,12 +313,8 @@ class InvoiceToAccounting extends AccountingClass
     protected function purchaseAccountingEntry(&$model)
     {
         $accountEntry = new Asiento();
-        $accountEntry->codejercicio = $this->document->codejercicio;
+        $this->setAccountingData($accountEntry);
         $accountEntry->concepto = $this->i18n->trans('supplier-invoice') . ' ' . $this->document->codigo;
-        $accountEntry->documento = $this->document->codigo;
-        $accountEntry->fecha = $this->document->fecha;
-        $accountEntry->idempresa = $this->document->idempresa;
-        $accountEntry->importe = $this->document->total;
         if (!$accountEntry->save()) {
             $this->miniLog->warning('accounting-entry-error');
             return;
@@ -336,12 +337,8 @@ class InvoiceToAccounting extends AccountingClass
     protected function salesAccountingEntry(&$model)
     {
         $accountEntry = new Asiento();
-        $accountEntry->codejercicio = $this->document->codejercicio;
+        $this->setAccountingData($accountEntry);
         $accountEntry->concepto = $this->i18n->trans('customer-invoice') . ' ' . $this->document->codigo;
-        $accountEntry->documento = $this->document->codigo;
-        $accountEntry->fecha = $this->document->fecha;
-        $accountEntry->idempresa = $this->document->idempresa;
-        $accountEntry->importe = $this->document->total;
         if (!$accountEntry->save()) {
             $this->miniLog->warning('accounting-entry-error');
             return;
@@ -354,5 +351,27 @@ class InvoiceToAccounting extends AccountingClass
 
         $this->miniLog->warning('accounting-lines-error');
         $accountEntry->delete();
+    }
+
+    /**
+     * Assign the document data to the accounting entry
+     *
+     * @param Asiento $accountEntry
+     */
+    private function setAccountingData(&$accountEntry)
+    {
+        /// Assign Common data
+        $accountEntry->codejercicio = $this->document->codejercicio;
+        $accountEntry->documento = $this->document->codigo;
+        $accountEntry->fecha = $this->document->fecha;
+        $accountEntry->idempresa = $this->document->idempresa;
+        $accountEntry->importe = $this->document->total;
+
+        /// Assign analytical data
+        $serie = new Serie();
+        $serie->loadFromCode($this->document->codserie);
+
+        $accountEntry->iddiario = $serie->iddiario;
+        $accountEntry->canal = $serie->canal;
     }
 }
