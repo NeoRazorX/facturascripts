@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Class for the generation of accounting entries of a sale/purchase document
@@ -53,7 +54,6 @@ class InvoiceToAccounting extends AccountingClass
     public function generate($model)
     {
         parent::generate($model);
-
         if (!$this->initialChecks()) {
             return;
         }
@@ -308,8 +308,7 @@ class InvoiceToAccounting extends AccountingClass
         if ($this->addSupplierLine($accountEntry) &&
             $this->addPurchaseTaxLines($accountEntry) &&
             $this->addPurchaseIrpfLines($accountEntry) &&
-            $this->addGoodsPurchaseLine($accountEntry))
-        {
+            $this->addGoodsPurchaseLine($accountEntry)) {
             $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
@@ -334,8 +333,7 @@ class InvoiceToAccounting extends AccountingClass
         if ($this->addCustomerLine($accountEntry) &&
             $this->addSalesTaxLines($accountEntry) &&
             $this->addSalesIrpfLines($accountEntry) &&
-            $this->addGoodsSalesLine($accountEntry))
-        {
+            $this->addGoodsSalesLine($accountEntry)) {
             $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
@@ -347,10 +345,10 @@ class InvoiceToAccounting extends AccountingClass
     /**
      * Add a standard line to the accounting entry based on the reported sub-account
      *
-     * @param Asiento $accountEntry
+     * @param Asiento   $accountEntry
      * @param Subcuenta $subaccount
-     * @param bool $isDebit
-     * @param double|null $amount
+     * @param bool      $isDebit
+     * @param double    $amount
      *
      * @return bool
      */
@@ -366,6 +364,7 @@ class InvoiceToAccounting extends AccountingClass
         } else {
             $line->haber = $total;
         }
+
         return $line->save();
     }
 
@@ -373,10 +372,10 @@ class InvoiceToAccounting extends AccountingClass
      * Add a line of taxes to the accounting entry based on the sub-account
      * and values reported
      *
-     * @param Asiento $accountEntry
+     * @param Asiento   $accountEntry
      * @param Subcuenta $subaccount
-     * @param bool $isDebit
-     * @param Array $values
+     * @param bool      $isDebit
+     * @param array     $values
      *
      * @return bool
      */

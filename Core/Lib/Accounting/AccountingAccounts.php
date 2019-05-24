@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Accounting\AccountingCreateTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaBanco;
@@ -162,7 +161,8 @@ class AccountingAccounts
      * Get the accounting sub-account for Purchase Retention.
      *
      * @param Retencion $retention
-     * @param string $specialAccount
+     * @param string    $specialAccount
+     *
      * @return Subcuenta
      */
     public function getIRPFPurchaseAccount($retention, string $specialAccount = self::SPECIAL_IRPF_PURCHASE_ACCOUNT)
@@ -174,7 +174,8 @@ class AccountingAccounts
      * Get the accounting sub-account for Sales Retention.
      *
      * @param Retencion $retention
-     * @param string $specialAccount
+     * @param string    $specialAccount
+     *
      * @return Subcuenta
      */
     public function getIRPFSalesAccount($retention, string $specialAccount = self::SPECIAL_IRPF_SALES_ACCOUNT)
@@ -305,7 +306,8 @@ class AccountingAccounts
      * Get the accounting sub-account for Impacted Tax.
      *
      * @param Impuesto $tax
-     * @param string $specialAccount
+     * @param string   $specialAccount
+     *
      * @return Subcuenta
      */
     public function getTaxImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT)
@@ -317,7 +319,8 @@ class AccountingAccounts
      * Get the accounting sub-account for Supported Tax.
      *
      * @param Impuesto $tax
-     * @param string $specialAccount
+     * @param string   $specialAccount
+     *
      * @return Subcuenta
      */
     public function getTaxSupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT)
@@ -332,6 +335,7 @@ class AccountingAccounts
      *
      * @param string $code
      * @param string $specialAccount
+     *
      * @return Subcuenta
      */
     private function getAccountFromCode($code, string $specialAccount)
