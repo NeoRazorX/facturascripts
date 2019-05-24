@@ -39,6 +39,18 @@ class Retencion extends Base\ModelClass
     public $codretencion;
 
     /**
+     *
+     * @var string
+     */
+    public $codsubcuentaret;
+
+    /**
+     *
+     * @var string
+     */
+    public $codsubcuentaacre;
+
+    /**
      * Description of the tax.
      *
      * @var string
@@ -51,6 +63,15 @@ class Retencion extends Base\ModelClass
      * @var int
      */
     public $porcentaje;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->porcentaje = 0.0;
+    }
 
     /**
      * Returns the name of the column that is the primary key of the model.
@@ -73,31 +94,28 @@ class Retencion extends Base\ModelClass
     }
 
     /**
-     * Reset the values of all model properties.
-     *
-     * @return void
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->descripcion = '';
-        $this->porcentaje = 0;
-    }
-
-    /**
      * Returns True if there is no erros on properties values.
      *
      * @return boolean
      */
     public function test(): bool
     {
+        $this->codretencion = trim($this->codretencion);
+        if (empty($this->codretencion) || strlen($this->codretencion) > 10) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-retention-code-length'));
+            return false;
+        }
+
+        $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
+        $this->codsubcuentaacre = empty($this->codsubcuentaacre) ? null : $this->codsubcuentaacre;
+
         $this->descripcion = Utils::noHtml($this->descripcion);
         if (empty($this->descripcion) || strlen($this->descripcion) > 50) {
             self::$miniLog->alert(self::$i18n->trans('not-valid-description-retention'));
             return false;
         }
 
-        if (empty($this->porcentaje) || intval($this->porcentaje) <= 0) {
+        if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
             self::$miniLog->alert(self::$i18n->trans('not-valid-percentage-retention'));
             return false;
         }
