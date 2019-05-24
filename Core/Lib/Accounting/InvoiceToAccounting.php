@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -357,7 +356,7 @@ class InvoiceToAccounting extends AccountingClass
      */
     private function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
     {
-        $total = isNull($amount) ? $this->document->total : $amount;
+        $total = ($amount === null) ? $this->document->total : $amount;
 
         $line = $accountEntry->getNewLine();
         $line->idsubcuenta = $subaccount->idsubcuenta;
