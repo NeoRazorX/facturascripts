@@ -45,6 +45,7 @@ class InvoiceToAccounting extends AccountingClass
     protected $subtotals;
 
     /**
+     * Method to launch the accounting process
      *
      * @param FacturaCliente|FacturaProveedor $model
      */
@@ -68,6 +69,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add the customer line to the accounting entry
      *
      * @param Asiento $accountEntry
      *
@@ -173,6 +175,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add the purchase line to the accounting entry
      *
      * @param Asiento $accountEntry
      *
@@ -228,6 +231,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add the sales line to the accounting entry
      *
      * @param Asiento $accountEntry
      *
@@ -340,6 +344,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add a standard line to the accounting entry based on the reported sub-account
      *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
@@ -361,6 +366,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add a line of taxes to the accounting entry based on the sub-account
+     * and values reported
      *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
@@ -397,6 +404,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Perform the initial checks to continue with the accounting process
      *
      * @return bool
      */
