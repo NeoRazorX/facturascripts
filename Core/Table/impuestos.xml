@@ -11,14 +11,14 @@
         <type>character varying(10)</type>
         <null>NO</null>
     </column>
-    <columna>
+    <column>
         <name>codsubcuentarep</name>
         <type>character varying(15)</type>
-    </columna>
-    <columna>
+    </column>
+    <column>
         <name>codsubcuentasop</name>
         <type>character varying(15)</type>
-    </columna>
+    </column>
     <column>
         <name>descripcion</name>
         <type>character varying(50)</type>
