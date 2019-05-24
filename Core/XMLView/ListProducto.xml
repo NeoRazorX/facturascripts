@@ -43,7 +43,12 @@
         <column name="price" title="price" display="right" order="140">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="stock" display="right" order="150">
+        <column name="tax" numcolumns="3" display="none" order="150">
+            <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
+                <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="stock" display="right" order="160">
             <widget type="number" fieldname="stockfis">
                 <option color="danger">lt:0</option>
             </widget>
