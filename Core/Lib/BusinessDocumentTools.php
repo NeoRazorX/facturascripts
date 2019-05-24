@@ -70,6 +70,8 @@ class BusinessDocumentTools
             $codimpuesto = empty($line->codimpuesto) ? $line->iva . '-' . $line->recargo : $line->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotals)) {
                 $subtotals[$codimpuesto] = [
+                    'iva' => $line->iva,
+                    'recargo' => $line->recargo,
                     'irpf' => 0.0,
                     'neto' => 0.0,
                     'totaliva' => 0.0,
@@ -161,7 +163,7 @@ class BusinessDocumentTools
     }
 
     /**
-     * 
+     *
      * @param BusinessDocument $doc
      */
     private function clearTotals(BusinessDocument &$doc)
@@ -200,7 +202,7 @@ class BusinessDocumentTools
     }
 
     /**
-     * 
+     *
      * @param string $reg
      */
     private function loadRegimenIva($reg)
@@ -217,7 +219,7 @@ class BusinessDocumentTools
     }
 
     /**
-     * 
+     *
      * @param BusinessDocument $doc
      */
     private function loadTaxZones($doc)
@@ -237,7 +239,7 @@ class BusinessDocumentTools
     }
 
     /**
-     * 
+     *
      * @param BusinessDocumentLine $line
      */
     private function recalculateLine(&$line)
@@ -278,7 +280,7 @@ class BusinessDocumentTools
     }
 
     /**
-     * 
+     *
      * @param array            $fLine
      * @param BusinessDocument $doc
      *
@@ -321,7 +323,7 @@ class BusinessDocumentTools
     }
 
     /**
-     * 
+     *
      * @param BusinessDocumentLine $line
      */
     private function recalculateFormLineTaxZones(&$line)
