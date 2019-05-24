@@ -80,6 +80,23 @@ class ListLogMessage extends ListController
     }
 
     /**
+     * 
+     * @param string $name
+     */
+    private function createEmailSentView($name = 'ListEmailSent')
+    {
+        $this->addView($name, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->addSearchFields($name, ['subject', 'text', 'addressee']);
+
+        /// filters
+        $users = $this->codeModel->all('users', 'nick', 'nick');
+        $this->addFilterSelect($name, 'nick', 'user', 'nick', $users);
+
+        /// settings
+        $this->setSettings($name, 'btnNew', false);
+    }
+
+    /**
      * Create view to get information about all logs.
      * 
      * @param string $name
@@ -103,23 +120,6 @@ class ListLogMessage extends ListController
 
         $this->addFilterDatePicker($name, 'fromdate', 'from-date', 'time', '>=');
         $this->addFilterDatePicker($name, 'untildate', 'until-date', 'time', '<=');
-
-        /// settings
-        $this->setSettings($name, 'btnNew', false);
-    }
-
-    /**
-     * 
-     * @param string $name
-     */
-    private function createEmailSentView($name = 'ListEmailSent')
-    {
-        $this->addView($name, 'EmailSent', 'email-sent', 'fas fa-envelope-open');
-        $this->addSearchFields($name, ['subject', 'text', 'addressee']);
-
-        /// filters
-        $users = $this->codeModel->all('users', 'nick', 'nick');
-        $this->addFilterSelect($name, 'nick', 'user', 'nick', $users);
 
         /// settings
         $this->setSettings($name, 'btnNew', false);

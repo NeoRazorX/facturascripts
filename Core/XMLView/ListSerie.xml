@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>  
- * @author Carlos García Gómez  <carlos@facturascripts.com>  
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -26,6 +26,14 @@
         </column>
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
+        </column>
+        <column name="journal" order="120">
+            <widget type="select" fieldname="iddiario">
+                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="channel" order="130">
+            <widget type="number" fieldname="canal" min="0"/>
         </column>
         <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva" />

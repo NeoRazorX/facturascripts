@@ -69,11 +69,12 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="actualizastock">
-            <option color="warning">-2</option>
-            <option color="danger">-1</option>
-            <option color="success">1</option>
-            <option color="warning">2</option>
+        <row type="status">
+            <option color="warning" fieldname="actualizastock">-2</option>
+            <option color="danger" fieldname="actualizastock">-1</option>
+            <option color="success" fieldname="actualizastock">1</option>
+            <option color="warning" fieldname="actualizastock">2</option>
+            <option color="info" fieldname="predeterminado">1</option>
         </row>
     </rows>
 </view>

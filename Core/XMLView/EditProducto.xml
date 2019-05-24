@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -15,9 +15,6 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Initial description for the controller EditProducto
  *
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
@@ -69,7 +66,7 @@
             </column>
             <column name="publico" title="public" order="120">
                 <widget type="checkbox" fieldname="publico" />
-            </column> 
+            </column>
             <column name="bloqueado" title="blocked" order="130">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
@@ -82,18 +79,18 @@
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
-        <group name="accounts" title="accounting" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" numcolumns="4" order="100">
+        <group name="accounts" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" display="none" numcolumns="4" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentaven" title="subaccount-sales" numcolumns="4" order="110">
+            <column name="codsubcuentaven" title="subaccount-sales" display="none" numcolumns="4" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" numcolumns="4" order="120">
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" display="none" numcolumns="4" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
