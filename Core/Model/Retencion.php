@@ -74,6 +74,18 @@ class Retencion extends Base\ModelClass
     }
 
     /**
+     *
+     * @param double $percentaje
+     * @return bool
+     */
+    public function loadFromPercentage($percentaje)
+    {
+        $where = [ new DataBaseWhere('porcentaje', $percentaje) ];
+        $order = [ 'codretencion', 'ASC' ];
+        return $this->loadFromCode('', $where, $order);
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string

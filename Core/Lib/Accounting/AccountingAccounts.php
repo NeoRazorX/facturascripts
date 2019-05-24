@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -50,6 +51,8 @@ class AccountingAccounts
     const SPECIAL_SUPPLIER_ACCOUNT = 'PROVEE';
     const SPECIAL_TAX_IMPACTED_ACCOUNT = 'IVAREP';
     const SPECIAL_TAX_SUPPORTED_ACCOUNT = 'IVASOP';
+    const SPECIAL_IRPF_SALES_ACCOUNT = 'IRPF';
+    const SPECIAL_IRPF_PURCHASE_ACCOUNT = 'IRPFPR';
 
     /**
      *
@@ -153,6 +156,30 @@ class AccountingAccounts
         }
 
         return $this->getSpecialSubAccount($specialAccount);
+    }
+
+    /**
+     * Get the accounting sub-account for Purchase Retention.
+     *
+     * @param Retencion $retention
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getIRPFPurchaseAccount($retention, string $specialAccount = self::SPECIAL_IRPF_PURCHASE_ACCOUNT)
+    {
+        return $this->getAccountFromCode($retention->codsubcuentaret, $specialAccount);
+    }
+
+    /**
+     * Get the accounting sub-account for Sales Retention.
+     *
+     * @param Retencion $retention
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getIRPFSalesAccount($retention, string $specialAccount = self::SPECIAL_IRPF_SALES_ACCOUNT)
+    {
+        return $this->getAccountFromCode($retention->codsubcuentaret, $specialAccount);
     }
 
     /**
@@ -283,7 +310,7 @@ class AccountingAccounts
      */
     public function getTaxImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT)
     {
-        return $this->getTaxAccount($tax->codsubcuentarep, $specialAccount);
+        return $this->getAccountFromCode($tax->codsubcuentarep, $specialAccount);
     }
 
     /**
@@ -295,23 +322,23 @@ class AccountingAccounts
      */
     public function getTaxSupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT)
     {
-        return $this->getTaxAccount($tax->codsubcuentasop, $specialAccount);
+        return $this->getAccountFromCode($tax->codsubcuentasop, $specialAccount);
     }
 
     /**
-     * Get the accounting sub-account according to the indicated tax sub-account.
+     * Get the accounting sub-account according to the indicated code sub-account.
      *   - First check the tax
      *   - Second check the special account
      *
-     * @param string $taxSubAccount
+     * @param string $code
      * @param string $specialAccount
      * @return Subcuenta
      */
-    private function getTaxAccount($taxSubAccount, string $specialAccount)
+    private function getAccountFromCode($code, string $specialAccount)
     {
         /// defined sub-account code?
-        if (!empty($taxSubAccount)) {
-            $subaccount = $this->getSubAccount($taxSubAccount);
+        if (!empty($code)) {
+            $subaccount = $this->getSubAccount($code);
             if ($subaccount->exists()) {
                 return $subaccount;
             }
@@ -321,7 +348,7 @@ class AccountingAccounts
 
             /// create sub-account
             $createTools = new AccountingCreateTools();
-            return $createTools->createFromAccount($account, $taxSubAccount);
+            return $createTools->createFromAccount($account, $code);
         }
 
         /// search from parent acount

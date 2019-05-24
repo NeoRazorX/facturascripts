@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -25,6 +26,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -152,26 +154,26 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addPurchaseIrpfLines($accountEntry)
     {
-        if (empty($this->document->totalirpf)) {
+        if (empty($this->document->totalirpf) || count($this->subtotals) == 0) {
             return true;
         }
 
-        $cuenta = $this->getSpecialAccount('IRPFPR');
-        if (!$cuenta->exists()) {
-            $this->miniLog->alert($this->i18n->trans('irpfpr-account-not-found'));
+        $key = array_keys($this->subtotals)[0];
+        $percentaje = $this->subtotals[$key]['irpf'];
+
+        $retention = new Retencion();
+        if (!$retention->loadFromPercentage($percentaje)) {
+            $this->miniLog->alert($this->i18n->trans('irpf-code-not-found'));
             return false;
         }
 
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
-            $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->haber = $this->document->totalirpf;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return empty($line->haber) ? true : $line->save();
+        $subaccount = $this->getIRPFPurchaseAccount($retention);
+        if (!$subaccount->exists()) {
+            $this->miniLog->alert($this->i18n->trans('irpfpr-subaccount-not-found'));
+            return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('irpfpr-subaccount-not-found'));
-        return false;
+        return $this->addBasicLine($accountEntry, $subaccount, false, $this->subtotals[$key]['totalirpf']);
     }
 
     /**
@@ -208,26 +210,26 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addSalesIrpfLines($accountEntry)
     {
-        if (empty($this->document->totalirpf)) {
+        if (empty($this->document->totalirpf) || count($this->subtotals) == 0) {
             return true;
         }
 
-        $cuenta = $this->getSpecialAccount('IRPF');
-        if (!$cuenta->exists()) {
-            $this->miniLog->alert($this->i18n->trans('irpf-account-not-found'));
+        $key = array_keys($this->subtotals)[0];
+        $percentaje = $this->subtotals[$key]['irpf'];
+
+        $retention = new Retencion();
+        if (!$retention->loadFromPercentage($percentaje)) {
+            $this->miniLog->alert($this->i18n->trans('irpf-code-not-found'));
             return false;
         }
 
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
-            $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->debe = $this->document->totalirpf;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return empty($line->debe) ? true : $line->save();
+        $subaccount = $this->getIRPFSalesAccount($retention);
+        if (!$subaccount->exists()) {
+            $this->miniLog->alert($this->i18n->trans('irpf-subaccount-not-found'));
+            return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('irpf-subaccount-not-found'));
-        return false;
+        return $this->addBasicLine($accountEntry, $subaccount, true, $this->subtotals[$key]['totalirpf']);
     }
 
     /**
@@ -349,18 +351,21 @@ class InvoiceToAccounting extends AccountingClass
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
      * @param bool $isDebit
+     * @param double|null $amount
      *
      * @return bool
      */
-    private function addBasicLine($accountEntry, $subaccount, $isDebit): bool
+    private function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
     {
+        $total = isNull($amount) ? $this->document->total : $amount;
+
         $line = $accountEntry->getNewLine();
         $line->idsubcuenta = $subaccount->idsubcuenta;
         $line->codsubcuenta = $subaccount->codsubcuenta;
         if ($isDebit) {
-            $line->debe = $this->document->total;
+            $line->debe = $total;
         } else {
-            $line->haber = $this->document->total;
+            $line->haber = $total;
         }
         return $line->save();
     }
