@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="addressee" required="true" readonly="true" />
             </column>
         </group>
-        <group name="content" numcolumns="12"> 
+        <group name="content" numcolumns="12">
             <column name="subject" numcolumns="12" order="100">
                 <widget type="text" fieldname="subject" required="true" readonly="true" />
             </column>

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>  
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
 -->
 <view>
@@ -29,6 +29,16 @@
         </column>
         <column name="percentage" display="right" order="120">
             <widget type="number" decimal="2" fieldname="porcentaje" />
+        </column>
+        <column name="subaccount-irpf" order="130">
+            <widget type="autocomplete" fieldname="codsubcuentaret">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+        <column name="subaccount-irpf-creditor" order="140">
+            <widget type="autocomplete" fieldname="codsubcuentaacre">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+            </widget>
         </column>
     </columns>
 </view>

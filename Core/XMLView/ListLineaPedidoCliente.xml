@@ -28,7 +28,7 @@
             <widget type="autocomplete" fieldname="idpedido" onclick="EditPedidoCliente">
                 <values source="pedidoscli" fieldcode="idpedido" fieldtitle="codigo"></values>
             </widget>
-        </column>        
+        </column>
         <column name="product" order="120">
             <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
                 <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>

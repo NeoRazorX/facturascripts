@@ -69,7 +69,7 @@
             </column>
             <column name="publico" title="public" order="120">
                 <widget type="checkbox" fieldname="publico" />
-            </column> 
+            </column>
             <column name="bloqueado" title="blocked" order="130">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
