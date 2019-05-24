@@ -67,7 +67,7 @@ class EditFamilia extends EditController
 
         /// more tabs
         $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
-        $this->addListView('ListFamilia', 'Familia', 'families-children', 'fas fa-level-down-alt');
+        $this->addListView('ListFamilia', 'Familia', 'families', 'fas fa-level-down-alt');
     }
 
     /**

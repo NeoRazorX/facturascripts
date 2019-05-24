@@ -33,5 +33,15 @@
         <column name="surcharge" title="percentage-surcharge" display="right" order="130">
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
+        <column name="impacted-tax-subaccount" order="140">
+                <widget type="autocomplete" fieldname="codsubcuentarep">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="supported-tax-subaccount" order="150">
+                <widget type="autocomplete" fieldname="codsubcuentasop">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
     </columns>
 </view>
