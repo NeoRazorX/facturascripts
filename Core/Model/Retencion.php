@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -71,6 +72,18 @@ class Retencion extends Base\ModelClass
     {
         parent::clear();
         $this->porcentaje = 0.0;
+    }
+
+    /**
+     *
+     * @param double $percentaje
+     * @return bool
+     */
+    public function loadFromPercentage($percentaje)
+    {
+        $where = [ new DataBaseWhere('porcentaje', $percentaje) ];
+        $order = [ 'codretencion' => 'ASC' ];
+        return $this->loadFromCode('', $where, $order);
     }
 
     /**
