@@ -79,7 +79,7 @@
     </columns>
     <rows>
         <row type="actions">
-            <button type="js" id="vat-register-btn" label="vat-register" color="info" action="showVatRegister('vat-register')" hint="hint-vat-register" icon="fas fa-book" />
+            <button type="js" id="vat-register-btn" label="VAT-register" color="info" action="showVatRegister('vat-register')" hint="hint-vat-register" icon="fas fa-book" />
             <button type="action" id="clone-btn" label="clone" color="info" action="clone" hint="clone-account-entry" icon="fas fa-clone" />
             <button type="action" label="lock-unlock" color="warning" action="lock" hint="lock-unlock-account-entry" icon="fas fa-lock" />
         </row>
