@@ -307,7 +307,7 @@ class AccountingAccounts
      * @param string $specialAccount
      * @return Subcuenta
      */
-    private function getTaxAccount(string $taxSubAccount, string $specialAccount)
+    private function getTaxAccount($taxSubAccount, string $specialAccount)
     {
         /// defined sub-account code?
         if (!empty($taxSubAccount)) {
@@ -327,6 +327,7 @@ class AccountingAccounts
         /// search from parent acount
         $account = $this->getSpecialAccount($specialAccount);
         $subaccount = new Subcuenta();
-        return $subaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
+        $subaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
+        return $subaccount;
     }
 }
