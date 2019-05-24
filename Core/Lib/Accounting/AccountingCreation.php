@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class AccountingCreateTools
+class AccountingCreation
 {
 
     /**
@@ -53,59 +53,13 @@ class AccountingCreateTools
     }
 
     /**
-     * Load exercise and check if it can be used
-     *
-     * @param string $code
-     * @return bool
-     */
-    private function checkExercise(string $code): bool
-    {
-        if ($this->exercise->codejercicio !== $code) {
-            $this->exercise->loadFromCode($code);
-        }
-
-        return $this->exercise->isOpened();
-    }
-
-    /**
-     * Create the accounting sub-account for the informed customer or supplier.
-     * If the customer or supplier does not have an associated accounting subaccount,
-     * one is calculated automatically.
-     *
-     * @param Cliente|Proveedor $business     Customer or Supplier model
-     * @param Cuenta $account                 Parent group account model
-     *
-     * @return Subcuenta
-     */
-    public function createBusinessAccount(&$business, $account)
-    {
-        if (!$account->exists() || !$this->checkExercise($account->codejercicio)) {
-            return new Subcuenta();
-        }
-
-        if (empty($business->codsubcuenta)) {
-            $business->codsubcuenta = $this->getFreeBusinessSubaccount($business, $account);
-        }
-
-        $subaccount = new Subcuenta();
-        $subaccount->codcuenta = $account->codcuenta;
-        $subaccount->codejercicio = $account->codejercicio;
-        $subaccount->codsubcuenta = $business->codsubcuenta;
-        $subaccount->descripcion = $business->razonsocial;
-        $subaccount->idcuenta = $account->idcuenta;
-        if ($subaccount->save()) {
-            $business->save();
-        }
-        return $subaccount;
-    }
-
-    /**
      * Create a sub-account with the code and the reported description
      * belonging to the group and exercise.
      *
      * @param Cuenta $account        Parent group account
-     * @param String $code           The code of the subaccount
-     * @param String $description    The description of the subaccount
+     * @param string $code           The code of the subaccount
+     * @param string $description    The description of the subaccount
+     *
      * @return Subcuenta
      */
     public function createFromAccount($account, $code, $description = '')
@@ -121,6 +75,38 @@ class AccountingCreateTools
         $subaccount->descripcion = empty($description) ? $account->descripcion : $description;
         $subaccount->idcuenta = $account->idcuenta;
         $subaccount->save();
+        return $subaccount;
+    }
+
+    /**
+     * Create the accounting sub-account for the informed customer or supplier.
+     * If the customer or supplier does not have an associated accounting subaccount,
+     * one is calculated automatically.
+     *
+     * @param Cliente|Proveedor $subject Customer or Supplier model
+     * @param Cuenta            $account Parent group account model
+     *
+     * @return Subcuenta
+     */
+    public function createSubjectAccount(&$subject, $account)
+    {
+        if (!$account->exists() || !$this->checkExercise($account->codejercicio)) {
+            return new Subcuenta();
+        }
+
+        if (empty($subject->codsubcuenta)) {
+            $subject->codsubcuenta = $this->getFreeSubjectSubaccount($subject, $account);
+        }
+
+        $subaccount = new Subcuenta();
+        $subaccount->codcuenta = $account->codcuenta;
+        $subaccount->codejercicio = $account->codejercicio;
+        $subaccount->codsubcuenta = $subject->codsubcuenta;
+        $subaccount->descripcion = $subject->razonsocial;
+        $subaccount->idcuenta = $account->idcuenta;
+        if ($subaccount->save()) {
+            $subject->save();
+        }
         return $subaccount;
     }
 
@@ -149,33 +135,65 @@ class AccountingCreateTools
     /**
      * Calculate an accounting sub-account from the customer or supplier code
      *
-     * @param Cliente|Proveedor $business     Customer or Supplier model
-     * @param Cuenta $account                 Parent group account model
+     * @param Cliente|Proveedor $subject Customer or Supplier model
+     * @param Cuenta            $account Parent group account model
      *
      * @return string
      */
-    public function getFreeBusinessSubaccount($business, $account)
+    public function getFreeSubjectSubaccount($subject, $account)
     {
         if (!$this->checkExercise($account->codejercicio)) {
             return '';
         }
 
-        $subAccount = new Subcuenta();
-        $numbers = array_merge([$business->primaryColumnValue()], range(1, 999));
+        $numbers = array_merge([$subject->primaryColumnValue()], range(1, 999));
         foreach ($numbers as $num) {
             $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
-            if (empty($newCode) || ($business->count([new DataBaseWhere('codsubcuenta', $newCode)]) > 0)) {
-                continue;
-            }
 
-            $where = [
-                new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-                new DataBaseWhere('codsubcuenta', $newCode)
-            ];
-            if ($subAccount->loadFromCode('', $where)) {
+            /// is this code used in other customer or supplier?
+            $where = [new DataBaseWhere('codsubcuenta', $newCode)];
+            $count = $subject->count($where);
+
+            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
                 return $newCode;
             }
         }
+
         return '';
+    }
+
+    /**
+     * Load exercise and check if it can be used
+     *
+     * @param string $code
+     *
+     * @return bool
+     */
+    private function checkExercise(string $code): bool
+    {
+        if ($this->exercise->codejercicio !== $code) {
+            $this->exercise->loadFromCode($code);
+        }
+
+        return $this->exercise->isOpened();
+    }
+
+    /**
+     * Get the indicated accounting sub-account.
+     *
+     * @param string $code
+     *
+     * @return Subcuenta
+     */
+    private function getSubAccount(string $code)
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
+            new DataBaseWhere('codsubcuenta', $code)
+        ];
+
+        $subAccount = new Subcuenta();
+        $subAccount->loadFromCode('', $where);
+        return $subAccount;
     }
 }

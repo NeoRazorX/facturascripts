@@ -55,6 +55,12 @@ class AccountingAccounts
 
     /**
      *
+     * @var AccountingCreation
+     */
+    protected $creation;
+
+    /**
+     *
      * @var Ejercicio
      */
     public $exercise;
@@ -64,6 +70,7 @@ class AccountingAccounts
      */
     public function __construct()
     {
+        $this->creation = new AccountingCreation();
         $this->exercise = new Ejercicio();
     }
 
@@ -93,8 +100,7 @@ class AccountingAccounts
             $account = $this->getSpecialAccount($specialAccount);
 
             /// create sub-account
-            $createTools = new AccountingCreateTools();
-            return $createTools->createBusinessAccount($customer, $account);
+            return $this->creation->createSubjectAccount($customer, $account);
         }
 
         /// group has sub-account?
@@ -108,8 +114,7 @@ class AccountingAccounts
 
         /// create and assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
-        $createTools = new AccountingCreateTools();
-        return $createTools->createBusinessAccount($customer, $account);
+        return $this->creation->createSubjectAccount($customer, $account);
     }
 
     /**
@@ -135,8 +140,7 @@ class AccountingAccounts
         $account = $this->getSpecialAccount($specialAccount);
 
         /// create in this exercise
-        $createTools = new AccountingCreateTools();
-        return $createTools->createFromAccount($account, $group->codsubcuenta, $group->nombre);
+        return $this->creation->createFromAccount($account, $group->codsubcuenta, $group->nombre);
     }
 
     /**
@@ -292,14 +296,12 @@ class AccountingAccounts
             $account = $this->getSpecialAccount($specialAccount);
 
             /// create sub-account
-            $createTools = new AccountingCreateTools();
-            return $createTools->createBusinessAccount($supplier, $account);
+            return $this->creation->createSubjectAccount($supplier, $account);
         }
 
         /// assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
-        $createTools = new AccountingCreateTools();
-        return $createTools->createBusinessAccount($supplier, $account);
+        return $this->creation->createSubjectAccount($supplier, $account);
     }
 
     /**
@@ -351,8 +353,7 @@ class AccountingAccounts
             $account = $this->getSpecialAccount($specialAccount);
 
             /// create sub-account
-            $createTools = new AccountingCreateTools();
-            return $createTools->createFromAccount($account, $code);
+            return $this->creation->createFromAccount($account, $code);
         }
 
         /// search from parent acount

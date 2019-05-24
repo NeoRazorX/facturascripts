@@ -105,9 +105,9 @@ class Partida extends Base\ModelOnChangeClass
     public $documento;
 
     /**
-     * Invoice of the departure.
+     * Invoice number of the departure.
      *
-     * @var
+     * @var string
      */
     public $factura;
 

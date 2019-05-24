@@ -70,6 +70,32 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add a standard line to the accounting entry based on the reported sub-account
+     *
+     * @param Asiento   $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool      $isDebit
+     * @param float     $amount
+     *
+     * @return bool
+     */
+    protected function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
+    {
+        $line = $accountEntry->getNewLine();
+        $line->idsubcuenta = $subaccount->idsubcuenta;
+        $line->codsubcuenta = $subaccount->codsubcuenta;
+
+        $total = ($amount === null) ? $this->document->total : $amount;
+        if ($isDebit) {
+            $line->debe = $total;
+        } else {
+            $line->haber = $total;
+        }
+
+        return $line->save();
+    }
+
+    /**
      * Add the customer line to the accounting entry
      *
      * @param Asiento $accountEntry
@@ -198,6 +224,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
         }
+
         return true;
     }
 
@@ -282,6 +309,67 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add a line of taxes to the accounting entry based on the sub-account
+     * and values reported
+     *
+     * @param Asiento   $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool      $isDebit
+     * @param array     $values
+     *
+     * @return bool
+     */
+    protected function addTaxLine($accountEntry, $subaccount, $isDebit, $values): bool
+    {
+        $line = $accountEntry->getNewLine();
+        $line->idsubcuenta = $subaccount->idsubcuenta;
+        $line->codsubcuenta = $subaccount->codsubcuenta;
+
+        $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
+        if ($isDebit) {
+            $line->debe = $amount;
+        } else {
+            $line->haber = $amount;
+        }
+
+        /// add tax register data
+        $line->baseimponible = (float) $values['neto'];
+        $line->iva = (float) $values['iva'];
+        $line->recargo = (float) $values['recargo'];
+        $line->cifnif = $this->document->cifnif;
+        $line->codserie = $this->document->codserie;
+        $line->documento = $this->document->codigo;
+        $line->factura = $this->document->numero;
+
+        /// save new line
+        return $line->save();
+    }
+
+    /**
+     * Perform the initial checks to continue with the accounting process
+     *
+     * @return bool
+     */
+    protected function initialChecks(): bool
+    {
+        if (!empty($this->document->idasiento)) {
+            return false;
+        }
+
+        if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
+            $this->miniLog->warning($this->i18n->trans('closed-exercise'));
+            return false;
+        }
+
+        if (!$this->loadSubtotals()) {
+            $this->miniLog->warning('invoice-subtotals-error');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      *
      * @return bool
      */
@@ -298,8 +386,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function purchaseAccountingEntry()
     {
         $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry);
-        $accountEntry->concepto = $this->i18n->trans('supplier-invoice') . ' ' . $this->document->codigo;
+        $this->setAccountingData($accountEntry, $this->i18n->trans('supplier-invoice') . ' ' . $this->document->codigo);
         if (!$accountEntry->save()) {
             $this->miniLog->warning('accounting-entry-error');
             return;
@@ -323,8 +410,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function salesAccountingEntry()
     {
         $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry);
-        $accountEntry->concepto = $this->i18n->trans('customer-invoice') . ' ' . $this->document->codigo;
+        $this->setAccountingData($accountEntry, $this->i18n->trans('customer-invoice') . ' ' . $this->document->codigo);
         if (!$accountEntry->save()) {
             $this->miniLog->warning('accounting-entry-error');
             return;
@@ -343,108 +429,21 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add a standard line to the accounting entry based on the reported sub-account
-     *
-     * @param Asiento   $accountEntry
-     * @param Subcuenta $subaccount
-     * @param bool      $isDebit
-     * @param double    $amount
-     *
-     * @return bool
-     */
-    private function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
-    {
-        $total = ($amount === null) ? $this->document->total : $amount;
-
-        $line = $accountEntry->getNewLine();
-        $line->idsubcuenta = $subaccount->idsubcuenta;
-        $line->codsubcuenta = $subaccount->codsubcuenta;
-        if ($isDebit) {
-            $line->debe = $total;
-        } else {
-            $line->haber = $total;
-        }
-
-        return $line->save();
-    }
-
-    /**
-     * Add a line of taxes to the accounting entry based on the sub-account
-     * and values reported
-     *
-     * @param Asiento   $accountEntry
-     * @param Subcuenta $subaccount
-     * @param bool      $isDebit
-     * @param array     $values
-     *
-     * @return bool
-     */
-    private function addTaxLine($accountEntry, $subaccount, $isDebit, $values): bool
-    {
-        $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
-
-        /// add new line to account entry
-        $line = $accountEntry->getNewLine();
-        $line->idsubcuenta = $subaccount->idsubcuenta;
-        $line->codsubcuenta = $subaccount->codsubcuenta;
-        if ($isDebit) {
-            $line->debe = $amount;
-        } else {
-            $line->haber = $amount;
-        }
-
-        /// add tax register data
-        $line->baseimponible = (float) $values['neto'];
-        $line->iva = $values['iva'];
-        $line->recargo = $values['recargo'];
-        $line->cifnif = $this->document->cifnif;
-        $line->codserie = $this->document->codserie;
-        $line->documento = $this->document->codigo;
-        $line->factura = $this->document->numero;
-
-        /// save new line
-        return $line->save();
-    }
-
-    /**
-     * Perform the initial checks to continue with the accounting process
-     *
-     * @return bool
-     */
-    private function initialChecks(): bool
-    {
-        if (!empty($this->document->idasiento)) {
-            return false;
-        }
-
-        if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
-            $this->miniLog->warning($this->i18n->trans('closed-exercise'));
-            return false;
-        }
-
-        if (!$this->loadSubtotals()) {
-            $this->miniLog->warning('invoice-subtotals-error');
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Assign the document data to the accounting entry
      *
      * @param Asiento $accountEntry
+     * @param string  $concept
      */
-    private function setAccountingData(&$accountEntry)
+    protected function setAccountingData(&$accountEntry, $concept)
     {
-        /// Assign Common data
         $accountEntry->codejercicio = $this->document->codejercicio;
+        $accountEntry->concepto = $concept;
         $accountEntry->documento = $this->document->codigo;
         $accountEntry->fecha = $this->document->fecha;
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
 
-        /// Assign analytical data
+        /// Assign analytical data defined in Serie model
         $serie = new Serie();
         $serie->loadFromCode($this->document->codserie);
 
