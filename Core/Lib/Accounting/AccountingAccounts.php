@@ -19,11 +19,13 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\AccountingCreateTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
+use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -46,6 +48,8 @@ class AccountingAccounts
     const SPECIAL_EXPENSE_ACCOUNT = 'GTOBAN';
     const SPECIAL_PAYMENT_ACCOUNT = 'CAJA';
     const SPECIAL_SUPPLIER_ACCOUNT = 'PROVEE';
+    const SPECIAL_TAX_IMPACTED_ACCOUNT = 'IVAREP';
+    const SPECIAL_TAX_SUPPORTED_ACCOUNT = 'IVASOP';
 
     /**
      *
@@ -55,8 +59,6 @@ class AccountingAccounts
 
     /**
      * Class constructor
-     *
-     * @param string $exercise
      */
     public function __construct()
     {
@@ -270,5 +272,62 @@ class AccountingAccounts
         $account = $this->getSpecialAccount($specialAccount);
         $createTools = new AccountingCreateTools();
         return $createTools->createBusinessAccount($supplier, $account);
+    }
+
+    /**
+     * Get the accounting sub-account for Impacted Tax.
+     *
+     * @param Impuesto $tax
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getTaxImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT)
+    {
+        return $this->getTaxAccount($tax->codsubcuentarep, $specialAccount);
+    }
+
+    /**
+     * Get the accounting sub-account for Supported Tax.
+     *
+     * @param Impuesto $tax
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    public function getTaxSupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT)
+    {
+        return $this->getTaxAccount($tax->codsubcuentasop, $specialAccount);
+    }
+
+    /**
+     * Get the accounting sub-account according to the indicated tax sub-account.
+     *   - First check the tax
+     *   - Second check the special account
+     *
+     * @param string $taxSubAccount
+     * @param string $specialAccount
+     * @return Subcuenta
+     */
+    private function getTaxAccount($taxSubAccount, string $specialAccount)
+    {
+        /// defined sub-account code?
+        if (!empty($taxSubAccount)) {
+            $subaccount = $this->getSubAccount($taxSubAccount);
+            if ($subaccount->exists()) {
+                return $subaccount;
+            }
+
+            /// search parent account
+            $account = $this->getSpecialAccount($specialAccount);
+
+            /// create sub-account
+            $createTools = new AccountingCreateTools();
+            return $createTools->createFromAccount($account, $taxSubAccount);
+        }
+
+        /// search from parent acount
+        $account = $this->getSpecialAccount($specialAccount);
+        $subaccount = new Subcuenta();
+        $subaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
+        return $subaccount;
     }
 }

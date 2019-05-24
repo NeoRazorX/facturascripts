@@ -46,8 +46,6 @@ class AccountingCreateTools
 
     /**
      * Class constructor
-     *
-     * @param string $exercise
      */
     public function __construct()
     {
@@ -110,7 +108,7 @@ class AccountingCreateTools
      * @param String $description    The description of the subaccount
      * @return Subcuenta
      */
-    public function createFromAccount($account, $code, $description)
+    public function createFromAccount($account, $code, $description = '')
     {
         if (!$account->exists() || !$this->checkExercise($account->codejercicio)) {
             return new Subcuenta();
@@ -120,7 +118,7 @@ class AccountingCreateTools
         $subaccount->codcuenta = $account->codcuenta;
         $subaccount->codejercicio = $account->codejercicio;
         $subaccount->codsubcuenta = $code;
-        $subaccount->descripcion = $description;
+        $subaccount->descripcion = empty($description) ? $account->descripcion : $description;
         $subaccount->idcuenta = $account->idcuenta;
         $subaccount->save();
         return $subaccount;
