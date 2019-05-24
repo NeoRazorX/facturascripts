@@ -23,6 +23,7 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
 
@@ -51,23 +52,17 @@ class InvoiceToAccounting extends AccountingClass
     {
         parent::generate($model);
 
-        if (!empty($model->idasiento)) {
-            return;
-        } elseif (!$this->exercise->loadFromCode($model->codejercicio) || !$this->exercise->isOpened()) {
-            $this->miniLog->warning($this->i18n->trans('closed-exercise'));
-            return;
-        } elseif (!$this->loadSubtotals()) {
-            $this->miniLog->warning('invoice-subtotals-error');
+        if (!$this->initialChecks()) {
             return;
         }
 
         switch ($model->modelClassName()) {
             case 'FacturaCliente':
-                $this->salesAccountingEntry($model);
+                $this->salesAccountingEntry();
                 break;
 
             case 'FacturaProveedor':
-                $this->purchaseAccountingEntry($model);
+                $this->purchaseAccountingEntry();
                 break;
         }
     }
@@ -78,25 +73,21 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addCustomerLine($accountEntry)
+    protected function addCustomerLine($accountEntry): bool
     {
-        $cliente = new Cliente();
-        if (!$cliente->loadFromCode($this->document->codcliente)) {
+        $customer = new Cliente();
+        if (!$customer->loadFromCode($this->document->codcliente)) {
             $this->miniLog->warning($this->i18n->trans('customer-not-found'));
             return false;
         }
 
-        $subcuenta = $this->getCustomerAccount($cliente);
-        if (!$subcuenta->exists()) {
+        $subaccount = $this->getCustomerAccount($customer);
+        if (!$subaccount->exists()) {
             $this->miniLog->warning($this->i18n->trans('customer-account-not-found'));
             return false;
         }
 
-        $line = $accountEntry->getNewLine();
-        $line->codsubcuenta = $subcuenta->codsubcuenta;
-        $line->debe = $this->document->total;
-        $line->idsubcuenta = $subcuenta->idsubcuenta;
-        return $line->save();
+        return $this->addBasicLine($accountEntry, $subaccount, true);
     }
 
     /**
@@ -159,6 +150,10 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addPurchaseIrpfLines($accountEntry)
     {
+        if (empty($this->document->totalirpf)) {
+            return true;
+        }
+
         $cuenta = $this->getSpecialAccount('IRPFPR');
         if (!$cuenta->exists()) {
             $this->miniLog->alert($this->i18n->trans('irpfpr-account-not-found'));
@@ -183,28 +178,23 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addPurchaseTaxLines($accountEntry)
+    protected function addPurchaseTaxLines($accountEntry): bool
     {
-        if (!$this->addPurchaseIrpfLines($accountEntry)) {
-            return false;
-        }
+        $tax = new Impuesto();
+        foreach ($this->subtotals as $key => $value) {
+            /// search for tax data
+            $tax->loadFromCode($key);
+            $subaccount = $this->getTaxSupportedAccount($tax);
+            if (!$subaccount->exists()) {
+                $this->miniLog->alert($this->i18n->trans('ivasop-account-not-found'));
+                return false;
+            }
 
-        $cuenta = $this->getSpecialAccount('IVASOP');
-        if (!$cuenta->exists()) {
-            $this->miniLog->alert($this->i18n->trans('ivasop-account-not-found'));
-            return false;
+            if (!$this->addTaxLine($accountEntry, $subaccount, true, $value)) {
+                return false;
+            }
         }
-
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
-            $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->debe = $this->document->totaliva + $this->document->totalrecargo;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return empty($line->debe) ? true : $line->save();
-        }
-
-        $this->miniLog->alert($this->i18n->trans('ivasop-subaccount-not-found'));
-        return false;
+        return true;
     }
 
     /**
@@ -243,28 +233,24 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addSalesTaxLines($accountEntry)
+    protected function addSalesTaxLines($accountEntry): bool
     {
-        if (!$this->addSalesIrpfLines($accountEntry)) {
-            return false;
-        }
+        $tax = new Impuesto();
+        foreach ($this->subtotals as $key => $value) {
+            /// search for tax data
+            $tax->loadFromCode($key);
+            $subaccount = $this->getTaxImpactedAccount($tax);
+            if (!$subaccount->exists()) {
+                $this->miniLog->alert($this->i18n->trans('ivarep-subaccount-not-found'));
+                return false;
+            }
 
-        $cuenta = $this->getSpecialAccount('IVAREP');
-        if (!$cuenta->exists()) {
-            $this->miniLog->alert($this->i18n->trans('ivarep-account-not-found'));
-            return false;
+            /// add tax line
+            if (!$this->addTaxLine($accountEntry, $subaccount, false, $value)) {
+                return false;
+            }
         }
-
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
-            $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->haber = $this->document->totaliva + $this->document->totalrecargo;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return empty($line->haber) ? true : $line->save();
-        }
-
-        $this->miniLog->alert($this->i18n->trans('ivarep-subaccount-not-found'));
-        return false;
+        return true;
     }
 
     /**
@@ -273,25 +259,21 @@ class InvoiceToAccounting extends AccountingClass
      *
      * @return bool
      */
-    protected function addSupplierLine($accountEntry)
+    protected function addSupplierLine($accountEntry): bool
     {
-        $proveedor = new Proveedor();
-        if (!$proveedor->loadFromCode($this->document->codproveedor)) {
+        $supplier = new Proveedor();
+        if (!$supplier->loadFromCode($this->document->codproveedor)) {
             $this->miniLog->warning($this->i18n->trans('supplier-not-found'));
             return false;
         }
 
-        $subcuenta = $this->getSupplierAccount($proveedor);
-        if (!$subcuenta->exists()) {
+        $subaccount = $this->getSupplierAccount($supplier);
+        if (!$subaccount->exists()) {
             $this->miniLog->warning($this->i18n->trans('supplier-account-not-found'));
             return false;
         }
 
-        $line = $accountEntry->getNewLine();
-        $line->codsubcuenta = $subcuenta->codsubcuenta;
-        $line->haber = $this->document->total;
-        $line->idsubcuenta = $subcuenta->idsubcuenta;
-        return $line->save();
+        return $this->addBasicLine($accountEntry, $subaccount, false);
     }
 
     /**
@@ -307,10 +289,8 @@ class InvoiceToAccounting extends AccountingClass
 
     /**
      * Generate the accounting entry for a purchase document.
-     *
-     * @param FacturaProveedor $model
      */
-    protected function purchaseAccountingEntry(&$model)
+    protected function purchaseAccountingEntry()
     {
         $accountEntry = new Asiento();
         $this->setAccountingData($accountEntry);
@@ -320,8 +300,12 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        if ($this->addSupplierLine($accountEntry) && $this->addPurchaseTaxLines($accountEntry) && $this->addGoodsPurchaseLine($accountEntry)) {
-            $model->idasiento = $accountEntry->primaryColumnValue();
+        if ($this->addSupplierLine($accountEntry) &&
+            $this->addPurchaseTaxLines($accountEntry) &&
+            $this->addPurchaseIrpfLines($accountEntry) &&
+            $this->addGoodsPurchaseLine($accountEntry))
+        {
+            $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
 
@@ -331,10 +315,8 @@ class InvoiceToAccounting extends AccountingClass
 
     /**
      * Generate the accounting entry for a sales document.
-     *
-     * @param FacturaCliente $model
      */
-    protected function salesAccountingEntry(&$model)
+    protected function salesAccountingEntry()
     {
         $accountEntry = new Asiento();
         $this->setAccountingData($accountEntry);
@@ -344,13 +326,97 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        if ($this->addCustomerLine($accountEntry) && $this->addSalesTaxLines($accountEntry) && $this->addGoodsSalesLine($accountEntry)) {
-            $model->idasiento = $accountEntry->primaryColumnValue();
+        if ($this->addCustomerLine($accountEntry) &&
+            $this->addSalesTaxLines($accountEntry) &&
+            $this->addSalesIrpfLines($accountEntry) &&
+            $this->addGoodsSalesLine($accountEntry))
+        {
+            $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
 
         $this->miniLog->warning('accounting-lines-error');
         $accountEntry->delete();
+    }
+
+    /**
+     *
+     * @param Asiento $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool $isDebit
+     *
+     * @return bool
+     */
+    private function addBasicLine($accountEntry, $subaccount, $isDebit): bool
+    {
+        $line = $accountEntry->getNewLine();
+        $line->idsubcuenta = $subaccount->idsubcuenta;
+        $line->codsubcuenta = $subaccount->codsubcuenta;
+        if ($isDebit) {
+            $line->debe = $this->document->total;
+        } else {
+            $line->haber = $this->document->total;
+        }
+        return $line->save();
+    }
+
+    /**
+     *
+     * @param Asiento $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool $isDebit
+     * @param Array $values
+     *
+     * @return bool
+     */
+    private function addTaxLine($accountEntry, $subaccount, $isDebit, $values): bool
+    {
+        $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
+
+        /// add new line to account entry
+        $line = $accountEntry->getNewLine();
+        $line->idsubcuenta = $subaccount->idsubcuenta;
+        $line->codsubcuenta = $subaccount->codsubcuenta;
+        if ($isDebit) {
+            $line->debe = $amount;
+        } else {
+            $line->haber = $amount;
+        }
+
+        /// add tax register data
+        $line->baseimponible = (float) $values['neto'];
+        $line->iva = $values['iva'];
+        $line->recargo = $values['recargo'];
+        $line->cifnif = $this->document->cifnif;
+        $line->codserie = $this->document->codserie;
+        $line->documento = $this->document->codigo;
+        $line->factura = $this->document->numero;
+
+        /// save new line
+        return $line->save();
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    private function initialChecks(): bool
+    {
+        if (!empty($this->document->idasiento)) {
+            return false;
+        }
+
+        if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
+            $this->miniLog->warning($this->i18n->trans('closed-exercise'));
+            return false;
+        }
+
+        if (!$this->loadSubtotals()) {
+            $this->miniLog->warning('invoice-subtotals-error');
+            return false;
+        }
+
+        return true;
     }
 
     /**
