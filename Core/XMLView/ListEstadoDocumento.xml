@@ -53,6 +53,10 @@
                 <values title="do-nothing">0</values>
                 <values title="add">1</values>
                 <values title="foresee">2</values>
+                <option color="warning">-2</option>
+                <option color="danger">-1</option>
+                <option color="success">1</option>
+                <option color="warning">2</option>
             </widget>
         </column>
         <column name="generate-doc-type" display="right" order="160">
@@ -70,11 +74,9 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="warning" fieldname="actualizastock">-2</option>
-            <option color="danger" fieldname="actualizastock">-1</option>
-            <option color="success" fieldname="actualizastock">1</option>
-            <option color="warning" fieldname="actualizastock">2</option>
             <option color="info" fieldname="predeterminado">1</option>
+            <option color="success" fieldname="generadoc">neq:</option>
+            <option color="warning" fieldname="editable">0</option>
         </row>
     </rows>
 </view>
