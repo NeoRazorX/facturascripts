@@ -1,0 +1,8 @@
+{
+    "default": {
+        "coddivisa": "PAB",
+        "codserie": "A",
+        "codpago": "CONT",
+        "codimpuesto": "ITBMS"
+    }
+}
