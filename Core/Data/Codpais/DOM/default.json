@@ -1,0 +1,8 @@
+{
+    "default": {
+        "coddivisa": "DOP",
+        "codserie": "A",
+        "codpago": "CONT",
+        "codimpuesto": "ITBIS18"
+    }
+}
