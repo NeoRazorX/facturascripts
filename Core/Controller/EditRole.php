@@ -83,7 +83,7 @@ class EditRole extends EditController
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
-        
+
         $this->addEditListView('EditRoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
         $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fas fa-address-card');
 
@@ -153,12 +153,11 @@ class EditRole extends EditController
         $order = [];
         switch ($viewName) {
             case 'EditRoleAccess':
-                $order['pagename'] = 'ASC';
             /// no break
             case 'EditRoleUser':
                 $codrole = $this->getViewModelValue('EditRole', 'codrole');
                 $where = [new DataBaseWhere('codrole', $codrole)];
-                $view->loadData('', $where, $order);
+                $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
             default:
