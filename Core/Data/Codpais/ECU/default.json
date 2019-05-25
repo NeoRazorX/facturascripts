@@ -1,0 +1,8 @@
+{
+    "default": {
+        "coddivisa": "USD",
+        "codserie": "A",
+        "codpago": "CONT",
+        "codimpuesto": "IVA12"
+    }
+}
