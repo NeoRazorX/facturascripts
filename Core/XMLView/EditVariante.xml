@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,41 +16,38 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditVariante
- *
- * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="product" display="none" order="110">
+            <column name="product" display="none" order="100">
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
-            <column name="reference" numcolumns="4" order="120">
+            <column name="reference" numcolumns="4" order="110">
                 <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" />
             </column>
-            <column name="attribute-value-1" numcolumns="4" order="130">
+            <column name="attribute-value-1" titleurl="ListAtributo" numcolumns="4" order="120">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
                     <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="attribute-value-2" numcolumns="4" order="140">
+            <column name="attribute-value-2" titleurl="ListAtributo" numcolumns="4" order="130">
                 <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo">
                     <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="barcode" numcolumns="3" order="150">
+            <column name="barcode" numcolumns="3" order="140">
                 <widget type="text" fieldname="codbarras" icon="fas fa-barcode" />
             </column>
-            <column name="price" numcolumns="3" order="160">
+            <column name="price" numcolumns="3" order="150">
                 <widget type="money" decimal="2" fieldname="precio" />
             </column>
-            <column name="cost-price" numcolumns="3" order="170">
+            <column name="cost-price" numcolumns="3" order="160">
                 <widget type="money" decimal="2" fieldname="coste" />
             </column>
-            <column name="stockfis" title="physical-stock" numcolumns="3" order="180">
+            <column name="stockfis" title="physical-stock" numcolumns="3" order="170">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
         </group>
