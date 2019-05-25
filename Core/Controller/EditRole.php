@@ -150,7 +150,6 @@ class EditRole extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $order = [];
         switch ($viewName) {
             case 'EditRoleAccess':
             /// no break
