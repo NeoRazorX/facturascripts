@@ -233,14 +233,23 @@
 {% macro statusSelect(model, view, i18n) %}
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ model.getStatus().nombre }}
+            {% set status = model.getStatus() %}
+            {% if status.generadoc %}
+                <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+            {% elseif status.editable %}
+                <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+            {% else %}
+                <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+            {% endif %}
         </button>
         <div class="dropdown-menu dropdown-menu-right">
             {% set showDocumentStitcher = false %}
             {% for status in view.documentStatus %}
                 {% if model.idestado == status.idestado %}
                     <a class="dropdown-item active" href="#">
-                        {% if status.editable %}
+                        {% if status.generadoc %}
+                            <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                        {% elseif status.editable %}
                             <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}
                             <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
@@ -249,7 +258,9 @@
                 {% else %}
                     <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
                             businessDocViewSave();">
-                        {% if status.editable %}
+                        {% if status.generadoc %}
+                            <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                        {% elseif status.editable %}
                             <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         {% else %}
                             <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}

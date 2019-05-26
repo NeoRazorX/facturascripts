@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
- * Copyright (C) 2017-2018  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019  Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,8 +24,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Defines the individual permissions for each page within a user role.
  *
- * @author Joe Nilson            <joenilson at gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Joe Nilson           <joenilson at gmail.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class RoleAccess extends Base\ModelClass
 {

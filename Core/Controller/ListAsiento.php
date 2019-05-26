@@ -48,24 +48,25 @@ class ListAsiento extends ListController
      */
     protected function createViews()
     {
-        $this->createViewAccountEntries(); /// account entries tab
-        $this->createViewConcepts(); /// concepts tab
-        $this->createViewJournals(); /// journals tab
+        $this->createViewAccountEntries();
+        $this->createViewConcepts();
+        $this->createViewJournals();
     }
 
     /**
+     * Add accounting entries tab
      * 
      * @param string $name
      */
     private function createViewAccountEntries($name = 'ListAsiento')
     {
-        /// accounting entries
         $this->addView($name, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->addSearchFields($name, ['CAST(numero AS CHAR(10))', 'concepto']);
         $this->addOrderBy($name, ['fecha', 'idasiento'], 'date', 2);
         $this->addOrderBy($name, ['numero', 'idasiento'], 'number');
         $this->addOrderBy($name, ['importe', 'idasiento'], 'ammount');
 
+        /// filters
         $this->addFilterPeriod($name, 'date', 'period', 'fecha');
         $this->addFilterNumber($name, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($name, 'max-total', 'amount', 'importe', '<=');
@@ -80,6 +81,16 @@ class ListAsiento extends ListController
         $this->addFilterSelect($name, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
         $this->addFilterNumber($name, 'canal', 'channel', 'canal', '=');
+
+        /// buttons
+        $newButton = [
+            'action' => 'renumber',
+            'color' => 'warning',
+            'icon' => 'fas fa-sort-numeric-down',
+            'label' => 'renumber-accounting',
+            'type' => 'action',
+        ];
+        $this->addButton($name, $newButton);
     }
 
     /**

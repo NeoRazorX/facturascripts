@@ -391,7 +391,11 @@ abstract class PanelController extends BaseController
 
         // save in database
         if ($this->views[$this->active]->model->save()) {
-            $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
+            /// redir to new model url only if this is the first view
+            if ($this->active === array_keys($this->views)[0]) {
+                $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
+            }
+
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
             $this->views[$this->active]->model->clear();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
