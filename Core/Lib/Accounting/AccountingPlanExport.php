@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
 
 /**
  * Class to export accounting plans.
@@ -37,25 +35,9 @@ class AccountingPlanExport
      */
     private $dataBase;
 
-    /**
-     * System translator.
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * Manage the log of the entire application.
-     *
-     * @var MiniLog
-     */
-    private $miniLog;
-
     public function __construct()
     {
         $this->dataBase = new DataBase();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
     }
 
     /**
