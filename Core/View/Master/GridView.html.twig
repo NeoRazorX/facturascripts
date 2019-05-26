@@ -5,7 +5,7 @@
      * Visualization of grid data edited into handsontable component.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -176,7 +176,7 @@
     {% set currentViewName = currentView.getViewName() %}
     {% set detailView = currentView.detailView %}
     {% set detailViewName = detailView.getViewName() %}
-    <ul class="nav nav-tabs d-print-none" role="tablist">
+    <ul class="nav nav-tabs mb-3 d-print-none" role="tablist">
         {# Grid View (detail) #}
         <li class="nav-item">
             <a href="#tab{{ detailViewName }}" class="nav-link active" data-toggle="tab" role="tab" aria-controls="tab{{ detailViewName }}">
