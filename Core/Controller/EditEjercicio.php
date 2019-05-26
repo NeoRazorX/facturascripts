@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Artex Trading sa         <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Oscar G. Villa González  <ogvilla@gmail.com>
  */
 class EditEjercicio extends EditController
 {
@@ -121,7 +122,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * Export AccountingPlan to XML.
+     * Export AccountingPlan to CSV file.
      * 
      * @return bool
      */
@@ -133,11 +134,15 @@ class EditEjercicio extends EditController
             return false;
         }
 
-        $this->setTemplate(false);
         $accountingPlanExport = new AccountingPlanExport();
-        $this->response->setContent($accountingPlanExport->exportXML($code));
-        $this->response->headers->set('Content-Type', 'text/xml; charset=utf-8');
-        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $code . '.xml');
+        $dataToExport = $accountingPlanExport->getDataToExport($code);
+        if (empty($dataToExport)) {
+            $this->miniLog->error($this->i18n->trans('accounting-data-missing'));
+            return false;
+        } else {
+            $this->setTemplate(false);
+            $accountingPlanExport->exportCSV($dataToExport, $code);
+        }
 
         return true;
     }
@@ -187,4 +192,5 @@ class EditEjercicio extends EditController
 
         return true;
     }
+
 }
