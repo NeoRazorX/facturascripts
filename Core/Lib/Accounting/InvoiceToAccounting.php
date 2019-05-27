@@ -293,7 +293,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
-            $this->miniLog->warning($this->i18n->trans('closed-exercise'));
+            $this->miniLog->warning($this->i18n->trans('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]));
             return false;
         }
 
