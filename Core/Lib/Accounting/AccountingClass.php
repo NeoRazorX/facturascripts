@@ -22,6 +22,8 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Model\Partida;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Base class for creation of accounting processes
@@ -71,5 +73,76 @@ abstract class AccountingClass extends AccountingAccounts
     {
         $this->document = $model;
         $this->exercise->idempresa = $model->idempresa ?? AppSettings::get('default', 'idempresa');
+    }
+
+    /**
+     * Add a standard line to the accounting entry based on the reported sub-account
+     *
+     * @param Asiento   $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool      $isDebit
+     * @param float     $amount
+     *
+     * @return bool
+     */
+    protected function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
+    {
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
+        return $line->save();
+    }
+
+    /**
+     * Add a line of taxes to the accounting entry based on the sub-account
+     * and values reported
+     *
+     * @param Asiento   $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool      $isDebit
+     * @param array     $values
+     *
+     * @return bool
+     */
+    protected function addTaxLine($accountEntry, $subaccount, $isDebit, $values): bool
+    {
+        /// add basic data
+        $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
+
+        /// add tax register data
+        $line->baseimponible = (float) $values['neto'];
+        $line->iva = (float) $values['iva'];
+        $line->recargo = (float) $values['recargo'];
+        $line->cifnif = $this->document->cifnif;
+        $line->codserie = $this->document->codserie;
+        $line->documento = $this->document->codigo;
+        $line->factura = $this->document->numero;
+
+        /// save new line
+        return $line->save();
+    }
+
+    /**
+     * Obtain a standard line to the accounting entry based on the reported sub-account
+     *
+     * @param Asiento   $accountEntry
+     * @param Subcuenta $subaccount
+     * @param bool      $isDebit
+     * @param float     $amount
+     *
+     * @return Partida
+     */
+    protected function getBasicLine($accountEntry, $subaccount, $isDebit, $amount = null)
+    {
+        $line = $accountEntry->getNewLine();
+        $line->idsubcuenta = $subaccount->idsubcuenta;
+        $line->codsubcuenta = $subaccount->codsubcuenta;
+
+        $total = ($amount === null) ? $this->document->total : $amount;
+        if ($isDebit) {
+            $line->debe = $total;
+        } else {
+            $line->haber = $total;
+        }
+        return $line;
     }
 }
