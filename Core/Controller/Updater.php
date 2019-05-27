@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Dinamic\Model\Diario;
-use FacturaScripts\Core\Model\IdentificadorFiscal;
+use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
