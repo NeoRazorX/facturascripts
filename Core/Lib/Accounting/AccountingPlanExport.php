@@ -55,7 +55,6 @@ class AccountingPlanExport
      */
     private function getDataToExport($code)
     {
-        // modificar con databasewhere
         $sql = 'SELECT codcuenta as cuenta, descripcion, codcuentaesp AS cuentaesp FROM cuentas'
             . ' WHERE codejercicio = ' . $code
             . ' UNION'
@@ -83,4 +82,5 @@ class AccountingPlanExport
         $csvExport->generateTablePage($columns, $rows);
         return $csvExport->getDoc();
     }
+
 }
