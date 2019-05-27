@@ -53,7 +53,7 @@ class EditCliente extends EditController
     }
 
     /**
-     * Returns the sum of the client's total outstanding invoices.
+     * Returns the sum of the customer's total outstanding invoices.
      *
      * @return string
      */
