@@ -44,4 +44,9 @@
             </widget>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="warning" fieldname="iva">0</option>
+        </row>
+    </rows>
 </view>
