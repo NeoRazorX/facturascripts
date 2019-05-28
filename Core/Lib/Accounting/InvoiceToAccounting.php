@@ -27,7 +27,6 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
-use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Class for the generation of accounting entries of a sale/purchase document
@@ -67,32 +66,6 @@ class InvoiceToAccounting extends AccountingClass
                 $this->purchaseAccountingEntry();
                 break;
         }
-    }
-
-    /**
-     * Add a standard line to the accounting entry based on the reported sub-account
-     *
-     * @param Asiento   $accountEntry
-     * @param Subcuenta $subaccount
-     * @param bool      $isDebit
-     * @param float     $amount
-     *
-     * @return bool
-     */
-    protected function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
-    {
-        $line = $accountEntry->getNewLine();
-        $line->idsubcuenta = $subaccount->idsubcuenta;
-        $line->codsubcuenta = $subaccount->codsubcuenta;
-
-        $total = ($amount === null) ? $this->document->total : $amount;
-        if ($isDebit) {
-            $line->debe = $total;
-        } else {
-            $line->haber = $total;
-        }
-
-        return $line->save();
     }
 
     /**
@@ -309,43 +282,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add a line of taxes to the accounting entry based on the sub-account
-     * and values reported
-     *
-     * @param Asiento   $accountEntry
-     * @param Subcuenta $subaccount
-     * @param bool      $isDebit
-     * @param array     $values
-     *
-     * @return bool
-     */
-    protected function addTaxLine($accountEntry, $subaccount, $isDebit, $values): bool
-    {
-        $line = $accountEntry->getNewLine();
-        $line->idsubcuenta = $subaccount->idsubcuenta;
-        $line->codsubcuenta = $subaccount->codsubcuenta;
-
-        $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
-        if ($isDebit) {
-            $line->debe = $amount;
-        } else {
-            $line->haber = $amount;
-        }
-
-        /// add tax register data
-        $line->baseimponible = (float) $values['neto'];
-        $line->iva = (float) $values['iva'];
-        $line->recargo = (float) $values['recargo'];
-        $line->cifnif = $this->document->cifnif;
-        $line->codserie = $this->document->codserie;
-        $line->documento = $this->document->codigo;
-        $line->factura = $this->document->numero;
-
-        /// save new line
-        return $line->save();
-    }
-
-    /**
      * Perform the initial checks to continue with the accounting process
      *
      * @return bool
@@ -357,7 +293,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
-            $this->miniLog->warning($this->i18n->trans('closed-exercise'));
+            $this->miniLog->warning($this->i18n->trans('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]));
             return false;
         }
 
@@ -442,6 +378,7 @@ class InvoiceToAccounting extends AccountingClass
         $accountEntry->fecha = $this->document->fecha;
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
+        $accountEntry->editable = false;
 
         /// Assign analytical data defined in Serie model
         $serie = new Serie();

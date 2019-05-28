@@ -119,8 +119,9 @@
                             <td>
                                 <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
                             </td>
-                            <td class="table-warning">
-                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ fsc.getDefaultQuantity(line) }}" step="any" class="form-control text-right" autocomplete="off"/>
+                            {% set apQuantity = fsc.getDefaultQuantity(line) %}
+                            <td class="{{ apQuantity == 0 ? 'table-success' : 'table-warning' }}">
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ apQuantity }}" step="any" class="form-control text-right" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}

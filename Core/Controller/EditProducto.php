@@ -88,6 +88,9 @@ class EditProducto extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
+        $where = [new DataBaseWhere('idproducto', $idproducto)];
+
         switch ($viewName) {
             case 'EditProducto':
                 parent::loadData($viewName, $view);
@@ -99,10 +102,11 @@ class EditProducto extends EditController
                 break;
 
             case 'EditVariante':
+                $view->loadData('', $where, ['idvariante' => 'DESC']);
+                break;
+
             case 'EditStock':
-                $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
-                $where = [new DataBaseWhere('idproducto', $idproducto)];
-                $view->loadData('', $where, ['referencia' => 'ASC']);
+                $view->loadData('', $where, ['idstock' => 'DESC']);
                 break;
         }
     }
