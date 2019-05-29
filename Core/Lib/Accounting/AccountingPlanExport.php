@@ -42,7 +42,7 @@ class AccountingPlanExport
     public function countAccounts($code)
     {
         $cuentas = new Cuenta();
-        $total = $cuentas->count([new DataBaseWhere('codejercicio', $code,)]);
+        $total = $cuentas->count([new DataBaseWhere('codejercicio', $code)]);
         return $total;
     }
 
