@@ -18,10 +18,10 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Export\CSVExport;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Class to export accounting plans.
@@ -33,41 +33,6 @@ class AccountingPlanExport
 {
 
     /**
-     * Get cuentas quantity  from Acoounting Plan
-     * 
-     * @param string $code
-     *
-     * @return integer
-     */
-    public function countAccounts($code)
-    {
-        $cuentas = new Cuenta();
-        $total = $cuentas->count([new DataBaseWhere('codejercicio', $code)]);
-        return $total;
-    }
-
-    /**
-     * Get Acoounting Plan data to export
-     * 
-     * @param string $code
-     *
-     * @return array
-     */
-    private function getDataToExport($code)
-    {
-        $sql = 'SELECT codcuenta as cuenta, descripcion, codcuentaesp AS cuentaesp FROM cuentas'
-            . ' WHERE codejercicio = ' . $code
-            . ' UNION'
-            . ' SELECT codsubcuenta AS cuenta, descripcion, codcuentaesp AS cuentaesp FROM subcuentas '
-            . ' WHERE codejercicio = ' . $code
-            . ' ORDER BY cuenta';
-        $dataBase = new DataBase();
-        $data = $dataBase->select($sql);
-
-        return $data;
-    }
-
-    /**
      * Export accounting plan data to CSV file.
      * 
      * @param string $code
@@ -76,11 +41,57 @@ class AccountingPlanExport
      */
     public function exportCSV($code)
     {
-        $columns = array('cuenta', 'descripcion', 'cuentaesp');
-        $rows = $this->getDataToExport($code);
+        $columns = ['cuenta', 'descripcion', 'cuentaesp'];
+        $rows = array_merge($this->getAccountsData($code), $this->getSubaccountsData($code));
+
         $csvExport = new CSVExport();
         $csvExport->generateTablePage($columns, $rows);
         return $csvExport->getDoc();
     }
 
+    /**
+     * 
+     * @param string $code
+     *
+     * @return array
+     */
+    protected function getAccountsData($code)
+    {
+        $data = [];
+
+        $cuentaModel = new Cuenta();
+        $where = [new DataBaseWhere('codejercicio', $code)];
+        foreach ($cuentaModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $cuenta) {
+            $data[] = [
+                'cuenta' => $cuenta->codcuenta,
+                'descripcion' => $cuenta->descripcion,
+                'codcuentaesp' => $cuenta->codcuentaesp
+            ];
+        }
+
+        return $data;
+    }
+
+    /**
+     * 
+     * @param string $code
+     *
+     * @return array
+     */
+    protected function getSubaccountsData($code)
+    {
+        $data = [];
+
+        $subcuentaModel = new Subcuenta();
+        $where = [new DataBaseWhere('codejercicio', $code)];
+        foreach ($subcuentaModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subcuenta) {
+            $data[] = [
+                'cuenta' => $subcuenta->codsubcuenta,
+                'descripcion' => $subcuenta->descripcion,
+                'codcuentaesp' => $subcuenta->codcuentaesp
+            ];
+        }
+
+        return $data;
+    }
 }
