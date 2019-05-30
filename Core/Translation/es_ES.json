@@ -575,6 +575,7 @@
     "missing-epigraph-data": "Faltan datos en el epígrafe.",
     "missing-file": "Falta el archivo",
     "missing-file-help": "Parece que este archivo no se encuentra en tu instalación. Quizás no lo uses, pero <em>no puedes eliminarlo<\/em>.",
+    "model-not-found": "Modelo no encontrado",
     "month-name": "Nombre del Mes",
     "month-wildcard-info": "Mes actual (de la fecha actual)",
     "monthly": "Mensual",

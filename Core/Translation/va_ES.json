@@ -575,6 +575,7 @@
     "missing-epigraph-data": "Falten senyes en el grup.",
     "missing-file": "Falta el fitxer",
     "missing-file-help": "Pareix que este fitxer no està en la teua instalació. Potser no l'uses, pero <em>no el pots borrar<\/em>.",
+    "model-not-found": "model-not-found",
     "month-name": "Nom del més",
     "month-wildcard-info": "Més actual (de la data actual)",
     "monthly": "Mensualment",

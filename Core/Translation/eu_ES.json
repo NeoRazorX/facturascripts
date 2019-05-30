@@ -575,6 +575,7 @@
     "missing-epigraph-data": "Datuak falta dira epigrafean.",
     "missing-file": "Fitxategia falta da",
     "missing-file-help": "Badirudi fitxategi hau ez dagoela zure instalazioan.  Beharbada ez duzu erabiliko, baina <em>ezin duzu ezabatu<\/em>.",
+    "model-not-found": "model-not-found",
     "month-name": "Hilabete izena",
     "month-wildcard-info": "Oraingo hilabetea (gaurko datakoa)",
     "monthly": "Hilero",
