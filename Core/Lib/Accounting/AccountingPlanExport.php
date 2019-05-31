@@ -18,13 +18,10 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Dinamic\Model\Balance;
-use FacturaScripts\Dinamic\Model\BalanceCuenta;
-use FacturaScripts\Dinamic\Model\BalanceCuentaA;
-use FacturaScripts\Dinamic\Model\Cuenta;
-use FacturaScripts\Dinamic\Model\CuentaEspecial;
-use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Export\CSVExport;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Class to export accounting plans.
@@ -36,122 +33,65 @@ class AccountingPlanExport
 {
 
     /**
+     * Export accounting plan data to CSV file.
      * 
      * @param string $code
      *
      * @return string
      */
-    public function exportXML($code)
+    public function exportCSV($code)
     {
-        $xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!--
-    Document   : ejercicio_" . $code . ".xml
-    Description:
-        Estructura cuentas y subcuentas del ejercicio " . $code . ".
--->
-        <ejercicio></ejercicio>\n";
-        $xml = simplexml_load_string($xmlString);
-        if (false === $xml) {
-            return '';
-        }
+        $columns = ['cuenta', 'descripcion', 'cuentaesp'];
+        $rows = array_merge($this->getAccountsData($code), $this->getSubaccountsData($code));
 
-        $this->addBalances($xml);
-        $this->addCuentasEspeciales($xml);
-        $this->addCuentas($xml, $code);
-        $this->addSubcuentas($xml, $code);
-
-        return $xml->asXML();
+        $csvExport = new CSVExport();
+        $csvExport->generateTablePage($columns, $rows);
+        return $csvExport->getDoc();
     }
 
     /**
      * 
-     * @param object $xml
-     */
-    protected function addBalances(&$xml)
-    {
-        $balance = new Balance();
-        foreach ($balance->all([], [], 0, 0) as $item) {
-            $aux = $xml->addChild("balance");
-            $aux->addChild("codbalance", $item->codbalance);
-            $aux->addChild("naturaleza", $item->naturaleza);
-            $aux->addChild("nivel1", $item->nivel1);
-            $aux->addChild("descripcion1", base64_encode($item->descripcion1));
-            $aux->addChild("nivel2", $item->nivel2);
-            $aux->addChild("descripcion2", base64_encode($item->descripcion2));
-            $aux->addChild("nivel3", $item->nivel3);
-            $aux->addChild("descripcion3", base64_encode($item->descripcion3));
-            $aux->addChild("orden3", $item->orden3);
-            $aux->addChild("nivel4", $item->nivel4);
-            $aux->addChild("descripcion4", base64_encode($item->descripcion4));
-            $aux->addChild("descripcion4ba", base64_encode($item->descripcion4ba));
-        }
-
-        $balanceCuenta = new BalanceCuenta();
-        foreach ($balanceCuenta->all([], [], 0, 0) as $item) {
-            $aux = $xml->addChild("balance_cuenta");
-            $aux->addChild("codbalance", $item->codbalance);
-            $aux->addChild("codcuenta", $item->codcuenta);
-            $aux->addChild("descripcion", base64_encode($item->desccuenta));
-        }
-
-        $balanceCuentaA = new BalanceCuentaA();
-        foreach ($balanceCuentaA->all([], [], 0, 0) as $item) {
-            $aux = $xml->addChild("balance_cuenta_a");
-            $aux->addChild("codbalance", $item->codbalance);
-            $aux->addChild("codcuenta", $item->codcuenta);
-            $aux->addChild("descripcion", base64_encode($item->desccuenta));
-        }
-    }
-
-    /**
-     * 
-     * @param object $xml
      * @param string $code
+     *
+     * @return array
      */
-    protected function addCuentas(&$xml, $code)
+    protected function getAccountsData($code)
     {
-        $cuenta = new Cuenta();
+        $data = [];
+
+        $cuentaModel = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $code)];
-        $order = ['codcuenta' => 'ASC'];
-        foreach ($cuenta->all($where, $order, 0, 0) as $item) {
-            $aux = $xml->addChild("cuenta");
-            $aux->addChild("parent_codcuenta", $item->parent_codcuenta);
-            $aux->addChild("codcuenta", $item->codcuenta);
-            $aux->addChild("descripcion", base64_encode($item->descripcion));
-            $aux->addChild("codcuentaesp", $item->codcuentaesp);
+        foreach ($cuentaModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $cuenta) {
+            $data[] = [
+                'cuenta' => $cuenta->codcuenta,
+                'descripcion' => $cuenta->descripcion,
+                'codcuentaesp' => $cuenta->codcuentaesp
+            ];
         }
+
+        return $data;
     }
 
     /**
      * 
-     * @param object $xml
-     */
-    protected function addCuentasEspeciales(&$xml)
-    {
-        $cuentaEsp = new CuentaEspecial();
-        foreach ($cuentaEsp->all([], [], 0, 0) as $item) {
-            $aux = $xml->addChild("cuenta_especial");
-            $aux->addChild("idcuentaesp", $item->idcuentaesp);
-            $aux->addChild("descripcion", base64_encode($item->descripcion));
-        }
-    }
-
-    /**
-     * 
-     * @param object $xml
      * @param string $code
+     *
+     * @return array
      */
-    protected function addSubcuentas(&$xml, $code)
+    protected function getSubaccountsData($code)
     {
-        $subcuenta = new Subcuenta();
+        $data = [];
+
+        $subcuentaModel = new Subcuenta();
         $where = [new DataBaseWhere('codejercicio', $code)];
-        $order = ['codcuenta' => 'ASC'];
-        foreach ($subcuenta->all($where, $order, 0, 0) as $item) {
-            $aux = $xml->addChild("subcuenta");
-            $aux->addChild("codcuenta", $item->codcuenta);
-            $aux->addChild("codsubcuenta", $item->codsubcuenta);
-            $aux->addChild("descripcion", base64_encode($item->descripcion));
-            $aux->addChild("codcuentaesp", $item->codcuentaesp);
+        foreach ($subcuentaModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subcuenta) {
+            $data[] = [
+                'cuenta' => $subcuenta->codsubcuenta,
+                'descripcion' => $subcuenta->descripcion,
+                'codcuentaesp' => $subcuenta->codcuentaesp
+            ];
         }
+
+        return $data;
     }
 }

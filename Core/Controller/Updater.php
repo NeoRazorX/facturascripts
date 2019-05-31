@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Dinamic\Model\Diario;
+use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -111,7 +113,7 @@ class Updater extends Controller
 
             $downloader = new DownloadTools();
             if ($downloader->download($item['url'], FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
-                $this->miniLog->info('download-completed');
+                $this->miniLog->info($this->i18n->trans('download-completed'));
                 $this->updaterItems[$key]['downloaded'] = true;
                 $this->cache->clear();
             }
@@ -135,6 +137,7 @@ class Updater extends Controller
                 $this->update();
                 $pluginManager = new PluginManager();
                 $pluginManager->deploy(true, true);
+                $this->initNewModels();
                 break;
 
             default:
@@ -181,6 +184,12 @@ class Updater extends Controller
                 break;
             }
         }
+    }
+
+    private function initNewModels()
+    {
+        new Diario();
+        new IdentificadorFiscal();
     }
 
     /**

@@ -53,7 +53,7 @@ class EditProveedor extends EditController
     }
 
     /**
-     * Returns the sum of the client's total outstanding invoices.
+     * Returns the sum of the supplier's total outstanding invoices.
      *
      * @return string
      */
@@ -202,7 +202,7 @@ class EditProveedor extends EditController
         $this->createSubaccountsView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
 
         $this->createListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->createLineView('ListLineaFacturaProveedor', 'LineaFacturaCliente', 'products');
+        $this->createLineView('ListLineaFacturaProveedor', 'LineaFacturaProveedor', 'products');
         $this->createListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
         $this->createListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
         $this->createListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');

@@ -105,8 +105,14 @@ class DocumentStitcher extends Controller
             $idlines[] = $docTrans->idlinea2;
         }
 
+        $idchildren = [];
         foreach ($this->documents as $doc) {
             foreach ($doc->childrenDocuments() as $child) {
+                if (in_array($child->primaryColumnValue(), $idchildren)) {
+                    continue;
+                }
+
+                $idchildren[] = $child->primaryColumnValue();
                 foreach ($child->getLines() as $childLine) {
                     if (in_array($childLine->primaryColumnValue(), $idlines)) {
                         $quantity -= $childLine->cantidad;

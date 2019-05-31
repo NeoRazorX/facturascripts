@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
@@ -61,15 +62,33 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
+     * 
+     * @param string $name
+     */
+    protected function createAccountsView($name = 'ListAsiento')
+    {
+        $this->addListView($name, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+
+        /// buttons
+        $newButton = [
+            'action' => 'generate-accounting',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate-accounting-entry',
+            'type' => 'action',
+        ];
+        $this->addButton($name, $newButton);
+
+        /// settings
+        $this->setSettings($name, 'btnNew', false);
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
-
-        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->setSettings('ListAsiento', 'btnNew', false);
-
+        $this->createAccountsView();
         $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
     }
 
@@ -82,12 +101,44 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'generate-accounting':
+                $this->generateAccountingAction();
+                break;
+
             case 'new-refund':
                 $this->newRefundAction();
                 break;
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function generateAccountingAction()
+    {
+        $invoice = new FacturaProveedor();
+        if (!$invoice->loadFromCode($this->request->query->get('code'))) {
+            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            return false;
+        }
+
+        $generator = new InvoiceToAccounting();
+        $generator->generate($invoice);
+        if (empty($invoice->idasiento)) {
+            $this->miniLog->error($this->i18n->trans('record-save-error'));
+            return false;
+        }
+
+        if ($invoice->save()) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return true;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        return false;
     }
 
     /**

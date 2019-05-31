@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator as i18n;
-use FacturaScripts\Core\Model\EmailSent;
-use FacturaScripts\Core\Model\Settings;
+use FacturaScripts\Dinamic\Model\EmailSent;
+use FacturaScripts\Dinamic\Model\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -179,12 +179,26 @@ class EmailTools
         }
 
         if ($mail->smtpConnect($this->smtpOptions()) && $mail->send()) {
+            /// get all email address
+            $addresses = [];
+            foreach ($mail->getToAddresses() as $addr) {
+                $addresses[] = $addr[0];
+            }
+            foreach ($mail->getCcAddresses() as $addr) {
+                $addresses[] = $addr[0];
+            }
+            foreach ($mail->getBccAddresses() as $addr) {
+                $addresses[] = $addr[0];
+            }
+
             /// save email sent
-            $emailSent = new EmailSent();
-            $emailSent->addressee = $mail->From;
-            $emailSent->body = $mail->Body;
-            $emailSent->subject = $mail->Subject;
-            $emailSent->save();
+            foreach (array_unique($addresses) as $address) {
+                $emailSent = new EmailSent();
+                $emailSent->addressee = $address;
+                $emailSent->body = $mail->Body;
+                $emailSent->subject = $mail->Subject;
+                $emailSent->save();
+            }
             return true;
         }
 

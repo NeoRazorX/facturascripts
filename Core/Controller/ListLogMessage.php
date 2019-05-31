@@ -86,6 +86,7 @@ class ListLogMessage extends ListController
     private function createEmailSentView($name = 'ListEmailSent')
     {
         $this->addView($name, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->addOrderBy($name, ['date'], 'date', 2);
         $this->addSearchFields($name, ['subject', 'text', 'addressee']);
 
         /// filters
