@@ -133,11 +133,17 @@ class Updater extends Controller
                 $this->download();
                 break;
 
-            case 'update':
-                $this->update();
-                $pluginManager = new PluginManager();
-                $pluginManager->deploy(true, true);
+            case 'post-update':
+                $this->updaterItems = $this->getUpdateItems();
                 $this->initNewModels();
+                break;
+
+            case 'update':
+                if ($this->update()) {
+                    $pluginManager = new PluginManager();
+                    $pluginManager->deploy(true, true);
+                    $this->redirect($this->getClassName() . '?action=post-update');
+                }
                 break;
 
             default:
