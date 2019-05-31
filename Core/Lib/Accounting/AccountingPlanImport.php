@@ -162,6 +162,8 @@ class AccountingPlanImport
      * @param string $definition
      * @param string $parentCode
      * @param string $codcuentaesp
+     *
+     * @return bool
      */
     private function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
     {
@@ -174,7 +176,7 @@ class AccountingPlanImport
             new DataBaseWhere('codcuenta', $code)
         ];
         if ($account->loadFromCode('', $where)) {
-            return;
+            return true;
         }
 
         if (!empty($parentCode)) {
@@ -185,7 +187,7 @@ class AccountingPlanImport
             $parent = new Model\Cuenta();
             if (!$parent->loadFromCode('', $whereParent)) {
                 $this->miniLog->alert($this->i18n->trans('parent-error'));
-                return;
+                return false;
             }
 
             $account->parent_codcuenta = $parent->codcuenta;
@@ -196,7 +198,7 @@ class AccountingPlanImport
         $account->codcuenta = $code;
         $account->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $account->descripcion = $definition;
-        $account->save();
+        return $account->save();
     }
 
     /**
@@ -206,8 +208,10 @@ class AccountingPlanImport
      * @param string $description
      * @param string $parentCode
      * @param string $codcuentaesp
+     *
+     * @return bool
      */
-    private function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp)
+    private function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
     {
         $subaccount = new Model\Subcuenta();
         $subaccount->disableAditionalTest();
@@ -218,7 +222,7 @@ class AccountingPlanImport
             new DataBaseWhere('codsubcuenta', $code)
         ];
         if ($subaccount->loadFromCode('', $where)) {
-            return;
+            return true;
         }
 
         $account = new Model\Cuenta();
@@ -230,7 +234,7 @@ class AccountingPlanImport
         /// the account exist?
         if (!$account->loadFromCode('', $whereAccount)) {
             $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'account "' . $parentCode . '" not found']));
-            return;
+            return false;
         }
 
         $subaccount->codejercicio = $this->ejercicio->codejercicio;
@@ -239,7 +243,7 @@ class AccountingPlanImport
         $subaccount->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $subaccount->codsubcuenta = $code;
         $subaccount->descripcion = $description;
-        $subaccount->save();
+        return $subaccount->save();
     }
 
     /**
