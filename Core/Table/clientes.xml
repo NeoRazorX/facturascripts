@@ -128,7 +128,19 @@
         <type>PRIMARY KEY (codcliente)</type>
     </constraint>
     <constraint>
+        <name>ca_clientes_formaspago</name>
+        <type>FOREIGN KEY (codpago) REFERENCES formaspago (codpago) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_clientes_grupos</name>
         <type>FOREIGN KEY (codgrupo) REFERENCES gruposclientes (codgrupo) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_clientes_retenciones</name>
+        <type>FOREIGN KEY (codretencion) REFERENCES retenciones (codretencion) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_clientes_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
