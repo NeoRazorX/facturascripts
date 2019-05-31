@@ -62,7 +62,7 @@ class RowActions extends VisualItem
      *
      * @return string
      */
-    public function render($small = false)
+    public function render($small = false, $viewName = '')
     {
         $html = '';
         foreach ($this->children as $child) {
@@ -71,7 +71,7 @@ class RowActions extends VisualItem
             }
 
             $button = new RowButton($child);
-            $html .= $button->render($small);
+            $html .= $button->render($small, $viewName);
         }
 
         return $html;

@@ -11,10 +11,37 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+function setAction(viewName, value) {
+    $("#form" + viewName + " :input[name=\"action\"]").val(value);
+    $("#form" + viewName).submit();
+}
+
+function confirmAction(viewName, action) {
+    bootbox.confirm({
+        title: "Confirm Text",
+        message: "Are you sure?",
+        closeButton: false,
+        buttons: {
+            cancel: {
+                label: '<i class="fas fa-times"></i> Cancel'
+            },
+            confirm: {
+                label: '<i class="fas fa-check"></i> Confirm',
+                className: "btn-danger"
+            }
+        },
+        callback: function (result) {
+            if (result) {
+                setAction(viewName, action);
+            }
+        }
+    });
+}
 
 $(document).ready(function () {
     $(".datepicker").datepicker({

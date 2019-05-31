@@ -29,7 +29,7 @@
                 <div class="col">
                     {# -- Row actions -- #}
                     {% set row = currentView.getRow('actions') %}
-                    {{ row.render() | raw }}
+                    {{ row.render(false, currentView.getViewName()) | raw }}
                 </div>
             </div>
         </div>
