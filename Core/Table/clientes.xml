@@ -78,9 +78,8 @@
         <type>integer</type>
     </column>
     <column>
-        <!--TODO: remove on next update-->
-        <name>irpf</name>
-        <type>double precision</type>
+        <name>tipoidfiscal</name>
+        <type>character varying(25)</type>
     </column>
     <column>
         <name>nombre</name>
@@ -119,10 +118,6 @@
     <column>
         <name>telefono2</name>
         <type>character varying(30)</type>
-    </column>
-    <column>
-        <name>tipoidfiscal</name>
-        <type>character varying(25)</type>
     </column>
     <column>
         <name>web</name>
