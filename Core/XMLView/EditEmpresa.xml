@@ -32,7 +32,12 @@
             <column name="company-name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="cifnif" numcolumns="3" order="120" >
+            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="120">
+                <widget type="select" fieldname="tipoidfiscal" required="true">
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
+                </widget>
+            </column>
+            <column name="fiscal-number" numcolumns="3" order="130">            
                 <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
             <column name="administrator" description="administrator" numcolumns="3" order="130">

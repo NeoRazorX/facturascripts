@@ -47,6 +47,10 @@
         <type>date</type>
     </column>
     <column>
+        <name>tipoidfiscal</name>
+        <type>character varying(25)</type>
+    </column>
+    <column>
         <name>idempresa</name>
         <type>serial</type>
         <null>NO</null>
