@@ -71,11 +71,6 @@
         <type>integer</type>
     </column>
     <column>
-        <!--TODO: remove on next update-->
-        <name>irpf</name>
-        <type>double precision</type>
-    </column>
-    <column>
         <name>nombre</name>
         <type>character varying(100)</type>
         <null>NO</null>
