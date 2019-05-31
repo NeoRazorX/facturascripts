@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,7 @@ class RowButton extends VisualItem
 
     /**
      *
-     * @var boolean
+     * @var bool
      */
     public $confirm;
 
@@ -78,7 +78,7 @@ class RowButton extends VisualItem
         parent::__construct($data);
         $this->action = $data['action'] ?? '';
         $this->color = $data['color'] ?? '';
-        $this->confirm = isset($data['confirm']) ? (bool) $data['confirm'] : false;
+        $this->confirm = isset($data['confirm']);
         $this->icon = $data['icon'] ?? '';
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int) $data['level'] : 0;
@@ -104,7 +104,6 @@ class RowButton extends VisualItem
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $label = $small ? '' : $this->label;
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
-
         if ($small && empty($icon)) {
             $icon = $this->label;
         }
@@ -129,19 +128,6 @@ class RowButton extends VisualItem
         }
     }
 
-    private function getOnClickValue($viewName, $jsFunction)
-    {
-        if ($this->confirm) {
-            return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\');';
-        }
-
-        if (empty($jsFunction)) {
-            return 'this.form.action.value=\'' . $this->action . '\';this.form.submit();';
-        }
-
-        return $jsFunction . '(\'' . $viewName . '\',\'' . $this->action . '\');';
-    }
-
     /**
      * Fix url.
      *
@@ -157,5 +143,26 @@ class RowButton extends VisualItem
         }
 
         return str_replace('//', '/', $path . $url);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     * @param string $jsFunction
+     *
+     * @return string
+     */
+    protected function getOnClickValue($viewName, $jsFunction)
+    {
+        if ($this->confirm) {
+            return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\',\''
+                . $this->label . '\',\'' . self::$i18n->trans('are-you-sure-action') . '\');';
+        }
+
+        if (empty($jsFunction)) {
+            return 'this.form.action.value=\'' . $this->action . '\';this.form.submit();';
+        }
+
+        return $jsFunction . '(\'' . $viewName . '\',\'' . $this->action . '\');';
     }
 }

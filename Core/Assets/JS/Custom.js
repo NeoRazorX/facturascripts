@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,15 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function setAction(viewName, value) {
-    $("#form" + viewName + " :input[name=\"action\"]").val(value);
-    $("#form" + viewName).submit();
-}
-
-function confirmAction(viewName, action) {
+function confirmAction(viewName, action, title, message) {
     bootbox.confirm({
-        title: "Confirm Text",
-        message: "Are you sure?",
+        title: title,
+        message: message,
         closeButton: false,
         buttons: {
             cancel: {
@@ -32,12 +27,13 @@ function confirmAction(viewName, action) {
             },
             confirm: {
                 label: '<i class="fas fa-check"></i> Confirm',
-                className: "btn-danger"
+                className: "btn-warning"
             }
         },
         callback: function (result) {
             if (result) {
-                setAction(viewName, action);
+                $("#form" + viewName + " :input[name=\"action\"]").val(action);
+                $("#form" + viewName).submit();
             }
         }
     });

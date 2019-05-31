@@ -86,6 +86,7 @@ class ListAsiento extends ListController
         $newButton = [
             'action' => 'renumber',
             'color' => 'warning',
+            'confirm' => true,
             'icon' => 'fas fa-sort-numeric-down',
             'label' => 'renumber-accounting',
             'type' => 'action',
