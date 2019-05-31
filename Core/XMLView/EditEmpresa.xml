@@ -37,7 +37,7 @@
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
                 </widget>
             </column>
-            <column name="fiscal-number" numcolumns="3" order="130" >            
+            <column name="fiscal-number" numcolumns="3" order="130">            
                 <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
             <column name="administrator" description="administrator" numcolumns="3" order="130">

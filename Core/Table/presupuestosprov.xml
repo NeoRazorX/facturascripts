@@ -107,12 +107,7 @@
     <column>
         <name>observaciones</name>
         <type>text</type>
-    </column>
-    <column>
-        <!--TODO: remove on next update-->
-        <name>pagado</name>
-        <type>boolean</type>
-    </column>
+    </column>    
     <column>
         <name>tasaconv</name>
         <type>double precision</type>
