@@ -146,17 +146,8 @@ class AppController extends App
      */
     private function getControllerFullName(string $pageName)
     {
-        $controllerName = 'FacturaScripts\\Dinamic\\Controller\\' . $pageName;
-        if (!class_exists($controllerName)) {
-            $controllerName = 'FacturaScripts\\Core\\Controller\\' . $pageName;
-
-            /// This is important in development and unattended installations
-            if (FS_DEBUG || !file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
-                $this->pluginManager->deploy();
-            }
-        }
-
-        return $controllerName;
+        $controllerName = '\\FacturaScripts\\Dinamic\\Controller\\' . $pageName;
+        return class_exists($controllerName) ? $controllerName : '\\FacturaScripts\\Core\\Controller\\' . $pageName;
     }
 
     /**
