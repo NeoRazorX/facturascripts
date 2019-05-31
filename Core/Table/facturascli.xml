@@ -167,11 +167,6 @@
         <default>false</default>
     </column>
     <column>
-        <!--TODO: remove on next update-->
-        <name>pagado</name>
-        <type>boolean</type>
-    </column>
-    <column>
         <name>porcomision</name>
         <type>double precision</type>
     </column>
