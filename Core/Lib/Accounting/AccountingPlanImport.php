@@ -85,6 +85,11 @@ class AccountingPlanImport
             return false;
         }
 
+        if (!file_exists($filePath)) {
+            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
+            return false;
+        }
+
         // start transaction
         $this->dataBase->beginTransaction();
         $return = true;
@@ -156,9 +161,9 @@ class AccountingPlanImport
      * @param string $code
      * @param string $definition
      * @param string $parentCode
-     * @param string $idcuentaesp
+     * @param string $codcuentaesp
      */
-    private function createAccount(string $code, string $definition, string $parentCode = '', string $idcuentaesp = '')
+    private function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
     {
         $account = new Model\Cuenta();
         $account->disableAditionalTest();
@@ -189,7 +194,7 @@ class AccountingPlanImport
 
         $account->codejercicio = $this->ejercicio->codejercicio;
         $account->codcuenta = $code;
-        $account->codcuentaesp = empty($idcuentaesp) ? null : $idcuentaesp;
+        $account->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $account->descripcion = $definition;
         $account->save();
     }
@@ -200,8 +205,9 @@ class AccountingPlanImport
      * @param string $code
      * @param string $description
      * @param string $parentCode
+     * @param string $codcuentaesp
      */
-    private function createSubaccount(string $code, string $description, string $parentCode)
+    private function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp)
     {
         $subaccount = new Model\Subcuenta();
         $subaccount->disableAditionalTest();
@@ -230,6 +236,7 @@ class AccountingPlanImport
         $subaccount->codejercicio = $this->ejercicio->codejercicio;
         $subaccount->idcuenta = $account->idcuenta;
         $subaccount->codcuenta = $account->codcuenta;
+        $subaccount->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $subaccount->codsubcuenta = $code;
         $subaccount->descripcion = $description;
         $subaccount->save();
@@ -310,19 +317,20 @@ class AccountingPlanImport
      */
     private function processCsvData(string $filePath)
     {
-        if (!file_exists($filePath)) {
-            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
-        }
-
         $csv = new Csv();
         $csv->auto($filePath);
-        $accountPlan = [];
+
         $length = [];
+        $accountPlan = [];
         foreach ($csv->data as $value) {
             $key = $value[$csv->titles[0]];
             if (strlen($key) > 0) {
-                $length[] = strlen($key);
-                $accountPlan[$key] = utf8_encode($value[$csv->titles[1]]);
+                $code = $value[$csv->titles[0]];
+                $accountPlan[$code] = [
+                    'descripcion' => $value[$csv->titles[1]],
+                    'codcuentaesp' => $value[$csv->titles[2]]
+                ];
+                $length[] = strlen($code);
             }
         }
 
@@ -336,17 +344,17 @@ class AccountingPlanImport
         foreach ($accountPlan as $key => $value) {
             switch (strlen($key)) {
                 case $minLength:
-                    $this->createAccount($key, $value);
+                    $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
                     break;
 
                 case $maxLength:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createSubaccount($key, $value, $parentCode);
+                    $this->createSubaccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
 
                 default:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createAccount($key, $value, $parentCode);
+                    $this->createAccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
             }
         }
