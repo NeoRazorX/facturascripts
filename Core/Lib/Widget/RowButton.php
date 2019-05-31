@@ -40,6 +40,12 @@ class RowButton extends VisualItem
 
     /**
      *
+     * @var boolean
+     */
+    public $confirm;
+
+    /**
+     *
      * @var string
      */
     public $icon;
@@ -64,7 +70,7 @@ class RowButton extends VisualItem
     public $type;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -72,6 +78,7 @@ class RowButton extends VisualItem
         parent::__construct($data);
         $this->action = $data['action'] ?? '';
         $this->color = $data['color'] ?? '';
+        $this->confirm = isset($data['confirm']) ? (bool) $data['confirm'] : false;
         $this->icon = $data['icon'] ?? '';
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int) $data['level'] : 0;
@@ -79,7 +86,7 @@ class RowButton extends VisualItem
     }
 
     /**
-     * 
+     *
      * @param bool   $small
      * @param string $viewName
      * @param string $jsFunction
@@ -116,11 +123,23 @@ class RowButton extends VisualItem
                     . $this->action . '" title="' . $this->label . '">' . $icon . $label . '</button>';
 
             default:
-                $onclick = empty($jsFunction) ? 'this.form.action.value=\'' . $this->action . '\';this.form.submit();' :
-                    $jsFunction . '(\'' . $viewName . '\',\'' . $this->action . '\');';
+                $onclick = $this->getOnClickValue($viewName, $jsFunction);
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $this->label . '">' . $icon . $label . '</button>';
         }
+    }
+
+    private function getOnClickValue($viewName, $jsFunction)
+    {
+        if ($this->confirm) {
+            return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\');';
+        }
+
+        if (empty($jsFunction)) {
+            return 'this.form.action.value=\'' . $this->action . '\';this.form.submit();';
+        }
+
+        return $jsFunction . '(\'' . $viewName . '\',\'' . $this->action . '\');';
     }
 
     /**

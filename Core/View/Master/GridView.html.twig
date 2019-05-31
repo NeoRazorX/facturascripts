@@ -135,7 +135,7 @@
                                 {% set row = detailView.getRow('actions') %}
                                 {% if row is not empty %}
                                     <div class="col d-flex justify-content-center">
-                                        {{ row.render() | raw }}
+                                        {{ row.render(false, currentView.getViewName()) | raw }}
                                     </div>
                                 {% endif %}
                                 {# -- Save actions -- #}
