@@ -63,6 +63,8 @@ class EditBalance extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
         $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account');
         $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated');
     }
@@ -84,7 +86,7 @@ class EditBalance extends EditController
             case 'EditBalanceCuentaA':
                 $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
                 $where = [new DataBaseWhere('codbalance', $codbalance)];
-                $view->loadData('', $where, [], 0, 0);
+                $view->loadData('', $where, ['id' => 'DESC'], 0, 0);
                 break;
         }
     }
