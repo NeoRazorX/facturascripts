@@ -35,7 +35,7 @@
         <column name="expiration" order="120">
             <widget type="number" fieldname="plazovencimiento" decimal="0" />
         </column>
-        <column name="expiration-type" numcolumns="4" order="125">
+        <column name="expiration-type" numcolumns="4" order="130">
             <widget type="select" fieldname="tipovencimiento" translate="true">
                 <values title="days">days</values>
                 <values title="weeks">weeks</values>
@@ -43,16 +43,13 @@
                 <values title="years">years</values>
             </widget>
         </column>
-        <column name="generate-receipt" display="center" order="135">
-            <widget type="select" fieldname="genrecibos" translate="true">
-                <values title="paid">Pagados</values>
-                <values title="issued">Emitidos</values>
-                <option color="green">Pagados</option>
-                <option color="brown">Emitidos</option>
-            </widget>
-        </column>
-        <column name="domicilied" display="center" order="145">
+        <column name="domicilied" display="center" order="140">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="plazovencimiento">0</option>
+        </row>
+    </rows>
 </view>

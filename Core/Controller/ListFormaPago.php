@@ -95,20 +95,6 @@ class ListFormaPago extends ListController
 
         /// filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
-        $this->addFilterSelect($viewName, 'genreceipt', 'generate-receipt', 'genrecibos', $this->getGenerateReceiptOptions());
         $this->addFilterCheckbox($viewName, 'domiciliado', 'domicilied', 'domiciliado');
-    }
-
-    /**
-     * Return list of generate receipt availables
-     *
-     * @return array
-     */
-    private function getGenerateReceiptOptions()
-    {
-        return [
-            ['code' => 'Pagados', 'description' => $this->i18n->trans('paid')],
-            ['code' => 'Emitidos', 'description' => $this->i18n->trans('issued')],
-        ];
     }
 }
