@@ -225,7 +225,7 @@ class EditCliente extends EditController
         switch ($viewName) {
             case 'EditCliente':
                 parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues();
+                $this->setCustomWidgetValues($viewName);
                 break;
 
             case 'EditCuentaBancoCliente':
@@ -260,23 +260,34 @@ class EditCliente extends EditController
         }
     }
 
-    protected function setCustomWidgetValues()
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function setCustomWidgetValues($viewName)
     {
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+
+        /// Model exists?
+        if (!$this->views[$viewName]->model->exists()) {
+            $this->views[$viewName]->disableColumn('billing-address');
+            $this->views[$viewName]->disableColumn('shipping-address');
+            return;
+        }
+
         /// Search for client contacts
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->getViewModelValue($viewName, 'codcliente');
         $where = [new DataBaseWhere('codcliente', $codcliente)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         /// Load values option to default billing address from client contacts list
-        $columnBilling = $this->views['EditCliente']->columnForName('billing-address');
+        $columnBilling = $this->views[$viewName]->columnForName('billing-address');
         $columnBilling->widget->setValuesFromCodeModel($contacts);
 
         /// Load values option to default shipping address from client contacts list
-        $columnShipping = $this->views['EditCliente']->columnForName('shipping-address');
+        $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
         $columnShipping->widget->setValuesFromCodeModel($contacts);
-
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
     }
 }
