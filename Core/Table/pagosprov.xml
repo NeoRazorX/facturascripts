@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : pagosprov.xml
+    Description:
+        Estructura de la tabla pagosprov.
+-->
+<table>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+    </column>
+    <column>
+        <name>codpago</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idasiento</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idfactura</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idpago</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('pagosprov_idpago_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>importe</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <constraint>
+        <name>pagosprov_pkey</name>
+        <type>PRIMARY KEY (idpago)</type>
+    </constraint>
+    <constraint>
+        <name>ca_pagosprov_asiento</name>
+        <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pagosprov_facturasprov</name>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pagosprov_proveedores</name>
+        <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+</table>

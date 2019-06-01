@@ -168,6 +168,17 @@ class EditProveedor extends EditController
 
     /**
      * 
+     * @param string $viewName
+     */
+    protected function createPaymentView($viewName = 'ListPagoProveedor')
+    {
+        $this->addListView($viewName, 'PagoProveedor', 'payments', 'fas fa-piggy-bank');
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+    }
+
+    /**
+     * 
      * @param string $name
      * @param string $model
      * @param string $label
@@ -206,6 +217,7 @@ class EditProveedor extends EditController
         $this->createListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
         $this->createListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
         $this->createListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        $this->createPaymentView();
     }
 
     /**
@@ -227,6 +239,7 @@ class EditProveedor extends EditController
             case 'ListAlbaranProveedor':
             case 'ListContacto':
             case 'ListFacturaProveedor':
+            case 'ListPagoProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];

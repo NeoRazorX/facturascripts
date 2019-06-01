@@ -168,6 +168,17 @@ class EditCliente extends EditController
 
     /**
      * 
+     * @param string $viewName
+     */
+    protected function createPaymentView($viewName = 'ListPagoCliente')
+    {
+        $this->addListView($viewName, 'PagoCliente', 'payments', 'fas fa-piggy-bank');
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+    }
+
+    /**
+     * 
      * @param string $name
      * @param string $model
      * @param string $label
@@ -206,11 +217,7 @@ class EditCliente extends EditController
         $this->createListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createListView('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->createListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
-
-        /// Disable buttons
-        $this->setSettings('ListCliente', 'btnNew', false);
-        $this->setSettings('ListCliente', 'btnDelete', false);
+        $this->createPaymentView();
     }
 
     /**
@@ -232,18 +239,11 @@ class EditCliente extends EditController
             case 'ListAlbaranCliente':
             case 'ListContacto':
             case 'ListFacturaCliente':
+            case 'ListPagoCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where);
-                break;
-
-            case 'ListCliente':
-                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
-                if (!empty($codgrupo)) {
-                    $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                    $view->loadData('', $where);
-                }
                 break;
 
             case 'ListLineaFacturaCliente':
