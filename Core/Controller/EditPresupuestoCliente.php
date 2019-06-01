@@ -47,11 +47,9 @@ class EditPresupuestoCliente extends SalesDocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'sales';
+        $pagedata['title'] = 'estimation';
         $pagedata['icon'] = 'fas fa-file-invoice';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

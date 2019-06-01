@@ -50,11 +50,9 @@ class EditEmpresa extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'company';
         $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'company';
         $pagedata['icon'] = 'fas fa-building';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

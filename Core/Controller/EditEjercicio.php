@@ -52,11 +52,9 @@ class EditEjercicio extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'exercise';
         $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'exercise';
         $pagedata['icon'] = 'fas fa-calendar-alt';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

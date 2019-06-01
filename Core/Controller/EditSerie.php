@@ -50,11 +50,9 @@ class EditSerie extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'serie';
         $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'serie';
         $pagedata['icon'] = 'fas fa-layer-group';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

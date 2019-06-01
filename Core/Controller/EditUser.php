@@ -52,11 +52,9 @@ class EditUser extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
+        $pagedata['menu'] = 'admin';
         $pagedata['title'] = 'user';
         $pagedata['icon'] = 'fas fa-user-tie';
-        $pagedata['menu'] = 'admin';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

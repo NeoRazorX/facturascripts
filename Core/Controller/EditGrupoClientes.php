@@ -51,11 +51,9 @@ class EditGrupoClientes extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customer-group';
         $pagedata['menu'] = 'sales';
+        $pagedata['title'] = 'customer-group';
         $pagedata['icon'] = 'fas fa-folder-open';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

@@ -53,11 +53,9 @@ class EditFacturaProveedor extends PurchaseDocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'invoice';
         $pagedata['menu'] = 'purchases';
+        $pagedata['title'] = 'invoice';
         $pagedata['icon'] = 'fas fa-file-invoice-dollar';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

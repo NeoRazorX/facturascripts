@@ -47,11 +47,9 @@ class EditSecuenciaDocumento extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'document-sequence';
         $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'document-sequence';
         $pagedata['icon'] = 'fas fa-code';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

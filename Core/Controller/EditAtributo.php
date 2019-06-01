@@ -51,11 +51,9 @@ class EditAtributo extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'attribute';
         $pagedata['menu'] = 'warehouse';
+        $pagedata['title'] = 'attribute';
         $pagedata['icon'] = 'fas fa-sliders-h';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

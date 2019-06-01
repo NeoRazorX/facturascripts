@@ -55,6 +55,17 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
 
     /**
      * 
+     * @return array
+     */
+    public function getPageData()
+    {
+        $data = parent::getPageData();
+        $data['showonmenu'] = false;
+        return $data;
+    }
+
+    /**
+     * 
      * @param mixed $view
      */
     protected function loadCustomContactsWidget(&$view)

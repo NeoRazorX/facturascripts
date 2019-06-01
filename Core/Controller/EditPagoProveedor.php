@@ -44,9 +44,9 @@ class EditPagoProveedor extends EditController
     public function getPageData()
     {
         $data = parent::getPageData();
+        $data['menu'] = 'purchases';
         $data['title'] = 'payment';
         $data['icon'] = 'fas fa-piggy-bank';
-
         return $data;
     }
 }

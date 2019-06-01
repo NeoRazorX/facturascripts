@@ -44,9 +44,9 @@ class EditPagoCliente extends EditController
     public function getPageData()
     {
         $data = parent::getPageData();
+        $data['menu'] = 'sales';
         $data['title'] = 'payment';
         $data['icon'] = 'fas fa-piggy-bank';
-
         return $data;
     }
 }

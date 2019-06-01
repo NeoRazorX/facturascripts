@@ -50,11 +50,9 @@ class EditImpuesto extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'tax';
         $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'tax';
         $pagedata['icon'] = 'fas fa-plus-square';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

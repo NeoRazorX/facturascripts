@@ -48,11 +48,9 @@ class EditFabricante extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'manufacturer';
         $pagedata['menu'] = 'warehouse';
+        $pagedata['title'] = 'manufacturer';
         $pagedata['icon'] = 'fas fa-columns';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

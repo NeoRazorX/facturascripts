@@ -50,11 +50,9 @@ class EditAsiento extends EditController
     public function getPageData(): array
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entries';
         $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'accounting-entries';
         $pagedata['icon'] = 'fas fa-balance-scale';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

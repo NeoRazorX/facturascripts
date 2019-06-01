@@ -48,11 +48,9 @@ class EditAlmacen extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'warehouse';
         $pagedata['menu'] = 'warehouse';
+        $pagedata['title'] = 'warehouse';
         $pagedata['icon'] = 'fas fa-building';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

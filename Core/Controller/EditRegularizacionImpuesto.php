@@ -91,11 +91,9 @@ class EditRegularizacionImpuesto extends EditController
     public function getPageData(): array
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'vat-regularization';
         $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'vat-regularization';
         $pagedata['icon'] = 'fas fa-map-signs';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

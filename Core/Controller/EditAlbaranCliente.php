@@ -46,11 +46,9 @@ class EditAlbaranCliente extends SalesDocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'delivery-note';
         $pagedata['menu'] = 'sales';
+        $pagedata['title'] = 'delivery-note';
         $pagedata['icon'] = 'fas fa-file-invoice';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

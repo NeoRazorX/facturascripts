@@ -47,11 +47,9 @@ class EditAlbaranProveedor extends PurchaseDocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'delivery-note';
         $pagedata['menu'] = 'purchases';
+        $pagedata['title'] = 'delivery-note';
         $pagedata['icon'] = 'fas fa-file-invoice';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

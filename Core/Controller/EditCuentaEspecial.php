@@ -49,11 +49,9 @@ class EditCuentaEspecial extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
+        $pagedata['menu'] = 'accounting';
         $pagedata['title'] = 'special-account';
         $pagedata['icon'] = 'fas fa-newspaper';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 
