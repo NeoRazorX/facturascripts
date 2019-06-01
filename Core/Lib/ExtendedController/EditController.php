@@ -44,6 +44,19 @@ abstract class EditController extends PanelController
     }
 
     /**
+     * Return the basic data for this page.
+     * 
+     * @return array
+     */
+    public function getPageData()
+    {
+        $data = parent::getPageData();
+        $data['showonmenu'] = false;
+
+        return $data;
+    }
+
+    /**
      * Create the view to display.
      */
     protected function createViews()
