@@ -20,24 +20,29 @@
 -->
 <view>
     <columns>
-        <column name="id" display="none" order="100">
-            <widget type="text" fieldname="idpago" />
-        </column>
-        <column name="supplier" display="none" order="110">
-            <widget type="autocomplete" fieldname="codproveedor">
-                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
-            </widget>
-        </column>
-        <column name="description" order="120">
-            <widget type="textarea" fieldname="descripcion" />
-        </column>
-        <column name="amount" display="right" order="130">
-            <widget type="money" fieldname="total">
-                <option color="danger">lt:0</option>
-            </widget>
-        </column>
-        <column name="date" display="right" order="140">
-            <widget type="date" fieldname="fecha" />
-        </column>
+        <group name="main" numcolumns="12">
+            <column name="id" display="none" order="100">
+                <widget type="text" fieldname="idpago" />
+            </column>
+            <column name="supplier" order="110">
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor" required="true" readonly="dinamic">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="amount" display="right" order="120">
+                <widget type="money" fieldname="importe" />
+            </column>
+            <column name="date" display="right" order="130">
+                <widget type="date" fieldname="fecha" />
+            </column>
+            <column name="user" display="right" order="140">
+                <widget type="select" fieldname="nick" readonly="true">
+                    <values source="users" fieldcode="nick" fieldtitle="nick" />
+                </widget>
+            </column>
+            <column name="description" numcolumns="12" order="150">
+                <widget type="textarea" fieldname="descripcion" required="true" />
+            </column>
+        </group>
     </columns>
 </view>

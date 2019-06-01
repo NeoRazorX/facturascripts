@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -48,5 +49,18 @@ class EditPagoCliente extends EditController
         $data['title'] = 'payment';
         $data['icon'] = 'fas fa-piggy-bank';
         return $data;
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        if (empty($this->views[$this->active]->model->nick)) {
+            $this->views[$this->active]->model->nick = $this->user->nick;
+        }
     }
 }

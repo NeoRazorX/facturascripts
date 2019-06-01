@@ -62,6 +62,17 @@ class PagoCliente extends Base\Payment
 
     /**
      * 
+     * @return Cliente
+     */
+    public function getSubject()
+    {
+        $cliente = new Cliente();
+        $cliente->loadFromCode($this->codcliente);
+        return $cliente;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function install()
@@ -82,5 +93,21 @@ class PagoCliente extends Base\Payment
     public static function tableName()
     {
         return 'pagoscli';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        if ('list' === $type && !empty($this->codcliente)) {
+            return $this->getSubject()->url() . '&activetab=List' . $this->modelClassName();
+        }
+
+        return parent::url($type, $list);
     }
 }

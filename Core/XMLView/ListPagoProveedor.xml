@@ -32,7 +32,7 @@
             <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="amount" display="right" order="130">
-            <widget type="money" fieldname="total">
+            <widget type="money" fieldname="importe">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
