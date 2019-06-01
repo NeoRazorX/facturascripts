@@ -85,13 +85,11 @@ class EditCliente extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customer';
-        $pagedata['icon'] = 'fas fa-users';
-        $pagedata['menu'] = 'sales';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'customer';
+        $data['icon'] = 'fas fa-users';
+        return $data;
     }
 
     /**
@@ -168,6 +166,17 @@ class EditCliente extends EditController
 
     /**
      * 
+     * @param string $viewName
+     */
+    protected function createPaymentView($viewName = 'ListPagoCliente')
+    {
+        $this->addListView($viewName, 'PagoCliente', 'payments', 'fas fa-piggy-bank');
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+    }
+
+    /**
+     * 
      * @param string $name
      * @param string $model
      * @param string $label
@@ -206,11 +215,7 @@ class EditCliente extends EditController
         $this->createListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createListView('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->createListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->addListView('ListCliente', 'Cliente', 'same-group', 'fas fa-users');
-
-        /// Disable buttons
-        $this->setSettings('ListCliente', 'btnNew', false);
-        $this->setSettings('ListCliente', 'btnDelete', false);
+        $this->createPaymentView();
     }
 
     /**
@@ -225,25 +230,18 @@ class EditCliente extends EditController
         switch ($viewName) {
             case 'EditCliente':
                 parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues();
+                $this->setCustomWidgetValues($viewName);
                 break;
 
             case 'EditCuentaBancoCliente':
             case 'ListAlbaranCliente':
             case 'ListContacto':
             case 'ListFacturaCliente':
+            case 'ListPagoCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where);
-                break;
-
-            case 'ListCliente':
-                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
-                if (!empty($codgrupo)) {
-                    $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                    $view->loadData('', $where);
-                }
                 break;
 
             case 'ListLineaFacturaCliente':
@@ -260,23 +258,34 @@ class EditCliente extends EditController
         }
     }
 
-    protected function setCustomWidgetValues()
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function setCustomWidgetValues($viewName)
     {
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+
+        /// Model exists?
+        if (!$this->views[$viewName]->model->exists()) {
+            $this->views[$viewName]->disableColumn('billing-address');
+            $this->views[$viewName]->disableColumn('shipping-address');
+            return;
+        }
+
         /// Search for client contacts
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $codcliente = $this->getViewModelValue($viewName, 'codcliente');
         $where = [new DataBaseWhere('codcliente', $codcliente)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         /// Load values option to default billing address from client contacts list
-        $columnBilling = $this->views['EditCliente']->columnForName('billing-address');
+        $columnBilling = $this->views[$viewName]->columnForName('billing-address');
         $columnBilling->widget->setValuesFromCodeModel($contacts);
 
         /// Load values option to default shipping address from client contacts list
-        $columnShipping = $this->views['EditCliente']->columnForName('shipping-address');
+        $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
         $columnShipping->widget->setValuesFromCodeModel($contacts);
-
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditCliente']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
     }
 }

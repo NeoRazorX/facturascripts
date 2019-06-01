@@ -36,12 +36,11 @@ class ListFabricante extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'manufacturers';
-        $pagedata['icon'] = 'fas fa-columns';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'manufacturers';
+        $data['icon'] = 'fas fa-columns';
+        return $data;
     }
 
     /**

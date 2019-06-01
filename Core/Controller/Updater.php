@@ -53,13 +53,12 @@ class Updater extends Controller
      */
     public function getPageData()
     {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'admin';
-        $pageData['submenu'] = 'control-panel';
-        $pageData['title'] = 'updater';
-        $pageData['icon'] = 'fas fa-cloud-download-alt';
-
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['submenu'] = 'control-panel';
+        $data['title'] = 'updater';
+        $data['icon'] = 'fas fa-cloud-download-alt';
+        return $data;
     }
 
     /**
@@ -133,11 +132,17 @@ class Updater extends Controller
                 $this->download();
                 break;
 
-            case 'update':
-                $this->update();
-                $pluginManager = new PluginManager();
-                $pluginManager->deploy(true, true);
+            case 'post-update':
+                $this->updaterItems = $this->getUpdateItems();
                 $this->initNewModels();
+                break;
+
+            case 'update':
+                if ($this->update()) {
+                    $pluginManager = new PluginManager();
+                    $pluginManager->deploy(true, true);
+                    $this->redirect($this->getClassName() . '?action=post-update');
+                }
                 break;
 
             default:

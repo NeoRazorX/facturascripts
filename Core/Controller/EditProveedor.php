@@ -85,13 +85,11 @@ class EditProveedor extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'supplier';
-        $pagedata['icon'] = 'fas fa-users';
-        $pagedata['menu'] = 'purchases';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'supplier';
+        $data['icon'] = 'fas fa-users';
+        return $data;
     }
 
     /**
@@ -168,6 +166,17 @@ class EditProveedor extends EditController
 
     /**
      * 
+     * @param string $viewName
+     */
+    protected function createPaymentView($viewName = 'ListPagoProveedor')
+    {
+        $this->addListView($viewName, 'PagoProveedor', 'payments', 'fas fa-piggy-bank');
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+    }
+
+    /**
+     * 
      * @param string $name
      * @param string $model
      * @param string $label
@@ -206,6 +215,7 @@ class EditProveedor extends EditController
         $this->createListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
         $this->createListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
         $this->createListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        $this->createPaymentView();
     }
 
     /**
@@ -220,13 +230,14 @@ class EditProveedor extends EditController
         switch ($viewName) {
             case 'EditProveedor':
                 parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues();
+                $this->setCustomWidgetValues($viewName);
                 break;
 
             case 'EditCuentaBancoProveedor':
             case 'ListAlbaranProveedor':
             case 'ListContacto':
             case 'ListFacturaProveedor':
+            case 'ListPagoProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
@@ -247,19 +258,29 @@ class EditProveedor extends EditController
         }
     }
 
-    protected function setCustomWidgetValues()
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function setCustomWidgetValues($viewName)
     {
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
+        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+
+        /// Model exists?
+        if (!$this->views[$viewName]->model->exists()) {
+            $this->views[$viewName]->disableColumn('contact');
+            return;
+        }
+
         /// Search for supplier contacts
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $codproveedor = $this->getViewModelValue($viewName, 'codproveedor');
         $where = [new DataBaseWhere('codproveedor', $codproveedor)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
         /// Load values option to default contact
-        $columnBilling = $this->views['EditProveedor']->columnForName('contact');
+        $columnBilling = $this->views[$viewName]->columnForName('contact');
         $columnBilling->widget->setValuesFromCodeModel($contacts);
-
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditProveedor']->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
     }
 }

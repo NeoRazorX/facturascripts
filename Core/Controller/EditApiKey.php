@@ -50,13 +50,11 @@ class EditApiKey extends EditController
      */
     public function getPageData()
     {
-        $pageData = parent::getPageData();
-        $pageData['title'] = 'api-key';
-        $pageData['menu'] = 'admin';
-        $pageData['icon'] = 'fas fa-key';
-        $pageData['showonmenu'] = false;
-
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'api-key';
+        $data['icon'] = 'fas fa-key';
+        return $data;
     }
 
     /**

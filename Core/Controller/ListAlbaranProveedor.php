@@ -37,12 +37,11 @@ class ListAlbaranProveedor extends ListBusinessDocument
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'delivery-notes';
-        $pagedata['icon'] = 'fas fa-copy';
-        $pagedata['menu'] = 'purchases';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'delivery-notes';
+        $data['icon'] = 'fas fa-copy';
+        return $data;
     }
 
     /**

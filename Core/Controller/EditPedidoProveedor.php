@@ -46,12 +46,10 @@ class EditPedidoProveedor extends PurchaseDocumentController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'order';
-        $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fas fa-file-invoice';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'order';
+        $data['icon'] = 'fas fa-file-invoice';
+        return $data;
     }
 }

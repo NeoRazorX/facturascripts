@@ -35,12 +35,11 @@ class ListUser extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fas fa-users';
-        $pagedata['menu'] = 'admin';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'users';
+        $data['icon'] = 'fas fa-users';
+        return $data;
     }
 
     /**

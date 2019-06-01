@@ -46,12 +46,10 @@ class EditAttachedFile extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'attached-file';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-paperclip';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'attached-file';
+        $data['icon'] = 'fas fa-paperclip';
+        return $data;
     }
 }

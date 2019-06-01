@@ -39,13 +39,12 @@ class ListLogMessage extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'logs';
-        $pagedata['icon'] = 'fas fa-file-medical-alt';
-        $pagedata['menu'] = 'admin';
-        $pagedata['submenu'] = 'control-panel';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['submenu'] = 'control-panel';
+        $data['title'] = 'logs';
+        $data['icon'] = 'fas fa-file-medical-alt';
+        return $data;
     }
 
     /**

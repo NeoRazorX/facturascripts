@@ -48,13 +48,11 @@ class EditBalance extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'balance';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-clipboard';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'balance';
+        $data['icon'] = 'fas fa-clipboard';
+        return $data;
     }
 
     /**
@@ -63,6 +61,8 @@ class EditBalance extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
         $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account');
         $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated');
     }
@@ -84,7 +84,7 @@ class EditBalance extends EditController
             case 'EditBalanceCuentaA':
                 $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
                 $where = [new DataBaseWhere('codbalance', $codbalance)];
-                $view->loadData('', $where, [], 0, 0);
+                $view->loadData('', $where, ['id' => 'DESC'], 0, 0);
                 break;
         }
     }

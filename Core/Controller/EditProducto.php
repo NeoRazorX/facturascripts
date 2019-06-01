@@ -48,13 +48,11 @@ class EditProducto extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'product';
-        $pagedata['icon'] = 'fas fa-cube';
-        $pagedata['menu'] = 'warehouse';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'product';
+        $data['icon'] = 'fas fa-cube';
+        return $data;
     }
 
     /**

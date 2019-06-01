@@ -38,12 +38,11 @@ class ListCliente extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fas fa-users';
-        $pagedata['menu'] = 'sales';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'customers';
+        $data['icon'] = 'fas fa-users';
+        return $data;
     }
 
     /**

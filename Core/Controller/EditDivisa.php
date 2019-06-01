@@ -46,12 +46,10 @@ class EditDivisa extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'currency';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-money-bill-alt';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'currency';
+        $data['icon'] = 'fas fa-money-bill-alt';
+        return $data;
     }
 }

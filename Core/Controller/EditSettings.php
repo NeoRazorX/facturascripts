@@ -43,13 +43,12 @@ class EditSettings extends ExtendedController\PanelController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'app-preferences';
-        $pagedata['icon'] = 'fas fa-cogs';
-        $pagedata['menu'] = 'admin';
-        $pagedata['submenu'] = 'control-panel';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['submenu'] = 'control-panel';
+        $data['title'] = 'app-preferences';
+        $data['icon'] = 'fas fa-cogs';
+        return $data;
     }
 
     /**

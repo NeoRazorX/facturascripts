@@ -35,12 +35,11 @@ class ListProducto extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'products';
-        $pagedata['icon'] = 'fas fa-cubes';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'products';
+        $data['icon'] = 'fas fa-cubes';
+        return $data;
     }
 
     /**

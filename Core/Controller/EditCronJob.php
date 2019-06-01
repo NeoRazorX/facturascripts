@@ -46,13 +46,11 @@ class EditCronJob extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'cron-job';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-cogs';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'cron-job';
+        $data['icon'] = 'fas fa-cogs';
+        return $data;
     }
 
     protected function createViews()

@@ -36,12 +36,11 @@ class ListFamilia extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'families';
-        $pagedata['icon'] = 'fas fa-object-group';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'families';
+        $data['icon'] = 'fas fa-object-group';
+        return $data;
     }
 
     /**

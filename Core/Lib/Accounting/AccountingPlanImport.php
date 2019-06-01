@@ -85,6 +85,11 @@ class AccountingPlanImport
             return false;
         }
 
+        if (!file_exists($filePath)) {
+            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
+            return false;
+        }
+
         // start transaction
         $this->dataBase->beginTransaction();
         $return = true;
@@ -156,9 +161,11 @@ class AccountingPlanImport
      * @param string $code
      * @param string $definition
      * @param string $parentCode
-     * @param string $idcuentaesp
+     * @param string $codcuentaesp
+     *
+     * @return bool
      */
-    private function createAccount(string $code, string $definition, string $parentCode = '', string $idcuentaesp = '')
+    private function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
     {
         $account = new Model\Cuenta();
         $account->disableAditionalTest();
@@ -169,7 +176,7 @@ class AccountingPlanImport
             new DataBaseWhere('codcuenta', $code)
         ];
         if ($account->loadFromCode('', $where)) {
-            return;
+            return true;
         }
 
         if (!empty($parentCode)) {
@@ -180,7 +187,7 @@ class AccountingPlanImport
             $parent = new Model\Cuenta();
             if (!$parent->loadFromCode('', $whereParent)) {
                 $this->miniLog->alert($this->i18n->trans('parent-error'));
-                return;
+                return false;
             }
 
             $account->parent_codcuenta = $parent->codcuenta;
@@ -189,9 +196,9 @@ class AccountingPlanImport
 
         $account->codejercicio = $this->ejercicio->codejercicio;
         $account->codcuenta = $code;
-        $account->codcuentaesp = empty($idcuentaesp) ? null : $idcuentaesp;
+        $account->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $account->descripcion = $definition;
-        $account->save();
+        return $account->save();
     }
 
     /**
@@ -200,8 +207,11 @@ class AccountingPlanImport
      * @param string $code
      * @param string $description
      * @param string $parentCode
+     * @param string $codcuentaesp
+     *
+     * @return bool
      */
-    private function createSubaccount(string $code, string $description, string $parentCode)
+    private function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
     {
         $subaccount = new Model\Subcuenta();
         $subaccount->disableAditionalTest();
@@ -212,7 +222,7 @@ class AccountingPlanImport
             new DataBaseWhere('codsubcuenta', $code)
         ];
         if ($subaccount->loadFromCode('', $where)) {
-            return;
+            return true;
         }
 
         $account = new Model\Cuenta();
@@ -224,15 +234,16 @@ class AccountingPlanImport
         /// the account exist?
         if (!$account->loadFromCode('', $whereAccount)) {
             $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'account "' . $parentCode . '" not found']));
-            return;
+            return false;
         }
 
         $subaccount->codejercicio = $this->ejercicio->codejercicio;
         $subaccount->idcuenta = $account->idcuenta;
         $subaccount->codcuenta = $account->codcuenta;
+        $subaccount->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
         $subaccount->codsubcuenta = $code;
         $subaccount->descripcion = $description;
-        $subaccount->save();
+        return $subaccount->save();
     }
 
     /**
@@ -310,19 +321,20 @@ class AccountingPlanImport
      */
     private function processCsvData(string $filePath)
     {
-        if (!file_exists($filePath)) {
-            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
-        }
-
         $csv = new Csv();
         $csv->auto($filePath);
-        $accountPlan = [];
+
         $length = [];
+        $accountPlan = [];
         foreach ($csv->data as $value) {
             $key = $value[$csv->titles[0]];
             if (strlen($key) > 0) {
-                $length[] = strlen($key);
-                $accountPlan[$key] = utf8_encode($value[$csv->titles[1]]);
+                $code = $value[$csv->titles[0]];
+                $accountPlan[$code] = [
+                    'descripcion' => $value[$csv->titles[1]],
+                    'codcuentaesp' => $value[$csv->titles[2]]
+                ];
+                $length[] = strlen($code);
             }
         }
 
@@ -336,17 +348,17 @@ class AccountingPlanImport
         foreach ($accountPlan as $key => $value) {
             switch (strlen($key)) {
                 case $minLength:
-                    $this->createAccount($key, $value);
+                    $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
                     break;
 
                 case $maxLength:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createSubaccount($key, $value, $parentCode);
+                    $this->createSubaccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
 
                 default:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createAccount($key, $value, $parentCode);
+                    $this->createAccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
             }
         }

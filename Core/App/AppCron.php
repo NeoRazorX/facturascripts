@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,7 +64,7 @@ class AppCron extends App
     private function runPlugins()
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            $cronClass = "FacturaScripts\\Plugins\\{$pluginName}\\Cron";
+            $cronClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Cron';
             if (class_exists($cronClass)) {
                 $this->miniLog->notice($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
                 $cron = new $cronClass($pluginName);

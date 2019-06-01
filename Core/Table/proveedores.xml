@@ -112,4 +112,16 @@
         <name>proveedores_pkey</name>
         <type>PRIMARY KEY (codproveedor)</type>
     </constraint>
+    <constraint>
+        <name>ca_proveedores_formaspago</name>
+        <type>FOREIGN KEY (codpago) REFERENCES formaspago (codpago) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_proveedores_retenciones</name>
+        <type>FOREIGN KEY (codretencion) REFERENCES retenciones (codretencion) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_proveedores_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
 </table>

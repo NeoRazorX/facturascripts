@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\IPFilter;
+use FacturaScripts\Dinamic\Lib\IPFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -160,11 +160,12 @@ abstract class App
      */
     public function close(string $nick = '')
     {
+        if (FS_DEBUG) {
+            $this->pluginManager->deploy();
+        }
+
         new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick, $this->uri);
         $this->dataBase->close();
-        if (FS_DEBUG) {
-            ///$this->cache->clear();
-        }
     }
 
     /**
@@ -204,7 +205,7 @@ abstract class App
     private function loadPlugins()
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            $initClass = "FacturaScripts\\Plugins\\{$pluginName}\\Init";
+            $initClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Init';
             if (class_exists($initClass)) {
                 $initObject = new $initClass();
                 $initObject->init();

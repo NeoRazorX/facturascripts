@@ -46,12 +46,10 @@ class EditImpuestoZona extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'tax-area';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-globe-americas';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'tax-area';
+        $data['icon'] = 'fas fa-globe-americas';
+        return $data;
     }
 }

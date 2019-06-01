@@ -46,12 +46,10 @@ class EditPresupuestoProveedor extends PurchaseDocumentController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'estimation';
-        $pagedata['menu'] = 'purchases';
-        $pagedata['icon'] = 'fas fa-file-invoice';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'estimation';
+        $data['icon'] = 'fas fa-file-invoice';
+        return $data;
     }
 }

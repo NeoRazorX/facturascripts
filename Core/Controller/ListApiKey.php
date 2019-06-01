@@ -38,13 +38,12 @@ class ListApiKey extends ListController
      */
     public function getPageData()
     {
-        $pageData = parent::getPageData();
-        $pageData['title'] = 'api-keys';
-        $pageData['icon'] = 'fas fa-key';
-        $pageData['menu'] = 'admin';
-        $pageData['submenu'] = 'control-panel';
-
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['submenu'] = 'control-panel';
+        $data['title'] = 'api-keys';
+        $data['icon'] = 'fas fa-key';
+        return $data;
     }
 
     /**

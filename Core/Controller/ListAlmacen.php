@@ -36,12 +36,11 @@ class ListAlmacen extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'warehouses';
-        $pagedata['icon'] = 'fas fa-building';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'warehouses';
+        $data['icon'] = 'fas fa-building';
+        return $data;
     }
 
     /**

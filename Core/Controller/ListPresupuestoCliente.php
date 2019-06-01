@@ -38,12 +38,11 @@ class ListPresupuestoCliente extends ListBusinessDocument
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'estimations';
-        $pagedata['icon'] = 'fas fa-copy';
-        $pagedata['menu'] = 'sales';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'estimations';
+        $data['icon'] = 'fas fa-copy';
+        return $data;
     }
 
     /**

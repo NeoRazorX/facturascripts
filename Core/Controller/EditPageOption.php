@@ -72,13 +72,12 @@ class EditPageOption extends Controller
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'page-configuration';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-wrench';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['showonmenu'] = false;
+        $data['title'] = 'page-configuration';
+        $data['icon'] = 'fas fa-wrench';
+        return $data;
     }
 
     /**

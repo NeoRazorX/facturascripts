@@ -43,12 +43,11 @@ class ListFormaPago extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'payment-methods';
-        $pagedata['icon'] = 'fas fa-credit-card';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'payment-methods';
+        $data['icon'] = 'fas fa-credit-card';
+        return $data;
     }
 
     /**
@@ -95,20 +94,6 @@ class ListFormaPago extends ListController
 
         /// filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
-        $this->addFilterSelect($viewName, 'genreceipt', 'generate-receipt', 'genrecibos', $this->getGenerateReceiptOptions());
         $this->addFilterCheckbox($viewName, 'domiciliado', 'domicilied', 'domiciliado');
-    }
-
-    /**
-     * Return list of generate receipt availables
-     *
-     * @return array
-     */
-    private function getGenerateReceiptOptions()
-    {
-        return [
-            ['code' => 'Pagados', 'description' => $this->i18n->trans('paid')],
-            ['code' => 'Emitidos', 'description' => $this->i18n->trans('issued')],
-        ];
     }
 }

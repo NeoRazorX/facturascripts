@@ -36,12 +36,11 @@ class ListAgenciaTransporte extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'carriers';
-        $pagedata['icon'] = 'fas fa-truck';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'carriers';
+        $data['icon'] = 'fas fa-truck';
+        return $data;
     }
 
     /**

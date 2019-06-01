@@ -30,6 +30,15 @@ class EditIdentificadorFiscal extends EditController
 
     /**
      * 
+     * @return string
+     */
+    public function getModelClassName()
+    {
+        return 'IdentificadorFiscal';
+    }
+
+    /**
+     * 
      * @return array
      */
     public function getPageData()
@@ -38,17 +47,6 @@ class EditIdentificadorFiscal extends EditController
         $data['menu'] = 'admin';
         $data['title'] = 'fiscal-id';
         $data['icon'] = 'far fa-id-card';
-        $data['showonmenu'] = false;
-
         return $data;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getModelClassName()
-    {
-        return 'IdentificadorFiscal';
     }
 }

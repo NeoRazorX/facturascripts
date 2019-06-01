@@ -38,12 +38,11 @@ class ListEjercicio extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'exercises';
-        $pagedata['icon'] = 'fas fa-calendar-alt';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'exercises';
+        $data['icon'] = 'fas fa-calendar-alt';
+        return $data;
     }
 
     /**

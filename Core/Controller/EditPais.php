@@ -48,13 +48,11 @@ class EditPais extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'country';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-globe-americas';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'country';
+        $data['icon'] = 'fas fa-globe-americas';
+        return $data;
     }
 
     protected function createViews()

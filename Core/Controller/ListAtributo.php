@@ -37,12 +37,11 @@ class ListAtributo extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'attributes';
-        $pagedata['icon'] = 'fas fa-sliders-h';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'attributes';
+        $data['icon'] = 'fas fa-sliders-h';
+        return $data;
     }
 
     /**

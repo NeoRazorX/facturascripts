@@ -36,12 +36,11 @@ class ListPais extends ExtendedController\ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'countries';
-        $pagedata['icon'] = 'fas fa-globe-americas';
-        $pagedata['menu'] = 'admin';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'countries';
+        $data['icon'] = 'fas fa-globe-americas';
+        return $data;
     }
 
     /**

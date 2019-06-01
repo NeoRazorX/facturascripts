@@ -54,6 +54,17 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
+     * 
+     * @return array
+     */
+    public function getPageData()
+    {
+        $data = parent::getPageData();
+        $data['showonmenu'] = false;
+        return $data;
+    }
+
+    /**
      * Loads custom contact data for additional address details.
      *
      * @param mixed $view

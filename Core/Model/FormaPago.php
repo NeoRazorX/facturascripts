@@ -60,13 +60,6 @@ class FormaPago extends Base\ModelClass
     public $domiciliado;
 
     /**
-     * Paid -> mark the invoices generated as paid.
-     *
-     * @var string
-     */
-    public $genrecibos;
-
-    /**
      * Company identifier.
      *
      * @var int
@@ -94,7 +87,6 @@ class FormaPago extends Base\ModelClass
     {
         parent::clear();
         $this->domiciliado = false;
-        $this->genrecibos = 'Emitidos';
         $this->plazovencimiento = 0;
         $this->tipovencimiento = 'days';
     }

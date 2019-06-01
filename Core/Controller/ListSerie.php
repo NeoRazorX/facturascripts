@@ -36,12 +36,11 @@ class ListSerie extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'series';
-        $pagedata['icon'] = 'fas fa-layer-group';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'series';
+        $data['icon'] = 'fas fa-layer-group';
+        return $data;
     }
 
     /**

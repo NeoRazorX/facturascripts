@@ -51,13 +51,11 @@ class EditSubcuenta extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'subaccount';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fas fa-th-list';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'subaccount';
+        $data['icon'] = 'fas fa-th-list';
+        return $data;
     }
 
     /**

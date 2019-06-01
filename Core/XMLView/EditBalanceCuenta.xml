@@ -22,16 +22,16 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" order="100" numcolumns="2" display="none">
+            <column name="code" display="none" numcolumns="2" order="100">
                 <widget type="text" fieldname="id" onclick="EditBalance" readonly="true"/>
             </column>
-            <column name="cod-balance" order="110" numcolumns="2" display="none">
-                <widget type="text" fieldname="codbalance"/>
+            <column name="cod-balance" display="none" numcolumns="2" order="110">
+                <widget type="text" fieldname="codbalance" />
             </column>
-            <column name="account-code" order="120" numcolumns="4">
+            <column name="account-code" numcolumns="3" order="120">
                 <widget type="text" fieldname="codcuenta" />
             </column>
-            <column name="description" order="130" numcolumns="4">
+            <column name="description" order="130">
                 <widget type="text" fieldname="desccuenta" />
             </column>
         </group>

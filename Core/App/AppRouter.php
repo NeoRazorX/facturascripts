@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,6 +73,10 @@ class AppRouter
 
         if ('/cron' === $uri) {
             return new AppCron($uri);
+        }
+
+        if ('/deploy' === $uri) {
+            $this->deploy();
         }
 
         foreach ($this->routes as $key => $data) {
@@ -152,6 +156,17 @@ class AppRouter
         ];
 
         $this->save();
+    }
+
+    /**
+     * Deploy all dinamic files.
+     */
+    private function deploy()
+    {
+        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
+            $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
+            $pluginManager->deploy();
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
-codpago;descripcion;genrecibos;domiciliado;plazovencimiento;tipovencimiento;idempresa
-"CONT";"Al contado";"Pagados";false;"0";"days";"1"
-"TRANS";"Transferencia bancaria";"Emitidos";false;"1";"months";"1"
-"TARJETA";"Tarjeta de crédito";"Pagados";false;"0";"days";"1"
-"PAYPAL";"PayPal";"Pagados";false;"0";"days";"1"
+codpago;descripcion;domiciliado;plazovencimiento;tipovencimiento;idempresa
+"CONT";"Al contado";false;"0";"days";"1"
+"TRANS";"Transferencia bancaria";false;"1";"months";"1"
+"TARJETA";"Tarjeta de crédito";false;"0";"days";"1"
+"PAYPAL";"PayPal";false;"0";"days";"1"

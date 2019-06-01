@@ -103,6 +103,14 @@ class Empresa extends Base\Contact
     public $regimeniva;
 
     /**
+     * Type of tax identification of the client.
+     * Examples: CIF, NIF, CUIT ...
+     *
+     * @var string
+     */
+    public $tipoidfiscal;
+
+    /**
      * Website of the person.
      *
      * @var string
@@ -117,6 +125,7 @@ class Empresa extends Base\Contact
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
         $this->regimeniva = RegimenIVA::defaultValue();
+        $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
     }
 
     /**

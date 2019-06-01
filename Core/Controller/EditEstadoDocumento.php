@@ -46,12 +46,10 @@ class EditEstadoDocumento extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'status-document';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-tag';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'status-document';
+        $data['icon'] = 'fas fa-tag';
+        return $data;
     }
 }

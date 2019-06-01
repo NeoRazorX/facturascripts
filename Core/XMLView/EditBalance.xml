@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,45 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditBalance
- *
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" order="100" numcolumns="2">
+            <column name="code" numcolumns="3" order="100">
                 <widget type="text" fieldname="codbalance" icon="fas fa-hashtag" />
             </column>
             <column name="nature" numcolumns="3" order="110">
-                <widget type="select" fieldname="naturaleza">
+                <widget type="select" fieldname="naturaleza" translate="true" required="true">
                     <values title="asset">A</values>
                     <values title="liabilities">P</values>
                     <values title="profit-and-loss">PG</values>
                     <values title="income-and-expenses">IG</values>
                 </widget>
             </column>
-        </group>
-        <group name="descriptions" numcolumns="12">
-            <column name="description-1" order="120" numcolumns="6">
+            <column name="description-1" numcolumns="6" order="120">
                 <widget type="text" fieldname="descripcion1" />
             </column>
-            <column name="description-2" order="130" numcolumns="6">
+            <column name="description-2" numcolumns="6" order="130">
                 <widget type="text" fieldname="descripcion2" />
             </column>
-            <column name="description-3" order="140" numcolumns="6">
+            <column name="description-3" numcolumns="6" order="140">
                 <widget type="text" fieldname="descripcion3" />
             </column>
-            <column name="description-4" order="150" numcolumns="6">
+            <column name="description-4" numcolumns="6" order="150">
                 <widget type="text" fieldname="descripcion4" />
             </column>
-            <column name="description-4ba" order="160" numcolumns="6">
+            <column name="description-4ba" numcolumns="6" order="160">
                 <widget type="text" fieldname="descripcion4ba" />
             </column>
         </group>
     </columns>
 </view>
-

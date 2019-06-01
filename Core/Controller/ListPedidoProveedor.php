@@ -38,12 +38,11 @@ class ListPedidoProveedor extends ListBusinessDocument
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'orders';
-        $pagedata['icon'] = 'fas fa-copy';
-        $pagedata['menu'] = 'purchases';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'orders';
+        $data['icon'] = 'fas fa-copy';
+        return $data;
     }
 
     /**

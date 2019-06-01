@@ -46,12 +46,10 @@ class EditPedidoCliente extends SalesDocumentController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'order';
-        $pagedata['menu'] = 'sales';
-        $pagedata['icon'] = 'fas fa-file-invoice';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'order';
+        $data['icon'] = 'fas fa-file-invoice';
+        return $data;
     }
 }

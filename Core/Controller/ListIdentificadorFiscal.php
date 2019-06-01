@@ -38,7 +38,6 @@ class ListIdentificadorFiscal extends ListController
         $data['menu'] = 'admin';
         $data['title'] = 'fiscal-id';
         $data['icon'] = 'far fa-id-card';
-
         return $data;
     }
 

@@ -21,7 +21,9 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Retencion;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Description of ComercialContact
@@ -133,6 +135,23 @@ abstract class ComercialContact extends Contact
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
         $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new Retencion();
+        new Serie();
+        new FormaPago();
+
+        return parent::install();
     }
 
     /**
