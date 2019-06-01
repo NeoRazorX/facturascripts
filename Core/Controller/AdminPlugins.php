@@ -86,13 +86,12 @@ class AdminPlugins extends Base\Controller
      */
     public function getPageData()
     {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'admin';
-        $pageData['submenu'] = 'control-panel';
-        $pageData['title'] = 'plugins';
-        $pageData['icon'] = 'fas fa-plug';
-
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['submenu'] = 'control-panel';
+        $data['title'] = 'plugins';
+        $data['icon'] = 'fas fa-plug';
+        return $data;
     }
 
     /**

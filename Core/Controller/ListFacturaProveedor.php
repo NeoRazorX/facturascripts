@@ -38,12 +38,11 @@ class ListFacturaProveedor extends ListBusinessDocument
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'invoices';
-        $pagedata['icon'] = 'fas fa-copy';
-        $pagedata['menu'] = 'purchases';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'invoices';
+        $data['icon'] = 'fas fa-copy';
+        return $data;
     }
 
     /**

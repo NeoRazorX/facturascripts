@@ -43,12 +43,11 @@ class ListFormaPago extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'payment-methods';
-        $pagedata['icon'] = 'fas fa-credit-card';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'payment-methods';
+        $data['icon'] = 'fas fa-credit-card';
+        return $data;
     }
 
     /**

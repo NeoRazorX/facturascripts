@@ -36,12 +36,11 @@ class ListEmpresa extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'companies';
-        $pagedata['icon'] = 'fas fa-building';
-        $pagedata['menu'] = 'admin';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'companies';
+        $data['icon'] = 'fas fa-building';
+        return $data;
     }
 
     /**

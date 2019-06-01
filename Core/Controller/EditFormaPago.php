@@ -48,11 +48,11 @@ class EditFormaPago extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'payment-method';
-        $pagedata['icon'] = 'fas fa-credit-card';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'payment-method';
+        $data['icon'] = 'fas fa-credit-card';
+        return $data;
     }
 
     /**

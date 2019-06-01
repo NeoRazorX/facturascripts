@@ -36,12 +36,11 @@ class ListDivisa extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'currency';
-        $pagedata['icon'] = 'fas fa-money-bill-alt';
-        $pagedata['menu'] = 'admin';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'currency';
+        $data['icon'] = 'fas fa-money-bill-alt';
+        return $data;
     }
 
     /**

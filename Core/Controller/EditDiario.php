@@ -46,10 +46,10 @@ class EditDiario extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'journal';
-        $pagedata['icon'] = 'fas fa-book';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'journal';
+        $data['icon'] = 'fas fa-book';
+        return $data;
     }
 }

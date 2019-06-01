@@ -85,11 +85,11 @@ class EditProveedor extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'purchases';
-        $pagedata['title'] = 'supplier';
-        $pagedata['icon'] = 'fas fa-users';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'purchases';
+        $data['title'] = 'supplier';
+        $data['icon'] = 'fas fa-users';
+        return $data;
     }
 
     /**

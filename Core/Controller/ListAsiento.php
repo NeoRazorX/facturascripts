@@ -35,12 +35,11 @@ class ListAsiento extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entries';
-        $pagedata['icon'] = 'fas fa-balance-scale';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'accounting-entries';
+        $data['icon'] = 'fas fa-balance-scale';
+        return $data;
     }
 
     /**

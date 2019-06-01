@@ -50,11 +50,11 @@ class EditCuenta extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'account';
-        $pagedata['icon'] = 'fas fa-book';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'account';
+        $data['icon'] = 'fas fa-book';
+        return $data;
     }
 
     /**

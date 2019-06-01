@@ -46,11 +46,11 @@ class EditLogMessage extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'admin';
-        $pagedata['title'] = 'log';
-        $pagedata['icon'] = 'fas fa-file-medical-alt';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'log';
+        $data['icon'] = 'fas fa-file-medical-alt';
+        return $data;
     }
 
     /**

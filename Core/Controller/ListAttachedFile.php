@@ -36,12 +36,11 @@ class ListAttachedFile extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'attached-files';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fas fa-paperclip';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'attached-files';
+        $data['icon'] = 'fas fa-paperclip';
+        return $data;
     }
 
     /**

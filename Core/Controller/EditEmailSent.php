@@ -45,10 +45,10 @@ class EditEmailSent extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'admin';
-        $pagedata['title'] = 'email-sent';
-        $pagedata['icon'] = 'fas fa-envelope';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'email-sent';
+        $data['icon'] = 'fas fa-envelope';
+        return $data;
     }
 }

@@ -46,10 +46,10 @@ class EditProvincia extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'admin';
-        $pagedata['title'] = 'province';
-        $pagedata['icon'] = 'fas fa-globe';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'province';
+        $data['icon'] = 'fas fa-globe';
+        return $data;
     }
 }

@@ -48,11 +48,11 @@ class EditCuentaBanco extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'bank-account';
-        $pagedata['icon'] = 'fas fa-piggy-bank';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'bank-account';
+        $data['icon'] = 'fas fa-piggy-bank';
+        return $data;
     }
 
     protected function createViews()

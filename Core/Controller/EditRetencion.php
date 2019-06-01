@@ -46,10 +46,10 @@ class EditRetencion extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'retention';
-        $pagedata['icon'] = 'fas fa-plus-square';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'retention';
+        $data['icon'] = 'fas fa-plus-square';
+        return $data;
     }
 }

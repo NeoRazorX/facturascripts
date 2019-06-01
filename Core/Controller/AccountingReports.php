@@ -55,12 +55,11 @@ class AccountingReports extends Controller
      */
     public function getPageData()
     {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'reports';
-        $pageData['title'] = 'accounting-reports';
-        $pageData['icon'] = 'fas fa-balance-scale';
-
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'reports';
+        $data['title'] = 'accounting-reports';
+        $data['icon'] = 'fas fa-balance-scale';
+        return $data;
     }
 
     /**

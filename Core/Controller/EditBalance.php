@@ -48,11 +48,11 @@ class EditBalance extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'balance';
-        $pagedata['icon'] = 'fas fa-clipboard';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'balance';
+        $data['icon'] = 'fas fa-clipboard';
+        return $data;
     }
 
     /**

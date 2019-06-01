@@ -48,11 +48,11 @@ class EditFamilia extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'warehouse';
-        $pagedata['title'] = 'family';
-        $pagedata['icon'] = 'fas fa-object-group';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'family';
+        $data['icon'] = 'fas fa-object-group';
+        return $data;
     }
 
     /**

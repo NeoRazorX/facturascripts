@@ -48,11 +48,11 @@ class EditAgente extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'sales';
-        $pagedata['title'] = 'agent';
-        $pagedata['icon'] = 'fas fa-id-badge';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'agent';
+        $data['icon'] = 'fas fa-id-badge';
+        return $data;
     }
 
     /**

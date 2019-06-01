@@ -36,12 +36,11 @@ class ListSecuenciaDocumento extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'admin';
-        $pagedata['title'] = 'document-sequences';
-        $pagedata['icon'] = 'fas fa-code';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'document-sequences';
+        $data['icon'] = 'fas fa-code';
+        return $data;
     }
 
     /**

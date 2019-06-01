@@ -43,12 +43,11 @@ class ListCuenta extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-accounts';
-        $pagedata['icon'] = 'fas fa-book';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'accounting-accounts';
+        $data['icon'] = 'fas fa-book';
+        return $data;
     }
 
     /**

@@ -131,13 +131,12 @@ class DocumentStitcher extends Controller
      */
     public function getPageData()
     {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'sales';
-        $pageData['title'] = 'group-or-split';
-        $pageData['icon'] = 'fas fa-magic';
-        $pageData['showonmenu'] = false;
-
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['showonmenu'] = false;
+        $data['title'] = 'group-or-split';
+        $data['icon'] = 'fas fa-magic';
+        return $data;
     }
 
     /**

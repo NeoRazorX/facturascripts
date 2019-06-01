@@ -39,12 +39,11 @@ class ListImpuesto extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'accounting';
-        $pagedata['title'] = 'taxes';
-        $pagedata['icon'] = 'fas fa-plus-square';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'taxes';
+        $data['icon'] = 'fas fa-plus-square';
+        return $data;
     }
 
     /**

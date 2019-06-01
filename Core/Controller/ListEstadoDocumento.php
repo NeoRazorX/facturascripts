@@ -37,12 +37,11 @@ class ListEstadoDocumento extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'document-states';
-        $pagedata['icon'] = 'fas fa-tags';
-        $pagedata['menu'] = 'admin';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'document-states';
+        $data['icon'] = 'fas fa-tags';
+        return $data;
     }
 
     /**

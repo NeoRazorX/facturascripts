@@ -39,12 +39,11 @@ class ListBalance extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'balances';
-        $pagedata['icon'] = 'fas fa-clipboard';
-        $pagedata['menu'] = 'accounting';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'accounting';
+        $data['title'] = 'balances';
+        $data['icon'] = 'fas fa-clipboard';
+        return $data;
     }
 
     /**

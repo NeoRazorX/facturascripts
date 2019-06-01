@@ -37,12 +37,11 @@ class ListAgente extends ListController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'agents';
-        $pagedata['icon'] = 'fas fa-id-badge';
-        $pagedata['menu'] = 'sales';
-
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'agents';
+        $data['icon'] = 'fas fa-id-badge';
+        return $data;
     }
 
     /**

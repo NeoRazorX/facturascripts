@@ -50,11 +50,11 @@ class EditRole extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'admin';
-        $pagedata['title'] = 'role';
-        $pagedata['icon'] = 'fas fa-id-card';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'role';
+        $data['icon'] = 'fas fa-id-card';
+        return $data;
     }
 
     /**

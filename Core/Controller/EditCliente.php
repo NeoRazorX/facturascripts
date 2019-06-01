@@ -85,11 +85,11 @@ class EditCliente extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'sales';
-        $pagedata['title'] = 'customer';
-        $pagedata['icon'] = 'fas fa-users';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'sales';
+        $data['title'] = 'customer';
+        $data['icon'] = 'fas fa-users';
+        return $data;
     }
 
     /**

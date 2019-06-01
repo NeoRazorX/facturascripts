@@ -47,10 +47,10 @@ class EditAgenciaTransporte extends EditController
      */
     public function getPageData()
     {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'warehouse';
-        $pagedata['title'] = 'carrier';
-        $pagedata['icon'] = 'fas fa-truck';
-        return $pagedata;
+        $data = parent::getPageData();
+        $data['menu'] = 'warehouse';
+        $data['title'] = 'carrier';
+        $data['icon'] = 'fas fa-truck';
+        return $data;
     }
 }
