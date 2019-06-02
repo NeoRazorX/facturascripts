@@ -133,7 +133,6 @@
     <column>
         <name>tasaconv</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>total</name>
