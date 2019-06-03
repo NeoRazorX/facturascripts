@@ -18,6 +18,7 @@
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Oscar G. Villa     <ogvilla@gmail.com>
 -->
 <view>
     <columns>
@@ -58,4 +59,13 @@
             <option color="warning" fieldname="editable">0</option>
         </row>
     </rows>
+    <modals>
+        <group name='renumber' title='renumber-accounting' icon='fas fa-sort-numeric-down'>
+            <column name='exercise' numcolumns='12' description='if-you-no-select'>
+                <widget type='select' fieldname='code'>
+                    <values source='ejercicios' fieldcode='codejercicio'></values>
+                </widget>
+            </column>            
+        </group>
+    </modals>
 </view>
