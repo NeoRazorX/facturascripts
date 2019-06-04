@@ -160,10 +160,6 @@ abstract class App
      */
     public function close(string $nick = '')
     {
-        if (FS_DEBUG) {
-            $this->pluginManager->deploy();
-        }
-
         new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick, $this->uri);
         $this->dataBase->close();
     }
