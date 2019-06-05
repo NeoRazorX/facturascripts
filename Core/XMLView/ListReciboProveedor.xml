@@ -28,18 +28,23 @@
                 <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="observations" order="120">
+        <column name="invoice" order="120">
+            <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor" readonly="dinamic">
+                <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+            </widget>
+        </column>
+        <column name="observations" order="130">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="amount" display="right" order="130">
+        <column name="amount" display="right" order="140">
             <widget type="money" fieldname="importe">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="paid" display="center" order="140">
+        <column name="paid" display="center" order="150">
             <widget type="checkbox" fieldname="pagado" />
         </column>
-        <column name="date" display="right" order="150">
+        <column name="date" display="right" order="160">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>

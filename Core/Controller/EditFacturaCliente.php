@@ -61,11 +61,11 @@ class EditFacturaCliente extends SalesDocumentController
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createAccountsView($name = 'ListAsiento')
+    protected function createAccountsView($viewName = 'ListAsiento')
     {
-        $this->addListView($name, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
         /// buttons
         $newButton = [
@@ -74,10 +74,23 @@ class EditFacturaCliente extends SalesDocumentController
             'label' => 'generate-accounting-entry',
             'type' => 'action',
         ];
-        $this->addButton($name, $newButton);
+        $this->addButton($viewName, $newButton);
 
         /// settings
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createReceiptsView($viewName = 'ListReciboCliente')
+    {
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-piggy-bank');
+        
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -86,6 +99,7 @@ class EditFacturaCliente extends SalesDocumentController
     protected function createViews()
     {
         parent::createViews();
+        $this->createReceiptsView();
         $this->createAccountsView();
         $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
     }
@@ -149,6 +163,7 @@ class EditFacturaCliente extends SalesDocumentController
     {
         switch ($viewName) {
             case 'Devoluciones':
+            case 'ListReciboCliente':
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
                 $view->loadData('', $where);
                 break;

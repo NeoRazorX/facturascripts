@@ -28,23 +28,28 @@
                 <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="observations" order="120">
+        <column name="invoice" order="120">
+            <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente" readonly="dinamic">
+                <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"></values>
+            </widget>
+        </column>
+        <column name="observations" order="130">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="amount" display="right" order="130">
+        <column name="amount" display="right" order="140">
             <widget type="money" fieldname="importe">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="expenses" display="right" order="140">
+        <column name="expenses" display="right" order="150">
             <widget type="money" fieldname="gastos">
                 <option color="danger">gt:0</option>
             </widget>
         </column>
-        <column name="paid" display="center" order="150">
+        <column name="paid" display="center" order="160">
             <widget type="checkbox" fieldname="pagado" />
         </column>
-        <column name="date" display="right" order="160">
+        <column name="date" display="right" order="170">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>

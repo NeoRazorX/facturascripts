@@ -94,74 +94,74 @@ class EditProveedor extends EditController
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      * @param string $model
      * @param string $label
      * @param string $icon
      */
-    protected function createContactsView($name, $model, $label, $icon)
+    protected function createContactsView($viewName, $model, $label, $icon)
     {
-        $this->addListView($name, $model, $label, $icon);
+        $this->addListView($viewName, $model, $label, $icon);
 
         /// sort options
-        $this->views[$name]->addOrderBy(['fechaalta'], 'date');
-        $this->views[$name]->addOrderBy(['descripcion'], 'descripcion', 2);
+        $this->views[$viewName]->addOrderBy(['fechaalta'], 'date');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion', 2);
 
         /// search columns
-        $this->views[$name]->searchFields[] = 'apellidos';
-        $this->views[$name]->searchFields[] = 'descripcion';
-        $this->views[$name]->searchFields[] = 'direccion';
-        $this->views[$name]->searchFields[] = 'email';
-        $this->views[$name]->searchFields[] = 'nombre';
+        $this->views[$viewName]->searchFields[] = 'apellidos';
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+        $this->views[$viewName]->searchFields[] = 'direccion';
+        $this->views[$viewName]->searchFields[] = 'email';
+        $this->views[$viewName]->searchFields[] = 'nombre';
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      * @param string $model
      * @param string $label
      */
-    protected function createLineView($name, $model, $label)
+    protected function createLineView($viewName, $model, $label)
     {
-        $this->addListView($name, $model, $label, 'fas fa-cubes');
+        $this->addListView($viewName, $model, $label, 'fas fa-cubes');
 
         /// sort options
-        $this->views[$name]->addOrderBy(['idlinea'], 'code', 2);
-        $this->views[$name]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$name]->addOrderBy(['pvptotal'], 'amount');
+        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
+        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
 
         /// search columns
-        $this->views[$name]->searchFields[] = 'referencia';
-        $this->views[$name]->searchFields[] = 'descripcion';
+        $this->views[$viewName]->searchFields[] = 'referencia';
+        $this->views[$viewName]->searchFields[] = 'descripcion';
 
         /// Disable buttons
-        $this->setSettings($name, 'btnDelete', false);
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      * @param string $model
      * @param string $label
      */
-    protected function createListView($name, $model, $label)
+    protected function createListView($viewName, $model, $label)
     {
-        $this->addListView($name, $model, $label, 'fas fa-copy');
+        $this->addListView($viewName, $model, $label, 'fas fa-copy');
 
         /// sort options
-        $this->views[$name]->addOrderBy(['codigo'], 'code');
-        $this->views[$name]->addOrderBy(['fecha', 'hora'], 'date', 2);
-        $this->views[$name]->addOrderBy(['numero'], 'number');
-        $this->views[$name]->addOrderBy(['numproveedor'], 'numsupplier');
-        $this->views[$name]->addOrderBy(['total'], 'amount');
+        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
+        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['numero'], 'number');
+        $this->views[$viewName]->addOrderBy(['numproveedor'], 'numsupplier');
+        $this->views[$viewName]->addOrderBy(['total'], 'amount');
 
         /// search columns
-        $this->views[$name]->searchFields[] = 'numproveedor';
-        $this->views[$name]->searchFields[] = 'observaciones';
+        $this->views[$viewName]->searchFields[] = 'numproveedor';
+        $this->views[$viewName]->searchFields[] = 'observaciones';
 
         /// Disable columns
-        $this->views[$name]->disableColumn('customer', true);
+        $this->views[$viewName]->disableColumn('customer', true);
     }
 
     /**
@@ -173,28 +173,32 @@ class EditProveedor extends EditController
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-piggy-bank');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
         $this->views[$viewName]->searchFields[] = 'observaciones';
+        
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      * @param string $model
      * @param string $label
      * @param string $icon
      */
-    protected function createSubaccountsView($name, $model, $label, $icon)
+    protected function createSubaccountsView($viewName, $model, $label, $icon)
     {
-        $this->addListView($name, $model, $label, $icon);
+        $this->addListView($viewName, $model, $label, $icon);
 
         /// sort options
-        $this->views[$name]->addOrderBy(['codigo'], 'code');
-        $this->views[$name]->addOrderBy(['codejercicio'], 'exercise', 2);
-        $this->views[$name]->addOrderBy(['descripcion'], 'descripcion');
-        $this->views[$name]->addOrderBy(['saldo'], 'balance');
+        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
+        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion');
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
 
         /// search columns
-        $this->views[$name]->searchFields[] = 'codigo';
-        $this->views[$name]->searchFields[] = 'description';
+        $this->views[$viewName]->searchFields[] = 'codigo';
+        $this->views[$viewName]->searchFields[] = 'description';
 
         /// Disable buttons
         $this->setSettings('ListSubcuenta', 'btnNew', false);
