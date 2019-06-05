@@ -113,6 +113,9 @@ class EditProveedor extends EditController
         $this->views[$viewName]->searchFields[] = 'direccion';
         $this->views[$viewName]->searchFields[] = 'email';
         $this->views[$viewName]->searchFields[] = 'nombre';
+
+        /// Disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -173,7 +176,7 @@ class EditProveedor extends EditController
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-piggy-bank');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
         $this->views[$viewName]->searchFields[] = 'observaciones';
-        
+
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
@@ -201,7 +204,8 @@ class EditProveedor extends EditController
         $this->views[$viewName]->searchFields[] = 'description';
 
         /// Disable buttons
-        $this->setSettings('ListSubcuenta', 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**

@@ -113,6 +113,9 @@ class EditCliente extends EditController
         $this->views[$viewName]->searchFields[] = 'direccion';
         $this->views[$viewName]->searchFields[] = 'email';
         $this->views[$viewName]->searchFields[] = 'nombre';
+        
+        /// Disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -201,7 +204,8 @@ class EditCliente extends EditController
         $this->views[$viewName]->searchFields[] = 'description';
 
         /// Disable buttons
-        $this->setSettings('ListSubcuenta', 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
