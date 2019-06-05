@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="idpago" />
+            <widget type="text" fieldname="idrecibo" />
         </column>
         <column name="customer" display="none" order="110">
             <widget type="autocomplete" fieldname="codcliente">
                 <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="description" order="120">
-            <widget type="textarea" fieldname="descripcion" />
+        <column name="observations" order="120">
+            <widget type="textarea" fieldname="observaciones" />
         </column>
         <column name="amount" display="right" order="130">
             <widget type="money" fieldname="importe">

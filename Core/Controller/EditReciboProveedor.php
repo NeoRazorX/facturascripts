@@ -18,15 +18,16 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
- * Description of EditPagoProveedor
+ * Description of EditReciboProveedor
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class EditPagoProveedor extends EditController
+class EditReciboProveedor extends EditController
 {
 
     /**
@@ -35,7 +36,7 @@ class EditPagoProveedor extends EditController
      */
     public function getModelClassName()
     {
-        return 'PagoProveedor';
+        return 'ReciboProveedor';
     }
 
     /**
@@ -46,9 +47,17 @@ class EditPagoProveedor extends EditController
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
-        $data['title'] = 'payment';
+        $data['title'] = 'receipt';
         $data['icon'] = 'fas fa-piggy-bank';
         return $data;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addListView('EditPagoProveedor', 'PagoProveedor', 'payments');
     }
 
     /**
@@ -58,9 +67,22 @@ class EditPagoProveedor extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        parent::loadData($viewName, $view);
-        if (empty($this->views[$this->active]->model->nick)) {
-            $this->views[$this->active]->model->nick = $this->user->nick;
+        switch ($viewName) {
+            case 'EditPagoProveedor':
+                $idrecibo = $this->getViewModelValue('EditReciboProveedor', 'idrecibo');
+                $where = [new DataBaseWhere('idrecibo', $idrecibo)];
+                $this->views[$viewName]->loadData('', $where);
+                if (empty($this->views[$viewName]->model->nick)) {
+                    $this->views[$viewName]->model->nick = $this->user->nick;
+                }
+                break;
+
+            case 'EditReciboProveedor':
+                parent::loadData($viewName, $view);
+                if (empty($this->views[$viewName]->model->nick)) {
+                    $this->views[$viewName]->model->nick = $this->user->nick;
+                }
+                break;
         }
     }
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : recibospagosprov.xml
+    Description:
+        Estructura de la tabla recibospagosprov.
+-->
+<table>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+    </column>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>fechapago</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>fechav</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idfactura</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idrecibo</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('recibospagosprov_idrecibo_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>importe</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>liquidado</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>pagado</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <constraint>
+        <name>recibospagosprov_pkey</name>
+        <type>PRIMARY KEY (idrecibo)</type>
+    </constraint>
+    <constraint>
+        <name>ca_recibospagosprov_proveedores</name>
+        <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_recibospagosprov_facturasprov</name>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

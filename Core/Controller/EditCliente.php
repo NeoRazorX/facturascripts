@@ -168,11 +168,11 @@ class EditCliente extends EditController
      * 
      * @param string $viewName
      */
-    protected function createPaymentView($viewName = 'ListPagoCliente')
+    protected function createReceiptView($viewName = 'ListReciboCliente')
     {
-        $this->addListView($viewName, 'PagoCliente', 'payments', 'fas fa-piggy-bank');
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-piggy-bank');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
-        $this->views[$viewName]->searchFields[] = 'descripcion';
+        $this->views[$viewName]->searchFields[] = 'observaciones';
     }
 
     /**
@@ -215,7 +215,7 @@ class EditCliente extends EditController
         $this->createListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createListView('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->createListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->createPaymentView();
+        $this->createReceiptView();
     }
 
     /**
@@ -237,9 +237,9 @@ class EditCliente extends EditController
             case 'ListAlbaranCliente':
             case 'ListContacto':
             case 'ListFacturaCliente':
-            case 'ListPagoCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
+            case 'ListReciboCliente':
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where);
                 break;

@@ -22,24 +22,29 @@
     <columns>
         <group name="main" numcolumns="12">
             <column name="id" display="none" order="100">
-                <widget type="text" fieldname="idpago" />
-            </column>
-            <column name="receipt" display="none" order="110">
                 <widget type="text" fieldname="idrecibo" />
             </column>
-            <column name="date" order="120">
-                <widget type="date" fieldname="fecha" />
+            <column name="supplier" order="110">
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor" required="true" readonly="dinamic">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+                </widget>
             </column>
-            <column name="hour" order="130">
-                <widget type="text" fieldname="hora" />
-            </column>
-            <column name="amount" display="right" order="140">
+            <column name="amount" display="right" order="120">
                 <widget type="money" fieldname="importe" />
             </column>
-            <column name="user" display="right" order="150">
+            <column name="date" display="right" order="130">
+                <widget type="date" fieldname="fecha" />
+            </column>
+            <column name="user" display="right" order="140">
                 <widget type="select" fieldname="nick" readonly="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
+            </column>
+            <column name="observations" numcolumns="12" order="150">
+                <widget type="textarea" fieldname="observaciones" />
+            </column>
+            <column name="paid" numcolumns="12" order="160">
+                <widget type="checkbox" fieldname="pagado" />
             </column>
         </group>
     </columns>

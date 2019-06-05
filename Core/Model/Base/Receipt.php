@@ -18,39 +18,52 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Utils;
 
 /**
- * Description of Payment
+ * Description of Receipt
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-abstract class Payment extends ModelClass
+abstract class Receipt extends ModelClass
 {
 
     /**
      *
      * @var string
      */
-    public $fecha;
-    
+    public $coddivisa;
+
     /**
      *
      * @var string
      */
-    public $hora;
+    public $fecha;
+
+    /**
+     *
+     * @var string
+     */
+    public $fechapago;
+
+    /**
+     *
+     * @var string
+     */
+    public $fechav;
 
     /**
      *
      * @var int
      */
-    public $idasiento;
+    public $idempresa;
 
     /**
      *
      * @var int
      */
-    public $idpago;
+    public $idfactura;
 
     /**
      *
@@ -66,28 +79,37 @@ abstract class Payment extends ModelClass
 
     /**
      *
+     * @var float
+     */
+    public $liquidado;
+
+    /**
+     *
      * @var string
      */
     public $nick;
 
+    /**
+     *
+     * @var string
+     */
+    public $observaciones;
+
+    /**
+     *
+     * @var bool
+     */
+    public $pagado;
+
     public function clear()
     {
         parent::clear();
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
+        $this->fechav = date('d-m-Y');
         $this->importe = 0.0;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function install()
-    {
-        /// needed dependencies
-        new Asiento();
-
-        return parent::install();
+        $this->liquidado = 0.0;
+        $this->pagado = false;
     }
 
     /**
@@ -96,6 +118,16 @@ abstract class Payment extends ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idpago';
+        return 'idrecibo';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->observaciones = Utils::noHtml($this->observaciones);
+        return parent::test();
     }
 }
