@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
+use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
 
 /**
@@ -112,6 +114,20 @@ trait InvoiceTrait
 
     /**
      * 
+     * @return bool
+     */
+    public function delete()
+    {
+        $asiento = $this->getAccountingEntry();
+        if ($asiento->exists()) {
+            return $asiento->delete() ? parent::delete() : false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * 
      * @return Asiento
      */
     public function getAccountingEntry()
@@ -133,6 +149,21 @@ trait InvoiceTrait
 
         $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
         return $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        $sql = parent::install();
+        new Asiento();
+
+        return $sql;
     }
 
     /**
@@ -172,6 +203,16 @@ trait InvoiceTrait
     }
 
     /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'idfactura';
+    }
+
+    /**
      * Returns the refunded items amount associated with the invoice.
      *
      * @return float|int
@@ -188,5 +229,46 @@ trait InvoiceTrait
         }
 
         return $amount;
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        if (!parent::onChange($field)) {
+            return false;
+        }
+
+        switch ($field) {
+            case 'total':
+                return $this->onChangeTotal();
+        }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function onChangeTotal()
+    {
+        /// check accounting entry
+        $asiento = $this->getAccountingEntry();
+        if ($asiento->exists() && $asiento->delete()) {
+            $this->idasiento = null;
+        }
+        $tool = new InvoiceToAccounting();
+        $tool->generate($this);
+
+        /// check receipts
+        $generator = new ReceiptGenerator();
+        $generator->generate($this);
+
+        return true;
     }
 }
