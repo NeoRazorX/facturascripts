@@ -94,7 +94,7 @@
     </column>
     <column>
         <name>hora</name>
-        <type>time without time zone</type>
+        <type>time</type>
     </column>
     <column>
         <name>idcontactoenv</name>
