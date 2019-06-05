@@ -252,16 +252,18 @@ abstract class BaseView
     }
 
     /**
-     * Establishes the column's edit state
+     * Establishes the column's display or read only state.
      *
      * @param string $columnName
      * @param bool   $disabled
+     * @param string $readOnly
      */
-    public function disableColumn($columnName, $disabled = true)
+    public function disableColumn($columnName, $disabled = true, $readOnly = '')
     {
         $column = $this->columnForName($columnName);
         if (!empty($column)) {
             $column->display = $disabled ? 'none' : 'left';
+            $column->widget->readonly = empty($readOnly) ? $column->widget->readonly : $readOnly;
         }
     }
 
