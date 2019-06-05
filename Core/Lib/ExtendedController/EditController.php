@@ -45,7 +45,7 @@ abstract class EditController extends PanelController
 
     /**
      * Return the basic data for this page.
-     * 
+     *
      * @return array
      */
     public function getPageData()
@@ -57,12 +57,22 @@ abstract class EditController extends PanelController
     }
 
     /**
+     * Returns the name assigned to the main view
+     *
+     * @return string
+     */
+    protected function getMainViewName(): string
+    {
+        return 'Edit' . $this->getModelClassName();
+    }
+
+    /**
      * Create the view to display.
      */
     protected function createViews()
     {
         $modelName = $this->getModelClassName();
-        $viewName = 'Edit' . $this->getModelClassName();
+        $viewName = $this->getMainViewName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];
 
@@ -87,7 +97,7 @@ abstract class EditController extends PanelController
 
         /// data not found?
         $action = $this->request->request->get('action', '');
-        $mainViewName = 'Edit' . $this->getModelClassName();
+        $mainViewName = $this->getMainViewName();
         if (!empty($code) && !$view->model->exists() && $viewName === $mainViewName && '' === $action) {
             $this->miniLog->warning($this->i18n->trans('record-not-found'));
         }
