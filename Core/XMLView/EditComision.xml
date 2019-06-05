@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2019  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for Edit Commission
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+<view>
+    <columns>
+        <group name="data" numcolumns="9" title="conditions" icon="fas fa-filter">
+            <column name="idcomision" display="none" order="100">
+                <widget type="text" fieldname="id" />
+            </column>
+            <column name="company" order="100">
+                <widget type="select" fieldname="idempresa" >
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="agent" numcolumns="6" order="200">
+                <widget type="autocomplete" fieldname="codagente">
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="customer" numcolumns="6" order="250">
+                <widget type="autocomplete" fieldname="codcliente">
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="family" numcolumns="6" order="300">
+                <widget type="autocomplete" fieldname="codfamilia">
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="product" numcolumns="6" order="350">
+                <widget type="autocomplete" fieldname="idproducto">
+                    <values source="productos" fieldcode="idproducto" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
+        <group name="space" numcolumns="1">
+        </group>
+        <group name="value" numcolumns="2" title="value" icon="fas fa-globe">
+            <column name="percentage" order="100">
+                <widget type="number" decimal="2" min="0.01" max="100.00" step="0.01" fieldname="porcentaje" />
+            </column>
+        </group>
+    </columns>
+    <rows>
+        <row type="actions">
+            <button type="js" label='help' color="primary" action="$('#help-card').toggle()" icon="fas fa-question-circle" />
+        </row>
+        <row type="footer">
+            <group name="help" id="help-card" class="collapse" html="Block/CommissionInfo.html.twig"></group>
+        </row>
+    </rows>
+</view>
