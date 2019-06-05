@@ -102,10 +102,6 @@
         <type>integer</type>
     </column>
     <column>
-        <name>idasientop</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idcontactoenv</name>
         <type>integer</type>
     </column>
@@ -209,10 +205,6 @@
     <constraint>
         <name>ca_facturascli_asiento</name>
         <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_facturascli_asientop</name>
-        <type>FOREIGN KEY (idasientop) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_ejercicios</name>

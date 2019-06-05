@@ -52,13 +52,6 @@ trait InvoiceTrait
     public $idasiento;
 
     /**
-     * ID of the related payment accounting entry, if any.
-     *
-     * @var int
-     */
-    public $idasientop;
-
-    /**
      * Primary key.
      *
      * @var int

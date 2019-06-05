@@ -154,10 +154,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
                 break;
 
             case 'ListAsiento':
-                $where = [
-                    new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento')),
-                    new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasientop'), '=', 'OR')
-                ];
+                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento'))];
                 $view->loadData('', $where);
                 break;
 
