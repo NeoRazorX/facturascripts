@@ -36,7 +36,7 @@
             <column name="amount" display="right" order="140">
                 <widget type="money" fieldname="importe" />
             </column>
-            <column name="fee" display="right" order="150">
+            <column name="expenses" display="right" order="150">
                 <widget type="money" fieldname="gastos" />
             </column>
             <column name="code" order="160">

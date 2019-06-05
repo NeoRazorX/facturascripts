@@ -36,7 +36,7 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="fee" display="right" order="140">
+        <column name="expenses" display="right" order="140">
             <widget type="money" fieldname="gastos">
                 <option color="danger">gt:0</option>
             </widget>
