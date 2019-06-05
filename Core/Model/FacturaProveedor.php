@@ -119,19 +119,6 @@ class FacturaProveedor extends Base\PurchaseDocument
 
     /**
      * 
-     * @return bool
-     */
-    public function test()
-    {
-        if (empty($this->vencimiento)) {
-            $this->setPaymentMethod($this->codpago);
-        }
-
-        return parent::test();
-    }
-
-    /**
-     * 
      * @param string $field
      *
      * @return bool
@@ -143,10 +130,6 @@ class FacturaProveedor extends Base\PurchaseDocument
         }
 
         switch ($field) {
-            case 'codpago':
-                $this->setPaymentMethod($this->codpago);
-                return true;
-
             case 'total':
                 $asiento = $this->getAccountingEntry();
                 if ($asiento->exists() && $asiento->delete()) {

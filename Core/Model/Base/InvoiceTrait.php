@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
  * Description of InvoiceTrait
@@ -37,13 +36,6 @@ trait InvoiceTrait
      * @var string
      */
     public $codigorect;
-
-    /**
-     * Payment method associated.
-     *
-     * @var string
-     */
-    public $codpago;
 
     /**
      * Date of the document.
@@ -85,13 +77,6 @@ trait InvoiceTrait
      * @var bool
      */
     public $pagada;
-
-    /**
-     * Due date of the invoice.
-     *
-     * @var string
-     */
-    public $vencimiento;
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
 
@@ -210,22 +195,5 @@ trait InvoiceTrait
         }
 
         return $amount;
-    }
-
-    /**
-     * 
-     * @param string $codpago
-     */
-    public function setPaymentMethod($codpago)
-    {
-        $this->vencimiento = $this->fecha;
-
-        $formaPago = new FormaPago();
-        if ($formaPago->loadFromCode($codpago)) {
-            $this->codpago = $codpago;
-
-            $string = '+' . $formaPago->plazovencimiento . ' ' . $formaPago->tipovencimiento;
-            $this->vencimiento = date('d-m-Y', strtotime($this->fecha . ' ' . $string));
-        }
     }
 }

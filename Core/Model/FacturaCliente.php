@@ -119,19 +119,6 @@ class FacturaCliente extends Base\SalesDocument
 
     /**
      * 
-     * @return bool
-     */
-    public function test()
-    {
-        if (empty($this->vencimiento)) {
-            $this->setPaymentMethod($this->codpago);
-        }
-
-        return parent::test();
-    }
-
-    /**
-     * 
      * @param string $field
      *
      * @return bool
@@ -143,10 +130,6 @@ class FacturaCliente extends Base\SalesDocument
         }
 
         switch ($field) {
-            case 'codpago':
-                $this->setPaymentMethod($this->codpago);
-                return true;
-
             case 'total':
                 $asiento = $this->getAccountingEntry();
                 if ($asiento->exists() && $asiento->delete()) {

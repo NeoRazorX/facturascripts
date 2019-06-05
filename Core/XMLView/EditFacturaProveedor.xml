@@ -40,24 +40,18 @@
             </column>
         </group>
         <group name="payment-method" title="payment-method" numcolumns="12">
-            <column name="expiration" order="100">
-                <widget type="date" fieldname="vencimiento" required="true" />
-            </column>
-            <column name="payment" title="method-payment" order="110">
+            <column name="payment" title="method-payment" order="100">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="currency" order="120">
+            <column name="currency" order="110">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tasaconv" order="130">
+            <column name="tasaconv" order="120">
                 <widget type="number" fieldname="tasaconv" icon="fas fa-exchange-alt" />
-            </column>
-            <column name="paid" numcolumns="12" order="140">
-                <widget type="checkbox" fieldname="pagada" />
             </column>
         </group>
         <group name="attributes" title="attributes" numcolumns="12">
