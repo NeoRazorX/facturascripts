@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : liquidacioncomision.xml
+    Author     : Artex Trading sa <jcuello@artextrading.com>
+    Description: Estructura para la tabla de liquidaciones de comisiones.
+-->
+<table>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idfactura</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idliquidacion</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('settledcommissions_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>total</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <constraint>
+        <name>liquidacioncomision_pkey</name>
+        <type>PRIMARY KEY (idliquidacion)</type>
+    </constraint>
+    <constraint>
+        <name>ca_liquidacioncomision_agentes</name>
+        <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_liquidacioncomision_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_liquidacioncomision_facturas</name>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+</table>
