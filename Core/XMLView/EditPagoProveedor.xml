@@ -43,4 +43,10 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="importe">gt:0</option>
+            <option color="warning" fieldname="importe">lt:0</option>
+        </row>
+    </rows>
 </view>

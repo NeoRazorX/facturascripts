@@ -33,7 +33,7 @@
                 <widget type="money" fieldname="importe" />
             </column>
             <column name="fee" display="right" order="130">
-                <widget type="money" fieldname="gastos" />
+                <widget type="money" fieldname="gastos" readonly="dinamic" />
             </column>
             <column name="date" display="right" order="140">
                 <widget type="date" fieldname="fecha" />

@@ -41,8 +41,17 @@
                 <option color="danger">gt:0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="150">
+        <column name="paid" display="center" order="150">
+            <widget type="checkbox" fieldname="pagado" />
+        </column>
+        <column name="date" display="right" order="160">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="pagado">1</option>
+            <option color="warning" fieldname="pagado">0</option>
+        </row>
+    </rows>
 </view>
