@@ -31,8 +31,22 @@ use FacturaScripts\Dinamic\Model\Empresa;
 class ListAgente extends ListController
 {
 
-    private $companyList;
+    /**
+     * Company list used by filters
+     *
+     * @var array
+     */
+    protected $companyList;
 
+    /**
+     * Initializes all the objects and properties.
+     *
+     * @param Base\Cache      $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
+     * @param string          $uri
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
@@ -103,13 +117,13 @@ class ListAgente extends ListController
     {
         /// View
         $this->addView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
-        $this->addSearchFields($viewName, ['codagente', 'codcliente', 'CAST(porcentaje AS VARCHAR)', 'codfamilia', 'referencia']);
+        $this->addSearchFields($viewName, ['codagente', 'codcliente', 'CAST(porcentaje AS VARCHAR)', 'codfamilia', 'idproducto']);
 
         /// Order By
-        $this->addOrderBy($viewName, ['idempresa', 'codagente', 'percentage'], 'company');
-        $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'referencia', 'percentage'], 'agent', 1);
-        $this->addOrderBy($viewName, ['codcliente', 'codfamilia', 'referencia', 'percentage'], 'customer');
-        $this->addOrderBy($viewName, ['codfamilia', 'referencia', 'percentage'], 'family');
+        $this->addOrderBy($viewName, ['idempresa', 'codagente', 'porcentaje'], 'company');
+        $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'agent', 1);
+        $this->addOrderBy($viewName, ['codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'customer');
+        $this->addOrderBy($viewName, ['codfamilia', 'idproducto', 'porcentaje'], 'family');
 
         /// Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
@@ -117,7 +131,7 @@ class ListAgente extends ListController
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
         $this->addFilterAutocomplete($viewName, 'customer', 'customer', 'codcliente', 'Cliente', 'codcliente');
         $this->addFilterAutocomplete($viewName, 'family', 'family', 'codfamilia', 'Familia', 'codfamilia');
-        $this->addFilterAutocomplete($viewName, 'product', 'product', 'referencia', 'Producto', 'referencia');
+        $this->addFilterAutocomplete($viewName, 'product', 'product', 'referencia', 'Producto', 'referencia', 'descripcion');
     }
 
     /**
@@ -137,7 +151,7 @@ class ListAgente extends ListController
 
         /// Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'ejercicios.idempresa', $this->companyList);
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
-        $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
+        $this->addFilterPeriod($viewName, 'fecha', 'date', 'liquidacioncomision.fecha');
+        $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'liquidacioncomision.codagente', 'agentes', 'codagente', 'nombre');
     }
 }

@@ -47,18 +47,18 @@ class LiquidacionComision extends ModelView
     protected function getFields(): array
     {
         return [
-            'creationdate' => 'liquidacioncomision.fecha',
-            'idsettled' => 'liquidacioncomision.idliquidacion',
-            'idagent' => 'liquidacioncomision.codagente',
-            'idexercise' => 'liquidacioncomision.codejercicio',
-            'note' => 'liquidacioncomision.observaciones',
+            'fecha' => 'liquidacioncomision.fecha',
+            'idliquidacion' => 'liquidacioncomision.idliquidacion',
+            'codagente' => 'liquidacioncomision.codagente',
+            'codejercicio' => 'liquidacioncomision.codejercicio',
+            'observaciones' => 'liquidacioncomision.observaciones',
             'total' => 'liquidacioncomision.total',
-            'agent' => 'agentes.nombre',
-            'exercise' => 'ejercicios.nombre',
-            'idcompany' => 'ejercicios.idempresa',
-            'company' => 'empresas.nombre',
-            'invoicenumber' => 'facturasprov.codigo',
-            'invoicedate' => 'facturasprov.fecha',
+            'agente' => 'agentes.nombre',
+            'ejercicio' => 'ejercicios.nombre',
+            'idempresa' => 'ejercicios.idempresa',
+            'empresa' => 'empresas.nombrecorto',
+            'factura' => 'facturasprov.codigo',
+            'fechafactura' => 'facturasprov.fecha',
         ];
     }
 

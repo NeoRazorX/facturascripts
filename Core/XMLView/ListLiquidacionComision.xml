@@ -28,22 +28,22 @@
             <widget type="text" fieldname="idliquidacion" />
         </column>
         <column name="company" order="110">
-            <widget type="text" fieldname="company" />
+            <widget type="text" fieldname="empresa" />
         </column>
         <column name="exercise" order="120">
-            <widget type="text" fieldname="idexercise" />
+            <widget type="text" fieldname="ejercicio" />
         </column>
         <column name="date" order="130">
-            <widget type="date" fieldname="creationdate" />
+            <widget type="date" fieldname="fecha" />
         </column>
         <column name="agent" order="140">
-            <widget type="text" fieldname="agent" />
+            <widget type="text" fieldname="agente" />
         </column>
         <column name="invoice" order="150">
-            <widget type="text" fieldname="invoicenumber" />
+            <widget type="text" fieldname="factura" />
         </column>
         <column name="invoice-date" display="none" order="160">
-            <widget type="date" fieldname="invoicedate" />
+            <widget type="date" fieldname="fechafactura" />
         </column>
         <column name="total" display="right" numcolumns="2" order="170">
             <widget type="money" fieldname="total">
@@ -52,7 +52,7 @@
             </widget>
         </column>
         <column name="notes" display="none" order="180">
-            <widget type="text" fieldname="note" />
+            <widget type="text" fieldname="observaciones" />
         </column>
     </columns>
 </view>
