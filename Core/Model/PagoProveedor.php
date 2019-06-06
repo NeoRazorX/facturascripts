@@ -31,35 +31,15 @@ class PagoProveedor extends Base\Payment
     use Base\ModelTrait;
 
     /**
-     *
-     * @var string
-     */
-    public $codproveedor;
-
-    /**
-     * 
-     * @return Proveedor
-     */
-    public function getSubject()
-    {
-        $proveedor = new Proveedor();
-        $proveedor->loadFromCode($this->codproveedor);
-        return $proveedor;
-    }
-
-    /**
      * 
      * @return string
      */
     public function install()
     {
-        $sql = parent::install();
-
         /// needes dependecies
-        new Proveedor();
-        new FacturaProveedor();
+        new ReciboProveedor();
 
-        return $sql;
+        return parent::install();
     }
 
     /**
@@ -69,21 +49,5 @@ class PagoProveedor extends Base\Payment
     public static function tableName()
     {
         return 'pagosprov';
-    }
-
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
-    {
-        if ('list' === $type && !empty($this->codproveedor)) {
-            return $this->getSubject()->url() . '&activetab=List' . $this->modelClassName();
-        }
-
-        return parent::url($type, $list);
     }
 }

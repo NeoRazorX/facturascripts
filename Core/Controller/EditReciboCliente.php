@@ -18,15 +18,16 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
- * Description of EditPagoCliente
+ * Description of EditReciboCliente
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class EditPagoCliente extends EditController
+class EditReciboCliente extends EditController
 {
 
     /**
@@ -35,7 +36,7 @@ class EditPagoCliente extends EditController
      */
     public function getModelClassName()
     {
-        return 'PagoCliente';
+        return 'ReciboCliente';
     }
 
     /**
@@ -46,9 +47,17 @@ class EditPagoCliente extends EditController
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
-        $data['title'] = 'payment';
+        $data['title'] = 'receipt';
         $data['icon'] = 'fas fa-piggy-bank';
         return $data;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addListView('EditPagoCliente', 'PagoCliente', 'payments');
     }
 
     /**
@@ -58,9 +67,22 @@ class EditPagoCliente extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        parent::loadData($viewName, $view);
-        if (empty($this->views[$this->active]->model->nick)) {
-            $this->views[$this->active]->model->nick = $this->user->nick;
+        switch ($viewName) {
+            case 'EditPagoCliente':
+                $idrecibo = $this->getViewModelValue('EditReciboCliente', 'idrecibo');
+                $where = [new DataBaseWhere('idrecibo', $idrecibo)];
+                $this->views[$viewName]->loadData('', $where);
+                if (empty($this->views[$viewName]->model->nick)) {
+                    $this->views[$viewName]->model->nick = $this->user->nick;
+                }
+                break;
+
+            case 'EditReciboCliente':
+                parent::loadData($viewName, $view);
+                if (empty($this->views[$viewName]->model->nick)) {
+                    $this->views[$viewName]->model->nick = $this->user->nick;
+                }
+                break;
         }
     }
 }

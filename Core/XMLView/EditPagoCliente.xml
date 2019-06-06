@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -24,28 +24,38 @@
             <column name="id" display="none" order="100">
                 <widget type="text" fieldname="idpago" />
             </column>
-            <column name="customer" order="110">
-                <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente" required="true" readonly="dinamic">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
-                </widget>
+            <column name="receipt" display="none" order="110">
+                <widget type="text" fieldname="idrecibo" />
             </column>
-            <column name="amount" display="right" order="120">
-                <widget type="money" fieldname="importe" />
-            </column>
-            <column name="fee" display="right" order="130">
-                <widget type="money" fieldname="gastos" />
-            </column>
-            <column name="date" display="right" order="140">
+            <column name="date" order="120">
                 <widget type="date" fieldname="fecha" />
             </column>
-            <column name="user" display="right" order="150">
+            <column name="hour" order="130">
+                <widget type="text" fieldname="hora" />
+            </column>
+            <column name="amount" display="right" order="140">
+                <widget type="money" fieldname="importe" />
+            </column>
+            <column name="expenses" display="right" order="150">
+                <widget type="money" fieldname="gastos" />
+            </column>
+            <column name="code" order="160">
+                <widget type="text" fieldname="customid" />
+            </column>
+            <column name="status" order="170">
+                <widget type="text" fieldname="customstatus" />
+            </column>
+            <column name="user" display="right" order="180">
                 <widget type="select" fieldname="nick" readonly="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
             </column>
-            <column name="description" numcolumns="12" order="160">
-                <widget type="textarea" fieldname="descripcion" required="true" />
-            </column>
         </group>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="importe">gt:0</option>
+            <option color="warning" fieldname="importe">lt:0</option>
+        </row>
+    </rows>
 </view>
