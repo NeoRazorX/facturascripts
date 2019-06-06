@@ -56,7 +56,7 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="commission" display="right" order="180">
+        <column name="porcommission" display="right" order="180">
             <widget type="number" decimal="2" fieldname="porcomision" />
         </column>
     </columns>

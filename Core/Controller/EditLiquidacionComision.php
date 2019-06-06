@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 
 /**
  * Description of EditCommissionSettlement
@@ -29,7 +30,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 class EditLiquidacionComision extends EditController
 {
 
-    const VIEWNAME_SETTLEDRECEIPT = 'ListLineaLiquidacionComision';
+    const VIEWNAME_SETTLEDINVOICE = 'ListLiquidacionComisionFactura';
 
     const INSERT_STATUS_ALL = 'ALL';
     const INSERT_STATUS_CHARGED = 'CHARGED';
@@ -39,14 +40,28 @@ class EditLiquidacionComision extends EditController
     const INSERT_DOMICILED_WITHOUT = 'WITHOUT';
 
     /**
-     * Add view with Receipts included
-     *
-     * @param string $viewName
+     * Returns the model name
      */
-    private function addSettledReceiptView($viewName = self::VIEWNAME_SETTLEDRECEIPT)
+    public function getModelClassName()
     {
-        $this->addListView($viewName, 'ModelView\LineaLiquidacionComision', 'receipts', 'fas fa-Receipt');
-        $this->setSettings($viewName, 'modalInsert', 'insertreceipts');
+        return 'LiquidacionComision';
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['menu'] = 'sales';
+        $pagedata['submenu'] = 'commissions';
+        $pagedata['title'] = 'settlement';
+        $pagedata['icon'] = 'fas fa-chalkboard-teacher';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
     }
 
     /**
@@ -56,53 +71,8 @@ class EditLiquidacionComision extends EditController
     {
         parent::createViews();
 
-        $this->addSettledReceiptView();
+        $this->addSettledInvoiceView();
         $this->setTabsPosition('bottom');
-    }
-
-    /**
-     * Set Read Only property to column
-     *
-     * @param BaseView $view
-     * @param string $columnName
-     */
-    private function disableColumn($view, $columnName)
-    {
-        $column = $view->columnForName($columnName);
-        if (empty($column)) {
-            return;
-        }
-
-        $column->widget->readonly = 'true';
-    }
-
-    /**
-     * Indicates if any data necessary for the insertion of receipts
-     * in the settlement is missing.
-     *
-     * @param array $data
-     * @return bool
-     */
-    private function errorInInsertData($data): bool
-    {
-        return empty($data['idsettled']) ||
-            empty($data['idexercise']) ||
-            empty($data['idagent']);
-    }
-
-    /**
-     * Indicates if any of the periods necessary for the insertion of receipts
-     * in the settlement are missing.
-     *
-     * @param array $data
-     * @return bool
-     */
-    private function errorInSelectDates($data): bool
-    {
-        return empty($data['datefrom']) &&
-            empty($data['dateto']) &&
-            empty($data['expirationfrom']) &&
-            empty($data['expirationto']);
     }
 
     /**
@@ -115,9 +85,9 @@ class EditLiquidacionComision extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'insertreceipts':
+            case 'insertinvoices':
                 $data = $this->request->request->all();
-                $this->insertReceipts($data);
+                $this->insertInvoices($data);
                 return true;
 
             case 'generateinvoice':
@@ -127,6 +97,64 @@ class EditLiquidacionComision extends EditController
             default:
                 return parent::execPreviousAction($action);
         }
+    }
+
+    /**
+     * Loads the data to display.
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case self::VIEWNAME_SETTLEDINVOICE:
+                $this->loadDataSettledInvoice($view);
+                $this->setViewStatus($view);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
+    }
+
+    /**
+     * Add view with Invoices included
+     *
+     * @param string $viewName
+     */
+    private function addSettledInvoiceView($viewName = self::VIEWNAME_SETTLEDINVOICE)
+    {
+        $this->addListView($viewName, 'ModelView\LiquidacionComisionFactura', 'invoices', 'fas fa-file-invoice');
+        $this->setSettings($viewName, 'modalInsert', 'insertinvoices');
+    }
+
+    /**
+     * Indicates if any data necessary for the insertion of invoices
+     * in the settlement is missing.
+     *
+     * @param array $data
+     * @return bool
+     */
+    private function errorInInsertData($data): bool
+    {
+        return empty($data['idliquidacion']) ||
+            empty($data['codejercicio']) ||
+            empty($data['codagente']);
+    }
+
+    /**
+     * Indicates if any of the periods necessary for the insertion of invoices
+     * in the settlement are missing.
+     *
+     * @param array $data
+     * @return bool
+     */
+    private function errorInSelectDates($data): bool
+    {
+        return empty($data['datefrom']) &&
+            empty($data['dateto']);
     }
 
     /**
@@ -168,42 +196,17 @@ class EditLiquidacionComision extends EditController
     }
 
     /**
-     * Returns the model name
-     */
-    public function getModelClassName()
-    {
-        return 'LiquidacionComision';
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'sales';
-        $pagedata['submenu'] = 'commissions';
-        $pagedata['title'] = 'settlement';
-        $pagedata['icon'] = 'fas fa-chalkboard-teacher';
-        $pagedata['showonmenu'] = false;
-
-        return $pagedata;
-    }
-
-    /**
      * Gets a where filter of the data reported in the form
      *
      * @param array $data
      * @return DatabaseWhere[]
      */
-    private function getReceiptsWhere($data)
+    private function getInvoicesWhere($data)
     {
         /// Basic data filter
         $where = [
-            new DatabaseWhere('reciboscli.codagente', $data['idagent']),
-            new DatabaseWhere('facturascli.codejercicio', $data['idexercise']),
+            new DatabaseWhere('facturascli.codagente', $data['codagente']),
+            new DatabaseWhere('facturascli.codejercicio', $data['codejercicio']),
         ];
 
         /// Dates filter
@@ -211,13 +214,15 @@ class EditLiquidacionComision extends EditController
             $this->getWhereFromDate($where, $data, 'datefrom', 'dateto', 'facturascli.fecha');
         }
 
+        /*
         if (!empty($data['expirationfrom'])) {
             $this->getWhereFromDate($where, $data, 'expirationfrom', 'expirationto', 'reciboscli.fechav');
         }
+        */
 
         /// Status payment filter
         if ($data['status'] == self::INSERT_STATUS_CHARGED) {
-            $where[] = new DatabaseWhere('reciboscli.estado', SettledReceipt::STATE_PAID);
+            $where[] = new DatabaseWhere('facturascli.pagada', true);
         }
 
         /// Payment source filter
@@ -232,8 +237,8 @@ class EditLiquidacionComision extends EditController
         }
 
         /// Customer filter
-        if (!empty($data['customer'])) {
-            $where[] = new DatabaseWhere('reciboscli.codcliente', $data['customer']);
+        if (!empty($data['codcliente'])) {
+            $where[] = new DatabaseWhere('facturascli.codcliente', $data['codcliente']);
         }
 
         /// Return completed filter
@@ -262,65 +267,45 @@ class EditLiquidacionComision extends EditController
     }
 
     /**
-     * Insert Receipts in the settled
+     * Insert Invoices in the settled
      *
      * @param array $data
      */
-    private function insertReceipts($data)
+    private function insertInvoices($data)
     {
         if ($this->errorInInsertData($data)) {
-            $this->miniLog->error($this->i18n->trans('insert-receipts-data-error'));
+            $this->miniLog->error($this->i18n->trans('insert-invoices-data-error'));
             return;
         }
 
         if ($this->errorInSelectDates($data)) {
-            $this->miniLog->error($this->i18n->trans('insert-receipts-date-error'));
+            $this->miniLog->error($this->i18n->trans('insert-invoices-date-error'));
             return;
         }
 
-        $where = $this->getReceiptsWhere($data);
-        $settledReceipt = new SettledReceipt();
-        $settledReceipt->addSettledReceiptFromSales($data['idsettled'], $where);
+        $where = $this->getInvoicesWhere($data);
+        $settleinvoice = new LiquidacionComisionFactura();
+        $settleinvoice->addInvoiceToSettle($data['idliquidacion'], $where);
     }
 
     /**
-     * Loads the data to display.
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case self::VIEWNAME_SETTLEDRECEIPT:
-                $this->loadDataSettledReceipt($view);
-                $this->setViewStatus($view);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
-                break;
-        }
-    }
-
-    /**
-     * Load data to view with Receipts detaill
+     * Load data to view with Invoices detaill
      *
      * @param BaseView $view
      */
-    private function loadDataSettledReceipt($view)
+    private function loadDataSettledInvoice($view)
     {
         /// Get master data
         $mainViewName = $this->getMainViewName();
         $idsettled = $this->getViewModelValue($mainViewName, 'idliquidacion');
 
         /// Set master values to insert modal view
-        $view->model->idsettled = $idsettled;
-        $view->model->idexercise = $this->getViewModelValue($mainViewName, 'codejercicio');
-        $view->model->idagent = $this->getViewModelValue($mainViewName, 'codagente');
+        $view->model->idliquidacion = $idsettled;
+        $view->model->codejercicio = $this->getViewModelValue($mainViewName, 'codejercicio');
+        $view->model->codagente = $this->getViewModelValue($mainViewName, 'codagente');
 
         /// Load view data
-        $where = [new DataBaseWhere('idliquidacion', $idsettled)];
+        $where = [new DataBaseWhere('facturascli.idliquidacion', $idsettled)];
         $view->loadData(false, $where, ['facturascli.codigo' => 'ASC']);
     }
 
@@ -332,12 +317,14 @@ class EditLiquidacionComision extends EditController
      */
     private function setViewStatus($view)
     {
+        /// If new record, nothing to do
         $mainViewName = $this->getMainViewName();
         $idsettled = $this->getViewModelValue($mainViewName, 'idliquidacion');
         if (empty($idsettled)) {
             return;
         }
 
+        /// Add invoice button and insert/delete
         $idinvoice = $this->getViewModelValue($mainViewName, 'idfactura');
         if (empty($idinvoice)) {
             $this->addButton($mainViewName, $this->getInvoiceButton());
@@ -346,10 +333,11 @@ class EditLiquidacionComision extends EditController
             $view->settings['btnDelete'] = false;
         }
 
+        /// Disable header fields when there are invoice selected
         if ($view->count > 0) {
             $masterView = $this->views[$mainViewName];
-            $this->disableColumn($masterView, 'exercise');
-            $this->disableColumn($masterView, 'agent');
+            $masterView->disableColumn('exercise', false, 'true');
+            $masterView->disableColumn('agent', false, 'true');
         }
     }
 }

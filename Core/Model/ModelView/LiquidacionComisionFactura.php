@@ -18,7 +18,10 @@
  */
 namespace FacturaScripts\Core\Model\ModelView;
 
+use Exception;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelView;
+use FacturaScripts\Core\Model\FacturaCliente;
 
 /**
  * Description of SettledReceipt
@@ -27,6 +30,50 @@ use FacturaScripts\Core\Model\Base\ModelView;
  */
 class LiquidacionComisionFactura extends ModelView
 {
+
+    /**
+     * Add to the indicated settlement the list of customer invoices
+     * according to the where filter.
+     *
+     * @param int $settled
+     * @param DataBaseWhere $where
+     */
+    public function addInvoiceToSettle($settled, $where)
+    {
+        $where[] = new DataBaseWhere('facturascli.idliquidacion', 'NULL', 'IS');
+        $invoices = $this->all($where);
+        if (count($invoices) == 0) {
+            return;
+        }
+
+        $sql = 'UPDATE ' . FacturaCliente::tableName()
+            . ' SET idliquidacion = ' . self::$dataBase->var2str($settled)
+            . ' WHERE ' . FacturaCliente::primaryColumn() . ' = ';
+
+        self::$dataBase->beginTransaction();
+        try {
+            foreach ($invoices as $row) {
+                $idinvoice = self::$dataBase->var2str($row->idfactura);
+                self::$dataBase->exec($sql . $idinvoice);
+            }
+            self::$dataBase->commit();
+        } catch (Exception $exc) {
+            self::$dataBase->rollback();
+            self::$miniLog->error($exc->getMessage());
+        }
+    }
+
+    /**
+     * Remove the record from settle commission.
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        $sql = 'UPDATE ' . FacturaCliente::tableName() . ' SET idliquidacion = NULL'
+            . ' WHERE ' . FacturaCliente::primaryColumn() . ' = ' . self::$dataBase->var2str($this->idfactura);
+        return self::$dataBase->exec($sql);
+    }
 
     /**
      * List of fields or columns to select clausule
@@ -73,26 +120,4 @@ class LiquidacionComisionFactura extends ModelView
             'empresas'
         ];
     }
-
-    /**
-     * Add to the indicated settlement the list of customer receipts
-     * according to the where filter.
-     *
-     * @param int $settled
-     * @param DataBaseWhere $where
-     */
-    /*
-    public function addSettledReceiptFromSales($settled, $where)
-    {
-        $salesReceipt = new SalesReceipt();
-        foreach ($salesReceipt->all($where) as $row) {
-            if (empty($row->idsettledreceipt)) {
-                $this->idliquidacion = $settled;
-                $this->idfactura = $row->idfactura;
-                $this->idrecibo = $row->idrecibo;
-                $this->save();
-            }
-        }
-    }
-    */
 }
