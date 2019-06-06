@@ -113,7 +113,7 @@ class EditCliente extends EditController
         $this->views[$viewName]->searchFields[] = 'direccion';
         $this->views[$viewName]->searchFields[] = 'email';
         $this->views[$viewName]->searchFields[] = 'nombre';
-        
+
         /// Disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
     }
@@ -175,8 +175,11 @@ class EditCliente extends EditController
     {
         $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['fechapago'], 'payment-date');
+        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
         $this->views[$viewName]->searchFields[] = 'observaciones';
-        
+
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);

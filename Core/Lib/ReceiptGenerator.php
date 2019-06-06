@@ -80,6 +80,7 @@ class ReceiptGenerator
         $newReceipt->idfactura = $invoice->idfactura;
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
+        $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->save();
     }
 
@@ -115,6 +116,7 @@ class ReceiptGenerator
         $newReceipt->idfactura = $invoice->idfactura;
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
+        $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->save();
     }
 

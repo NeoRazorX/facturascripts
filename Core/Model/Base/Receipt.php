@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
  * Description of Receipt
@@ -34,6 +35,12 @@ abstract class Receipt extends ModelClass
      * @var string
      */
     public $coddivisa;
+
+    /**
+     *
+     * @var string
+     */
+    public $codpago;
 
     /**
      *
@@ -105,11 +112,11 @@ abstract class Receipt extends ModelClass
     {
         parent::clear();
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
+        $this->codpago = AppSettings::get('default', 'codpago');
         $this->fecha = date('d-m-Y');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->pagado = false;
-        $this->vencimiento = date('d-m-Y');
     }
 
     /**
@@ -119,6 +126,19 @@ abstract class Receipt extends ModelClass
     public static function primaryColumn()
     {
         return 'idrecibo';
+    }
+
+    /**
+     * 
+     * @param string $codpago
+     */
+    public function setPaymentMethod($codpago)
+    {
+        $formaPago = new FormaPago();
+        if ($formaPago->loadFromCode($codpago)) {
+            $this->codpago = $codpago;
+            $this->vencimiento = $formaPago->getExpiration($this->fecha);
+        }
     }
 
     /**

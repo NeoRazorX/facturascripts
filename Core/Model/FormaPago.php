@@ -107,6 +107,18 @@ class FormaPago extends Base\ModelClass
     }
 
     /**
+     * Returns the date with the expiration term applied.
+     * 
+     * @param string $date
+     *
+     * @return string
+     */
+    public function getExpiration($date)
+    {
+        return date('d-m-Y', strtotime($date . ' +' . $this->plazovencimiento . ' ' . $this->tipovencimiento));
+    }
+
+    /**
      * 
      * @return string
      */
