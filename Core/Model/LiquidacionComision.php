@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
@@ -88,6 +89,7 @@ class LiquidacionComision extends Base\ModelClass
     {
         new Agente();
         new Ejercicio();
+        new FacturaCliente();
         new FacturaProveedor();
 
         return parent::install();
