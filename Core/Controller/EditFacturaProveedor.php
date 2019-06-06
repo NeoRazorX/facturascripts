@@ -87,7 +87,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function createReceiptsView($viewName = 'ListReciboProveedor')
     {
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-piggy-bank');
-        
+
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
@@ -99,6 +99,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function createViews()
     {
         parent::createViews();
+        $this->createReceiptsView();
         $this->createAccountsView();
         $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
     }

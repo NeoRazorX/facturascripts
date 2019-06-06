@@ -38,6 +38,17 @@ class ReciboProveedor extends Base\Receipt
 
     /**
      * 
+     * @return FacturaProveedor
+     */
+    public function getInvoice()
+    {
+        $invoice = new FacturaProveedor();
+        $invoice->loadFromCode($this->idfactura);
+        return $invoice;
+    }
+
+    /**
+     * 
      * @return Proveedor
      */
     public function getSubject()
@@ -75,10 +86,10 @@ class ReciboProveedor extends Base\Receipt
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListFacturaProveedor?activetab=List')
     {
-        if ('list' === $type && !empty($this->codproveedor)) {
-            return $this->getSubject()->url() . '&activetab=List' . $this->modelClassName();
+        if ('list' === $type && !empty($this->idfactura)) {
+            return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
         }
 
         return parent::url($type, $list);
