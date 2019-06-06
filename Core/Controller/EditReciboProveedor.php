@@ -58,6 +58,7 @@ class EditReciboProveedor extends EditController
         $this->setTabsPosition('bottom');
 
         $this->addListView('EditPagoProveedor', 'PagoProveedor', 'payments');
+        $this->setSettings('EditPagoProveedor', 'btnNew', false);
     }
 
     /**

@@ -24,10 +24,6 @@
         <type>date</type>
     </column>
     <column>
-        <name>fechav</name>
-        <type>date</type>
-    </column>
-    <column>
         <name>idempresa</name>
         <type>integer</type>
     </column>
@@ -63,6 +59,10 @@
         <name>pagado</name>
         <type>boolean</type>
         <default>false</default>
+    </column>
+    <column>
+        <name>vencimiento</name>
+        <type>date</type>
     </column>
     <constraint>
         <name>recibospagosprov_pkey</name>

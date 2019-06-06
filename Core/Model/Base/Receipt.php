@@ -49,12 +49,6 @@ abstract class Receipt extends ModelClass
 
     /**
      *
-     * @var string
-     */
-    public $fechav;
-
-    /**
-     *
      * @var int
      */
     public $idempresa;
@@ -101,15 +95,21 @@ abstract class Receipt extends ModelClass
      */
     public $pagado;
 
+    /**
+     *
+     * @var string
+     */
+    public $vencimiento;
+
     public function clear()
     {
         parent::clear();
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->fecha = date('d-m-Y');
-        $this->fechav = date('d-m-Y');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->pagado = false;
+        $this->vencimiento = date('d-m-Y');
     }
 
     /**

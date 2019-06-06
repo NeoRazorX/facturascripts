@@ -24,10 +24,6 @@
         <type>date</type>
     </column>
     <column>
-        <name>fechav</name>
-        <type>date</type>
-    </column>
-    <column>
         <name>gastos</name>
         <type>double precision</type>
         <default>0</default>
@@ -68,6 +64,10 @@
         <name>pagado</name>
         <type>boolean</type>
         <default>false</default>
+    </column>
+    <column>
+        <name>vencimiento</name>
+        <type>date</type>
     </column>
     <constraint>
         <name>recibospagoscli_pkey</name>

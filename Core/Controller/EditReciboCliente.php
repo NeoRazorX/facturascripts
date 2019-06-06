@@ -58,6 +58,7 @@ class EditReciboCliente extends EditController
         $this->setTabsPosition('bottom');
 
         $this->addListView('EditPagoCliente', 'PagoCliente', 'payments');
+        $this->setSettings('EditPagoCliente', 'btnNew', false);
     }
 
     /**
