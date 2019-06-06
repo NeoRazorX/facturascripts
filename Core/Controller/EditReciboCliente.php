@@ -59,6 +59,7 @@ class EditReciboCliente extends EditController
 
         $this->addListView('EditPagoCliente', 'PagoCliente', 'payments');
         $this->setSettings('EditPagoCliente', 'btnNew', false);
+        $this->setSettings('EditPagoCliente', 'btnDelete', false);
     }
 
     /**
@@ -72,10 +73,7 @@ class EditReciboCliente extends EditController
             case 'EditPagoCliente':
                 $idrecibo = $this->getViewModelValue('EditReciboCliente', 'idrecibo');
                 $where = [new DataBaseWhere('idrecibo', $idrecibo)];
-                $this->views[$viewName]->loadData('', $where);
-                if (empty($this->views[$viewName]->model->nick)) {
-                    $this->views[$viewName]->model->nick = $this->user->nick;
-                }
+                $this->views[$viewName]->loadData('', $where, ['idpago' => 'DESC']);
                 break;
 
             case 'EditReciboCliente':

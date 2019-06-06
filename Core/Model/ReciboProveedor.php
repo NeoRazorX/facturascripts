@@ -95,27 +95,13 @@ class ReciboProveedor extends Base\Receipt
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    public function newPayment()
     {
-        if (parent::saveInsert($values)) {
-            if ($this->pagado) {
-                $pago = new PagoProveedor();
-                $pago->fecha = $this->fecha;
-                $pago->idrecibo = $this->idrecibo;
-                $pago->importe = $this->importe;
-                $pago->nick = $this->nick;
-                $pago->save();
-            }
-
-            return true;
-        }
-
-        return false;
+        $pago = new PagoProveedor();
+        $pago->fecha = $this->fecha;
+        $pago->idrecibo = $this->idrecibo;
+        $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;
+        $pago->nick = $this->nick;
+        $pago->save();
     }
 }

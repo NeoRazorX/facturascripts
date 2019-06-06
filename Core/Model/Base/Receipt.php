@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\FormaPago;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-abstract class Receipt extends ModelClass
+abstract class Receipt extends ModelOnChangeClass
 {
 
     /**
@@ -108,6 +108,8 @@ abstract class Receipt extends ModelClass
      */
     public $vencimiento;
 
+    abstract public function newPayment();
+
     public function clear()
     {
         parent::clear();
@@ -148,6 +150,58 @@ abstract class Receipt extends ModelClass
     public function test()
     {
         $this->observaciones = Utils::noHtml($this->observaciones);
+
+        /// check expiration date
+        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
+            return false;
+        }
+
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'pagado':
+                $this->newPayment();
+                return true;
+
+            default:
+                return parent::onChange($field);
+        }
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = array())
+    {
+        if (parent::saveInsert($values)) {
+            if ($this->pagado) {
+                $this->newPayment();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        parent::setPreviousData(array_merge(['pagado'], $fields));
     }
 }
