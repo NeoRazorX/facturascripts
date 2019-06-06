@@ -50,6 +50,17 @@ class ReciboCliente extends Base\Receipt
 
     /**
      * 
+     * @return FacturaCliente
+     */
+    public function getInvoice()
+    {
+        $invoice = new FacturaCliente();
+        $invoice->loadFromCode($this->idfactura);
+        return $invoice;
+    }
+
+    /**
+     * 
      * @return Cliente
      */
     public function getSubject()
@@ -87,10 +98,10 @@ class ReciboCliente extends Base\Receipt
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List')
     {
-        if ('list' === $type && !empty($this->codcliente)) {
-            return $this->getSubject()->url() . '&activetab=List' . $this->modelClassName();
+        if ('list' === $type && !empty($this->idfactura)) {
+            return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
         }
 
         return parent::url($type, $list);

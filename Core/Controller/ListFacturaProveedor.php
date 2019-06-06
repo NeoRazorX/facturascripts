@@ -54,5 +54,22 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'paid');
 
         $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+        $this->createViewReceipts();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewReceipts($viewName = 'ListReciboProveedor')
+    {
+        $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
+        $this->addOrderBy($viewName, ['fecha'], 'date', 2);
+        $this->addOrderBy($viewName, ['importe'], 'ammount');
+        $this->addSearchFields($viewName, ['observaciones']);
+
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 }

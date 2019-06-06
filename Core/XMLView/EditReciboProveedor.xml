@@ -29,6 +29,11 @@
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
+            <column name="invoice" order="120">
+                <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor" readonly="dinamic">
+                    <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+                </widget>
+            </column>
             <column name="amount" display="right" order="120">
                 <widget type="money" fieldname="importe" />
             </column>

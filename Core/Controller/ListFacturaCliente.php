@@ -54,5 +54,22 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterCheckbox('ListFacturaCliente', 'pagada', 'paid');
 
         $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
+        $this->createViewReceipts();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewReceipts($viewName = 'ListReciboCliente')
+    {
+        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
+        $this->addOrderBy($viewName, ['fecha'], 'date', 2);
+        $this->addOrderBy($viewName, ['importe'], 'ammount');
+        $this->addSearchFields($viewName, ['observaciones']);
+
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 }

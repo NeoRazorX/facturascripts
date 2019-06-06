@@ -95,14 +95,10 @@
     </column>
     <column>
         <name>hora</name>
-        <type>time without time zone</type>
+        <type>time</type>
     </column>
     <column>
         <name>idasiento</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>idasientop</name>
         <type>integer</type>
     </column>
     <column>
@@ -202,10 +198,6 @@
         <name>totalrecargo</name>
         <type>double precision</type>
     </column>
-    <column>
-        <name>vencimiento</name>
-        <type>date</type>
-    </column>
     <constraint>
         <name>facturascli_pkey</name>
         <type>PRIMARY KEY (idfactura)</type>
@@ -217,10 +209,6 @@
     <constraint>
         <name>ca_facturascli_asiento</name>
         <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_facturascli_asientop</name>
-        <type>FOREIGN KEY (idasientop) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_facturascli_ejercicios</name>
