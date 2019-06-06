@@ -56,17 +56,23 @@ class ReceiptGenerator
     {
         /// check current invoice receipts
         $receipts = $invoice->getReceipts();
-        if (count($receipts) === 1 && $receipts[0]->pagado === false) {
-            $receipts[0]->importe = $invoice->total;
-            $receipts[0]->save();
-            return;
-        }
 
+        /// calculate pending amount
         $amount = $this->getPendingAmount($receipts, $invoice->total);
         if (empty($amount)) {
             return;
         }
 
+        /// try to update open receipts
+        foreach ($receipts as $receipt) {
+            if ($receipt->pagado === false) {
+                $receipt->importe = $amount;
+                $receipt->save();
+                return;
+            }
+        }
+
+        /// create new receipt
         $newReceipt = new ReciboCliente();
         $newReceipt->codcliente = $invoice->codcliente;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -85,17 +91,23 @@ class ReceiptGenerator
     {
         /// check current invoice receipts
         $receipts = $invoice->getReceipts();
-        if (count($receipts) === 1 && $receipts[0]->pagado === false) {
-            $receipts[0]->importe = $invoice->total;
-            $receipts[0]->save();
-            return;
-        }
 
+        /// calculate pending amount
         $amount = $this->getPendingAmount($receipts, $invoice->total);
         if (empty($amount)) {
             return;
         }
 
+        /// try to update open receipts
+        foreach ($receipts as $receipt) {
+            if ($receipt->pagado === false) {
+                $receipt->importe = $amount;
+                $receipt->save();
+                return;
+            }
+        }
+
+        /// create new receipt
         $newReceipt = new ReciboProveedor();
         $newReceipt->codproveedor = $invoice->codproveedor;
         $newReceipt->coddivisa = $invoice->coddivisa;
