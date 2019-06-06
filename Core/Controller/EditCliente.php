@@ -173,7 +173,7 @@ class EditCliente extends EditController
      */
     protected function createReceiptView($viewName = 'ListReciboCliente')
     {
-        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-piggy-bank');
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
         $this->views[$viewName]->searchFields[] = 'observaciones';
         

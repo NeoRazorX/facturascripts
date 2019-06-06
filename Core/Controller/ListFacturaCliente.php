@@ -63,7 +63,7 @@ class ListFacturaCliente extends ListBusinessDocument
      */
     protected function createViewReceipts($viewName = 'ListReciboCliente')
     {
-        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-piggy-bank');
+        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
         $this->addOrderBy($viewName, ['fecha'], 'date', 2);
         $this->addOrderBy($viewName, ['importe'], 'ammount');
         $this->addSearchFields($viewName, ['observaciones']);

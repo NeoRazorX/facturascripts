@@ -173,7 +173,7 @@ class EditProveedor extends EditController
      */
     protected function createReceiptView($viewName = 'ListReciboProveedor')
     {
-        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-piggy-bank');
+        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
         $this->views[$viewName]->searchFields[] = 'observaciones';
 

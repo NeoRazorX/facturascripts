@@ -86,7 +86,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
      */
     protected function createReceiptsView($viewName = 'ListReciboProveedor')
     {
-        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-piggy-bank');
+        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
 
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
