@@ -68,6 +68,18 @@ class FacturaCliente extends Base\SalesDocument
     }
 
     /**
+     * Returns all invoice's receipts.
+     * 
+     * @return ReciboCliente[]
+     */
+    public function getReceipts()
+    {
+        $receipt = new ReciboCliente();
+        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        return $receipt->all($where, ['idrecibo' => 'DESC'], 0, 0);
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string

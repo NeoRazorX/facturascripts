@@ -54,14 +54,27 @@ class ReceiptGenerator
      */
     protected function generateReciboCliente(&$invoice)
     {
-        $recibo = new ReciboCliente();
-        $recibo->codcliente = $invoice->codcliente;
-        $recibo->coddivisa = $invoice->coddivisa;
-        $recibo->idempresa = $invoice->idempresa;
-        $recibo->idfactura = $invoice->idfactura;
-        $recibo->importe = $invoice->total;
-        $recibo->nick = $invoice->nick;
-        $recibo->save();
+        /// check current invoice receipts
+        $receipts = $invoice->getReceipts();
+        if (count($receipts) === 1 && $receipts[0]->pagado === false) {
+            $receipts[0]->importe = $invoice->total;
+            $receipts[0]->save();
+            return;
+        }
+
+        $amount = $this->getPendingAmount($receipts, $invoice->total);
+        if (empty($amount)) {
+            return;
+        }
+
+        $newReceipt = new ReciboCliente();
+        $newReceipt->codcliente = $invoice->codcliente;
+        $newReceipt->coddivisa = $invoice->coddivisa;
+        $newReceipt->idempresa = $invoice->idempresa;
+        $newReceipt->idfactura = $invoice->idfactura;
+        $newReceipt->importe = $amount;
+        $newReceipt->nick = $invoice->nick;
+        $newReceipt->save();
     }
 
     /**
@@ -70,13 +83,45 @@ class ReceiptGenerator
      */
     protected function generateReciboProveedor(&$invoice)
     {
-        $recibo = new ReciboProveedor();
-        $recibo->codproveedor = $invoice->codproveedor;
-        $recibo->coddivisa = $invoice->coddivisa;
-        $recibo->idempresa = $invoice->idempresa;
-        $recibo->idfactura = $invoice->idfactura;
-        $recibo->importe = $invoice->total;
-        $recibo->nick = $invoice->nick;
-        $recibo->save();
+        /// check current invoice receipts
+        $receipts = $invoice->getReceipts();
+        if (count($receipts) === 1 && $receipts[0]->pagado === false) {
+            $receipts[0]->importe = $invoice->total;
+            $receipts[0]->save();
+            return;
+        }
+
+        $amount = $this->getPendingAmount($receipts, $invoice->total);
+        if (empty($amount)) {
+            return;
+        }
+
+        $newReceipt = new ReciboProveedor();
+        $newReceipt->codproveedor = $invoice->codproveedor;
+        $newReceipt->coddivisa = $invoice->coddivisa;
+        $newReceipt->idempresa = $invoice->idempresa;
+        $newReceipt->idfactura = $invoice->idfactura;
+        $newReceipt->importe = $amount;
+        $newReceipt->nick = $invoice->nick;
+        $newReceipt->save();
+    }
+
+    /**
+     * 
+     * @param ReciboCliente[]|ReciboProveedor[] $receipts
+     * @param float                             $amount
+     *
+     * @return float
+     */
+    protected function getPendingAmount($receipts, $amount)
+    {
+        $pending = $amount;
+        foreach ($receipts as $receipt) {
+            if ($receipt->pagado) {
+                $pending -= $receipt->importe;
+            }
+        }
+
+        return $pending;
     }
 }

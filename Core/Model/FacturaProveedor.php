@@ -68,6 +68,18 @@ class FacturaProveedor extends Base\PurchaseDocument
     }
 
     /**
+     * Returns all invoice's receipts.
+     * 
+     * @return ReciboProveedor[]
+     */
+    public function getReceipts()
+    {
+        $receipt = new ReciboProveedor();
+        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        return $receipt->all($where, ['idrecibo' => 'DESC'], 0, 0);
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string

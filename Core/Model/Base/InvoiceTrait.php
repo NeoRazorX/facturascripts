@@ -77,6 +77,8 @@ trait InvoiceTrait
 
     abstract public function getLines();
 
+    abstract public function getReceipts();
+
     /**
      * Returns all children documents of this one.
      *
