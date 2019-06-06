@@ -68,18 +68,18 @@ class Comision extends Base\ModelClass
     public $idempresa;
 
     /**
+     * code of product.
+     *
+     * @var string
+     */
+    public $idproducto;
+
+    /**
      * Commission percentage.
      *
      * @var float
      */
     public $porcentaje;
-
-    /**
-     * code of product.
-     *
-     * @var string
-     */
-    public $referencia;
 
     /**
      * Reset the values of all model properties.
@@ -103,7 +103,7 @@ class Comision extends Base\ModelClass
         new Cliente();
         new Agente();
 
-        return '';
+        return parent::install();
     }
 
     /**
