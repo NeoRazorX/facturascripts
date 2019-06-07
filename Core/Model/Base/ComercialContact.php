@@ -104,14 +104,6 @@ abstract class ComercialContact extends Contact
     public $regimeniva;
 
     /**
-     * Type of tax identification of the client.
-     * Examples: CIF, NIF, CUIT ...
-     *
-     * @var string
-     */
-    public $tipoidfiscal;
-
-    /**
      * Website of the person.
      *
      * @var string
@@ -134,14 +126,13 @@ abstract class ComercialContact extends Contact
         $this->codretencion = AppSettings::get('default', 'codretencion');
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
-        $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
-     * 
+     *
      * @return string
      */
     public function install()
@@ -156,7 +147,7 @@ abstract class ComercialContact extends Contact
 
     /**
      * Returns default contact retention value.
-     * 
+     *
      * @return float
      */
     public function irpf()

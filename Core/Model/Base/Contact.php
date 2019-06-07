@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -93,6 +94,14 @@ abstract class Contact extends ModelClass
     public $telefono2;
 
     /**
+     * Type of tax identification of the client.
+     * Examples: CIF, NIF, CUIT ...
+     *
+     * @var string
+     */
+    public $tipoidfiscal;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -100,6 +109,7 @@ abstract class Contact extends ModelClass
         parent::clear();
         $this->fechaalta = date('d-m-Y');
         $this->personafisica = true;
+        $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
     }
 
     /**

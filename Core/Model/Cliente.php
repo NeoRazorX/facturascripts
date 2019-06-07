@@ -31,7 +31,7 @@ class Cliente extends Base\ComercialContact
     use Base\ModelTrait;
 
     /**
-     * Employee assigned to this customer. Agent model.
+     * Agent assigned to this customer. Agent model.
      *
      * @var string
      */
@@ -79,7 +79,7 @@ class Cliente extends Base\ComercialContact
     public $riesgomax;
 
     /**
-     * 
+     *
      * @param string $query
      * @param string $fieldcode
      *
@@ -212,7 +212,7 @@ class Cliente extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
