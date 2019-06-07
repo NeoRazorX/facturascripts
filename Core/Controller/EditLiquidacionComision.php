@@ -39,7 +39,9 @@ class EditLiquidacionComision extends EditController
     const INSERT_DOMICILED_WITHOUT = 'WITHOUT';
 
     /**
-     * Returns the model name
+     * Returns the model name.
+     * 
+     * @return string
      */
     public function getModelClassName()
     {
@@ -134,6 +136,7 @@ class EditLiquidacionComision extends EditController
      * in the settlement is missing.
      *
      * @param array $data
+     *
      * @return bool
      */
     private function errorInInsertData($data): bool
@@ -152,8 +155,7 @@ class EditLiquidacionComision extends EditController
      */
     private function errorInSelectDates($data): bool
     {
-        return empty($data['datefrom']) &&
-            empty($data['dateto']);
+        return empty($data['datefrom']) && empty($data['dateto']);
     }
 
     /**
@@ -161,7 +163,7 @@ class EditLiquidacionComision extends EditController
      */
     private function generateInvoice()
     {
-        
+        ;
     }
 
     /**
@@ -185,6 +187,7 @@ class EditLiquidacionComision extends EditController
      * Gets a where filter of the data reported in the form
      *
      * @param array $data
+     *
      * @return DatabaseWhere[]
      */
     private function getInvoicesWhere($data)
@@ -230,10 +233,10 @@ class EditLiquidacionComision extends EditController
      * of fields that are reported
      *
      * @param DatabaseWhere[] $where
-     * @param array $data
-     * @param string $fieldFrom
-     * @param string $fieldTo
-     * @param string $sqlField
+     * @param array           $data
+     * @param string          $fieldFrom
+     * @param string          $fieldTo
+     * @param string          $sqlField
      */
     private function getWhereFromDate(&$where, $data, $fieldFrom, $fieldTo, $sqlField)
     {

@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
-use FacturaScripts\Dinamic\Model\LiquidacionComision;
 
 /**
  * Invoice of a client.
