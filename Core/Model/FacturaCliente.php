@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
+use FacturaScripts\Core\Model\LiquidacionComision;
 
 /**
  * Invoice of a client.
@@ -31,6 +32,16 @@ class FacturaCliente extends Base\SalesDocument
 
     use Base\ModelTrait;
     use Base\InvoiceTrait;
+
+    /**
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new LiquidacionComision();
+        return parent::install();
+    }
 
     /**
      * Returns the lines associated with the invoice.
@@ -69,7 +80,7 @@ class FacturaCliente extends Base\SalesDocument
 
     /**
      * Returns all invoice's receipts.
-     * 
+     *
      * @return ReciboCliente[]
      */
     public function getReceipts()

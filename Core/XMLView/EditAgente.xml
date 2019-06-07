@@ -34,9 +34,6 @@
             <column name="position" numcolumns="4" order="140">
                 <widget type="text" fieldname="cargo" />
             </column>
-            <column name="commission" title="percentage-commission" numcolumns="4" order="150">
-                <widget type="number" fieldname="porcomision" />
-            </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="address" numcolumns="4" order="100">
