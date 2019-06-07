@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\ModelView;
 
 use FacturaScripts\Core\Model\Base\ModelView;
-use FacturaScripts\Dinamic\Model\LiquidacionComision as ParentModel;
+use FacturaScripts\Core\Model\LiquidacionComision as ParentModel;
 
 /**
  * Description of Settled Commission list view
