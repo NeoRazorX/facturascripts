@@ -78,9 +78,7 @@ class EditReciboProveedor extends EditController
 
             case 'EditReciboProveedor':
                 parent::loadData($viewName, $view);
-                if (empty($this->views[$viewName]->model->nick)) {
-                    $this->views[$viewName]->model->nick = $this->user->nick;
-                }
+                $this->views[$viewName]->model->nick = $this->user->nick;
                 break;
         }
     }
