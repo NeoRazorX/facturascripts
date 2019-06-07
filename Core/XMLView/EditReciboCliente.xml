@@ -34,18 +34,21 @@
                     <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"></values>
                 </widget>
             </column>
-            <column name="date" order="130">
+            <column name="number" order="130">
+                <widget type="number" fieldname="numero" icon="fas fa-hashtag" />
+            </column>
+            <column name="date" order="140">
                 <widget type="date" fieldname="fecha" />
             </column>
-            <column name="expiration" order="140">
+            <column name="expiration" order="150">
                 <widget type="date" fieldname="fecha" />
             </column>
-            <column name="user" display="none" order="150">
+            <column name="user" display="none" order="160">
                 <widget type="select" fieldname="nick" readonly="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
             </column>
-            <column name="company" order="160">
+            <column name="company" order="170">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>

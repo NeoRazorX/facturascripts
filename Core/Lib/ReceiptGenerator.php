@@ -64,11 +64,16 @@ class ReceiptGenerator
         }
 
         /// try to update open receipts
+        $newNum = 1;
         foreach ($receipts as $receipt) {
             if ($receipt->pagado === false) {
                 $receipt->importe = $amount;
                 $receipt->save();
                 return;
+            }
+
+            if ($receipt->numero == $newNum) {
+                $newNum++;
             }
         }
 
@@ -80,6 +85,7 @@ class ReceiptGenerator
         $newReceipt->idfactura = $invoice->idfactura;
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
+        $newReceipt->numero = $newNum;
         $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->save();
     }
@@ -100,11 +106,16 @@ class ReceiptGenerator
         }
 
         /// try to update open receipts
+        $newNum = 1;
         foreach ($receipts as $receipt) {
             if ($receipt->pagado === false) {
                 $receipt->importe = $amount;
                 $receipt->save();
                 return;
+            }
+
+            if ($receipt->numero == $newNum) {
+                $newNum++;
             }
         }
 
@@ -116,6 +127,7 @@ class ReceiptGenerator
         $newReceipt->idfactura = $invoice->idfactura;
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
+        $newReceipt->numero = $newNum;
         $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->save();
     }

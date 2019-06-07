@@ -92,6 +92,12 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      *
+     * @var int
+     */
+    public $numero;
+
+    /**
+     *
      * @var string
      */
     public $observaciones;
@@ -118,6 +124,7 @@ abstract class Receipt extends ModelOnChangeClass
         $this->fecha = date('d-m-Y');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
+        $this->numero = 1;
         $this->pagado = false;
     }
 
@@ -169,6 +176,7 @@ abstract class Receipt extends ModelOnChangeClass
     {
         switch ($field) {
             case 'pagado':
+                $this->fechapago = $this->pagado ? date('d-m-Y') : null;
                 $this->newPayment();
                 return true;
 

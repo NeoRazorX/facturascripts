@@ -36,26 +36,29 @@
                 <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"></values>
             </widget>
         </column>
-        <column name="observations" order="140">
+        <column name="number" order="140">
+            <widget type="number" fieldname="numero" decimal="0" />
+        </column>
+        <column name="observations" order="150">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="amount" display="right" order="150">
+        <column name="amount" display="right" order="160">
             <widget type="money" fieldname="importe">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="expenses" display="right" order="160">
+        <column name="expenses" display="right" order="170">
             <widget type="money" fieldname="gastos">
                 <option color="danger">gt:0</option>
             </widget>
         </column>
-        <column name="paid" display="center" order="170">
+        <column name="paid" display="center" order="180">
             <widget type="checkbox" fieldname="pagado" />
         </column>
-        <column name="payment-date" order="180">
+        <column name="payment-date" order="190">
             <widget type="date" fieldname="fechapago" />
         </column>
-        <column name="expiration" display="right" order="190">
+        <column name="expiration" display="right" order="200">
             <widget type="date" fieldname="vencimiento" />
         </column>
     </columns>

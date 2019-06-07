@@ -56,6 +56,10 @@
         <type>character varying(50)</type>
     </column>
     <column>
+        <name>numero</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>observaciones</name>
         <type>text</type>
     </column>

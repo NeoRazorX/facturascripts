@@ -76,7 +76,7 @@ class FacturaCliente extends Base\SalesDocument
     {
         $receipt = new ReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
-        return $receipt->all($where, ['idrecibo' => 'DESC'], 0, 0);
+        return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
     /**
