@@ -56,6 +56,17 @@ class PagoCliente extends Base\Payment
 
     /**
      * 
+     * @return ReciboCliente
+     */
+    public function getReceipt()
+    {
+        $receipt = new ReciboCliente();
+        $receipt->loadFromCode($this->idrecibo);
+        return $receipt;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function install()

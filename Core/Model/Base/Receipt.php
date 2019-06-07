@@ -134,6 +134,15 @@ abstract class Receipt extends ModelOnChangeClass
      * 
      * @return string
      */
+    public function getCode()
+    {
+        return $this->getInvoice()->codigo . '-' . $this->numero;
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public static function primaryColumn()
     {
         return 'idrecibo';
