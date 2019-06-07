@@ -104,13 +104,6 @@ class Agente extends Base\Contact
     public $fechanacimiento;
 
     /**
-     * Percentage of the agent's commission. It is used in budgets, orders, delivery notes and invoices.
-     *
-     * @var float|int
-     */
-    public $porcomision;
-
-    /**
      * Contact province.
      *
      * @var string
@@ -123,15 +116,6 @@ class Agente extends Base\Contact
      * @var string
      */
     public $seg_social;
-
-    /**
-     * Reset values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->porcomision = 0.00;
-    }
 
     /**
      * Returns the name of the column that is the model's primary key.

@@ -66,10 +66,6 @@
         <type>text</type>
     </column>
     <column>
-        <name>porcomision</name>
-        <type>double precision</type>
-    </column>
-    <column>
         <name>provincia</name>
         <type>character varying(100)</type>
     </column>

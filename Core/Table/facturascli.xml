@@ -128,6 +128,10 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idliquidacion</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>irpf</name>
         <type>double precision</type>
     </column>
@@ -217,6 +221,10 @@
     <constraint>
         <name>ca_facturascli_users</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturascli_liquidaciones</name>
+        <type>FOREIGN KEY (idliquidacion) REFERENCES liquidacioncomision (idliquidacion) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_facturascli</name>
