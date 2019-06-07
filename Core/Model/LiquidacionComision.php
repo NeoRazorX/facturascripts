@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 
 /**
