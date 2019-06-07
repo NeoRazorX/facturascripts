@@ -32,8 +32,14 @@ abstract class Payment extends ModelClass
      *
      * @var string
      */
+    public $codpago;
+
+    /**
+     *
+     * @var string
+     */
     public $fecha;
-    
+
     /**
      *
      * @var string

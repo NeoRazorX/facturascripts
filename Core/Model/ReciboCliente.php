@@ -139,6 +139,7 @@ class ReciboCliente extends Base\Receipt
     public function newPayment()
     {
         $pago = new PagoCliente();
+        $pago->codpago = $this->codpago;
         $pago->fecha = $this->fecha;
         $pago->gastos = $this->gastos;
         $pago->idrecibo = $this->idrecibo;

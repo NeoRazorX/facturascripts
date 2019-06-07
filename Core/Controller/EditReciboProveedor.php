@@ -57,9 +57,24 @@ class EditReciboProveedor extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('EditPagoProveedor', 'PagoProveedor', 'payments');
-        $this->setSettings('EditPagoProveedor', 'btnNew', false);
-        $this->setSettings('EditPagoProveedor', 'btnDelete', false);
+
+        /// disable new button
+        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+
+        $this->createViewPayments();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewPayments($viewName = 'ListPagoProveedor')
+    {
+        $this->addListView($viewName, 'PagoProveedor', 'payments');
+
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -70,7 +85,7 @@ class EditReciboProveedor extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditPagoProveedor':
+            case 'ListPagoProveedor':
                 $idrecibo = $this->getViewModelValue('EditReciboProveedor', 'idrecibo');
                 $where = [new DataBaseWhere('idrecibo', $idrecibo)];
                 $this->views[$viewName]->loadData('', $where, ['idpago' => 'DESC']);
@@ -79,6 +94,10 @@ class EditReciboProveedor extends EditController
             case 'EditReciboProveedor':
                 parent::loadData($viewName, $view);
                 $this->views[$viewName]->model->nick = $this->user->nick;
+                if ($this->views[$viewName]->model->pagado) {
+                    $this->views[$viewName]->disableColumn('amount', false, 'true');
+                    $this->views[$viewName]->disableColumn('payment', false, 'true');
+                }
                 break;
         }
     }

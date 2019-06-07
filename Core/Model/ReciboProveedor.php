@@ -98,6 +98,7 @@ class ReciboProveedor extends Base\Receipt
     public function newPayment()
     {
         $pago = new PagoProveedor();
+        $pago->codpago = $this->codpago;
         $pago->fecha = $this->fecha;
         $pago->idrecibo = $this->idrecibo;
         $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;
