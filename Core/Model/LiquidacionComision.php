@@ -89,7 +89,6 @@ class LiquidacionComision extends Base\ModelClass
     {
         new Agente();
         new Ejercicio();
-        new FacturaCliente();
         new FacturaProveedor();
 
         return parent::install();
