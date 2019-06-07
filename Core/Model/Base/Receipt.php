@@ -177,6 +177,9 @@ abstract class Receipt extends ModelOnChangeClass
     protected function onChange($field)
     {
         switch ($field) {
+            case 'importe':
+                return $this->previousData['pagado'] ? false : true;
+
             case 'pagado':
                 $this->fechapago = $this->pagado ? date('d-m-Y') : null;
                 $this->newPayment();
@@ -229,22 +232,20 @@ abstract class Receipt extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        parent::setPreviousData(array_merge(['pagado'], $fields));
+        parent::setPreviousData(array_merge(['importe', 'pagado'], $fields));
     }
 
     protected function updateInvoice()
     {
-        $paid = false;
+        $paidAmount = 0.0;
         $invoice = $this->getInvoice();
         foreach ($invoice->getReceipts() as $receipt) {
             if ($receipt->pagado) {
-                $paid = true;
-            } else {
-                $paid = false;
-                break;
+                $paidAmount += $receipt->importe;
             }
         }
 
+        $paid = $paidAmount == $invoice->total;
         if ($invoice->pagada != $paid) {
             $invoice->pagada = $paid;
             $invoice->save();
