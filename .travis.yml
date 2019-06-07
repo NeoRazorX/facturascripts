@@ -31,10 +31,6 @@ script:
 # Run PHPUnit test.
   - vendor/bin/phpunit --configuration phpunit.xml
 matrix:
-  include:
-    - php: hhvm
-      dist: trusty
   allow_failures:
-    - php: hhvm
     - php: nightly
   fast_finish: true
