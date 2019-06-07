@@ -20,10 +20,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Core\Lib\ReceiptGenerator;
+use FacturaScripts\Dinamic\Lib\ExtendedController\PurchaseDocumentController;
+use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**

@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
-use FacturaScripts\Core\Model\PagoCliente;
-use FacturaScripts\Core\Model\PagoProveedor;
-use FacturaScripts\Core\Model\ReciboCliente;
-use FacturaScripts\Core\Model\ReciboProveedor;
+use FacturaScripts\Dinamic\Model\PagoCliente;
+use FacturaScripts\Dinamic\Model\PagoProveedor;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
+use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
 /**
  * Description of PaymentToAccounting
@@ -84,6 +84,14 @@ class PaymentToAccounting extends AccountingClass
      */
     protected function customerPaymentAccountingEntry()
     {
+        /// Get Subaccounts
+        $customer = $this->receipt->getSubject();
+        $customerSubaccount = $this->getCustomerAccount($customer);
+        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
+        if (!$customerSubaccount->exists() || !$paymentSubaccount->exists()) {
+            return false;
+        }
+
         /// Create account entry header
         $accountEntry = new Asiento();
         $concept = $this->i18n->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
@@ -93,11 +101,6 @@ class PaymentToAccounting extends AccountingClass
             $this->miniLog->warning('accounting-entry-error');
             return false;
         }
-
-        /// Get Subaccounts
-        $customer = $this->receipt->getSubject();
-        $customerSubaccount = $this->getCustomerAccount($customer);
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
 
         /// Create account entry detail
         /// Add Customer Receipt Amount Line
@@ -132,6 +135,14 @@ class PaymentToAccounting extends AccountingClass
 
     protected function supplierPaymentAccountingEntry()
     {
+        /// Get Subaccounts
+        $supplier = $this->receipt->getSubject();
+        $supplierSubaccount = $this->getCustomerAccount($supplier);
+        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
+        if (!$supplierSubaccount->exists() || !$paymentSubaccount->exists()) {
+            return false;
+        }
+
         /// Create account entry header
         $accountEntry = new Asiento();
         $concept = $this->i18n->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
@@ -140,11 +151,6 @@ class PaymentToAccounting extends AccountingClass
             $this->miniLog->warning('accounting-entry-error');
             return false;
         }
-
-        /// Get Subaccounts
-        $supplier = $this->receipt->getSubject();
-        $supplierSubaccount = $this->getCustomerAccount($supplier);
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
 
         /// Create account entry detail
         /// Add Customer Receipt Amount Line

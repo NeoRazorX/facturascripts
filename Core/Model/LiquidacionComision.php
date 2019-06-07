@@ -18,9 +18,9 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Agente;
-use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Agente;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
  * List of Commissions Settlement.

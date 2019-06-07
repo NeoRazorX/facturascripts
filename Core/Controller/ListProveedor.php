@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -27,7 +27,7 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListProveedor extends ExtendedController\ListController
+class ListProveedor extends ListController
 {
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Core\Model\ModelView\LiquidacionComisionFactura;
+use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 
 /**
  * Description of EditCommissionSettlement
@@ -32,10 +32,8 @@ class EditLiquidacionComision extends EditController
 {
 
     const VIEWNAME_SETTLEDINVOICE = 'ListLiquidacionComisionFactura';
-
     const INSERT_STATUS_ALL = 'ALL';
     const INSERT_STATUS_CHARGED = 'CHARGED';
-
     const INSERT_DOMICILED_ALL = 'ALL';
     const INSERT_DOMICILED_DOMICILED = 'DOMICILED';
     const INSERT_DOMICILED_WITHOUT = 'WITHOUT';
@@ -163,6 +161,7 @@ class EditLiquidacionComision extends EditController
      */
     private function generateInvoice()
     {
+        
     }
 
     /**

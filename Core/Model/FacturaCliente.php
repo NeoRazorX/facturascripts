@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
-use FacturaScripts\Core\Model\LiquidacionComision;
+use FacturaScripts\Dinamic\Model\LiquidacionComision;
 
 /**
  * Invoice of a client.

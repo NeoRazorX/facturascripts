@@ -20,8 +20,8 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
-use FacturaScripts\Core\Model\ReciboCliente;
-use FacturaScripts\Core\Model\ReciboProveedor;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
+use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
 /**
  * Description of ReceiptGenerator

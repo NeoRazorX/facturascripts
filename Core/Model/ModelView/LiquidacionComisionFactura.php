@@ -22,7 +22,7 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\Base\ModelView;
-use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 
 /**
  * Description of SettledReceipt
