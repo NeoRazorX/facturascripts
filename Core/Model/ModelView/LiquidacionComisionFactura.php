@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\ModelView;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\Base\ModelView;
 use FacturaScripts\Core\Model\FacturaCliente;
 
@@ -27,6 +28,8 @@ use FacturaScripts\Core\Model\FacturaCliente;
  * Description of SettledReceipt
  *
  * @author Artex Trading s.a. <jcuello@artextrading.com>
+ *
+ * @property int $idfactura
  */
 class LiquidacionComisionFactura extends ModelView
 {
@@ -36,7 +39,7 @@ class LiquidacionComisionFactura extends ModelView
      * according to the where filter.
      *
      * @param int $settled
-     * @param DataBaseWhere $where
+     * @param DataBaseWhere[] $where
      */
     public function addInvoiceToSettle($settled, $where)
     {
@@ -59,7 +62,8 @@ class LiquidacionComisionFactura extends ModelView
             self::$dataBase->commit();
         } catch (Exception $exc) {
             self::$dataBase->rollback();
-            self::$miniLog->error($exc->getMessage());
+            $miniLog = new MiniLog();
+            $miniLog->error($exc->getMessage());
         }
     }
 

@@ -19,8 +19,9 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
+use FacturaScripts\Core\Model\ModelView\LiquidacionComisionFactura;
 
 /**
  * Description of EditCommissionSettlement
@@ -162,20 +163,6 @@ class EditLiquidacionComision extends EditController
      */
     private function generateInvoice()
     {
-        /*
-        $factura = new FacturaProveedor();
-        $factura->setSubject($proveedor);
-        $factura->save();
-
-        $newLinea = $factura->getNewProductLine('123'); /// referencia 123
-        $newLinea->cantidad = 2;
-        $newLinea->save();
-
-        /// recalculamos
-        $docTools = new BusinessDocumentTools();
-        $docTools->recalculate($factura);
-        $factura->save();
-        */
     }
 
     /**
@@ -213,12 +200,6 @@ class EditLiquidacionComision extends EditController
         if (!empty($data['datefrom'])) {
             $this->getWhereFromDate($where, $data, 'datefrom', 'dateto', 'facturascli.fecha');
         }
-
-        /*
-        if (!empty($data['expirationfrom'])) {
-            $this->getWhereFromDate($where, $data, 'expirationfrom', 'expirationto', 'reciboscli.fechav');
-        }
-        */
 
         /// Status payment filter
         if ($data['status'] == self::INSERT_STATUS_CHARGED) {

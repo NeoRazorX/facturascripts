@@ -18,10 +18,10 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Dinamic\Model\Agente;
-use FacturaScripts\Dinamic\Model\Ejercicio;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\Agente;
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FacturaProveedor;
 
 /**
  * List of Commissions Settlement.
@@ -34,9 +34,9 @@ class LiquidacionComision extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Date of creation of the payroll
+     * Date of creation of the settlement.
      *
-     * @var date
+     * @var string
      */
     public $fecha;
 
@@ -62,7 +62,7 @@ class LiquidacionComision extends Base\ModelClass
     public $idfactura;
 
     /**
-     * Total amount of the commission settlement
+     * Total amount of the commission settlement.
      *
      * @var double
      */

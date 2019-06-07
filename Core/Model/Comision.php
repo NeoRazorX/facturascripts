@@ -18,9 +18,10 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Dinamic\Model\Agente;
-use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Core\Model\Agente;
+use FacturaScripts\Core\Model\Base;
+use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Producto;
 
 /**
  * List of a sellers commissions.
