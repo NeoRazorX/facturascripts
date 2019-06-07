@@ -23,6 +23,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\SalesDocumentController;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 
 /**
@@ -87,10 +88,18 @@ class EditFacturaCliente extends SalesDocumentController
     protected function createReceiptsView($viewName = 'ListReciboCliente')
     {
         $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
-        
+
+        /// buttons
+        $newButton = [
+            'action' => 'generate-receipts',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate-receipts',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $newButton);
+
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -115,6 +124,10 @@ class EditFacturaCliente extends SalesDocumentController
         switch ($action) {
             case 'generate-accounting':
                 $this->generateAccountingAction();
+                break;
+
+            case 'generate-receipts':
+                $this->generateReceiptsAction();
                 break;
 
             case 'new-refund':
@@ -151,6 +164,24 @@ class EditFacturaCliente extends SalesDocumentController
 
         $this->miniLog->error($this->i18n->trans('record-save-error'));
         return false;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function generateReceiptsAction()
+    {
+        $invoice = new FacturaCliente();
+        if (!$invoice->loadFromCode($this->request->query->get('code'))) {
+            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            return false;
+        }
+
+        $generator = new ReceiptGenerator();
+        $generator->generate($invoice);
+        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        return true;
     }
 
     /**
