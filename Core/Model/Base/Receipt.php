@@ -114,6 +114,8 @@ abstract class Receipt extends ModelOnChangeClass
      */
     public $vencimiento;
 
+    abstract public function getInvoice();
+
     abstract public function newPayment();
 
     public function clear()
@@ -191,13 +193,30 @@ abstract class Receipt extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = array())
+    protected function saveInsert(array $values = [])
     {
         if (parent::saveInsert($values)) {
             if ($this->pagado) {
                 $this->newPayment();
+                $this->updateInvoice();
             }
 
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = [])
+    {
+        if (parent::saveUpdate($values)) {
+            $this->updateInvoice();
             return true;
         }
 
@@ -211,5 +230,24 @@ abstract class Receipt extends ModelOnChangeClass
     protected function setPreviousData(array $fields = [])
     {
         parent::setPreviousData(array_merge(['pagado'], $fields));
+    }
+
+    protected function updateInvoice()
+    {
+        $paid = false;
+        $invoice = $this->getInvoice();
+        foreach ($invoice->getReceipts() as $receipt) {
+            if ($receipt->pagado) {
+                $paid = true;
+            } else {
+                $paid = false;
+                break;
+            }
+        }
+
+        if ($invoice->pagada != $paid) {
+            $invoice->pagada = $paid;
+            $invoice->save();
+        }
     }
 }
