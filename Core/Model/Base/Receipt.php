@@ -190,6 +190,11 @@ abstract class Receipt extends ModelOnChangeClass
         }
     }
 
+    protected function onDelete()
+    {
+        $this->updateInvoice();
+    }
+
     /**
      * 
      * @param array $values
