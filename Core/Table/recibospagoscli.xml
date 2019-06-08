@@ -15,16 +15,16 @@
         <type>character varying(3)</type>
     </column>
     <column>
+        <name>codpago</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>fecha</name>
         <type>date</type>
         <null>NO</null>
     </column>
     <column>
         <name>fechapago</name>
-        <type>date</type>
-    </column>
-    <column>
-        <name>fechav</name>
         <type>date</type>
     </column>
     <column>
@@ -61,6 +61,10 @@
         <type>character varying(50)</type>
     </column>
     <column>
+        <name>numero</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>observaciones</name>
         <type>text</type>
     </column>
@@ -68,6 +72,10 @@
         <name>pagado</name>
         <type>boolean</type>
         <default>false</default>
+    </column>
+    <column>
+        <name>vencimiento</name>
+        <type>date</type>
     </column>
     <constraint>
         <name>recibospagoscli_pkey</name>

@@ -34,22 +34,48 @@
                     <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
                 </widget>
             </column>
-            <column name="amount" display="right" order="120">
-                <widget type="money" fieldname="importe" />
+            <column name="number" order="130">
+                <widget type="number" fieldname="numero" icon="fas fa-hashtag" />
             </column>
-            <column name="date" display="right" order="130">
+            <column name="date" order="140">
                 <widget type="date" fieldname="fecha" />
             </column>
-            <column name="user" display="right" order="140">
+            <column name="expiration" order="150">
+                <widget type="date" fieldname="vencimiento" />
+            </column>
+            <column name="user" display="none" order="160">
                 <widget type="select" fieldname="nick" readonly="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
             </column>
+            <column name="company" order="170">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
+            </column>
+        </group>
+        <group name="payment" numcolumns="12">
+            <column name="amount" order="100">
+                <widget type="money" fieldname="importe" />
+            </column>
+            <column name="currency" order="110">
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true" readonly="dinamic">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="payment" title="method-payment" order="120">
+                <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="payment-date" order="130">
+                <widget type="date" fieldname="fechapago" readonly="dinamic" />
+            </column>
+            <column name="paid" numcolumns="12" order="140">
+                <widget type="checkbox" fieldname="pagado" />
+            </column>
             <column name="observations" numcolumns="12" order="150">
                 <widget type="textarea" fieldname="observaciones" />
-            </column>
-            <column name="paid" numcolumns="12" order="160">
-                <widget type="checkbox" fieldname="pagado" />
             </column>
         </group>
     </columns>

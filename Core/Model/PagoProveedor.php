@@ -32,6 +32,17 @@ class PagoProveedor extends Base\Payment
 
     /**
      * 
+     * @return ReciboProveedor
+     */
+    public function getReceipt()
+    {
+        $receipt = new ReciboProveedor();
+        $receipt->loadFromCode($this->idrecibo);
+        return $receipt;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function install()

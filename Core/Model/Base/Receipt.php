@@ -20,13 +20,14 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
  * Description of Receipt
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-abstract class Receipt extends ModelClass
+abstract class Receipt extends ModelOnChangeClass
 {
 
     /**
@@ -39,6 +40,12 @@ abstract class Receipt extends ModelClass
      *
      * @var string
      */
+    public $codpago;
+
+    /**
+     *
+     * @var string
+     */
     public $fecha;
 
     /**
@@ -46,12 +53,6 @@ abstract class Receipt extends ModelClass
      * @var string
      */
     public $fechapago;
-
-    /**
-     *
-     * @var string
-     */
-    public $fechav;
 
     /**
      *
@@ -91,6 +92,12 @@ abstract class Receipt extends ModelClass
 
     /**
      *
+     * @var int
+     */
+    public $numero;
+
+    /**
+     *
      * @var string
      */
     public $observaciones;
@@ -101,15 +108,35 @@ abstract class Receipt extends ModelClass
      */
     public $pagado;
 
+    /**
+     *
+     * @var string
+     */
+    public $vencimiento;
+
+    abstract public function getInvoice();
+
+    abstract public function newPayment();
+
     public function clear()
     {
         parent::clear();
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
+        $this->codpago = AppSettings::get('default', 'codpago');
         $this->fecha = date('d-m-Y');
-        $this->fechav = date('d-m-Y');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
+        $this->numero = 1;
         $this->pagado = false;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->getInvoice()->codigo . '-' . $this->numero;
     }
 
     /**
@@ -123,11 +150,119 @@ abstract class Receipt extends ModelClass
 
     /**
      * 
+     * @param string $codpago
+     */
+    public function setPaymentMethod($codpago)
+    {
+        $formaPago = new FormaPago();
+        if ($formaPago->loadFromCode($codpago)) {
+            $this->codpago = $codpago;
+            $this->vencimiento = $formaPago->getExpiration($this->fecha);
+        }
+    }
+
+    /**
+     * 
      * @return bool
      */
     public function test()
     {
         $this->observaciones = Utils::noHtml($this->observaciones);
+
+        /// check expiration date
+        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
+            return false;
+        }
+
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'importe':
+                return $this->previousData['pagado'] ? false : true;
+
+            case 'pagado':
+                $this->fechapago = $this->pagado ? date('d-m-Y') : null;
+                $this->newPayment();
+                return true;
+
+            default:
+                return parent::onChange($field);
+        }
+    }
+
+    protected function onDelete()
+    {
+        $this->updateInvoice();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            if ($this->pagado) {
+                $this->newPayment();
+                $this->updateInvoice();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = [])
+    {
+        if (parent::saveUpdate($values)) {
+            $this->updateInvoice();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        parent::setPreviousData(array_merge(['importe', 'pagado'], $fields));
+    }
+
+    protected function updateInvoice()
+    {
+        $paidAmount = 0.0;
+        $invoice = $this->getInvoice();
+        foreach ($invoice->getReceipts() as $receipt) {
+            if ($receipt->pagado) {
+                $paidAmount += $receipt->importe;
+            }
+        }
+
+        $paid = $paidAmount == $invoice->total;
+        if ($invoice->pagada != $paid) {
+            $invoice->pagada = $paid;
+            $invoice->save();
+        }
     }
 }

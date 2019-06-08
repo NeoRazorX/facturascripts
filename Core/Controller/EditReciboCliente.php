@@ -57,7 +57,23 @@ class EditReciboCliente extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('EditPagoCliente', 'PagoCliente', 'payments');
+        /// disable new button
+        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+
+        $this->createViewPayments();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewPayments($viewName = 'ListPagoCliente')
+    {
+        $this->addListView($viewName, 'PagoCliente', 'payments');
+
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -68,19 +84,19 @@ class EditReciboCliente extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditPagoCliente':
+            case 'ListPagoCliente':
                 $idrecibo = $this->getViewModelValue('EditReciboCliente', 'idrecibo');
                 $where = [new DataBaseWhere('idrecibo', $idrecibo)];
-                $this->views[$viewName]->loadData('', $where);
-                if (empty($this->views[$viewName]->model->nick)) {
-                    $this->views[$viewName]->model->nick = $this->user->nick;
-                }
+                $this->views[$viewName]->loadData('', $where, ['idpago' => 'DESC']);
                 break;
 
             case 'EditReciboCliente':
                 parent::loadData($viewName, $view);
-                if (empty($this->views[$viewName]->model->nick)) {
-                    $this->views[$viewName]->model->nick = $this->user->nick;
+                $this->views[$viewName]->model->nick = $this->user->nick;
+                if ($this->views[$viewName]->model->pagado) {
+                    $this->views[$viewName]->disableColumn('amount', false, 'true');
+                    $this->views[$viewName]->disableColumn('expenses', false, 'true');
+                    $this->views[$viewName]->disableColumn('payment', false, 'true');
                 }
                 break;
         }

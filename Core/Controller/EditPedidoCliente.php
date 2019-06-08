@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\SalesDocumentController;
+use FacturaScripts\Dinamic\Lib\ExtendedController\SalesDocumentController;
 
 /**
  * Controller to edit a single item from the AlbaranCliente model

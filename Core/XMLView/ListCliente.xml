@@ -31,7 +31,7 @@
             <widget type="text" fieldname="razonsocial" />
         </column>
         <column name="fiscal-id" display="none" order="130">
-            <widget type="text" fieldname="cifnif" />
+            <widget type="text" fieldname="tipoidfiscal" />
         </column>
         <column name="fiscal-number" order="140">
             <widget type="text" fieldname="cifnif" />

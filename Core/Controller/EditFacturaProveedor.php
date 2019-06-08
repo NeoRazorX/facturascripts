@@ -20,9 +20,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Lib\ExtendedController\PurchaseDocumentController;
+use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
@@ -88,9 +89,17 @@ class EditFacturaProveedor extends PurchaseDocumentController
     {
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
 
+        /// buttons
+        $newButton = [
+            'action' => 'generate-receipts',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate-receipts',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $newButton);
+
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -115,6 +124,10 @@ class EditFacturaProveedor extends PurchaseDocumentController
         switch ($action) {
             case 'generate-accounting':
                 $this->generateAccountingAction();
+                break;
+
+            case 'generate-receipts':
+                $this->generateReceiptsAction();
                 break;
 
             case 'new-refund':
@@ -151,6 +164,24 @@ class EditFacturaProveedor extends PurchaseDocumentController
 
         $this->miniLog->error($this->i18n->trans('record-save-error'));
         return false;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function generateReceiptsAction()
+    {
+        $invoice = new FacturaProveedor();
+        if (!$invoice->loadFromCode($this->request->query->get('code'))) {
+            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            return false;
+        }
+
+        $generator = new ReceiptGenerator();
+        $generator->generate($invoice);
+        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        return true;
     }
 
     /**

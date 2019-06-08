@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\PurchaseDocumentController;
+use FacturaScripts\Dinamic\Lib\ExtendedController\PurchaseDocumentController;
 
 /**
  * Controller to edit a single item from the AlbaranProveedor model

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\ListBusinessDocument;
+use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the FacturaProveedor model
@@ -65,6 +65,8 @@ class ListFacturaProveedor extends ListBusinessDocument
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->addOrderBy($viewName, ['fecha'], 'date', 2);
+        $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
+        $this->addOrderBy($viewName, ['vencimiento'], 'expiration');
         $this->addOrderBy($viewName, ['importe'], 'ammount');
         $this->addSearchFields($viewName, ['observaciones']);
 

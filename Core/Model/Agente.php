@@ -69,20 +69,18 @@ class Agente extends Base\Contact
     public $idcontacto;
 
     /**
-     * Percentage of the agent's commission. It is used in budgets, orders, delivery notes and invoices.
+     * Contact province.
      *
-     * @var float|int
+     * @var string
      */
-    public $porcomision;
+    public $provincia;
 
     /**
-     * Reset values of all model properties.
+     * Social security number.
+     *
+     * @var string
      */
-    public function clear()
-    {
-        parent::clear();
-        $this->porcomision = 0.00;
-    }
+    public $seg_social;
 
     /**
      * Returns the name of the column that is the model's primary key.

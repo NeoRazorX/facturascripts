@@ -20,8 +20,8 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
-use FacturaScripts\Core\Model\ReciboCliente;
-use FacturaScripts\Core\Model\ReciboProveedor;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
+use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
 /**
  * Description of ReceiptGenerator
@@ -56,17 +56,28 @@ class ReceiptGenerator
     {
         /// check current invoice receipts
         $receipts = $invoice->getReceipts();
-        if (count($receipts) === 1 && $receipts[0]->pagado === false) {
-            $receipts[0]->importe = $invoice->total;
-            $receipts[0]->save();
-            return;
-        }
 
+        /// calculate pending amount
         $amount = $this->getPendingAmount($receipts, $invoice->total);
         if (empty($amount)) {
             return;
         }
 
+        /// try to update open receipts
+        $newNum = 1;
+        foreach ($receipts as $receipt) {
+            if ($receipt->pagado === false) {
+                $receipt->importe = $amount;
+                $receipt->save();
+                return;
+            }
+
+            if ($receipt->numero == $newNum) {
+                $newNum++;
+            }
+        }
+
+        /// create new receipt
         $newReceipt = new ReciboCliente();
         $newReceipt->codcliente = $invoice->codcliente;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -74,6 +85,8 @@ class ReceiptGenerator
         $newReceipt->idfactura = $invoice->idfactura;
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
+        $newReceipt->numero = $newNum;
+        $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->save();
     }
 
@@ -85,17 +98,28 @@ class ReceiptGenerator
     {
         /// check current invoice receipts
         $receipts = $invoice->getReceipts();
-        if (count($receipts) === 1 && $receipts[0]->pagado === false) {
-            $receipts[0]->importe = $invoice->total;
-            $receipts[0]->save();
-            return;
-        }
 
+        /// calculate pending amount
         $amount = $this->getPendingAmount($receipts, $invoice->total);
         if (empty($amount)) {
             return;
         }
 
+        /// try to update open receipts
+        $newNum = 1;
+        foreach ($receipts as $receipt) {
+            if ($receipt->pagado === false) {
+                $receipt->importe = $amount;
+                $receipt->save();
+                return;
+            }
+
+            if ($receipt->numero == $newNum) {
+                $newNum++;
+            }
+        }
+
+        /// create new receipt
         $newReceipt = new ReciboProveedor();
         $newReceipt->codproveedor = $invoice->codproveedor;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -103,6 +127,8 @@ class ReceiptGenerator
         $newReceipt->idfactura = $invoice->idfactura;
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
+        $newReceipt->numero = $newNum;
+        $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->save();
     }
 

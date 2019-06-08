@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
 
 /**
  * Invoice of a client.
@@ -31,6 +30,16 @@ class FacturaCliente extends Base\SalesDocument
 
     use Base\ModelTrait;
     use Base\InvoiceTrait;
+
+    /**
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new LiquidacionComision();
+        return parent::install();
+    }
 
     /**
      * Returns the lines associated with the invoice.
@@ -69,14 +78,14 @@ class FacturaCliente extends Base\SalesDocument
 
     /**
      * Returns all invoice's receipts.
-     * 
+     *
      * @return ReciboCliente[]
      */
     public function getReceipts()
     {
         $receipt = new ReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
-        return $receipt->all($where, ['idrecibo' => 'DESC'], 0, 0);
+        return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
     /**

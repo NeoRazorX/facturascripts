@@ -175,6 +175,9 @@ class EditProveedor extends EditController
     {
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['fechapago'], 'payment-date');
+        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
         $this->views[$viewName]->searchFields[] = 'observaciones';
 
         /// settings

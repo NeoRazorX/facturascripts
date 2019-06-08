@@ -84,6 +84,35 @@ class ReciboCliente extends Base\Receipt
 
     /**
      * 
+     * @param string $codpago
+     */
+    public function setPaymentMethod($codpago)
+    {
+        parent::setPaymentMethod($codpago);
+
+        $days = $this->getSubject()->getPaymentDays();
+        if (empty($days)) {
+            return;
+        }
+
+        /// try to select consumer defined days for expiration date
+        $newDates = [];
+        $maxDay = date('t', strtotime($this->vencimiento));
+        foreach ($days as $numDay) {
+            $day = min([$numDay, $maxDay]);
+            for ($num = 0; $num < 30; $num++) {
+                $newDay = date('d', strtotime($this->vencimiento . ' +' . $num . ' days'));
+                if ($newDay == $day) {
+                    $newDates[] = strtotime($this->vencimiento . ' +' . $num . ' days');
+                }
+            }
+        }
+
+        $this->vencimiento = date('d-m-Y', min($newDates));
+    }
+
+    /**
+     * 
      * @return string
      */
     public static function tableName()
@@ -107,28 +136,15 @@ class ReciboCliente extends Base\Receipt
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    public function newPayment()
     {
-        if (parent::saveInsert($values)) {
-            if ($this->pagado) {
-                $pago = new PagoCliente();
-                $pago->fecha = $this->fecha;
-                $pago->gastos = $this->gastos;
-                $pago->idrecibo = $this->idrecibo;
-                $pago->importe = $this->importe;
-                $pago->nick = $this->nick;
-                $pago->save();
-            }
-
-            return true;
-        }
-
-        return false;
+        $pago = new PagoCliente();
+        $pago->codpago = $this->codpago;
+        $pago->fecha = $this->fecha;
+        $pago->gastos = $this->gastos;
+        $pago->idrecibo = $this->idrecibo;
+        $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;
+        $pago->nick = $this->nick;
+        $pago->save();
     }
 }

@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\SecuenciaDocumento;
+use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 
 /**
  * Description of BusinessDocumentCode

@@ -46,8 +46,12 @@
         <type>text</type>
     </column>
     <column>
-        <name>porcomision</name>
-        <type>double precision</type>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>seg_social</name>
+        <type>character varying(100)</type>
     </column>
     <column>
         <name>telefono1</name>

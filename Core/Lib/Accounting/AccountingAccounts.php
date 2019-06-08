@@ -23,6 +23,7 @@ use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -188,18 +189,21 @@ class AccountingAccounts
     }
 
     /**
-     * Get the accounting sub-account for payments in the fiscal year.
+     * Get the accounting sub-account for the payment method in the fiscal year.
      *
-     * @param string $code
+     * @param string $codpago
      * @param string $specialAccount
      *
      * @return Subcuenta
      */
-    public function getPaymentAccount(string $code, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
+    public function getPaymentAccount(string $codpago, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
     {
-        $bankAccount = new CuentaBanco();
-        if ($bankAccount->loadFromCode($code) && !empty($bankAccount->codsubcuenta)) {
-            return $this->getSubAccount($bankAccount->codsubcuenta);
+        $paymentMethod = new FormaPago();
+        if ($paymentMethod->loadFromCode($codpago) && $paymentMethod->codcuentabanco) {
+            $bankAccount = new CuentaBanco();
+            if ($bankAccount->loadFromCode($paymentMethod->codcuentabanco) && !empty($bankAccount->codsubcuenta)) {
+                return $this->getSubAccount($bankAccount->codsubcuenta);
+            }
         }
 
         return $this->getSpecialSubAccount($specialAccount);

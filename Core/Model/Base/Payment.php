@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\Asiento;
 
 /**
@@ -32,8 +33,14 @@ abstract class Payment extends ModelClass
      *
      * @var string
      */
+    public $codpago;
+
+    /**
+     *
+     * @var string
+     */
     public $fecha;
-    
+
     /**
      *
      * @var string
@@ -70,12 +77,25 @@ abstract class Payment extends ModelClass
      */
     public $nick;
 
+    abstract public function getReceipt();
+
     public function clear()
     {
         parent::clear();
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->importe = 0.0;
+    }
+
+    /**
+     * 
+     * @return Asiento
+     */
+    public function getAccountingEntry()
+    {
+        $entry = new Asiento();
+        $entry->loadFromCode($this->idasiento);
+        return $entry;
     }
 
     /**
@@ -97,5 +117,35 @@ abstract class Payment extends ModelClass
     public static function primaryColumn()
     {
         return 'idpago';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        if (parent::test()) {
+            if (empty($this->idasiento)) {
+                $tool = new PaymentToAccounting();
+                $tool->generate($this);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return empty($this->idasiento) ? $this->getReceipt()->url() : $this->getAccountingEntry()->url();
     }
 }
