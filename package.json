@@ -25,13 +25,13 @@
   },
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.x",
+    "@fortawesome/fontawesome-free": "^5.9.0",
     "bootbox": "^4.x",
     "bootstrap": "^4.x",
     "chart.js": "^2.8.x",
     "handsontable": "^6.x",
-    "jquery": "^3.x",
+    "jquery": "^3.4.1",
     "jquery-ui-dist": "^1.12.x",
-    "popper.js": "^1.x"
+    "popper.js": "^1.15.0"
   }
 }
