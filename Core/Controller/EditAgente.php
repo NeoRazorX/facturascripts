@@ -20,20 +20,21 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\ExtendedController\EditDocHistoryController;
 
 /**
  * Controller to edit a single item from the Agente model
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Artex Trading sa    <jcuello@artextrading.com>
  * @author Raul
  */
-class EditAgente extends EditController
+class EditAgente extends EditDocHistoryController
 {
 
     /**
      * Returns the class name of the model to use in the editView.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -61,10 +62,13 @@ class EditAgente extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
+        $this->createContactsView();
+        $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
+        $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
     }
 
     /**
@@ -76,7 +80,13 @@ class EditAgente extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
+            case 'EditAgente':
+                parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues($view);
+                break;
+
             case 'ListAlbaranCliente':
+            case 'ListContacto':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
@@ -84,9 +94,19 @@ class EditAgente extends EditController
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
+        }
+    }
 
-            default:
-                parent::loadData($viewName, $view);
+    /**
+     *
+     * @param BaseView $view
+     */
+    protected function setCustomWidgetValues($view)
+    {
+        /// Model exists?
+        if (!$view->model->exists()) {
+            $view->disableColumn('fiscal-id');
+            return;
         }
     }
 }

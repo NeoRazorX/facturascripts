@@ -26,19 +26,12 @@ use FacturaScripts\Core\Base\Utils;
  * can be associated with several user of none at all.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa    <jcuello@artextrading.com>
  */
 class Agente extends Base\Contact
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Bank account.
-     *
-     * @var string
-     */
-    public $banco;
 
     /**
      * Position in the company.
@@ -48,13 +41,6 @@ class Agente extends Base\Contact
     public $cargo;
 
     /**
-     * Contact city.
-     *
-     * @var string
-     */
-    public $ciudad;
-
-    /**
      * Primary key. Varchar (10).
      *
      * @var int
@@ -62,32 +48,11 @@ class Agente extends Base\Contact
     public $codagente;
 
     /**
-     * Contact country.
-     *
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Postal code of the contact.
-     *
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * True -> the customer no longer buys us or we do not want anything with him.
+     * True -> the agent no longer buys us or we do not want anything with him.
      *
      * @var boolean
      */
     public $debaja;
-
-    /**
-     * Address of the contact.
-     *
-     * @var string
-     */
-    public $direccion;
 
     /**
      * Date of withdrawal from the company.
@@ -97,11 +62,11 @@ class Agente extends Base\Contact
     public $fechabaja;
 
     /**
-     * Birthdate.
+     * Default contact data
      *
-     * @var string
+     * @var integer
      */
-    public $fechanacimiento;
+    public $idcontacto;
 
     /**
      * Contact province.
@@ -154,20 +119,11 @@ class Agente extends Base\Contact
      */
     public function test()
     {
-        $this->banco = Utils::noHtml($this->banco);
         $this->cargo = Utils::noHtml($this->cargo);
-        $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->codpostal = Utils::noHtml($this->codpostal);
-        $this->direccion = Utils::noHtml($this->direccion);
-        $this->provincia = Utils::noHtml($this->provincia);
-        $this->seg_social = Utils::noHtml($this->seg_social);
+        $this->debaja = (!empty($this->fechabaja));
 
         if (empty($this->codagente)) {
             $this->codagente = $this->newCode();
-        }
-
-        if ($this->debaja && empty($this->fechabaja)) {
-            $this->fechabaja = date('d-m-Y');
         }
 
         return parent::test();
