@@ -20,15 +20,16 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\ExtendedController\EditDocHistoryController;
 
 /**
  * Controller to edit a single item from the Agente model
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Artex Trading sa    <jcuello@artextrading.com>
  * @author Raul
  */
-class EditAgente extends EditController
+class EditAgente extends EditDocHistoryController
 {
 
     /**
@@ -55,35 +56,19 @@ class EditAgente extends EditController
         return $data;
     }
 
-    protected function addContactView($viewName = 'ListContacto')
-    {
-        $this->addListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-
-        /// sort options
-        $this->views[$viewName]->addOrderBy(['fechaalta'], 'date');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion', 2);
-
-        /// search columns
-        $this->views[$viewName]->searchFields[] = 'apellidos';
-        $this->views[$viewName]->searchFields[] = 'descripcion';
-        $this->views[$viewName]->searchFields[] = 'direccion';
-        $this->views[$viewName]->searchFields[] = 'email';
-        $this->views[$viewName]->searchFields[] = 'nombre';
-
-        /// Disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-    }
-
     /**
      * Load Views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListFacturaCliente', 'FacturaCliente', 'invoices', 'fas fa-copy');
-        $this->addListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes', 'fas fa-copy');
-        $this->addListView('ListPedidoCliente', 'PedidoCliente', 'orders', 'fas fa-copy');
-        $this->addListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations', 'fas fa-copy');
+        $this->createContactsView();
+        $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
+        $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
     }
 
     /**
@@ -97,9 +82,11 @@ class EditAgente extends EditController
         switch ($viewName) {
             case 'EditAgente':
                 parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues($view);
                 break;
 
             case 'ListAlbaranCliente':
+            case 'ListContacto':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
@@ -121,15 +108,5 @@ class EditAgente extends EditController
             $view->disableColumn('fiscal-id');
             return;
         }
-
-        /// load agent contact dada
-        $view->model->loadContactData();
-
-        /// Search for agent contacts and load contacts widget
-        $codagente = $this->getViewModelValue($view->name, 'codagente');
-        $where = [new DataBaseWhere('codagente', $codagente)];
-        $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
-        $columnContacts = $view->columnForName('contact');
-        $columnContacts->widget->setValuesFromCodeModel($contacts);
     }
 }
