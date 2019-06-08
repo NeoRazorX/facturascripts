@@ -57,9 +57,9 @@ abstract class EditDocHistoryController extends EditController
     /**
      * Add a Customer document List View
      *
-     * @param type $viewName
-     * @param type $model
-     * @param type $label
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
      */
     protected function createCustomerListView($viewName, $model, $label) {
         $this->createListView($viewName, $model, $label, $this->getCustomerFields());
@@ -139,9 +139,9 @@ abstract class EditDocHistoryController extends EditController
     /**
      * Add a Supplier document List View
      *
-     * @param type $viewName
-     * @param type $model
-     * @param type $label
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
      */
     protected function createSupplierListView($viewName, $model, $label)
     {
@@ -202,36 +202,5 @@ abstract class EditDocHistoryController extends EditController
             'numfield' => 'numproveedor',
             'numtitle' => 'numsupplier'
         ];
-    }
-
-    /**
-     *
-     * @param string $viewName
-     */
-    protected function setCustomWidgetValues($viewName)
-    {
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
-
-        /// Model exists?
-        if (!$this->views[$viewName]->model->exists()) {
-            $this->views[$viewName]->disableColumn('billing-address');
-            $this->views[$viewName]->disableColumn('shipping-address');
-            return;
-        }
-
-        /// Search for client contacts
-        $codcliente = $this->getViewModelValue($viewName, 'codcliente');
-        $where = [new DataBaseWhere('codcliente', $codcliente)];
-        $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
-
-        /// Load values option to default billing address from client contacts list
-        $columnBilling = $this->views[$viewName]->columnForName('billing-address');
-        $columnBilling->widget->setValuesFromCodeModel($contacts);
-
-        /// Load values option to default shipping address from client contacts list
-        $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
-        $columnShipping->widget->setValuesFromCodeModel($contacts);
     }
 }
