@@ -126,6 +126,10 @@
         <type>character varying(30)</type>
     </column>
     <column>
+        <name>tipoidfiscal</name>
+        <type>character varying(25)</type>
+    </column>
+    <column>
         <name>verificado</name>
         <type>boolean</type>
         <default>false</default>
@@ -133,6 +137,10 @@
     <constraint>
         <name>contactos_pkey</name>
         <type>PRIMARY KEY (idcontacto)</type>
+    </constraint>
+    <constraint>
+        <name>ca_contactos_agentes</name>
+        <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_contactos_clientes</name>
