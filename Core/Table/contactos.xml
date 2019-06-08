@@ -135,6 +135,10 @@
         <type>PRIMARY KEY (idcontacto)</type>
     </constraint>
     <constraint>
+        <name>ca_contactos_agentes</name>
+        <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_contactos_clientes</name>
         <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>

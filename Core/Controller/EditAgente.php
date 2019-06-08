@@ -33,7 +33,7 @@ class EditAgente extends EditController
 
     /**
      * Returns the class name of the model to use in the editView.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -53,6 +53,25 @@ class EditAgente extends EditController
         $data['title'] = 'agent';
         $data['icon'] = 'fas fa-id-badge';
         return $data;
+    }
+
+    protected function addContactView($viewName = 'ListContacto')
+    {
+        $this->addListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+
+        /// sort options
+        $this->views[$viewName]->addOrderBy(['fechaalta'], 'date');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion', 2);
+
+        /// search columns
+        $this->views[$viewName]->searchFields[] = 'apellidos';
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+        $this->views[$viewName]->searchFields[] = 'direccion';
+        $this->views[$viewName]->searchFields[] = 'email';
+        $this->views[$viewName]->searchFields[] = 'nombre';
+
+        /// Disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -76,6 +95,10 @@ class EditAgente extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
+            case 'EditAgente':
+                parent::loadData($viewName, $view);
+                break;
+
             case 'ListAlbaranCliente':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
@@ -84,9 +107,29 @@ class EditAgente extends EditController
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
-
-            default:
-                parent::loadData($viewName, $view);
         }
+    }
+
+    /**
+     *
+     * @param BaseView $view
+     */
+    protected function setCustomWidgetValues($view)
+    {
+        /// Model exists?
+        if (!$view->model->exists()) {
+            $view->disableColumn('fiscal-id');
+            return;
+        }
+
+        /// load agent contact dada
+        $view->model->loadContactData();
+
+        /// Search for agent contacts and load contacts widget
+        $codagente = $this->getViewModelValue($view->name, 'codagente');
+        $where = [new DataBaseWhere('codagente', $codagente)];
+        $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
+        $columnContacts = $view->columnForName('contact');
+        $columnContacts->widget->setValuesFromCodeModel($contacts);
     }
 }
