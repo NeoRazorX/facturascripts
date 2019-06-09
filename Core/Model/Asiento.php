@@ -246,10 +246,23 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    public function renumber()
+    public function renumber($valuejercicio)
     {
         $ejercicio = new Ejercicio();
-        foreach ($ejercicio->all([new DataBaseWhere('estado', 'ABIERTO')]) as $eje) {
+        if (empty($valuejercicio)) {
+            $ejes = $ejercicio->all([new DataBaseWhere('estado', 'ABIERTO')]);
+        } else {
+            $where = [
+                new DataBaseWhere('codejercicio', $valuejercicio),
+                new DataBaseWhere('estado', 'ABIERTO')
+            ];
+            $ejes = $ejercicio->all($where);
+            if (empty($ejes)) {
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise'));
+                return false;
+            }
+        }
+        foreach ($ejes as $eje) {
             $posicion = 0;
             $numero = 1;
             $consulta = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
@@ -260,7 +273,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
             while (!empty($asientos)) {
                 $sql = '';
                 foreach ($asientos as $col) {
-                    if ($col['numero'] !== $numero) {
+                    if (self::$dataBase->var2str($col['numero']) !== self::$dataBase->var2str($numero)) {
                         $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($numero)
                             . ' WHERE idasiento = ' . self::$dataBase->var2str($col['idasiento']) . ';';
                     }
