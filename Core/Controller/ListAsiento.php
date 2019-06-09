@@ -128,8 +128,8 @@ class ListAsiento extends ListController
     {
         switch ($action) {
             case 'renumber':
-                $code = $this->request->request->get('code', '');
-                if ($this->views['ListAsiento']->model->renumber($code)) {
+                $value = $this->request->request->get('codejercicio', '');
+                if ($this->views['ListAsiento']->model->renumber($value)) {
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
                 return true;
