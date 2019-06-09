@@ -30,7 +30,7 @@
             <column name="name" numcolumns="2" order="120">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="surname" numcolumns="3" order="130">
+            <column name="surname" order="130">
                 <widget type="text" fieldname="apellidos" />
             </column>
             <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="140">
@@ -41,23 +41,23 @@
             <column name="fiscal-number" numcolumns="3" order="150">
                 <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
-            <column name="company" numcolumns="2" order="200">
+            <column name="company" numcolumns="2" order="160">
                 <widget type="text" fieldname="empresa" />
             </column>
-            <column name="position" numcolumns="1" order="210">
+            <column name="position" order="170">
                 <widget type="text" fieldname="cargo" />
             </column>
-            <column name="customer" numcolumns="3" order="220">
+            <column name="customer" numcolumns="3" order="180">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
                     <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="supplier" numcolumns="3" order="230">
+            <column name="supplier" numcolumns="3" order="190">
                 <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="agent" numcolumns="3" order="240">
+            <column name="agent" numcolumns="3" order="200">
                 <widget type="autocomplete" fieldname="codagente" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>

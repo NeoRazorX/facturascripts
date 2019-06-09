@@ -107,7 +107,7 @@ class Comision extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn(): string
+    public static function primaryColumn()
     {
         return 'idcomision';
     }

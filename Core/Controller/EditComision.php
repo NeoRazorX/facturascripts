@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controler to edit commission.
  *
- * @author Artex Trading s.a. <jcuello@artextrading.com>
+ * @author Artex Trading s.a.   <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class EditComision extends EditController
 {
@@ -47,8 +48,6 @@ class EditComision extends EditController
         $pagedata['menu'] = 'sales';
         $pagedata['title'] = 'commission';
         $pagedata['icon'] = 'fas fa-percentage';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 }

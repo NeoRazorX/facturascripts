@@ -21,19 +21,13 @@ namespace FacturaScripts\Core\Model;
 /**
  * List of Commissions Settlement.
  *
- * @author Artex Trading s.a. <jcuello@artextrading.com>
+ * @author Artex Trading s.a.   <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class LiquidacionComision extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Date of creation of the settlement.
-     *
-     * @var string
-     */
-    public $fecha;
 
     /**
      * id of agent.
@@ -48,6 +42,13 @@ class LiquidacionComision extends Base\ModelClass
      * @var string
      */
     public $codejercicio;
+
+    /**
+     * Date of creation of the settlement.
+     *
+     * @var string
+     */
+    public $fecha;
 
     /**
      * id of generate invoice.
@@ -82,6 +83,7 @@ class LiquidacionComision extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new Agente();
         new Ejercicio();
         new FacturaProveedor();
@@ -94,7 +96,7 @@ class LiquidacionComision extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn(): string
+    public static function primaryColumn()
     {
         return 'idliquidacion';
     }

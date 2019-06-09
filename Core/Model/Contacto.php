@@ -318,6 +318,7 @@ class Contacto extends Base\Contact
     public function install()
     {
         /// we need this models to be checked before
+        new Agente();
         new Cliente();
         new Proveedor();
 

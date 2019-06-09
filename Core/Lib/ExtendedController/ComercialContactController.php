@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,51 +22,50 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  * Controller for editing models that are related and show
  * a history of purchase or sale documents.
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-abstract class EditDocHistoryController extends EditController
+abstract class ComercialContactController extends EditController
 {
 
     /**
-     * Add a Contact List View
+     * Add a Contact List View.
      *
      * @param string $viewName
      */
     protected function createContactsView($viewName = 'ListContacto')
     {
         $this->addListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $view = $this->views[$viewName];
 
         /// sort options
-        $view->addOrderBy(['fechaalta'], 'date');
-        $view->addOrderBy(['descripcion'], 'descripcion', 2);
+        $this->views[$viewName]->addOrderBy(['fechaalta'], 'date');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion', 2);
 
         /// search columns
-        $view->searchFields[] = 'apellidos';
-        $view->searchFields[] = 'descripcion';
-        $view->searchFields[] = 'direccion';
-        $view->searchFields[] = 'email';
-        $view->searchFields[] = 'nombre';
+        $this->views[$viewName]->searchFields[] = 'apellidos';
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+        $this->views[$viewName]->searchFields[] = 'direccion';
+        $this->views[$viewName]->searchFields[] = 'email';
+        $this->views[$viewName]->searchFields[] = 'nombre';
 
-        /// Disable buttons
+        /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-
     /**
-     * Add a Customer document List View
+     * Add a Customer document List View.
      *
      * @param string $viewName
      * @param string $model
      * @param string $label
      */
-    protected function createCustomerListView($viewName, $model, $label) {
+    protected function createCustomerListView($viewName, $model, $label)
+    {
         $this->createListView($viewName, $model, $label, $this->getCustomerFields());
     }
 
     /**
-     * Add Product Lines from documents
+     * Add Product Lines from documents.
      *
      * @param string $viewName
      * @param string $model
@@ -75,63 +74,65 @@ abstract class EditDocHistoryController extends EditController
     protected function createLineView($viewName, $model, $label = 'products')
     {
         $this->addListView($viewName, $model, $label, 'fas fa-cubes');
-        $view = $this->views[$viewName];
 
         /// sort options
-        $view->addOrderBy(['idlinea'], 'code', 2);
-        $view->addOrderBy(['cantidad'], 'quantity');
-        $view->addOrderBy(['pvptotal'], 'amount');
+        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
+        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
 
         /// search columns
-        $view->searchFields[] = 'referencia';
-        $view->searchFields[] = 'descripcion';
+        $this->views[$viewName]->searchFields[] = 'referencia';
+        $this->views[$viewName]->searchFields[] = 'descripcion';
 
-        /// Disable buttons
+        /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
+     * Add a receipt list view.
      *
      * @param string $viewName
+     * @param string $model
      */
     protected function createReceiptView($viewName, $model)
     {
         $this->addListView($viewName, $model, 'receipts', 'fas fa-dollar-sign');
-        $view = $this->views[$viewName];
 
-        $view->addOrderBy(['fecha'], 'date', 2);
-        $view->addOrderBy(['fechapago'], 'payment-date');
-        $view->addOrderBy(['vencimiento'], 'expiration');
-        $view->addOrderBy(['importe'], 'amount');
-        $view->searchFields[] = 'observaciones';
+        /// sort options
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['fechapago'], 'payment-date');
+        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
 
-        /// settings
+        /// search columns
+        $this->views[$viewName]->searchFields[] = 'observaciones';
+
+        /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
-     * Add Subaccount List View
+     * Add Subaccount List View.
      *
      * @param string $viewName
      */
     protected function createSubaccountsView($viewName = 'ListSubcuenta')
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
-        $view = $this->views[$viewName];
 
         /// sort options
-        $view->addOrderBy(['codigo'], 'code');
-        $view->addOrderBy(['codejercicio'], 'exercise', 2);
-        $view->addOrderBy(['descripcion'], 'descripcion');
-        $view->addOrderBy(['saldo'], 'balance');
+        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
+        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion');
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
 
         /// search columns
-        $view->searchFields[] = 'codigo';
-        $view->searchFields[] = 'description';
+        $this->views[$viewName]->searchFields[] = 'codigo';
+        $this->views[$viewName]->searchFields[] = 'description';
 
-        /// Disable buttons
+        /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
@@ -159,21 +160,20 @@ abstract class EditDocHistoryController extends EditController
     private function createListView($viewName, $model, $label, $fields)
     {
         $this->addListView($viewName, $model, $label, 'fas fa-copy');
-        $view = $this->views[$viewName];
 
         /// sort options
-        $view->addOrderBy(['codigo'], 'code');
-        $view->addOrderBy(['fecha', 'hora'], 'date', 2);
-        $view->addOrderBy(['numero'], 'number');
-        $view->addOrderBy([$fields['numfield']], $fields['numtitle']);
-        $view->addOrderBy(['total'], 'amount');
+        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
+        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['numero'], 'number');
+        $this->views[$viewName]->addOrderBy([$fields['numfield']], $fields['numtitle']);
+        $this->views[$viewName]->addOrderBy(['total'], 'amount');
 
         /// search columns
-        $view->searchFields[] = $fields['numfield'];
-        $view->searchFields[] = 'observaciones';
+        $this->views[$viewName]->searchFields[] = $fields['numfield'];
+        $this->views[$viewName]->searchFields[] = 'observaciones';
 
-        /// Disable columns
-        $view->disableColumn($fields['linkfield'], true);
+        /// disable columns
+        $this->views[$viewName]->disableColumn($fields['linkfield'], true);
     }
 
     /**

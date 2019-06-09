@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -40,21 +39,6 @@ class ListAgente extends ListController
     protected $companyList;
 
     /**
-     * Initializes all the objects and properties.
-     *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
-     * @param string          $uri
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -73,6 +57,8 @@ class ListAgente extends ListController
      */
     protected function createViews()
     {
+        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
+
         $this->addAgentView();
         $this->addCommissionView();
         $this->addSettlementView();
@@ -92,14 +78,10 @@ class ListAgente extends ListController
         /// Order by
         $this->addOrderBy($viewName, ['codagente'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
-        $this->addOrderBy($viewName, ['provincia'], 'province');
 
         /// Filters
         $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
         $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $selectValues);
-
-        $cityValues = $this->codeModel->all('agentes', 'ciudad', 'ciudad');
-        $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cityValues);
 
         $values = [
             ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],

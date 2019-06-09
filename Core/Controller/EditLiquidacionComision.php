@@ -57,11 +57,8 @@ class EditLiquidacionComision extends EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['menu'] = 'sales';
-        $pagedata['submenu'] = 'commissions';
         $pagedata['title'] = 'settlement';
         $pagedata['icon'] = 'fas fa-chalkboard-teacher';
-        $pagedata['showonmenu'] = false;
-
         return $pagedata;
     }
 

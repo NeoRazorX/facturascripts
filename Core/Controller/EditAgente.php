@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditDocHistoryController;
+use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 
 /**
  * Controller to edit a single item from the Agente model
@@ -29,11 +29,11 @@ use FacturaScripts\Core\Lib\ExtendedController\EditDocHistoryController;
  * @author Artex Trading sa    <jcuello@artextrading.com>
  * @author Raul
  */
-class EditAgente extends EditDocHistoryController
+class EditAgente extends ComercialContactController
 {
 
     /**
-     * Returns the class name of the model to use in the editView.
+     * Returns the class name of the model to use.
      *
      * @return string
      */
@@ -57,18 +57,55 @@ class EditAgente extends EditDocHistoryController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createCommissionsView($viewName = 'ListComision')
+    {
+        $this->addListView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('agent', true);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createContactView($viewName = 'EditContacto')
+    {
+        $this->addEditView($viewName, 'Contacto', 'contact', 'fa fa-address-book');
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('agent', true);
+        $this->views[$viewName]->disableColumn('company', true);
+        $this->views[$viewName]->disableColumn('fiscal-id', true);
+        $this->views[$viewName]->disableColumn('fiscal-number', true);
+        $this->views[$viewName]->disableColumn('position', true);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createSettlementView($viewName = 'ListLiquidacionComision')
+    {
+        $this->addListView($viewName, 'LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
+    }
+
+    /**
      * Load Views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->createContactsView();
+        $this->createContactView();
+        $this->createCommissionsView();
+        $this->createSettlementView();
         $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
-        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
         $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
     }
 
     /**
@@ -80,33 +117,24 @@ class EditAgente extends EditDocHistoryController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditAgente':
-                parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues($view);
-                break;
-
+            case 'EditContacto':
             case 'ListAlbaranCliente':
-            case 'ListContacto':
+            case 'ListComision':
             case 'ListFacturaCliente':
+            case 'ListLiquidacionComision':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $codagente = $this->getViewModelValue('EditAgente', 'codagente');
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
-        }
-    }
 
-    /**
-     *
-     * @param BaseView $view
-     */
-    protected function setCustomWidgetValues($view)
-    {
-        /// Model exists?
-        if (!$view->model->exists()) {
-            $view->disableColumn('fiscal-id');
-            return;
+            default:
+                parent::loadData($viewName, $view);
+                if (!$view->model->exists()) {
+                    $view->disableColumn('contact');
+                }
+                break;
         }
     }
 }

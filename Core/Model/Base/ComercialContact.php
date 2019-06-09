@@ -171,19 +171,14 @@ abstract class ComercialContact extends Contact
      */
     public function test()
     {
-        $this->razonsocial = Utils::noHtml($this->razonsocial);
-        $this->web = Utils::noHtml($this->web);
+        $this->debaja = !empty($this->fechabaja);
 
+        $this->razonsocial = Utils::noHtml($this->razonsocial);
         if (empty($this->razonsocial)) {
             $this->razonsocial = $this->nombre;
         }
 
-        if (!$this->debaja) {
-            $this->fechabaja = null;
-        } elseif (empty($this->fechabaja)) {
-            $this->fechabaja = date('d-m-Y');
-        }
-
+        $this->web = Utils::noHtml($this->web);
         return parent::test();
     }
 }

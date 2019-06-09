@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditDocHistoryController;
+use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\TotalModel;
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
-class EditCliente extends EditDocHistoryController
+class EditCliente extends ComercialContactController
 {
 
     /**
@@ -70,6 +70,7 @@ class EditCliente extends EditDocHistoryController
     }
 
     /**
+     * Returns the class name of the model to use.
      *
      * @return string
      */

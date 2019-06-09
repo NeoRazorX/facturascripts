@@ -115,9 +115,6 @@
             <column name="date-of-suspension" numcolumns="3" order="110">
                 <widget type="date" fieldname="fechabaja" icon="fas fa-calendar-alt" />
             </column>
-            <column name="suspended" numcolumns="3" order="120">
-                <widget type="checkbox" fieldname="debaja" />
-            </column>
         </group>
         <group name="notes">
             <column name="observations" order="100" numcolumns="12">

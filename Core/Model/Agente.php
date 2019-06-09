@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,20 +69,6 @@ class Agente extends Base\Contact
     public $idcontacto;
 
     /**
-     * Contact province.
-     *
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Social security number.
-     *
-     * @var string
-     */
-    public $seg_social;
-
-    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -120,12 +106,41 @@ class Agente extends Base\Contact
     public function test()
     {
         $this->cargo = Utils::noHtml($this->cargo);
-        $this->debaja = (!empty($this->fechabaja));
+        $this->debaja = !empty($this->fechabaja);
 
         if (empty($this->codagente)) {
             $this->codagente = $this->newCode();
         }
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            /// creates new contact
+            $contact = new Contacto();
+            $contact->cifnif = $this->cifnif;
+            $contact->codagente = $this->codagente;
+            $contact->descripcion = $this->nombre;
+            $contact->email = $this->email;
+            $contact->nombre = $this->nombre;
+            $contact->telefono1 = $this->telefono1;
+            $contact->telefono2 = $this->telefono2;
+            if ($contact->save()) {
+                $this->idcontacto = $contact->idcontacto;
+                return $this->save();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
