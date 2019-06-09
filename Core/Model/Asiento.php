@@ -246,15 +246,15 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    public function renumber($code)
+    public function renumber($valuejercicio)
     {
         $ejercicio = new Ejercicio();
-        if (empty($code)) {
+        if (empty($valuejercicio)) {
             $ejes = $ejercicio->all([new DataBaseWhere('estado', 'ABIERTO')]);
 //            return true;
         } else {
             $where = [
-                new DataBaseWhere('codejercicio', $code),
+                new DataBaseWhere('codejercicio', $valuejercicio),
                 new DataBaseWhere('estado', 'ABIERTO')
             ];
             $ejes = $ejercicio->all($where);
