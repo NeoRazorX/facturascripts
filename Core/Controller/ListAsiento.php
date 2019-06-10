@@ -88,7 +88,7 @@ class ListAsiento extends ListController
             'confirm' => true,
             'icon' => 'fas fa-sort-numeric-down',
             'label' => 'renumber-accounting',
-            'type' => 'action',
+            'type' => 'modal',
         ];
         $this->addButton($name, $newButton);
     }
@@ -128,7 +128,8 @@ class ListAsiento extends ListController
     {
         switch ($action) {
             case 'renumber':
-                if ($this->views['ListAsiento']->model->renumber()) {
+                $value = $this->request->request->get('ejercicio', '');
+                if ($this->views['ListAsiento']->model->renumber($value)) {
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
                 return true;
