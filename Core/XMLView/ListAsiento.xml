@@ -56,12 +56,12 @@
         <row type="status">
             <option color="info" fieldname="documento">neq:</option>
             <option color="warning" fieldname="editable">0</option>
-        </row>        
+        </row>
     </rows>
-    <modals>    
+    <modals>
         <group name="renumber" title="renumber-accounting" icon="fas fa-sort-numeric-down">
-            <column name="exercise-to-renumber" numcolumns="12" description="if-you-no-select">
-                <widget type="select" fieldname="ejercicio" >
+            <column name="exercise">
+                <widget type="select" fieldname="exercise" >
                     <values source="ejercicios" fieldcode="codejercicio"></values>
                 </widget>
             </column>
