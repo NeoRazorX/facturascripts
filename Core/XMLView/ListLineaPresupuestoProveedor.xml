@@ -52,10 +52,10 @@
         <column name="discount" display="right" order="180">
             <widget type="number" fieldname="dtopor" />
         </column>
-        <column name="ammount-without-discount" display="none" order="190">
+        <column name="amount-without-discount" display="none" order="190">
             <widget type="money" fieldname="pvpsindto" />
         </column>
-        <column name="ammount" display="right" order="200">
+        <column name="amount" display="right" order="200">
             <widget type="money" fieldname="pvptotal">
                 <option color="danger">lt:0</option>
             </widget>

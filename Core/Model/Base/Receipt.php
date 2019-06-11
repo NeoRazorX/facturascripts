@@ -187,7 +187,7 @@ abstract class Receipt extends ModelOnChangeClass
 
         /// check expiration date
         if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
-            return false;
+            $this->vencimiento = $this->fecha;
         }
 
         return parent::test();
@@ -276,7 +276,7 @@ abstract class Receipt extends ModelOnChangeClass
         }
 
         $paid = $paidAmount == $invoice->total;
-        if ($invoice->pagada != $paid) {
+        if ($invoice->exists() && $invoice->pagada != $paid) {
             $invoice->pagada = $paid;
             $invoice->save();
         }

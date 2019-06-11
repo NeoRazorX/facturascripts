@@ -385,9 +385,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
          * or convert amounts in several currencies. For this reason we need
          * many decimals.
          */
-        $this->totaleuros = round($this->total / $this->tasaconv, 5);
+        $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
 
-        /// check ammount
+        /// check total
         if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
             self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
             return false;
