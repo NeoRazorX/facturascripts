@@ -95,14 +95,23 @@ class ReciboProveedor extends Base\Receipt
         return parent::url($type, $list);
     }
 
-    public function newPayment()
+    /**
+     * Creates a new payment fro this receipt.
+     * 
+     * @return bool
+     */
+    protected function newPayment()
     {
+        if ($this->disablePaymentGeneration) {
+            return false;
+        }
+
         $pago = new PagoProveedor();
         $pago->codpago = $this->codpago;
         $pago->fecha = $this->fecha;
         $pago->idrecibo = $this->idrecibo;
         $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;
         $pago->nick = $this->nick;
-        $pago->save();
+        return $pago->save();
     }
 }

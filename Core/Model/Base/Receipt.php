@@ -44,6 +44,12 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      *
+     * @var bool
+     */
+    protected $disablePaymentGeneration = false;
+
+    /**
+     *
      * @var string
      */
     public $fecha;
@@ -116,7 +122,7 @@ abstract class Receipt extends ModelOnChangeClass
 
     abstract public function getInvoice();
 
-    abstract public function newPayment();
+    abstract protected function newPayment();
 
     public function clear()
     {
@@ -124,10 +130,20 @@ abstract class Receipt extends ModelOnChangeClass
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->fecha = date('d-m-Y');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->numero = 1;
         $this->pagado = false;
+    }
+
+    /**
+     * 
+     * @param bool $disable
+     */
+    public function disablePaymentGeneration($disable = true)
+    {
+        $this->disablePaymentGeneration = $disable;
     }
 
     /**
