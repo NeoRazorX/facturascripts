@@ -128,7 +128,7 @@ class LiquidacionComision extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'liquidacioncomision';
+        return 'liquidacionescomisiones';
     }
 
     /**

@@ -47,12 +47,12 @@ class LiquidacionComision extends ModelView
     protected function getFields(): array
     {
         return [
-            'fecha' => 'liquidacioncomision.fecha',
-            'idliquidacion' => 'liquidacioncomision.idliquidacion',
-            'codagente' => 'liquidacioncomision.codagente',
-            'codejercicio' => 'liquidacioncomision.codejercicio',
-            'observaciones' => 'liquidacioncomision.observaciones',
-            'total' => 'liquidacioncomision.total',
+            'fecha' => 'liquidacionescomisiones.fecha',
+            'idliquidacion' => 'liquidacionescomisiones.idliquidacion',
+            'codagente' => 'liquidacionescomisiones.codagente',
+            'codejercicio' => 'liquidacionescomisiones.codejercicio',
+            'observaciones' => 'liquidacionescomisiones.observaciones',
+            'total' => 'liquidacionescomisiones.total',
             'agente' => 'agentes.nombre',
             'ejercicio' => 'ejercicios.nombre',
             'idempresa' => 'ejercicios.idempresa',
@@ -67,11 +67,11 @@ class LiquidacionComision extends ModelView
      */
     protected function getSQLFrom(): string
     {
-        return 'liquidacioncomision'
-            . ' INNER JOIN agentes ON agentes.codagente = liquidacioncomision.codagente'
-            . ' INNER JOIN ejercicios ON ejercicios.codejercicio = liquidacioncomision.codejercicio'
+        return 'liquidacionescomisiones'
+            . ' INNER JOIN agentes ON agentes.codagente = liquidacionescomisiones.codagente'
+            . ' INNER JOIN ejercicios ON ejercicios.codejercicio = liquidacionescomisiones.codejercicio'
             . ' INNER JOIN empresas ON empresas.idempresa = ejercicios.idempresa'
-            . ' LEFT JOIN facturasprov ON facturasprov.idfactura = liquidacioncomision.idfactura';
+            . ' LEFT JOIN facturasprov ON facturasprov.idfactura = liquidacionescomisiones.idfactura';
     }
 
     /**
@@ -80,7 +80,7 @@ class LiquidacionComision extends ModelView
     protected function getTables(): array
     {
         return [
-            'liquidacioncomision',
+            'liquidacionescomisiones',
             'agentes',
             'ejercicios',
             'empresas',
