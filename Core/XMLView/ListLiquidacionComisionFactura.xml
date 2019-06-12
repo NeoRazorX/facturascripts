@@ -81,7 +81,7 @@
             <column name="from-date" numcolumns="6" order="0">
                 <widget type="date" fieldname="datefrom" />
             </column>
-            <column name="to-date" numcolumns="6" order="0">
+            <column name="until-date" numcolumns="6" order="0">
                 <widget type="date" fieldname="dateto" />
             </column>
             <column name="status" numcolumns="6" order="0">
