@@ -45,7 +45,7 @@
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tasaconv" order="120">
+            <column name="conversion-rate" order="120">
                 <widget type="number" fieldname="tasaconv" icon="fas fa-exchange-alt" />
             </column>
         </group>

@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Description for the controller EditDivisa
- *
  * @author Raúl Jiménez Nazca Networks  <comercial@nazcanetworks.com>
  * @author Carlos Jiménez Gómez         <carlos@evolunext.es>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
@@ -29,22 +26,22 @@
             <column name="code" numcolumns="3" order="100">
                 <widget type="text" fieldname="coddivisa" icon="fas fa-hashtag" maxlength="3" required="true" />
             </column>
-            <column name="symbol" numcolumns="3" order="100" description="symbol">
+            <column name="symbol" numcolumns="3" order="110">
                 <widget type="text" fieldname="simbolo" />
             </column>
-            <column name="description" numcolumns="6" order="100">
+            <column name="description" numcolumns="6" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
         </group>
         <group name="seccondary" numcolumns="12">
-            <column name="iso" numcolumns="4" order="100">
-                <widget type="number" decimal="0" fieldname="codiso" />
+            <column name="iso" titleurl="https://es.wikipedia.org/wiki/ISO_4217" numcolumns="4" order="100">
+                <widget type="number" decimal="0" fieldname="codiso" icon="fas fa-flag" />
             </column>
-            <column name="sales-rate" numcolumns="4" order="100">
-                <widget type="text" fieldname="tasaconv" />
+            <column name="sales-rate" description="conversion-rate" numcolumns="4" order="110">
+                <widget type="number" decimal="0" fieldname="tasaconv" icon="fas fa-euro-sign" />
             </column>
-            <column name="purchase-rate" numcolumns="4" order="100">
-                <widget type="text" fieldname="tasaconvcompra" />
+            <column name="purchase-rate" description="conversion-rate" numcolumns="4" order="120">
+                <widget type="number" decimal="0" fieldname="tasaconvcompra" icon="fas fa-euro-sign" />
             </column>
         </group>
     </columns>

@@ -185,6 +185,11 @@ abstract class Receipt extends ModelOnChangeClass
     {
         $this->observaciones = Utils::noHtml($this->observaciones);
 
+        /// check payment date
+        if ($this->pagado === false) {
+            $this->fechapago = null;
+        }
+
         /// check expiration date
         if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;

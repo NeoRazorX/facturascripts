@@ -101,7 +101,7 @@
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tasaconv" numcolumns="2" order="150">
+            <column name="conversion-rate" numcolumns="2" order="150">
                 <widget type="number" fieldname="tasaconv" icon="fas fa-exchange-alt" />
             </column>
             <column name="agent" titleurl="ListAgente" numcolumns="2" order="160">
