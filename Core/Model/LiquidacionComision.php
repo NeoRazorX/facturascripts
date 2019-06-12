@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+
 /**
  * List of Commissions Settlement.
  *
@@ -72,6 +74,24 @@ class LiquidacionComision extends Base\ModelClass
         parent::clear();
         $this->fecha = date('d-m-Y');
         $this->total = 0.00;
+    }
+
+    /**
+     * Calculate the total commission amount of a settlement
+     *
+     * @param int $settle
+     */
+    public function calculateTotalCommission($settle)
+    {
+        $sql = 'UPDATE ' . self::tableName()
+            . ' SET total = COALESCE('
+                . '(SELECT SUM(neto * porcomision / 100)'
+                .  ' FROM ' . FacturaCliente::tableName()
+                . ' WHERE idliquidacion = ' . $settle . ')'
+            . ',0)'
+            . ' WHERE idliquidacion = ' . $settle;
+
+        return self::$dataBase->exec($sql);
     }
 
     /**
