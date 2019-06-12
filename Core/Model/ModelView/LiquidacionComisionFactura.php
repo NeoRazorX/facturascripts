@@ -35,6 +35,17 @@ class LiquidacionComisionFactura extends ModelView
 {
 
     /**
+     * Constructor and class initializer.
+     *
+     * @param array $data
+     */
+    public function __construct($data = array())
+    {
+        parent::__construct($data);
+        $this->setMasterModel(new FacturaCliente());
+    }
+
+    /**
      * Add to the indicated settlement the list of customer invoices
      * according to the where filter.
      *
@@ -123,5 +134,13 @@ class LiquidacionComisionFactura extends ModelView
             'ejercicios',
             'empresas'
         ];
+    }
+
+    /**
+     * Get value from modal view cursor of the master model primary key
+     */
+    public function primaryColumnValue()
+    {
+        return $this->idfactura;
     }
 }
