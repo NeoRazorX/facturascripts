@@ -19,14 +19,15 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Model\Comision;
 
 /**
  * Class for the calculation of sales commissions
  *
- * @author Artex Trading s.a. <jcuello@artextrading.com>
+ * @author Artex Trading s.a.   <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class CommissionCalculate
 {
@@ -48,9 +49,9 @@ class CommissionCalculate
     /**
      * Calculate commission sale of a document
      *
-     * @param BusinessDocument $doc
+     * @param SalesDocument $doc
      */
-    public function recalculate(BusinessDocument &$doc)
+    public function recalculate(SalesDocument &$doc)
     {
         $lines = $doc->getLines();
         $count = count($lines);
@@ -60,25 +61,12 @@ class CommissionCalculate
 
         $percentage = 0.00;
         foreach ($lines as $row) {
-            $this->updateBusinessDocumentLine($doc, $row);
+            $this->updateSalesDocumentLine($doc, $row);
             $percentage += $row->porcomision;
         }
 
         $doc->porcomision = round($percentage / $count, 2);
         $doc->save();
-    }
-
-    /**
-     * Update commission sale of a document line
-     *
-     * @param BusinessDocument $doc
-     * @param BusinessDocumentLine $line
-     * @return bool
-     */
-    private function updateBusinessDocumentLine(BusinessDocument &$doc, BusinessDocumentLine &$line)
-    {
-        $line->porcomision = $this->getCommision($doc, $line);
-        return $line->save();
     }
 
     /**
@@ -88,21 +76,18 @@ class CommissionCalculate
      *   - family
      *   - product
      *
-     * @param BusinessDocument $doc
-     * @param BusinessDocumentLine $line
+     * @param SalesDocument     $doc
+     * @param SalesDocumentLine $line
      */
-    protected function getCommision(BusinessDocument &$doc, BusinessDocumentLine &$line)
+    protected function getCommision(SalesDocument &$doc, SalesDocumentLine &$line)
     {
         $where = [
             new DataBaseWhere('codagente', $doc->codagente),
             new DataBaseWhere('codagente', null, 'IS', 'OR'),
-
             new DataBaseWhere('codcliente', $doc->codcliente),
             new DataBaseWhere('codcliente', null, 'IS', 'OR'),
-
             new DataBaseWhere('codfamilia', $line->codfamilia),
             new DataBaseWhere('codfamilia', null, 'IS', 'OR'),
-
             new DataBaseWhere('referencia', $line->referencia),
             new DataBaseWhere('referencia', null, 'IS', 'OR'),
         ];
@@ -116,5 +101,19 @@ class CommissionCalculate
 
         $this->commission->loadFromCode('', $where, $orderby);
         return $this->commission->porcentaje;
+    }
+
+    /**
+     * Update commission sale of a document line
+     *
+     * @param SalesDocument     $doc
+     * @param SalesDocumentLine $line
+     *
+     * @return bool
+     */
+    protected function updateSalesDocumentLine(SalesDocument &$doc, SalesDocumentLine &$line)
+    {
+        $line->porcomision = $this->getCommision($doc, $line);
+        return $line->save();
     }
 }

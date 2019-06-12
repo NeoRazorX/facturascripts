@@ -52,7 +52,7 @@ class EditAgente extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'agent';
-        $data['icon'] = 'fas fa-id-badge';
+        $data['icon'] = 'fas fa-user-tie';
         return $data;
     }
 

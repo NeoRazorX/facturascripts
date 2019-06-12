@@ -108,7 +108,7 @@
             </column>
         </group>
         <group name="notes" numcolumns="12">
-            <column name="observations" numcolumns="12" order="100">
+            <column name="observations" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

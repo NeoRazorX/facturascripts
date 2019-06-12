@@ -125,7 +125,7 @@ abstract class SalesDocument extends TransformerDocument
     public $numero2;
 
     /**
-     * % commission of the employee.
+     * % commission of the agent.
      *
      * @var float|int
      */
