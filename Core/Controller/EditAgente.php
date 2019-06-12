@@ -63,6 +63,7 @@ class EditAgente extends ComercialContactController
     protected function createCommissionsView($viewName = 'ListComision')
     {
         $this->addListView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
+        $this->views[$viewName]->addOrderBy(['prioridad'], 'priority', 2);
 
         /// disable columns
         $this->views[$viewName]->disableColumn('agent', true);

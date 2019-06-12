@@ -48,5 +48,8 @@
         <column name="percentage" display="right" order="160">
             <widget type="number" decimal="0" fieldname="porcentaje" />
         </column>
+        <column name="priority" display="right" order="170">
+            <widget type="number" decimal="0" fieldname="prioridad" />
+        </column>
     </columns>
 </view>

@@ -103,14 +103,15 @@ class ListAgente extends ListController
         $this->addSearchFields($viewName, ['codagente', 'codcliente', 'CAST(porcentaje AS VARCHAR)', 'codfamilia', 'idproducto']);
 
         /// Order By
+        $this->addOrderBy($viewName, ['idcomision'], 'id');
+        $this->addOrderBy($viewName, ['prioridad'], 'priority', 2);
         $this->addOrderBy($viewName, ['idempresa', 'codagente', 'porcentaje'], 'company');
-        $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'agent', 1);
+        $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'agent');
         $this->addOrderBy($viewName, ['codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'customer');
         $this->addOrderBy($viewName, ['codfamilia', 'idproducto', 'porcentaje'], 'family');
 
         /// Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
-
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
         $this->addFilterAutocomplete($viewName, 'customer', 'customer', 'codcliente', 'Cliente', 'codcliente');
         $this->addFilterAutocomplete($viewName, 'family', 'family', 'codfamilia', 'Familia', 'codfamilia');
