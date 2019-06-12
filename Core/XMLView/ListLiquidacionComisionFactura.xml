@@ -61,6 +61,12 @@
         </column>
     </columns>
 
+    <rows>
+        <row type="actions">
+            <button type="action" label="calculate" color="info" action="calculatecommission" icon="fas fa-percentage" />
+        </row>
+    </rows>
+
     <modals>
         <group name="insertinvoices" title="add-invoices" icon="fas fa-file-invoice">
             <column name="idsettled" display="none" order="0">
@@ -75,7 +81,7 @@
             <column name="from-date" numcolumns="6" order="0">
                 <widget type="date" fieldname="datefrom" />
             </column>
-            <column name="to-date" numcolumns="6" order="0">
+            <column name="until-date" numcolumns="6" order="0">
                 <widget type="date" fieldname="dateto" />
             </column>
             <column name="status" numcolumns="6" order="0">

@@ -18,10 +18,13 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\CommissionCalculate;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 
 /**
  * Description of EditCommissionSettlement
@@ -40,7 +43,7 @@ class EditLiquidacionComision extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -88,8 +91,18 @@ class EditLiquidacionComision extends EditController
                 $this->insertInvoices($data);
                 return true;
 
+            case 'calculatecommission':
+                $data = $this->request->request->all();
+                $this->calculateCommission($data);
+                return true;
+
             case 'generateinvoice':
                 $this->generateInvoice();
+                return true;
+
+            case 'delete':
+                parent::execPreviousAction($action);
+                $this->calculateTotalCommission();
                 return true;
 
             default:
@@ -126,6 +139,45 @@ class EditLiquidacionComision extends EditController
     {
         $this->addListView($viewName, 'ModelView\LiquidacionComisionFactura', 'invoices', 'fas fa-file-invoice');
         $this->setSettings($viewName, 'modalInsert', 'insertinvoices');
+    }
+
+    /**
+     * Calculate the commission percentage for each of the selected invoices
+     *
+     * @param array $data
+     */
+    private function calculateCommission($data)
+    {
+        $commission = new CommissionCalculate();
+        $docs = $this->getInvoicesFromDataForm($data);
+
+        $this->dataBase->beginTransaction();
+        try {
+            /// recalculate all business documents
+            if (isset($docs)) {
+                foreach ($docs as $invoice) {
+                    $commission->recalculate($invoice);
+                }
+            }
+
+            /// update total to settlement commission
+            $this->calculateTotalCommission();
+
+            /// confirm changes
+            $this->dataBase->commit();
+        } catch (Exception $ex) {
+            $this->dataBase->rollback();
+            $this->miniLog->error($ex->getMessage());
+        }
+    }
+
+    /**
+     * Calculate the total commission amount for the settlement
+     */
+    private function calculateTotalCommission()
+    {
+        $settle = $this->request->get('code');
+        $this->getModel()->calculateTotalCommission($settle);
     }
 
     /**
@@ -178,6 +230,25 @@ class EditLiquidacionComision extends EditController
             'color' => 'info',
             'confirm' => true,
         ];
+    }
+
+    /**
+     * Get the list of invoices selected by the user
+     *
+     * @param array $data
+     * @return FacturaCliente[]|null
+     */
+    private function getInvoicesFromDataForm($data)
+    {
+        $selected = implode(',', $data['code']);
+        if (empty($selected)) {
+            return null;
+        }
+
+        $invoice = new FacturaCliente();
+        $where = [ new DataBaseWhere('idfactura', $selected, 'IN') ];
+        $order = ['idfactura' => 'ASC'];
+        return $invoice->all($where, $order, 0, 0);
     }
 
     /**
@@ -263,9 +334,13 @@ class EditLiquidacionComision extends EditController
             return;
         }
 
+        /// add new invoice to settlement commission
         $where = $this->getInvoicesWhere($data);
         $settleinvoice = new LiquidacionComisionFactura();
         $settleinvoice->addInvoiceToSettle($data['idliquidacion'], $where);
+
+        /// update total to settlement commission
+        $this->calculateTotalCommission();
     }
 
     /**
