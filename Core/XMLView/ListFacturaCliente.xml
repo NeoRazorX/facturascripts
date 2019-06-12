@@ -52,7 +52,15 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="190">
+        <column name="agent" display="none" order="190">
+            <widget type="autocomplete" fieldname="codagente">
+                <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+            </widget>
+        </column>
+        <column name="percentage-commission" display="none" order="200">
+            <widget type="numer" fieldname="porcomision" />
+        </column>
+        <column name="date" display="right" order="210">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>

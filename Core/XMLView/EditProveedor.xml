@@ -56,7 +56,7 @@
             <column name="phone" order="110">
                 <widget type="tel" fieldname="telefono1" icon="fas fa-phone" />
             </column>
-            <column name="phone2" display="none" order="120">
+            <column name="phone2" order="120">
                 <widget type="tel" fieldname="telefono2" icon="fas fa-mobile-alt" />
             </column>
             <column name="fax" display="none" order="130">

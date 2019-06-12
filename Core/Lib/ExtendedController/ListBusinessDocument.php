@@ -155,6 +155,12 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterAutocomplete($name, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($name, 'idcontactofact', 'billing-address', 'idcontacto', 'contacto');
         $this->addFilterautocomplete($name, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
+
+        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
+        if (count($agents) > 0) {
+            $this->addFilterSelect($name, 'codagente', 'agent', 'codagente', $agents);
+        }
+
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
 
