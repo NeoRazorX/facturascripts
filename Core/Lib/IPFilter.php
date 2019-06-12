@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,14 +27,14 @@ class IPFilter
 {
 
     /**
-     * Maximum number of access attempts.
-     */
-    const MAX_ATTEMPTS = 5;
-
-    /**
      * The number of seconds the system blocks access.
      */
     const BAN_SECONDS = 600;
+
+    /**
+     * Maximum number of access attempts.
+     */
+    const MAX_ATTEMPTS = 5;
 
     /**
      * Path of the file with the list.
@@ -57,36 +57,32 @@ class IPFilter
     {
         $this->filePath = FS_FOLDER . '/MyFiles/Cache/ip.list';
         $this->ipList = [];
-
-        if (file_exists($this->filePath)) {
-            /// We read the list of IP addresses in the file
-            $file = fopen($this->filePath, 'rb');
-            if ($file) {
-                while (!feof($file)) {
-                    $line = explode(';', trim(fgets($file)));
-                    $this->readIp($line);
-                }
-
-                fclose($file);
-            }
-        }
+        $this->readFile();
     }
 
     /**
-     * Load the IP addresses in the $ ipList array
-     *
-     * @param array $line
+     * Clean the list of IP addresses and save the data.
      */
-    private function readIp($line)
+    public function clear()
     {
-        /// si no ha expirado
-        if (count($line) === 3 && (int) $line[2] > time()) {
-            $this->ipList[] = [
-                'ip' => $line[0],
-                'count' => (int) $line[1],
-                'expire' => (int) $line[2],
-            ];
+        $this->ipList = [];
+        $this->save();
+    }
+
+    /**
+     * Returns true client IP address.
+     * 
+     * @return string
+     */
+    public static function getClientIp()
+    {
+        foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
+            if (isset($_SERVER[$field])) {
+                return $_SERVER[$field];
+            }
         }
+
+        return '';
     }
 
     /**
@@ -98,16 +94,13 @@ class IPFilter
      */
     public function isBanned($ip)
     {
-        $banned = false;
-
         foreach ($this->ipList as $line) {
             if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
-                $banned = true;
-                break;
+                return true;
             }
         }
 
-        return $banned;
+        return false;
     }
 
     /**
@@ -139,6 +132,44 @@ class IPFilter
     }
 
     /**
+     * Reads file and load IP addressess.
+     */
+    private function readFile()
+    {
+        if (!file_exists($this->filePath)) {
+            return;
+        }
+
+        /// We read the list of IP addresses in the file
+        $file = fopen($this->filePath, 'rb');
+        if ($file) {
+            while (!feof($file)) {
+                $line = explode(';', trim(fgets($file)));
+                $this->readIp($line);
+            }
+
+            fclose($file);
+        }
+    }
+
+    /**
+     * Load the IP addresses in the $ ipList array
+     *
+     * @param array $line
+     */
+    private function readIp($line)
+    {
+        /// if row is not expired
+        if (count($line) === 3 && (int) $line[2] > time()) {
+            $this->ipList[] = [
+                'ip' => $line[0],
+                'count' => (int) $line[1],
+                'expire' => (int) $line[2],
+            ];
+        }
+    }
+
+    /**
      * Stores the list of IP addresses in the file.
      */
     private function save()
@@ -151,14 +182,5 @@ class IPFilter
 
             fclose($file);
         }
-    }
-
-    /**
-     * Clean the list of IP addresses and save the data.
-     */
-    public function clear()
-    {
-        $this->ipList = [];
-        $this->save();
     }
 }

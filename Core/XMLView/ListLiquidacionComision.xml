@@ -36,7 +36,7 @@
         <column name="agent" order="140">
             <widget type="text" fieldname="codagente" />
         </column>
-        <column name="invoice" order="150">
+        <column name="invoice" title="generated-invoice" order="150">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente">
                 <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"></values>
             </widget>

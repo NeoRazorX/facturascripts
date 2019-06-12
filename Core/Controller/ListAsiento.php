@@ -55,66 +55,65 @@ class ListAsiento extends ListController
     /**
      * Add accounting entries tab
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    private function createViewAccountEntries($name = 'ListAsiento')
+    private function createViewAccountEntries($viewName = 'ListAsiento')
     {
-        $this->addView($name, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->addSearchFields($name, ['CAST(numero AS CHAR(10))', 'concepto']);
-        $this->addOrderBy($name, ['fecha', 'idasiento'], 'date', 2);
-        $this->addOrderBy($name, ['numero', 'idasiento'], 'number');
-        $this->addOrderBy($name, ['importe', 'idasiento'], 'ammount');
+        $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addSearchFields($viewName, ['CAST(numero AS CHAR(10))', 'concepto']);
+        $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
+        $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
+        $this->addOrderBy($viewName, ['importe', 'idasiento'], 'ammount');
 
         /// filters
-        $this->addFilterPeriod($name, 'date', 'period', 'fecha');
-        $this->addFilterNumber($name, 'min-total', 'amount', 'importe', '>=');
-        $this->addFilterNumber($name, 'max-total', 'amount', 'importe', '<=');
+        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
+        $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
 
         $selectCompany = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->addFilterSelect($name, 'idempresa', 'company', 'idempresa', $selectCompany);
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
 
         $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->addFilterSelect($name, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
+        $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
-        $this->addFilterSelect($name, 'iddiario', 'journals', 'iddiario', $selectJournals);
+        $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $this->addFilterNumber($name, 'canal', 'channel', 'canal', '=');
+        $this->addFilterNumber($viewName, 'canal', 'channel', 'canal', '=');
 
         /// buttons
         $newButton = [
             'action' => 'renumber',
             'color' => 'warning',
-            'confirm' => true,
             'icon' => 'fas fa-sort-numeric-down',
             'label' => 'renumber-accounting',
-            'type' => 'action',
+            'type' => 'modal',
         ];
-        $this->addButton($name, $newButton);
+        $this->addButton($viewName, $newButton);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    private function createViewConcepts($name = 'ListConceptoPartida')
+    private function createViewConcepts($viewName = 'ListConceptoPartida')
     {
-        $this->addView($name, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
-        $this->addSearchFields($name, ['codconcepto', 'descripcion']);
-        $this->addOrderBy($name, ['codconcepto'], 'code');
-        $this->addOrderBy($name, ['descripcion'], 'description');
+        $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
+        $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
+        $this->addOrderBy($viewName, ['codconcepto'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    private function createViewJournals($name = 'ListDiario')
+    private function createViewJournals($viewName = 'ListDiario')
     {
-        $this->addView($name, 'Diario', 'journals', 'fas fa-book');
-        $this->addSearchFields($name, ['iddiario', 'descripcion']);
-        $this->addOrderBy($name, ['iddiario'], 'code');
-        $this->addOrderBy($name, ['descripcion'], 'description');
+        $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
+        $this->addSearchFields($viewName, ['iddiario', 'descripcion']);
+        $this->addOrderBy($viewName, ['iddiario'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
     }
 
     /**
@@ -128,7 +127,8 @@ class ListAsiento extends ListController
     {
         switch ($action) {
             case 'renumber':
-                if ($this->views['ListAsiento']->model->renumber()) {
+                $codejercicio = $this->request->request->get('exercise');
+                if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
                 return true;

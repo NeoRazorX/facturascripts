@@ -58,4 +58,13 @@
             <option color="warning" fieldname="editable">0</option>
         </row>
     </rows>
+    <modals>
+        <group name="renumber" title="renumber-accounting" icon="fas fa-sort-numeric-down">
+            <column name="exercise">
+                <widget type="select" fieldname="exercise" >
+                    <values source="ejercicios" fieldcode="codejercicio"></values>
+                </widget>
+            </column>
+        </group>
+    </modals>
 </view>

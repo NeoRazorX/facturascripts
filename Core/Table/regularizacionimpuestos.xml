@@ -22,7 +22,6 @@
     <column>
         <name>fechaasiento</name>
         <type>date</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fechainicio</name>
@@ -37,7 +36,6 @@
     <column>
         <name>idasiento</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idempresa</name>

@@ -61,7 +61,7 @@ abstract class EditController extends PanelController
      *
      * @return string
      */
-    protected function getMainViewName(): string
+    protected function getMainViewName()
     {
         return 'Edit' . $this->getModelClassName();
     }

@@ -23,7 +23,6 @@
     <column>
         <name>idfactura</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idliquidacion</name>

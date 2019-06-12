@@ -170,7 +170,6 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
     /**
      *
-     *
      * @return Partida
      */
     public function getNewLine()
@@ -242,39 +241,47 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
-     * Re-number the accounting entries of the open exercises
+     * Re-number the accounting entries of the open exercises.
+     * 
+     * @param string $codjercicio
      *
      * @return bool
      */
-    public function renumber()
+    public function renumber($codjercicio = '')
     {
         $ejercicio = new Ejercicio();
-        foreach ($ejercicio->all([new DataBaseWhere('estado', 'ABIERTO')]) as $eje) {
-            $posicion = 0;
-            $numero = 1;
-            $consulta = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
+        $where = empty($codjercicio) ? [] : [new DataBaseWhere('codejercicio', $codjercicio)];
+
+        foreach ($ejercicio->all($where) as $eje) {
+            if ($ejercicio->isOpened() === false) {
+                continue;
+            }
+
+            $offset = 0;
+            $number = 1;
+            $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
                 . ' WHERE codejercicio = ' . self::$dataBase->var2str($eje->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
-            $asientos = self::$dataBase->selectLimit($consulta, 1000, $posicion);
+            $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             while (!empty($asientos)) {
-                $sql = '';
+                $sql2 = '';
                 foreach ($asientos as $col) {
-                    if ($col['numero'] !== $numero) {
-                        $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($numero)
+                    if (self::$dataBase->var2str($col['numero']) !== self::$dataBase->var2str($number)) {
+                        $sql2 .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
                             . ' WHERE idasiento = ' . self::$dataBase->var2str($col['idasiento']) . ';';
                     }
 
-                    ++$numero;
+                    ++$number;
                 }
 
-                if (!empty($sql) && !self::$dataBase->exec($sql)) {
+                if (!empty($sql2) && !self::$dataBase->exec($sql2)) {
                     self::$miniLog->alert(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
                     return false;
                 }
 
-                $posicion += 1000;
-                $asientos = self::$dataBase->selectLimit($consulta, 1000, $posicion);
+                $offset += 1000;
+                $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             }
         }
 

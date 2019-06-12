@@ -30,7 +30,7 @@
             <column name="total" numcolumns="4" order="120">
                 <widget type="money" fieldname="total" readonly="true"/>
             </column>
-            <column name="invoice" numcolumns="4" order="130">
+            <column name="invoice" title="generated-invoice" numcolumns="4" order="130">
                 <widget type="autocomplete" fieldname="idfactura" readonly="true">
                     <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
                 </widget>

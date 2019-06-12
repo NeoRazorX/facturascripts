@@ -295,12 +295,12 @@ class AppController extends App
                 return $user;
             }
 
-            $this->ipFilter->setAttempt($this->request->getClientIp());
+            $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
             $this->miniLog->warning($this->i18n->trans('login-password-fail'));
             return false;
         }
 
-        $this->ipFilter->setAttempt($this->request->getClientIp());
+        $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
         $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
         return false;
     }
@@ -344,7 +344,7 @@ class AppController extends App
     private function updateCookies(User &$user, bool $force = false)
     {
         if ($force || \time() - \strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
-            $user->newLogkey($this->request->getClientIp());
+            $user->newLogkey($this->ipFilter->getClientIp());
             $user->save();
 
             $expire = time() + FS_COOKIES_EXPIRE;

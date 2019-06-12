@@ -160,7 +160,7 @@ abstract class App
      */
     public function close(string $nick = '')
     {
-        new Base\MiniLogSave($this->request->getClientIp() ?? '', $nick, $this->uri);
+        new Base\MiniLogSave($this->ipFilter->getClientIp() ?? '', $nick, $this->uri);
         $this->dataBase->close();
     }
 
@@ -192,7 +192,7 @@ abstract class App
      */
     protected function isIPBanned()
     {
-        return $this->ipFilter->isBanned($this->request->getClientIp());
+        return $this->ipFilter->isBanned($this->ipFilter->getClientIp());
     }
 
     /**
