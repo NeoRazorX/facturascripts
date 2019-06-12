@@ -41,6 +41,10 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idproducto</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>nombre</name>
         <type>character varying(100)</type>
         <null>NO</null>
@@ -64,5 +68,9 @@
     <constraint>
         <name>agentes_pkey</name>
         <type>PRIMARY KEY (codagente)</type>
+    </constraint>
+    <constraint>
+        <name>ca_agentes_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
