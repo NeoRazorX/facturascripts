@@ -47,7 +47,7 @@
             </column>
             <column name="product" numcolumns="6" order="350">
                 <widget type="autocomplete" fieldname="idproducto">
-                    <values source="productos" fieldcode="idproducto" fieldtitle="descripcion"></values>
+                    <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
                 </widget>
             </column>
         </group>

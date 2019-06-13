@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\Producto;
 
 /**
  * The agent/employee is the one associated with a delivery note, invoice o box.
@@ -69,6 +70,51 @@ class Agente extends Base\Contact
     public $idcontacto;
 
     /**
+     * Link to product model for settle commission
+     *
+     * @var int
+     */
+    public $idproducto;
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Producto();
+        return parent::install();
+    }
+
+    /**
+     * Returns the addresses associated with the provider.
+     *
+     * @return Contacto
+     */
+    public function getContact()
+    {
+        $contact = new Contacto();
+        $contact->loadFromCode($this->idcontacto);
+        return $contact;
+    }
+
+    /**
+     * Return the supplier id associated to agent
+     *
+     * @return string
+     */
+    public function getSupplierId()
+    {
+        if (empty($this->idcontacto)) {
+            return '';
+        }
+        return $this->getContact()->codproveedor;
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -116,7 +162,7 @@ class Agente extends Base\Contact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

@@ -55,6 +55,11 @@
             <column name="date-of-suspension" numcolumns="3" order="120">
                 <widget type="date" fieldname="fechabaja" />
             </column>
+            <column name="product-settle" numcolumns="3" order="130">
+                <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
+                    <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
+                </widget>
+            </column>
         </group>
     </columns>
 </view>
