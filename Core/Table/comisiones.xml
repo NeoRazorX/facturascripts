@@ -8,7 +8,6 @@
     <column>
         <name>codagente</name>
         <type>character varying(10)</type>
-        <null>NO</null>
     </column>
     <column>
         <name>codcliente</name>

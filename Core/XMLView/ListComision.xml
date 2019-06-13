@@ -21,8 +21,8 @@
 -->
 <view>
     <columns>
-        <column name="code" order="100">
-            <widget type="number" fieldname="idcomision" />
+        <column name="id" order="100">
+            <widget type="text" fieldname="idcomision" />
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idempresa" >

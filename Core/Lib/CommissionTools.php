@@ -70,10 +70,6 @@ class CommissionTools
     {
         $codfamilia = $line->getProducto()->codfamilia;
         foreach ($this->commissions as $commission) {
-            if (!empty($commission->codcliente) && $commission->codcliente != $doc->codcliente) {
-                continue;
-            }
-
             if (!empty($commission->codfamilia) && $commission->codfamilia != $codfamilia) {
                 continue;
             }
@@ -89,17 +85,30 @@ class CommissionTools
     }
 
     /**
+     * Charge applicable commissions.
      * 
      * @param SalesDocument $doc
      */
     protected function loadCommissions(&$doc)
     {
-        $where = [
-            new DataBaseWhere('idempresa', $doc->idempresa),
-            new DataBaseWhere('codagente', $doc->codagente),
-        ];
+        $this->commissions = [];
+        if (empty($doc->codagente)) {
+            return;
+        }
+
         $commission = new Comision();
-        $this->commissions = empty($doc->codagente) ? [] : $commission->all($where, ['prioridad' => 'DESC'], 0, 0);
+        $where = [new DataBaseWhere('idempresa', $doc->idempresa)];
+        foreach ($commission->all($where, ['prioridad' => 'DESC'], 0, 0) as $comm) {
+            if (!empty($comm->codagente) && $comm->codagente != $doc->codagente) {
+                continue;
+            }
+
+            if (!empty($comm->codcliente) && $comm->codcliente != $doc->codcliente) {
+                continue;
+            }
+
+            $this->commissions[] = $comm;
+        }
     }
 
     /**
