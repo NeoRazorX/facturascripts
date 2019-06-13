@@ -24,7 +24,9 @@ use FacturaScripts\Core\Lib\CommissionCalculate;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Core\Lib\InvoiceGenerator;
 
 /**
  * Description of EditCommissionSettlement
@@ -77,6 +79,24 @@ class EditLiquidacionComision extends EditController
     }
 
     /**
+     * Run the controller after actions.
+     *
+     * @param string $action
+     */
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'generateinvoice':
+                $this->generateInvoice();
+                break;
+
+            default:
+                parent::execAfterAction($action);
+                break;
+        }
+    }
+
+    /**
      * Run the actions that alter data before reading it.
      *
      * @param string $action
@@ -87,17 +107,11 @@ class EditLiquidacionComision extends EditController
     {
         switch ($action) {
             case 'insertinvoices':
-                $data = $this->request->request->all();
-                $this->insertInvoices($data);
+                $this->insertInvoices();
                 return true;
 
             case 'calculatecommission':
-                $data = $this->request->request->all();
-                $this->calculateCommission($data);
-                return true;
-
-            case 'generateinvoice':
-                $this->generateInvoice();
+                $this->calculateCommission();
                 return true;
 
             case 'delete':
@@ -143,11 +157,10 @@ class EditLiquidacionComision extends EditController
 
     /**
      * Calculate the commission percentage for each of the selected invoices
-     *
-     * @param array $data
      */
-    private function calculateCommission($data)
+    private function calculateCommission()
     {
+        $data = $this->request->request->all();
         $commission = new CommissionCalculate();
         $docs = $this->getInvoicesFromDataForm($data);
 
@@ -208,11 +221,44 @@ class EditLiquidacionComision extends EditController
     }
 
     /**
+     * Indicates whether any information needed to generate the settlement invoice
+     * to the agent is missing.
+     *
+     * @param Agente $agent
+     * @return bool
+     */
+    private function errorInAgentData($agent): bool
+    {
+        return empty($agent->getSupplierId())
+            || empty($agent->idproducto);
+    }
+
+    /**
      * Create the invoice for the payment to the agent
      */
     private function generateInvoice()
     {
-        ;
+        $model = $this->views[$this->getMainViewName()]->model;
+
+        /// load and check agent data
+        $agent = new Agente();
+        $agent->loadFromCode($model->codagente);
+        if ($this->errorInAgentData($agent)) {
+            $this->miniLog->error($this->i18n->trans('agent-data-for-invoice-error'));
+            return;
+        }
+
+        /// lines structure
+        $lines = [[
+            'idproducto' => $agent->idproducto,
+            'descripcion' => 'LIQUIDACION COMISIONES (ref. ' . $model->idliquidacion . ')',
+            'pvpunitario' => $model->total,
+        ]];
+
+        /// create purchase invoice
+        $generator = new InvoiceGenerator();
+        $model->idfactura = $generator->generatePurchaseInvoice($agent->getSupplierId(), $lines);
+        $model->save();
     }
 
     /**
@@ -319,11 +365,12 @@ class EditLiquidacionComision extends EditController
 
     /**
      * Insert Invoices in the settled
-     *
-     * @param array $data
      */
-    private function insertInvoices($data)
+    private function insertInvoices()
     {
+        $data = $this->request->request->all();
+
+        /// check needed values
         if ($this->errorInInsertData($data)) {
             $this->miniLog->error($this->i18n->trans('insert-invoices-data-error'));
             return;
@@ -379,14 +426,16 @@ class EditLiquidacionComision extends EditController
             return;
         }
 
-        /// Add invoice button and insert/delete
-        $idinvoice = $this->getViewModelValue($mainViewName, 'idfactura');
-        if (empty($idinvoice)) {
+        /// Add purchasse invoice button
+        $canInvoice = empty($this->getViewModelValue($mainViewName, 'idfactura'));
+        $total = $this->getViewModelValue($mainViewName, 'total');
+        if ($canInvoice && $total != 0) {
             $this->addButton($mainViewName, $this->getInvoiceButton());
-        } else {
-            $view->settings['btnNew'] = false;
-            $view->settings['btnDelete'] = false;
         }
+
+        /// Update insert/delete buttons status
+        $view->settings['btnNew'] = $canInvoice;
+        $view->settings['btnDelete'] = $canInvoice;
 
         /// Disable header fields when there are invoice selected
         if ($view->count > 0) {

@@ -20,9 +20,11 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
+use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
  * Class to automate the creation of purchase and sales invoices
@@ -37,13 +39,17 @@ class InvoiceGenerator
      *
      * @param string $subject
      * @param array $lines
-     * @return int
+     * @return int|null
      */
     public function generateSaleInvoice($subject, $lines)
     {
+        $customer = new Cliente();
+        $customer->loadFromCode($subject);
+
         $invoice = new FacturaCliente();
-        $this->createHeader($invoice, $subject);
-        $this->createLines($invoice, $lines);
+        if ($this->createHeader($invoice, $customer)) {
+            $this->createLines($invoice, $lines);
+        }
         return $invoice->idfactura;
     }
 
@@ -52,25 +58,30 @@ class InvoiceGenerator
      *
      * @param string $subject
      * @param array $lines
-     * @return int
+     * @return int|null
      */
     public function generatePurchaseInvoice($subject, $lines)
     {
+        $supplier = new Proveedor();
+        $supplier->loadFromCode($subject);
+
         $invoice = new FacturaProveedor();
-        $this->createHeader($invoice, $subject);
-        $this->createLines($invoice, $lines);
+        if ($this->createHeader($invoice, $supplier)) {
+            $this->createLines($invoice, $lines);
+        }
         return $invoice->idfactura;
     }
 
     /**
      *
      * @param TransformerDocument $invoice
-     * @param string $subject
+     * @param Cliente|Proveedor $subject
+     * @return bool
      */
     private function createHeader(&$invoice, $subject)
     {
         $invoice->setSubject($subject);
-        $invoice->save();
+        return $invoice->save();
     }
 
     /**
