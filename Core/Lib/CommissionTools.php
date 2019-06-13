@@ -45,18 +45,17 @@ class CommissionTools
      */
     public function recalculate(&$doc, &$lines)
     {
-        if (!property_exists($doc, 'porcomision')) {
+        if (!property_exists($doc, 'totalcomision')) {
             return;
         }
 
-        $percentage = 0.0;
+        $totalcommission = 0.0;
         $this->loadCommissions($doc);
         foreach ($lines as $line) {
-            $percentage += $this->recalculateLine($doc, $line);
+            $totalcommission += $this->recalculateLine($doc, $line);
         }
 
-        $count = count($lines);
-        $doc->porcomision = $count > 0 ? round($percentage / $count, (int) FS_NF0) : 0.0;
+        $doc->totalcomision = round($totalcommission, (int) FS_NF0);
     }
 
     /**
@@ -127,6 +126,6 @@ class CommissionTools
             $line->save();
         }
 
-        return $line->porcomision;
+        return $line->porcomision * $line->pvptotal / 100;
     }
 }

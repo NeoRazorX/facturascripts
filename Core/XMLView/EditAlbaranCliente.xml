@@ -100,7 +100,7 @@
                 </widget>
             </column>
             <column name="commission" order="110">
-                <widget type="number" fieldname="porcomision" icon="fas fa-percentage" readonly="true" />
+                <widget type="money" fieldname="totalcomision" icon="fas fa-coins" readonly="true" />
             </column>
         </group>
         <group name="attributes" title="attributes" icon="fas fa-database" numcolumns="8">

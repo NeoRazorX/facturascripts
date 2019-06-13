@@ -20,12 +20,12 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\CommissionCalculate;
+use FacturaScripts\Core\Lib\CommissionTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 use FacturaScripts\Core\Lib\InvoiceGenerator;
 
 /**
@@ -73,9 +73,8 @@ class EditLiquidacionComision extends EditController
     protected function createViews()
     {
         parent::createViews();
-
-        $this->addSettledInvoiceView();
         $this->setTabsPosition('bottom');
+        $this->addSettledInvoiceView();
     }
 
     /**
@@ -149,28 +148,34 @@ class EditLiquidacionComision extends EditController
      *
      * @param string $viewName
      */
-    private function addSettledInvoiceView($viewName = self::VIEWNAME_SETTLEDINVOICE)
+    protected function addSettledInvoiceView($viewName = self::VIEWNAME_SETTLEDINVOICE)
     {
         $this->addListView($viewName, 'ModelView\LiquidacionComisionFactura', 'invoices', 'fas fa-file-invoice');
+
+        /// settings
         $this->setSettings($viewName, 'modalInsert', 'insertinvoices');
     }
 
     /**
      * Calculate the commission percentage for each of the selected invoices
      */
-    private function calculateCommission()
+    protected function calculateCommission()
     {
         $data = $this->request->request->all();
-        $commission = new CommissionCalculate();
         $docs = $this->getInvoicesFromDataForm($data);
+        if (empty($docs)) {
+            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            return;
+        }
 
+        $commission = new CommissionTools();
         $this->dataBase->beginTransaction();
+
         try {
             /// recalculate all business documents
-            if (isset($docs)) {
-                foreach ($docs as $invoice) {
-                    $commission->recalculate($invoice);
-                }
+            foreach ($docs as $invoice) {
+                $lines = $invoice->getLines();
+                $commission->recalculate($invoice, $lines);
             }
 
             /// update total to settlement commission
@@ -187,10 +192,10 @@ class EditLiquidacionComision extends EditController
     /**
      * Calculate the total commission amount for the settlement
      */
-    private function calculateTotalCommission()
+    protected function calculateTotalCommission()
     {
-        $settle = $this->request->get('code');
-        $this->getModel()->calculateTotalCommission($settle);
+        $code = $this->request->get('code');
+        $this->getModel()->calculateTotalCommission($code);
     }
 
     /**
@@ -201,7 +206,7 @@ class EditLiquidacionComision extends EditController
      *
      * @return bool
      */
-    private function errorInInsertData($data): bool
+    protected function errorInInsertData($data): bool
     {
         return empty($data['idliquidacion']) ||
             empty($data['codejercicio']) ||
@@ -215,7 +220,7 @@ class EditLiquidacionComision extends EditController
      * @param array $data
      * @return bool
      */
-    private function errorInSelectDates($data): bool
+    protected function errorInSelectDates($data): bool
     {
         return empty($data['datefrom']) && empty($data['dateto']);
     }
@@ -227,16 +232,15 @@ class EditLiquidacionComision extends EditController
      * @param Agente $agent
      * @return bool
      */
-    private function errorInAgentData($agent): bool
+    protected function errorInAgentData($agent): bool
     {
-        return empty($agent->getSupplierId())
-            || empty($agent->idproducto);
+        return empty($agent->getSupplierId()) || empty($agent->idproducto);
     }
 
     /**
      * Create the invoice for the payment to the agent
      */
-    private function generateInvoice()
+    protected function generateInvoice()
     {
         $model = $this->views[$this->getMainViewName()]->model;
 
@@ -266,7 +270,7 @@ class EditLiquidacionComision extends EditController
      *
      * @return array
      */
-    private function getInvoiceButton()
+    protected function getInvoiceButton()
     {
         return [
             'action' => 'generateinvoice',
@@ -282,17 +286,22 @@ class EditLiquidacionComision extends EditController
      * Get the list of invoices selected by the user
      *
      * @param array $data
-     * @return FacturaCliente[]|null
+     *
+     * @return FacturaCliente[]
      */
-    private function getInvoicesFromDataForm($data)
+    protected function getInvoicesFromDataForm($data)
     {
+        if (!isset($data['code'])) {
+            return [];
+        }
+
         $selected = implode(',', $data['code']);
         if (empty($selected)) {
-            return null;
+            return [];
         }
 
         $invoice = new FacturaCliente();
-        $where = [ new DataBaseWhere('idfactura', $selected, 'IN') ];
+        $where = [new DataBaseWhere('idfactura', $selected, 'IN')];
         $order = ['idfactura' => 'ASC'];
         return $invoice->all($where, $order, 0, 0);
     }
@@ -304,7 +313,7 @@ class EditLiquidacionComision extends EditController
      *
      * @return DatabaseWhere[]
      */
-    private function getInvoicesWhere($data)
+    protected function getInvoicesWhere($data)
     {
         /// Basic data filter
         $where = [
@@ -352,7 +361,7 @@ class EditLiquidacionComision extends EditController
      * @param string          $fieldTo
      * @param string          $sqlField
      */
-    private function getWhereFromDate(&$where, $data, $fieldFrom, $fieldTo, $sqlField)
+    protected function getWhereFromDate(&$where, $data, $fieldFrom, $fieldTo, $sqlField)
     {
         if (empty($data[$fieldTo])) {
             $where[] = new DatabaseWhere($sqlField, $data[$fieldFrom]);
@@ -366,7 +375,7 @@ class EditLiquidacionComision extends EditController
     /**
      * Insert Invoices in the settled
      */
-    private function insertInvoices()
+    protected function insertInvoices()
     {
         $data = $this->request->request->all();
 
@@ -395,7 +404,7 @@ class EditLiquidacionComision extends EditController
      *
      * @param BaseView $view
      */
-    private function loadDataSettledInvoice($view)
+    protected function loadDataSettledInvoice($view)
     {
         /// Get master data
         $mainViewName = $this->getMainViewName();
@@ -417,7 +426,7 @@ class EditLiquidacionComision extends EditController
      *
      * @param BaseView $view
      */
-    private function setViewStatus($view)
+    protected function setViewStatus($view)
     {
         /// If new record, nothing to do
         $mainViewName = $this->getMainViewName();

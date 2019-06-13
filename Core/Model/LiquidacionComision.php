@@ -79,17 +79,17 @@ class LiquidacionComision extends Base\ModelClass
     /**
      * Calculate the total commission amount of a settlement
      *
-     * @param int $settle
+     * @param int $code
      */
-    public function calculateTotalCommission($settle)
+    public function calculateTotalCommission($code)
     {
         $sql = 'UPDATE ' . self::tableName()
             . ' SET total = COALESCE('
-                . '(SELECT SUM(neto * porcomision / 100)'
-                .  ' FROM ' . FacturaCliente::tableName()
-                . ' WHERE idliquidacion = ' . $settle . ')'
+            . '(SELECT SUM(totalcomision)'
+            . ' FROM ' . FacturaCliente::tableName()
+            . ' WHERE idliquidacion = ' . $code . ')'
             . ',0)'
-            . ' WHERE idliquidacion = ' . $settle;
+            . ' WHERE idliquidacion = ' . $code;
 
         return self::$dataBase->exec($sql);
     }

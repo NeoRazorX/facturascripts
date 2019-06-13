@@ -107,7 +107,7 @@ class LiquidacionComisionFactura extends ModelView
             'pagada' => 'facturascli.pagada',
             'neto' => 'facturascli.neto',
             'total' => 'facturascli.total',
-            'porcomision' => 'facturascli.porcomision',
+            'totalcomision' => 'facturascli.totalcomision',
             'cliente' => 'facturascli.nombrecliente',
             'ejercicio' => 'ejercicios.nombre',
             'empresa' => 'empresas.nombrecorto'
