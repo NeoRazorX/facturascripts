@@ -52,7 +52,7 @@ class CommissionTools
         $totalcommission = 0.0;
         $this->loadCommissions($doc);
         foreach ($lines as $line) {
-            $totalcommission += $this->recalculateLine($doc, $line);
+            $totalcommission += $this->recalculateLine($line);
         }
 
         $doc->totalcomision = round($totalcommission, (int) FS_NF0);
@@ -60,12 +60,11 @@ class CommissionTools
 
     /**
      * 
-     * @param SalesDocument     $doc
      * @param SalesDocumentLine $line
      *
      * @return float
      */
-    protected function getCommision(&$doc, &$line)
+    protected function getCommision(&$line)
     {
         $codfamilia = $line->getProducto()->codfamilia;
         foreach ($this->commissions as $commission) {
@@ -113,14 +112,13 @@ class CommissionTools
     /**
      * Update commission sale of a document line
      *
-     * @param SalesDocument     $doc
      * @param SalesDocumentLine $line
      *
      * @return float
      */
-    protected function recalculateLine(&$doc, &$line)
+    protected function recalculateLine(&$line)
     {
-        $newValue = $this->getCommision($doc, $line);
+        $newValue = $this->getCommision($line);
         if ($newValue != $line->porcomision) {
             $line->porcomision = $newValue;
             $line->save();
