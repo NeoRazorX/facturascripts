@@ -34,7 +34,7 @@
             <widget type="date" fieldname="fecha" />
         </column>
         <column name="agent" order="140">
-            <widget type="text" fieldname="codagente" />
+            <widget type="text" fieldname="agente" />
         </column>
         <column name="invoice" title="generated-invoice" order="150">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente">
