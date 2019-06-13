@@ -53,27 +53,15 @@ class ListAgente extends ListController
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
-
-        $this->addAgentView();
-        $this->addCommissionView();
-        $this->addSettlementView();
-    }
-
-    /**
      * Add Agent View
      *
      * @param string $viewName
      */
-    private function addAgentView($viewName = 'ListAgente')
+    protected function createAgentView($viewName = 'ListAgente')
     {
         /// View
         $this->addView($viewName, 'Agente', 'agents', 'fas fa-user-tie');
-        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email']);
+        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
 
         /// Order by
         $this->addOrderBy($viewName, ['codagente'], 'code');
@@ -96,7 +84,7 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    private function addCommissionView($viewName = 'ListComision')
+    protected function createCommissionView($viewName = 'ListComision')
     {
         /// View
         $this->addView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
@@ -123,19 +111,32 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    private function addSettlementView($viewName = 'ListLiquidacionComision')
+    protected function createSettlementView($viewName = 'ListLiquidacionComision')
     {
         /// View
         $this->addView($viewName, 'ModelView\LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
-        $this->addSearchFields($viewName, ['agentes.nombre', 'facturasprov.codigo']);
+        $this->addSearchFields($viewName, ['agentes.nombre', 'facturasprov.codigo', 'liquidacionescomisiones.observaciones']);
 
         /// Order By
         $this->addOrderBy($viewName, ['fecha', 'idliquidacion'], 'date', 2);
         $this->addOrderBy($viewName, ['codagente', 'fecha'], 'agent');
+        $this->addOrderBy($viewName, ['total', 'fecha'], 'amount');
 
         /// Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'ejercicios.idempresa', $this->companyList);
         $this->addFilterPeriod($viewName, 'fecha', 'date', 'liquidacioncomision.fecha');
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'liquidacioncomision.codagente', 'agentes', 'codagente', 'nombre');
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
+
+        $this->createAgentView();
+        $this->createCommissionView();
+        $this->createSettlementView();
     }
 }

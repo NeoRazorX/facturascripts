@@ -46,10 +46,10 @@
         <column name="invoice-date" display="none" order="160">
             <widget type="date" fieldname="fechafactura" />
         </column>
-        <column name="total" display="right" order="170">
+        <column name="amount" display="right" order="170">
             <widget type="money" fieldname="total" />
         </column>
-        <column name="notes" display="none" order="180">
+        <column name="observations" display="none" order="180">
             <widget type="text" fieldname="observaciones" />
         </column>
     </columns>

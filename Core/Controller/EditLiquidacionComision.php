@@ -23,10 +23,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\CommissionTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\InvoiceGenerator;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
-use FacturaScripts\Core\Lib\InvoiceGenerator;
 
 /**
  * Description of EditCommissionSettlement
@@ -151,6 +151,9 @@ class EditLiquidacionComision extends EditController
     protected function addSettledInvoiceView($viewName = self::VIEWNAME_SETTLEDINVOICE)
     {
         $this->addListView($viewName, 'ModelView\LiquidacionComisionFactura', 'invoices', 'fas fa-file-invoice');
+        $this->views[$viewName]->addOrderBy(['fecha', 'idfactura'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['total'], 'amount');
+        $this->views[$viewName]->addOrderBy(['totalcomision'], 'commission');
 
         /// settings
         $this->setSettings($viewName, 'modalInsert', 'insertinvoices');

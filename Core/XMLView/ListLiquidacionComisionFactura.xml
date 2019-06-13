@@ -33,27 +33,22 @@
         <column name="number" display="none" order="130">
             <widget type="text" fieldname="numero" />
         </column>
-        <column name="number2" display="none" order="130">
+        <column name="number2" display="none" order="140">
             <widget type="text" fieldname="numero2" />
         </column>
-        <column name="customer" order="140">
+        <column name="customer" order="150">
             <widget type="text" fieldname="cliente" />
-        </column>
-        <column name="date" display="center" order="150">
-            <widget type="date" fieldname="fecha" />
         </column>
         <column name="amount" display="right" order="160">
             <widget type="money" fieldname="neto">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="total" display="none" order="170">
-            <widget type="money" fieldname="total">
-                <option color="danger">lt:0</option>
-            </widget>
-        </column>
-        <column name="commission" display="right" order="180">
+        <column name="commission" display="right" order="170">
             <widget type="money" fieldname="totalcomision" />
+        </column>
+        <column name="date" display="right" order="180">
+            <widget type="date" fieldname="fecha" />
         </column>
     </columns>
     <rows>

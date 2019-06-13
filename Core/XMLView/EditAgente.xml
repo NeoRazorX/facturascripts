@@ -46,7 +46,7 @@
                     <values source="contactos" fieldcode="idcontacto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="product-settle" numcolumns="3" order="110">
+            <column name="settlement-product" numcolumns="3" order="110">
                 <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
                     <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
                 </widget>
