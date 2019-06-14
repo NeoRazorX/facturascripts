@@ -55,63 +55,65 @@ class ListProveedor extends ListController
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    private function createViewAdresses($name = 'ListContacto')
+    private function createViewAdresses($viewName = 'ListContacto')
     {
-        $this->addView($name, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addSearchFields($name, ['nombre', 'apellidos', 'email']);
-        $this->addOrderBy($name, ['email'], 'email');
-        $this->addOrderBy($name, ['nombre'], 'name');
-        $this->addOrderBy($name, ['empresa'], 'company');
-        $this->addOrderBy($name, ['level'], 'level');
-        $this->addOrderBy($name, ['lastactivity'], 'last-activity', 2);
+        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
+        $this->addOrderBy($viewName, ['email'], 'email');
+        $this->addOrderBy($viewName, ['nombre'], 'name');
+        $this->addOrderBy($viewName, ['empresa'], 'company');
+        $this->addOrderBy($viewName, ['level'], 'level');
+        $this->addOrderBy($viewName, ['lastactivity'], 'last-activity', 2);
 
+        /// filters
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
-        $this->addFilterSelect($name, 'cargo', 'position', 'cargo', $cargoValues);
+        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargoValues);
 
         $counties = $this->codeModel->all('paises', 'codpais', 'nombre');
-        $this->addFilterSelect($name, 'codpais', 'country', 'codpais', $counties);
+        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $counties);
 
         $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        $this->addFilterSelect($name, 'provincia', 'province', 'provincia', $provinces);
+        $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
 
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        $this->addFilterSelect($name, 'ciudad', 'city', 'ciudad', $cities);
+        $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
 
-        $this->addFilterCheckbox($name, 'verificado', 'verified', 'verificado');
-        $this->addFilterCheckbox($name, 'admitemarketing', 'allow-marketing', 'admitemarketing');
+        $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
+        $this->addFilterCheckbox($viewName, 'admitemarketing', 'allow-marketing', 'admitemarketing');
 
         /// disable megasearch
-        $this->setSettings($name, 'megasearch', false);
+        $this->setSettings($viewName, 'megasearch', false);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    private function createViewSuppliers($name = 'ListProveedor')
+    private function createViewSuppliers($viewName = 'ListProveedor')
     {
-        $this->addView($name, 'Proveedor', 'suppliers', 'fas fa-users');
-        $this->addSearchFields($name, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
-        $this->addOrderBy($name, ['codproveedor'], 'code');
-        $this->addOrderBy($name, ['nombre'], 'name', 1);
-        $this->addOrderBy($name, ['fecha'], 'date');
+        $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
+        $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->addOrderBy($viewName, ['codproveedor'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addOrderBy($viewName, ['fecha'], 'date');
 
+        /// filters
         $values = [
             ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
-        $this->addFilterSelectWhere($name, 'status', $values);        
-        
-        $retencions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
-        $this->addFilterSelect($name, 'codretencion', 'retentions', 'codretencion', $retencions);
-        
+        $this->addFilterSelectWhere($viewName, 'status', $values);
+
         $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect($name, 'codserie', 'series', 'codserie', $series);
-        
+        $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
+
+        $retencions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
+        $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', $retencions);
+
         $formaspago = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect($name, 'codpago', 'payment-methods', 'codpago', $formaspago);
+        $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $formaspago);
     }
 }
