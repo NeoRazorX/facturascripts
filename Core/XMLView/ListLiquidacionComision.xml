@@ -24,33 +24,34 @@
         <column name="code" display="none" order="100">
             <widget type="text" fieldname="idliquidacion" />
         </column>
-        <column name="date" order="110">
-            <widget type="date" fieldname="fecha" />
+        <column name="company" order="110">
+            <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
         </column>
-        <column name="exercise" order="120">
-            <widget type="text" fieldname="ejercicio" />
+        <column name="serie" order="120">
+            <widget type="select" fieldname="codserie" onclick="EditSerie">
+                <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+            </widget>
         </column>
-        <column name="company" order="130">
-            <widget type="text" fieldname="empresa" />
-        </column>
-        <column name="agent" order="140">
+        <column name="agent" order="130">
             <widget type="select" fieldname="codagente" onclick="EditAgente">
                 <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="invoice" title="generated-invoice" order="150">
+        <column name="invoice" title="generated-invoice" order="140">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor">
                 <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
             </widget>
         </column>
-        <column name="invoice-date" display="none" order="160">
-            <widget type="date" fieldname="fechafactura" />
+        <column name="observations" order="150">
+            <widget type="text" fieldname="observaciones" />
         </column>
-        <column name="amount" display="right" order="170">
+        <column name="amount" display="right" order="160">
             <widget type="money" fieldname="total" />
         </column>
-        <column name="observations" display="none" order="180">
-            <widget type="text" fieldname="observaciones" />
+        <column name="date" order="170">
+            <widget type="date" fieldname="fecha" />
         </column>
     </columns>
     <rows>

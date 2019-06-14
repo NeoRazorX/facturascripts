@@ -37,7 +37,7 @@
             <widget type="text" fieldname="numero2" />
         </column>
         <column name="customer" order="150">
-            <widget type="text" fieldname="cliente" />
+            <widget type="text" fieldname="nombrecliente" />
         </column>
         <column name="paid" display="center" order="160">
             <widget type="checkbox" fieldname="pagada" />
@@ -64,8 +64,11 @@
             <column name="idsettled" display="none" order="0">
                 <widget type="text" fieldname="idliquidacion" readonly="true" />
             </column>
-            <column name="idexercise" display="none" order="0">
-                <widget type="text" fieldname="codejercicio" readonly="true" />
+            <column name="idcompany" display="none" order="0">
+                <widget type="text" fieldname="idempresa" readonly="true" />
+            </column>
+            <column name="idserie" display="none" order="0">
+                <widget type="text" fieldname="codserie" readonly="true" />
             </column>
             <column name="idagent" display="none" order="0">
                 <widget type="text" fieldname="codagente" readonly="true" />

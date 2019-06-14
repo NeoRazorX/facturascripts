@@ -114,8 +114,8 @@ class ListAgente extends ListController
     protected function createSettlementView($viewName = 'ListLiquidacionComision')
     {
         /// View
-        $this->addView($viewName, 'ModelView\LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
-        $this->addSearchFields($viewName, ['agentes.nombre', 'facturasprov.codigo', 'liquidacionescomisiones.observaciones']);
+        $this->addView($viewName, 'LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
+        $this->addSearchFields($viewName, ['observaciones']);
 
         /// Order By
         $this->addOrderBy($viewName, ['fecha', 'idliquidacion'], 'date', 2);
@@ -123,9 +123,14 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['total', 'fecha'], 'amount');
 
         /// Filters
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'ejercicios.idempresa', $this->companyList);
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'liquidacioncomision.fecha');
-        $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'liquidacioncomision.codagente', 'agentes', 'codagente', 'nombre');
+        $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
+
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
+
+        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
+        $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
     }
 
     /**

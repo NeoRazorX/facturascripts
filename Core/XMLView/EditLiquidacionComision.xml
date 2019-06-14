@@ -22,28 +22,33 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="exercise" order="100">
-                <widget type="select" fieldname="codejercicio" required="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+            <column name="company" titleurl="ListEmpresa" order="100">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="agent" titleurl="ListAgente" order="110">
+            <column name="serie" titleurl="ListSerie" order="110">
+                <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="agent" titleurl="ListAgente" order="120">
                 <widget type="select" fieldname="codagente" onclick="EditAgente" required="true">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="date" order="120">
+            <column name="date" order="130">
                 <widget type="date" fieldname="fecha" icon="fas fa-calendar" required="true"/>
             </column>
-            <column name="invoice" title="generated-invoice" order="130">
+            <column name="invoice" title="generated-invoice" order="140">
                 <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor" readonly="true">
                     <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
                 </widget>
             </column>
-            <column name="amount" order="140">
+            <column name="amount" order="150">
                 <widget type="money" fieldname="total" readonly="true"/>
             </column>
-            <column name="observations" numcolumns="12" order="150">
+            <column name="observations" numcolumns="12" order="160">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

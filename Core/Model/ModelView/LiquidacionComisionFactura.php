@@ -40,7 +40,7 @@ class LiquidacionComisionFactura extends ModelView
      *
      * @param array $data
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new FacturaCliente());
@@ -93,6 +93,16 @@ class LiquidacionComisionFactura extends ModelView
     }
 
     /**
+     * Get value from modal view cursor of the master model primary key.
+     * 
+     * @return int
+     */
+    public function primaryColumnValue()
+    {
+        return $this->idfactura;
+    }
+
+    /**
      * List of fields or columns to select clausule.
      * 
      * @return array
@@ -100,21 +110,24 @@ class LiquidacionComisionFactura extends ModelView
     protected function getFields(): array
     {
         return [
-            'idliquidacion' => 'facturascli.idliquidacion',
-            'idfactura' => 'facturascli.idfactura',
-            'idempresa' => 'facturascli.idempresa',
+            'codagente' => 'facturascli.codagente',
             'codcliente' => 'facturascli.codcliente',
+            'codejercicio' => 'facturascli.codejercicio',
             'codigo' => 'facturascli.codigo',
+            'codpago' => 'facturascli.codpago',
+            'codserie' => 'facturascli.codserie',
+            'fecha' => 'facturascli.fecha',
+            'hora' => 'facturascli.hora',
+            'idempresa' => 'facturascli.idempresa',
+            'idfactura' => 'facturascli.idfactura',
+            'idliquidacion' => 'facturascli.idliquidacion',
+            'nombrecliente' => 'facturascli.nombrecliente',
             'numero' => 'facturascli.numero',
             'numero2' => 'facturascli.numero2',
-            'fecha' => 'facturascli.fecha',
-            'pagada' => 'facturascli.pagada',
             'neto' => 'facturascli.neto',
+            'pagada' => 'facturascli.pagada',
             'total' => 'facturascli.total',
             'totalcomision' => 'facturascli.totalcomision',
-            'cliente' => 'facturascli.nombrecliente',
-            'ejercicio' => 'ejercicios.nombre',
-            'empresa' => 'empresas.nombrecorto'
         ];
     }
 
@@ -125,9 +138,7 @@ class LiquidacionComisionFactura extends ModelView
      */
     protected function getSQLFrom(): string
     {
-        return 'facturascli'
-            . ' INNER JOIN ejercicios ON ejercicios.codejercicio = facturascli.codejercicio'
-            . ' INNER JOIN empresas ON empresas.idempresa = facturascli.idempresa';
+        return 'facturascli INNER JOIN formaspago ON formaspago.codpago = facturascli.codpago';
     }
 
     /**
@@ -137,20 +148,6 @@ class LiquidacionComisionFactura extends ModelView
      */
     protected function getTables(): array
     {
-        return [
-            'facturascli',
-            'ejercicios',
-            'empresas'
-        ];
-    }
-
-    /**
-     * Get value from modal view cursor of the master model primary key.
-     * 
-     * @return int
-     */
-    public function primaryColumnValue()
-    {
-        return $this->idfactura;
+        return ['facturascli', 'formaspago'];
     }
 }

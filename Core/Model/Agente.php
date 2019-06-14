@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -86,15 +86,17 @@ class Agente extends Base\Contact
         $contact->loadFromCode($this->idcontacto);
         return $contact;
     }
-
+    
     /**
-     * Return the supplier id associated to agent
-     *
-     * @return string
+     * Returns settlement product.
+     * 
+     * @return Producto
      */
-    public function getSupplierId()
+    public function getProduct()
     {
-        return empty($this->idcontacto) ? '' : $this->getContact()->codproveedor;
+        $product = new Producto();
+        $product->loadFromCode($this->idproducto);
+        return $product;
     }
 
     /**
