@@ -20,8 +20,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Lib\Accounting\VatRegularizationToAccounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 
 /**
  * Controller to list the items in the RegularizacionImpuesto model
@@ -75,7 +77,7 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -124,6 +126,89 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->addTaxSummaryView();
+        $this->addTaxLineView('ListPartidaImpuesto-1', 'purchases', 'fas fa-sign-in-alt');
+        $this->addTaxLineView('ListPartidaImpuesto-2', 'sales', 'fas fa-sign-out-alt');
+        $this->addEntryLineView();
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'create-accounting-entry':
+                $code = $this->request->get('code');
+                $this->createAccountingEntry($code);
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
+    }
+
+    /**
+     * Load data view procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'EditRegularizacionImpuesto':
+                parent::loadData($viewName, $view);
+                break;
+
+            case 'ListPartida':
+                $this->getListPartida($view);
+                break;
+
+            case 'ListPartidaImpuestoResumen':
+                $this->getListPartidaImpuestoResumen($view);
+                break;
+
+            case 'ListPartidaImpuesto-1':
+                $this->getListPartidaImpuesto1($view);
+                break;
+
+            case 'ListPartidaImpuesto-2':
+                $this->getListPartidaImpuesto2($view);
+                break;
+        }
+    }
+
+    private function addTaxSummaryView($viewName = 'ListPartidaImpuestoResumen')
+    {
+        $this->addListView($viewName, 'PartidaImpuestoResumen', 'summary', 'fas fa-list-alt');
+        $this->disableButtons($viewName);
+    }
+
+    private function addTaxLineView($viewName, $caption, $icon)
+    {
+        $this->addListView($viewName, 'PartidaImpuesto', $caption, $icon);
+        $this->disableButtons($viewName);
+    }
+
+    private function addEntryLineView($viewName = 'ListPartida')
+    {
+        $this->addListView($viewName, 'Partida', 'accounting-entry', 'fas fa-balance-scale');
+        $this->disableButtons($viewName);
+    }
+
+    /**
      * Calculates the amounts for the different sections of the regularization
      *
      * @param PartidaImpuestoResumen[] $data
@@ -150,36 +235,25 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * Load views
+     *
+     * @param int $code
      */
-    protected function createViews()
+    private function createAccountingEntry($code)
     {
-        parent::createViews();
-        $this->setTabsPosition('bottom');
-
-        $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fas fa-list-alt');
-        $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fas fa-sign-in-alt');
-        $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fas fa-sign-out-alt');
-        $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fas fa-balance-scale');
+        $document = new RegularizacionImpuesto();
+        if ($document->loadFromCode($code) && empty($document->idasiento)) {
+            $accounting = new VatRegularizationToAccounting();
+            $accounting->generate($document);
+            if (!empty($document->idasiento)) {
+                $document->save();
+            }
+        }
     }
 
-    /**
-     * Run the actions that alter data before reading it.
-     *
-     * @param string $action
-     *
-     * @return bool
-     */
-    protected function execPreviousAction($action)
+    private function disableButtons($viewName)
     {
-        switch ($action) {
-            case 'create-accounting-entry':
-                /// TODO: Create accounting entry
-                return true;
-
-            default:
-                return parent::execPreviousAction($action);
-        }
+        $this->views[$viewName]->settings['btnDelete'] = false;
+        $this->views[$viewName]->settings['btnNew'] = false;
     }
 
     private function getListPartida($view)
@@ -187,7 +261,7 @@ class EditRegularizacionImpuesto extends EditController
         $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
         if (!empty($idasiento)) {
             $where = [new DataBaseWhere('idasiento', $idasiento)];
-            $view->loadData($where, ['orden' => 'ASC']);
+            $view->loadData(false, $where, ['orden' => 'ASC']);
         }
     }
 
@@ -225,6 +299,10 @@ class EditRegularizacionImpuesto extends EditController
         }
     }
 
+    /**
+     *
+     * @param BaseView $view
+     */
     private function getListPartidaImpuestoResumen($view)
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
@@ -246,37 +324,6 @@ class EditRegularizacionImpuesto extends EditController
             ];
             $view->loadData(false, $where, $orderby);
             $this->calculateAmounts($view->cursor);
-        }
-    }
-
-    /**
-     * Load data view procedure
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'EditRegularizacionImpuesto':
-                parent::loadData($viewName, $view);
-                break;
-
-            case 'ListPartida':
-                $this->getListPartida($view);
-                break;
-
-            case 'ListPartidaImpuestoResumen':
-                $this->getListPartidaImpuestoResumen($view);
-                break;
-
-            case 'ListPartidaImpuesto-1':
-                $this->getListPartidaImpuesto1($view);
-                break;
-
-            case 'ListPartidaImpuesto-2':
-                $this->getListPartidaImpuesto2($view);
-                break;
         }
     }
 }

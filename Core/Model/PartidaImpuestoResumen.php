@@ -33,8 +33,10 @@ class PartidaImpuestoResumen extends Base\ModelView
      */
     protected function getGroupFields(): string
     {
-        return 'asientos.codejercicio, subcuentas.codcuentaesp,'
+        return 'asientos.codejercicio,'
+            . 'subcuentas.codcuentaesp,'
             . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
+            . 'partidas.idsubcuenta, partidas.codsubcuenta,'
             . 'partidas.iva, partidas.recargo';
     }
 
@@ -48,6 +50,8 @@ class PartidaImpuestoResumen extends Base\ModelView
             'codcuentaesp' => 'subcuentas.codcuentaesp',
             'descripcion' => 'cuentasesp.descripcion',
             'codimpuesto' => 'subcuentas.codimpuesto',
+            'idsubcuenta' => 'partidas.idsubcuenta',
+            'codsubcuenta' => 'partidas.codsubcuenta',
             'iva' => 'partidas.iva',
             'recargo' => 'partidas.recargo',
             'baseimponible' => 'SUM(partidas.baseimponible)'
