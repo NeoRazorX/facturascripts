@@ -222,8 +222,12 @@ abstract class BaseController extends Base\Controller
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->get('code', '');
 
-        // deleting multiples rows?
-        if (is_array($codes)) {
+        if (empty($codes)) {
+            // no selected item
+            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            return false;
+        } elseif (is_array($codes)) {
+            // deleting multiples rows
             $numDeletes = 0;
             foreach ($codes as $cod) {
                 if ($model->loadFromCode($cod) && $model->delete()) {
@@ -238,7 +242,7 @@ abstract class BaseController extends Base\Controller
                 return true;
             }
         } elseif ($model->loadFromCode($codes) && $model->delete()) {
-            // deleting a single row?
+            // deleting a single row
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
         }

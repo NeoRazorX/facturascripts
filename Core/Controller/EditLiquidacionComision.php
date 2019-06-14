@@ -87,12 +87,10 @@ class EditLiquidacionComision extends EditController
         switch ($action) {
             case 'generateinvoice':
                 $this->generateInvoice();
-                break;
-
-            default:
-                parent::execAfterAction($action);
-                break;
+                return;
         }
+
+        parent::execAfterAction($action);
     }
 
     /**
@@ -117,10 +115,9 @@ class EditLiquidacionComision extends EditController
                 parent::execPreviousAction($action);
                 $this->calculateTotalCommission();
                 return true;
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -134,7 +131,7 @@ class EditLiquidacionComision extends EditController
         switch ($viewName) {
             case self::VIEWNAME_SETTLEDINVOICE:
                 $this->loadDataSettledInvoice($view);
-                $this->setViewStatus($view);
+                $this->setViewStatus($viewName, $view);
                 break;
 
             default:
@@ -221,6 +218,7 @@ class EditLiquidacionComision extends EditController
      * in the settlement are missing.
      *
      * @param array $data
+     *
      * @return bool
      */
     protected function errorInSelectDates($data): bool
@@ -233,6 +231,7 @@ class EditLiquidacionComision extends EditController
      * to the agent is missing.
      *
      * @param Agente $agent
+     *
      * @return bool
      */
     protected function errorInAgentData($agent): bool
@@ -266,23 +265,6 @@ class EditLiquidacionComision extends EditController
         $generator = new InvoiceGenerator();
         $model->idfactura = $generator->generatePurchaseInvoice($agent->getSupplierId(), $lines);
         $model->save();
-    }
-
-    /**
-     * Return invoice button configuration
-     *
-     * @return array
-     */
-    protected function getInvoiceButton()
-    {
-        return [
-            'action' => 'generateinvoice',
-            'icon' => 'fas fa-file-invoice',
-            'label' => 'generate-invoice',
-            'type' => 'action',
-            'color' => 'info',
-            'confirm' => true,
-        ];
     }
 
     /**
@@ -427,33 +409,49 @@ class EditLiquidacionComision extends EditController
      * Allows you to set special conditions for columns and action buttons
      * based on the state of the views
      *
+     * @param string   $viewName
      * @param BaseView $view
      */
-    protected function setViewStatus($view)
+    protected function setViewStatus($viewName, $view)
     {
-        /// If new record, nothing to do
-        $mainViewName = $this->getMainViewName();
-        $idsettled = $this->getViewModelValue($mainViewName, 'idliquidacion');
-        if (empty($idsettled)) {
+        if ($view->count === 0) {
+            $this->setSettings($viewName, 'btnDelete', false);
             return;
         }
 
-        /// Add purchasse invoice button
+        /// disable some fields in the main view
+        $mainViewName = $this->getMainViewName();
+        $this->views[$mainViewName]->disableColumn('exercise', false, 'true');
+        $this->views[$mainViewName]->disableColumn('agent', false, 'true');
+
+        /// Is there an invoice created?
         $canInvoice = empty($this->getViewModelValue($mainViewName, 'idfactura'));
-        $total = $this->getViewModelValue($mainViewName, 'total');
-        if ($canInvoice && $total != 0) {
-            $this->addButton($mainViewName, $this->getInvoiceButton());
-        }
 
         /// Update insert/delete buttons status
-        $view->settings['btnNew'] = $canInvoice;
-        $view->settings['btnDelete'] = $canInvoice;
+        $this->setSettings($viewName, 'btnNew', $canInvoice);
+        $this->setSettings($viewName, 'btnDelete', $canInvoice);
 
-        /// Disable header fields when there are invoice selected
-        if ($view->count > 0) {
-            $masterView = $this->views[$mainViewName];
-            $masterView->disableColumn('exercise', false, 'true');
-            $masterView->disableColumn('agent', false, 'true');
+        if ($canInvoice) {
+            $calcButton = [
+                'action' => 'calculatecommission',
+                'icon' => 'fas fa-percentage',
+                'label' => 'calculate',
+                'type' => 'action',
+            ];
+            $this->addButton($viewName, $calcButton);
+        }
+
+        $total = $this->getViewModelValue($mainViewName, 'total');
+        if ($canInvoice && $total > 0) {
+            $invoiceButton = [
+                'action' => 'generateinvoice',
+                'icon' => 'fas fa-file-invoice',
+                'label' => 'generate-invoice',
+                'type' => 'action',
+                'color' => 'info',
+                'confirm' => true,
+            ];
+            $this->addButton($mainViewName, $invoiceButton);
         }
     }
 }

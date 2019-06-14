@@ -53,4 +53,9 @@
             <widget type="text" fieldname="observaciones" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="idfactura">notnull:</option>
+        </row>
+    </rows>
 </view>

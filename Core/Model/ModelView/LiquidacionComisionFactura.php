@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,8 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 /**
  * Description of SettledReceipt
  *
- * @author Artex Trading s.a. <jcuello@artextrading.com>
+ * @author Artex Trading s.a.   <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  *
  * @property int $idfactura
  */
@@ -49,7 +50,7 @@ class LiquidacionComisionFactura extends ModelView
      * Add to the indicated settlement the list of customer invoices
      * according to the where filter.
      *
-     * @param int $settled
+     * @param int             $settled
      * @param DataBaseWhere[] $where
      */
     public function addInvoiceToSettle($settled, $where)
@@ -65,6 +66,7 @@ class LiquidacionComisionFactura extends ModelView
             . ' WHERE ' . FacturaCliente::primaryColumn() . ' = ';
 
         self::$dataBase->beginTransaction();
+
         try {
             foreach ($invoices as $row) {
                 $idinvoice = self::$dataBase->var2str($row->idfactura);
@@ -91,7 +93,9 @@ class LiquidacionComisionFactura extends ModelView
     }
 
     /**
-     * List of fields or columns to select clausule
+     * List of fields or columns to select clausule.
+     * 
+     * @return array
      */
     protected function getFields(): array
     {
@@ -115,7 +119,9 @@ class LiquidacionComisionFactura extends ModelView
     }
 
     /**
-     * List of tables related to from clausule
+     * List of tables related to from clausule.
+     * 
+     * @return string
      */
     protected function getSQLFrom(): string
     {
@@ -126,6 +132,8 @@ class LiquidacionComisionFactura extends ModelView
 
     /**
      * List of tables required for the execution of the view.
+     * 
+     * @return array
      */
     protected function getTables(): array
     {
@@ -137,7 +145,9 @@ class LiquidacionComisionFactura extends ModelView
     }
 
     /**
-     * Get value from modal view cursor of the master model primary key
+     * Get value from modal view cursor of the master model primary key.
+     * 
+     * @return int
      */
     public function primaryColumnValue()
     {
