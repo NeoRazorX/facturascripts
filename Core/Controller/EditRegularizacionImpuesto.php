@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 
 /**
  * Controller to list the items in the RegularizacionImpuesto model
@@ -75,7 +76,7 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -157,9 +158,9 @@ class EditRegularizacionImpuesto extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListPartidaImpuestoResumen', 'PartidaImpuestoResumen', 'summary', 'fas fa-list-alt');
-        $this->addListView('ListPartidaImpuesto-1', 'PartidaImpuesto', 'purchases', 'fas fa-sign-in-alt');
-        $this->addListView('ListPartidaImpuesto-2', 'PartidaImpuesto', 'sales', 'fas fa-sign-out-alt');
+        $this->addListView('ListPartidaImpuestoResumen', 'ModelView\PartidaImpuestoResumen', 'summary', 'fas fa-list-alt');
+        $this->addListView('ListPartidaImpuesto-1', 'ModelView\PartidaImpuesto', 'purchases', 'fas fa-sign-in-alt');
+        $this->addListView('ListPartidaImpuesto-2', 'ModelView\PartidaImpuesto', 'sales', 'fas fa-sign-out-alt');
         $this->addListView('ListPartida', 'Partida', 'accounting-entry', 'fas fa-balance-scale');
     }
 
