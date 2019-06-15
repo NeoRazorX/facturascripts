@@ -52,7 +52,7 @@ class EditAgente extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'agent';
-        $data['icon'] = 'fas fa-id-badge';
+        $data['icon'] = 'fas fa-user-tie';
         return $data;
     }
 
@@ -63,6 +63,7 @@ class EditAgente extends ComercialContactController
     protected function createCommissionsView($viewName = 'ListComision')
     {
         $this->addListView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
+        $this->views[$viewName]->addOrderBy(['prioridad'], 'priority', 2);
 
         /// disable columns
         $this->views[$viewName]->disableColumn('agent', true);

@@ -125,18 +125,18 @@ abstract class SalesDocument extends TransformerDocument
     public $numero2;
 
     /**
-     * % commission of the employee.
-     *
-     * @var float|int
-     */
-    public $porcomision;
-
-    /**
      * Customer's province.
      *
      * @var string
      */
     public $provincia;
+
+    /**
+     * % commission of the agent.
+     *
+     * @var float|int
+     */
+    public $totalcomision;
 
     /**
      * Reset the values of all model properties.
@@ -145,7 +145,7 @@ abstract class SalesDocument extends TransformerDocument
     {
         parent::clear();
         $this->direccion = '';
-        $this->porcomision = 0.0;
+        $this->totalcomision = 0.0;
 
         /// select default currency
         $divisa = new Divisa();

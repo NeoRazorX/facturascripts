@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,6 +69,52 @@ class Agente extends Base\Contact
     public $idcontacto;
 
     /**
+     * Link to product model for settle commission
+     *
+     * @var int
+     */
+    public $idproducto;
+
+    /**
+     * Returns the addresses associated with the provider.
+     *
+     * @return Contacto
+     */
+    public function getContact()
+    {
+        $contact = new Contacto();
+        $contact->loadFromCode($this->idcontacto);
+        return $contact;
+    }
+    
+    /**
+     * Returns settlement product.
+     * 
+     * @return Producto
+     */
+    public function getProduct()
+    {
+        $product = new Producto();
+        $product->loadFromCode($this->idproducto);
+        return $product;
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new Producto();
+
+        return parent::install();
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -116,7 +162,7 @@ class Agente extends Base\Contact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

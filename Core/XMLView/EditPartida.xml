@@ -39,7 +39,7 @@
             <column name="channel" numcolumns="1" order="130">
                 <widget type="number" fieldname="canal" readonly="true" />
             </column>
-            <column name="ammount" numcolumns="2" display="right" order="200">
+            <column name="amount" numcolumns="2" display="right" order="200">
                 <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="true" />
             </column>
         </group>

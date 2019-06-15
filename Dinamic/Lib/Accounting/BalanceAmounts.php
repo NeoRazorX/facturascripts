@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Lib\Accounting
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class BalanceAmmounts extends \FacturaScripts\Core\Lib\Accounting\BalanceAmmounts
+class BalanceAmounts extends \FacturaScripts\Core\Lib\Accounting\BalanceAmounts
 {
 }

@@ -47,7 +47,7 @@
             <column name="channel" numcolumns="3" order="220">
                 <widget type="number" decimal="0" step="1" fieldname="canal" />
             </column>
-            <column name="ammount" numcolumns="4" display="right" order="230">
+            <column name="amount" numcolumns="4" display="right" order="230">
                 <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="true" />
             </column>
         </group>

@@ -27,10 +27,10 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="symbol" display="center" order="110">
+        <column name="symbol" display="center" order="120">
             <widget type="text" fieldname="simbolo" />
         </column>
-        <column name="iso" order="120" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
+        <column name="iso" titleurl="https://es.wikipedia.org/wiki/ISO_4217" order="130">
             <widget type="text" fieldname="codiso" />
         </column>
         <column name="sales-rate" display="right" order="140">

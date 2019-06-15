@@ -26,6 +26,11 @@
     <column>
         <name>idempresa</name>
         <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idproducto</name>
+        <type>integer</type>
     </column>
     <column>
         <name>porcentaje</name>
@@ -33,8 +38,9 @@
         <default>0</default>
     </column>
     <column>
-        <name>idproducto</name>
+        <name>prioridad</name>
         <type>integer</type>
+        <default>0</default>
     </column>
     <constraint>
         <name>commisiones_pkey</name>
@@ -46,11 +52,11 @@
     </constraint>
     <constraint>
         <name>ca_comisiones_clientes</name>
-        <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_comisiones_empresas</name>
-        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_comisiones_familias</name>

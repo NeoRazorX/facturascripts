@@ -49,7 +49,7 @@
                 </widget>
             </column>
             <column name="company" order="170">
-                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>

@@ -48,20 +48,8 @@ class ListAgente extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'agents';
-        $data['icon'] = 'fas fa-id-badge';
+        $data['icon'] = 'fas fa-user-tie';
         return $data;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
-
-        $this->addAgentView();
-        $this->addCommissionView();
-        $this->addSettlementView();
     }
 
     /**
@@ -69,11 +57,11 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    private function addAgentView($viewName = 'ListAgente')
+    protected function createAgentView($viewName = 'ListAgente')
     {
         /// View
-        $this->addView($viewName, 'Agente', 'agents', 'fas fa-id-badge');
-        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email']);
+        $this->addView($viewName, 'Agente', 'agents', 'fas fa-user-tie');
+        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
 
         /// Order by
         $this->addOrderBy($viewName, ['codagente'], 'code');
@@ -96,21 +84,22 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    private function addCommissionView($viewName = 'ListComision')
+    protected function createCommissionView($viewName = 'ListComision')
     {
         /// View
         $this->addView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
         $this->addSearchFields($viewName, ['codagente', 'codcliente', 'CAST(porcentaje AS VARCHAR)', 'codfamilia', 'idproducto']);
 
         /// Order By
+        $this->addOrderBy($viewName, ['idcomision'], 'id');
+        $this->addOrderBy($viewName, ['prioridad'], 'priority', 2);
         $this->addOrderBy($viewName, ['idempresa', 'codagente', 'porcentaje'], 'company');
-        $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'agent', 1);
+        $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'agent');
         $this->addOrderBy($viewName, ['codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'customer');
         $this->addOrderBy($viewName, ['codfamilia', 'idproducto', 'porcentaje'], 'family');
 
         /// Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
-
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
         $this->addFilterAutocomplete($viewName, 'customer', 'customer', 'codcliente', 'Cliente', 'codcliente');
         $this->addFilterAutocomplete($viewName, 'family', 'family', 'codfamilia', 'Familia', 'codfamilia');
@@ -122,19 +111,37 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    private function addSettlementView($viewName = 'ListLiquidacionComision')
+    protected function createSettlementView($viewName = 'ListLiquidacionComision')
     {
         /// View
-        $this->addView($viewName, 'ModelView\LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
-        $this->addSearchFields($viewName, ['agentes.nombre', 'facturasprov.codigo']);
+        $this->addView($viewName, 'LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
+        $this->addSearchFields($viewName, ['observaciones']);
 
         /// Order By
         $this->addOrderBy($viewName, ['fecha', 'idliquidacion'], 'date', 2);
         $this->addOrderBy($viewName, ['codagente', 'fecha'], 'agent');
+        $this->addOrderBy($viewName, ['total', 'fecha'], 'amount');
 
         /// Filters
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'ejercicios.idempresa', $this->companyList);
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'liquidacioncomision.fecha');
-        $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'liquidacioncomision.codagente', 'agentes', 'codagente', 'nombre');
+        $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
+
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
+
+        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
+        $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
+
+        $this->createAgentView();
+        $this->createCommissionView();
+        $this->createSettlementView();
     }
 }

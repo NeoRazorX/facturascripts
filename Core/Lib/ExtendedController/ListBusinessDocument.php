@@ -94,7 +94,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($name, ['referencia'], 'reference');
         $this->addOrderBy($name, ['cantidad'], 'quantity');
         $this->addOrderBy($name, ['descripcion'], 'description');
-        $this->addOrderBy($name, ['pvptotal'], 'ammount');
+        $this->addOrderBy($name, ['pvptotal'], 'amount');
         $this->addOrderBy($name, ['idlinea'], 'code', 2);
 
         /// filters
@@ -104,7 +104,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($name, 'cantidad', 'quantity', 'cantidad');
         $this->addFilterNumber($name, 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber($name, 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber($name, 'pvptotal', 'ammount', 'pvptotal');
+        $this->addFilterNumber($name, 'pvptotal', 'amount', 'pvptotal');
 
         /// disable megasearch for this view
         $this->setSettings($name, 'megasearch', false);
@@ -155,6 +155,12 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterAutocomplete($name, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($name, 'idcontactofact', 'billing-address', 'idcontacto', 'contacto');
         $this->addFilterautocomplete($name, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
+
+        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
+        if (count($agents) > 0) {
+            $this->addFilterSelect($name, 'codagente', 'agent', 'codagente', $agents);
+        }
+
         $this->addFilterCheckbox($name, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
 
