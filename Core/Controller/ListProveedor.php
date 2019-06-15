@@ -103,6 +103,15 @@ class ListProveedor extends ListController
             ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
-        $this->addFilterSelectWhere($name, 'status', $values);
+        $this->addFilterSelectWhere($name, 'status', $values);        
+        
+        $retencions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
+        $this->addFilterSelect($name, 'codretencion', 'retentions', 'codretencion', $retencions);
+        
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect($name, 'codserie', 'series', 'codserie', $series);
+        
+        $formaspago = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect($name, 'codpago', 'payment-methods', 'codpago', $formaspago);
     }
 }

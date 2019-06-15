@@ -45,7 +45,7 @@ class BalanceSheet extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * Generate the balance ammounts between two dates.
+     * Generate the balance amounts between two dates.
      *
      * @param string $dateFrom
      * @param string $dateTo

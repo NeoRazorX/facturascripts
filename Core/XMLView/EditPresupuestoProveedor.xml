@@ -21,63 +21,65 @@
 -->
 <view>
     <columns>
-        <group name="supplier" numcolumns="12">
-            <column name="date" numcolumns="2" order="100">
+        <group name="data" numcolumns="12">
+            <column name="date" order="100">
                 <widget type="date" fieldname="fecha" required="true" />
             </column>
-            <column name="hour" numcolumns="2" order="110">
+            <column name="hour" order="110">
                 <widget type="text" fieldname="hora" icon="fas fa-clock" required="true" />
             </column>
-            <column name="numsupplier" numcolumns="3" order="120">
+            <column name="number" order="120">
+                <widget type="text" fieldname="numero" icon="fas fa-hashtag" readonly="true" />
+            </column>
+            <column name="numsupplier" order="130">
                 <widget type="text" fieldname="numproveedor" icon="fas fa-hashtag" />
             </column>
-            <column name="supplier" numcolumns="3" order="130">
+        </group>
+        <group name="supplier" title="supplier" icon="fas fa-user" numcolumns="12">
+            <column name="supplier" order="100">
                 <widget type="text" fieldname="nombre" icon="fas fa-user" required="true" />
             </column>
-            <column name="cifnif" numcolumns="2" order="140">
+            <column name="cifnif" order="110">
                 <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
             </column>
+            <column name="email-sent" order="120">
+                <widget type="date" fieldname="femail" />
+            </column>
         </group>
-        <group name="attributes" title="attributes" numcolumns="12">
-            <column name="company" numcolumns="2" order="100">
-                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-                </widget>
-            </column>
-            <column name="warehouse" numcolumns="2" order="110">
-                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true" readonly="dinamic">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="serie" numcolumns="2" order="120">
-                <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="payment" title="method-payment" numcolumns="2" order="130">
+        <group name="payment-method" title="payment-method" icon="fas fa-dollar-sign" numcolumns="6">
+            <column name="payment" title="method-payment" order="130">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="currency" numcolumns="2" order="140">
+            <column name="currency" order="140">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tasaconv" numcolumns="2" order="150">
+            <column name="conversion-rate" order="150">
                 <widget type="number" fieldname="tasaconv" icon="fas fa-exchange-alt" />
             </column>
-            <column name="agent" titleurl="ListAgente" numcolumns="2" order="160">
-                <widget type="select" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+        </group>
+        <group name="attributes" title="attributes" icon="fas fa-database" numcolumns="6">
+            <column name="company" order="100">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="email-sent" numcolumns="2" order="170">
-                <widget type="date" fieldname="femail" />
+            <column name="warehouse" order="110">
+                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true" readonly="dinamic">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="serie" order="120">
+                <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
             </column>
         </group>
         <group name="notes" numcolumns="12">
-            <column name="observations" numcolumns="12" order="100">
+            <column name="observations" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

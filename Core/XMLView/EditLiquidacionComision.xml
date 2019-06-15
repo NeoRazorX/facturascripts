@@ -21,32 +21,35 @@
 -->
 <view>
     <columns>
-        <group name="data" numcolumns="7" >
-            <column name="exercise" numcolumns="3" order="110">
-                <widget type="select" fieldname="codejercicio" required="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+        <group name="data" numcolumns="12">
+            <column name="company" titleurl="ListEmpresa" order="100">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="total" numcolumns="4" order="120">
-                <widget type="money" fieldname="total" readonly="true"/>
-            </column>
-            <column name="invoice" title="generated-invoice" numcolumns="4" order="130">
-                <widget type="autocomplete" fieldname="idfactura" readonly="true">
-                    <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+            <column name="serie" titleurl="ListSerie" order="110">
+                <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="agent" numcolumns="7" order="200">
-                <widget type="autocomplete" fieldname="codagente" required="true">
+            <column name="agent" titleurl="ListAgente" order="120">
+                <widget type="select" fieldname="codagente" onclick="EditAgente" required="true">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="date" numcolumns="4" order="210">
+            <column name="date" order="130">
                 <widget type="date" fieldname="fecha" icon="fas fa-calendar" required="true"/>
             </column>
-        </group>
-        <group name="note" numcolumns="5" >
-            <column name="notes" order="100">
-                <widget type="textarea" fieldname="observaciones" rows="4"/>
+            <column name="invoice" title="generated-invoice" order="140">
+                <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor" readonly="true">
+                    <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+                </widget>
+            </column>
+            <column name="amount" order="150">
+                <widget type="money" fieldname="total" readonly="true"/>
+            </column>
+            <column name="observations" numcolumns="12" order="160">
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>

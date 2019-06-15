@@ -51,7 +51,7 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViews()
     {
         $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'paid');
+        $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', '', '!=');
 
         $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
         $this->createViewReceipts();
@@ -64,14 +64,19 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViewReceipts($viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
-        $this->addOrderBy($viewName, ['fecha'], 'date', 2);
+        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date', 2);
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
         $this->addOrderBy($viewName, ['vencimiento'], 'expiration');
-        $this->addOrderBy($viewName, ['importe'], 'ammount');
+        $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['observaciones']);
+
+        /// filters
+        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
+        $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+        $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
 
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
     }
 }

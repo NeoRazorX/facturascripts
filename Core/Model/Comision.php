@@ -66,7 +66,7 @@ class Comision extends Base\ModelClass
     /**
      * code of product.
      *
-     * @var string
+     * @var int
      */
     public $idproducto;
 
@@ -78,12 +78,19 @@ class Comision extends Base\ModelClass
     public $porcentaje;
 
     /**
+     *
+     * @var int
+     */
+    public $prioridad;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
         $this->porcentaje = 0.00;
+        $this->prioridad = 0;
     }
 
     /**
@@ -95,9 +102,9 @@ class Comision extends Base\ModelClass
      */
     public function install()
     {
-        new Producto();
-        new Cliente();
         new Agente();
+        new Cliente();
+        new Producto();
 
         return parent::install();
     }

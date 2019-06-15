@@ -57,7 +57,7 @@
             <column name="phone" order="120">
                 <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
             </column>
-            <column name="phone2" display="none" order="130">
+            <column name="phone2" order="130">
                 <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
             </column>
             <column name="fax" display="none" order="140">
@@ -69,7 +69,7 @@
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="agent" numcolumns="3" titleurl="ListAgente" order="100">
-                <widget type="select" fieldname="codagente" onclick="EditAgente">
+                <widget type="select" fieldname="codagente" onclick="EditAgente" icon="fas fa-user-tie">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : liquidacioncomision.xml
+    Document   : liquidacionescomisiones.xml
     Author     : Artex Trading sa <jcuello@artextrading.com>
     Description: Estructura para la tabla de liquidaciones de comisiones.
 -->
@@ -11,13 +11,18 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codejercicio</name>
+        <name>codserie</name>
         <type>character varying(4)</type>
         <null>NO</null>
     </column>
     <column>
         <name>fecha</name>
         <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
         <null>NO</null>
     </column>
     <column>
@@ -28,7 +33,7 @@
         <name>idliquidacion</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('settledcommissions_id_seq'::regclass)</default>
+        <default>nextval('liquidacionescomisiones_id_seq'::regclass)</default>
     </column>
     <column>
         <name>observaciones</name>
@@ -37,23 +42,26 @@
     <column>
         <name>total</name>
         <type>double precision</type>
-        <null>NO</null>
         <default>0</default>
     </column>
     <constraint>
-        <name>liquidacioncomision_pkey</name>
+        <name>liquidacionescomisiones_pkey</name>
         <type>PRIMARY KEY (idliquidacion)</type>
     </constraint>
     <constraint>
-        <name>ca_liquidacioncomision_agentes</name>
+        <name>ca_liquidacionescomisiones_agentes</name>
         <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_liquidacioncomision_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_liquidacionescomisiones_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_liquidacioncomision_facturas</name>
+        <name>ca_liquidacionescomisiones_facturas</name>
         <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_liquidacionescomisiones_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>
