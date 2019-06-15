@@ -222,7 +222,7 @@ function customAfterChange(changes) {
                 setAccountData(results.subaccount);
             }
 
-            // update ammounts
+            // update amounts
             setUnbalance(results.unbalance);
             total.val(results.total);
             // show VAT Register, if needed

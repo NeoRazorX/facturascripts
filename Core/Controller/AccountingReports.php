@@ -71,7 +71,7 @@ class AccountingReports extends Controller
     {
         return [
             'ledger' => ['description' => 'ledger', 'grouping' => true],
-            'balance-ammounts' => ['description' => 'balance-ammounts', 'grouping' => false],
+            'balance-amounts' => ['description' => 'balance-amounts', 'grouping' => false],
             'balance-sheet' => ['description' => 'balance-sheet', 'grouping' => false],
             'profit' => ['description' => 'profit-and-loss-balance', 'grouping' => false],
         ];
@@ -118,9 +118,9 @@ class AccountingReports extends Controller
                 $pages = $ledger->generate($dateFrom, $dateTo, $params);
                 break;
 
-            case 'balance-ammounts':
-                $balanceAmmount = new Accounting\BalanceAmmounts();
-                $pages = $balanceAmmount->generate($dateFrom, $dateTo, $params);
+            case 'balance-amounts':
+                $balanceAmount = new Accounting\BalanceAmounts();
+                $pages = $balanceAmount->generate($dateFrom, $dateTo, $params);
                 break;
 
             case 'balance-sheet':

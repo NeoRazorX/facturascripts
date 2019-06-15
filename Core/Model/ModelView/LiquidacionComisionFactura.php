@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,8 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 /**
  * Description of SettledReceipt
  *
- * @author Artex Trading s.a. <jcuello@artextrading.com>
+ * @author Artex Trading s.a.   <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  *
  * @property int $idfactura
  */
@@ -39,7 +40,7 @@ class LiquidacionComisionFactura extends ModelView
      *
      * @param array $data
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new FacturaCliente());
@@ -49,7 +50,7 @@ class LiquidacionComisionFactura extends ModelView
      * Add to the indicated settlement the list of customer invoices
      * according to the where filter.
      *
-     * @param int $settled
+     * @param int             $settled
      * @param DataBaseWhere[] $where
      */
     public function addInvoiceToSettle($settled, $where)
@@ -65,6 +66,7 @@ class LiquidacionComisionFactura extends ModelView
             . ' WHERE ' . FacturaCliente::primaryColumn() . ' = ';
 
         self::$dataBase->beginTransaction();
+
         try {
             foreach ($invoices as $row) {
                 $idinvoice = self::$dataBase->var2str($row->idfactura);
@@ -91,56 +93,61 @@ class LiquidacionComisionFactura extends ModelView
     }
 
     /**
-     * List of fields or columns to select clausule
-     */
-    protected function getFields(): array
-    {
-        return [
-            'idliquidacion' => 'facturascli.idliquidacion',
-            'idfactura' => 'facturascli.idfactura',
-            'idempresa' => 'facturascli.idempresa',
-            'codcliente' => 'facturascli.codcliente',
-            'codigo' => 'facturascli.codigo',
-            'numero' => 'facturascli.numero',
-            'numero2' => 'facturascli.numero2',
-            'fecha' => 'facturascli.fecha',
-            'pagada' => 'facturascli.pagada',
-            'neto' => 'facturascli.neto',
-            'total' => 'facturascli.total',
-            'porcomision' => 'facturascli.porcomision',
-            'cliente' => 'facturascli.nombrecliente',
-            'ejercicio' => 'ejercicios.nombre',
-            'empresa' => 'empresas.nombrecorto'
-        ];
-    }
-
-    /**
-     * List of tables related to from clausule
-     */
-    protected function getSQLFrom(): string
-    {
-        return 'facturascli'
-            . ' INNER JOIN ejercicios ON ejercicios.codejercicio = facturascli.codejercicio'
-            . ' INNER JOIN empresas ON empresas.idempresa = facturascli.idempresa';
-    }
-
-    /**
-     * List of tables required for the execution of the view.
-     */
-    protected function getTables(): array
-    {
-        return [
-            'facturascli',
-            'ejercicios',
-            'empresas'
-        ];
-    }
-
-    /**
-     * Get value from modal view cursor of the master model primary key
+     * Get value from modal view cursor of the master model primary key.
+     * 
+     * @return int
      */
     public function primaryColumnValue()
     {
         return $this->idfactura;
+    }
+
+    /**
+     * List of fields or columns to select clausule.
+     * 
+     * @return array
+     */
+    protected function getFields(): array
+    {
+        return [
+            'codagente' => 'facturascli.codagente',
+            'codcliente' => 'facturascli.codcliente',
+            'codejercicio' => 'facturascli.codejercicio',
+            'codigo' => 'facturascli.codigo',
+            'codpago' => 'facturascli.codpago',
+            'codserie' => 'facturascli.codserie',
+            'fecha' => 'facturascli.fecha',
+            'hora' => 'facturascli.hora',
+            'idempresa' => 'facturascli.idempresa',
+            'idfactura' => 'facturascli.idfactura',
+            'idliquidacion' => 'facturascli.idliquidacion',
+            'nombrecliente' => 'facturascli.nombrecliente',
+            'numero' => 'facturascli.numero',
+            'numero2' => 'facturascli.numero2',
+            'neto' => 'facturascli.neto',
+            'pagada' => 'facturascli.pagada',
+            'total' => 'facturascli.total',
+            'totalcomision' => 'facturascli.totalcomision',
+        ];
+    }
+
+    /**
+     * List of tables related to from clausule.
+     * 
+     * @return string
+     */
+    protected function getSQLFrom(): string
+    {
+        return 'facturascli INNER JOIN formaspago ON formaspago.codpago = facturascli.codpago';
+    }
+
+    /**
+     * List of tables required for the execution of the view.
+     * 
+     * @return array
+     */
+    protected function getTables(): array
+    {
+        return ['facturascli', 'formaspago'];
     }
 }

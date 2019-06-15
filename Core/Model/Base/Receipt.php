@@ -44,6 +44,12 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      *
+     * @var bool
+     */
+    protected $disablePaymentGeneration = false;
+
+    /**
+     *
      * @var string
      */
     public $fecha;
@@ -116,7 +122,7 @@ abstract class Receipt extends ModelOnChangeClass
 
     abstract public function getInvoice();
 
-    abstract public function newPayment();
+    abstract protected function newPayment();
 
     public function clear()
     {
@@ -124,10 +130,20 @@ abstract class Receipt extends ModelOnChangeClass
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->fecha = date('d-m-Y');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->numero = 1;
         $this->pagado = false;
+    }
+
+    /**
+     * 
+     * @param bool $disable
+     */
+    public function disablePaymentGeneration($disable = true)
+    {
+        $this->disablePaymentGeneration = $disable;
     }
 
     /**
@@ -169,9 +185,14 @@ abstract class Receipt extends ModelOnChangeClass
     {
         $this->observaciones = Utils::noHtml($this->observaciones);
 
+        /// check payment date
+        if ($this->pagado === false) {
+            $this->fechapago = null;
+        }
+
         /// check expiration date
         if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
-            return false;
+            $this->vencimiento = $this->fecha;
         }
 
         return parent::test();
@@ -260,7 +281,7 @@ abstract class Receipt extends ModelOnChangeClass
         }
 
         $paid = $paidAmount == $invoice->total;
-        if ($invoice->pagada != $paid) {
+        if ($invoice->exists() && $invoice->pagada != $paid) {
             $invoice->pagada = $paid;
             $invoice->save();
         }

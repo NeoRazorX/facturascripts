@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
@@ -38,6 +39,12 @@ class BusinessDocumentTools
 
     /**
      *
+     * @var CommissionTools
+     */
+    protected $commissionTools;
+
+    /**
+     *
      * @var ImpuestoZona[]
      */
     protected $impuestosZonas = [];
@@ -46,13 +53,18 @@ class BusinessDocumentTools
      *
      * @var bool
      */
-    private $recargo = false;
+    protected $recargo = false;
 
     /**
      *
      * @var bool
      */
-    private $siniva = false;
+    protected $siniva = false;
+
+    public function __construct()
+    {
+        $this->commissionTools = new CommissionTools();
+    }
 
     /**
      * Returns subtotals by tax.
@@ -127,6 +139,9 @@ class BusinessDocumentTools
         }
 
         $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
+        
+        /// recalculate commissions
+        $this->commissionTools->recalculate($doc, $lines);
     }
 
     /**
@@ -166,7 +181,7 @@ class BusinessDocumentTools
      *
      * @param BusinessDocument $doc
      */
-    private function clearTotals(BusinessDocument &$doc)
+    protected function clearTotals(BusinessDocument &$doc)
     {
         $doc->neto = 0.0;
         $doc->total = 0.0;
@@ -205,7 +220,7 @@ class BusinessDocumentTools
      *
      * @param string $reg
      */
-    private function loadRegimenIva($reg)
+    protected function loadRegimenIva($reg)
     {
         switch ($reg) {
             case 'Exento':
@@ -222,7 +237,7 @@ class BusinessDocumentTools
      *
      * @param BusinessDocument $doc
      */
-    private function loadTaxZones($doc)
+    protected function loadTaxZones($doc)
     {
         $this->impuestosZonas = [];
 
@@ -242,7 +257,7 @@ class BusinessDocumentTools
      *
      * @param BusinessDocumentLine $line
      */
-    private function recalculateLine(&$line)
+    protected function recalculateLine(&$line)
     {
         /// apply tax zones
         $newCodimpuesto = $line->getProducto()->codimpuesto;
@@ -286,7 +301,7 @@ class BusinessDocumentTools
      *
      * @return BusinessDocumentLine
      */
-    private function recalculateFormLine(array $fLine, BusinessDocument $doc)
+    protected function recalculateFormLine(array $fLine, BusinessDocument $doc)
     {
         if (isset($fLine['cantidad']) && '' !== $fLine['cantidad']) {
             /// edit line
@@ -326,7 +341,7 @@ class BusinessDocumentTools
      *
      * @param BusinessDocumentLine $line
      */
-    private function recalculateFormLineTaxZones(&$line)
+    protected function recalculateFormLineTaxZones(&$line)
     {
         $newCodimpuesto = $line->codimpuesto;
         foreach ($this->impuestosZonas as $impZona) {

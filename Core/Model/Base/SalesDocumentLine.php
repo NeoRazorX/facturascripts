@@ -41,6 +41,13 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     public $mostrar_precio;
 
     /**
+     * % commission of the agent.
+     *
+     * @var float|int
+     */
+    public $porcomision;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -48,5 +55,6 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
         parent::clear();
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;
+        $this->porcomision = 0.0;
     }
 }

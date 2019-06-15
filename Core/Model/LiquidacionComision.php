@@ -18,7 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 
 /**
  * List of Commissions Settlement.
@@ -39,11 +40,10 @@ class LiquidacionComision extends Base\ModelClass
     public $codagente;
 
     /**
-     * id of exercise.
      *
      * @var string
      */
-    public $codejercicio;
+    public $codserie;
 
     /**
      * Date of creation of the settlement.
@@ -53,11 +53,29 @@ class LiquidacionComision extends Base\ModelClass
     public $fecha;
 
     /**
+     *
+     * @var int
+     */
+    public $idempresa;
+
+    /**
      * id of generate invoice.
+     *
+     * @var int
+     */
+    public $idfactura;
+
+    /**
+     *
+     * @var int
+     */
+    public $idliquidacion;
+
+    /**
      *
      * @var string
      */
-    public $idfactura;
+    public $observaciones;
 
     /**
      * Total amount of the commission settlement.
@@ -73,25 +91,88 @@ class LiquidacionComision extends Base\ModelClass
     {
         parent::clear();
         $this->fecha = date('d-m-Y');
-        $this->total = 0.00;
+        $this->total = 0.0;
     }
 
     /**
      * Calculate the total commission amount of a settlement
      *
-     * @param int $settle
+     * @param int $code
      */
-    public function calculateTotalCommission($settle)
+    public function calculateTotalCommission($code)
     {
         $sql = 'UPDATE ' . self::tableName()
             . ' SET total = COALESCE('
-                . '(SELECT SUM(neto * porcomision / 100)'
-                .  ' FROM ' . FacturaCliente::tableName()
-                . ' WHERE idliquidacion = ' . $settle . ')'
+            . '(SELECT SUM(totalcomision)'
+            . ' FROM ' . FacturaCliente::tableName()
+            . ' WHERE idliquidacion = ' . $code . ')'
             . ',0)'
-            . ' WHERE idliquidacion = ' . $settle;
+            . ' WHERE idliquidacion = ' . $code;
 
         return self::$dataBase->exec($sql);
+    }
+
+    /**
+     * Generates an supplier invoice with this settlement.
+     * 
+     * @return bool
+     */
+    public function generateInvoice()
+    {
+        if (null !== $this->idfactura) {
+            return true;
+        }
+
+        $agent = $this->getAgent();
+        $contact = $agent->getContact();
+        if (empty($contact->codproveedor)) {
+            self::$miniLog->warning(self::$i18n->trans('agent-dont-have-associated-supplier'));
+            return false;
+        }
+
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($contact->getSupplier());
+        $invoice->codserie = $this->codserie;
+        $invoice->fecha = $this->fecha;
+
+        $warehouse = new Almacen();
+        foreach ($warehouse->all() as $alm) {
+            if ($alm->idempresa == $this->idempresa) {
+                $invoice->codalmacen = $alm->codalmacen;
+                $invoice->idempresa = $alm->idempresa;
+            }
+        }
+
+        if ($invoice->save()) {
+            $product = $agent->getProduct();
+            $newLine = $product->exists() ? $invoice->getNewProductLine($product->referencia) : $invoice->getNewLine();
+            $newLine->cantidad = 1;
+            $newLine->descripcion = self::$i18n->trans('commission-settlement', ['%code%' => $this->idliquidacion]);
+            $newLine->pvpunitario = $this->total;
+            $newLine->save();
+
+            $docTools = new BusinessDocumentTools();
+            $docTools->recalculate($invoice);
+            if ($invoice->save()) {
+                $this->idfactura = $invoice->idfactura;
+                return $this->save();
+            }
+
+            $invoice->delete();
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * @return Agente
+     */
+    public function getAgent()
+    {
+        $agent = new Agente();
+        $agent->loadFromCode($this->codagente);
+        return $agent;
     }
 
     /**
@@ -105,7 +186,6 @@ class LiquidacionComision extends Base\ModelClass
     {
         /// needed dependencies
         new Agente();
-        new Ejercicio();
         new FacturaProveedor();
 
         return parent::install();
@@ -128,7 +208,17 @@ class LiquidacionComision extends Base\ModelClass
      */
     public static function tableName()
     {
-        return 'liquidacioncomision';
+        return 'liquidacionescomisiones';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->observaciones = Utils::noHtml($this->observaciones);
+        return parent::test();
     }
 
     /**
@@ -139,8 +229,8 @@ class LiquidacionComision extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListAgente?activetab=List')
     {
-        return parent::url($type, 'ListAgente?activetab=' . $list);
+        return parent::url($type, $list);
     }
 }

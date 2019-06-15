@@ -54,7 +54,7 @@ class EditUser extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'user';
-        $data['icon'] = 'fas fa-user-tie';
+        $data['icon'] = 'fas fa-user-circle';
         return $data;
     }
 

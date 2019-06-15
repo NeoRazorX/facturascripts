@@ -38,17 +38,17 @@
                     <values title="service">Servicio</values>
                 </widget>
             </column>
-            <column name="company" numcolumns="3" order="120">
+            <column name="company" titleurl="ListEmpresa" numcolumns="3" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="exercise" numcolumns="3" order="130">
+            <column name="exercise" titleurl="ListEjercicio" numcolumns="3" order="130">
                 <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="serie" numcolumns="3" order="140">
+            <column name="serie" titleurl="ListSerie" numcolumns="3" order="140">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
@@ -59,7 +59,7 @@
             <column name="number-length" numcolumns="2" order="160" required="true">
                 <widget type="number" fieldname="longnumero" decimal="0" min="1" />
             </column>
-            <column name="pattern" numcolumns="4" order="170" required="true">
+            <column name="pattern" order="170" required="true">
                 <widget type="text" fieldname="patron" maxlength="30" />
             </column>
         </group>

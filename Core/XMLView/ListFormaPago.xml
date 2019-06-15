@@ -43,7 +43,7 @@
                 <values title="years">years</values>
             </widget>
         </column>
-        <column name="domicilied" display="center" order="140">
+        <column name="domiciled" display="center" order="140">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
     </columns>

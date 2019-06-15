@@ -59,7 +59,7 @@ abstract class AccountingBase
     protected $dateTo;
 
     /**
-     * Generate the balance ammounts between two dates.
+     * Generate the balance amounts between two dates.
      */
     abstract public function generate(string $dateFrom, string $dateTo, array $params = []);
 

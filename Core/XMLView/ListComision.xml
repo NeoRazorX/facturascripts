@@ -21,8 +21,8 @@
 -->
 <view>
     <columns>
-        <column name="code" order="100">
-            <widget type="number" fieldname="idcomision" />
+        <column name="id" order="100">
+            <widget type="text" fieldname="idcomision" />
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idempresa" >
@@ -47,6 +47,9 @@
         </column>
         <column name="percentage" display="right" order="160">
             <widget type="number" decimal="0" fieldname="porcentaje" />
+        </column>
+        <column name="priority" display="right" order="170">
+            <widget type="number" decimal="0" fieldname="prioridad" />
         </column>
     </columns>
 </view>

@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Description of BalanceAmmounts
+ * Description of BalanceAmounts
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author nazca                <comercial@nazcanetworks.com>
  */
-class BalanceAmmounts extends AccountingBase
+class BalanceAmounts extends AccountingBase
 {
 
     /**
@@ -37,7 +37,7 @@ class BalanceAmmounts extends AccountingBase
     private $subcuentaModel;
 
     /**
-     * BalanceAmmounts constructor.
+     * BalanceAmounts constructor.
      */
     public function __construct()
     {
@@ -46,7 +46,7 @@ class BalanceAmmounts extends AccountingBase
     }
 
     /**
-     * Generate the balance ammounts between two dates.
+     * Generate the balance amounts between two dates.
      * 
      * @param string $dateFrom
      * @param string $dateTo
