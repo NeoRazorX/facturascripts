@@ -86,6 +86,7 @@ class EditLiquidacionComision extends EditController
             foreach ($docs as $invoice) {
                 $lines = $invoice->getLines();
                 $commission->recalculate($invoice, $lines);
+                $invoice->save();
             }
 
             /// update total to settlement commission
@@ -93,9 +94,11 @@ class EditLiquidacionComision extends EditController
 
             /// confirm changes
             $this->dataBase->commit();
-        } catch (Exception $ex) {
+
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->miniLog->error($ex->getMessage());
+            $this->miniLog->error($exc->getMessage());
         }
     }
 
@@ -160,10 +163,6 @@ class EditLiquidacionComision extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'insertinvoices':
-                $this->insertInvoices();
-                return true;
-
             case 'calculatecommission':
                 $this->calculateCommission();
                 return true;
@@ -171,6 +170,10 @@ class EditLiquidacionComision extends EditController
             case 'delete':
                 parent::execPreviousAction($action);
                 $this->calculateTotalCommission();
+                return true;
+
+            case 'insertinvoices':
+                $this->insertInvoices();
                 return true;
         }
 

@@ -250,6 +250,10 @@ abstract class SalesDocument extends TransformerDocument
         $this->numero2 = Utils::noHtml($this->numero2);
         $this->provincia = Utils::noHtml($this->provincia);
 
+        if (null === $this->codagente) {
+            $this->totalcomision = 0.0;
+        }
+
         return parent::test();
     }
 
