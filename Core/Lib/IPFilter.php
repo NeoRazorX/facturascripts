@@ -82,7 +82,7 @@ class IPFilter
             }
         }
 
-        return '';
+        return '::1';
     }
 
     /**
