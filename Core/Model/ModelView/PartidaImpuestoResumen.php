@@ -16,15 +16,58 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
+namespace FacturaScripts\Core\Model\ModelView;
+
+use FacturaScripts\Core\Model\Base\ModelView;
 
 /**
- * Auxiliary model to load a list of accounting entries with VAT
+ * Auxiliary model to load a resume of accounting entries with VAT
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class PartidaImpuesto extends Base\ModelView
+class PartidaImpuestoResumen extends ModelView
 {
+
+    /**
+     * Return Group By fields
+     *
+     * @return string
+     */
+    protected function getGroupFields(): string
+    {
+        return 'asientos.codejercicio, subcuentas.codcuentaesp,'
+            . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
+            . 'partidas.iva, partidas.recargo';
+    }
+
+    /**
+     * List of fields or columns to select clausule
+     */
+    protected function getFields(): array
+    {
+        return [
+            'codejercicio' => 'asientos.codejercicio',
+            'codcuentaesp' => 'subcuentas.codcuentaesp',
+            'descripcion' => 'cuentasesp.descripcion',
+            'codimpuesto' => 'subcuentas.codimpuesto',
+            'iva' => 'partidas.iva',
+            'recargo' => 'partidas.recargo',
+            'baseimponible' => 'SUM(partidas.baseimponible)'
+        ];
+    }
+
+    /**
+     * List of tables related to from clausule
+     */
+    protected function getSQLFrom(): string
+    {
+        return 'asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' AND subcuentas.codimpuesto IS NOT NULL'
+            . ' AND subcuentas.codcuentaesp IS NOT NULL'
+            . ' LEFT JOIN cuentasesp ON cuentasesp.codcuentaesp = subcuentas.codcuentaesp';
+    }
 
     /**
      * List of tables required for the execution of the view.
@@ -39,44 +82,6 @@ class PartidaImpuesto extends Base\ModelView
     }
 
     /**
-     * List of fields or columns to select clausule
-     */
-    protected function getFields(): array
-    {
-        return [
-            'codejercicio' => 'asientos.codejercicio',
-            'idasiento' => 'asientos.idasiento',
-            'numero' => 'asientos.numero',
-            'fecha' => 'asientos.fecha',
-            'idpartida' => 'partidas.idpartida',
-            'idcontrapartida' => 'partidas.idcontrapartida',
-            'codcontrapartida' => 'partidas.codcontrapartida',
-            'concepto' => 'partidas.concepto',
-            'documento' => 'partidas.documento',
-            'cifnif' => 'partidas.cifnif',
-            'codserie' => 'partidas.codserie',
-            'factura' => 'partidas.factura',
-            'baseimponible' => 'partidas.baseimponible',
-            'iva' => 'partidas.iva',
-            'recargo' => 'partidas.recargo',
-            'codcuentaesp' => 'subcuentas.codcuentaesp',
-            'codimpuesto' => 'subcuentas.codimpuesto'
-        ];
-    }
-
-    /**
-     * List of tables related to from clausule
-     */
-    protected function getSQLFrom(): string
-    {
-        return 'asientos '
-            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
-            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta '
-            . 'AND subcuentas.codimpuesto IS NOT NULL '
-            . 'AND subcuentas.codcuentaesp IS NOT NULL';
-    }
-
-    /**
      * Reset the values of all model view properties.
      */
     public function clear()
@@ -85,9 +90,10 @@ class PartidaImpuesto extends Base\ModelView
 
         $this->baseimponible = 0.00;
         $this->iva = 0.00;
-        $this->cuotaiva = 0.00;
         $this->recargo = 0.00;
+        $this->cuotaiva = 0.00;
         $this->cuotarecargo = 0.00;
+        $this->total = 0.00;
     }
 
     /**
@@ -101,5 +107,6 @@ class PartidaImpuesto extends Base\ModelView
 
         $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
         $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
+        $this->total = $this->baseimponible + $this->cuotaiva + $this->cuotarecargo;
     }
 }
