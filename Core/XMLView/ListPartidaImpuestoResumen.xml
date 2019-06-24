@@ -24,13 +24,16 @@
         <column name="fiscal-exercise" order="100" display="none">
             <widget type="text" fieldname="codejercicio" />
         </column>
+        <column name="subaccount" order="100" display="none">
+            <widget type="text" fieldname="codsubcuenta" />
+        </column>
         <column name="special-account" order="100" display="left">
             <widget type="text" fieldname="codcuentaesp" />
         </column>
         <column name="description" order="110" display="left">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="taxes" order="120" display="left">
+        <column name="tax" order="120" display="none">
             <widget type="text" fieldname="codimpuesto" />
         </column>
         <column name="tax-base" display="right" order="130">
@@ -46,7 +49,7 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="surcharge" display="right" order="160">
+        <column name="pct-surcharge" display="right" order="160">
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
         <column name="surcharge" display="right" order="160">
@@ -63,7 +66,7 @@
     <rows>
         <row type="footer">
             <group name="actions">
-                <button type="action" label="create-accounting-entry"
+                <button type="action" label="create-accounting-entry" confirm="true"
                         color="danger" action="create-accounting-entry"
                         hint="hint-create-accounting-entry" icon="fas fa-balance-scale" />
             </group>
