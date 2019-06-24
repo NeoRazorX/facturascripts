@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Dinamic\Model\PartidaImpuestoResumen;
+use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -87,11 +87,11 @@ class VatRegularizationToAccounting extends AccountingClass
         $this->vatAccountingEntry();
     }
 
-
     /**
      * Add the game with the result of regularization
      *
      * @param Asiento $accountEntry
+     *
      * @return bool
      */
     protected function addAccountingResultLine($accountEntry): bool
@@ -111,11 +111,11 @@ class VatRegularizationToAccounting extends AccountingClass
      * Add the items with the tax amounts
      *
      * @param Asiento $accountEntry
+     *
      * @return bool
      */
     protected function addAccountingTaxLines($accountEntry): bool
     {
-        $amount = 0.00;
         foreach ($this->subtotals as $row) {
             $amount = $row->cuotaiva + $row->cuotarecargo;
             $this->subaccount->idsubcuenta = $row->idsubcuenta;
