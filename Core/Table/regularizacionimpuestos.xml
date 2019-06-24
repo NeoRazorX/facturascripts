@@ -82,6 +82,6 @@
     </constraint>
     <constraint>
         <name>ca_regularizacionimpuestos_empresas</name>
-        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>
