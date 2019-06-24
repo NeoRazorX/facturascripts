@@ -114,6 +114,11 @@ abstract class TransformerDocument extends BusinessDocument
      */
     public function delete()
     {
+        $children = $this->childrenDocuments();
+        if (count($children) > 0) {
+            return false;
+        }
+
         $lines = $this->getLines();
         if (!parent::delete()) {
             return false;
@@ -138,7 +143,6 @@ abstract class TransformerDocument extends BusinessDocument
         /// remove data from DocTransformation
         $docTransformation = new DocTransformation();
         $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
-
         return true;
     }
 
