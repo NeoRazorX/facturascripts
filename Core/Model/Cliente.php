@@ -53,18 +53,18 @@ class Cliente extends Base\ComercialContact
     public $diaspago;
 
     /**
-     * Default contact for sending documentation
-     *
-     * @var integer
-     */
-    public $idcontactofact;
-
-    /**
      * Default contact for the shipment of products
      *
      * @var integer
      */
     public $idcontactoenv;
+
+    /**
+     * Default contact for sending documentation
+     *
+     * @var integer
+     */
+    public $idcontactofact;
 
     /**
      *

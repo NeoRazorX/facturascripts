@@ -62,6 +62,35 @@ class EditContacto extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function addConversionButtons($viewName)
+    {
+        if (empty($this->views[$viewName]->model->codcliente)) {
+            $customerButton = [
+                'action' => 'convert-into-customer',
+                'color' => 'success',
+                'icon' => 'fas fa-user-check',
+                'label' => 'convert-into-customer',
+                'type' => 'action',
+            ];
+            $this->addButton($viewName, $customerButton);
+        }
+
+        if (empty($this->views[$viewName]->model->codproveedor)) {
+            $supplierButton = [
+                'action' => 'convert-into-supplier',
+                'color' => 'success',
+                'icon' => 'fas fa-user-cog',
+                'label' => 'convert-into-supplier',
+                'type' => 'action',
+            ];
+            $this->addButton($viewName, $supplierButton);
+        }
+    }
+
+    /**
      * Run the controller after actions
      *
      * @param string $action
@@ -69,15 +98,26 @@ class EditContacto extends EditController
     protected function execAfterAction($action)
     {
         switch ($action) {
-            case 'convert-to-customer':
+            case 'convert-into-customer':
                 $customer = $this->views['EditContacto']->model->getCustomer();
-                if (empty($customer->codcliente)) {
-                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                if ($customer->exists()) {
+                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
+                    $this->redirect($customer->url() . '&action=save-ok');
                     break;
                 }
 
-                $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
-                $this->redirect($customer->url());
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                break;
+
+            case 'convert-into-supplier':
+                $supplier = $this->views['EditContacto']->model->getSupplier();
+                if ($supplier->exists()) {
+                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
+                    $this->redirect($supplier->url() . '&action=save-ok');
+                    break;
+                }
+
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
                 break;
         }
     }
@@ -92,15 +132,8 @@ class EditContacto extends EditController
         switch ($viewName) {
             case 'EditContacto':
                 parent::loadData($viewName, $view);
-                if ($this->views[$viewName]->model->exists() && empty($this->views[$viewName]->model->codcliente)) {
-                    $button = [
-                        'action' => 'convert-to-customer',
-                        'color' => 'success',
-                        'icon' => 'fas fa-plus',
-                        'label' => 'new-customer',
-                        'type' => 'action',
-                    ];
-                    $this->addButton($viewName, $button);
+                if ($view->model->exists()) {
+                    $this->addConversionButtons($viewName);
                 }
                 break;
 

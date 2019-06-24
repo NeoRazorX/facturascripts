@@ -258,12 +258,12 @@ class Contacto extends Base\Contact
         }
 
         /// creates a new customer
-        $cliente->idcontactoenv = $this->idcontacto;
-        $cliente->idcontactofact = $this->idcontacto;
         $cliente->cifnif = $this->cifnif;
         $cliente->codproveedor = $this->codproveedor;
         $cliente->email = $this->email;
         $cliente->fax = $this->fax;
+        $cliente->idcontactoenv = $this->idcontacto;
+        $cliente->idcontactofact = $this->idcontacto;
         $cliente->nombre = $this->fullName();
         $cliente->observaciones = $this->observaciones;
         $cliente->personafisica = $this->personafisica;
@@ -294,6 +294,7 @@ class Contacto extends Base\Contact
         $proveedor->codcliente = $this->codcliente;
         $proveedor->email = $this->email;
         $proveedor->fax = $this->fax;
+        $proveedor->idcontacto = $this->idcontacto;
         $proveedor->nombre = $this->fullName();
         $proveedor->observaciones = $this->observaciones;
         $proveedor->personafisica = $this->personafisica;
