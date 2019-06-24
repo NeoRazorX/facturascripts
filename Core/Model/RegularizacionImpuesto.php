@@ -115,6 +115,9 @@ class RegularizacionImpuesto extends Base\ModelClass
      */
     public $periodo;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -137,7 +140,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Asiento
      */
     public function getAsiento()
@@ -231,7 +234,22 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
-     * 
+     * Returns true if there are no errors in the values of the model properties.
+     * It runs inside the save method.
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        /// calculate dates to selected period
+        $period = $this->getPeriod($this->periodo);
+        $this->fechainicio = $period['start'];
+        $this->fechafin = $period['end'];
+        return parent::test();
+    }
+
+    /**
+     *
      * @param string $type
      * @param string $list
      *
@@ -240,5 +258,32 @@ class RegularizacionImpuesto extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * Calculate Period data
+     *
+     * @param string $period
+     * @return array
+     */
+    private function getPeriod($period): array
+    {
+        /// Calculate actual year
+        $year = explode('-', date('d-m-Y'))[2];
+
+        // return periods values
+        switch ($period) {
+            case 'T2':
+                return ['start' => date('01-04-' . $year), 'end' => date('30-06-' . $year)];
+
+            case 'T3':
+                return ['start' => date('01-07-' . $year), 'end' => date('30-09-' . $year)];
+
+            case 'T4':
+                return ['start' => date('01-10-' . $year), 'end' => date('31-12-' . $year)];
+
+            default:
+                return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
+        }
     }
 }
