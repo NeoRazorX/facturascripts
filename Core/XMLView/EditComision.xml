@@ -44,17 +44,17 @@
                 </widget>
             </column>
             <column name="customer" description="optional" order="110">
-                <widget type="autocomplete" fieldname="codcliente">
+                <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
                     <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="family" description="optional" order="120">
-                <widget type="select" fieldname="codfamilia">
+                <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="product" description="optional" order="130">
-                <widget type="autocomplete" fieldname="idproducto">
+                <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
                     <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
                 </widget>
             </column>

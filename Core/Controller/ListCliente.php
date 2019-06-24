@@ -50,88 +50,91 @@ class ListCliente extends ListController
      */
     protected function createViews()
     {
-        $valuesGroup = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
+        $groupValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
 
-        $this->createViewCustomers($valuesGroup);
+        $this->createViewCustomers($groupValues);
         $this->createViewContacts();
-        $this->createViewGroups($valuesGroup);
+        $this->createViewGroups($groupValues);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createViewContacts($name = 'ListContacto')
+    protected function createViewContacts($viewName = 'ListContacto')
     {
-        $this->addView($name, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addSearchFields($name, ['nombre', 'apellidos', 'email']);
-        $this->addOrderBy($name, ['email'], 'email');
-        $this->addOrderBy($name, ['nombre'], 'name');
-        $this->addOrderBy($name, ['empresa'], 'company');
-        $this->addOrderBy($name, ['level'], 'level');
-        $this->addOrderBy($name, ['puntos'], 'points');
-        $this->addOrderBy($name, ['lastactivity'], 'last-activity', 2);
+        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
+        $this->addOrderBy($viewName, ['email'], 'email');
+        $this->addOrderBy($viewName, ['nombre'], 'name');
+        $this->addOrderBy($viewName, ['empresa'], 'company');
+        $this->addOrderBy($viewName, ['level'], 'level');
+        $this->addOrderBy($viewName, ['puntos'], 'points');
+        $this->addOrderBy($viewName, ['lastactivity'], 'last-activity', 2);
 
+        /// filters
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
-        $this->addFilterSelect($name, 'cargo', 'position', 'cargo', $cargoValues);
+        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargoValues);
 
         $counties = $this->codeModel->all('paises', 'codpais', 'nombre');
-        $this->addFilterSelect($name, 'codpais', 'country', 'codpais', $counties);
+        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $counties);
 
         $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        $this->addFilterSelect($name, 'provincia', 'province', 'provincia', $provinces);
+        $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
 
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        $this->addFilterSelect($name, 'ciudad', 'city', 'ciudad', $cities);
+        $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
 
-        $this->addFilterCheckbox($name, 'verificado', 'verified', 'verificado');
-        $this->addFilterCheckbox($name, 'admitemarketing', 'allow-marketing', 'admitemarketing');
+        $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
+        $this->addFilterCheckbox($viewName, 'admitemarketing', 'allow-marketing', 'admitemarketing');
     }
 
     /**
      * 
-     * @param array  $valuesGroup
-     * @param string $name
+     * @param array  $groupValues
+     * @param string $viewName
      */
-    private function createViewCustomers(array $valuesGroup, $name = 'ListCliente')
+    private function createViewCustomers($groupValues, $viewName = 'ListCliente')
     {
-        $this->addView($name, 'Cliente', 'customers', 'fas fa-users');
-        $this->addSearchFields($name, ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
-        $this->addOrderBy($name, ['codcliente'], 'code');
-        $this->addOrderBy($name, ['nombre'], 'name', 1);
-        $this->addOrderBy($name, ['fechaalta', 'codcliente'], 'date');
+        $this->addView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->addSearchFields($viewName, ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->addOrderBy($viewName, ['codcliente'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addOrderBy($viewName, ['fechaalta', 'codcliente'], 'date');
 
-        $this->addFilterSelect($name, 'codgrupo', 'group', 'codgrupo', $valuesGroup);
-
+        /// filters
         $values = [
             ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
-        $this->addFilterSelectWhere($name, 'status', $values);
-        
-        $retencions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
-        $this->addFilterSelect($name, 'codretencion', 'retentions', 'codretencion', $retencions);
-        
+        $this->addFilterSelectWhere($viewName, 'status', $values);
+
+        $this->addFilterSelect($viewName, 'codgrupo', 'group', 'codgrupo', $groupValues);
+
         $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect($name, 'codserie', 'series', 'codserie', $series);
-        
+        $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
+
+        $retencions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
+        $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', $retencions);
+
         $formaspago = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect($name, 'codpago', 'payment-methods', 'codpago', $formaspago);
+        $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $formaspago);
     }
 
     /**
      * 
-     * @param array  $valuesGroup
-     * @param string $name
+     * @param array  $groupValues
+     * @param string $viewName
      */
-    private function createViewGroups(array $valuesGroup, $name = 'ListGrupoClientes')
+    private function createViewGroups($groupValues, $viewName = 'ListGrupoClientes')
     {
-        $this->addView($name, 'GrupoClientes', 'groups', 'fas fa-folder-open');
-        $this->addSearchFields($name, ['nombre', 'codgrupo']);
-        $this->addOrderBy($name, ['codgrupo'], 'code');
-        $this->addOrderBy($name, ['nombre'], 'name', 1);
+        $this->addView($viewName, 'GrupoClientes', 'groups', 'fas fa-folder-open');
+        $this->addSearchFields($viewName, ['nombre', 'codgrupo']);
+        $this->addOrderBy($viewName, ['codgrupo'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
 
-        $this->addFilterSelect($name, 'parent', 'parent', 'parent', $valuesGroup);
+        /// filters
+        $this->addFilterSelect($viewName, 'parent', 'parent', 'parent', $groupValues);
     }
 }

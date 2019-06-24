@@ -16,14 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
+namespace FacturaScripts\Core\Model\ModelView;
+
+use FacturaScripts\Core\Model\Base\ModelView;
 
 /**
  * Auxiliary model to load a resume of accounting entries with VAT
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class PartidaImpuestoResumen extends Base\ModelView
+class PartidaImpuestoResumen extends ModelView
 {
 
     /**

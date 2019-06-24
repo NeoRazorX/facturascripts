@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\Accounting\VatRegularizationToAccounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
+use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 
 /**
  * Controller to list the items in the RegularizacionImpuesto model
