@@ -90,7 +90,7 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
      * 
      * @return Variante
      */
-    public function getVariante()
+    public function getVariant()
     {
         $variant = new Variante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
@@ -201,7 +201,7 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
 
         if (!$stock->loadFromCode('', $where)) {
             $stock->codalmacen = $transfer->codalmacenorigen;
-            $stock->idproducto = $this->getVariante()->idproducto;
+            $stock->idproducto = $this->getVariant()->idproducto;
             $stock->referencia = $this->referencia;
             $stock->save();
         }

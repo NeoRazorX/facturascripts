@@ -76,15 +76,15 @@ class EditTransferenciaStock extends EditController
         switch ($viewName) {
             case 'EditTransferenciaStock':
                 parent::loadData($viewName, $view);
-                if (empty($this->views[$this->active]->model->nick)) {
-                    $this->views[$this->active]->model->nick = $this->user->nick;
+                if (empty($view->model->nick)) {
+                    $view->model->nick = $this->user->nick;
                 }
                 break;
 
             case 'EditLineaTransferenciaStock':
                 $idtransferencia = $this->getViewModelValue('EditTransferenciaStock', 'idtrans');
                 $where = [new DataBaseWhere('idtrans', $idtransferencia)];
-                $view->loadData('', $where, [], 0, 0);
+                $view->loadData('', $where, ['idlinea' => 'DESC'], 0, 0);
                 break;
         }
     }
