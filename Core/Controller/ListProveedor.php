@@ -57,7 +57,7 @@ class ListProveedor extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewAdresses($viewName = 'ListContacto')
+    protected function createViewAdresses($viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
@@ -71,8 +71,8 @@ class ListProveedor extends ListController
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
         $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargoValues);
 
-        $counties = $this->codeModel->all('paises', 'codpais', 'nombre');
-        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $counties);
+        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
+        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
 
         $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
         $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
@@ -91,7 +91,7 @@ class ListProveedor extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewSuppliers($viewName = 'ListProveedor')
+    protected function createViewSuppliers($viewName = 'ListProveedor')
     {
         $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
         $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
@@ -110,10 +110,10 @@ class ListProveedor extends ListController
         $series = $this->codeModel->all('series', 'codserie', 'descripcion');
         $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
 
-        $retencions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
-        $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', $retencions);
+        $retentions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
+        $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', $retentions);
 
-        $formaspago = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $formaspago);
+        $paymentMethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $paymentMethods);
     }
 }
