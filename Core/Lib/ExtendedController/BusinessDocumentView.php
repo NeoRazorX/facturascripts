@@ -170,11 +170,8 @@ class BusinessDocumentView extends BaseView
     {
         $newLines = [];
         $order = count($formLines);
-        foreach ($formLines as $data) {
-            $line = ['orden' => $order];
-            foreach ($this->getColumns() as $col) {
-                $line[$col->widget->fieldname] = isset($data[$col->widget->fieldname]) ? $data[$col->widget->fieldname] : null;
-            }
+        foreach ($formLines as $line) {
+            $line['order'] = $order;
             $newLines[] = $line;
             $order--;
         }

@@ -70,7 +70,7 @@ function businessDocViewSubjectChanged() {
             $("#doc_codserie").val(results.codserie);
             console.log("results", results);
 
-            businessDocViewRecalculate()
+            businessDocViewRecalculate();
         },
         error: function (xhr, status, error) {
             alert(xhr.responseText);
@@ -121,6 +121,7 @@ function businessDocViewSave() {
     data.action = "save-document";
     data.lines = getGridData();
     console.log(data);
+
     $.ajax({
         type: "POST",
         url: businessDocViewUrl,

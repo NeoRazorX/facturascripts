@@ -39,7 +39,7 @@ abstract class BusinessDocumentController extends PanelController
      * @var BusinessDocumentTools
      */
     private $documentTools;
-    
+
     /**
      * Returns an array of custom fields to add on the header.
      */
@@ -256,6 +256,11 @@ abstract class BusinessDocumentController extends PanelController
         $data = $this->getBusinessFormData();
         $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
+
+        /// update subject data?
+        if (!$this->views[$this->active]->model->exists()) {
+            $this->views[$this->active]->model->updateSubject();
+        }
 
         /// recalculate
         $result = $this->documentTools->recalculateForm($this->views[$this->active]->model, $data['lines']);

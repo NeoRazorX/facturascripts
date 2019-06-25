@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
-use FacturaScripts\Core\Lib\CommissionTools;
+use FacturaScripts\Dinamic\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
@@ -139,7 +139,7 @@ class BusinessDocumentTools
         }
 
         $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
-        
+
         /// recalculate commissions
         $this->commissionTools->recalculate($doc, $lines);
     }
@@ -306,12 +306,6 @@ class BusinessDocumentTools
         if (isset($fLine['cantidad']) && '' !== $fLine['cantidad']) {
             /// edit line
             $newLine = $doc->getNewLine($fLine);
-            $newLine->cantidad = (float) $fLine['cantidad'];
-            $newLine->pvpunitario = (float) $fLine['pvpunitario'];
-            $newLine->dtopor = (float) $fLine['dtopor'];
-            $newLine->irpf = (float) $fLine['irpf'];
-            $newLine->iva = (float) $fLine['iva'];
-            $newLine->recargo = (float) $fLine['recargo'];
         } elseif (isset($fLine['referencia']) && '' !== $fLine['referencia']) {
             /// new line with reference
             $newLine = $doc->getNewProductLine($fLine['referencia']);

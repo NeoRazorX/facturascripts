@@ -127,15 +127,15 @@
         <div class="col">
             {% if fsc.hasData and currentView.settings.btnDelete %}
                 <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ currentView.getViewName() }}');">
-                    <i class="fas fa-trash-alt" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans('delete') }}</span>
+                    <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                 </button>
             {% endif %}
         </div>
         <div class="col text-right">
             {% if currentView.settings.btnSave %}
                 <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
-                    <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
+                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
                 </button>
             {% endif %}
         </div>
@@ -152,7 +152,7 @@
             <select id="{{ id }}" name="{{ name }}" class="form-control">
                 {% for key, option in allValues %}
                     <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
-                        {{ option }}
+                        {{ option | raw }}
                     </option>
                 {% endfor %}
             </select>
