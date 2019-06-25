@@ -73,7 +73,7 @@ class EditCuentaBanco extends EditController
     {
         switch ($viewName) {
             case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue('Edit' . $this->getModelClassName(), 'codsubcuenta');
+                $codsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'codsubcuenta');
                 $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where, ['codejercicio' => 'DESC']);
                 break;
