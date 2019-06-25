@@ -23,17 +23,12 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codgrupo" icon="fas fa-hashtag" readonly="dinamic" required="true" />
+                <widget type="text" fieldname="codgrupo" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" required="true" />
             </column>
-            <column name="description" numcolumns="4" order="110">
+            <column name="description" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="parent-group" numcolumns="3" order="120">
-                <widget type="select" fieldname="parent">
-                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="subaccount" numcolumns="3" order="130">
+            <column name="subaccount" numcolumns="3" order="120">
                 <widget type="text" fieldname="codsubcuenta" />
             </column>
         </group>

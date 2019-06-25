@@ -133,8 +133,5 @@ class ListCliente extends ListController
         $this->addSearchFields($viewName, ['nombre', 'codgrupo']);
         $this->addOrderBy($viewName, ['codgrupo'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
-
-        /// filters
-        $this->addFilterSelect($viewName, 'parent', 'parent', 'parent', $groupValues);
     }
 }

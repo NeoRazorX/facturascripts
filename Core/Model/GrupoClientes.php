@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,13 +38,6 @@ class GrupoClientes extends Base\ModelClass
     public $codgrupo;
 
     /**
-     * Code of the associated rate, if any.
-     *
-     * @var string
-     */
-    public $codtarifa;
-
-    /**
      * Accounting code.
      *
      * @var string
@@ -52,18 +45,18 @@ class GrupoClientes extends Base\ModelClass
     public $codsubcuenta;
 
     /**
+     * Code of the associated rate, if any.
+     *
+     * @var string
+     */
+    public $codtarifa;
+
+    /**
      * Group name.
      *
      * @var string
      */
     public $nombre;
-
-    /**
-     * Parent group.
-     *
-     * @var string
-     */
-    public $parent;
 
     /**
      * This function is called when creating the model table. Returns the SQL
@@ -77,7 +70,7 @@ class GrupoClientes extends Base\ModelClass
         /// As there is a key outside of tariffs, we have to check that table before
         new Tarifa();
 
-        return '';
+        return parent::install();
     }
 
     /**
@@ -118,11 +111,6 @@ class GrupoClientes extends Base\ModelClass
     public function test()
     {
         $this->nombre = Utils::noHtml($this->nombre);
-
-        if ($this->checkCircularRelation()) {
-            return false;
-        }
-
         return parent::test();
     }
 
@@ -137,38 +125,5 @@ class GrupoClientes extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return parent::url($type, 'ListCliente?activetab=List');
-    }
-
-    /**
-     * Check if exists a circular relation between groups.
-     *
-     * @return bool
-     */
-    private function checkCircularRelation()
-    {
-        if ($this->parent === null) {
-            return false;
-        }
-
-        if ($this->codgrupo === $this->parent) {
-            self::$miniLog->alert(self::$i18n->trans('parent-group-cant-be-the-same-group'));
-            return true;
-        }
-
-        $subgroups = [$this->codgrupo];
-        $group = $this->get($this->parent);
-        while ($group->parent !== null) {
-            if (in_array($group->parent, $subgroups)) {
-                self::$miniLog->alert(self::$i18n->trans('parent-group-loop', ['%parentGroup%' => $group->codgrupo]));
-                return true;
-            }
-
-            $subgroups[] = $group->parent;
-            if (!$group->loadFromCode($group->parent)) {
-                break;
-            }
-        }
-
-        return false;
     }
 }
