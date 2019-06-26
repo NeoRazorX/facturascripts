@@ -23,7 +23,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="4" order="100">
-                <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" maxlength="20" required="true" />
+                <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" maxlength="20" readonly="dinamic" required="true" />
             </column>
             <column name="name" numcolumns="8" order="110">
                 <widget type="text" fieldname="nombre" required="true" />

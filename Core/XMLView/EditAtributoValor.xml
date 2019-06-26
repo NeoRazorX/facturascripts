@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos Jiménez Gómez     <carlos@evolunext.es>
- * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Carlos Jiménez Gómez <carlos@evolunext.es>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -26,7 +26,9 @@
                 <widget type="text" fieldname="id" readonly="true" required="true" />
             </column>
             <column name="attribute" numcolumns="4" order="110">
-                <widget type="text" fieldname="codatributo" readonly="true" required="true" />
+                <widget type="select" fieldname="codatributo" readonly="true" required="true">
+                    <values source="atributos" fieldcode="codatributo" fieldtitle="nombre"></values>
+                </widget>
             </column>
             <column name="value" order="120">
                 <widget type="text" fieldname="valor" />

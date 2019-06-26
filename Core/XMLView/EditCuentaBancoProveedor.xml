@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditCuentaBancoProveedor
- *
- * @author PC REDNET S.L. <lusimi@pcrednet.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author PC REDNET S.L.       <lusimi@pcrednet.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -31,19 +28,17 @@
             <column name="codproveedor" display="none" order="110">
                 <widget type="text" fieldname="codproveedor" />
             </column>
-            <column name="description" numcolumns="10" order="120">
+            <column name="description" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="principal" numcolumns="2" order="130">
-                <widget type="checkbox" fieldname="principal" />
-            </column>
-        </group>
-        <group name="bankaccount" numcolumns="12">
-            <column name="iban" numcolumns="6" order="140">
+            <column name="iban" order="130">
                 <widget type="text" fieldname="iban" />
             </column>
-            <column name="swift" numcolumns="6" order="150">
-                <widget type="check" fieldname="swift"/>
+            <column name="swift" order="140">
+                <widget type="text" fieldname="swift"/>
+            </column>
+            <column name="principal" numcolumns="12" order="150">
+                <widget type="checkbox" fieldname="principal" />
             </column>
         </group>
     </columns>
