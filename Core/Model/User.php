@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,8 @@ class User extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+
+    const DEFAULT_LEVEL = 2;
 
     /**
      * true -> user is admin.
@@ -138,7 +140,7 @@ class User extends Base\ModelClass
         $this->enabled = true;
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
-        $this->level = 2;
+        $this->level = self::DEFAULT_LEVEL;
     }
 
     /**
@@ -171,10 +173,8 @@ class User extends Base\ModelClass
      */
     public function newLogkey($ipAddress)
     {
-        $this->lastactivity = date('d-m-Y H:i:s');
-        $this->lastip = $ipAddress;
+        $this->updateActivity($ipAddress);
         $this->logkey = Utils::randomString(99);
-
         return $this->logkey;
     }
 
@@ -216,9 +216,15 @@ class User extends Base\ModelClass
      */
     public function test()
     {
-        $this->checkEmptyValues();
-        $this->nick = trim($this->nick);
+        if ($this->lastactivity === '') {
+            $this->lastactivity = null;
+        }
 
+        if ($this->level === null) {
+            $this->level = 0;
+        }
+
+        $this->nick = trim($this->nick);
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
             return false;
@@ -234,6 +240,17 @@ class User extends Base\ModelClass
         }
 
         return parent::test();
+    }
+
+    /**
+     * Updates last ip address and last activity property.
+     * 
+     * @param string $ipAddress
+     */
+    public function updateActivity($ipAddress)
+    {
+        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastip = $ipAddress;
     }
 
     /**
@@ -265,26 +282,30 @@ class User extends Base\ModelClass
             return true;
         }
 
-        // To ensure that any user of facturascripts_2015 can login and rehash its password
-        if (sha1($value) === $this->password) {
-            $this->setPassword($value);
-            return true;
-        }
-
         return false;
     }
 
     /**
-     * Check the null value of the fields
+     * Assigns the first role to this user.
      */
-    private function checkEmptyValues()
+    protected function setNewRole()
     {
-        if ($this->lastactivity === '') {
-            $this->lastactivity = null;
-        }
+        $roleModel = new Role();
+        foreach ($roleModel->all() as $role) {
+            $roleUser = new RoleUser();
+            $roleUser->codrole = $role->codrole;
+            $roleUser->nick = $this->nick;
+            $roleUser->save();
 
-        if ($this->level === null) {
-            $this->level = 0;
+            /// set user homepage
+            foreach ($roleUser->getRoleAccess() as $roleAccess) {
+                $this->homepage = $roleAccess->pagename;
+                if ('List' == substr($this->homepage, 0, 4)) {
+                    break;
+                }
+            }
+            $this->save();
+            break;
         }
     }
 
@@ -298,24 +319,7 @@ class User extends Base\ModelClass
     {
         $result = parent::saveInsert($values);
         if ($result && !$this->admin) {
-            /// assign to some role
-            $roleModel = new Role();
-            foreach ($roleModel->all() as $role) {
-                $roleUser = new RoleUser();
-                $roleUser->codrole = $role->codrole;
-                $roleUser->nick = $this->nick;
-                $roleUser->save();
-
-                /// set user homepage
-                foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                    $this->homepage = $roleAccess->pagename;
-                    if ('List' == substr($this->homepage, 0, 4)) {
-                        break;
-                    }
-                }
-                $this->save();
-                break;
-            }
+            $this->setNewRole();
         }
 
         return $result;
