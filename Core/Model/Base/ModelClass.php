@@ -53,13 +53,12 @@ abstract class ModelClass extends ModelCore
      * @param int   $offset
      * @param int   $limit
      *
-     * @return array
+     * @return self[]
      */
     public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
     {
         $modelList = [];
-        $sqlWhere = DataBaseWhere::getSQLWhere($where);
-        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($order);
+        $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . $this->getOrderBy($order);
         $data = self::$dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             $class = $this->modelName();
@@ -74,14 +73,14 @@ abstract class ModelClass extends ModelCore
     /**
      * Allows to use this model as source in CodeModel special model.
      * 
-     * @param string $fieldcode
+     * @param string $fieldCode
      * 
      * @return CodeModel[]
      */
-    public function codeModelAll(string $fieldcode = '')
+    public function codeModelAll(string $fieldCode = '')
     {
         $results = [];
-        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
             . 'FROM ' . $this->tableName() . ' ORDER BY 2 ASC';
@@ -96,13 +95,13 @@ abstract class ModelClass extends ModelCore
      * Allows to use this model as source in CodeModel special model.
      * 
      * @param string $query
-     * @param string $fieldcode
+     * @param string $fieldCode
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '')
+    public function codeModelSearch(string $query, string $fieldCode = '')
     {
-        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
         $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
@@ -156,19 +155,19 @@ abstract class ModelClass extends ModelCore
     /**
      * Returns the model whose primary column corresponds to the value $cod
      *
-     * @param string $cod
+     * @param string $code
      *
-     * @return mixed
+     * @return self
      */
-    public function get($cod)
+    public function get($code)
     {
-        $data = $this->getRecord($cod);
-        if (!empty($data)) {
-            $class = $this->modelName();
-            return new $class($data[0]);
+        $data = $this->getRecord($code);
+        if (empty($data)) {
+            return false;
         }
 
-        return false;
+        $class = $this->modelName();
+        return new $class($data[0]);
     }
 
     /**
@@ -179,15 +178,15 @@ abstract class ModelClass extends ModelCore
      * meet the above conditions.
      * Returns True if the record exists and False otherwise.
      *
-     * @param string $cod
+     * @param string $code
      * @param array  $where
      * @param array  $orderby
      *
      * @return bool
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function loadFromCode($code, array $where = [], array $orderby = [])
     {
-        $data = $this->getRecord($cod, $where, $orderby);
+        $data = $this->getRecord($code, $where, $orderby);
         if (empty($data)) {
             $this->clear();
             return false;
@@ -225,8 +224,8 @@ abstract class ModelClass extends ModelCore
         /// Search for new code value
         $sqlWhere = DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
-        $cod = self::$dataBase->select($sql);
-        return empty($cod) ? 1 : 1 + (int) $cod[0]['cod'];
+        $data = self::$dataBase->select($sql);
+        return empty($data) ? 1 : 1 + (int) $data[0]['cod'];
     }
 
     /**
@@ -305,11 +304,11 @@ abstract class ModelClass extends ModelCore
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        $value = rawurlencode($this->primaryColumnValue());
+        $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
         switch ($type) {
             case 'edit':
-                return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . $value;
+                return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
 
             case 'list':
                 return $list . $model;
@@ -319,7 +318,7 @@ abstract class ModelClass extends ModelCore
         }
 
         /// default
-        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . $value;
+        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
     }
 
     /**
@@ -418,15 +417,15 @@ abstract class ModelClass extends ModelCore
      * Read the record whose primary column corresponds to the value $cod
      * or the first that meets the indicated condition.
      *
-     * @param string $cod
+     * @param string $code
      * @param array  $where
      * @param array  $orderby
      *
      * @return array
      */
-    private function getRecord($cod, array $where = [], array $orderby = [])
+    private function getRecord($code, array $where = [], array $orderby = [])
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) : DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
         return self::$dataBase->selectLimit($sql, 1);
     }
