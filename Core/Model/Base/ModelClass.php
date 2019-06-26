@@ -305,7 +305,7 @@ abstract class ModelClass extends ModelCore
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        $value = $this->primaryColumnValue();
+        $value = rawurlencode($this->primaryColumnValue());
         $model = $this->modelClassName();
         switch ($type) {
             case 'edit':
