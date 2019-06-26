@@ -64,7 +64,7 @@ class HtmlView extends BaseView
      * @param int    $offset
      * @param int    $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if (empty($code) && empty($where)) {
             return;
@@ -75,7 +75,7 @@ class HtmlView extends BaseView
 
     /**
      * 
-     * @param User $user
+     * @param User|false $user
      */
     public function loadPageOptions($user = false)
     {

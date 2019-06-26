@@ -157,7 +157,7 @@ abstract class ModelClass extends ModelCore
      *
      * @param string $code
      *
-     * @return self
+     * @return self|false
      */
     public function get($code)
     {
