@@ -55,12 +55,25 @@ class EditPais extends EditController
         return $data;
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createProvinceView($viewName = 'ListProvincia')
+    {
+        $this->addListView($viewName, 'Provincia', 'provinces');
+        $this->views[$viewName]->addOrderBy(['provincia'], 'name', 1);
+    }
+
+    /**
+     * Create tabs or views.
+     */
     protected function createViews()
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListProvincia', 'Provincia', 'provinces');
+        $this->createProvinceView();
     }
 
     /**
