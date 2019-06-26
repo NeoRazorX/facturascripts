@@ -73,7 +73,10 @@ class ListLogMessage extends ListController
         /// filters
         $this->addFilterDatePicker($name, 'fromdate', 'from-date', 'date', '>=');
         $this->addFilterDatePicker($name, 'untildate', 'until-date', 'date', '<=');
-
+        
+        $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
+        $this->addFilterSelect($name, 'pluginname', 'plugin', 'pluginname', $plugins);
+        
         /// settings
         $this->setSettings($name, 'btnNew', false);
     }
