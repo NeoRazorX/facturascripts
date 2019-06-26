@@ -51,4 +51,15 @@ class EditEmailSent extends EditController
         $data['icon'] = 'fas fa-envelope';
         return $data;
     }
+
+    /**
+     * Loads views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+
+        /// settings
+        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+    }
 }

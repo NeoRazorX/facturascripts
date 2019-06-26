@@ -57,16 +57,27 @@ class EditSerie extends EditController
     }
 
     /**
-     * Load views
+     * 
+     * @param string $viewName
+     */
+    protected function createSequenceView($viewName = 'ListSecuenciaDocumento')
+    {
+        $this->addListView($viewName, 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
+        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('serie');
+    }
+
+    /**
+     * Create tabs or views.
      */
     protected function createViews()
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListSecuenciaDocumento', 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
-        $this->views['ListSecuenciaDocumento']->addOrderBy(['codejercicio'], 'exercise', 2);
-        $this->views['ListSecuenciaDocumento']->disableColumn('serie');
+        $this->createSequenceView();
     }
 
     /**
@@ -79,7 +90,7 @@ class EditSerie extends EditController
     {
         switch ($viewName) {
             case 'ListSecuenciaDocumento':
-                $codserie = $this->getViewModelValue('EditSerie', 'codserie');
+                $codserie = $this->getViewModelValue($this->getMainViewName(), 'codserie');
                 $where = [new DataBaseWhere('codserie', $codserie)];
                 $view->loadData('', $where);
                 break;

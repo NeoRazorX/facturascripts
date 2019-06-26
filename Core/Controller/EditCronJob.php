@@ -56,6 +56,8 @@ class EditCronJob extends EditController
     protected function createViews()
     {
         parent::createViews();
+
+        /// settings
         $this->setSettings($this->getMainViewName(), 'btnNew', false);
     }
 }

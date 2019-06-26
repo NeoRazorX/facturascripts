@@ -23,7 +23,7 @@
     <columns>
         <group name="bankaccount" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />

@@ -55,13 +55,28 @@ class EditCuentaBanco extends EditController
         return $data;
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createSubAccountingView($viewName = 'ListSubcuenta')
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
+        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Create tabs or views.
+     */
     protected function createViews()
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts', 'fas fa-book');
-        $this->setSettings('ListSubcuenta', 'btnNew', false);
+        $this->createSubAccountingView();
     }
 
     /**

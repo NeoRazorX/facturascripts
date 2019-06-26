@@ -62,7 +62,7 @@ class ListLogMessage extends ListController
      * 
      * @param string $name
      */
-    private function createCronJobView($name = 'ListCronJob')
+    protected function createCronJobView($name = 'ListCronJob')
     {
         $this->addView($name, 'CronJob', 'crons', 'fas fa-cogs');
         $this->addSearchFields($name, ['jobname', 'pluginname']);
@@ -73,10 +73,10 @@ class ListLogMessage extends ListController
         /// filters
         $this->addFilterDatePicker($name, 'fromdate', 'from-date', 'date', '>=');
         $this->addFilterDatePicker($name, 'untildate', 'until-date', 'date', '<=');
-        
+
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
         $this->addFilterSelect($name, 'pluginname', 'plugin', 'pluginname', $plugins);
-        
+
         /// settings
         $this->setSettings($name, 'btnNew', false);
     }
@@ -85,7 +85,7 @@ class ListLogMessage extends ListController
      * 
      * @param string $name
      */
-    private function createEmailSentView($name = 'ListEmailSent')
+    protected function createEmailSentView($name = 'ListEmailSent')
     {
         $this->addView($name, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->addOrderBy($name, ['date'], 'date', 2);
@@ -104,7 +104,7 @@ class ListLogMessage extends ListController
      * 
      * @param string $name
      */
-    private function createLogMessageView($name = 'ListLogMessage')
+    protected function createLogMessageView($name = 'ListLogMessage')
     {
         $this->addView($name, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
         $this->addSearchFields($name, ['message', 'uri']);
@@ -150,12 +150,11 @@ class ListLogMessage extends ListController
     /**
      * Delete logs based on active filters.
      */
-    private function deleteWithFilters()
+    protected function deleteWithFilters()
     {
         // start transaction
         $this->dataBase->beginTransaction();
 
-        // main save process
         try {
             $logMessage = new LogMessage();
 
@@ -171,13 +170,15 @@ class ListLogMessage extends ListController
 
                 $counter++;
             }
+
             // confirm data
             $this->dataBase->commit();
+
             if ($counter > 0) {
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             }
-        } catch (Exception $e) {
-            $this->miniLog->alert($e->getMessage());
+        } catch (Exception $exc) {
+            $this->miniLog->alert($exc->getMessage());
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();
