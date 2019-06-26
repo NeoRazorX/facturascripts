@@ -135,13 +135,13 @@ class BusinessDocumentView extends BaseView
 
     /**
      * 
-     * @param string|bool $code
-     * @param array       $where
-     * @param int         $order
-     * @param int         $offset
-     * @param int         $limit
+     * @param string $code
+     * @param array  $where
+     * @param int    $order
+     * @param int    $offset
+     * @param int    $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;

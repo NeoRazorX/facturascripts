@@ -215,15 +215,15 @@ class ListView extends BaseView
     /**
      * Loads the data in the cursor property, according to the where filter specified.
      *
-     * @param mixed           $code
+     * @param string          $code
      * @param DataBaseWhere[] $where
      * @param array           $order
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = false, $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
-        $this->offset = ($offset < 0) ? $this->offset : $offset;
+        $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
         $this->where = array_merge($where, $this->where);
         $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);

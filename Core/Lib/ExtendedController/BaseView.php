@@ -163,7 +163,7 @@ abstract class BaseView
     /**
      * Loads view data.
      */
-    abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
+    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
      * Process form data.

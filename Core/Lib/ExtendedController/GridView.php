@@ -197,6 +197,12 @@ class GridView extends EditView
         return $result;
     }
 
+    /**
+     * 
+     * @param array $data
+     *
+     * @return array
+     */
     public function saveData($data): array
     {
         $result = [
@@ -390,6 +396,8 @@ class GridView extends EditView
      * Return array of values to select
      *
      * @param WidgetSelect $widget
+     *
+     * @return array
      */
     private function getSelectSource($widget): array
     {
