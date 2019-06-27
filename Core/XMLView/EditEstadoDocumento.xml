@@ -25,10 +25,10 @@
             <column name="id" display="none" order="100">
                 <widget type="text" fieldname="idestado" readonly="dinamic" />
             </column>
-            <column name="name" numcolumns="4" order="110">
+            <column name="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="doc-type" numcolumns="4" order="120">
+            <column name="doc-type" order="120">
                 <widget type="select" fieldname="tipodoc" required="true" translate="true">
                     <values title="customer-estimation">PresupuestoCliente</values>
                     <values title="customer-order">PedidoCliente</values>
@@ -50,7 +50,7 @@
                     <values title="foresee">2</values>
                 </widget>
             </column>
-            <column name="generate-doc-type" numcolumns="4" order="140">
+            <column name="generate-doc-type" order="140">
                 <widget type="select" fieldname="generadoc" translate="true">
                     <values title="customer-estimation">PresupuestoCliente</values>
                     <values title="customer-order">PedidoCliente</values>
@@ -63,6 +63,8 @@
                     <values title="service">Servicio</values>
                 </widget>
             </column>
+        </group>
+        <group name="config" numcolumns="12">
             <column name="editable" order="150">
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -51,5 +53,52 @@ class EditEstadoDocumento extends EditController
         $data['title'] = 'status-document';
         $data['icon'] = 'fas fa-tag';
         return $data;
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createOtherStatusView($viewName = 'ListEstadoDocumento')
+    {
+        $this->addListView($viewName, 'EstadoDocumento', 'document-states');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Create tabs or views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createOtherStatusView();
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListEstadoDocumento':
+                $idestado = $this->getViewModelValue($this->getMainViewName(), 'idestado');
+                $tipoDoc = $this->getViewModelValue($this->getMainViewName(), 'tipodoc');
+                $where = [
+                    new DataBaseWhere('tipodoc', $tipoDoc),
+                    new DataBaseWhere('idestado', $idestado, '!='),
+                ];
+                $view->loadData('', $where, ['idestado' => 'ASC']);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }
