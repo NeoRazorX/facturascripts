@@ -72,7 +72,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    private function createViewBankAccounts($viewName = 'EditCuentaBanco')
+    protected function createViewBankAccounts($viewName = 'EditCuentaBanco')
     {
         $this->addEditListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->views[$viewName]->disableColumn('company');
@@ -82,7 +82,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    private function createViewExercises($viewName = 'ListEjercicio')
+    protected function createViewExercises($viewName = 'ListEjercicio')
     {
         $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
         $this->views[$viewName]->disableColumn('company');
@@ -92,7 +92,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    private function createViewPaymentMethods($viewName = 'EditFormaPago')
+    protected function createViewPaymentMethods($viewName = 'EditFormaPago')
     {
         $this->addEditListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
         $this->views[$viewName]->disableColumn('company');
@@ -102,7 +102,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    private function createViewWarehouse($viewName = 'EditAlmacen')
+    protected function createViewWarehouse($viewName = 'EditAlmacen')
     {
         $this->addEditListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');
         $this->views[$viewName]->disableColumn('company');

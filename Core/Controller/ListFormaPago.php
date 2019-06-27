@@ -68,7 +68,7 @@ class ListFormaPago extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewsBankAccounts($viewName = 'ListCuentaBanco')
+    protected function createViewsBankAccounts($viewName = 'ListCuentaBanco')
     {
         $this->addView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->addSearchFields($viewName, ['descripcion', 'codcuenta']);
@@ -84,7 +84,7 @@ class ListFormaPago extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewsPaymentMethods($viewName = 'ListFormaPago')
+    protected function createViewsPaymentMethods($viewName = 'ListFormaPago')
     {
         $this->addView($viewName, 'FormaPago', 'payment-methods', 'fas fa-credit-card');
         $this->addSearchFields($viewName, ['descripcion', 'codpago']);

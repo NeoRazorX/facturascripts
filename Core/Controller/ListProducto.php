@@ -56,7 +56,7 @@ class ListProducto extends ListController
      * 
      * @param string $name
      */
-    private function createViewProducto($name = 'ListProducto')
+    protected function createViewProducto($name = 'ListProducto')
     {
         $this->addView($name, 'Producto', 'products', 'fas fa-cubes');
         $this->addSearchFields($name, ['referencia', 'descripcion', 'observaciones']);
@@ -86,7 +86,7 @@ class ListProducto extends ListController
      * 
      * @param string $name
      */
-    private function createViewVariante($name = 'ListVariante')
+    protected function createViewVariante($name = 'ListVariante')
     {
         $this->addView($name, 'Variante', 'variants', 'fas fa-code-branch');
         $this->addSearchFields($name, ['referencia', 'codbarras']);
@@ -108,7 +108,7 @@ class ListProducto extends ListController
      * 
      * @param string $name
      */
-    private function createViewStock($name = 'ListStock')
+    protected function createViewStock($name = 'ListStock')
     {
         $this->addView($name, 'Stock', 'stock', 'fas fa-tasks');
         $this->addSearchFields($name, ['referencia']);

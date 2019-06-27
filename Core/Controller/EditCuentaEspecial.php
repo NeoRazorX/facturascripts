@@ -55,13 +55,28 @@ class EditCuentaEspecial extends EditController
         return $data;
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createAccountingView($viewName = 'ListCuenta')
+    {
+        $this->addListView($viewName, 'Cuenta', 'accounts');
+        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('special-account');
+    }
+
+    /**
+     * Create tabs or views.
+     */
     protected function createViews()
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListCuenta', 'Cuenta', 'accounts');
-        $this->views['ListCuenta']->disableColumn('special-account');
+        $this->createAccountingView();
     }
 
     /**

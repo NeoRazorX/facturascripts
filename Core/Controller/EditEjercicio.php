@@ -59,17 +59,41 @@ class EditEjercicio extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createAccountingView($viewName = 'ListCuenta')
+    {
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
+        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('fiscal-exercise');
+        $this->views[$viewName]->disableColumn('parent-account');
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createSubAccountingView($viewName = 'ListSubcuenta')
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
+        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('fiscal-exercise');
+    }
+
+    /**
      * Load views.
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListCuenta', 'Cuenta', 'accounts', 'fas fa-book');
-        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccount');
-
-        /// Disable columns
-        $this->views['ListCuenta']->disableColumn('fiscal-exercise', true);
-        $this->views['ListSubcuenta']->disableColumn('fiscal-exercise', true);
+        $this->createAccountingView();
+        $this->createSubAccountingView();
     }
 
     /**
@@ -124,7 +148,7 @@ class EditEjercicio extends EditController
      * 
      * @return bool
      */
-    private function exportAccountingPlan()
+    protected function exportAccountingPlan()
     {
         $code = $this->request->get('code', '');
         if (empty($code)) {
@@ -145,7 +169,7 @@ class EditEjercicio extends EditController
      *
      * @return bool
      */
-    private function importAccountingPlan()
+    protected function importAccountingPlan()
     {
         $code = $this->request->request->get('codejercicio', '');
         if (empty($code)) {

@@ -58,14 +58,43 @@ class EditCuenta extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createAccountingView($viewName = 'ListCuenta')
+    {
+        $this->addListView($viewName, 'Cuenta', 'children-accounts');
+        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('fiscal-exercise');
+        $this->views[$viewName]->disableColumn('parent-account');
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createSubAccountingView($viewName = 'ListSubcuenta')
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
+        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('fiscal-exercise');
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->addListView('ListSubcuenta', 'Subcuenta', 'subaccounts');
-        $this->addListView('ListCuenta', 'Cuenta', 'children-accounts');
         $this->setTabsPosition('bottom');
+
+        $this->createSubAccountingView();
+        $this->createAccountingView();
     }
 
     /**

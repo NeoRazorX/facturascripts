@@ -57,7 +57,7 @@ class ListAsiento extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewAccountEntries($viewName = 'ListAsiento')
+    protected function createViewAccountEntries($viewName = 'ListAsiento')
     {
         $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->addSearchFields($viewName, ['CAST(numero AS CHAR(10))', 'concepto']);
@@ -96,7 +96,7 @@ class ListAsiento extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewConcepts($viewName = 'ListConceptoPartida')
+    protected function createViewConcepts($viewName = 'ListConceptoPartida')
     {
         $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
         $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
@@ -108,7 +108,7 @@ class ListAsiento extends ListController
      * 
      * @param string $viewName
      */
-    private function createViewJournals($viewName = 'ListDiario')
+    protected function createViewJournals($viewName = 'ListDiario')
     {
         $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
         $this->addSearchFields($viewName, ['iddiario', 'descripcion']);
@@ -132,9 +132,8 @@ class ListAsiento extends ListController
                     $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
                 }
                 return true;
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 }

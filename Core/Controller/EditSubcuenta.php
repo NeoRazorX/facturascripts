@@ -59,6 +59,21 @@ class EditSubcuenta extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createAccountingView($viewName = 'ListAsiento')
+    {
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->views[$viewName]->addOrderBy(['numero'], 'number', 2);
+        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
+        $this->views[$viewName]->searchFields[] = 'concepto';
+        
+        /// disable columns
+        $this->views[$viewName]->disableColumn('exercise');
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -66,7 +81,7 @@ class EditSubcuenta extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListAsiento', 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->createAccountingView();
     }
 
     /**

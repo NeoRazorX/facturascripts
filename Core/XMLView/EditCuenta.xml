@@ -26,10 +26,10 @@
                 <widget type="text" fieldname="idcuenta" />
             </column>
             <column name="account" numcolumns="3" order="110">
-                <widget type="text" fieldname="codcuenta" maxlength="10" icon="fas fa-hashtag" />
+                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="120">
-                <widget type="textarea" fieldname="descripcion" />
+                <widget type="text" fieldname="descripcion" required="true" />
             </column>
         </group>
         <group name="seccondary-data" numcolumns="12">
@@ -39,7 +39,7 @@
                 </widget>
             </column>
             <column name="fiscal-exercise" numcolumns="3" order="110">
-                <widget type="select" fieldname="codejercicio" required="true" onclick="EditEjercicio">
+                <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic" required="true">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
