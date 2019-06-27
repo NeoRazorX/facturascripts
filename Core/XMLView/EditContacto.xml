@@ -91,7 +91,7 @@
                 <widget type="text" fieldname="provincia" />
             </column>
             <column name="country" numcolumns="2" order="150">
-                <widget type="select" fieldname="codpais" required="true">
+                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>

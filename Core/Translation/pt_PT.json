@@ -212,6 +212,8 @@
     "controller-not-found": "Controlador não encontrado",
     "conversion-rate": "Conversion rate",
     "conversion-rate-not-0": "A taxa de conversão não pode ser 0.",
+    "convert-into-customer": "convert-into-customer",
+    "convert-into-supplier": "convert-to-supplier",
     "cost-price": "Preço de custo",
     "countries": "Países",
     "country": "País",

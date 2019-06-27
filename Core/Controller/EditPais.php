@@ -63,6 +63,9 @@ class EditPais extends EditController
     {
         $this->addListView($viewName, 'Provincia', 'provinces');
         $this->views[$viewName]->addOrderBy(['provincia'], 'name', 1);
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('country');
     }
 
     /**

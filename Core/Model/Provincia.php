@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra     <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2013-2019  Carlos Garcia Gomez         <carlos@facturascripts.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2013-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * A province.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  */
 class Provincia extends Base\ModelClass
 {
@@ -49,34 +50,11 @@ class Provincia extends Base\ModelClass
     public $codpais;
 
     /**
-     * Postal code associated with the province.
-     *
-     * @url: https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png
-     *
-     * @var string
-     */
-    public $codpostal2d;
-
-    /**
      * Identify the registry.
      *
      * @var string
      */
     public $idprovincia;
-
-    /**
-     * Latitude associated with the place.
-     *
-     * @var float
-     */
-    public $latitud;
-
-    /**
-     * Length associated with the place.
-     *
-     * @var float
-     */
-    public $longitud;
 
     /**
      * Name of the province.
@@ -89,6 +67,18 @@ class Provincia extends Base\ModelClass
     {
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new Pais();
+
+        return parent::install();
     }
 
     /**
@@ -130,8 +120,8 @@ class Provincia extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List')
     {
-        return parent::url($type, 'ListPais?activetab=List');
+        return parent::url($type, $list);
     }
 }

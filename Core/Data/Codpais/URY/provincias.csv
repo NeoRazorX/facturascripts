@@ -1,20 +1,20 @@
-idprovincia;codpais;provincia;codigoiso;codpostal2d;latitud;longitud;fecha_revision
-1;URY;Artigas;UY-AR;55000;-30.466;-56.466;20/02/2018
-2;URY;Canelones;UY-CA;90000;-34.516;-56.283;20/02/2018
-3;URY;Cerro Largo;UY-CL;37000;-32.366;-54.183;20/02/2018
-4;URY;Colonia;UY-CO;70000;-34.471;-57.844;20/02/2018
-5;URY;Durazno;UY-DU;97000;-33.383;-56.516;20/02/2018
-6;URY;Flores;UY-FS;85000;-33.533;-56.883;20/02/2018
-7;URY;Florida;UY-FD;94000;-34.1;-56.216;20/02/2018
-8;URY;Lavalleja;UY-LA;30000;-34.366;-55.233;20/02/2018
-9;URY;Maldonado;UY-MA;20000;-34.908;-54.958;20/02/2018
-10;URY;Montevideo;UY-MO;11000-13000;-34.866;-56.166;20/02/2018
-11;URY;Paysandú;UY-PA;60000;-32.32;-58.075;20/02/2018
-12;URY;Río Negro;UY-RN;65000;-33.133;-58.3;20/02/2018
-13;URY;Rivera;UY-RV;40000;-30.902;-55.55;20/02/2018
-14;URY;Rocha;UY-RO;27000;-34.483;-54.35;20/02/2018
-15;URY;Salto;UY-SA;50000;-31.388;-57.96;20/02/2018
-16;URY;San José;UY-SJ;80000;-34.333;-56.716;20/02/2018
-17;URY;Soriano;UY-SO;75000;-33.25;-58.031;20/02/2018
-18;URY;Tacuarembó;UY-TA;45000;-31.714;-55.982;20/02/2018
-19;URY;Treinta y Tres;UY-TT;33000;-33.23;-54.382;20/02/2018
+idprovincia;codpais;provincia;codigoiso
+1;URY;Artigas;UY-AR
+2;URY;Canelones;UY-CA
+3;URY;Cerro Largo;UY-CL
+4;URY;Colonia;UY-CO
+5;URY;Durazno;UY-DU
+6;URY;Flores;UY-FS
+7;URY;Florida;UY-FD
+8;URY;Lavalleja;UY-LA
+9;URY;Maldonado;UY-MA
+10;URY;Montevideo;UY-MO
+11;URY;Paysandú;UY-PA
+12;URY;Río Negro;UY-RN
+13;URY;Rivera;UY-RV
+14;URY;Rocha;UY-RO
+15;URY;Salto;UY-SA
+16;URY;San José;UY-SJ
+17;URY;Soriano;UY-SO
+18;URY;Tacuarembó;UY-TA
+19;URY;Treinta y Tres;UY-TT

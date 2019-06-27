@@ -212,6 +212,8 @@
     "controller-not-found": "Ez da kontrolatzailea aurkitu",
     "conversion-rate": "€ bihurketa tasa",
     "conversion-rate-not-0": "Bihurketa tasa ezin da 0 izan.",
+    "convert-into-customer": "convert-into-customer",
+    "convert-into-supplier": "convert-to-supplier",
     "cost-price": "Kostu prezioa",
     "countries": "Estatuak",
     "country": "Estatua",

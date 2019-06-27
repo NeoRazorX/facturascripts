@@ -1,14 +1,14 @@
-idprovincia;codpais;provincia;codigoiso;codpostal2d;latitud;longitud;fecha_revision;
-1;PAN;"Bocas del Toro";"PAN-1";000001;9.34;-82.24;19-02-2018;
-2;PAN;"Coclé";"PAN-2";000002;8.5;-80.5;19-02-2018;
-3;PAN;"Colón";"PAN-3";000003;9.17;-80.17;19-02-2018;
-4;PAN;"Chiriquí";"PAN-4";000004;8.43;-82.43;19-02-2018;
-5;PAN;"Darién";"PAN-5";000012;8.41;-77.92;19-02-2018;
-6;PAN;"Herrera";"PAN-6";000005;7.83;-80.67;19-02-2018;
-7;PAN;"Los Santos";"PAN-7";000006;7.6;-80.45;19-02-2018;
-8;PAN;"Panamá";"PAN-8";000007;9;-79.17;19-02-2018;
-9;PAN;"Veraguas";"PAN-9";000008;8;-81;19-02-2018;
-10;PAN;"Panamá Oeste";"PAN-13";000000;8.88;-79.78;19-02-2018;
-11;PAN;"Emberá-Wounaan";"PAN-EW";000012;8.53;-77.54;19-02-2018;
-12;PAN;"Guna Yala";"PAN-KY";000009;9.3;-78.34;19-02-2018;
-13;PAN;"Ngäbe-Buglé";"PAN-NB";000010;8.77;-81.734;19-02-2018;
+idprovincia;codpais;provincia;codigoiso
+1;PAN;"Bocas del Toro";"PAN-1"
+2;PAN;"Coclé";"PAN-2"
+3;PAN;"Colón";"PAN-3"
+4;PAN;"Chiriquí";"PAN-4"
+5;PAN;"Darién";"PAN-5"
+6;PAN;"Herrera";"PAN-6"
+7;PAN;"Los Santos";"PAN-7"
+8;PAN;"Panamá";"PAN-8"
+9;PAN;"Veraguas";"PAN-9"
+10;PAN;"Panamá Oeste";"PAN-13"
+11;PAN;"Emberá-Wounaan";"PAN-EW"
+12;PAN;"Guna Yala";"PAN-KY"
+13;PAN;"Ngäbe-Buglé";"PAN-NB"

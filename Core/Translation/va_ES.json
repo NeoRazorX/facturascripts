@@ -212,6 +212,8 @@
     "controller-not-found": "No s'ha trobat el controlador",
     "conversion-rate": "Taxa de conversió a €",
     "conversion-rate-not-0": "La taxa de conversió no pot ser 0.",
+    "convert-into-customer": "convert-into-customer",
+    "convert-into-supplier": "convert-to-supplier",
     "cost-price": "Preu de cost",
     "countries": "Països",
     "country": "País",
