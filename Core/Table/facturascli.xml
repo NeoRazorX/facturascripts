@@ -212,6 +212,10 @@
         <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
+        <name>ca_facturascli_clientes</name>
+        <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_facturascli_ejercicios</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>

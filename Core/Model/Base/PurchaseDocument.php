@@ -66,6 +66,21 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// we need to call parent first
+        $result = parent::install();
+
+        /// needed dependencies
+        new Proveedor();
+
+        return $result;
+    }
+
+    /**
      * Assign the supplier to the document.
      * 
      * @param Proveedor $subject
@@ -90,7 +105,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
         return true;
     }
-    
+
     /**
      * 
      * @return string

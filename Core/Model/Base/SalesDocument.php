@@ -170,6 +170,21 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// we need to call parent first
+        $result = parent::install();
+
+        /// needed dependencies
+        new Cliente();
+
+        return $result;
+    }
+
+    /**
      * Assign the customer to the document.
      * 
      * @param Cliente|Contacto $subject
