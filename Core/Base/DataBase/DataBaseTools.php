@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\Translator;
 /**
  * This class group all method for DataBase, tools like check/generate table, compare constraints/columns, ...
  *
- * @author Carlos García Gómez
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 class DataBaseTools
 {
@@ -82,13 +82,9 @@ class DataBaseTools
      */
     public function checkTable($tableName, $xmlCols, $xmlCons)
     {
-        if (!self::$dataBase->checkTableAux($tableName)) {
-            self::$miniLog->critical(self::$i18n->trans('error-to-innodb'));
-        }
-
         /**
-         * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
-         * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
+         * If we have to make changes to the restrictions, we first eliminate them all.
+         * Then we will add the correct ones. We do it like this because it avoids problems in MySQL.
          */
         $dbCons = self::$dataBase->getConstraints($tableName);
         $sql2 = $this->compareConstraints($tableName, $xmlCons, $dbCons, true);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,8 +25,8 @@ use FacturaScripts\Core\Base\DataBase\Postgresql;
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class DataBase
 {
@@ -99,24 +99,6 @@ class DataBase
 
         self::$miniLog->sql('Begin Transaction');
         return self::$engine->beginTransaction(self::$link);
-    }
-
-    /**
-     * Make extra checks on the table.
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     */
-    public function checkTableAux($tableName)
-    {
-        $error = '';
-        $result = self::$engine->checkTableAux(self::$link, $tableName, $error);
-        if (!$result) {
-            self::$miniLog->critical($error);
-        }
-
-        return $result;
     }
 
     /**

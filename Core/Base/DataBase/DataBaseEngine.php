@@ -45,15 +45,6 @@ interface DataBaseEngine
     public function checkSequence($link, $tableName, $default, $colname);
 
     /**
-     * Additional check to see if a table exists
-     *
-     * @param \mysqli|resource $link
-     * @param string           $tableName
-     * @param string           $error
-     */
-    public function checkTableAux($link, $tableName, &$error);
-
-    /**
      * Closes the connection to the database
      *
      * @param \mysqli|resource $link

@@ -112,31 +112,6 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Runs extra checks in the table.
-     *
-     * @param \mysqli $link
-     * @param string  $tableName
-     * @param string  $error
-     *
-     * @return bool
-     */
-    public function checkTableAux($link, $tableName, &$error)
-    {
-        $result = true;
-
-        /// table uses InnoDB?
-        $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
-        if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
-            $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
-            if ($result) {
-                $error = $this->i18n->trans('cant-convert-to-innodb', ['%tableName%' => $tableName]);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Disconnect from the database.
      *
      * @param \mysqli $link
