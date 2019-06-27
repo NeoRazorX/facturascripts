@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -51,5 +53,52 @@ class EditDiario extends EditController
         $data['title'] = 'journal';
         $data['icon'] = 'fas fa-book';
         return $data;
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createAccountingView($viewName = 'ListAsiento')
+    {
+        $this->addListView($viewName, 'Asiento', 'accounting-entry');
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
+        $this->views[$viewName]->searchFields[] = 'concepto';
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('journal');
+    }
+
+    /**
+     * Create tabs or views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createAccountingView();
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListAsiento':
+                $iddiario = $this->getViewModelValue($this->getMainViewName(), 'iddiario');
+                $where = [new DataBaseWhere('iddiario', $iddiario)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

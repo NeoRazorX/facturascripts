@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditDiario
- *
- * @author Raul Jimenez   <raul.jimenez.com>
- *
+ * @author Raul Jimenez         <raul.jimenez.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <column name="code" numcolumns="2" order="100">
-            <widget type="text" fieldname="iddiario" icon="fas fa-hashtag" required="true" />
+            <widget type="text" fieldname="iddiario" icon="fas fa-hashtag" readonly="dinamic" required="true" />
         </column>
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" required="true" />

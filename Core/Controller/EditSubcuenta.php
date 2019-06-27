@@ -68,7 +68,7 @@ class EditSubcuenta extends EditController
         $this->views[$viewName]->addOrderBy(['numero'], 'number', 2);
         $this->views[$viewName]->addOrderBy(['importe'], 'amount');
         $this->views[$viewName]->searchFields[] = 'concepto';
-        
+
         /// disable columns
         $this->views[$viewName]->disableColumn('exercise');
     }
@@ -97,7 +97,7 @@ class EditSubcuenta extends EditController
                 /// needed dependency
                 new Partida();
 
-                $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
+                $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
                 $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
                 $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
                 $view->loadData('', $where);
