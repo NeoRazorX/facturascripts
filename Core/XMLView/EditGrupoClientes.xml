@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="subaccount" numcolumns="3" order="120">
-                <widget type="text" fieldname="codsubcuenta" />
+                <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
         </group>
     </columns>

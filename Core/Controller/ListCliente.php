@@ -62,7 +62,7 @@ class ListCliente extends ListController
     protected function createViewContacts($viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
+        $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['email'], 'email');
         $this->addOrderBy($viewName, ['nombre'], 'name');
         $this->addOrderBy($viewName, ['empresa'], 'company');

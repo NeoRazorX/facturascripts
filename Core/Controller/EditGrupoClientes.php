@@ -58,6 +58,25 @@ class EditGrupoClientes extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createCustomerView($viewName = 'ListCliente')
+    {
+        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->views[$viewName]->addOrderBy(['codcliente'], 'code', 1);
+        $this->views[$viewName]->addOrderBy(['email'], 'email');
+        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name');
+        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
+
+        /// settings
+        $this->views[$viewName]->disableColumn('group');
+        $this->views[$viewName]->settings['btnNew'] = false;
+        $this->views[$viewName]->settings['btnDelete'] = false;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -65,12 +84,7 @@ class EditGrupoClientes extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addListView('ListCliente', 'Cliente', 'customers', 'fas fa-users');
-
-        /// settings
-        $this->views['ListCliente']->disableColumn('group', true);
-        $this->views['ListCliente']->settings['btnNew'] = false;
-        $this->views['ListCliente']->settings['btnDelete'] = false;
+        $this->createCustomerView();
     }
 
     /**
