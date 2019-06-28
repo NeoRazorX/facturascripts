@@ -39,7 +39,7 @@ abstract class EditController extends PanelController
      */
     public function getModel()
     {
-        $viewName = array_keys($this->views)[0];
+        $viewName = $this->getMainViewName();
         return $this->views[$viewName]->model;
     }
 
@@ -52,18 +52,7 @@ abstract class EditController extends PanelController
     {
         $data = parent::getPageData();
         $data['showonmenu'] = false;
-
         return $data;
-    }
-
-    /**
-     * Returns the name assigned to the main view
-     *
-     * @return string
-     */
-    protected function getMainViewName()
-    {
-        return 'Edit' . $this->getModelClassName();
     }
 
     /**
@@ -72,7 +61,7 @@ abstract class EditController extends PanelController
     protected function createViews()
     {
         $modelName = $this->getModelClassName();
-        $viewName = $this->getMainViewName();
+        $viewName = 'Edit' . $this->getModelClassName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];
 

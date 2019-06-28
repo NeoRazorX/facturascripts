@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,10 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\ExportManager;
-use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of BaseController
@@ -72,10 +74,10 @@ abstract class BaseController extends Base\Controller
      *
      * @var BaseView[]|ListView[]
      */
-    public $views;
+    public $views = [];
 
     /**
-     * Inserts the views to display.
+     * Inserts the views or tabs to display.
      */
     abstract protected function createViews();
 
@@ -104,7 +106,6 @@ abstract class BaseController extends Base\Controller
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->numberTools = new Base\NumberTools();
-        $this->views = [];
     }
 
     /**
@@ -150,6 +151,20 @@ abstract class BaseController extends Base\Controller
     }
 
     /**
+     * Returns the name assigned to the main view
+     *
+     * @return string
+     */
+    protected function getMainViewName()
+    {
+        foreach (array_keys($this->views) as $key) {
+            return $key;
+        }
+
+        return '';
+    }
+
+    /**
      * Returns the configuration value for the indicated view.
      *
      * @param string $viewName
@@ -160,6 +175,35 @@ abstract class BaseController extends Base\Controller
     public function getSettings($viewName, $property)
     {
         return isset($this->views[$viewName]->settings[$property]) ? $this->views[$viewName]->settings[$property] : null;
+    }
+
+    /**
+     * Return the value for a field in the model of the view.
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    public function getViewModelValue($viewName, $fieldName)
+    {
+        $model = $this->views[$viewName]->model;
+        return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
+    }
+
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param Response                   $response
+     * @param User                       $user
+     * @param Base\ControllerPermissions $permissions
+     */
+    public function privateCore(&$response, $user, $permissions)
+    {
+        parent::privateCore($response, $user, $permissions);
+
+        // Create the views to display
+        $this->createViews();
     }
 
     /**
@@ -204,6 +248,7 @@ abstract class BaseController extends Base\Controller
         if (empty($results)) {
             $results[] = ['key' => null, 'value' => $this->i18n->trans('no-data')];
         }
+
         return $results;
     }
 

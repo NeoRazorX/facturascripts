@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -59,9 +59,6 @@ abstract class ListController extends BaseController
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        // Create views to show
-        $this->createViews();
 
         // Store action to execute
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));

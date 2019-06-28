@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,7 +36,7 @@ abstract class PanelController extends BaseController
      *
      * @var bool
      */
-    public $hasData;
+    public $hasData = false;
 
     /**
      * Tabs position in page: left, bottom.
@@ -57,7 +57,6 @@ abstract class PanelController extends BaseController
     public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
     {
         parent::__construct($cache, $i18n, $miniLog, $className, $uri);
-        $this->hasData = false;
         $this->setTabsPosition('left');
     }
 
@@ -71,20 +70,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Return the value for a field in the model of the view.
-     *
-     * @param string $viewName
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    public function getViewModelValue($viewName, $fieldName)
-    {
-        $model = $this->views[$viewName]->model;
-        return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
-    }
-
-    /**
      * Runs the controller's private logic.
      *
      * @param Response                   $response
@@ -95,9 +80,6 @@ abstract class PanelController extends BaseController
     {
         parent::privateCore($response, $user, $permissions);
 
-        // Create the views to display
-        $this->createViews();
-
         // Get any operations that have to be performed
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
@@ -107,7 +89,6 @@ abstract class PanelController extends BaseController
         }
 
         // Load the model data for each view
-        $mainViewName = array_keys($this->views)[0];
         foreach ($this->views as $viewName => $view) {
             if ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
@@ -118,7 +99,7 @@ abstract class PanelController extends BaseController
             $this->loadData($viewName, $view);
 
             // check if we are processing the main view
-            if ($viewName == $mainViewName) {
+            if ($viewName === $this->getMainViewName()) {
                 $this->hasData = $view->count > 0;
                 continue;
             }
@@ -154,7 +135,6 @@ abstract class PanelController extends BaseController
             default:
                 $this->tabsPosition = 'left';
                 $this->setTemplate('Master/PanelController');
-                break;
         }
     }
 
@@ -334,11 +314,15 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'edit':
-                $this->editAction();
+                if ($this->editAction()) {
+                    $this->views[$this->active]->model->clear();
+                }
                 break;
 
             case 'insert':
-                $this->insertAction();
+                if ($this->insertAction()) {
+                    $this->views[$this->active]->model->clear();
+                }
                 break;
 
             case 'save-document':
@@ -396,7 +380,6 @@ abstract class PanelController extends BaseController
             }
 
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-            $this->views[$this->active]->model->clear();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
