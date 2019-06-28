@@ -38,7 +38,7 @@
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
+                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
             </column>
             <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
                 <widget type="checkbox" fieldname="personafisica" />

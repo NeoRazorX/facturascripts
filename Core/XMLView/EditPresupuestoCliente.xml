@@ -47,17 +47,17 @@
             <column name="customer" title="name-or-business-name" numcolumns="3" order="110">
                 <widget type="text" fieldname="nombrecliente" required="true" />
             </column>
-            <column name="cifnif" title="cifnif" numcolumns="2" order="120">
-                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
+            <column name="fiscal-number" numcolumns="2" order="120">
+                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
             </column>
             <column name="address" numcolumns="5" order="120">
                 <widget type="text" fieldname="direccion" icon="fas fa-map-marked" />
             </column>
             <column name="zip-code" numcolumns="2" order="130">
-                <widget type="text" fieldname="codpostal" />
+                <widget type="text" fieldname="codpostal" maxlength="10" />
             </column>
             <column name="postalmail" numcolumns="2" order="140">
-                <widget type="text" fieldname="apartado" />
+                <widget type="text" fieldname="apartado" maxlength="10" />
             </column>
             <column name="city" numcolumns="3" order="150">
                 <widget type="text" fieldname="ciudad" />

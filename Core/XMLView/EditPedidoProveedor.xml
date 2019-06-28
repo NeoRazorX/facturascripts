@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @autor Luis Miguel Pérez     <luismi@pcrednet.com>
+ * @author Luis Miguel Pérez    <luismi@pcrednet.com>
 -->
 <view>
     <columns>
@@ -34,16 +34,21 @@
             <column name="numsupplier" order="130">
                 <widget type="text" fieldname="numproveedor" icon="fas fa-hashtag" />
             </column>
+            <column name="email-sent" order="140">
+                <widget type="date" fieldname="femail" />
+            </column>
         </group>
         <group name="supplier" title="supplier" icon="fas fa-user" numcolumns="12">
             <column name="supplier" order="100">
-                <widget type="text" fieldname="nombre" icon="fas fa-user" required="true" />
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor" readonly="true" required="true">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="razonsocial"></values>
+                </widget>
             </column>
-            <column name="cifnif" order="110">
-                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
+            <column name="business-name" title="name-or-business-name" order="110">
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="email-sent" order="120">
-                <widget type="date" fieldname="femail" />
+            <column name="fiscal-number" order="120">
+                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
             </column>
         </group>
         <group name="payment-method" title="payment-method" icon="fas fa-dollar-sign" numcolumns="6">

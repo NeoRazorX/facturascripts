@@ -34,7 +34,7 @@
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="130">            
-                <widget type="text" fieldname="cifnif" icon="fas fa-id-card" />
+                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
             </column>
             <column name="administrator" numcolumns="3" order="140">
                 <widget type="text" fieldname="administrador" hint="company-manager"/>
@@ -51,7 +51,7 @@
                 <widget type="text" fieldname="apartado"/>
             </column>
             <column name="postalcode" numcolumns="2" order="120">
-                <widget type="text" fieldname="codpostal" />
+                <widget type="text" fieldname="codpostal" maxlength="10" />
             </column>
             <column name="city" numcolumns="4" order="130">
                 <widget type="text" fieldname="ciudad" />
