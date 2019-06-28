@@ -396,6 +396,7 @@ abstract class PanelController extends BaseController
             }
 
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+            $this->views[$this->active]->model->clear();
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
