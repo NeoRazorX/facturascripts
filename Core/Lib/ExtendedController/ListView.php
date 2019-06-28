@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Core\Lib\Widget\GroupItem;
 use FacturaScripts\Core\Model\PageFilter;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -176,6 +177,7 @@ class ListView extends BaseView
                     unset($this->pageFilters[$key]);
                 }
             }
+
             return true;
         }
 
@@ -198,18 +200,15 @@ class ListView extends BaseView
 
     /**
      *
-     * @return array
+     * @return GroupItem[]
      */
     public function getColumns()
     {
-        $columns = [];
         foreach ($this->columns as $group) {
-            foreach ($group->columns as $col) {
-                $columns[] = $col;
-            }
+            return $group->columns;
         }
 
-        return $columns;
+        return [];
     }
 
     /**

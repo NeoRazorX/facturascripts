@@ -39,13 +39,13 @@
     <input type="hidden" name="idestado" value="{{ currentView.model.idestado }}" id="doc_idestado"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="form-row">
-        {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, fsc.getSelectValues('Almacen')) }}
+        {{ macros.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, currentView.getSelectValues('Almacen')) }}
         {% if currentView.model.subjectColumn() == 'codcliente' %}
             {{ macros.customerSelect(i18n, 'codcliente', 'codcliente', currentView.model, fsc.getNewSubjectUrl()) }}
         {% elseif currentView.model.subjectColumn() == 'codproveedor' %}
             {{ macros.supplierSelect(i18n, 'codproveedor', 'codproveedor', currentView.model, fsc.getNewSubjectUrl()) }}
         {% endif %}
-        {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
+        {{ macros.customSelect('doc_codserie', 'codserie', currentView.model.codserie, currentView.getSelectValues('Serie')) }}
         {{ macros.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
         {% for field in fsc.getCustomFields() %}
             {{ macros.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(currentView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}

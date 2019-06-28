@@ -30,15 +30,10 @@ abstract class BusinessDocumentController extends PanelController
 {
 
     /**
-     * Default item limit for selects.
-     */
-    const ITEM_SELECT_LIMIT = 500;
-
-    /**
      *
      * @var BusinessDocumentTools
      */
-    private $documentTools;
+    protected $documentTools;
 
     /**
      * Returns an array of custom fields to add on the header.
@@ -47,8 +42,6 @@ abstract class BusinessDocumentController extends PanelController
 
     /**
      * Returns the document class name.
-     *
-     * @return string
      */
     abstract public function getModelClassName();
 
@@ -83,31 +76,13 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * Returns an array with all data from selected model.
-     *
-     * @param string $modelName
-     *
-     * @return mixed
-     */
-    public function getSelectValues($modelName)
-    {
-        $values = [];
-        $modelName = self::MODEL_NAMESPACE . $modelName;
-        $model = new $modelName();
-
-        $order = [$model->primaryDescriptionColumn() => 'ASC'];
-        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
-            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
-        }
-
-        return $values;
-    }
-
-    /**
      * Load views and document.
      */
     protected function createViews()
     {
+        /// tabs on top
+        $this->setTabsPosition('top');
+
         /// document tab
         $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
         $view = new BusinessDocumentView($this->getLineXMLView(), 'new', $fullModelName);
@@ -116,9 +91,6 @@ abstract class BusinessDocumentController extends PanelController
         /// edit tab
         $viewName = 'Edit' . $this->getModelClassName();
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fas fa-edit');
-
-        /// tabs on top
-        $this->setTabsPosition('top');
     }
 
     /**
@@ -193,7 +165,6 @@ abstract class BusinessDocumentController extends PanelController
 
                 default:
                     $data['form'][$field] = $value;
-                    break;
             }
         }
 
@@ -224,15 +195,13 @@ abstract class BusinessDocumentController extends PanelController
             return;
         }
 
-        $documentView = $this->getLineXMLView();
-        $editViewName = 'Edit' . $this->getModelClassName();
         switch ($viewName) {
-            case $editViewName:
+            case 'Edit' . $this->getModelClassName():
                 $view->loadData($code);
                 $this->loadCustomContactsWidget($view);
                 break;
 
-            case $documentView:
+            case $this->getLineXMLView():
                 $view->loadData($code);
                 /// data not found?
                 $action = $this->request->request->get('action', '');
@@ -339,15 +308,11 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         /// custom data fields
-        foreach ($data['custom'] as $key => $value) {
-            $view->model->{$key} = $value;
-        }
+        $view->model->loadFromData($data['custom']);
 
         if ($view->model->save() && $this->saveLines($view, $data['lines'])) {
             /// final data fields
-            foreach ($data['final'] as $key => $value) {
-                $view->model->{$key} = $value;
-            }
+            $view->model->loadFromData($data['final']);
 
             $this->documentTools->recalculate($view->model);
             return $view->model->save() && $this->dataBase->commit() ? 'OK:' . $view->model->url() : $this->saveDocumentError('ERROR');
@@ -427,12 +392,12 @@ abstract class BusinessDocumentController extends PanelController
         $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
+        /// update subject data?
         if (!$this->views[$this->active]->model->exists()) {
             $this->views[$this->active]->model->updateSubject();
         }
 
-        $result = json_encode($this->views[$this->active]->model);
-        $this->response->setContent($result);
+        $this->response->setContent(json_encode($this->views[$this->active]->model));
         return false;
     }
 

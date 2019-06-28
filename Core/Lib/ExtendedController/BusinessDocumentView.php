@@ -34,6 +34,9 @@ use Symfony\Component\HttpFoundation\Request;
 class BusinessDocumentView extends BaseView
 {
 
+    const ITEM_SELECT_LIMIT = 500;
+    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
+
     /**
      *
      * @var EstadoDocumento[]
@@ -77,13 +80,11 @@ class BusinessDocumentView extends BaseView
      */
     public function getColumns()
     {
-        $keys = array_keys($this->columns);
-        if (empty($keys)) {
-            return [];
+        foreach ($this->columns as $group) {
+            return $group->columns;
         }
 
-        $key = $keys[0];
-        return $this->columns[$key]->columns;
+        return [];
     }
 
     /**
@@ -100,6 +101,10 @@ class BusinessDocumentView extends BaseView
         ];
 
         foreach ($this->getColumns() as $col) {
+            if ($col->hidden()) {
+                continue;
+            }
+
             $item = [
                 'data' => $col->widget->fieldname,
                 'type' => $col->widget->getType(),
@@ -115,22 +120,40 @@ class BusinessDocumentView extends BaseView
                 $item['trimDropdown'] = false;
             }
 
-            if (!$col->hidden()) {
-                $data['columns'][] = $item;
-                $data['headers'][] = self::$i18n->trans($col->title);
-            }
+            $data['columns'][] = $item;
+            $data['headers'][] = self::$i18n->trans($col->title);
         }
 
         foreach ($this->lines as $line) {
             $lineArray = [];
             foreach ($line->getModelFields() as $key => $field) {
-                $lineArray[$key] = $line->{$key};
+                $lineArray[$key] = $key === 'descripcion' ? Utils::fixHtml($line->{$key}) : $line->{$key};
             }
-            $lineArray['descripcion'] = Utils::fixHtml($lineArray['descripcion']);
             $data['rows'][] = $lineArray;
         }
 
         return json_encode($data);
+    }
+
+    /**
+     * Returns an array with all data from selected model.
+     *
+     * @param string $modelName
+     *
+     * @return array
+     */
+    public function getSelectValues($modelName)
+    {
+        $values = [];
+        $modelName = self::MODEL_NAMESPACE . $modelName;
+        $model = new $modelName();
+
+        $order = [$model->primaryDescriptionColumn() => 'ASC'];
+        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
+        }
+
+        return $values;
     }
 
     /**

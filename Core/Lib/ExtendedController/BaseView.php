@@ -39,7 +39,7 @@ abstract class BaseView
 
     /**
      *
-     * @var array
+     * @var GroupItem[]
      */
     protected $columns = [];
 
