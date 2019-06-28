@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
-use FacturaScripts\Core\Lib\Widget\GroupItem;
+use FacturaScripts\Core\Lib\Widget\ColumnItem;
 use FacturaScripts\Core\Model\PageFilter;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -200,7 +200,7 @@ class ListView extends BaseView
 
     /**
      *
-     * @return GroupItem[]
+     * @return ColumnItem[]
      */
     public function getColumns()
     {
