@@ -1,9 +1,5 @@
 {#
-   /**
-     * Grid View template
-     *
-     * Visualization of grid data edited into handsontable component.
-     *
+    /**
      * This file is part of FacturaScripts
      * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
@@ -19,11 +15,10 @@
      *
      * You should have received a copy of the GNU Lesser General Public License
      * along with this program. If not, see http://www.gnu.org/licenses/.
-     *
-    */
+     */
 #}
+
 {# IMPORTANT: This template is only executed if the master view has data. #}
-{% import _self as macros %}
 {% set currentView = fsc.getCurrentView() %}
 {% set currentViewName = currentView.getViewName() %}
 {% set detailView = currentView.detailView %}
@@ -62,15 +57,15 @@
     <div class="col-12">
         {# -- Tabs: When detail view has a master card -- #}
         {% if detailMasterColumns is not empty %}
-            {{ macros.tabRender(currentView, i18n) }}
+            {{ _self.tabRender(currentView, i18n) }}
         {% endif %}
         <div class="tab-content mt-1">
             <div class="tab-pane show active" id="tab{{ detailViewName }}" role="tabpanel">
                 {# -- Row header -- #}
                 {% if detailMasterColumns is not empty %}
-                    {{ macros.rowRender(fsc, currentView, currentViewName, 'header') }}
+                    {{ _self.rowRender(fsc, currentView, currentViewName, 'header') }}
                 {% endif %}
-                {{ macros.rowRender(fsc, detailView, currentViewName, 'header') }}
+                {{ _self.rowRender(fsc, detailView, currentViewName, 'header') }}
                 {# -- Master data -- #}
                 <form id="{{ formName }}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="{{ action }}"/>
@@ -152,14 +147,14 @@
                 </form>
                 <br/>
                 {# -- Row footer -- #}
-                {{ macros.rowRender(fsc, detailView, currentViewName, 'footer') }}
+                {{ _self.rowRender(fsc, detailView, currentViewName, 'footer') }}
                 {% if detailMasterColumns is not empty %}
-                    {{ macros.rowRender(fsc, currentView, currentViewName, 'footer') }}
+                    {{ _self.rowRender(fsc, currentView, currentViewName, 'footer') }}
                 {% endif %}
                 {# -- Modals -- #}
-                {{ macros.modalRender(detailView, currentViewName) }}
+                {{ _self.modalRender(detailView, currentViewName) }}
                 {% if detailMasterColumns is not empty %}
-                    {{ macros.modalRender(currentView, currentViewName) }}
+                    {{ _self.modalRender(currentView, currentViewName) }}
                 {% endif %}
             </div>
             {% if detailMasterColumns is not empty %}

@@ -1,9 +1,5 @@
 {#
-   /**
-     * Admin Home view template.
-     *
-     * Main page for administration of plugins and addons.
-     *
+    /**
      * This file is part of FacturaScripts
      * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
@@ -18,15 +14,12 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see <http://www.gnu.org/licenses/>.
-     *
-    */
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     */
 #}
-
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
-    {% import _self as macros %}
     {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
     <div class="container-fluid mb-2">
@@ -86,10 +79,10 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="installed" role="tabpanel">
-            {{ macros.showInstalledPlugins(fsc, i18n, installedPlugins) }}
+            {{ _self.showInstalledPlugins(fsc, i18n, installedPlugins) }}
         </div>
         <div class="tab-pane fade" id="all" role="tabpanel">
-            {{ macros.showAllPlugins(fsc, i18n, allPlugins) }}
+            {{ _self.showAllPlugins(fsc, i18n, allPlugins) }}
         </div>
     </div>
 

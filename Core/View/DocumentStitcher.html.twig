@@ -1,5 +1,5 @@
 {#
-   /**
+    /**
      * This file is part of FacturaScripts
      * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
@@ -14,13 +14,10 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see <http://www.gnu.org/licenses/>.
-     *
-    */
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     */
 #}
-
 {% extends "Master/MenuTemplate.html.twig" %}
-{% import _self as macros %}
 {% set pageData = fsc.getPageData() %}
 
 {% block body %}
@@ -65,7 +62,7 @@
                 <div class="col">
                     {% for doc in fsc.documents %}
                         <input type="hidden" name="code[]" value="{{ doc.primaryColumnValue() }}"/>
-                        {{ macros.documentCard(doc, fsc, i18n) }}
+                        {{ _self.documentCard(doc, fsc, i18n) }}
                     {% else %}
                         <div class="alert alert-warning" role="alert">
                             {{ i18n.trans('no-data') }}

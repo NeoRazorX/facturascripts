@@ -16,9 +16,9 @@
                             <img src="Core/Assets/Images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
                         </a>
                         <ul class="nav navbar-nav mr-auto">
-                            {% import 'Macro/Menu.html.twig' as MenuMacro %}
+                            {% import 'Macro/Menu.html.twig' as macros %}
                             {% for menuItem in menuManager.getMenu() %}
-                                {{ MenuMacro.showMenu(menuItem) }}
+                                {{ macros.showMenu(menuItem) }}
                             {% endfor %}
                         </ul>
                         <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">

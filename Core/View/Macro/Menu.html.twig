@@ -1,7 +1,5 @@
 {#
-   /**
-     * Macros to generate app menu.
-     *
+    /**
      * This file is part of FacturaScripts
      * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
@@ -17,16 +15,11 @@
      *
      * You should have received a copy of the GNU Lesser General Public License
      * along with this program. If not, see <http://www.gnu.org/licenses/>.
-     *
      */
 #}
 
-
-{#
-    Generate menu and submenus structure.
-#}
 {% macro showMenu(menuItem, parent) %}
-    {% import _self as MenuMacro %}
+    {% import _self as macros %}
     {% set active = menuItem.active ? ' active' : '' %}
     {% set menuId = parent is empty ? 'menu-' ~ menuItem.title : parent ~ menuItem.name %}
 
@@ -59,7 +52,7 @@
                 </a>
             </li>
         {% else %}
-            {{ MenuMacro.showMenu(item, menuId) }}
+            {{ macros.showMenu(item, menuId) }}
         {% endif %}
     {% endfor %}
     </ul>

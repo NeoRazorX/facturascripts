@@ -1,19 +1,19 @@
 {% extends "Master/MicroTemplate.html.twig" %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <br/><br/>
-            <div class="jumbotron">
-                <h1>
-                    <i class="fas fa-bug" aria-hidden="true"></i> {{ i18n.trans('template-not-found') }}:
-                </h1>
-                <hr class="my-4">
-                <p>{{ i18n.trans('template') }}: {{ template }}</p>
-                <p>{{ i18n.trans('controller') }}: {{ controllerName }}</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <br/><br/>
+                <div class="jumbotron">
+                    <h1>
+                        <i class="fas fa-bug" aria-hidden="true"></i> {{ i18n.trans('template-not-found') }}:
+                    </h1>
+                    <hr class="my-4">
+                    <p>{{ i18n.trans('template') }}: {{ template }}</p>
+                    <p>{{ i18n.trans('controller') }}: {{ controllerName }}</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

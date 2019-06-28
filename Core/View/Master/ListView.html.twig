@@ -1,4 +1,22 @@
-{% import _self as macros %}
+{#
+    /**
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     */
+#}
 {% set currentView = fsc.getCurrentView() %}
 {% set formName = 'form' ~ currentView.getViewName() %}
 
@@ -39,7 +57,7 @@
                 </div>
                 {% if currentView.settings.btnPrint %}
                     <div class="btn-group">
-                        {{ macros.printButton(fsc, currentView, i18n) }}
+                        {{ _self.printButton(fsc, currentView, i18n) }}
                     </div>
                 {% endif %}
             </div>
@@ -50,13 +68,13 @@
             </div>
             {# -- Search field -- #}
             {% if currentView.searchFields is not empty %}
-                {{ macros.searchControl(currentView, i18n) }}
+                {{ _self.searchControl(currentView, i18n) }}
             {% endif %}
             {# -- Center buttons -- #}
             <div class="col">
                 {# -- Filters button -- #}
                 {% if currentView.filters is not empty %}
-                    {{ macros.filterButton(currentView, i18n) }}
+                    {{ _self.filterButton(currentView, i18n) }}
                 {% endif %}
                 {# -- Row statistics -- #}
                 {% set row = currentView.getRow('statistics') %}
@@ -68,7 +86,7 @@
                 </div>
             {% else %}
                 {# -- OrderBy button -- #}
-                {{ macros.sortButton(currentView) }}
+                {{ _self.sortButton(currentView) }}
             {% endif %}
         </div>
         {# -- Filters -- #}
@@ -145,7 +163,7 @@
     </div>
     {# -- Save Filter modal window -- #}
     {% if currentView.showFilters %}
-        {{ macros.filterSaveModal(currentView, i18n) }}
+        {{ _self.filterSaveModal(currentView, i18n) }}
     {% endif %}
 </form>
 
@@ -251,7 +269,7 @@
             <div class="input-group">
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}"/>
                 <span class="input-group-append">
-                    <button class="btn btn-primary" type="submit">
+                    <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-search" aria-hidden="true"></i>
                     </button>
                 </span>
