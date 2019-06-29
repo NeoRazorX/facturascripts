@@ -338,11 +338,10 @@ class Producto extends Base\ModelClass
         $newReferencia = null;
 
         foreach ($this->getVariants() as $variant) {
-            if ($newPrecio == 0.0 || $variant->precio < $newPrecio) {
-                $newPrecio = $variant->precio;
-            }
             if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
+                $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
+                break;
             }
         }
 
