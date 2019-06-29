@@ -195,7 +195,7 @@ class BusinessDocumentView extends BaseView
         $newLines = [];
         $order = count($formLines);
         foreach ($formLines as $line) {
-            $line['order'] = $order;
+            $line['orden'] = $order;
             $newLines[] = $line;
             $order--;
         }
