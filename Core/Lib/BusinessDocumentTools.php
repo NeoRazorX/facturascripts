@@ -182,6 +182,10 @@ class BusinessDocumentTools
      */
     protected function clearTotals(BusinessDocument &$doc)
     {
+        $this->impuestosZonas = [];
+        $this->recargo = false;
+        $this->siniva = false;
+
         $doc->neto = 0.0;
         $doc->total = 0.0;
         $doc->totaleuros = 0.0;
@@ -238,8 +242,6 @@ class BusinessDocumentTools
      */
     protected function loadTaxZones($doc)
     {
-        $this->impuestosZonas = [];
-
         $impuestoZonaModel = new ImpuestoZona();
         foreach ($impuestoZonaModel->all([], ['prioridad' => 'DESC']) as $impZona) {
             if ($impZona->codpais == $doc->codpais && $impZona->provincia() == $doc->provincia) {

@@ -100,7 +100,7 @@ abstract class PanelController extends BaseController
 
             // check if we are processing the main view
             if ($viewName === $this->getMainViewName()) {
-                $this->hasData = $view->count > 0;
+                $this->hasData = $view->model->exists();
                 continue;
             }
 

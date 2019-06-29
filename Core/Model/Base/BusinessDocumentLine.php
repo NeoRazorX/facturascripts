@@ -231,10 +231,13 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public function test()
     {
+        if ('' === $this->codimpuesto) {
+            $this->codimpuesto = null;
+        }
+
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
         $this->pvptotal = $this->pvpsindto * (100 - $this->dtopor) / 100;
-
         return parent::test();
     }
 
