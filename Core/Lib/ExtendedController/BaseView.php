@@ -20,13 +20,13 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Widget\ColumnItem;
-use FacturaScripts\Core\Lib\Widget\GroupItem;
-use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\PageOption;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
+use FacturaScripts\Dinamic\Lib\Widget\GroupItem;
+use FacturaScripts\Dinamic\Lib\Widget\VisualItem;
+use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
+use FacturaScripts\Dinamic\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Model\PageOption;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Base definition for the views used in ExtendedControllers

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -52,5 +54,54 @@ class EditAlmacen extends EditController
         $data['title'] = 'warehouse';
         $data['icon'] = 'fas fa-building';
         return $data;
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createStockView($viewName = 'ListStock')
+    {
+        $this->addListView($viewName, 'Stock', 'stock', 'fas fa-cubes');
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
+        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('warehouse');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Add tabs or views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createStockView();
+    }
+
+    /**
+     * Load data view procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListStock':
+                $codalmacen = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
+                $where = [new DataBaseWhere('codalmacen', $codalmacen)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

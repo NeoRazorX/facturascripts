@@ -42,12 +42,12 @@
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="taxes" numcolumns="4" order="120">
+            <column name="taxes" titleurl="ListImpuesto" numcolumns="4" order="120">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="special-account" numcolumns="3" order="130">
+            <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" numcolumns="3" order="130">
                 <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
                     <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
                 </widget>

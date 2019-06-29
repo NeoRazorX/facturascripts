@@ -66,6 +66,10 @@ class EditCuentaEspecial extends EditController
 
         /// disable columns
         $this->views[$viewName]->disableColumn('special-account');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**

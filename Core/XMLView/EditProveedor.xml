@@ -85,7 +85,7 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="subaccount" numcolumns="3" order="130">
+            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="130">
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
             <column name="vat-regime" numcolumns="3" order="140">

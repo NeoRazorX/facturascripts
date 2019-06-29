@@ -63,7 +63,7 @@ class EditCuenta extends EditController
      */
     protected function createAccountingView($viewName = 'ListCuenta')
     {
-        $this->addListView($viewName, 'Cuenta', 'children-accounts');
+        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fas fa-level-down-alt');
         $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
 
         /// disable columns

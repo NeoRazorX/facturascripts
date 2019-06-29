@@ -28,7 +28,7 @@
             <column name="description" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="subaccount" numcolumns="3" order="120">
+            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="120">
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
         </group>

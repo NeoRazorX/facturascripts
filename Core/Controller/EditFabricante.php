@@ -55,6 +55,22 @@ class EditFabricante extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createProductView($viewName = 'ListProducto')
+    {
+        $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
+        $this->views[$viewName]->addOrderBy(['precio'], 'price');
+        $this->views[$viewName]->addOrderBy(['stock'], 'stock');
+        $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('manufacturer');
+    }
+
+    /**
      * Load views.
      */
     protected function createViews()
@@ -62,8 +78,7 @@ class EditFabricante extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// products tab
-        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
+        $this->createProductView();
     }
 
     /**
@@ -76,7 +91,7 @@ class EditFabricante extends EditController
     {
         switch ($viewName) {
             case 'ListProducto':
-                $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
+                $codfabricante = $this->getViewModelValue($this->getMainViewName(), 'codfabricante');
                 $where = [new DataBaseWhere('codfabricante', $codfabricante)];
                 $view->loadData('', $where);
                 break;

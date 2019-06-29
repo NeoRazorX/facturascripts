@@ -43,7 +43,7 @@
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="special-account" order="120">
+            <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" order="120">
                 <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
                     <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
                 </widget>

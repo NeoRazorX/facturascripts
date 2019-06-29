@@ -63,8 +63,8 @@ class EditBalance extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account');
-        $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated');
+        $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account', 'fas fa-book');
+        $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated', 'fas fa-clipboard-list');
     }
 
     /**

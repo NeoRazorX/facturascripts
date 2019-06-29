@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
-use FacturaScripts\Core\Lib\Widget\ColumnItem;
+use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use Symfony\Component\HttpFoundation\Request;

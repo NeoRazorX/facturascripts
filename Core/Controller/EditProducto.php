@@ -75,7 +75,9 @@ class EditProducto extends EditController
         }
 
         $columnReference = $this->views['EditStock']->columnForName('reference');
-        $columnReference->widget->setValuesFromArray($references, false);
+        if ($columnReference) {
+            $columnReference->widget->setValuesFromArray($references, false);
+        }
     }
 
     /**

@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditStock
- *
  * @author PC REDNET S.L.       <luismi@pcrednet.com>
  * @author Rafael San José      <info@rsanjoseo.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -31,13 +28,13 @@
         <column name="product" display="none" order="100">
             <widget type="text" fieldname="idproducto" />
         </column>
-        <column name="reference" numcolumns="2" order="110">
+        <column name="reference" title="variant" numcolumns="2" order="110">
             <widget type="select" fieldname="referencia" readonly="dinamic" required="true">
                 <values></values>
             </widget>
         </column>
-        <column name="warehouse" numcolumns="2" order="120">
-            <widget type="select" fieldname="codalmacen" readonly="dinamic" required="true">
+        <column name="warehouse" titleurl="ListAlmacen" numcolumns="2" order="120">
+            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" readonly="dinamic" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>

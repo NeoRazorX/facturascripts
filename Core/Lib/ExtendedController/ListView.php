@@ -20,12 +20,12 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Lib\ExportManager;
-use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
-use FacturaScripts\Core\Lib\Widget\ColumnItem;
-use FacturaScripts\Core\Model\PageFilter;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
+use FacturaScripts\Dinamic\Model\PageFilter;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

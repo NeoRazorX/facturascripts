@@ -56,6 +56,22 @@ class EditFamilia extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createProductView($viewName = 'ListProducto')
+    {
+        $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
+        $this->views[$viewName]->addOrderBy(['precio'], 'price');
+        $this->views[$viewName]->addOrderBy(['stock'], 'stock');
+        $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('manufacturer');
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -64,7 +80,7 @@ class EditFamilia extends EditController
         $this->setTabsPosition('bottom');
 
         /// more tabs
-        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
+        $this->createProductView();
         $this->addListView('ListFamilia', 'Familia', 'families', 'fas fa-level-down-alt');
     }
 
@@ -76,7 +92,7 @@ class EditFamilia extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
+        $codfamilia = $this->getViewModelValue($this->getMainViewName(), 'codfamilia');
         switch ($viewName) {
             case 'ListProducto':
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
