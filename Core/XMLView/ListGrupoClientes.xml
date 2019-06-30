@@ -27,7 +27,12 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="subaccount" order="120">
+        <column name="rate" order="120">
+            <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
+                <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre"></values>
+            </widget>
+        </column>
+        <column name="subaccount" order="130">
             <widget type="text" fieldname="codsubcuenta" />
         </column>
     </columns>

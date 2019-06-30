@@ -28,4 +28,8 @@
         <name>gruposclientes_pkey</name>
         <type>PRIMARY KEY (codgrupo)</type>
     </constraint>
+    <constraint>
+        <name>ca_gruposclientes_tarifas</name>
+        <type>FOREIGN KEY (codtarifa) REFERENCES tarifas (codtarifa) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
 </table>

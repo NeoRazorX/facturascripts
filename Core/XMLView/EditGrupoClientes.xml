@@ -28,7 +28,12 @@
             <column name="description" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="120">
+            <column name="rate" titleurl="ListTarifa" numcolumns="2" order="120">
+                <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
+                    <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="subaccount" titleurl="ListCuenta" numcolumns="2" order="130">
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
         </group>

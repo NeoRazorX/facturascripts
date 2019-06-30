@@ -45,6 +45,12 @@ class Cliente extends Base\ComercialContact
     public $codgrupo;
 
     /**
+     *
+     * @var string
+     */
+    public $codtarifa;
+
+    /**
      * Preferred payment days when calculating the due date of invoices.
      * Days separated by commas: 1,15,31
      *

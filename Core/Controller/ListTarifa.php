@@ -48,9 +48,10 @@ class ListTarifa extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListTarifa', 'Tarifa', 'rates', 'fas fa-money-bill-alt');
-        $this->addSearchFields('ListTarifa', ['nombre', 'codtarifa']);
-        $this->addOrderBy('ListTarifa', ['codtarifa'], 'code');
-        $this->addOrderBy('ListTarifa', ['nombre'], 'name', 1);
+        $viewName = 'ListTarifa';
+        $this->addView($viewName, 'Tarifa', 'rates', 'fas fa-money-bill-alt');
+        $this->addSearchFields($viewName, ['nombre', 'codtarifa']);
+        $this->addOrderBy($viewName, ['codtarifa'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
     }
 }

@@ -16,26 +16,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditTarifa
- *
  * @author @jhonsmall           <juancarloschico0@gmail.com>
  * @author Carlos garcía Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
-        <group name="data" numcolumns="12" title="rates">
-            <column name="codtarifa" title="code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codtarifa" icon="fas fa-hashtag" maxlength="6" required="true" />
+        <group name="data" numcolumns="12">
+            <column name="codtarifa" title="code" numcolumns="2" order="100">
+                <widget type="text" fieldname="codtarifa" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" required="true" />
             </column>
-            <column name="nombre" title="name" numcolumns="6" order="110">
+            <column name="nombre" title="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="aplicar" title="formula-to-apply" numcolumns="3" order="120">
-                <widget type="select" fieldname="aplicar" translate="true">
+            <column name="aplicar" title="formula-to-apply" order="120">
+                <widget type="select" fieldname="aplicar" translate="true" required="true">
                     <values title="formula-sale-price">pvp</values>
                     <values title="formula-cost-price">coste</values>
                 </widget>
+            </column>
+            <column name="incpct" title="x" order="130">
+                <widget type="number" fieldname="incporcentual" icon="fas fa-percentage" />
+            </column>
+            <column name="inclineal" title="y" order="140">
+                <widget type="money" fieldname="inclineal" />
             </column>
         </group>
         <group name="check" numcolumns="12">

@@ -45,6 +45,11 @@
         <column name="phone2" display="none" order="170">
             <widget type="text" fieldname="telefono2" />
         </column>
+        <column name="rate" display="none" order="175">
+            <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
+                <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre"></values>
+            </widget>
+        </column>
         <column name="group" order="180">
             <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes">
                 <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
