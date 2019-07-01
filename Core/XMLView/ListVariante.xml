@@ -42,13 +42,13 @@
                 <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="price" title="price" display="right" order="140">
+        <column name="price" display="right" order="140">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="cost-price" title="cost-price" display="none" order="150">
+        <column name="cost-price" display="none" order="150">
             <widget type="money" fieldname="coste" />
         </column>
-        <column name="stockfis" title="physical-stock" display="right" order="160">
+        <column name="stock" display="right" order="160">
             <widget type="number" fieldname="stockfis"/>
         </column>
     </columns>

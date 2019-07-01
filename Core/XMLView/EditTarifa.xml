@@ -34,11 +34,11 @@
                     <values title="formula-cost-price">coste</values>
                 </widget>
             </column>
-            <column name="incpct" title="x" order="130">
-                <widget type="number" fieldname="incporcentual" icon="fas fa-percentage" />
+            <column name="value-x" order="130">
+                <widget type="number" fieldname="valorx" icon="fas fa-percentage" />
             </column>
-            <column name="inclineal" title="y" order="140">
-                <widget type="money" fieldname="inclineal" />
+            <column name="value-y" order="140">
+                <widget type="money" fieldname="valory" />
             </column>
         </group>
         <group name="check" numcolumns="12">

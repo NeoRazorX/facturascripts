@@ -60,8 +60,8 @@ abstract class EditController extends PanelController
      */
     protected function createViews()
     {
-        $modelName = $this->getModelClassName();
         $viewName = 'Edit' . $this->getModelClassName();
+        $modelName = $this->getModelClassName();
         $title = $this->getPageData()['title'];
         $viewIcon = $this->getPageData()['icon'];
 
@@ -76,19 +76,23 @@ abstract class EditController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        /**
-         * We need the identifier to load the model. It's almost always code,
-         * but sometimes it's not.
-         */
-        $primaryKey = $this->request->request->get($view->model->primaryColumn());
-        $code = $this->request->query->get('code', $primaryKey);
-        $view->loadData($code);
-
-        /// data not found?
-        $action = $this->request->request->get('action', '');
         $mainViewName = $this->getMainViewName();
-        if (!empty($code) && !$view->model->exists() && $viewName === $mainViewName && '' === $action) {
-            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+        switch ($viewName) {
+            case $mainViewName:
+                /**
+                 * We need the identifier to load the model. It's almost always code,
+                 * but sometimes it's not.
+                 */
+                $primaryKey = $this->request->request->get($view->model->primaryColumn());
+                $code = $this->request->query->get('code', $primaryKey);
+                $view->loadData($code);
+
+                /// data not found?
+                $action = $this->request->request->get('action', '');
+                if (!empty($code) && !$view->model->exists() && '' === $action) {
+                    $this->miniLog->warning($this->i18n->trans('record-not-found'));
+                }
+                break;
         }
     }
 }

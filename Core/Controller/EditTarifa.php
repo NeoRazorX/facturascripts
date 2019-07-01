@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -52,5 +54,54 @@ class EditTarifa extends EditController
         $data['title'] = 'rate';
         $data['icon'] = 'fas fa-money-bill-alt';
         return $data;
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createProductView($viewName = 'ListTarifaProducto')
+    {
+        $this->addListView($viewName, 'ModelView\\TarifaProducto', 'products', 'fas fa-box');
+        $this->views[$viewName]->addOrderBy(['coste'], 'cost-price');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['precio'], 'price');
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
+        $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
+        
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Creates tabs or views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createProductView();
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListTarifaProducto':
+                $codtarifa = $this->getViewModelValue($this->getMainViewName(), 'codtarifa');
+                $where = [new DataBaseWhere('codtarifa', $codtarifa)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

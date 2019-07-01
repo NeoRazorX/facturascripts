@@ -45,20 +45,6 @@ class Tarifa extends Base\ModelClass
     public $codtarifa;
 
     /**
-     * Linear increment or linear discount.
-     *
-     * @var float|int
-     */
-    public $inclineal;
-
-    /**
-     * Percentage increase or discount.
-     *
-     * @var float|int
-     */
-    public $incporcentual;
-
-    /**
      * Do not sell above retail price.
      *
      * @var bool
@@ -80,16 +66,28 @@ class Tarifa extends Base\ModelClass
     public $nombre;
 
     /**
+     *
+     * @var float
+     */
+    public $valorx;
+
+    /**
+     *
+     * @var float
+     */
+    public $valory;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
-        $this->incporcentual = 0.0;
-        $this->inclineal = 0.0;
         $this->aplicar = 'pvp';
-        $this->mincoste = false;
         $this->maxpvp = false;
+        $this->mincoste = false;
+        $this->valorx = 0.0;
+        $this->valory = 0.0;
     }
 
     /**
@@ -100,6 +98,15 @@ class Tarifa extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'codtarifa';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'nombre';
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,22 +24,23 @@ use FacturaScripts\Core\Model\Base\ModelView;
  * Auxiliary model to load a resume of accounting entries with VAT
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PartidaImpuestoResumen extends ModelView
 {
 
     /**
-     * Return Group By fields
-     *
-     * @return string
+     * Reset the values of all model view properties.
      */
-    protected function getGroupFields(): string
+    public function clear()
     {
-        return 'asientos.codejercicio,'
-            . 'subcuentas.codcuentaesp,'
-            . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
-            . 'partidas.idsubcuenta, partidas.codsubcuenta,'
-            . 'partidas.iva, partidas.recargo';
+        parent::clear();
+        $this->baseimponible = 0.00;
+        $this->iva = 0.00;
+        $this->recargo = 0.00;
+        $this->cuotaiva = 0.00;
+        $this->cuotarecargo = 0.00;
+        $this->total = 0.00;
     }
 
     /**
@@ -58,6 +59,20 @@ class PartidaImpuestoResumen extends ModelView
             'recargo' => 'partidas.recargo',
             'baseimponible' => 'SUM(partidas.baseimponible)'
         ];
+    }
+
+    /**
+     * Return Group By fields
+     *
+     * @return string
+     */
+    protected function getGroupFields(): string
+    {
+        return 'asientos.codejercicio,'
+            . 'subcuentas.codcuentaesp,'
+            . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
+            . 'partidas.idsubcuenta, partidas.codsubcuenta,'
+            . 'partidas.iva, partidas.recargo';
     }
 
     /**
@@ -83,21 +98,6 @@ class PartidaImpuestoResumen extends ModelView
             'partidas',
             'subcuentas'
         ];
-    }
-
-    /**
-     * Reset the values of all model view properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-
-        $this->baseimponible = 0.00;
-        $this->iva = 0.00;
-        $this->recargo = 0.00;
-        $this->cuotaiva = 0.00;
-        $this->cuotarecargo = 0.00;
-        $this->total = 0.00;
     }
 
     /**

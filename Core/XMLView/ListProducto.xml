@@ -21,34 +21,34 @@
 -->
 <view>
     <columns>
-        <column name="code" display="none" order="90">
+        <column name="code" display="none" order="100">
             <widget type="text" fieldname="idproducto" onclick="EditProducto" />
         </column>
-        <column name="reference" order="100">
+        <column name="reference" order="110">
             <widget type="text" fieldname="referencia" />
         </column>
-        <column name="description" order="110">
+        <column name="description" order="120">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="manufacturer" order="120">
+        <column name="manufacturer" order="130">
             <widget type="autocomplete" fieldname="codfabricante" onclick="EditFabricante">
                 <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="family" order="130">
+        <column name="family" order="140">
             <widget type="autocomplete" fieldname="codfamilia" onclick="EditFamilia">
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="price" title="price" display="right" order="140">
+        <column name="price" display="right" order="150">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="tax" numcolumns="3" display="none" order="150">
+        <column name="tax" display="none" order="160">
             <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="stock" display="right" order="160">
+        <column name="stock" display="right" order="170">
             <widget type="number" fieldname="stockfis">
                 <option color="danger">lt:0</option>
             </widget>

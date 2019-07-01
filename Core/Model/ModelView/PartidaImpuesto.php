@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,20 +24,22 @@ use FacturaScripts\Core\Model\Base\ModelView;
  * Auxiliary model to load a list of accounting entries with VAT
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PartidaImpuesto extends ModelView
 {
 
     /**
-     * List of tables required for the execution of the view.
+     * Reset the values of all model view properties.
      */
-    protected function getTables(): array
+    public function clear()
     {
-        return [
-            'asientos',
-            'partidas',
-            'subcuentas'
-        ];
+        parent::clear();
+        $this->baseimponible = 0.00;
+        $this->iva = 0.00;
+        $this->cuotaiva = 0.00;
+        $this->recargo = 0.00;
+        $this->cuotarecargo = 0.00;
     }
 
     /**
@@ -79,17 +81,15 @@ class PartidaImpuesto extends ModelView
     }
 
     /**
-     * Reset the values of all model view properties.
+     * List of tables required for the execution of the view.
      */
-    public function clear()
+    protected function getTables(): array
     {
-        parent::clear();
-
-        $this->baseimponible = 0.00;
-        $this->iva = 0.00;
-        $this->cuotaiva = 0.00;
-        $this->recargo = 0.00;
-        $this->cuotarecargo = 0.00;
+        return [
+            'asientos',
+            'partidas',
+            'subcuentas'
+        ];
     }
 
     /**

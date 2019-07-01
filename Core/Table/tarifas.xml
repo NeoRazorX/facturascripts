@@ -16,16 +16,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>inclineal</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>incporcentual</name>
-        <type>double precision</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>maxpvp</name>
         <type>boolean</type>
         <default>false</default>
@@ -39,6 +29,14 @@
         <name>nombre</name>
         <type>character varying(50)</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>valorx</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>valory</name>
+        <type>double precision</type>
     </column>
     <constraint>
         <name>tarifas_pkey</name>

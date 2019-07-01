@@ -33,11 +33,11 @@
                 <values title="formula-cost-price">coste</values>
             </widget>
         </column>
-        <column name="incpct" title="x" display="right" order="130">
-            <widget type="number" fieldname="incporcentual" />
+        <column name="value-x" display="right" order="130">
+            <widget type="number" fieldname="valorx" />
         </column>
-        <column name="inclineal" title="y" display="right" order="140">
-            <widget type="money" fieldname="inclineal" />
+        <column name="value-y" display="right" order="140">
+            <widget type="money" fieldname="valory" />
         </column>
         <column name="mincost" title="dont-sell-below-cost" display="center" order="150">
             <widget type="checkbox" fieldname="mincoste" />
