@@ -60,15 +60,49 @@ class EditTarifa extends EditController
      * 
      * @param string $viewName
      */
+    protected function createCustomerGroupView($viewName = 'ListGrupoClientes')
+    {
+        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fas fa-folder-open');
+        $this->views[$viewName]->searchFields = ['nombre', 'codgrupo'];
+        $this->views[$viewName]->addOrderBy(['codgrupo'], 'code');
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('rate');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createCustomerView($viewName = 'ListCliente')
+    {
+        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
+        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+        $this->views[$viewName]->addOrderBy(['fechaalta', 'codcliente'], 'date');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
     protected function createProductView($viewName = 'ListTarifaProducto')
     {
-        $this->addListView($viewName, 'ModelView\\TarifaProducto', 'products', 'fas fa-box');
+        $this->addListView($viewName, 'ModelView\\TarifaProducto', 'products', 'fas fa-cubes');
         $this->views[$viewName]->addOrderBy(['coste'], 'cost-price');
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
-        
+
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
@@ -83,6 +117,8 @@ class EditTarifa extends EditController
         $this->setTabsPosition('bottom');
 
         $this->createProductView();
+        $this->createCustomerGroupView();
+        $this->createCustomerView();
     }
 
     /**
@@ -93,6 +129,8 @@ class EditTarifa extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
+            case 'ListCliente':
+            case 'ListGrupoClientes':
             case 'ListTarifaProducto':
                 $codtarifa = $this->getViewModelValue($this->getMainViewName(), 'codtarifa');
                 $where = [new DataBaseWhere('codtarifa', $codtarifa)];
