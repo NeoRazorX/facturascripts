@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -149,6 +150,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $observaciones;
 
     /**
+     *
+     * @var Tarifa
+     */
+    protected $tarifa;
+
+    /**
      * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
@@ -201,6 +208,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * Returns a new line for this business document.
      */
     abstract public function getNewLine(array $data = []);
+
+    /**
+     * Returns the subject of this document.
+     */
+    abstract public function getSubject();
 
     /**
      * Sets subject for this document.
@@ -270,7 +282,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $impuesto->iva;
-            $newLine->pvpunitario = $variant->precio;
+            $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->apply($variant->coste, $variant->precio) : $variant->precio;
             $newLine->recargo = $impuesto->recargo;
             $newLine->referencia = $variant->referencia;
         }

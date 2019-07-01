@@ -25,6 +25,15 @@ use FacturaScripts\Dinamic\Model\Producto;
  * Description of TarifaProducto
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * 
+ * @property string $aplicar
+ * @property float  $coste
+ * @property int    $idproducto
+ * @property bool   $maxpvp
+ * @property bool   $mincoste
+ * @property float  $precio
+ * @property float  $valorx
+ * @property float  $valory
  */
 class TarifaProducto extends ModelView
 {
@@ -73,10 +82,10 @@ class TarifaProducto extends ModelView
                 break;
         }
 
-        if ($this->maxpvp && $finalPrice > $this->precio) {
-            return (float) $this->precio;
-        } elseif ($this->mincoste && $finalPrice < $this->coste) {
-            return (float) $this->coste;
+        if ($this->maxpvp && $finalPrice > $price) {
+            return $price;
+        } elseif ($this->mincoste && $finalPrice < $cost) {
+            return $cost;
         }
 
         return $finalPrice > 0 ? $finalPrice : 0.0;

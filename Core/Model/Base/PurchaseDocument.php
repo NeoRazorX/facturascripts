@@ -67,6 +67,17 @@ abstract class PurchaseDocument extends TransformerDocument
 
     /**
      * 
+     * @return Proveedor
+     */
+    public function getSubject()
+    {
+        $proveedor = new Proveedor();
+        $proveedor->loadFromCode($this->codproveedor);
+        return $proveedor;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function install()

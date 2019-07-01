@@ -78,6 +78,36 @@ class Tarifa extends Base\ModelClass
     public $valory;
 
     /**
+     * 
+     * @param float $cost
+     * @param float $price
+     *
+     * @return float
+     */
+    public function apply($cost, $price)
+    {
+        $finalPrice = 0.0;
+
+        switch ($this->aplicar) {
+            case 'coste':
+                $finalPrice += $cost + ($cost * $this->valorx / 100) + $this->valory;
+                break;
+
+            case 'pvp':
+                $finalPrice += $price - ($price * $this->valorx / 100) - $this->valory;
+                break;
+        }
+
+        if ($this->maxpvp && $finalPrice > $price) {
+            return (float) $price;
+        } elseif ($this->mincoste && $finalPrice < $cost) {
+            return (float) $cost;
+        }
+
+        return $finalPrice > 0 ? $finalPrice : 0.0;
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()

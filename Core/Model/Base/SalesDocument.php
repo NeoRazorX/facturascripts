@@ -23,7 +23,9 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
+use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Tarifa;
 
 /**
  * Description of SalesDocument
@@ -171,6 +173,17 @@ abstract class SalesDocument extends TransformerDocument
 
     /**
      * 
+     * @return Cliente
+     */
+    public function getSubject()
+    {
+        $cliente = new Cliente();
+        $cliente->loadFromCode($this->codcliente);
+        return $cliente;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function install()
@@ -193,48 +206,12 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function setSubject($subject)
     {
-        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Contacto')) {
-            /// Contacto model
-            $this->apartado = $subject->apartado;
-            $this->cifnif = $subject->cifnif;
-            $this->ciudad = $subject->ciudad;
-            $this->codcliente = $subject->codcliente;
-            $this->codpais = $subject->codpais;
-            $this->codpostal = $subject->codpostal;
-            $this->direccion = $subject->direccion;
-            $this->idcontactoenv = $subject->idcontacto;
-            $this->idcontactofact = $subject->idcontacto;
-            $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
-            $this->provincia = $subject->provincia;
-            return true;
-        }
+        switch ($subject->modelClassName()) {
+            case 'Cliente':
+                return $this->setCustomer($subject);
 
-        if (is_a($subject, '\\FacturaScripts\\Core\\Model\\Cliente')) {
-            /// Cliente model
-            $this->cifnif = $subject->cifnif;
-            $this->codcliente = $subject->codcliente;
-            $this->nombrecliente = $subject->razonsocial;
-
-            /// commercial data
-            $this->codagente = $subject->codagente ?? $this->codagente;
-            $this->codpago = $subject->codpago ?? $this->codpago;
-            $this->codserie = $subject->codserie ?? $this->codserie;
-            $this->irpf = $subject->irpf() ?? $this->irpf;
-
-            /// billing address
-            $billingAddress = $subject->getDefaultAddress('billing');
-            $this->codpais = $billingAddress->codpais;
-            $this->provincia = $billingAddress->provincia;
-            $this->ciudad = $billingAddress->ciudad;
-            $this->direccion = $billingAddress->direccion;
-            $this->codpostal = $billingAddress->codpostal;
-            $this->apartado = $billingAddress->apartado;
-            $this->idcontactofact = $billingAddress->idcontacto;
-
-            /// shipping address
-            $shippingAddress = $subject->getDefaultAddress('shipping');
-            $this->idcontactoenv = $shippingAddress->idcontacto;
-            return true;
+            case 'Contacto':
+                return $this->setContact($subject);
         }
 
         return false;
@@ -289,6 +266,82 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         return $this->setSubject($cliente);
+    }
+
+    /**
+     * 
+     * @param Contacto $subject
+     *
+     * @return bool
+     */
+    protected function setContact($subject)
+    {
+        $this->apartado = $subject->apartado;
+        $this->cifnif = $subject->cifnif;
+        $this->ciudad = $subject->ciudad;
+        $this->codcliente = $subject->codcliente;
+        $this->codpais = $subject->codpais;
+        $this->codpostal = $subject->codpostal;
+        $this->direccion = $subject->direccion;
+        $this->idcontactoenv = $subject->idcontacto;
+        $this->idcontactofact = $subject->idcontacto;
+        $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
+        $this->provincia = $subject->provincia;
+        return true;
+    }
+
+    /**
+     * 
+     * @param Cliente $subject
+     *
+     * @return bool
+     */
+    protected function setCustomer($subject)
+    {
+        $this->cifnif = $subject->cifnif;
+        $this->codcliente = $subject->codcliente;
+        $this->nombrecliente = $subject->razonsocial;
+
+        /// commercial data
+        $this->codagente = $subject->codagente ?? $this->codagente;
+        $this->codpago = $subject->codpago ?? $this->codpago;
+        $this->codserie = $subject->codserie ?? $this->codserie;
+        $this->irpf = $subject->irpf() ?? $this->irpf;
+
+        /// billing address
+        $billingAddress = $subject->getDefaultAddress('billing');
+        $this->codpais = $billingAddress->codpais;
+        $this->provincia = $billingAddress->provincia;
+        $this->ciudad = $billingAddress->ciudad;
+        $this->direccion = $billingAddress->direccion;
+        $this->codpostal = $billingAddress->codpostal;
+        $this->apartado = $billingAddress->apartado;
+        $this->idcontactofact = $billingAddress->idcontacto;
+
+        /// shipping address
+        $shippingAddress = $subject->getDefaultAddress('shipping');
+        $this->idcontactoenv = $shippingAddress->idcontacto;
+
+        $this->setRate($subject);
+        return true;
+    }
+
+    /**
+     * 
+     * @param Cliente $subject
+     */
+    protected function setRate($subject)
+    {
+        $group = new GrupoClientes();
+        $this->tarifa = new Tarifa();
+
+        if ($subject->codtarifa) {
+            $this->tarifa->loadFromCode($subject->codtarifa);
+        } elseif ($subject->codgrupo && $group->loadFromCode($subject->codgrupo) && $group->codtarifa) {
+            $this->tarifa->loadFromCode($group->codtarifa);
+        } else {
+            $this->tarifa->clear();
+        }
     }
 
     /**
