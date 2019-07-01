@@ -20,23 +20,26 @@ namespace FacturaScripts\Core\Model\ModelView;
 
 use FacturaScripts\Core\Model\Base\ModelView;
 use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Tarifa;
 
 /**
  * Description of TarifaProducto
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * 
- * @property string $aplicar
+ * @property string $codtarifa
  * @property float  $coste
  * @property int    $idproducto
- * @property bool   $maxpvp
- * @property bool   $mincoste
  * @property float  $precio
- * @property float  $valorx
- * @property float  $valory
  */
 class TarifaProducto extends ModelView
 {
+
+    /**
+     *
+     * @var Tarifa[]
+     */
+    private static $rates = [];
 
     /**
      * 
@@ -61,34 +64,29 @@ class TarifaProducto extends ModelView
 
     /**
      * 
+     * @return Tarifa
+     */
+    public function getRate()
+    {
+        if (isset(self::$rates[$this->codtarifa])) {
+            return self::$rates[$this->codtarifa];
+        }
+
+        $rate = new Tarifa();
+        if ($rate->loadFromCode($this->codtarifa)) {
+            self::$rates[$this->codtarifa] = $rate;
+        }
+
+        return $rate;
+    }
+
+    /**
+     * 
      * @return float
      */
     public function priceInRate()
     {
-        $finalPrice = 0.0;
-
-        $cost = (float) $this->coste;
-        $price = (float) $this->precio;
-        $valuex = (float) $this->valorx;
-        $valuey = (float) $this->valory;
-
-        switch ($this->aplicar) {
-            case 'coste':
-                $finalPrice += $cost + ($cost * $valuex / 100) + $valuey;
-                break;
-
-            case 'pvp':
-                $finalPrice += $price - ($price * $valuex / 100) - $valuey;
-                break;
-        }
-
-        if ($this->maxpvp && $finalPrice > $price) {
-            return $price;
-        } elseif ($this->mincoste && $finalPrice < $cost) {
-            return $cost;
-        }
-
-        return $finalPrice > 0 ? $finalPrice : 0.0;
+        return $this->getRate()->apply((float) $this->coste, (float) $this->precio);
     }
 
     /**
@@ -107,18 +105,13 @@ class TarifaProducto extends ModelView
     protected function getFields(): array
     {
         return [
-            'aplicar' => 'tarifas.aplicar',
             'codtarifa' => 'tarifas.codtarifa',
             'coste' => 'variantes.coste',
             'descripcion' => 'productos.descripcion',
             'idproducto' => 'productos.idproducto',
             'idvariante' => 'variantes.idvariante',
-            'maxpvp' => 'tarifas.maxpvp',
-            'mincoste' => 'tarifas.mincoste',
             'precio' => 'variantes.precio',
             'referencia' => 'variantes.referencia',
-            'valorx' => 'tarifas.valorx',
-            'valory' => 'tarifas.valory',
         ];
     }
 
