@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\ModelView;
 use FacturaScripts\Core\Model\Base\ModelView;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Tarifa;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of TarifaProducto
@@ -49,6 +50,9 @@ class TarifaProducto extends ModelView
     {
         parent::__construct($data);
         $this->setMasterModel(new Producto());
+
+        /// needed dependency
+        new Variante();
     }
 
     /**

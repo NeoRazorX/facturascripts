@@ -38,8 +38,8 @@ class ListAttachedFile extends ListController
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['title'] = 'attached-files';
-        $data['icon'] = 'fas fa-paperclip';
+        $data['title'] = 'library';
+        $data['icon'] = 'fas fa-book-open';
         return $data;
     }
 

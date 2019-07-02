@@ -79,7 +79,7 @@
                 </widget>
             </column>
             <column name="group" titleurl="ListGrupoCliente" numcolumns="3" order="120">
-                <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes" icon="fas fa-folder" >
+                <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes">
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>

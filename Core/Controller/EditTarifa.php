@@ -62,7 +62,7 @@ class EditTarifa extends EditController
      */
     protected function createCustomerGroupView($viewName = 'ListGrupoClientes')
     {
-        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fas fa-folder-open');
+        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fas fa-users-cog');
         $this->views[$viewName]->searchFields = ['nombre', 'codgrupo'];
         $this->views[$viewName]->addOrderBy(['codgrupo'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
