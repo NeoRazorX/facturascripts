@@ -102,6 +102,7 @@ abstract class CronClass
         $where = [
             new DataBaseWhere('pluginname', $this->pluginName),
             new DataBaseWhere('jobname', $jobName),
+            new DataBaseWhere('enabled', true),
         ];
 
         /// if we can't find it, then is the first time

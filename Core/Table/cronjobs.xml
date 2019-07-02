@@ -16,6 +16,11 @@
         <default>false</default>
     </column>
     <column>
+        <name>enabled</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
