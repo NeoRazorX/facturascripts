@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Model;
 /**
  * Model to personalize the impresion of sales and buy documents.
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class FormatoDocumento extends Base\ModelClass
 {
@@ -50,13 +51,6 @@ class FormatoDocumento extends Base\ModelClass
     public $idempresa;
 
     /**
-     * Foreign key with table Attached_files
-     *
-     * @var int
-     */
-    public $icono;
-
-    /**
      * 
      *
      * @var string
@@ -78,6 +72,21 @@ class FormatoDocumento extends Base\ModelClass
     public $titulo;
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new Serie();
+        new Empresa();
+
+        return parent::install();
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -95,21 +104,5 @@ class FormatoDocumento extends Base\ModelClass
     public static function tableName()
     {
         return 'formatos_documentos';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Empresa();
-        new AttachedFile();
-
-        return parent::install();
     }
 }

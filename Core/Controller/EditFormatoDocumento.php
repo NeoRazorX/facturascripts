@@ -23,7 +23,8 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the FormaPago model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
 class EditFormatoDocumento extends EditController
 {
@@ -47,8 +48,8 @@ class EditFormatoDocumento extends EditController
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['title'] = 'format-document';
-        $data['icon'] = 'fas fa-file';
+        $data['title'] = 'printing-format';
+        $data['icon'] = 'fas fa-print';
         return $data;
     }
 }

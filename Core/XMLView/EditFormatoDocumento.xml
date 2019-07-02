@@ -17,45 +17,42 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos garcía Gómez          <carlos@facturascripts.com>
 -->
 <view>
     <columns> 
-        <column name="id" display="none" order="90">
-            <widget type="text" fieldname="id" onclick="EditFormatoDocumento" />
-        </column>
-        <column name="title" numcolumns="4" order="100" >
-            <widget type="text" fieldname="titulo" />
-        </column>
-        <column name="doc-type" numcolumns="3" order="110">
-            <widget type="select" fieldname="tipodoc" translate="true" required="true">
-                <values title="customer-estimation">PresupuestoCliente</values>
-                <values title="customer-order">PedidoCliente</values>
-                <values title="customer-delivery-note">AlbaranCliente</values>
-                <values title="customer-invoice">FacturaCliente</values>
-                <values title="supplier-estimation">PresupuestoProveedor</values>
-                <values title="supplier-order">PedidoProveedor</values>
-                <values title="supplier-delivery-note">AlbaranProveedor</values>
-                <values title="supplier-invoice">FacturaProveedor</values>
-                <values title="service">Servicio</values>
-            </widget>
-        </column>
-        <column name="icon" order="120" numcolumns="3">
-            <widget type="autocomplete" fieldname="icono">
-                <values source="attached_files" fieldcode="idfile" fieldtitle="filename"></values>
-            </widget>
-        </column>
-        <column name="text" numcolumns="12" order="130">
-            <widget type="textarea" fieldname="texto" />
-        </column>
-        <column name="company" order="140">
-            <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-            </widget>
-        </column>
-        <column name="serie" order="150">
-            <widget type="select" fieldname="codserie">
-                <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
-            </widget>
-        </column>
+        <group name="data" numcolumns="12">
+            <column name="id" display="none" order="100">
+                <widget type="text" fieldname="id" onclick="EditFormatoDocumento" />
+            </column>
+            <column name="doc-type" numcolumns="3" order="110">
+                <widget type="select" fieldname="tipodoc" translate="true" required="true">
+                    <values title="customer-estimation">PresupuestoCliente</values>
+                    <values title="customer-order">PedidoCliente</values>
+                    <values title="customer-delivery-note">AlbaranCliente</values>
+                    <values title="customer-invoice">FacturaCliente</values>
+                    <values title="supplier-estimation">PresupuestoProveedor</values>
+                    <values title="supplier-order">PedidoProveedor</values>
+                    <values title="supplier-delivery-note">AlbaranProveedor</values>
+                    <values title="supplier-invoice">FacturaProveedor</values>
+                </widget>
+            </column>
+            <column name="company" titleurl="ListEmpresa" order="120">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
+            </column>
+            <column name="serie" titleurl="ListSerie" order="130">
+                <widget type="select" fieldname="codserie" onclick="EditSerie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="title" order="140" >
+                <widget type="text" fieldname="titulo" />
+            </column>
+            <column name="text" numcolumns="12" order="150">
+                <widget type="textarea" fieldname="texto" />
+            </column>
+        </group>
     </columns>
 </view>

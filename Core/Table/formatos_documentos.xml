@@ -21,10 +21,6 @@
         <type>integer</type>
     </column>
     <column>
-        <name>icono</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>texto</name>
         <type>text</type>
     </column>
@@ -42,14 +38,10 @@
     </constraint>
     <constraint>
         <name>ca_formatos_documentos_series</name>
-        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_formatos_documentos_empresas</name>
         <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_formatos_documentos_atteched_files</name>
-        <type>FOREIGN KEY (icono) REFERENCES attached_files (idfile) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>
