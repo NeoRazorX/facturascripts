@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+-->
+<view>
+   <columns> 
+        <column name="id" display="none" order="90">
+            <widget type="text" fieldname="id" onclick="EditFormatoDocumento" />
+        </column>
+        <column name="title" numcolumns="4" order="100" >
+            <widget type="text" fieldname="titulo" />
+        </column>
+        <column name="doc-type" numcolumns="3" order="110">
+            <widget type="select" fieldname="tipodoc" translate="true" required="true">
+                <values title="customer-estimation">PresupuestoCliente</values>
+                <values title="customer-order">PedidoCliente</values>
+                <values title="customer-delivery-note">AlbaranCliente</values>
+                <values title="customer-invoice">FacturaCliente</values>
+                <values title="supplier-estimation">PresupuestoProveedor</values>
+                <values title="supplier-order">PedidoProveedor</values>
+                <values title="supplier-delivery-note">AlbaranProveedor</values>
+                <values title="supplier-invoice">FacturaProveedor</values>
+                <values title="service">Servicio</values>
+            </widget>
+        </column>
+        <column name="icon" order="120" numcolumns="3">
+            <widget type="autocomplete" fieldname="icono">
+                <values source="attached_files" fieldcode="idfile" fieldtitle="filename"></values>
+            </widget>
+        </column>
+        <column name="text" numcolumns="12" order="130">
+            <widget type="textarea" fieldname="texto" />
+        </column>
+        <column name="company" order="140">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+            </widget>
+        </column>
+        <column name="serie" order="150">
+            <widget type="select" fieldname="codserie">
+                <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+            </widget>
+        </column>
+    </columns>
+</view>
