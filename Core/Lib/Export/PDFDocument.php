@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Dinamic\Model;
 
 /**
  * PDF document data.
@@ -92,9 +92,11 @@ class PDFDocument extends PDFCore
     }
 
     /**
-     * Insert company logo to PDF document or dies with a message to try to solve the problem.
+     * Inserts company logo to PDF document or dies with a message to try to solve the problem.
+     * 
+     * @param int $idfile
      */
-    protected function insertCompanyLogo()
+    protected function insertCompanyLogo($idfile = 0)
     {
         if (!\function_exists('imagecreatefromstring')) {
             die('ERROR: function imagecreatefromstring() not founded. '
@@ -102,9 +104,13 @@ class PDFDocument extends PDFCore
                 . 'Note that the package name can differ between operating system or PHP version.');
         }
 
+        $logoFile = new Model\AttachedFile();
         $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
-        $logoSize = $this->calcLogoSize($logoPath);
+        if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
+            $logoPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $logoFile->path;
+        }
 
+        $logoSize = $this->calcLogoSize($logoPath);
         $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
         $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
         $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
@@ -131,30 +137,30 @@ class PDFDocument extends PDFCore
         }
 
         $this->insertedHeader = true;
-        $this->insertCompanyLogo();
 
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Model\Empresa();
         if ($company->loadFromCode($code)) {
             $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9);
             $address = $company->direccion;
-            $address .= empty($company->codpostal) ? ' - ' : ' - CP: ' . $company->codpostal . ' - ';
+            $address .= empty($company->codpostal) ? '' : ' - ' . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
             $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';
             $contactData .= empty($company->telefono2) ? '' : $company->telefono2 . ' ';
             $contactData .= empty($company->email) ? '' : $company->email . ' ';
             $contactData .= empty($company->web) ? '' : $company->web;
-
-            $lineText = $company->cifnif . ' - ' . $address . ' - ' . $contactData;
+            $lineText = $company->cifnif . ' - ' . $address . "\n" . $contactData;
             $this->pdf->ezText($lineText . "\n", self::FONT_SIZE);
+
+            $this->insertCompanyLogo($company->idlogo);
         }
     }
 
     /**
      * Generate a table with two key => value per row.
      *
-     * @param        $tableData
+     * @param array  $tableData
      * @param string $title
      * @param array  $options
      */

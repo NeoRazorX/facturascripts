@@ -332,10 +332,12 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
+        $subject = $model->getSubject();
+        $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
         $tableData = [
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
             ['key' => $headerData['subject'], 'value' => Base\Utils::fixHtml($model->{$headerData['fieldName']})],
-            ['key' => $this->i18n->trans('cifnif'), 'value' => $model->cifnif],
+            ['key' => $tipoidfiscal, 'value' => $model->cifnif],
         ];
 
         if (!empty($model->direccion)) {

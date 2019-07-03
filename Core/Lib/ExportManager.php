@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -71,8 +71,11 @@ class ExportManager
      */
     public function defaultOption()
     {
-        $keys = array_keys(self::$options);
-        return $keys[0];
+        foreach (array_keys(self::$options) as $key) {
+            return $key;
+        }
+
+        return '';
     }
 
     /**
