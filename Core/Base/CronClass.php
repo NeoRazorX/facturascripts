@@ -101,8 +101,7 @@ abstract class CronClass
         $cronJob = new CronJob();
         $where = [
             new DataBaseWhere('pluginname', $this->pluginName),
-            new DataBaseWhere('jobname', $jobName),
-            new DataBaseWhere('enabled', true),
+            new DataBaseWhere('jobname', $jobName)
         ];
 
         /// if we can't find it, then is the first time
@@ -111,7 +110,7 @@ abstract class CronClass
         }
 
         /// last time was before period?
-        if (strtotime($cronJob->date) < strtotime('-' . $period)) {
+        if ($cronJob->enabled && strtotime($cronJob->date) < strtotime('-' . $period)) {
             /// updates date and return true (if no error)
             $cronJob->date = date('d-m-Y H:i:s');
             $cronJob->done = false;
