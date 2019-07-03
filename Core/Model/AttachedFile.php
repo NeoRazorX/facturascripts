@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,8 @@ use finfo;
 /**
  * Class to manage attached files.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class AttachedFile extends Base\ModelClass
 {
@@ -130,7 +131,7 @@ class AttachedFile extends Base\ModelClass
      * @param array  $where
      * @param array  $orderby
      * 
-     * @return boolean
+     * @return bool
      */
     public function loadFromCode($cod, array $where = [], array $orderby = [])
     {
@@ -153,6 +154,15 @@ class AttachedFile extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'filename';
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -165,7 +175,7 @@ class AttachedFile extends Base\ModelClass
     /**
      * Test model data.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {
@@ -188,7 +198,7 @@ class AttachedFile extends Base\ModelClass
     /**
      * Examine and move new file setted.
      * 
-     * @return boolean
+     * @return bool
      */
     protected function setFile()
     {

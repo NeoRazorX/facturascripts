@@ -48,17 +48,18 @@ class ListAttachedFile extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAttachedFile', 'AttachedFile', 'attached-files', 'fas fa-paperclip');
-        $this->addSearchFields('ListAttachedFile', ['filename', 'mimetype']);
-        $this->addOrderBy('ListAttachedFile', ['idfile'], 'code');
-        $this->addOrderBy('ListAttachedFile', ['date'], 'date', 2);
-        $this->addOrderBy('ListAttachedFile', ['filename'], 'file-name');
-        $this->addOrderBy('ListAttachedFile', ['size'], 'size');
+        $viewName = 'ListAttachedFile';
+        $this->addView($viewName, 'AttachedFile', 'attached-files', 'fas fa-paperclip');
+        $this->addSearchFields($viewName, ['filename', 'mimetype']);
+        $this->addOrderBy($viewName, ['idfile'], 'code');
+        $this->addOrderBy($viewName, ['date'], 'date', 2);
+        $this->addOrderBy($viewName, ['filename'], 'file-name');
+        $this->addOrderBy($viewName, ['size'], 'size');
+
+        /// filters
+        $this->addFilterPeriod($viewName, 'date', 'period', 'date');
 
         $types = $this->codeModel->all('attached_files', 'mimetype', 'mimetype');
-        $this->addFilterSelect('ListAttachedFile', 'mimetype', 'mime-type', 'mimetype', $types);
-
-        $this->addFilterDatePicker('ListAttachedFile', 'fromdate', 'from-date', 'date', '>=');
-        $this->addFilterDatePicker('ListAttachedFile', 'untildate', 'until-date', 'date', '<=');
+        $this->addFilterSelect($viewName, 'mimetype', 'mime-type', 'mimetype', $types);
     }
 }
