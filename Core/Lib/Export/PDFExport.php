@@ -337,7 +337,9 @@ class PDFExport extends PDFDocument implements ExportInterface
         $tableData = [
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
             ['key' => $headerData['subject'], 'value' => Base\Utils::fixHtml($model->{$headerData['fieldName']})],
+            ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
+            ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie],
         ];
 
         if (!empty($model->direccion)) {

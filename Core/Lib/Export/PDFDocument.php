@@ -105,15 +105,18 @@ class PDFDocument extends PDFCore
         }
 
         $logoFile = new Model\AttachedFile();
-        $logoPath = \FS_FOLDER . '/Core/Assets/Images/logo.png';
+        $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
         if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
             $logoPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $logoFile->path;
         }
 
         $logoSize = $this->calcLogoSize($logoPath);
-        $xPos = $this->pdf->ez['pageWidth'] - $logoSize['width'] - $this->pdf->ez['topMargin'];
+        $xPos = $this->pdf->ez['topMargin'];
         $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
         $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+
+        /// add some margin
+        $this->pdf->y -= 20;
     }
 
     /**
@@ -141,7 +144,7 @@ class PDFDocument extends PDFCore
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Model\Empresa();
         if ($company->loadFromCode($code)) {
-            $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9);
+            $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9, ['justification' => 'right']);
             $address = $company->direccion;
             $address .= empty($company->codpostal) ? '' : ' - ' . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
@@ -151,7 +154,7 @@ class PDFDocument extends PDFCore
             $contactData .= empty($company->email) ? '' : $company->email . ' ';
             $contactData .= empty($company->web) ? '' : $company->web;
             $lineText = $company->cifnif . ' - ' . $address . "\n" . $contactData;
-            $this->pdf->ezText($lineText . "\n", self::FONT_SIZE);
+            $this->pdf->ezText($lineText . "\n", self::FONT_SIZE, ['justification' => 'right']);
 
             $this->insertCompanyLogo($company->idlogo);
         }
