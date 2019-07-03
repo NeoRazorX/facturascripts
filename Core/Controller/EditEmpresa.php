@@ -72,9 +72,9 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewBankAccounts($viewName = 'EditCuentaBanco')
+    protected function createViewBankAccounts($viewName = 'ListCuentaBanco')
     {
-        $this->addEditListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->views[$viewName]->disableColumn('company');
     }
 
@@ -92,9 +92,9 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewPaymentMethods($viewName = 'EditFormaPago')
+    protected function createViewPaymentMethods($viewName = 'ListFormaPago')
     {
-        $this->addEditListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
+        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
         $this->views[$viewName]->disableColumn('company');
     }
 
@@ -102,9 +102,9 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewWarehouse($viewName = 'EditAlmacen')
+    protected function createViewWarehouse($viewName = 'ListAlmacen')
     {
-        $this->addEditListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');
+        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');
         $this->views[$viewName]->disableColumn('company');
     }
 
@@ -117,11 +117,11 @@ class EditEmpresa extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditAlmacen':
-            case 'EditCuentaBanco':
-            case 'EditFormaPago':
+            case 'ListAlmacen':
+            case 'ListCuentaBanco':
             case 'ListEjercicio':
-                $idcompany = $this->getViewModelValue('EditEmpresa', 'idempresa');
+            case 'ListFormaPago':
+                $idcompany = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
                 $where = [new DataBaseWhere('idempresa', $idcompany)];
                 $view->loadData('', $where);
                 break;
@@ -133,10 +133,13 @@ class EditEmpresa extends EditController
         }
     }
 
+    /**
+     * Load values option to VAT Type select input
+     */
     protected function setCustomWidgetValues()
     {
-        /// Load values option to VAT Type select input
-        $columnVATType = $this->views['EditEmpresa']->columnForName('vat-regime');
+        $mainViewName = $this->getMainViewName();
+        $columnVATType = $this->views[$mainViewName]->columnForName('vat-regime');
         $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
     }
 }
