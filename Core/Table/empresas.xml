@@ -47,14 +47,14 @@
         <type>date</type>
     </column>
     <column>
-        <name>tipoidfiscal</name>
-        <type>character varying(25)</type>
-    </column>
-    <column>
         <name>idempresa</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('empresas_idempresa_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idlogo</name>
+        <type>integer</type>
     </column>
     <column>
         <name>nombre</name>
@@ -91,11 +91,19 @@
         <type>character varying(30)</type>
     </column>
     <column>
+        <name>tipoidfiscal</name>
+        <type>character varying(25)</type>
+    </column>
+    <column>
         <name>web</name>
         <type>character varying(100)</type>
     </column>
     <constraint>
         <name>empresas_pkey</name>
         <type>PRIMARY KEY (idempresa)</type>
+    </constraint>
+    <constraint>
+        <name>ca_empresas_attached_files</name>
+        <type>FOREIGN KEY (idlogo) REFERENCES attached_files (idfile) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

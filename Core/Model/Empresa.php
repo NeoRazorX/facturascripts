@@ -82,6 +82,12 @@ class Empresa extends Base\Contact
     public $idempresa;
 
     /**
+     *
+     * @var int
+     */
+    public $idlogo;
+
+    /**
      * Short name of the company, to show on the menu.
      *
      * @var string Name to show in the menu.
@@ -143,8 +149,10 @@ class Empresa extends Base\Contact
      */
     public function install()
     {
-        $num = mt_rand(1, 9999);
+        /// needed dependencies
+        new AttachedFile();
 
+        $num = mt_rand(1, 9999);
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
             . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
             . "VALUES (1,'https://www.facturascripts.com','ESP','C/ Falsa, 123',"

@@ -91,7 +91,12 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="observations" numcolumns="12" order="120">
+            <column name="logo" titleurl="ListAttachedFile" numcolumns="3" order="120">
+                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile">
+                    <values source="attached_files" fieldcode="idfile" fieldtitle="filename"></values>
+                </widget>
+            </column>
+            <column name="observations" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
