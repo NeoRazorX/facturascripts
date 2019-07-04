@@ -30,28 +30,49 @@
         <column name="description" order="120">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="manufacturer" order="130">
+        <column name="observations" display="none" order="130">
+            <widget type="textarea" fieldname="observaciones" />
+        </column>
+        <column name="manufacturer" order="140">
             <widget type="autocomplete" fieldname="codfabricante" onclick="EditFabricante">
                 <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="family" order="140">
+        <column name="family" order="150">
             <widget type="autocomplete" fieldname="codfamilia" onclick="EditFamilia">
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="price" display="right" order="150">
+        <column name="secompra" title="for-purchase" display="none" order="160">
+            <widget type="checkbox" fieldname="secompra" />
+        </column>
+        <column name="sevende" title="for-sale" display="none" order="170">
+            <widget type="checkbox" fieldname="sevende" />
+        </column>
+        <column name="publico" title="public" order="180">
+            <widget type="checkbox" fieldname="publico" />
+        </column>
+        <column name="bloqueado" title="blocked" display="none" order="190">
+            <widget type="checkbox" fieldname="bloqueado"/>
+        </column>
+        <column name="ventasinstock" title="allow-sale-without-stock" display="none" order="200">
+            <widget type="checkbox" fieldname="ventasinstock"/>
+        </column>
+        <column name="price" display="right" order="210">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="tax" display="none" order="160">
+        <column name="tax" display="none" order="220">
             <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="stock" display="right" order="170">
+        <column name="stock" display="right" order="230">
             <widget type="number" fieldname="stockfis">
                 <option color="danger">lt:0</option>
             </widget>
+        </column>
+        <column name="update-time" display="none" order="240">
+            <widget type="date" fieldname="actualizado" />
         </column>
     </columns>
     <rows>

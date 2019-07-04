@@ -50,7 +50,7 @@
             </column>
         </group>
         <group name="stock" numcolumns="4">
-            <column name="stockfis" title="physical-stock" order="100">
+            <column name="stock" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
             <column name="nostock" title="no-stock" order="110">
