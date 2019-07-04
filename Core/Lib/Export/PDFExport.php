@@ -130,7 +130,7 @@ class PDFExport extends PDFDocument implements ExportInterface
             $tableDataAux[] = ['key' => $colTitle, 'value' => $this->fixValue($value)];
         }
 
-        $this->pdf->ezText("\n" . $title . "\n", self::FONT_SIZE + 6);
+        $this->pdf->ezText("\n" . $title . ' ' . $model->primaryDescription() . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
         $this->insertParalellTable($tableDataAux, '', $tableOptions);
