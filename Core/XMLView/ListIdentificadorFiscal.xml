@@ -21,8 +21,10 @@
 <view>
     <columns>
         <column name="name" order="100">
-            <widget type="text" fieldname="tipoidfiscal" required="true" />
+            <widget type="text" fieldname="tipoidfiscal" required="true"/>
+        </column>
+        <column name="code" order="110">
+            <widget type="text" maxlength="2" fieldname="codeid"/>
         </column>
     </columns>
 </view>
-
