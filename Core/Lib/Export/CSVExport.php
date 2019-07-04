@@ -265,7 +265,7 @@ class CSVExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = (isset($row->{$col}) && null !== $value) ? $row->{$col} : '';
+                $value = (isset($row->{$col}) && null !== $row->{$col}) ? $row->{$col} : '';
                 $tableData[$key][$col] = $this->delimiter . $value . $this->delimiter;
             }
         }

@@ -119,9 +119,10 @@ class EditContacto extends EditController
 
                 $this->miniLog->error($this->i18n->trans('record-save-error'));
                 break;
-        }
 
-        return parent::execAfterAction($action);
+            default:
+                parent::execAfterAction($action);
+        }
     }
 
     /**
