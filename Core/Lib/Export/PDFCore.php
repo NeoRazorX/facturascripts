@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,10 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base;
+use Cezpdf;
+use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\NumberTools;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * Description of PDFCore
@@ -45,14 +48,14 @@ class PDFCore
 
     /**
      *
-     * @var Base\DivisaTools
+     * @var DivisaTools
      */
     protected $divisaTools;
 
     /**
      * Translator object
      *
-     * @var Base\Translator
+     * @var Translator
      */
     protected $i18n;
 
@@ -60,19 +63,19 @@ class PDFCore
      *
      * @var bool
      */
-    protected $insertedHeader;
+    protected $insertedHeader = false;
 
     /**
      * Class with number tools (to format numbers)
      *
-     * @var Base\NumberTools
+     * @var NumberTools
      */
     protected $numberTools;
 
     /**
      * PDF object.
      *
-     * @var \Cezpdf
+     * @var Cezpdf
      */
     protected $pdf;
 
@@ -81,18 +84,42 @@ class PDFCore
      *
      * @var int|float
      */
-    protected $tableWidth;
+    protected $tableWidth = 0.0;
 
     /**
      * PDFExport constructor.
      */
     public function __construct()
     {
-        $this->divisaTools = new Base\DivisaTools();
-        $this->i18n = new Base\Translator();
-        $this->insertedHeader = false;
-        $this->numberTools = new Base\NumberTools();
-        $this->tableWidth = 0.0;
+        $this->divisaTools = new DivisaTools();
+        $this->i18n = new Translator();
+        $this->numberTools = new NumberTools();
+    }
+
+    /**
+     * Calculate logo size and return as array of width and height
+     *
+     * @param $logo
+     *
+     * @return array
+     */
+    protected function calcLogoSize($logo)
+    {
+        $logoSize = $size = getimagesize($logo);
+        if ($size[0] > 200) {
+            $logoSize[0] = 200;
+            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
+            $size[0] = $logoSize[0];
+            $size[1] = $logoSize[1];
+        }
+        if ($size[1] > 80) {
+            $logoSize[1] = 80;
+            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
+        }
+        return [
+            'width' => $logoSize[0],
+            'height' => $logoSize[1],
+        ];
     }
 
     /**
@@ -116,16 +143,26 @@ class PDFCore
                     continue;
                 }
 
-                $value = $row->{$col};
-                if (isset($tableOptions['cols'][$col]['widget'])) {
-                    $value = $tableOptions['cols'][$col]['widget']->plainText($row);
-                }
-
+                $value = isset($tableOptions['cols'][$col]['widget']) ? $tableOptions['cols'][$col]['widget']->plainText($row) : $row->{$col};
                 $tableData[$key][$col] = $value;
             }
         }
 
         return $tableData;
+    }
+
+    /**
+     * Generate a table with two key => value per row.
+     *
+     * @param array  $tableData
+     * @param string $title
+     * @param array  $options
+     */
+    protected function insertParalellTable($tableData, $title = '', $options = [])
+    {
+        $headers = ['data1' => 'data1', 'data2' => 'data2'];
+        $rows = $this->paralellTableData($tableData);
+        $this->pdf->ezTable($rows, $headers, $title, $options);
     }
 
     /**
@@ -155,6 +192,30 @@ class PDFCore
 
         if ($txt !== '') {
             $this->pdf->ezText($txt);
+        }
+    }
+
+    /**
+     * Adds a new page.
+     *
+     * @param string $orientation
+     */
+    protected function newPage($orientation = 'portrait')
+    {
+        if ($this->pdf === null) {
+            $this->pdf = new Cezpdf('a4', $orientation);
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
+
+            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
+
+            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+        } elseif ($this->pdf->y < 200) {
+            $this->pdf->ezNewPage();
+            $this->insertedHeader = false;
+        } else {
+            $this->pdf->ezText("\n");
         }
     }
 

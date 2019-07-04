@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -36,9 +36,9 @@ class CodeModel
     /**
      * It provides direct access to the database.
      *
-     * @var Base\DataBase
+     * @var DataBase
      */
-    private static $dataBase;
+    protected static $dataBase;
 
     /**
      * Value of the code field of the model read.
@@ -66,7 +66,7 @@ class CodeModel
             $this->description = '';
         } else {
             $this->code = $data['code'];
-            $this->description = Base\Utils::fixHtml($data['description']);
+            $this->description = $data['description'];
         }
     }
 
@@ -95,10 +95,7 @@ class CodeModel
             return $model->codeModelAll($fieldCode);
         }
 
-        if (self::$dataBase === null) {
-            self::$dataBase = new Base\DataBase();
-        }
-
+        self::initDataBase();
         if (self::$dataBase->tableExists($tableName)) {
             $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
                 . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
@@ -158,10 +155,7 @@ class CodeModel
             return new self();
         }
 
-        if (self::$dataBase === null) {
-            self::$dataBase = new Base\DataBase();
-        }
-
+        self::initDataBase();
         if (self::$dataBase->tableExists($tableName)) {
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
                 . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::$dataBase->var2str($code);
@@ -188,5 +182,15 @@ class CodeModel
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
         return empty($model->description) ? $code : $model->description;
+    }
+
+    /**
+     * Inits database connection.
+     */
+    protected static function initDataBase()
+    {
+        if (self::$dataBase === null) {
+            self::$dataBase = new DataBase();
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -37,7 +39,7 @@ class CSVExport implements ExportInterface
      *
      * @var array
      */
-    private $csv;
+    private $csv = [];
 
     /**
      * Text delimiter value
@@ -56,7 +58,7 @@ class CSVExport implements ExportInterface
     /**
      * Adds a new page with the document data.
      *
-     * @param mixed $model
+     * @param BusinessDocument $model
      */
     public function generateBusinessDocPage($model)
     {
@@ -76,12 +78,12 @@ class CSVExport implements ExportInterface
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed                         $model
-     * @param Base\DataBase\DataBaseWhere[] $where
-     * @param array                         $order
-     * @param int                           $offset
-     * @param array                         $columns
-     * @param string                        $title
+     * @param ModelClass      $model
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param array           $columns
+     * @param string          $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
@@ -116,9 +118,9 @@ class CSVExport implements ExportInterface
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
+     * @param ModelClass $model
+     * @param array      $columns
+     * @param string     $title
      */
     public function generateModelPage($model, $columns, $title = '')
     {
@@ -228,22 +230,20 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Fills an array with the CSV data
-     *
-     * @param $tableData
-     * @param $sheetHeaders
+     * Fills an array with the CSV data.
+     * 
+     * @param array $tableData
+     * @param array $sheetHeaders
      */
     public function writeSheet($tableData, $sheetHeaders)
     {
-        $this->csv = [];
         $header = [];
-        $body = [];
-
         foreach ($sheetHeaders as $key => $value) {
             $header[] = $key;
         }
         $this->csv[] = \implode($this->separator, $header);
 
+        $body = [];
         foreach ($tableData as $line) {
             $body[] = \implode($this->separator, $line);
         }
@@ -251,7 +251,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Returns the table data
+     * Returns the table data.
      *
      * @param array $cursor
      * @param array $tableCols
@@ -265,14 +265,7 @@ class CSVExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
-                    if (null === $value) {
-                        $value = '';
-                    }
-                }
-
+                $value = (isset($row->{$col}) && null !== $value) ? $row->{$col} : '';
                 $tableData[$key][$col] = $this->delimiter . $value . $this->delimiter;
             }
         }

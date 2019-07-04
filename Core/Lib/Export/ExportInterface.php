@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,14 +34,14 @@ interface ExportInterface
     /**
      * Adds a new page with the document data.
      *
-     * @param mixed $model
+     * @param BusinessDocument $model
      */
     public function generateBusinessDocPage($model);
 
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed           $model
+     * @param ModelClass      $model
      * @param DataBaseWhere[] $where
      * @param array           $order
      * @param int             $offset
@@ -51,9 +53,9 @@ interface ExportInterface
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
+     * @param ModelClass $model
+     * @param array      $columns
+     * @param string     $title
      */
     public function generateModelPage($model, $columns, $title = '');
 

@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,7 +37,7 @@ class MAILExport extends PDFExport
 
     /**
      * 
-     * @param mixed $model
+     * @param BusinessDocument $model
      */
     public function generateBusinessDocPage($model)
     {

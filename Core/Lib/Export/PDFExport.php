@@ -18,9 +18,10 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -52,12 +53,12 @@ class PDFExport extends PDFDocument implements ExportInterface
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed                         $model
-     * @param Base\DataBase\DataBaseWhere[] $where
-     * @param array                         $order
-     * @param int                           $offset
-     * @param array                         $columns
-     * @param string                        $title
+     * @param ModelClass      $model
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param array           $columns
+     * @param string          $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
@@ -100,9 +101,9 @@ class PDFExport extends PDFDocument implements ExportInterface
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
+     * @param ModelClass $model
+     * @param array      $columns
+     * @param string     $title
      */
     public function generateModelPage($model, $columns, $title = '')
     {
@@ -124,16 +125,8 @@ class PDFExport extends PDFDocument implements ExportInterface
 
         $tableDataAux = [];
         foreach ($tableColsTitle as $key => $colTitle) {
-            $value = null;
-            if (isset($model->{$key})) {
-                $value = $model->{$key};
-            }
-
-            if (is_bool($value)) {
-                $txt = $this->i18n->trans($value ? 'yes' : 'no');
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
-            } elseif ($value !== null && $value !== '') {
-                $value = is_string($value) ? Base\Utils::fixHtml($value) : $value;
+            $value = isset($tableOptions['cols'][$key]['widget']) ? $tableOptions['cols'][$key]['widget']->plainText($model) : $model->{$key};
+            if ($value !== null && $value !== '') {
                 $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
             }
         }
@@ -153,7 +146,7 @@ class PDFExport extends PDFDocument implements ExportInterface
      */
     public function generateTablePage($headers, $rows)
     {
-        $orientation = (count($headers) > 5) ? 'landscape' : 'portrait';
+        $orientation = count($headers) > 5 ? 'landscape' : 'portrait';
         $tableOptions = ['width' => $this->tableWidth];
 
         $this->newPage($orientation);
@@ -194,219 +187,5 @@ class PDFExport extends PDFDocument implements ExportInterface
     {
         $response->headers->set('Content-type', 'application/pdf');
         $response->setContent($this->getDoc());
-    }
-
-    /**
-     * Generate the body of the page with the model data.
-     *
-     * @param mixed $model
-     */
-    protected function insertBusinessDocBody($model)
-    {
-        $headers = [
-            'reference' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description'),
-            'quantity' => $this->i18n->trans('quantity'),
-            'price' => $this->i18n->trans('price'),
-            'discount' => $this->i18n->trans('discount'),
-            'tax' => $this->i18n->trans('tax'),
-            'surcharge' => $this->i18n->trans('surcharge'),
-            'irpf' => $this->i18n->trans('irpf'),
-            'total' => $this->i18n->trans('total'),
-        ];
-        $tableData = [];
-        foreach ($model->getlines() as $line) {
-            $tableData[] = [
-                'reference' => Base\Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $this->numberTools->format($line->cantidad),
-                'price' => $this->numberTools->format($line->pvpunitario),
-                'discount' => $this->numberTools->format($line->dtopor),
-                'tax' => $this->numberTools->format($line->iva),
-                'surcharge' => $this->numberTools->format($line->recargo),
-                'irpf' => $this->numberTools->format($line->irpf),
-                'total' => $this->numberTools->format($line->pvptotal),
-            ];
-        }
-
-        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
-        $tableOptions = [
-            'cols' => [
-                'quantity' => ['justification' => 'right'],
-                'price' => ['justification' => 'right'],
-                'discount' => ['justification' => 'right'],
-                'tax' => ['justification' => 'right'],
-                'surcharge' => ['justification' => 'right'],
-                'irpf' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
-        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
-    }
-
-    /**
-     * Inserts the footer of the page with the model data.
-     *
-     * @param BusinessDocument $model
-     */
-    protected function insertBusinessDocFooter($model)
-    {
-        if (!empty($model->observaciones)) {
-            $this->newPage();
-            $this->pdf->ezText($this->i18n->trans('notes') . "\n", self::FONT_SIZE);
-            $this->newLine();
-            $this->pdf->ezText(Base\Utils::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
-        }
-
-        $this->newPage();
-        $headers = [
-            'currency' => $this->i18n->trans('currency'),
-            'net' => $this->i18n->trans('net'),
-            'taxes' => $this->i18n->trans('taxes'),
-            'totalSurcharge' => $this->i18n->trans('surcharge'),
-            'totalIrpf' => $this->i18n->trans('irpf'),
-            'total' => $this->i18n->trans('total'),
-        ];
-        $rows = [
-            [
-                'currency' => $this->getDivisaName($model->coddivisa),
-                'net' => $this->numberTools->format($model->neto),
-                'taxes' => $this->numberTools->format($model->totaliva),
-                'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
-                'totalIrpf' => $this->numberTools->format($model->totalirpf),
-                'total' => $this->numberTools->format($model->total),
-            ]
-        ];
-        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
-        $tableOptions = [
-            'cols' => [
-                'net' => ['justification' => 'right'],
-                'taxes' => ['justification' => 'right'],
-                'totalSurcharge' => ['justification' => 'right'],
-                'totalIrpf' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
-        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
-    }
-
-    /**
-     * Inserts the header of the page with the model data.
-     *
-     * @param BusinessDocument $model
-     */
-    protected function insertBusinessDocHeader($model)
-    {
-        $headerData = [
-            'title' => $this->i18n->trans('delivery-note'),
-            'subject' => $this->i18n->trans('customer'),
-            'fieldName' => 'nombrecliente'
-        ];
-
-        if (isset($model->codproveedor)) {
-            $headerData['subject'] = $this->i18n->trans('supplier');
-            $headerData['fieldName'] = 'nombre';
-        }
-
-        switch ($model->modelClassName()) {
-            case 'FacturaProveedor':
-            case 'FacturaCliente':
-                $headerData['title'] = $this->i18n->trans('invoice');
-                break;
-
-            case 'PedidoProveedor':
-            case 'PedidoCliente':
-                $headerData['title'] = $this->i18n->trans('order');
-                break;
-
-            case 'PresupuestoProveedor':
-            case 'PresupuestoCliente':
-                $headerData['title'] = $this->i18n->trans('estimation');
-                break;
-        }
-
-        $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
-        $this->newLine();
-
-        $subject = $model->getSubject();
-        $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
-        $tableData = [
-            ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
-            ['key' => $headerData['subject'], 'value' => Base\Utils::fixHtml($model->{$headerData['fieldName']})],
-            ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
-            ['key' => $tipoidfiscal, 'value' => $model->cifnif],
-            ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie],
-        ];
-
-        if (!empty($model->direccion)) {
-            $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
-        }
-
-        $tableOptions = [
-            'width' => $this->tableWidth,
-            'showHeadings' => 0,
-            'shaded' => 0,
-            'lineCol' => [1, 1, 1],
-            'cols' => [],
-        ];
-        $this->insertParalellTable($tableData, '', $tableOptions);
-        $this->pdf->ezText('');
-
-        if (!empty($model->idcontactoenv) && $model->idcontactoenv != $model->idcontactofact) {
-            $this->insertBusinessDocShipping($model);
-        }
-    }
-
-    /**
-     * Inserts the address of delivery with the model data.
-     *
-     * @param BusinessDocument $model
-     */
-    private function insertBusinessDocShipping($model)
-    {
-        $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
-        $this->newLine();
-
-        $contacto = new Contacto();
-        if ($contacto->loadFromCode($model->idcontactoenv)) {
-            $name = Base\Utils::fixHtml($contacto->nombre) . ' ' . Base\Utils::fixHtml($contacto->apellidos);
-            $tableData = [
-                ['key' => $this->i18n->trans('name'), 'value' => $name],
-                ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($contacto)],
-            ];
-
-            $tableOptions = [
-                'width' => $this->tableWidth,
-                'showHeadings' => 0,
-                'shaded' => 0,
-                'lineCol' => [1, 1, 1],
-                'cols' => [],
-            ];
-            $this->insertParalellTable($tableData, '', $tableOptions);
-            $this->pdf->ezText('');
-        }
-    }
-
-    /**
-     * Combine address if the parameters don´t empty
-     *
-     * @param BusinessDocument|Contacto $model
-     *
-     * @return string
-     */
-    private function combineAddress($model): string
-    {
-        $completeAddress = Base\Utils::fixHtml($model->direccion);
-        $completeAddress .= empty($model->apartado) ? '' : ', ' . $this->i18n->trans('box') . ' ' . $model->apartado;
-        $completeAddress .= empty($model->codpostal) ? '' : ', ' . $model->codpostal;
-        $completeAddress .= empty($model->ciudad) ? '' : ', ' . Base\Utils::fixHtml($model->ciudad);
-        $completeAddress .= empty($model->provincia) ? '' : ' (' . Base\Utils::fixHtml($model->provincia) . ')';
-        $completeAddress .= empty($model->codpais) ? '' : ', ' . $this->getCountryName($model->codpais);
-
-        return $completeAddress;
     }
 }

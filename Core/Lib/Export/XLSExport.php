@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,14 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\NumberTools;
+use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
+use XLSXWriter;
 
 /**
  * XLS export data.
@@ -34,21 +40,21 @@ class XLSExport implements ExportInterface
     /**
      * Translator object
      *
-     * @var Base\Translator
+     * @var Translator
      */
-    private $i18n;
+    protected $i18n;
 
     /**
      * Class with number tools (to format numbers)
      *
-     * @var Base\NumberTools
+     * @var NumberTools
      */
-    private $numberTools;
+    protected $numberTools;
 
     /**
      * XLSX object.
      *
-     * @var \XLSXWriter
+     * @var XLSXWriter
      */
     private $writer;
 
@@ -57,14 +63,14 @@ class XLSExport implements ExportInterface
      */
     public function __construct()
     {
-        $this->i18n = new Base\Translator();
-        $this->numberTools = new Base\NumberTools();
+        $this->i18n = new Translator();
+        $this->numberTools = new NumberTools();
     }
 
     /**
      * Adds a new page with the document data.
      *
-     * @param mixed $model
+     * @param BusinessDocument $model
      */
     public function generateBusinessDocPage($model)
     {
@@ -80,8 +86,8 @@ class XLSExport implements ExportInterface
         $tableData = [];
         foreach ($model->getlines() as $line) {
             $tableData[] = [
-                'reference' => Base\Utils::fixHtml($line->referencia),
-                'description' => Base\Utils::fixHtml($line->descripcion),
+                'reference' => Utils::fixHtml($line->referencia),
+                'description' => Utils::fixHtml($line->descripcion),
                 'quantity' => $this->numberTools->format($line->cantidad),
                 'price' => $this->numberTools->format($line->pvpunitario),
                 'discount' => $this->numberTools->format($line->dtopor),
@@ -96,12 +102,12 @@ class XLSExport implements ExportInterface
     /**
      * Adds a new page with a table listing all models data.
      *
-     * @param mixed                         $model
-     * @param Base\DataBase\DataBaseWhere[] $where
-     * @param array                         $order
-     * @param int                           $offset
-     * @param array                         $columns
-     * @param string                        $title
+     * @param ModelClass      $model
+     * @param DataBaseWhere[] $where
+     * @param array           $order
+     * @param int             $offset
+     * @param array           $columns
+     * @param string          $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
@@ -130,9 +136,9 @@ class XLSExport implements ExportInterface
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
+     * @param ModelClass $model
+     * @param array      $columns
+     * @param string     $title
      */
     public function generateModelPage($model, $columns, $title = '')
     {
@@ -220,11 +226,11 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * Set the table content.
-     *
-     * @param $columns
-     * @param $tableCols
-     * @param $sheetHeaders
+     * Sets the table content.
+     * 
+     * @param array $columns
+     * @param array $tableCols
+     * @param array $sheetHeaders
      */
     private function setTableColumns(&$columns, &$tableCols, &$sheetHeaders)
     {
