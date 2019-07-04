@@ -33,7 +33,10 @@
             <column name="date" numcolumns="3" order="130">
                 <widget type="date" fieldname="date" readonly="true"  />
             </column>
-            <column name="done" numcolumns="2" order="140">
+            <column name="enabled" numcolumns="2" display="center" order="140">
+                <widget type="checkbox" fieldname="enabled" />
+            </column>
+            <column name="done" numcolumns="2" order="150">
                 <widget type="checkbox" fieldname="done" readonly="true" />
             </column>
         </group>
