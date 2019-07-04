@@ -21,10 +21,10 @@
 <view>
     <columns>
         <group name="data">
-            <column name="name" numcolumns="6" order="100">
+            <column name="name" order="100">
                 <widget type="text" fieldname="tipoidfiscal" required="true"/>
             </column>
-            <column name="code" numcolumns="6" order="110">
+            <column name="code" order="110">
                 <widget type="text" maxlength="2" fieldname="codeid"/>
             </column>
         </group>
