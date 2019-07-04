@@ -145,7 +145,7 @@ class XLSExport implements ExportInterface
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
-                $tableData[] = ['key' => $key, 'value' => $value];
+                $tableData[] = ['key' => $key, 'value' => Utils::fixHtml($value)];
             }
         }
 
@@ -218,7 +218,7 @@ class XLSExport implements ExportInterface
                     continue;
                 }
 
-                $tableData[$key][$col] = $row->{$col};
+                $tableData[$key][$col] = Utils::fixHtml($row->{$col});
             }
         }
 

@@ -97,8 +97,9 @@ class EditView extends BaseView
                 break;
 
             case 'load':
+                $exclude = ['action', 'code', 'option'];
                 foreach ($request->query->all() as $key => $value) {
-                    if ($key != 'code') {
+                    if (!in_array($key, $exclude)) {
                         $this->model->{$key} = $value;
                     }
                 }
