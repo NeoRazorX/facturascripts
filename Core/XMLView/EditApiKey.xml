@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditApiKey
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos Garcí Gómez       <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -31,14 +28,14 @@
             <column name="description" numcolumns="3" order="110">
                 <widget type="text" fieldname="description" required="true" />
             </column>
-            <column name="api-key" numcolumns="4" order="120">
+            <column name="api-key" numcolumns="5" order="120">
                 <widget type="text" fieldname="apikey" icon="fas fa-key" required="true" />
             </column>
-            <column name="created" numcolumns="3" order="130">
-                <widget type="date" fieldname="creationdate" />
+            <column name="created" numcolumns="2" order="130">
+                <widget type="date" fieldname="creationdate" readonly="true" />
             </column>
-            <column name="user" numcolumns="2" order="140">
-                <widget type="select" fieldname="nick" required="true">
+            <column name="user" titleurl="ListUser" numcolumns="2" order="140">
+                <widget type="select" fieldname="nick" icon="fas fa-user" onclick="EditUser" readonly="true" required="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick"></values>
                 </widget>
             </column>
