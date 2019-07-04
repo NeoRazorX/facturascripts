@@ -95,7 +95,7 @@ class PDFExport extends PDFDocument implements ExportInterface
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
 
-        $this->newLongTitles($longTitles);
+        $this->newLongTitles($longTitles, $tableColsTitle);
         $this->insertFooter();
     }
 
@@ -126,10 +126,8 @@ class PDFExport extends PDFDocument implements ExportInterface
 
         $tableDataAux = [];
         foreach ($tableColsTitle as $key => $colTitle) {
-            $value = isset($tableOptions['cols'][$key]['widget']) ? $tableOptions['cols'][$key]['widget']->plainText($model) : $model->{$key};
-            if ($value !== null && $value !== '') {
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $this->fixValue($value)];
-            }
+            $value = $tableOptions['cols'][$key]['widget']->plainText($model);
+            $tableDataAux[] = ['key' => $colTitle, 'value' => $this->fixValue($value)];
         }
 
         $this->pdf->ezText("\n" . $title . "\n", self::FONT_SIZE + 6);

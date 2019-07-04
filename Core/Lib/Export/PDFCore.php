@@ -48,6 +48,11 @@ class PDFCore
     const FOOTER_Y = 10;
 
     /**
+     * Maximum title length
+     */
+    const MAX_TITLE_LEN = 12;
+
+    /**
      *
      * @var DivisaTools
      */
@@ -150,12 +155,7 @@ class PDFCore
         /// Extracts the data from the cursos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                if (!isset($row->{$col})) {
-                    $tableData[$key][$col] = '';
-                    continue;
-                }
-
-                $value = isset($tableOptions['cols'][$col]['widget']) ? $tableOptions['cols'][$col]['widget']->plainText($row) : $row->{$col};
+                $value = $tableOptions['cols'][$col]['widget']->plainText($row);
                 $tableData[$key][$col] = $this->fixValue($value);
             }
         }
@@ -190,11 +190,16 @@ class PDFCore
      * Adds a description of long titles to the PDF.
      *
      * @param array $titles
+     * @param array $columns
      */
-    protected function newLongTitles(&$titles)
+    protected function newLongTitles(&$titles, $columns)
     {
         $txt = '';
         foreach ($titles as $key => $value) {
+            if (!in_array('*' . $key, $columns)) {
+                continue;
+            }
+
             if ($txt !== '') {
                 $txt .= ', ';
             }
@@ -271,10 +276,11 @@ class PDFCore
      */
     protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
     {
+        $emptyValues = ['-', $customEmptyValue];
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if (!empty($row[$key]) && $row[$key] != $customEmptyValue) {
+                if (!empty($row[$key]) && !in_array($row[$key], $emptyValues)) {
                     $remove = false;
                     break;
                 }
@@ -296,7 +302,7 @@ class PDFCore
     {
         $num = 1;
         foreach ($titles as $key => $value) {
-            if (mb_strlen($value) > 12) {
+            if (mb_strlen($value) > self::MAX_TITLE_LEN) {
                 $longTitles[$num] = $value;
                 $titles[$key] = '*' . $num;
                 ++$num;
