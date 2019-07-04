@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base;
+namespace FacturaScripts\Core\Model;
 
 /**
  * Description of IdentificadorFiscal
@@ -27,7 +26,6 @@ use FacturaScripts\Core\Model\Base;
  */
 class IdentificadorFiscal extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -37,7 +35,13 @@ class IdentificadorFiscal extends Base\ModelClass
     public $tipoidfiscal;
 
     /**
-     * 
+     *
+     * @var string
+     */
+    public $codeid;
+
+    /**
+     *
      * @return string
      */
     public static function primaryColumn()
@@ -46,7 +50,7 @@ class IdentificadorFiscal extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function tableName()

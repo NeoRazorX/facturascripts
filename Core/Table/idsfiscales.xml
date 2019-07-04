@@ -11,8 +11,20 @@
         <type>character varying(25)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>codeid</name>
+        <type>character varying(2)</type>
+    </column>
     <constraint>
         <name>idsfiscales_pkey</name>
         <type>PRIMARY KEY (tipoidfiscal)</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codeid</name>
+        <type>UNIQUE (codeid)</type>
+    </constraint>
+    <constraint>
+        <name>uniq_tipoidfiscal_codeid</name>
+        <type>UNIQUE (tipoidfiscal, codeid)</type>
     </constraint>
 </table>
