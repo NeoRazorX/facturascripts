@@ -194,7 +194,7 @@ class PDFDocument extends PDFCore
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
 
         if (!empty($this->format->texto)) {
-            $this->pdf->ezText("\n" . $this->format->texto, self::FONT_SIZE);
+            $this->pdf->ezText("\n" . Utils::fixHtml($this->format->texto), self::FONT_SIZE);
         }
     }
 
@@ -233,8 +233,8 @@ class PDFDocument extends PDFCore
                 break;
         }
 
-        if ($this->format->titulo !== '') {
-            $headerData['title'] = $this->format->titulo;
+        if (!empty($this->format->titulo)) {
+            $headerData['title'] = Utils::fixHtml($this->format->titulo);
         }
 
         $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);

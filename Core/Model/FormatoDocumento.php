@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Model to personalize the impresion of sales and buy documents.
  *
@@ -80,6 +82,7 @@ class FormatoDocumento extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependencies
         new Serie();
         new Empresa();
 
@@ -104,5 +107,16 @@ class FormatoDocumento extends Base\ModelClass
     public static function tableName()
     {
         return 'formatos_documentos';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->texto = Utils::noHtml($this->texto);
+        $this->titulo = Utils::noHtml($this->titulo);
+        return parent::test();
     }
 }
