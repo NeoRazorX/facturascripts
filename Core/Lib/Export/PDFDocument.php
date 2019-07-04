@@ -19,12 +19,14 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Core\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**
@@ -35,6 +37,12 @@ use FacturaScripts\Dinamic\Model\Pais;
  */
 class PDFDocument extends PDFCore
 {
+
+    /**
+     *
+     * @var FormatoDocumento
+     */
+    protected $format;
 
     /**
      * Combine address if the parameters don´t empty
@@ -184,6 +192,10 @@ class PDFDocument extends PDFCore
             'width' => $this->tableWidth
         ];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+
+        if (!empty($this->format->texto)) {
+            $this->pdf->ezText("\n" . $this->format->texto, self::FONT_SIZE);
+        }
     }
 
     /**
@@ -219,6 +231,10 @@ class PDFDocument extends PDFCore
             case 'PresupuestoCliente':
                 $headerData['title'] = $this->i18n->trans('estimation');
                 break;
+        }
+
+        if ($this->format->titulo !== '') {
+            $headerData['title'] = $this->format->titulo;
         }
 
         $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
@@ -350,5 +366,16 @@ class PDFDocument extends PDFCore
 
             $this->insertCompanyLogo($company->idlogo);
         }
+    }
+
+    /**
+     * 
+     * @param BusinessDocument $model
+     */
+    protected function loadDocumentFormat($model)
+    {
+        $this->format = new FormatoDocumento();
+        $where = [new DataBaseWhere('tipodoc', $model->modelClassName())];
+        $this->format->loadFromCode('', $where);
     }
 }
