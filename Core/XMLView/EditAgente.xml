@@ -62,4 +62,9 @@
             </column>
         </group>
     </columns>
+    <rows>
+        <row type="statistics">
+            <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="calcAgentInvoicePending" />
+        </row>
+    </rows>    
 </view>
