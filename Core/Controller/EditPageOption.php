@@ -83,7 +83,7 @@ class EditPageOption extends Controller
     /**
      * Get the list of users, excluding the user admin
      *
-     * @return Array
+     * @return array
      */
     public function getUserList()
     {

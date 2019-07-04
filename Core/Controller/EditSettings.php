@@ -232,7 +232,9 @@ class EditSettings extends ExtendedController\PanelController
         $methods = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
 
         $columnPayment = $this->views[$viewName]->columnForName('payment-method');
-        $columnPayment->widget->setValuesFromCodeModel($methods);
+        if ($columnPayment) {
+            $columnPayment->widget->setValuesFromCodeModel($methods);
+        }
     }
 
     /**
@@ -246,6 +248,8 @@ class EditSettings extends ExtendedController\PanelController
         $almacenes = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
 
         $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
-        $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
+        if ($columnWarehouse) {
+            $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
+        }
     }
 }

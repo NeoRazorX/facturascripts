@@ -159,7 +159,9 @@ class EditCliente extends ComercialContactController
     {
         /// Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+        if ($columnVATType) {
+            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+        }
 
         /// Model exists?
         if (!$this->views[$viewName]->model->exists()) {
@@ -175,10 +177,14 @@ class EditCliente extends ComercialContactController
 
         /// Load values option to default billing address from client contacts list
         $columnBilling = $this->views[$viewName]->columnForName('billing-address');
-        $columnBilling->widget->setValuesFromCodeModel($contacts);
+        if ($columnBilling) {
+            $columnBilling->widget->setValuesFromCodeModel($contacts);
+        }
 
         /// Load values option to default shipping address from client contacts list
         $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
-        $columnShipping->widget->setValuesFromCodeModel($contacts);
+        if ($columnShipping) {
+            $columnShipping->widget->setValuesFromCodeModel($contacts);
+        }
     }
 }

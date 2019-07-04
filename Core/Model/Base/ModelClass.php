@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\EventManager;
-use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * The class from which all models inherit, connects to the database,
