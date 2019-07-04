@@ -19,8 +19,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Controller to edit a single item from the Agente model
@@ -32,6 +34,23 @@ use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 class EditAgente extends ComercialContactController
 {
 
+    /**
+     * Returns the sum of the agent's total outstanding invoices.
+     *
+     * @return string
+     */
+    public function calcAgentInvoicePending()
+    {
+        $where = [
+            new DataBaseWhere('codagente', $this->getViewModelValue($this->getMainViewName(), 'codagente')),
+            new DataBaseWhere('pagada', false)
+        ];
+
+        $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
+        $divisaTools = new DivisaTools();
+        return $divisaTools->format($totalModel->totals['total'], 2);
+    }
+    
     /**
      * Returns the class name of the model to use.
      *
