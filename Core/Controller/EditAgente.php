@@ -50,7 +50,7 @@ class EditAgente extends ComercialContactController
         $divisaTools = new DivisaTools();
         return $divisaTools->format($totalModel->totals['total'], 2);
     }
-    
+
     /**
      * Returns the class name of the model to use.
      *
