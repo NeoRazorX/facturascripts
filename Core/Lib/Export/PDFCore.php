@@ -124,6 +124,17 @@ class PDFCore
     }
 
     /**
+     * 
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixValue($value)
+    {
+        return str_replace(['€', '₡', '₲', '£'], ['EUR', 'SVC', 'PYG', 'GBP'], Utils::fixHtml($value));
+    }
+
+    /**
      * Returns the table data
      *
      * @param array $cursor
@@ -145,7 +156,7 @@ class PDFCore
                 }
 
                 $value = isset($tableOptions['cols'][$col]['widget']) ? $tableOptions['cols'][$col]['widget']->plainText($row) : $row->{$col};
-                $tableData[$key][$col] = Utils::fixHtml($value);
+                $tableData[$key][$col] = $this->fixValue($value);
             }
         }
 

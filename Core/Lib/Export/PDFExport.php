@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
@@ -127,7 +126,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         foreach ($tableColsTitle as $key => $colTitle) {
             $value = isset($tableOptions['cols'][$key]['widget']) ? $tableOptions['cols'][$key]['widget']->plainText($model) : $model->{$key};
             if ($value !== null && $value !== '') {
-                $tableDataAux[] = ['key' => $colTitle, 'value' => Utils::fixHtml($value)];
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $this->fixValue($value)];
             }
         }
 
