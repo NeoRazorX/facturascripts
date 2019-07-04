@@ -38,5 +38,8 @@
         <column name="title" order="140">
             <widget type="text" fieldname="titulo" />
         </column>
+        <column name="additional-text" order="150">
+            <widget type="textarea" fieldname="texto" />
+        </column>
     </columns>
 </view>

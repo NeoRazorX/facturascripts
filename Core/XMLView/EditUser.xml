@@ -50,8 +50,8 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="company" numcolumns="3" order="120">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building">
+            <column name="company" titleurl="ListEmpresa" numcolumns="3" order="120">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
