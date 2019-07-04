@@ -14,8 +14,8 @@
         "maximebf/debugbar": "1.*",
         "mk-j/php_xlsxwriter": "0.37",
         "parsecsv/php-parsecsv": "1.*",
-        "phpmailer/phpmailer": "v6.0.5",
-        "rospdf/pdf-php": "0.12.46",
+        "phpmailer/phpmailer": "v6.0.7",
+        "rospdf/pdf-php": "0.12.52",
         "symfony/http-foundation": "^3.4",
         "symfony/translation": "^3.4",
         "twig/twig": "v2.*"

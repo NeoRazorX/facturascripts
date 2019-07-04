@@ -1,8 +1,9 @@
 {
     "default": {
         "coddivisa": "EUR",
-        "codserie": "A",
+        "codimpuesto": "IVA21",
         "codpago": "CONT",
-        "codimpuesto": "IVA21"
+        "codserie": "A",
+        "tipoidfiscal": "NIF"
     }
 }
