@@ -127,7 +127,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         foreach ($tableColsTitle as $key => $colTitle) {
             $value = isset($tableOptions['cols'][$key]['widget']) ? $tableOptions['cols'][$key]['widget']->plainText($model) : $model->{$key};
             if ($value !== null && $value !== '') {
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
+                $tableDataAux[] = ['key' => $colTitle, 'value' => Utils::fixHtml($value)];
             }
         }
 

@@ -22,6 +22,7 @@ use Cezpdf;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\NumberTools;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Description of PDFCore
@@ -135,7 +136,7 @@ class PDFCore
     {
         $tableData = [];
 
-        /// Get the data
+        /// Extracts the data from the cursos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
                 if (!isset($row->{$col})) {
@@ -144,7 +145,7 @@ class PDFCore
                 }
 
                 $value = isset($tableOptions['cols'][$col]['widget']) ? $tableOptions['cols'][$col]['widget']->plainText($row) : $row->{$col};
-                $tableData[$key][$col] = $value;
+                $tableData[$key][$col] = Utils::fixHtml($value);
             }
         }
 
