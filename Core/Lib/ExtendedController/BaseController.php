@@ -235,7 +235,7 @@ abstract class BaseController extends Base\Controller
      */
     protected function autocompleteAction(): array
     {
-        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'formname']);
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
         if ($data['source'] == '') {
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }
@@ -245,7 +245,9 @@ abstract class BaseController extends Base\Controller
             $results[] = ['key' => $value->code, 'value' => Base\Utils::fixHtml($value->description)];
         }
 
-        if (empty($results)) {
+        if (empty($results) && '0' == $data['strict']) {
+            $results[] = ['key' => $data['term'], 'value' => $data['term']];
+        } elseif (empty($results)) {
             $results[] = ['key' => null, 'value' => $this->i18n->trans('no-data')];
         }
 

@@ -25,7 +25,7 @@
             <column name="id" numcolumns="2" order="100" display="none">
                 <widget type="text" fieldname="idprovincia" required="true" />
             </column>
-            <column name="country" numcolumns="2" order="110">
+            <column name="country" titleurl="ListPais" numcolumns="2" order="110">
                 <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
