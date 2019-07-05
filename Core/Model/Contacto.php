@@ -248,31 +248,35 @@ class Contacto extends Base\Contact
 
     /**
      * 
+     * @param bool $create
+     *
      * @return Cliente
      */
-    public function getCustomer()
+    public function getCustomer($create = true)
     {
         $cliente = new Cliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
             return $cliente;
         }
 
-        /// creates a new customer
-        $cliente->cifnif = $this->cifnif;
-        $cliente->codproveedor = $this->codproveedor;
-        $cliente->email = $this->email;
-        $cliente->fax = $this->fax;
-        $cliente->idcontactoenv = $this->idcontacto;
-        $cliente->idcontactofact = $this->idcontacto;
-        $cliente->nombre = $this->fullName();
-        $cliente->observaciones = $this->observaciones;
-        $cliente->personafisica = $this->personafisica;
-        $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
-        $cliente->telefono1 = $this->telefono1;
-        $cliente->telefono2 = $this->telefono2;
-        if ($cliente->save()) {
-            $this->codcliente = $cliente->codcliente;
-            $this->save();
+        if ($create) {
+            /// creates a new customer
+            $cliente->cifnif = $this->cifnif;
+            $cliente->codproveedor = $this->codproveedor;
+            $cliente->email = $this->email;
+            $cliente->fax = $this->fax;
+            $cliente->idcontactoenv = $this->idcontacto;
+            $cliente->idcontactofact = $this->idcontacto;
+            $cliente->nombre = $this->fullName();
+            $cliente->observaciones = $this->observaciones;
+            $cliente->personafisica = $this->personafisica;
+            $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
+            $cliente->telefono1 = $this->telefono1;
+            $cliente->telefono2 = $this->telefono2;
+            if ($cliente->save()) {
+                $this->codcliente = $cliente->codcliente;
+                $this->save();
+            }
         }
 
         return $cliente;
@@ -280,30 +284,34 @@ class Contacto extends Base\Contact
 
     /**
      * 
+     * @param bool $create
+     *
      * @return Proveedor
      */
-    public function getSupplier()
+    public function getSupplier($create = true)
     {
         $proveedor = new Proveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
             return $proveedor;
         }
 
-        /// creates a new supplier
-        $proveedor->cifnif = $this->cifnif;
-        $proveedor->codcliente = $this->codcliente;
-        $proveedor->email = $this->email;
-        $proveedor->fax = $this->fax;
-        $proveedor->idcontacto = $this->idcontacto;
-        $proveedor->nombre = $this->fullName();
-        $proveedor->observaciones = $this->observaciones;
-        $proveedor->personafisica = $this->personafisica;
-        $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
-        $proveedor->telefono1 = $this->telefono1;
-        $proveedor->telefono2 = $this->telefono2;
-        if ($proveedor->save()) {
-            $this->codproveedor = $proveedor->codproveedor;
-            $this->save();
+        if ($create) {
+            /// creates a new supplier
+            $proveedor->cifnif = $this->cifnif;
+            $proveedor->codcliente = $this->codcliente;
+            $proveedor->email = $this->email;
+            $proveedor->fax = $this->fax;
+            $proveedor->idcontacto = $this->idcontacto;
+            $proveedor->nombre = $this->fullName();
+            $proveedor->observaciones = $this->observaciones;
+            $proveedor->personafisica = $this->personafisica;
+            $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
+            $proveedor->telefono1 = $this->telefono1;
+            $proveedor->telefono2 = $this->telefono2;
+            if ($proveedor->save()) {
+                $this->codproveedor = $proveedor->codproveedor;
+                $this->save();
+            }
         }
 
         return $proveedor;

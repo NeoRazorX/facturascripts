@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
  * Controller to edit a single item from the Contacto model
@@ -91,6 +92,20 @@ class EditContacto extends EditController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        $return = parent::editAction();
+        if ($return && $this->active === $this->getMainViewName()) {
+            $this->updateRelations($this->views[$this->active]->model);
+        }
+
+        return $return;
+    }
+
+    /**
      * Run the controller after actions
      *
      * @param string $action
@@ -143,6 +158,31 @@ class EditContacto extends EditController
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    /**
+     * 
+     * @param Contacto $contact
+     */
+    protected function updateRelations($contact)
+    {
+        $customer = $contact->getCustomer(false);
+        if ($customer->idcontactofact == $contact->idcontacto && $customer->exists()) {
+            $customer->email = $contact->email;
+            $customer->fax = $contact->fax;
+            $customer->telefono1 = $contact->telefono1;
+            $customer->telefono2 = $contact->telefono2;
+            $customer->save();
+        }
+
+        $supplier = $contact->getSupplier(false);
+        if ($supplier->idcontacto == $contact->idcontacto && $supplier->exists()) {
+            $supplier->email = $contact->email;
+            $supplier->fax = $contact->fax;
+            $supplier->telefono1 = $contact->telefono1;
+            $supplier->telefono2 = $contact->telefono2;
+            $supplier->save();
         }
     }
 }

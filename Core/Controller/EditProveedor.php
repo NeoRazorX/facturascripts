@@ -112,6 +112,20 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        $return = parent::editAction();
+        if ($return && $this->active === $this->getMainViewName()) {
+            $this->updateContact($this->views[$this->active]->model);
+        }
+
+        return $return;
+    }
+
+    /**
      * Load view data
      *
      * @param string   $viewName

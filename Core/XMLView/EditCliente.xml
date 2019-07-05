@@ -49,22 +49,22 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" order="110">
+            <column name="phone" order="110">
+                <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
+            </column>
+            <column name="phone2" order="120">
+                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
+            </column>
+            <column name="fax" display="none" order="130">
+                <widget type="text" fieldname="fax" />
+            </column>
+            <column name="email" order="140">
+                <widget type="email" fieldname="email" icon="fas fa-at" />
+            </column>
+            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" order="150">
                 <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
                     <values></values>
                 </widget>
-            </column>
-            <column name="phone" order="120">
-                <widget type="text" fieldname="telefono1" icon="fas fa-phone" />
-            </column>
-            <column name="phone2" order="130">
-                <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
-            </column>
-            <column name="fax" display="none" order="140">
-                <widget type="text" fieldname="fax" />
-            </column>
-            <column name="email" order="150">
-                <widget type="email" fieldname="email" icon="fas fa-at" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">

@@ -86,7 +86,19 @@ class Proveedor extends Base\ComercialContact
     public function getAdresses()
     {
         $contactModel = new Contacto();
-        return $contactModel->all([new DataBaseWhere('codproveedor', $this->codcliente)]);
+        return $contactModel->all([new DataBaseWhere('codproveedor', $this->codproveedor)]);
+    }
+
+    /**
+     * Return the default billing or shipping address.
+     *
+     * @return Contacto
+     */
+    public function getDefaultAddress()
+    {
+        $contact = new Contacto();
+        $contact->loadFromCode($this->idcontacto);
+        return $contact;
     }
 
     /**
