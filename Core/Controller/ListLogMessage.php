@@ -89,7 +89,7 @@ class ListLogMessage extends ListController
     {
         $this->addView($name, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->addOrderBy($name, ['date'], 'date', 2);
-        $this->addSearchFields($name, ['subject', 'text', 'addressee']);
+        $this->addSearchFields($name, ['addressee', 'body', 'subject']);
 
         /// filters
         $users = $this->codeModel->all('users', 'nick', 'nick');

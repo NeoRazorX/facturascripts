@@ -21,27 +21,27 @@
 -->
 <view>
     <columns>
-        <column name="id" order="100" display="none">
+        <column name="id" display="none" order="100">
             <widget type="number" fieldname="idtrans" onclick="EditTransferenciaStock"/>
         </column>
-        <column name="date" order="110">
-            <widget type="date" fieldname="fecha" />
-        </column>
-        <column name="codwarehouseorigin" title="origin-warehouse" order="120">
+        <column name="codwarehouseorigin" title="origin-warehouse" order="110">
             <widget type="select" fieldname="codalmacenorigen" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="codwarehousedestination" title="destination-warehouse" order="130">
+        <column name="codwarehousedestination" title="destination-warehouse" order="120">
             <widget type="select" fieldname="codalmacendestino" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="observations" order="140">
+        <column name="observations" order="130">
             <widget type="text" fieldname="observaciones" title="observations"/>
         </column>
-        <column name="user" display="right" order="150">
+        <column name="user" order="140">
             <widget type="text" fieldname="nick" />
+        </column>
+        <column name="date" display="right" order="150">
+            <widget type="datetime" fieldname="fecha" />
         </column>
     </columns>
 </view>
