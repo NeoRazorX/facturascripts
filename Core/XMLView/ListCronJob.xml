@@ -42,8 +42,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="done">1</option>
-            <option color="warning" fieldname="done">0</option>
+            <option color="success" fieldname="enabled">1</option>
+            <option color="warning" fieldname="enabled">0</option>
         </row>
     </rows>
 </view>
