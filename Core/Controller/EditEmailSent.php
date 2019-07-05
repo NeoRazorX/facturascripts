@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
  * Controller to edit a single registrer of EmailSent
@@ -53,13 +55,52 @@ class EditEmailSent extends EditController
     }
 
     /**
+     * Redirects to the contact page of this email.
+     */
+    protected function contactAction()
+    {
+        $contact = new Contacto();
+        $email = $this->getViewModelValue($this->getMainViewName(), 'addressee');
+        $where = [new DataBaseWhere('email', $email)];
+        if ($contact->loadFromCode('', $where)) {
+            $this->redirect($contact->url());
+            return;
+        }
+
+        $this->miniLog->warning($this->i18n->trans('record-not-found'));
+    }
+
+    /**
      * Loads views.
      */
     protected function createViews()
     {
         parent::createViews();
+        $mainView = $this->getMainViewName();
+
+        /// buttons
+        $newButton = [
+            'action' => 'contact',
+            'color' => 'info',
+            'icon' => 'fas fa-address-book',
+            'label' => 'contact',
+            'type' => 'button',
+        ];
+        $this->addButton($mainView, $newButton);
 
         /// settings
-        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+        $this->setSettings($mainView, 'btnNew', false);
+    }
+
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'contact':
+                $this->contactAction();
+                break;
+
+            default :
+                parent::execAfterAction($action);
+        }
     }
 }

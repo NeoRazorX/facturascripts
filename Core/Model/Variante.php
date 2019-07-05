@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Define method and attributes of table variantes.

@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -93,6 +94,31 @@ class EditContacto extends EditController
 
     /**
      * 
+     * @param string $viewName
+     */
+    protected function createEmailsView($viewName = 'ListEmailSent')
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Create views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('top');
+
+        $this->createEmailsView();
+    }
+
+    /**
+     * 
      * @return bool
      */
     protected function editAction()
@@ -147,16 +173,20 @@ class EditContacto extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mainViewName = $this->getMainViewName();
+
         switch ($viewName) {
-            case 'EditContacto':
+            case 'ListEmailSent':
+                $email = $this->getViewModelValue($mainViewName, 'email');
+                $where = [new DataBaseWhere('addressee', $email)];
+                $view->loadData('', $where);
+                break;
+
+            case $mainViewName:
                 parent::loadData($viewName, $view);
                 if ($view->model->exists()) {
                     $this->addConversionButtons($viewName);
                 }
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
                 break;
         }
     }
