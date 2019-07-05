@@ -237,7 +237,7 @@ class PDFDocument extends PDFCore
             $headerData['title'] = Utils::fixHtml($this->format->titulo);
         }
 
-        $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
+        $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
         $subject = $model->getSubject();
@@ -354,7 +354,7 @@ class PDFDocument extends PDFCore
         if ($company->loadFromCode($code)) {
             $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9, ['justification' => 'right']);
             $address = $company->direccion;
-            $address .= empty($company->codpostal) ? '' : ' - ' . $company->codpostal . ', ';
+            $address .= empty($company->codpostal) ? '' : "\n" . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
             $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';

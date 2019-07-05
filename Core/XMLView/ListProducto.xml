@@ -49,7 +49,7 @@
         <column name="sevende" title="for-sale" display="none" order="170">
             <widget type="checkbox" fieldname="sevende" />
         </column>
-        <column name="publico" title="public" order="180">
+        <column name="publico" title="public" display="center" order="180">
             <widget type="checkbox" fieldname="publico" />
         </column>
         <column name="bloqueado" title="blocked" display="none" order="190">
