@@ -87,7 +87,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $this->removeEmptyCols($tableData, $tableColsTitle);
+            $this->removeEmptyCols($tableData, $tableColsTitle, $this->numberTools->format(0));
             $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             /// Advance within the results

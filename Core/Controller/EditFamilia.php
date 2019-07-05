@@ -59,6 +59,22 @@ class EditFamilia extends EditController
      * 
      * @param string $viewName
      */
+    protected function createFamilyView($viewName = 'ListFamilia')
+    {
+        $this->addListView($viewName, 'Familia', 'families', 'fas fa-level-down-alt');
+        $this->views[$viewName]->addOrderBy(['codfamilia'], 'code');
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('parent');
+
+        /// disable button
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
     protected function createProductView($viewName = 'ListProducto')
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
@@ -68,7 +84,7 @@ class EditFamilia extends EditController
         $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
 
         /// disable column
-        $this->views[$viewName]->disableColumn('manufacturer');
+        $this->views[$viewName]->disableColumn('family');
     }
 
     /**
@@ -81,7 +97,7 @@ class EditFamilia extends EditController
 
         /// more tabs
         $this->createProductView();
-        $this->addListView('ListFamilia', 'Familia', 'families', 'fas fa-level-down-alt');
+        $this->createFamilyView();
     }
 
     /**
