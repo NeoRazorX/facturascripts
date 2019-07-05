@@ -99,7 +99,7 @@ class EditEmailSent extends EditController
                 $this->contactAction();
                 break;
 
-            default :
+            default:
                 parent::execAfterAction($action);
         }
     }

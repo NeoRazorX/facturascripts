@@ -30,14 +30,14 @@
         <column name="jobname" title="job-name" order="120">
             <widget type="text" fieldname="jobname" />
         </column>
-        <column name="date" order="130">
-            <widget type="text" fieldname="date" />
-        </column>
-        <column name="enabled" display="center" order="140">
+        <column name="enabled" display="center" order="130">
             <widget type="checkbox" fieldname="enabled" />
         </column>
-        <column name="done" display="center" order="150">
+        <column name="done" display="center" order="140">
             <widget type="checkbox" fieldname="done" />
+        </column>
+        <column name="date" display="right" order="150">
+            <widget type="datetime" fieldname="date" />
         </column>
     </columns>
     <rows>

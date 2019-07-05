@@ -56,7 +56,7 @@
             <widget type="number" fieldname="puntos" decimal="0" />
         </column>
         <column name="last-activity" display="none" order="200">
-            <widget type="date" fieldname="lastactivity" />
+            <widget type="datetime" fieldname="lastactivity" />
         </column>
     </columns>
     <rows>

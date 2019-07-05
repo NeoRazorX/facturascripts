@@ -42,7 +42,7 @@
             <widget type="text" fieldname="lastip" />
         </column>
         <column name="last-activity" display="right" order="160">
-            <widget type="text" fieldname="lastactivity" />
+            <widget type="datetime" fieldname="lastactivity" />
         </column>
     </columns>
     <rows>

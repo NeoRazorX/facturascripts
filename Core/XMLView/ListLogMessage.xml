@@ -40,7 +40,7 @@
             <widget type="text" fieldname="ip" />
         </column>
         <column name="date" display="right" order="160">
-            <widget type="text" fieldname="time" />
+            <widget type="datetime" fieldname="time" />
         </column>
     </columns>
     <rows>
