@@ -147,9 +147,9 @@ class PDFExport extends PDFDocument implements ExportInterface
     public function generateTablePage($headers, $rows)
     {
         $orientation = count($headers) > 5 ? 'landscape' : 'portrait';
-        $tableOptions = ['width' => $this->tableWidth];
-
         $this->newPage($orientation);
+
+        $tableOptions = ['width' => $this->tableWidth, 'shadeCol' => [0.95, 0.95, 0.95], 'shadeHeadingCol' => [0.95, 0.95, 0.95]];
         $this->insertHeader();
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         $this->insertFooter();
