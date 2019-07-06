@@ -272,7 +272,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $newLine = $this->getNewLine();
 
         $variant = new Variante();
-        $where = [new DataBaseWhere('referencia', $reference)];
+        $where = [new DataBaseWhere('referencia', Utils::noHtml($reference))];
         if ($variant->loadFromCode('', $where)) {
             $product = $variant->getProducto();
             $impuesto = $product->getImpuesto();

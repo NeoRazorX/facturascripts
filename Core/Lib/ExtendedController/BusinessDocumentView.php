@@ -125,10 +125,11 @@ class BusinessDocumentView extends BaseView
             $data['headers'][] = self::$i18n->trans($col->title);
         }
 
+        $fixColumns = ['descripcion', 'referencia'];
         foreach ($this->lines as $line) {
             $lineArray = [];
             foreach ($line->getModelFields() as $key => $field) {
-                $lineArray[$key] = $key === 'descripcion' ? Utils::fixHtml($line->{$key}) : $line->{$key};
+                $lineArray[$key] = in_array($key, $fixColumns) ? Utils::fixHtml($line->{$key}) : $line->{$key};
             }
             $data['rows'][] = $lineArray;
         }
