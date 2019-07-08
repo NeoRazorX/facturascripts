@@ -42,7 +42,7 @@ class PDFExport extends PDFDocument implements ExportInterface
      */
     public function generateBusinessDocPage($model)
     {
-        $this->loadDocumentFormat($model);
+        $this->format = $this->getDocumentFormat($model);
 
         $this->newPage();
         $this->insertHeader($model->idempresa);
