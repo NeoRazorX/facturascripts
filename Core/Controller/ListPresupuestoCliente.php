@@ -52,6 +52,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
     {
         $this->createViewSales('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
         $this->addButtonGroupDocument('ListPresupuestoCliente');
+        $this->addButtonApproveDocument('ListPresupuestoCliente');
 
         $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
     }

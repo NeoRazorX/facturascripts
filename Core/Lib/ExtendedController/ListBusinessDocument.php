@@ -32,6 +32,22 @@ abstract class ListBusinessDocument extends ListController
      * 
      * @param string $viewName
      */
+    protected function addButtonApproveDocument($viewName)
+    {
+        $newButton = [
+            'action' => 'approve-document',
+            'confirm' => 'true',
+            'icon' => 'fas fa-check',
+            'label' => 'approve-document',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
     protected function addButtonGroupDocument($viewName)
     {
         $newButton = [
@@ -80,6 +96,48 @@ abstract class ListBusinessDocument extends ListController
 
         $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymentValues);
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function approveDocumentAction()
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return true;
+        }
+
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+        if (!is_array($codes) || empty($model)) {
+            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            return true;
+        }
+
+        foreach ($codes as $code) {
+            if (!$model->loadFromCode($code)) {
+                $this->miniLog->error($this->i18n->trans('record-not-found'));
+                continue;
+            }
+
+            foreach ($model->getAvaliableStatus() as $status) {
+                if (empty($status->generadoc)) {
+                    continue;
+                }
+
+                $model->idestado = $status->idestado;
+                if (!$model->save()) {
+                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                    return true;
+                }
+            }
+        }
+
+        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $model->clear();
+        return true;
     }
 
     /**
@@ -176,9 +234,11 @@ abstract class ListBusinessDocument extends ListController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'approve-document':
+                return $this->approveDocumentAction();
+
             case 'group-document':
-                $this->groupDocumentAction();
-                break;
+                return $this->groupDocumentAction();
         }
 
         return parent::execPreviousAction($action);
@@ -198,10 +258,10 @@ abstract class ListBusinessDocument extends ListController
             $codes = implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
             $this->redirect($url);
-            return true;
+            return false;
         }
 
         $this->miniLog->warning($this->i18n->trans('no-selected-item'));
-        return false;
+        return true;
     }
 }
