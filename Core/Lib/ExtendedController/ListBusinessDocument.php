@@ -242,6 +242,9 @@ abstract class ListBusinessDocument extends ListController
 
             case 'group-document':
                 return $this->groupDocumentAction();
+
+            case 'paid':
+                return $this->paidAction();
         }
 
         return parent::execPreviousAction($action);
@@ -265,6 +268,42 @@ abstract class ListBusinessDocument extends ListController
         }
 
         $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+        return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function paidAction()
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return true;
+        }
+
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+        if (!is_array($codes) || empty($model)) {
+            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            return true;
+        }
+
+        foreach ($codes as $code) {
+            if (!$model->loadFromCode($code)) {
+                $this->miniLog->error($this->i18n->trans('record-not-found'));
+                continue;
+            }
+
+            $model->pagado = true;
+            if (!$model->save()) {
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                return true;
+            }
+        }
+
+        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $model->clear();
         return true;
     }
 }
