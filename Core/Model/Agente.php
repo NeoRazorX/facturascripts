@@ -43,7 +43,7 @@ class Agente extends Base\Contact
     /**
      * Primary key. Varchar (10).
      *
-     * @var int
+     * @var string
      */
     public $codagente;
 
