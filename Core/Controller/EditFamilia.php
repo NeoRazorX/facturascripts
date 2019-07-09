@@ -51,7 +51,7 @@ class EditFamilia extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'family';
-        $data['icon'] = 'fas fa-object-group';
+        $data['icon'] = 'fas fa-sitemap';
         return $data;
     }
 

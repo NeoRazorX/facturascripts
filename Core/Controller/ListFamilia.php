@@ -39,7 +39,7 @@ class ListFamilia extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'families';
-        $data['icon'] = 'fas fa-object-group';
+        $data['icon'] = 'fas fa-sitemap';
         return $data;
     }
 
@@ -48,7 +48,7 @@ class ListFamilia extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFamilia', 'Familia', 'families', 'fas fa-object-group');
+        $this->addView('ListFamilia', 'Familia', 'families', 'fas fa-sitemap');
         $this->addSearchFields('ListFamilia', ['descripcion', 'codfamilia', 'madre']);
         $this->addOrderBy('ListFamilia', ['codfamilia'], 'code');
         $this->addOrderBy('ListFamilia', ['descripcion'], 'description');

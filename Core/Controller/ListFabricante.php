@@ -39,7 +39,7 @@ class ListFabricante extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'manufacturers';
-        $data['icon'] = 'fas fa-columns';
+        $data['icon'] = 'fas fa-industry';
         return $data;
     }
 
@@ -48,7 +48,7 @@ class ListFabricante extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListFabricante', 'Fabricante', 'manufacturers', 'fas fa-columns');
+        $this->addView('ListFabricante', 'Fabricante', 'manufacturers', 'fas fa-industry');
         $this->addSearchFields('ListFabricante', ['nombre', 'codfabricante']);
         $this->addOrderBy('ListFabricante', ['codfabricante'], 'code');
         $this->addOrderBy('ListFabricante', ['nombre'], 'name');

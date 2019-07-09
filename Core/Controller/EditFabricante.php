@@ -50,7 +50,7 @@ class EditFabricante extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'manufacturer';
-        $data['icon'] = 'fas fa-columns';
+        $data['icon'] = 'fas fa-industry';
         return $data;
     }
 

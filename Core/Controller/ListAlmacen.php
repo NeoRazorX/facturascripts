@@ -39,7 +39,7 @@ class ListAlmacen extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'warehouses';
-        $data['icon'] = 'fas fa-building';
+        $data['icon'] = 'fas fa-warehouse';
         return $data;
     }
 
@@ -58,7 +58,7 @@ class ListAlmacen extends ListController
      */
     protected function createViewAlmacen($name = 'ListAlmacen')
     {
-        $this->addView($name, 'Almacen', 'warehouses', 'fas fa-building');
+        $this->addView($name, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->addSearchFields($name, ['nombre', 'codalmacen']);
         $this->addOrderBy($name, ['codalmacen'], 'code');
         $this->addOrderBy($name, ['nombre'], 'name');
