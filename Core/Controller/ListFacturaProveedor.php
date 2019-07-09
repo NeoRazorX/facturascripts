@@ -72,6 +72,7 @@ class ListFacturaProveedor extends ListBusinessDocument
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');

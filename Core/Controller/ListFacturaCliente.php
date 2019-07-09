@@ -72,6 +72,7 @@ class ListFacturaCliente extends ListBusinessDocument
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
