@@ -96,6 +96,9 @@ abstract class ListBusinessDocument extends ListController
 
         $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymentValues);
+
+        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
     }
 
     /**
