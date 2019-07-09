@@ -141,9 +141,9 @@ class Divisa extends Base\ModelClass
         $this->simbolo = Utils::noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']));
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']));
         } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codiso', '%min%' => '1', '%max%' => '3']));
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codiso, '%column%' => 'codiso', '%min%' => '1', '%max%' => '5']));
         } elseif ($this->tasaconv === 0.0 || $this->tasaconvcompra === 0.0) {
             self::$miniLog->alert(self::$i18n->trans('conversion-rate-not-0'));
         } else {

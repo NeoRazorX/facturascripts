@@ -167,14 +167,16 @@ class FormaPago extends Base\ModelClass
      */
     public function test()
     {
-        $this->descripcion = Utils::noHtml($this->descripcion);
-
-        /// we check the expiration validity
-        if ($this->plazovencimiento < 0) {
+        $this->codpago = trim($this->codpago);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codpago)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']));
+            return false;
+        } elseif ($this->plazovencimiento < 0) {
             self::$miniLog->alert(self::$i18n->trans('number-expiration-invalid'));
             return false;
         }
 
+        $this->descripcion = Utils::noHtml($this->descripcion);
         return parent::test();
     }
 }

@@ -75,8 +75,18 @@ class CuentaEspecial extends Base\ModelClass
         return 'cuentasesp';
     }
 
+    /**
+     * 
+     * @return bool
+     */
     public function test()
     {
+        $this->codcuentaesp = trim($this->codcuentaesp);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcuentaesp, '%column%' => 'codcuentaesp', '%min%' => '1', '%max%' => '6']));
+            return false;
+        }
+
         $this->descripcion = Utils::noHtml($this->descripcion);
         return parent::test();
     }
@@ -89,8 +99,8 @@ class CuentaEspecial extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
     {
-        return parent::url($type, 'ListCuenta?activetab=List');
+        return parent::url($type, $list);
     }
 }

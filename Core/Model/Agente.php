@@ -86,7 +86,7 @@ class Agente extends Base\Contact
         $contact->loadFromCode($this->idcontacto);
         return $contact;
     }
-    
+
     /**
      * Returns settlement product.
      * 
@@ -152,12 +152,13 @@ class Agente extends Base\Contact
     public function test()
     {
         $this->cargo = Utils::noHtml($this->cargo);
-        $this->debaja = !empty($this->fechabaja);
-
-        if (empty($this->codagente)) {
-            $this->codagente = $this->newCode();
+        $this->codagente = empty($this->codagente) ? (string) $this->newCode() : trim($this->codagente);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']));
+            return false;
         }
 
+        $this->debaja = !empty($this->fechabaja);
         return parent::test();
     }
 

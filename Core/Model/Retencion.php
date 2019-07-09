@@ -115,19 +115,14 @@ class Retencion extends Base\ModelClass
     public function test(): bool
     {
         $this->codretencion = trim($this->codretencion);
-        if (empty($this->codretencion) || strlen($this->codretencion) > 10) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-retention-code-length'));
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 
         $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
         $this->codsubcuentaacre = empty($this->codsubcuentaacre) ? null : $this->codsubcuentaacre;
-
         $this->descripcion = Utils::noHtml($this->descripcion);
-        if (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-description-retention'));
-            return false;
-        }
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
             self::$miniLog->alert(self::$i18n->trans('not-valid-percentage-retention'));
@@ -145,8 +140,8 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
     {
-        return parent::url($type, 'ListImpuesto?activetab=List');
+        return parent::url($type, $list);
     }
 }

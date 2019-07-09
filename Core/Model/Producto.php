@@ -303,6 +303,10 @@ class Producto extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->observaciones = Utils::noHtml($this->observaciones);
         $this->referencia = Utils::noHtml($this->referencia);
+        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            return false;
+        }
 
         if ($this->nostock && $this->stockfis != 0 && null !== $this->idproducto) {
             $sql = "DELETE FROM " . Stock::tableName() . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto)
@@ -318,11 +322,6 @@ class Producto extends Base\ModelClass
 
         if ($this->bloqueado) {
             $this->publico = false;
-        }
-
-        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
-            return false;
         }
 
         $this->actualizado = date('d-m-Y H:i:s');

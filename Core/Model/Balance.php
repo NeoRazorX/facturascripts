@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -141,12 +141,16 @@ class Balance extends Base\ModelClass
      */
     public function test()
     {
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codbalance, '%column%' => 'codbalance', '%min%' => '1', '%max%' => '15']));
+            return false;
+        }
+
         $this->descripcion1 = Utils::noHtml($this->descripcion1);
         $this->descripcion2 = Utils::noHtml($this->descripcion2);
         $this->descripcion3 = Utils::noHtml($this->descripcion3);
         $this->descripcion4 = Utils::noHtml($this->descripcion4);
         $this->descripcion4ba = Utils::noHtml($this->descripcion4ba);
-
         return parent::test();
     }
 }

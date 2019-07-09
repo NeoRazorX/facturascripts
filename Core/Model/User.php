@@ -226,7 +226,7 @@ class User extends Base\ModelClass
 
         $this->nick = trim($this->nick);
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
             return false;
         }
 
@@ -286,6 +286,22 @@ class User extends Base\ModelClass
     }
 
     /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        $result = parent::saveInsert($values);
+        if ($result && !$this->admin) {
+            $this->setNewRole();
+        }
+
+        return $result;
+    }
+
+    /**
      * Assigns the first role to this user.
      */
     protected function setNewRole()
@@ -307,21 +323,5 @@ class User extends Base\ModelClass
             $this->save();
             break;
         }
-    }
-
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        $result = parent::saveInsert($values);
-        if ($result && !$this->admin) {
-            $this->setNewRole();
-        }
-
-        return $result;
     }
 }

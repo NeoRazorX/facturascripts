@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,31 +45,6 @@ class Atributo extends Base\ModelClass
     public $nombre;
 
     /**
-     * Get attribute by name.
-     *
-     * @param string $nombre
-     * @param bool   $minusculas
-     *
-     * @return Atributo|bool
-     */
-    public function getByNombre($nombre, $minusculas = false)
-    {
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE nombre = ' . self::$dataBase->var2str($nombre) . ';';
-        if ($minusculas) {
-            $sql = 'SELECT * FROM ' . static::tableName()
-                . ' WHERE lower(nombre) = ' . self::$dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
-        }
-
-        $data = self::$dataBase->select($sql);
-
-        if (!empty($data)) {
-            return new self($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -90,26 +65,19 @@ class Atributo extends Base\ModelClass
     }
 
     /**
-     * Obtain the attributes of an attribute code.
-     *
-     * @return AtributoValor[]
-     */
-    public function valores()
-    {
-        $valor0 = new AtributoValor();
-
-        return $valor0->allFromAtributo($this->codatributo);
-    }
-
-    /**
      * Returns True if there is no errors on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->codatributo = empty($this->codatributo) ? (string) $this->newCode() : trim($this->codatributo);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']));
+            return false;
+        }
 
+        $this->nombre = Utils::noHtml($this->nombre);
         return parent::test();
     }
 }
