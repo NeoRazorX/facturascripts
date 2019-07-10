@@ -354,6 +354,7 @@ class EditLiquidacionComision extends EditController
         if ($canInvoice) {
             $calcButton = [
                 'action' => 'calculatecommission',
+                'confirm' => 'true',
                 'icon' => 'fas fa-percentage',
                 'label' => 'calculate',
                 'type' => 'action',
@@ -365,11 +366,11 @@ class EditLiquidacionComision extends EditController
         if ($canInvoice && $total > 0) {
             $invoiceButton = [
                 'action' => 'generateinvoice',
+                'color' => 'info',
+                'confirm' => true,
                 'icon' => 'fas fa-file-invoice',
                 'label' => 'generate-invoice',
                 'type' => 'action',
-                'color' => 'info',
-                'confirm' => true,
             ];
             $this->addButton($mainViewName, $invoiceButton);
         }
