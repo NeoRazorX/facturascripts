@@ -58,19 +58,15 @@ class FiscalNumberValitator
      */
     private static function isValidCIF($docNumber)
     {
-        $isValid = FALSE;
-        $fixedDocNumber = "";
-        $correctDigit = "";
-        $writtenDigit = "";
         $fixedDocNumber = strtoupper( $docNumber );
         $writtenDigit = substr( $fixedDocNumber, -1, 1 );
         if( self::isValidCIFFormat( $fixedDocNumber ) == 1 ) {
             $correctDigit = self::getCIFCheckDigit( $fixedDocNumber );
             if( $writtenDigit == $correctDigit ) {
-                $isValid = TRUE;
+                return true;
             }
         }
-        return $isValid;
+        return false;
     }
 
     /**
@@ -84,13 +80,7 @@ class FiscalNumberValitator
      */
     private static function getCIFCheckDigit($docNumber)
     {
-        $fixedDocNumber = "";
-        $centralChars = "";
         $firstChar = "";
-        $evenSum = 0;
-        $oddSum = 0;
-        $totalSum = 0;
-        $lastDigitTotalSum = 0;
         $correctDigit = "";
         $fixedDocNumber = strtoupper( $docNumber );
         if( self::isValidCIFFormat( $fixedDocNumber ) ) {
@@ -168,7 +158,6 @@ class FiscalNumberValitator
      */
     private static function isValidNIE($docNumber)
     {
-        $isValid = FALSE;
         $fixedDocNumber = "";
         if( !preg_match( "/^[A-Z]+$/i", substr( $fixedDocNumber, 1, 1 ) ) ) {
             $fixedDocNumber = strtoupper( substr( "000000000" . $docNumber, -9 ) );
@@ -177,7 +166,7 @@ class FiscalNumberValitator
         }
         if( self::isValidNIEFormat( $fixedDocNumber ) ) {
             if( substr( $fixedDocNumber, 1, 1 ) == "T" ) {
-                $isValid = TRUE;
+                return true;
             } else {
                 $numberWithoutLast = substr( $fixedDocNumber, 0, strlen($fixedDocNumber)-1 );
                 $lastDigit = substr( $fixedDocNumber, strlen($fixedDocNumber)-1, strlen($fixedDocNumber) );
@@ -185,10 +174,10 @@ class FiscalNumberValitator
                 $numberWithoutLast = str_replace('X', '0', $numberWithoutLast);
                 $numberWithoutLast = str_replace('Z', '2', $numberWithoutLast);
                 $fixedDocNumber = $numberWithoutLast . $lastDigit;
-                $isValid = self::isValidNIF( $fixedDocNumber );
+                return self::isValidNIF( $fixedDocNumber );
             }
         }
-        return $isValid;
+        return false;
     }
 
     /**
@@ -216,10 +205,7 @@ class FiscalNumberValitator
      */
     private static function isValidNIF($docNumber)
     {
-        $isValid = FALSE;
         $fixedDocNumber = "";
-        $correctDigit = "";
-        $writtenDigit = "";
         if( !preg_match( "/^[A-Z]+$/i", substr( $fixedDocNumber, 1, 1 ) ) ) {
             $fixedDocNumber = strtoupper( substr( "000000000" . $docNumber, -9 ) );
         } else {
@@ -229,10 +215,10 @@ class FiscalNumberValitator
         if( self::isValidNIFFormat( $fixedDocNumber ) ) {
             $correctDigit = self::getNIFCheckDigit( $fixedDocNumber );
             if( $writtenDigit == $correctDigit ) {
-                $isValid = TRUE;
+                return true;
             }
         }
-        return $isValid;
+        return false;
     }
 
     /**
@@ -248,8 +234,6 @@ class FiscalNumberValitator
     {
         $keyString = 'TRWAGMYFPDXBNJZSQVHLCKE';
         $fixedDocNumber = "";
-        $position = 0;
-        $writtenLetter = "";
         $correctLetter = "";
         if( !preg_match( "/^[A-Z]+$/i", substr( $fixedDocNumber, 1, 1 ) ) ) {
             $fixedDocNumber = strtoupper( substr( "000000000" . $docNumber, -9 ) );
@@ -295,14 +279,13 @@ class FiscalNumberValitator
      */
     private static function respectsDocPattern($givenString, $pattern)
     {
-        $isValid = FALSE;
         $fixedString = strtoupper( $givenString );
         if( is_int( substr( $fixedString, 0, 1 ) ) ) {
             $fixedString = substr( "000000000" . $givenString , -9 );
         }
         if( preg_match( $pattern, $fixedString ) ) {
-            $isValid = TRUE;
+            return true;
         }
-        return $isValid;
+        return false;
     }
 }
