@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\VatRegularizationToAccounting;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 
@@ -96,7 +97,7 @@ class EditRegularizacionImpuesto extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'vat-regularization';
-        $data['icon'] = 'fas fa-map-signs';
+        $data['icon'] = 'fas fa-balance-scale-right';
         return $data;
     }
 
@@ -250,7 +251,7 @@ class EditRegularizacionImpuesto extends EditController
 
     protected function getListPartidaImpuesto1($view)
     {
-        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregiva');
         if (!empty($id)) {
             $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
             $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
@@ -267,7 +268,7 @@ class EditRegularizacionImpuesto extends EditController
 
     protected function getListPartidaImpuesto2($view)
     {
-        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregiva');
         if (!empty($id)) {
             $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
             $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
@@ -288,7 +289,7 @@ class EditRegularizacionImpuesto extends EditController
      */
     protected function getListPartidaImpuestoResumen($view)
     {
-        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregularizacion');
+        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregiva');
         if (!empty($id)) {
             $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
             $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
@@ -321,6 +322,7 @@ class EditRegularizacionImpuesto extends EditController
         switch ($viewName) {
             case 'EditRegularizacionImpuesto':
                 parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues($viewName);
                 break;
 
             case 'ListPartida':
@@ -338,6 +340,32 @@ class EditRegularizacionImpuesto extends EditController
             case 'ListPartidaImpuesto-2':
                 $this->getListPartidaImpuesto2($view);
                 break;
+        }
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function setCustomWidgetValues($viewName)
+    {
+        $openExercises = [];
+        $exerciseModel = new Ejercicio();
+        foreach ($exerciseModel->all([], ['fechainicio' => 'DESC']) as $exercise) {
+            if ($exercise->isOpened()) {
+                $openExercises[$exercise->codejercicio] = $exercise->nombre;
+            }
+        }
+
+        $columnExercise = $this->views[$viewName]->columnForName('exercise');
+        if ($columnExercise) {
+            $columnExercise->widget->setValuesFromArrayKeys($openExercises);
+        }
+
+        /// Model exists?
+        if (!$this->views[$viewName]->model->exists()) {
+            $this->views[$viewName]->disableColumn('tax-credit-account', false, 'true');
+            $this->views[$viewName]->disableColumn('tax-debit-account', false, 'true');
         }
     }
 }

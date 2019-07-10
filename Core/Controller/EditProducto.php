@@ -61,7 +61,7 @@ class EditProducto extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-code-branch');
+        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-project-diagram');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-tasks');
     }
 

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 
 /**
  * A VAT regularization.
@@ -43,14 +43,14 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @var string
      */
-    public $codsubcuentaacreedora;
+    public $codsubcuentaacr;
 
     /**
      * Code, not ID, of the related sub-account.
      *
      * @var string
      */
-    public $codsubcuentadeudora;
+    public $codsubcuentadeu;
 
     /**
      * Date of entry.
@@ -92,21 +92,21 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @var int
      */
-    public $idregularizacion;
+    public $idregiva;
 
     /**
      * Related sub-account ID.
      *
      * @var int
      */
-    public $idsubcuentaacreedora;
+    public $idsubcuentaacr;
 
     /**
      * Related sub-account ID.
      *
      * @var int
      */
-    public $idsubcuentadeudora;
+    public $idsubcuentadeu;
 
     /**
      * Period of regularization.
@@ -114,15 +114,6 @@ class RegularizacionImpuesto extends Base\ModelClass
      * @var string
      */
     public $periodo;
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->idempresa = AppSettings::get('default', 'idempresa');
-    }
 
     /**
      * Deletes the regularization of VAT from the database.
@@ -151,6 +142,17 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return Ejercicio
+     */
+    public function getEjercicio()
+    {
+        $ejercicio = new Ejercicio();
+        $ejercicio->loadFromCode($this->codejercicio);
+        return $ejercicio;
+    }
+
+    /**
      * Returns the VAT regularization corresponding to that date,
      * that is, the regularization whose start date is earlier
      * to the date provided and its end date is after the date
@@ -168,11 +170,7 @@ class RegularizacionImpuesto extends Base\ModelClass
             . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
 
         $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            return new self($data[0]);
-        }
-
-        return false;
+        return empty($data) ? false : new self($data[0]);
     }
 
     /**
@@ -210,7 +208,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      */
     public static function primaryColumn()
     {
-        return 'idregularizacion';
+        return 'idregiva';
     }
 
     /**
@@ -245,6 +243,15 @@ class RegularizacionImpuesto extends Base\ModelClass
         $period = $this->getPeriod($this->periodo);
         $this->fechainicio = $period['start'];
         $this->fechafin = $period['end'];
+
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->getEjercicio()->idempresa;
+        }
+
+        if (empty($this->codsubcuentaacr) || empty($this->codsubcuentadeu)) {
+            $this->setDefaultAccounts();
+        }
+
         return parent::test();
     }
 
@@ -264,6 +271,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      * Calculate Period data
      *
      * @param string $period
+     *
      * @return array
      */
     private function getPeriod($period): array
@@ -285,5 +293,19 @@ class RegularizacionImpuesto extends Base\ModelClass
             default:
                 return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
         }
+    }
+
+    protected function setDefaultAccounts()
+    {
+        $accounts = new AccountingAccounts();
+        $accounts->exercise = $this->getEjercicio();
+
+        $subcuentaacr = $accounts->getSpecialSubAccount('IVAACR');
+        $this->codsubcuentaacr = $subcuentaacr->codsubcuenta;
+        $this->idsubcuentaacr = $subcuentaacr->primaryColumnValue();
+
+        $subcuentadeu = $accounts->getSpecialSubAccount('IVADEU');
+        $this->codsubcuentadeu = $subcuentadeu->codsubcuenta;
+        $this->idsubcuentadeu = $subcuentadeu->primaryColumnValue();
     }
 }

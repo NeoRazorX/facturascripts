@@ -88,7 +88,7 @@ class ListProducto extends ListController
      */
     protected function createViewVariante($name = 'ListVariante')
     {
-        $this->addView($name, 'Variante', 'variants', 'fas fa-code-branch');
+        $this->addView($name, 'Variante', 'variants', 'fas fa-project-diagram');
         $this->addSearchFields($name, ['referencia', 'codbarras']);
         $this->addOrderBy($name, ['referencia'], 'reference');
         $this->addOrderBy($name, ['codbarras'], 'barcode');
