@@ -127,7 +127,7 @@ class AdminPlugins extends Base\Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        die(var_dump(FiscalNumberValitator::validate('nif', '54063586q')));
+        die(var_dump(FiscalNumberValitator::validate('nie', 'X1038176W')));
         $this->pluginManager = new Base\PluginManager();
 
         $action = $this->request->get('action', '');

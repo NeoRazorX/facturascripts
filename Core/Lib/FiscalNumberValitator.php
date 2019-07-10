@@ -41,11 +41,58 @@ class FiscalNumberValitator
             case 'nif':
                 return self::isValidNIF($number);
             case 'nie':
-
+                return self::isValidNIE($number);
             case 'cif':
 
             
         }
+    }
+
+    /**
+     * This function validates a Spanish identification number
+     * verifying its check digits.
+     *
+     * @param string $docNumber
+     * @return boolean
+     */
+    private static function isValidNIE($docNumber)
+    {
+        $isValid = FALSE;
+        $fixedDocNumber = "";
+        if( !preg_match( "/^[A-Z]+$/i", substr( $fixedDocNumber, 1, 1 ) ) ) {
+            $fixedDocNumber = strtoupper( substr( "000000000" . $docNumber, -9 ) );
+        } else {
+            $fixedDocNumber = strtoupper( $docNumber );
+        }
+        if( self::isValidNIEFormat( $fixedDocNumber ) ) {
+            if( substr( $fixedDocNumber, 1, 1 ) == "T" ) {
+                $isValid = TRUE;
+            } else {
+                $numberWithoutLast = substr( $fixedDocNumber, 0, strlen($fixedDocNumber)-1 );
+                $lastDigit = substr( $fixedDocNumber, strlen($fixedDocNumber)-1, strlen($fixedDocNumber) );
+                $numberWithoutLast = str_replace('Y', '1', $numberWithoutLast);
+                $numberWithoutLast = str_replace('X', '0', $numberWithoutLast);
+                $numberWithoutLast = str_replace('Z', '2', $numberWithoutLast);
+                $fixedDocNumber = $numberWithoutLast . $lastDigit;
+                $isValid = self::isValidNIF( $fixedDocNumber );
+            }
+        }
+        return $isValid;
+    }
+
+    /**
+     * This function validates the format of a given string in order to
+     * see if it fits with NIE format. Practically, it performs a validation
+     * over a NIE, except this function does not check the check digit.
+     *
+     * @param string $docNumber
+     * @return boolean
+     */
+    private static function isValidNIEFormat($docNumber)
+    {
+        return self::respectsDocPattern(
+            $docNumber,
+            '/^[XYZT][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Z0-9]/' );
     }
 
     /**
