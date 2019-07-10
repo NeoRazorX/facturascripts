@@ -43,6 +43,10 @@ class ListIdentificadorFiscal extends ListController
 
     protected function createViews()
     {
-        $this->addView('ListIdentificadorFiscal', 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
+        $viewName = 'ListIdentificadorFiscal';
+        $this->addView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
+        $this->addSearchFields($viewName, ['tipoidfiscal']);
+        $this->addOrderBy($viewName, ['codeid'], 'code');
+        $this->addOrderBy($viewName, ['tipoidfiscal'], 'name', 1);
     }
 }

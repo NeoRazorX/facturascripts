@@ -88,7 +88,7 @@ class ListAgente extends ListController
     {
         /// View
         $this->addView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
-        $this->addSearchFields($viewName, ['codagente', 'codcliente', 'CAST(porcentaje AS VARCHAR)', 'codfamilia', 'idproducto']);
+        $this->addSearchFields($viewName, ['codagente', 'codcliente']);
 
         /// Order By
         $this->addOrderBy($viewName, ['idcomision'], 'id');
