@@ -155,7 +155,7 @@ abstract class BaseController extends Base\Controller
      *
      * @return string
      */
-    protected function getMainViewName()
+    public function getMainViewName()
     {
         foreach (array_keys($this->views) as $key) {
             return $key;
