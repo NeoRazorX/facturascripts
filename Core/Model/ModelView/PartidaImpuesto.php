@@ -75,9 +75,9 @@ class PartidaImpuesto extends ModelView
     {
         return 'asientos '
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
-            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta '
-            . 'AND subcuentas.codimpuesto IS NOT NULL '
-            . 'AND subcuentas.codcuentaesp IS NOT NULL';
+            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' AND subcuentas.codimpuesto IS NOT NULL'
+            . ' AND subcuentas.codcuentaesp IS NOT NULL';
     }
 
     /**

@@ -172,7 +172,7 @@ class AccountingAccounts
      */
     public function getIRPFPurchaseAccount($retention, string $specialAccount = self::SPECIAL_IRPF_PURCHASE_ACCOUNT)
     {
-        return $this->getAccountFromCode($retention->codsubcuentaret, $specialAccount);
+        return $this->getAccountFromCode($retention->codsubcuentaacr, $specialAccount);
     }
 
     /**
