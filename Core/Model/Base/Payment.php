@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Lib\Accounting\PaymentToAccounting;
+use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\Asiento;
 
 /**

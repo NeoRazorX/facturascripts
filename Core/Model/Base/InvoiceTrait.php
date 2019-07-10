@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Core\Lib\ReceiptGenerator;
+use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
 
 /**

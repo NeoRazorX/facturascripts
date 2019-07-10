@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Class for the accounting of tax regularizations
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class VatRegularizationToAccounting extends AccountingClass
 {

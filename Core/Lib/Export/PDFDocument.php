@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Empresa;
-use FacturaScripts\Core\Model\FormatoDocumento;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**

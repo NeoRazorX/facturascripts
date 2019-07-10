@@ -20,9 +20,9 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\CommissionTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 

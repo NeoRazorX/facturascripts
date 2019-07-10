@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Export\CSVExport;
+use FacturaScripts\Dinamic\Lib\Export\CSVExport;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 

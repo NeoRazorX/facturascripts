@@ -20,9 +20,9 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Lib\Accounting\VatRegularizationToAccounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\Accounting\VatRegularizationToAccounting;
 use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 
