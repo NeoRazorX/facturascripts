@@ -186,7 +186,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addView($viewName, $model, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'numproveedor', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
-        $this->addOrderBy($viewName, ['fecha', 'hora'], 'date', 2);
+        $this->addOrderBy($viewName, ['fecha', 'hora', 'codigo'], 'date', 2);
         $this->addOrderBy($viewName, ['numero'], 'number');
         $this->addOrderBy($viewName, ['numproveedor'], 'numsupplier');
         $this->addOrderBy($viewName, ['total'], 'amount');
@@ -208,7 +208,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addView($viewName, $model, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'numero2', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
-        $this->addOrderBy($viewName, ['fecha', 'hora'], 'date', 2);
+        $this->addOrderBy($viewName, ['fecha', 'hora', 'codigo'], 'date', 2);
         $this->addOrderBy($viewName, ['numero'], 'number');
         $this->addOrderBy($viewName, ['numero2'], 'number2');
         $this->addOrderBy($viewName, ['total'], 'amount');
