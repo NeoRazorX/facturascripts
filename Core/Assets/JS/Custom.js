@@ -16,17 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function confirmAction(viewName, action, title, message) {
+function confirmAction(viewName, action, title, message, cancel, confirm) {
     bootbox.confirm({
         title: title,
         message: message,
         closeButton: false,
         buttons: {
             cancel: {
-                label: '<i class="fas fa-times"></i> Cancel'
+                label: '<i class="fas fa-times"></i> ' + cancel
             },
             confirm: {
-                label: '<i class="fas fa-check"></i> Confirm',
+                label: '<i class="fas fa-check"></i> ' + confirm,
                 className: "btn-warning"
             }
         },
