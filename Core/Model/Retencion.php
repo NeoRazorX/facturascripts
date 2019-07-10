@@ -50,7 +50,7 @@ class Retencion extends Base\ModelClass
      *
      * @var string
      */
-    public $codsubcuentaacre;
+    public $codsubcuentaacr;
 
     /**
      * Description of the tax.
@@ -121,7 +121,7 @@ class Retencion extends Base\ModelClass
         }
 
         $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
-        $this->codsubcuentaacre = empty($this->codsubcuentaacre) ? null : $this->codsubcuentaacre;
+        $this->codsubcuentaacr = empty($this->codsubcuentaacr) ? null : $this->codsubcuentaacr;
         $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {

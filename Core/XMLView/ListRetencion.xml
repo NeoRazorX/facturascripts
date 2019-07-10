@@ -36,7 +36,7 @@
             </widget>
         </column>
         <column name="subaccount-irpf-creditor" order="140">
-            <widget type="autocomplete" fieldname="codsubcuentaacre">
+            <widget type="autocomplete" fieldname="codsubcuentaacr">
                 <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
             </widget>
         </column>
