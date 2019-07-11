@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Almacen extends \FacturaScripts\Core\Model\Almacen
+class Almacen extends \FacturaScripts\Plugins\atecresacorefs\Model\Almacen
 {
 }
