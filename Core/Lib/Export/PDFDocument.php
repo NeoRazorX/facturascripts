@@ -329,21 +329,24 @@ class PDFDocument extends PDFCore
     protected function insertCompanyLogo($idfile = 0)
     {
         if (!\function_exists('imagecreatefromstring')) {
-            die('ERROR: function imagecreatefromstring() not founded. '
+            die('ERROR: function imagecreatefromstring() not found. '
                 . ' Do you have installed php-gd package and enabled support to allow us render images? .'
                 . 'Note that the package name can differ between operating system or PHP version.');
         }
 
-        $logoFile = new AttachedFile();
-        $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
-        if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
-            $logoPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $logoFile->path;
-        }
+        $xPos = $this->pdf->ez['leftMargin'];
 
-        $logoSize = $this->calcLogoSize($logoPath);
-        $xPos = $this->pdf->ez['topMargin'];
-        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
-        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        $logoFile = new AttachedFile();
+        if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
+            $logoSize = $this->calcImageSize($logoFile->path);
+            $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
+            $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        } else {
+            $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
+            $logoSize = $this->calcImageSize($logoPath);
+            $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
+            $this->addImageFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        }
 
         /// add some margin
         $this->pdf->y -= 20;
