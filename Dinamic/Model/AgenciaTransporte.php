@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AgenciaTransporte extends \FacturaScripts\Plugins\atecresacorefs\Model\AgenciaTransporte
+class AgenciaTransporte extends \FacturaScripts\Core\Model\AgenciaTransporte
 {
 }

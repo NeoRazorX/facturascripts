@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Familia extends \FacturaScripts\Plugins\atecresacorefs\Model\Familia
+class Familia extends \FacturaScripts\Core\Model\Familia
 {
 }

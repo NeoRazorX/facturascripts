@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Agente extends \FacturaScripts\Plugins\atecresacorefs\Model\Agente
+class Agente extends \FacturaScripts\Core\Model\Agente
 {
 }
