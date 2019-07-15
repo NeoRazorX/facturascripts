@@ -284,6 +284,7 @@ abstract class BaseController extends Base\Controller
                 }
             }
 
+            $model->clear();
             if ($numDeletes > 0) {
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
                 return true;
@@ -291,10 +292,12 @@ abstract class BaseController extends Base\Controller
         } elseif ($model->loadFromCode($codes) && $model->delete()) {
             // deleting a single row
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $model->clear();
             return true;
         }
 
         $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+        $model->clear();
         return false;
     }
 
