@@ -51,6 +51,7 @@ class ListAlbaranCliente extends ListBusinessDocument
     {
         $this->createViewSales('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->addButtonGroupDocument('ListAlbaranCliente');
+        $this->addButtonApproveDocument('ListAlbaranCliente');
 
         $this->createViewLines('ListLineaAlbaranCliente', 'LineaAlbaranCliente');
     }

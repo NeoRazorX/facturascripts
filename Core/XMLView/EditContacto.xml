@@ -90,37 +90,40 @@
             <column name="province" numcolumns="2" order="140">
                 <widget type="text" fieldname="provincia" />
             </column>
-            <column name="country" numcolumns="2" order="150">
+            <column name="country" titleurl="ListPais" numcolumns="2" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
-            <column name="create-date" numcolumns="3" order="100">
+            <column name="create-date" numcolumns="2" order="100">
                 <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
             <column name="last-activity" numcolumns="3" order="110">
                 <widget type="date" fieldname="lastactivity" readonly="true" />
             </column>
-            <column name="points" numcolumns="3" order="120">
+            <column name="last-ip" numcolumns="3" order="120">
+                <widget type="text" fieldname="lastip" readonly="true" />
+            </column>
+            <column name="points" numcolumns="2" order="130">
                 <widget type="number" fieldname="puntos" />
             </column>
-            <column name="level" numcolumns="3" order="130">
+            <column name="level" numcolumns="2" order="140">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
             </column>
-            <column name="verified" title="verified" numcolumns="4" order="140">
+            <column name="verified" numcolumns="4" order="150">
                 <widget type="checkbox" fieldname="verificado" />
             </column>
-            <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
+            <column name="is-person" numcolumns="4" order="160">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
-            <column name="allow-marketing" title="allow-marketing" numcolumns="4" order="160">
+            <column name="allow-marketing" numcolumns="4" order="170">
                 <widget type="checkbox" fieldname="admitemarketing" />
             </column>
         </group>
         <group name="notes" numcolumns="12">
-            <column name="observations" numcolumns="12" order="140">
+            <column name="observations" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>

@@ -51,6 +51,7 @@ class ListAlbaranProveedor extends ListBusinessDocument
     {
         $this->createViewPurchases('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
         $this->addButtonGroupDocument('ListAlbaranProveedor');
+        $this->addButtonApproveDocument('ListAlbaranProveedor');
 
         $this->createViewLines('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor');
     }

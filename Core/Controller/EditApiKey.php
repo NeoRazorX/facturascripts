@@ -66,7 +66,7 @@ class EditApiKey extends EditController
      *
      * @throws Exception
      */
-    private function addResourcesToApiKey($idApiKey, $apiAccess, $state = false)
+    protected function addResourcesToApiKey($idApiKey, $apiAccess, $state = false)
     {
         // add Pages to Rol
         if (!Model\ApiAccess::addResourcesToApiKey($idApiKey, $apiAccess, $state)) {
@@ -80,7 +80,7 @@ class EditApiKey extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('top');
+        $this->setTabsPosition('bottom');
 
         $this->addEditListView('EditApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
 
@@ -175,9 +175,12 @@ class EditApiKey extends EditController
     {
         switch ($viewName) {
             case 'EditApiAccess':
-                $idApiKey = $this->getViewModelValue('EditApiKey', 'id');
+                $idApiKey = $this->getViewModelValue($this->getMainViewName(), 'id');
                 $where = [new DataBaseWhere('idapikey', $idApiKey)];
                 $view->loadData('', $where, ['resource' => 'ASC'], 0, 0);
+                if (!$this->views[$this->active]->model->exists()) {
+                    $this->views[$this->active]->model->nick = $this->user->nick;
+                }
                 break;
 
             default:

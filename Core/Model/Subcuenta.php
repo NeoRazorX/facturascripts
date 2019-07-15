@@ -220,6 +220,15 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codsubcuenta';
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string

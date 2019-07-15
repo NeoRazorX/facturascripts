@@ -52,7 +52,7 @@ class EditAlmacen extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'warehouse';
-        $data['icon'] = 'fas fa-building';
+        $data['icon'] = 'fas fa-warehouse';
         return $data;
     }
 

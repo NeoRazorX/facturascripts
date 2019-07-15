@@ -52,6 +52,7 @@ class ListPedidoCliente extends ListBusinessDocument
     {
         $this->createViewSales('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->addButtonGroupDocument('ListPedidoCliente');
+        $this->addButtonApproveDocument('ListPedidoCliente');
         
         $this->createViewLines('ListLineaPedidoCliente', 'LineaPedidoCliente');
     }

@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Diario;
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use FacturaScripts\Dinamic\Model\LiquidacionComision;
@@ -194,6 +195,7 @@ class Updater extends Controller
 
     private function initNewModels()
     {
+        new AttachedFile();
         new Diario();
         new IdentificadorFiscal();
         new LiquidacionComision();

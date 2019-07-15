@@ -20,9 +20,9 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\CommissionTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 
@@ -354,6 +354,7 @@ class EditLiquidacionComision extends EditController
         if ($canInvoice) {
             $calcButton = [
                 'action' => 'calculatecommission',
+                'confirm' => 'true',
                 'icon' => 'fas fa-percentage',
                 'label' => 'calculate',
                 'type' => 'action',
@@ -365,11 +366,11 @@ class EditLiquidacionComision extends EditController
         if ($canInvoice && $total > 0) {
             $invoiceButton = [
                 'action' => 'generateinvoice',
+                'color' => 'info',
+                'confirm' => true,
                 'icon' => 'fas fa-file-invoice',
                 'label' => 'generate-invoice',
                 'type' => 'action',
-                'color' => 'info',
-                'confirm' => true,
             ];
             $this->addButton($mainViewName, $invoiceButton);
         }

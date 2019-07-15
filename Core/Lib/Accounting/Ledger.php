@@ -151,11 +151,7 @@ class Ledger extends AccountingBase
      */
     protected function processLine($line, $grouping)
     {
-        $item = [];
-        if (!$grouping) {
-            $item['fecha'] = ($line['fecha']) ?? date('d-m-Y', strtotime($line['fecha']));
-            $item['numero'] = ($line['numero']) ?? $line['numero'];
-        }
+        $item = $grouping ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
         $item['cuenta'] = (isset($line['cuenta'])) ? $line['cuenta'] : $line['codsubcuenta'];
         $item['concepto'] = Utils::fixHtml($line['concepto']);
         $item['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');

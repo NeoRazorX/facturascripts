@@ -104,7 +104,7 @@ class EditEmpresa extends EditController
      */
     protected function createViewWarehouse($viewName = 'ListAlmacen')
     {
-        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-building');
+        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->views[$viewName]->disableColumn('company');
     }
 

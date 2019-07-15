@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Empresa;
-use FacturaScripts\Core\Model\FormatoDocumento;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**
@@ -94,6 +94,28 @@ class PDFDocument extends PDFCore
 
         $divisa = new Divisa();
         return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
+    }
+
+    /**
+     * 
+     * @param BusinessDocument $model
+     *
+     * @return FormatoDocumento
+     */
+    protected function getDocumentFormat($model)
+    {
+        $documentFormat = new FormatoDocumento();
+        $where = [
+            new DataBaseWhere('tipodoc', $model->modelClassName()),
+            new DataBaseWhere('idempresa', $model->idempresa)
+        ];
+        foreach ($documentFormat->all($where, ['codserie' => 'DESC']) as $format) {
+            if ($format->codserie == $model->codserie || null === $format->codserie) {
+                return $format;
+            }
+        }
+
+        return $documentFormat;
     }
 
     /**
@@ -237,7 +259,7 @@ class PDFDocument extends PDFCore
             $headerData['title'] = Utils::fixHtml($this->format->titulo);
         }
 
-        $this->pdf->ezText("\n" . $headerData['title'] . ' ' . $model->codigo . "\n", self::FONT_SIZE + 6);
+        $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
         $subject = $model->getSubject();
@@ -307,21 +329,24 @@ class PDFDocument extends PDFCore
     protected function insertCompanyLogo($idfile = 0)
     {
         if (!\function_exists('imagecreatefromstring')) {
-            die('ERROR: function imagecreatefromstring() not founded. '
+            die('ERROR: function imagecreatefromstring() not found. '
                 . ' Do you have installed php-gd package and enabled support to allow us render images? .'
                 . 'Note that the package name can differ between operating system or PHP version.');
         }
 
-        $logoFile = new AttachedFile();
-        $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
-        if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
-            $logoPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $logoFile->path;
-        }
+        $xPos = $this->pdf->ez['leftMargin'];
 
-        $logoSize = $this->calcLogoSize($logoPath);
-        $xPos = $this->pdf->ez['topMargin'];
-        $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['rightMargin'];
-        $this->pdf->addPngFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        $logoFile = new AttachedFile();
+        if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
+            $logoSize = $this->calcImageSize($logoFile->path);
+            $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
+            $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        } else {
+            $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
+            $logoSize = $this->calcImageSize($logoPath);
+            $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
+            $this->addImageFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
+        }
 
         /// add some margin
         $this->pdf->y -= 20;
@@ -354,7 +379,7 @@ class PDFDocument extends PDFCore
         if ($company->loadFromCode($code)) {
             $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9, ['justification' => 'right']);
             $address = $company->direccion;
-            $address .= empty($company->codpostal) ? '' : ' - ' . $company->codpostal . ', ';
+            $address .= empty($company->codpostal) ? '' : "\n" . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
             $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';
@@ -366,16 +391,5 @@ class PDFDocument extends PDFCore
 
             $this->insertCompanyLogo($company->idlogo);
         }
-    }
-
-    /**
-     * 
-     * @param BusinessDocument $model
-     */
-    protected function loadDocumentFormat($model)
-    {
-        $this->format = new FormatoDocumento();
-        $where = [new DataBaseWhere('tipodoc', $model->modelClassName())];
-        $this->format->loadFromCode('', $where);
     }
 }

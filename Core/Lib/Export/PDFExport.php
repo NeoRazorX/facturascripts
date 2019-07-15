@@ -42,7 +42,7 @@ class PDFExport extends PDFDocument implements ExportInterface
      */
     public function generateBusinessDocPage($model)
     {
-        $this->loadDocumentFormat($model);
+        $this->format = $this->getDocumentFormat($model);
 
         $this->newPage();
         $this->insertHeader($model->idempresa);
@@ -87,7 +87,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $this->removeEmptyCols($tableData, $tableColsTitle);
+            $this->removeEmptyCols($tableData, $tableColsTitle, $this->numberTools->format(0));
             $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             /// Advance within the results
@@ -95,7 +95,7 @@ class PDFExport extends PDFDocument implements ExportInterface
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
 
-        $this->newLongTitles($longTitles);
+        $this->newLongTitles($longTitles, $tableColsTitle);
         $this->insertFooter();
     }
 
@@ -126,13 +126,12 @@ class PDFExport extends PDFDocument implements ExportInterface
 
         $tableDataAux = [];
         foreach ($tableColsTitle as $key => $colTitle) {
-            $value = isset($tableOptions['cols'][$key]['widget']) ? $tableOptions['cols'][$key]['widget']->plainText($model) : $model->{$key};
-            if ($value !== null && $value !== '') {
-                $tableDataAux[] = ['key' => $colTitle, 'value' => $this->fixValue($value)];
-            }
+            $value = $tableOptions['cols'][$key]['widget']->plainText($model);
+            $tableDataAux[] = ['key' => $colTitle, 'value' => $this->fixValue($value)];
         }
 
-        $this->pdf->ezText("\n" . $title . "\n", self::FONT_SIZE + 6);
+        $title .= ': ' . $model->primaryDescription();
+        $this->pdf->ezText("\n" . $this->fixValue($title) . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
         $this->insertParalellTable($tableDataAux, '', $tableOptions);
@@ -148,9 +147,9 @@ class PDFExport extends PDFDocument implements ExportInterface
     public function generateTablePage($headers, $rows)
     {
         $orientation = count($headers) > 5 ? 'landscape' : 'portrait';
-        $tableOptions = ['width' => $this->tableWidth];
-
         $this->newPage($orientation);
+
+        $tableOptions = ['width' => $this->tableWidth, 'shadeCol' => [0.95, 0.95, 0.95], 'shadeHeadingCol' => [0.95, 0.95, 0.95]];
         $this->insertHeader();
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         $this->insertFooter();

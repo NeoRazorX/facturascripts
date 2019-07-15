@@ -63,7 +63,7 @@ class ListImpuesto extends ListController
      */
     protected function createViewRegularization($viewName = 'ListRegularizacionImpuesto')
     {
-        $this->addView($viewName, 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-map-signs');
+        $this->addView($viewName, 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-balance-scale-right');
         $this->addSearchFields($viewName, ['periodo', 'fechainicio']);
         $this->addOrderBy($viewName, ['codejercicio||periodo'], 'period');
         $this->addOrderBy($viewName, ['fechainicio'], 'start-date');

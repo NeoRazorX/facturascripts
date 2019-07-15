@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Proveedor;
+
 /**
  * Controller for editing models that are related and show
  * a history of purchase or sale documents.
@@ -202,5 +205,19 @@ abstract class ComercialContactController extends EditController
             'numfield' => 'numproveedor',
             'numtitle' => 'numsupplier'
         ];
+    }
+
+    /**
+     * 
+     * @param Cliente|Proveedor $subject
+     */
+    protected function updateContact($subject)
+    {
+        $contact = $subject->getDefaultAddress();
+        $contact->email = $subject->email;
+        $contact->fax = $subject->fax;
+        $contact->telefono1 = $subject->telefono1;
+        $contact->telefono2 = $subject->telefono2;
+        $contact->save();
     }
 }

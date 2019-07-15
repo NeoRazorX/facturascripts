@@ -117,18 +117,12 @@ class Pais extends Base\ModelClass
     public function test()
     {
         $this->codpais = trim($this->codpais);
-        $this->nombre = Utils::noHtml($this->nombre);
-
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codpais', '%min%' => '1', '%max%' => '20']));
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']));
             return false;
         }
 
-        if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
-            return false;
-        }
-
+        $this->nombre = Utils::noHtml($this->nombre);
         return parent::test();
     }
 }

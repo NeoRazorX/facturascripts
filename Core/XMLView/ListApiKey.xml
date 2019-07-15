@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListApiKey
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
 -->
-
 <view>
     <columns>
         <column name="code" order="100">
@@ -33,16 +30,22 @@
         <column name="api-key" order="120">
             <widget type="text" fieldname="apikey" />
         </column>
-        <column name="created" order="130">
-            <widget type="date" fieldname="creationdate" />
+        <column name="enabled" display="center" order="130">
+            <widget type="checkbox" fieldname="enabled" />
         </column>
-        <column name="nick" order="140">
+        <column name="user" order="140">
             <widget type="select" fieldname="nick" required="true">
                 <values source="users" fieldcode="nick" fieldtitle="nick"></values>
             </widget>
         </column>
-        <column name="enabled" order="150">
-            <widget type="checkbox" fieldname="enabled" />
+        <column name="created" display="right" order="150">
+            <widget type="date" fieldname="creationdate" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="enabled">1</option>
+            <option color="danger" fieldname="enabled">0</option>
+        </row>
+    </rows>
 </view>

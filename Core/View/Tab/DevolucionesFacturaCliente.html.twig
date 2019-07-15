@@ -18,6 +18,7 @@
      */
 #}
 {% set currentView = fsc.getCurrentView() %}
+{% set mainViewName = fsc.getMainViewName() %}
 
 {% if currentView.model.exists() %}
     <form method="post">
@@ -39,10 +40,10 @@
                         {% set refunded = currentView.model.refundedItemAmount(line.referencia) %}
                         <tr>
                             <td>
-                                <div class="form-control">{{ line.referencia }}</div>
+                                <div class="form-control">{{ line.referencia | raw }}</div>
                             </td>
                             <td>
-                                <div class="form-control">{{ line.descripcion }}</div>
+                                <div class="form-control">{{ line.descripcion | raw }}</div>
                             </td>
                             <td>
                                 <div class="form-control text-right">{{ line.cantidad }}</div>
@@ -62,11 +63,11 @@
                 </div>
             </div>
             <div class="form-row">
-                {{ _self.customSelect('codserie', 'codserie', currentView.model.codserie, fsc.getSelectValues('Serie')) }}
+                {{ _self.customSelect('codserie', 'codserie', currentView.model.codserie, fsc.views[mainViewName].getSelectValues('Serie')) }}
                 {{ _self.customInput('fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
                 <div class="col text-right">
                     <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-save" aria-hidden="true"></i>&nbsp; {{ i18n.trans('save') }}
+                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
                     </button>
                 </div>
             </div>

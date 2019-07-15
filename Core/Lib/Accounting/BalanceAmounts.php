@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -105,11 +106,7 @@ class BalanceAmounts extends AccountingBase
     private function getDescriptionSubcuenta($idsubcuenta)
     {
         $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        if ($subcuenta !== false) {
-            return $subcuenta->descripcion;
-        }
-
-        return '-';
+        return $subcuenta !== false ? Utils::fixHtml($subcuenta->descripcion) : '-';
     }
 
     /**

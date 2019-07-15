@@ -86,7 +86,19 @@ class Proveedor extends Base\ComercialContact
     public function getAdresses()
     {
         $contactModel = new Contacto();
-        return $contactModel->all([new DataBaseWhere('codproveedor', $this->codcliente)]);
+        return $contactModel->all([new DataBaseWhere('codproveedor', $this->codproveedor)]);
+    }
+
+    /**
+     * Return the default billing or shipping address.
+     *
+     * @return Contacto
+     */
+    public function getDefaultAddress()
+    {
+        $contact = new Contacto();
+        $contact->loadFromCode($this->idcontacto);
+        return $contact;
     }
 
     /**
@@ -127,6 +139,10 @@ class Proveedor extends Base\ComercialContact
     public function test()
     {
         $this->codproveedor = empty($this->codproveedor) ? (string) $this->newCode() : trim($this->codproveedor);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']));
+            return false;
+        }
 
         return parent::test();
     }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,19 +25,20 @@ namespace FacturaScripts\Core\Model;
  */
 class IdentificadorFiscal extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
      *
      * @var string
      */
-    public $tipoidfiscal;
+    public $codeid;
 
     /**
      *
      * @var string
      */
-    public $codeid;
+    public $tipoidfiscal;
 
     /**
      *
@@ -56,5 +56,20 @@ class IdentificadorFiscal extends Base\ModelClass
     public static function tableName()
     {
         return 'idsfiscales';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->tipoidfiscal = trim($this->tipoidfiscal);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,25}$/i', $this->tipoidfiscal)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->tipoidfiscal, '%column%' => 'tipoidfiscal', '%min%' => '1', '%max%' => '25']));
+            return false;
+        }
+
+        return parent::test();
     }
 }

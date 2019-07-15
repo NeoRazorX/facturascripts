@@ -40,7 +40,7 @@
                 <widget type="date" fieldname="fechafin" />
             </column>
             <column name="account-length" numcolumns="3" order="150">
-                <widget type="number" fieldname="longsubcuenta" max="15" min="4" required="true" />
+                <widget type="number" fieldname="longsubcuenta" decimal="0" max="15" min="4" required="true" />
             </column>
             <column name="status" numcolumns="3" order="160">
                 <widget type="select" fieldname="estado" translate="true" required="true">

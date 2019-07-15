@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base;
-
 /**
  * Description of PagoProveedor
  *

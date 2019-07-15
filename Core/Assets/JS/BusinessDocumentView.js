@@ -38,17 +38,12 @@ function beforeChange(changes, source) {
     }
 }
 
-function businessDocViewAutocompleteGetData(formId, field, source, fieldcode, fieldtitle, term) {
-    var formData = {};
+function businessDocViewAutocompleteGetData(formId, formData, term) {
     var rawForm = $("form[id=" + formId + "]").serializeArray();
     $.each(rawForm, function (i, input) {
         formData[input.name] = input.value;
     });
     formData["action"] = "autocomplete";
-    formData["field"] = field;
-    formData["source"] = source;
-    formData["fieldcode"] = fieldcode;
-    formData["fieldtitle"] = fieldtitle;
     formData["term"] = term;
     return formData;
 }
@@ -244,25 +239,27 @@ $(document).ready(function () {
     });
 
     $(".autocomplete-dc").each(function () {
-        var field = $(this).attr("data-field");
-        var source = $(this).attr("data-source");
-        var fieldcode = $(this).attr("data-fieldcode");
-        var fieldtitle = $(this).attr("data-fieldtitle");
+        var data = {
+            field: $(this).attr("data-field"),
+            fieldcode: $(this).attr("data-fieldcode"),
+            fieldtitle: $(this).attr("data-fieldtitle"),
+            source: $(this).attr("data-source")
+        };
         var formName = $(this).closest("form").attr("name");
         $(this).autocomplete({
             source: function (request, response) {
                 $.ajax({
                     method: "POST",
                     url: businessDocViewUrl,
-                    data: businessDocViewAutocompleteGetData(formName, field, source, fieldcode, fieldtitle, request.term),
+                    data: businessDocViewAutocompleteGetData(formName, data, request.term),
                     dataType: "json",
                     success: function (results) {
                         var values = [];
                         results.forEach(function (element) {
-                            if (element.key !== null) {
-                                values.push({key: element.key, value: element.key + " | " + element.value});
+                            if (element.key === null || element.key === element.value) {
+                                values.push(element);
                             } else {
-                                values.push({key: null, value: element.value});
+                                values.push({key: element.key, value: element.key + " | " + element.value});
                             }
                         });
                         response(values);
@@ -273,10 +270,14 @@ $(document).ready(function () {
                 });
             },
             select: function (event, ui) {
-                var value = ui.item.value.split(" | ");
-                if (value[0] !== null) {
-                    $("#" + field + "Autocomplete").val(ui.item.key);
-                    ui.item.value = value[1];
+                if (ui.item.key !== null) {
+                    $("#" + data.field + "Autocomplete").val(ui.item.key);
+                    var value = ui.item.value.split(" | ");
+                    if (value.length > 1) {
+                        ui.item.value = value[1];
+                    } else {
+                        ui.item.value = value[0];
+                    }
                     businessDocViewSubjectChanged();
                 }
             }

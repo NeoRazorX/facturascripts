@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller ListAttachedFile
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
 -->
-
 <view>
     <columns>
         <column name="code" order="100">
@@ -39,10 +36,10 @@
         <column name="size" display="right" order="140">
             <widget type="number" fieldname="size" decimal="0" />
         </column>
-        <column name="date" order="150">
+        <column name="date" display="right" order="150">
             <widget type="date" fieldname="date" />
         </column>
-        <column name="hour" order="150">
+        <column name="hour" display="right" order="160">
             <widget type="text" fieldname="hour" />
         </column>
     </columns>

@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditAgenciaTransporte
- *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codtrans" icon="fas fa-hashtag" maxlength="8" required="true" />
+            <column name="code" description="optional" numcolumns="2" order="100">
+                <widget type="text" fieldname="codtrans" icon="fas fa-hashtag" maxlength="8" readonly="dinamic" />
             </column>
-            <column name="name" numcolumns="3" order="110">
+            <column name="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="phone" numcolumns="3" order="120">
+            <column name="phone" numcolumns="2" order="120">
                 <widget type="text" fieldname="telefono" icon="fas fa-phone" />
             </column>
-            <column name="url" numcolumns="3" order="130">
+            <column name="url" order="130">
                 <widget type="link" fieldname="web" icon="fas fa-globe-americas" />
             </column>
         </group>
         <group name="data2" numcolumns="12">
-            <column name="active" numcolumns="2" order="100">
+            <column name="active" order="100">
                 <widget type="checkbox" fieldname="activo" />
             </column>
         </group>

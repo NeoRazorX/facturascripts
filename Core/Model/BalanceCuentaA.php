@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -67,22 +68,18 @@ class BalanceCuentaA extends Base\ModelClass
      */
     public function allFromCodbalance($cod)
     {
-        $balist = [];
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE codbalance = ' . self::$dataBase->var2str($cod) . ' ORDER BY codcuenta ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $b) {
-                $balist[] = new self($b);
-            }
-        }
-
-        return $balist;
+        $balance = new self();
+        $where = [new DataBaseWhere('codbalance', $cod)];
+        return $balance->all($where, ['codcuenta' => 'ASC'], 0, 0);
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependency
         new Balance();
 
         return parent::install();
@@ -178,5 +175,15 @@ class BalanceCuentaA extends Base\ModelClass
     public static function tableName()
     {
         return 'balancescuentasabreviadas';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->desccuenta = Utils::noHtml($this->desccuenta);
+        return parent::test();
     }
 }

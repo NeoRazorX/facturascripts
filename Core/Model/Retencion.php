@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,9 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Class to manage the data of retenciones table
  *
- * @author Cristo M. Estévez Hernández <cristom.estevez@gmail.com>
- * @author Rafael San José Tovar <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
  */
 class Retencion extends Base\ModelClass
 {
@@ -49,7 +50,7 @@ class Retencion extends Base\ModelClass
      *
      * @var string
      */
-    public $codsubcuentaacre;
+    public $codsubcuentaacr;
 
     /**
      * Description of the tax.
@@ -81,8 +82,8 @@ class Retencion extends Base\ModelClass
      */
     public function loadFromPercentage($percentaje)
     {
-        $where = [ new DataBaseWhere('porcentaje', $percentaje) ];
-        $order = [ 'codretencion' => 'ASC' ];
+        $where = [new DataBaseWhere('porcentaje', $percentaje)];
+        $order = ['codretencion' => 'ASC'];
         return $this->loadFromCode('', $where, $order);
     }
 
@@ -114,19 +115,14 @@ class Retencion extends Base\ModelClass
     public function test(): bool
     {
         $this->codretencion = trim($this->codretencion);
-        if (empty($this->codretencion) || strlen($this->codretencion) > 10) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-retention-code-length'));
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 
         $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
-        $this->codsubcuentaacre = empty($this->codsubcuentaacre) ? null : $this->codsubcuentaacre;
-
+        $this->codsubcuentaacr = empty($this->codsubcuentaacr) ? null : $this->codsubcuentaacr;
         $this->descripcion = Utils::noHtml($this->descripcion);
-        if (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-description-retention'));
-            return false;
-        }
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
             self::$miniLog->alert(self::$i18n->trans('not-valid-percentage-retention'));
@@ -144,8 +140,8 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
     {
-        return parent::url($type, 'ListImpuesto?activetab=List');
+        return parent::url($type, $list);
     }
 }

@@ -120,13 +120,11 @@ class Cliente extends Base\ComercialContact
         $contact = new Contacto();
         switch ($type) {
             case 'shipping':
-                $where = [new DataBaseWhere('idcontacto', $this->idcontactoenv)];
-                $contact->loadFromCode('', $where);
+                $contact->loadFromCode($this->idcontactoenv);
                 break;
 
             default:
-                $where = [new DataBaseWhere('idcontacto', $this->idcontactofact)];
-                $contact->loadFromCode('', $where);
+                $contact->loadFromCode($this->idcontactofact);
                 break;
         }
 
@@ -204,6 +202,10 @@ class Cliente extends Base\ComercialContact
     public function test()
     {
         $this->codcliente = empty($this->codcliente) ? (string) $this->newCode() : trim($this->codcliente);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']));
+            return false;
+        }
 
         /// we validate the days of payment
         $arrayDias = [];
@@ -213,7 +215,6 @@ class Cliente extends Base\ComercialContact
             }
         }
         $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
-
         return parent::test();
     }
 

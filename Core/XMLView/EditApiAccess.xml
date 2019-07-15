@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Initial description for the controller EditApiAccess
- *
- * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">
@@ -34,7 +31,7 @@
                 </widget>
             </column>
             <column name="resource" order="120">
-                <widget type="text" fieldname="resource"/>
+                <widget type="text" fieldname="resource" readonly="true"/>
             </column>
             <column name="allow-delete-data" order="130">
                 <widget type="checkbox" fieldname="allowdelete" />
@@ -53,8 +50,8 @@
     <rows>
         <row type="footer">
             <group name="footer_actions" footer="specials-actions">
-                <button type="action" label="add-all-enabled" color="info" action="add-api-access-enabled" icon="fas fa-plus" />
-                <button type="action" label="add-all-disabled" color="info" action="add-api-access-disabled" icon="fas fa-plus" />
+                <button type="action" label="add-all-enabled" color="success" action="add-api-access-enabled" icon="far fa-check-square" />
+                <button type="action" label="add-all-disabled" color="warning" action="add-api-access-disabled" icon="far fa-square" />
             </group>
         </row>
     </rows>

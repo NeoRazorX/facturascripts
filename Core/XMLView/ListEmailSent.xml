@@ -31,7 +31,7 @@
             <widget type="text" fieldname="subject" />
         </column>
         <column name="date" display="right" order="130">
-            <widget type="date" fieldname="date" />
+            <widget type="datetime" fieldname="date" />
         </column>
     </columns>
 </view>

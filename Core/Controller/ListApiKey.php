@@ -51,25 +51,18 @@ class ListApiKey extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListApiKey', 'ApiKey', 'api-keys', 'fas fa-key');
-        $this->addSearchFields('ListApiKey', ['description', 'apikey', 'nick']);
-        $this->addOrderBy('ListApiKey', ['apikey'], 'api-key');
-        $this->addOrderBy('ListApiKey', ['descripcion'], 'description');
-        $this->addOrderBy('ListApiKey', ['nick'], 'nick');
-
-        $this->addFilterCheckbox('ListApiKey', 'enabled', 'enabled', 'enabled');
-    }
-
-    /**
-     * 
-     * @param string $action
-     */
-    protected function execAfterAction($action)
-    {
         if (!AppSettings::get('default', 'enable_api', '')) {
             $this->miniLog->info($this->i18n->trans('api-disabled'));
         }
 
-        parent::execAfterAction($action);
+        $viewName = 'ListApiKey';
+        $this->addView($viewName, 'ApiKey', 'api-keys', 'fas fa-key');
+        $this->addSearchFields($viewName, ['description', 'apikey', 'nick']);
+        $this->addOrderBy($viewName, ['id'], 'id');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['creationdate', 'id'], 'date', 2);
+
+        /// filters
+        $this->addFilterCheckbox($viewName, 'enabled', 'enabled', 'enabled');
     }
 }

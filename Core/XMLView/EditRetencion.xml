@@ -31,13 +31,13 @@
             <column name="percentage" numcolumns="2" order="120">
                 <widget type="number" decimal="2" fieldname="porcentaje" icon="fas fa-percent" required="true" />
             </column>
-            <column name="subaccount-irpf" numcolumns="3" order="130">
+            <column name="subaccount-irpf" description="optional" numcolumns="3" order="130">
                 <widget type="autocomplete" fieldname="codsubcuentaret">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="subaccount-irpf-creditor" numcolumns="3" order="140">
-                <widget type="autocomplete" fieldname="codsubcuentaacre">
+            <column name="subaccount-irpf-creditor" description="optional" numcolumns="3" order="140">
+                <widget type="autocomplete" fieldname="codsubcuentaacr">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>

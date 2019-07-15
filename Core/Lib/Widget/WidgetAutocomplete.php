@@ -31,11 +31,11 @@ class WidgetAutocomplete extends WidgetSelect
     /**
      * Indicates whether a value should be selected strictly from the list
      * of values or whether the user can enter a new or different value
-     * from the list. (Only for GridViews)
+     * from the list.
      *
      * @var bool
      */
-    public $strict;
+    public $strict = true;
 
     /**
      *
@@ -119,7 +119,7 @@ class WidgetAutocomplete extends WidgetSelect
         $selected = static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
         return '<input type="' . $type . '" value="' . $selected . '" class="' . $class . '" data-field="' . $this->fieldname
             . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle
-            . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
+            . '" data-strict="' . $this->strictStr() . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
     }
 
     /**
@@ -131,5 +131,14 @@ class WidgetAutocomplete extends WidgetSelect
         // according to the information entered by the user.
         parent::setSourceData($child, false);
         $this->strict = isset($child['strict']) ? ($child['strict'] == 'true') : true;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function strictStr()
+    {
+        return $this->strict ? '1' : '0';
     }
 }

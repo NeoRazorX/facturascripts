@@ -31,7 +31,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @var array
      */
-    protected $previousData;
+    protected $previousData = [];
 
     /**
      * Class constructor.

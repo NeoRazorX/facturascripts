@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\NumberTools;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
  * Description of PDFCore
@@ -46,6 +47,11 @@ class PDFCore
      * Y position to start footer
      */
     const FOOTER_Y = 10;
+
+    /**
+     * Maximum title length
+     */
+    const MAX_TITLE_LEN = 12;
 
     /**
      *
@@ -98,28 +104,82 @@ class PDFCore
     }
 
     /**
-     * Calculate logo size and return as array of width and height
+     * 
+     * @param AttachedFile $file
+     * @param int|float    $xPos
+     * @param int|float    $yPos
+     * @param int|float    $width
+     * @param int|float    $height
+     */
+    protected function addImageFromAttachedFile($file, $xPos, $yPos, $width, $height)
+    {
+        switch ($file->mimetype) {
+            case 'image/gif':
+                $this->pdf->addGifFromFile($file->path, $xPos, $yPos, $width, $height);
+                break;
+
+            case 'image/jpeg':
+            case 'image/jpg':
+                $this->pdf->addJpegFromFile($file->path, $xPos, $yPos, $width, $height);
+                break;
+
+            case 'image/png':
+                $this->pdf->addPngFromFile($file->path, $xPos, $yPos, $width, $height);
+                break;
+        }
+    }
+
+    /**
+     * 
+     * @param string    $filePath
+     * @param int|float $xPos
+     * @param int|float $yPos
+     * @param int|float $width
+     * @param int|float $height
+     */
+    protected function addImageFromFile($filePath, $xPos, $yPos, $width, $height)
+    {
+        $parts = explode('.', $filePath);
+        $extension = strtolower(end($parts));
+        switch ($extension) {
+            case 'gif':
+                $this->pdf->addGifFromFile($filePath, $xPos, $yPos, $width, $height);
+                break;
+
+            case 'jpeg':
+            case 'jpg':
+                $this->pdf->addJpegFromFile($filePath, $xPos, $yPos, $width, $height);
+                break;
+
+            case 'png':
+                $this->pdf->addPngFromFile($filePath, $xPos, $yPos, $width, $height);
+                break;
+        }
+    }
+
+    /**
+     * Calculate image size and return as array of width and height
      *
-     * @param $logo
+     * @param $filePath
      *
      * @return array
      */
-    protected function calcLogoSize($logo)
+    protected function calcImageSize($filePath)
     {
-        $logoSize = $size = getimagesize($logo);
+        $imageSize = $size = getimagesize($filePath);
         if ($size[0] > 200) {
-            $logoSize[0] = 200;
-            $logoSize[1] = $logoSize[1] * $logoSize[0] / $size[0];
-            $size[0] = $logoSize[0];
-            $size[1] = $logoSize[1];
+            $imageSize[0] = 200;
+            $imageSize[1] = $imageSize[1] * $imageSize[0] / $size[0];
+            $size[0] = $imageSize[0];
+            $size[1] = $imageSize[1];
         }
         if ($size[1] > 80) {
-            $logoSize[1] = 80;
-            $logoSize[0] = $logoSize[0] * $logoSize[1] / $size[1];
+            $imageSize[1] = 80;
+            $imageSize[0] = $imageSize[0] * $imageSize[1] / $size[1];
         }
         return [
-            'width' => $logoSize[0],
-            'height' => $logoSize[1],
+            'width' => $imageSize[0],
+            'height' => $imageSize[1],
         ];
     }
 
@@ -150,12 +210,7 @@ class PDFCore
         /// Extracts the data from the cursos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                if (!isset($row->{$col})) {
-                    $tableData[$key][$col] = '';
-                    continue;
-                }
-
-                $value = isset($tableOptions['cols'][$col]['widget']) ? $tableOptions['cols'][$col]['widget']->plainText($row) : $row->{$col};
+                $value = $tableOptions['cols'][$col]['widget']->plainText($row);
                 $tableData[$key][$col] = $this->fixValue($value);
             }
         }
@@ -190,11 +245,16 @@ class PDFCore
      * Adds a description of long titles to the PDF.
      *
      * @param array $titles
+     * @param array $columns
      */
-    protected function newLongTitles(&$titles)
+    protected function newLongTitles(&$titles, $columns)
     {
         $txt = '';
         foreach ($titles as $key => $value) {
+            if (!in_array('*' . $key, $columns)) {
+                continue;
+            }
+
             if ($txt !== '') {
                 $txt .= ', ';
             }
@@ -271,10 +331,11 @@ class PDFCore
      */
     protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
     {
+        $emptyValues = ['-', $customEmptyValue];
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
-                if (!empty($row[$key]) && $row[$key] != $customEmptyValue) {
+                if (!empty($row[$key]) && !in_array($row[$key], $emptyValues)) {
                     $remove = false;
                     break;
                 }
@@ -296,7 +357,7 @@ class PDFCore
     {
         $num = 1;
         foreach ($titles as $key => $value) {
-            if (mb_strlen($value) > 12) {
+            if (mb_strlen($value) > self::MAX_TITLE_LEN) {
                 $longTitles[$num] = $value;
                 $titles[$key] = '*' . $num;
                 ++$num;

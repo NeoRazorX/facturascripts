@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Merchandise transport agency.
  *
@@ -51,6 +53,18 @@ class AgenciaTransporte extends Base\ModelClass
     public $nombre;
 
     /**
+     *
+     * @var string
+     */
+    public $telefono;
+
+    /**
+     *
+     * @var string
+     */
+    public $web;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -77,5 +91,23 @@ class AgenciaTransporte extends Base\ModelClass
     public static function tableName()
     {
         return 'agenciastrans';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->codtrans = empty($this->codtrans) ? (string) $this->newCode() : trim($this->codtrans);
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']));
+            return false;
+        }
+
+        $this->nombre = Utils::noHtml($this->nombre);
+        $this->telefono = Utils::noHtml($this->telefono);
+        $this->web = Utils::noHtml($this->web);
+        return parent::test();
     }
 }

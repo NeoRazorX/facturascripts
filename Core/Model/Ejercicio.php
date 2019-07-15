@@ -281,8 +281,8 @@ class Ejercicio extends Base\ModelClass
 
         if (empty($this->idempresa)) {
             self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'idempresa', '%tableName%' => static::tableName()]));
-        } elseif (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']));
+        } elseif (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {

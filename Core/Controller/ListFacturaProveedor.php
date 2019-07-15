@@ -70,8 +70,19 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['observaciones']);
 
+        /// buttons
+        $newButton = [
+            'action' => 'paid',
+            'confirm' => 'true',
+            'icon' => 'fas fa-check',
+            'label' => 'paid',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $newButton);
+
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');

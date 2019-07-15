@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Import;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use ParseCsv\Csv;
 
@@ -102,11 +103,8 @@ class CSVImport
      */
     protected static function getTableFilePath(string $table): string
     {
-        if (!defined('FS_CODPAIS')) {
-            define('FS_CODPAIS', 'ESP');
-        }
-
-        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';
+        $codpais = AppSettings::get('default', 'codpais', 'ESP');
+        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }

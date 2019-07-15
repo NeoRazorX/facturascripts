@@ -238,6 +238,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->descripcion = Utils::noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
         $this->pvptotal = $this->pvpsindto * (100 - $this->dtopor) / 100;
+        $this->referencia = Utils::noHtml($this->referencia);
         return parent::test();
     }
 

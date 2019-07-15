@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The quantity in inventory of an item in a particular warehouse.
@@ -215,6 +216,7 @@ class Stock extends Base\ModelClass
     public function test()
     {
         $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
+        $this->referencia = Utils::noHtml($this->referencia);
 
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
         if ($this->reservada < 0) {
@@ -227,7 +229,6 @@ class Stock extends Base\ModelClass
         }
 
         $this->disponible = $this->cantidad - $this->reservada;
-
         return parent::test();
     }
 
@@ -249,11 +250,7 @@ class Stock extends Base\ModelClass
         }
 
         $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            return round((float) $data[0]['total'], self::MAX_DECIMALS);
-        }
-
-        return 0.0;
+        return empty($data) ? 0.0 : round((float) $data[0]['total'], self::MAX_DECIMALS);
     }
 
     /**

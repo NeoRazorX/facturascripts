@@ -156,7 +156,8 @@ class RowButton extends VisualItem
     {
         if ($this->confirm) {
             return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\',\''
-                . $this->label . '\',\'' . self::$i18n->trans('are-you-sure-action') . '\');';
+                . $this->label . '\',\'' . self::$i18n->trans('are-you-sure-action') . '\',\''
+                . self::$i18n->trans('cancel') . '\',\'' . self::$i18n->trans('confirm') . '\');';
         }
 
         if (empty($jsFunction)) {

@@ -18,8 +18,10 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
  * Controller to edit a single item from the Contacto model
@@ -91,6 +93,45 @@ class EditContacto extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createEmailsView($viewName = 'ListEmailSent')
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Create views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('top');
+
+        $this->createEmailsView();
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        $return = parent::editAction();
+        if ($return && $this->active === $this->getMainViewName()) {
+            $this->updateRelations($this->views[$this->active]->model);
+        }
+
+        return $return;
+    }
+
+    /**
      * Run the controller after actions
      *
      * @param string $action
@@ -132,17 +173,46 @@ class EditContacto extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mainViewName = $this->getMainViewName();
+
         switch ($viewName) {
-            case 'EditContacto':
+            case 'ListEmailSent':
+                $email = $this->getViewModelValue($mainViewName, 'email');
+                $where = [new DataBaseWhere('addressee', $email)];
+                $view->loadData('', $where);
+                break;
+
+            case $mainViewName:
                 parent::loadData($viewName, $view);
                 if ($view->model->exists()) {
                     $this->addConversionButtons($viewName);
                 }
                 break;
+        }
+    }
 
-            default:
-                parent::loadData($viewName, $view);
-                break;
+    /**
+     * 
+     * @param Contacto $contact
+     */
+    protected function updateRelations($contact)
+    {
+        $customer = $contact->getCustomer(false);
+        if ($customer->idcontactofact == $contact->idcontacto && $customer->exists()) {
+            $customer->email = $contact->email;
+            $customer->fax = $contact->fax;
+            $customer->telefono1 = $contact->telefono1;
+            $customer->telefono2 = $contact->telefono2;
+            $customer->save();
+        }
+
+        $supplier = $contact->getSupplier(false);
+        if ($supplier->idcontacto == $contact->idcontacto && $supplier->exists()) {
+            $supplier->email = $contact->email;
+            $supplier->fax = $contact->fax;
+            $supplier->telefono1 = $contact->telefono1;
+            $supplier->telefono2 = $contact->telefono2;
+            $supplier->save();
         }
     }
 }

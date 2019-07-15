@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Class for the accounting of tax regularizations
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class VatRegularizationToAccounting extends AccountingClass
 {
@@ -97,13 +97,13 @@ class VatRegularizationToAccounting extends AccountingClass
     protected function addAccountingResultLine($accountEntry): bool
     {
         if ($this->debit >= $this->credit) {
-            $this->subaccount->idsubcuenta = $this->document->idsubcuentaacreedora;
-            $this->subaccount->codsubcuenta = $this->document->codsubcuentaacreedora;
+            $this->subaccount->idsubcuenta = $this->document->idsubcuentaacr;
+            $this->subaccount->codsubcuenta = $this->document->codsubcuentaacr;
             return $this->addBasicLine($accountEntry, $this->subaccount, false, $this->debit - $this->credit);
         }
 
-        $this->subaccount->idsubcuenta = $this->document->idsubcuentadeudora;
-        $this->subaccount->codsubcuenta = $this->document->codsubcuentadeudora;
+        $this->subaccount->idsubcuenta = $this->document->idsubcuentadeu;
+        $this->subaccount->codsubcuenta = $this->document->codsubcuentadeu;
         return $this->addBasicLine($accountEntry, $this->subaccount, true, $this->credit - $this->debit);
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,8 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * A family of products.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class Familia extends Base\ModelClass
 {
@@ -74,66 +74,6 @@ class Familia extends Base\ModelClass
     public $madre;
 
     /**
-     * Level.
-     *
-     * @var string
-     */
-    public $nivel;
-
-    /**
-     * Returns the daughter families.
-     *
-     * @param string $codmadre
-     *
-     * @return self[]
-     */
-    public function hijas($codmadre = '')
-    {
-        $famlist = [];
-
-        if (!empty($codmadre)) {
-            $codmadre = $this->codfamilia;
-        }
-
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE madre = ' . self::$dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $famlist[] = new self($d);
-            }
-        }
-
-        return $famlist;
-    }
-
-    /**
-     * Returns the mother families.
-     *
-     * @return self[]
-     */
-    public function madres()
-    {
-        $famlist = [];
-
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $famlist[] = new self($d);
-            }
-        }
-
-        if (empty($famlist)) {
-            /// if the list is empty, we put mother to null in all in case the user has been playing
-            $sql = 'UPDATE ' . static::tableName() . ' SET madre = NULL;';
-            self::$dataBase->exec($sql);
-        }
-
-        return $famlist;
-    }
-
-    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -163,10 +103,10 @@ class Familia extends Base\ModelClass
         $this->codfamilia = Utils::noHtml($this->codfamilia);
         $this->descripcion = Utils::noHtml($this->descripcion);
 
-        if (empty($this->codfamilia) || strlen($this->codfamilia) > 8) {
-            self::$miniLog->alert(self::$i18n->trans('family-code-valid-length'));
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']));
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 100) {
-            self::$miniLog->alert(self::$i18n->trans('family-desc-not-valid'));
+            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']));
         } elseif ($this->madre === $this->codfamilia) {
             self::$miniLog->alert(self::$i18n->trans('parent-family-cant-be-child'));
         } else {
@@ -174,31 +114,5 @@ class Familia extends Base\ModelClass
         }
 
         return false;
-    }
-
-    /**
-     * Complete the data in the list of families with the level.
-     *
-     * @param array  $familias
-     * @param string $madre
-     * @param string $nivel
-     *
-     * @return array
-     */
-    private function auxAll(&$familias, $madre, $nivel)
-    {
-        $subfamilias = [];
-
-        foreach ($familias as $fam) {
-            if ($fam['madre'] === $madre) {
-                $fam['nivel'] = $nivel;
-                $subfamilias[] = $fam;
-                foreach ($this->auxAll($familias, $fam['codfamilia'], '&nbsp;&nbsp;' . $nivel) as $value) {
-                    $subfamilias[] = $value;
-                }
-            }
-        }
-
-        return $subfamilias;
     }
 }

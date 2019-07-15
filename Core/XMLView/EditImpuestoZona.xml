@@ -30,12 +30,12 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="country" order="120">
+            <column name="country" titleurl="ListPais" order="120">
                 <widget type="select" fieldname="codpais" icon="fas fa-globe-americas">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="province" order="130">
+            <column name="province" titleurl="ListPais?activetab=ListProvincia" order="130">
                 <widget type="autocomplete" fieldname="codisopro">
                     <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
                 </widget>

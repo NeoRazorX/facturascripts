@@ -39,7 +39,7 @@ class ListTarifa extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'rates';
-        $data['icon'] = 'fas fa-money-bill-alt';
+        $data['icon'] = 'fas fa-percentage';
         return $data;
     }
 
@@ -49,7 +49,7 @@ class ListTarifa extends ListController
     protected function createViews()
     {
         $viewName = 'ListTarifa';
-        $this->addView($viewName, 'Tarifa', 'rates', 'fas fa-money-bill-alt');
+        $this->addView($viewName, 'Tarifa', 'rates', 'fas fa-percentage');
         $this->addSearchFields($viewName, ['nombre', 'codtarifa']);
         $this->addOrderBy($viewName, ['codtarifa'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);

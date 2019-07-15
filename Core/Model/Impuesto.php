@@ -135,20 +135,14 @@ class Impuesto extends Base\ModelClass
     public function test()
     {
         $this->codimpuesto = trim($this->codimpuesto);
-        if (empty($this->codimpuesto) || strlen($this->codimpuesto) > 10) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-tax-code-length'));
+        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
-
         $this->descripcion = Utils::noHtml($this->descripcion);
-        if (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-description-tax'));
-            return false;
-        }
-
         return parent::test();
     }
 }

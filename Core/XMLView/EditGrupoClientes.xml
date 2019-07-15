@@ -22,8 +22,8 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codgrupo" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" required="true" />
+            <column name="code" description="optional" numcolumns="2" order="100">
+                <widget type="text" fieldname="codgrupo" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
