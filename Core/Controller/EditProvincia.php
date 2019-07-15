@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -28,10 +30,9 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditProvincia extends EditController
 {
-
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -50,6 +51,53 @@ class EditProvincia extends EditController
         $data['menu'] = 'admin';
         $data['title'] = 'province';
         $data['icon'] = 'fas fa-globe';
+
         return $data;
+    }
+
+    /**
+     * Create tabs or views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createCityView();
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createCityView($viewName = 'ListCity')
+    {
+        $this->addListView($viewName, 'City', 'cities');
+        $this->views[$viewName]->addOrderBy(['ciudad'], 'name', 1);
+
+        /// disable column
+        $this->views[$viewName]->disableColumn('province');
+    }
+
+    /**
+     *
+     * @param string                                              $viewName
+     * @param FacturaScripts\Core\Lib\ExtendedController\BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListCity':
+                $view->loadData('', [
+                    new DataBaseWhere('idprovincia', $this->getViewModelValue('EditProvincia', 'idprovincia')),
+                ]);
+
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+
+                break;
+        }
     }
 }

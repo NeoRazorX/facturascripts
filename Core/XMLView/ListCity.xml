@@ -16,26 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Frank Aguirre  <faguirre@soenac.com>
 -->
 <view>
     <columns>
         <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idprovincia" onclick="EditProvincia" />
+            <widget type="text" fieldname="idciudad"/>
         </column>
-        <column name="province" order="110">
-            <widget type="text" fieldname="provincia" />
+        <column name="city" order="110">
+            <widget type="text" fieldname="ciudad"/>
         </column>
-        <column name="iso" order="120">
-            <widget type="text" fieldname="codisoprov" />
-        </column>
-        <column name="country" display="right" order="130">
-            <widget type="select" fieldname="codpais">
-                <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+        <column name="province" display="right" order="120">
+            <widget type="select" fieldname="idprovincia">
+                <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
             </widget>
         </column>
-        <column name="code" display="right" order="140">
+        <column name="code" display="right" order="130">
             <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
         </column>
     </columns>

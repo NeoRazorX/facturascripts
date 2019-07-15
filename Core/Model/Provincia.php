@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -30,8 +31,14 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Provincia extends Base\ModelClass
 {
-
     use Base\ModelTrait;
+
+    /**
+     * Code id
+     *
+     * @var string
+     */
+    public $codeid;
 
     /**
      * 'Normalized' code in Spain to identify the provinces.
@@ -67,10 +74,12 @@ class Provincia extends Base\ModelClass
     {
         parent::clear();
         $this->codpais = AppSettings::get('default', 'codpais');
+
+        $this->codeid = null;
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
@@ -109,6 +118,7 @@ class Provincia extends Base\ModelClass
     public function test()
     {
         $this->provincia = Utils::noHtml($this->provincia);
+
         return parent::test();
     }
 

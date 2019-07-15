@@ -36,6 +36,9 @@
             <column name="iso" numcolumns="2" order="130" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
                 <widget type="text" fieldname="codisoprov" maxlength="10" required="true" />
             </column>
+            <column name="code" numcolumns="2" description="optional" order="140">
+                <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
+            </column>
         </group>
     </columns>
 </view>
