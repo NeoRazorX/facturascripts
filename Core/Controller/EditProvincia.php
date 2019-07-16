@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -30,6 +30,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditProvincia extends EditController
 {
+
     /**
      * Returns the model name.
      *
@@ -51,7 +52,6 @@ class EditProvincia extends EditController
         $data['menu'] = 'admin';
         $data['title'] = 'province';
         $data['icon'] = 'fas fa-globe';
-
         return $data;
     }
 
@@ -70,10 +70,11 @@ class EditProvincia extends EditController
      *
      * @param string $viewName
      */
-    protected function createCityView($viewName = 'ListCity')
+    protected function createCityView($viewName = 'ListCiudad')
     {
-        $this->addListView($viewName, 'City', 'cities');
+        $this->addListView($viewName, 'Ciudad', 'cities');
         $this->views[$viewName]->addOrderBy(['ciudad'], 'name', 1);
+        $this->views[$viewName]->searchFields = ['ciudad'];
 
         /// disable column
         $this->views[$viewName]->disableColumn('province');
@@ -81,22 +82,20 @@ class EditProvincia extends EditController
 
     /**
      *
-     * @param string                                              $viewName
-     * @param FacturaScripts\Core\Lib\ExtendedController\BaseView $view
+     * @param string   $viewName
+     * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'ListCity':
-                $view->loadData('', [
-                    new DataBaseWhere('idprovincia', $this->getViewModelValue('EditProvincia', 'idprovincia')),
-                ]);
-
+            case 'ListCiudad':
+                $idprovincia = $this->getViewModelValue($this->getMainViewName(), 'idprovincia');
+                $where = [new DataBaseWhere('idprovincia', $idprovincia)];
+                $view->loadData('', $where);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
-
                 break;
         }
     }

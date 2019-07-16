@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2013-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,19 +18,23 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
- * A province.
- *
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
- * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * Ciudad
+ * 
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Frank Aguirre        <faguirre@soenac.com>
  */
-class Provincia extends Base\ModelClass
+class Ciudad extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+
+    /**
+     * Ciudad
+     *
+     * @var string
+     */
+    public $ciudad;
 
     /**
      * Code id
@@ -41,82 +44,49 @@ class Provincia extends Base\ModelClass
     public $codeid;
 
     /**
-     * 'Normalized' code in Spain to identify the provinces.
+     * Id ciudad
      *
-     * @url: https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias
-     *
-     * @var string
+     * @var int
      */
-    public $codisoprov;
+    public $idciudad;
 
     /**
-     * Country code associated with the province.
+     * Id provincia
      *
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Identify the registry.
-     *
-     * @var string
+     * @var int
      */
     public $idprovincia;
 
     /**
-     * Name of the province.
-     *
-     * @var string
-     */
-    public $provincia;
-
-    public function clear()
-    {
-        parent::clear();
-        $this->codpais = AppSettings::get('default', 'codpais');
-    }
-
-    /**
-     *
+     * 
      * @return string
      */
     public function install()
     {
-        /// needed dependencies
-        new Pais();
+        /// needed dependency
+        new Provincia();
 
         return parent::install();
     }
 
     /**
-     * Returns the name of the column that is the model's primary key.
+     * Primary column
      *
      * @return string
      */
     public static function primaryColumn()
     {
-        return 'idprovincia';
+        return 'idciudad';
     }
 
     /**
-     * Returns the name of the table that uses this model.
+     * Table name
      *
      * @return string
      */
     public static function tableName()
     {
-        return 'provincias';
-    }
-
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        $this->provincia = Utils::noHtml($this->provincia);
-        return parent::test();
+        return 'ciudades';
     }
 
     /**

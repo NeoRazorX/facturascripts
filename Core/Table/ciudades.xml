@@ -7,6 +7,15 @@
 -->
 <table>
     <column>
+        <name>ciudad</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codeid</name>
+        <type>character varying(5)</type>
+    </column>
+    <column>
         <name>idciudad</name>
         <type>serial</type>
         <null>NO</null>
@@ -16,16 +25,6 @@
         <name>idprovincia</name>
         <type>integer</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>ciudad</name>
-        <type>character varying(100)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>codeid</name>
-        <type>character varying(5)</type>
-        <null>SI</null>
     </column>
     <constraint>
         <name>ciudades_pkey</name>
