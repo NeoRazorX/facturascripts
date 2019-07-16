@@ -21,17 +21,17 @@
 -->
 <view>
     <columns>
-        <column name="id" order="100" display="none">
+        <column name="id" display="none" order="100">
             <widget type="text" fieldname="idprovincia" onclick="EditProvincia" />
         </column>
-        <column name="province" order="110">
+        <column name="name" order="110">
             <widget type="text" fieldname="provincia" />
         </column>
         <column name="iso" order="120">
             <widget type="text" fieldname="codisoprov" />
         </column>
         <column name="country" display="right" order="130">
-            <widget type="select" fieldname="codpais">
+            <widget type="autocomplete" fieldname="codpais" onclick="EditPais">
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
             </widget>
         </column>

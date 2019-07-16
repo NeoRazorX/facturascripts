@@ -104,7 +104,7 @@ class AccountingReports extends Controller
      * 
      * @param $action
      */
-    private function execAction($action)
+    protected function execAction($action)
     {
         $pages = [];
         $dateFrom = $this->request->get('date-from', '');
@@ -149,7 +149,7 @@ class AccountingReports extends Controller
      * @param array  $pages
      * @param string $format
      */
-    private function exportData(&$pages, $format)
+    protected function exportData(&$pages, $format)
     {
         $this->exportManager->newDoc($format);
 

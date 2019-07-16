@@ -75,7 +75,7 @@ class EditAsiento extends EditController
      * @param float $credit
      * @param float $debit
      */
-    private function calculateAmounts(array &$data, float $credit, float $debit)
+    protected function calculateAmounts(array &$data, float $credit, float $debit)
     {
         $unbalance = round(($credit - $debit), (int) FS_NF0);
         $index = count($data['lines']) - 1;
@@ -100,7 +100,7 @@ class EditAsiento extends EditController
      * @param array $line
      * @param array $previousLine
      */
-    private function checkEmptyValues(array &$line, array $previousLine)
+    protected function checkEmptyValues(array &$line, array $previousLine)
     {
         if (empty($line['concepto'])) {
             $line['concepto'] = $previousLine['concepto'];
@@ -112,7 +112,7 @@ class EditAsiento extends EditController
         }
     }
 
-    private function cloneDocument(&$data): string
+    protected function cloneDocument(&$data): string
     {
         // init document
         $accounting = new Model\Asiento();
@@ -224,7 +224,7 @@ class EditAsiento extends EditController
      *
      * @return array
      */
-    private function getAccountData(string $exercise, string $codeSubAccount): array
+    protected function getAccountData(string $exercise, string $codeSubAccount): array
     {
         $result = [
             'subaccount' => $codeSubAccount,
@@ -264,7 +264,7 @@ class EditAsiento extends EditController
      *
      * @return array
      */
-    private function getAccountVatID($exercise, $codeSubAccount): array
+    protected function getAccountVatID($exercise, $codeSubAccount): array
     {
         $result = ['group' => '', 'code' => '', 'description' => '', 'id' => '', 'surcharge' => false];
         if (empty($exercise) || empty($codeSubAccount)) {
@@ -343,7 +343,7 @@ class EditAsiento extends EditController
      *
      * @return array
      */
-    private function recalculateLines(array $lines, float &$totalCredit, float &$totalDebit): array
+    protected function recalculateLines(array $lines, float &$totalCredit, float &$totalDebit): array
     {
         // Work variables
         $result = [];
@@ -386,7 +386,7 @@ class EditAsiento extends EditController
      *
      * @return array
      */
-    private function recalculateVatRegister(array &$line, array $document, string $codevat, float $base): array
+    protected function recalculateVatRegister(array &$line, array $document, string $codevat, float $base): array
     {
         $result = [];
         if (empty($codevat)) {
@@ -417,7 +417,7 @@ class EditAsiento extends EditController
      *
      * @return array
      */
-    private function replaceConcept($results): array
+    protected function replaceConcept($results): array
     {
         $finalResults = [];
         $idasiento = $this->request->get('code');
@@ -442,7 +442,7 @@ class EditAsiento extends EditController
      * @param string $codeSubAccount
      * @param array  $values
      */
-    private function searchVatDataFromClient($codeSubAccount, &$values)
+    protected function searchVatDataFromClient($codeSubAccount, &$values)
     {
         $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
         $client = new Model\Cliente();
@@ -460,7 +460,7 @@ class EditAsiento extends EditController
      * @param string $codeSubAccount
      * @param array  $values
      */
-    private function searchVatDataFromSupplier($codeSubAccount, &$values)
+    protected function searchVatDataFromSupplier($codeSubAccount, &$values)
     {
         $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
         $supplier = new Model\Proveedor();

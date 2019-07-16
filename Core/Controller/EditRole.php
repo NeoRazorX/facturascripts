@@ -66,7 +66,7 @@ class EditRole extends EditController
      *
      * @throws Exception
      */
-    private function addRoleAccess($codrole, $pages)
+    protected function addRoleAccess($codrole, $pages)
     {
         // add Pages to Rol
         if (!RoleAccess::addPagesToRole($codrole, $pages)) {
@@ -128,7 +128,7 @@ class EditRole extends EditController
      *
      * @return Page[]
      */
-    private function getPages()
+    protected function getPages()
     {
         $menu = $this->request->get('menu', '---null---');
         if ($menu === '---null---') {

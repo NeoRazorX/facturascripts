@@ -86,7 +86,7 @@
                 {% endif %}
                 {% if fsc.hasData %}
                     <div class="btn-group">
-                        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}" class="btn btn-sm btn-light">
+                        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}" target="_blank" class="btn btn-sm btn-light">
                             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-md-inline-block">{{ i18n.trans('print') }}</span>
                         </a>
