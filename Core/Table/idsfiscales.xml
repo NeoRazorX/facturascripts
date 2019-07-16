@@ -20,11 +20,7 @@
         <type>PRIMARY KEY (tipoidfiscal)</type>
     </constraint>
     <constraint>
-        <name>uniq_idsfiscales_codeid</name>
-        <type>UNIQUE (codeid)</type>
-    </constraint>
-    <constraint>
-        <name>uniq_idsfiscales_tipoidfiscal</name>
+        <name>uniq_idsfiscales_tipoidfiscal_codeid</name>
         <type>UNIQUE (tipoidfiscal, codeid)</type>
     </constraint>
 </table>
