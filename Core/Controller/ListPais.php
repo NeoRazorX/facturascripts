@@ -48,18 +48,45 @@ class ListPais extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /// Countries
-        $this->addView('ListPais', 'Pais', 'countries', 'fas fa-globe-americas');
-        $this->addOrderBy('ListPais', ['codpais'], 'code');
-        $this->addOrderBy('ListPais', ['nombre'], 'name');
-        $this->addOrderBy('ListPais', ['codiso'], 'codiso');
-        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
+        $this->createViewCountries();
+        $this->createViewProvinces();
+        $this->createViewCities();
+    }
 
-        /// States
-        $this->addView('ListProvincia', 'Provincia', 'province', 'fas fa-map-signs');
-        $this->addOrderBy('ListProvincia', ['provincia'], 'province');
-        $this->addOrderBy('ListProvincia', ['codpais'], 'alfa-code-3', 1);
-        $this->addOrderBy('ListProvincia', ['codpostal2d'], 'postalcode');
-        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewCities($viewName = 'ListCiudad')
+    {
+        $this->addView($viewName, 'Ciudad', 'cities', 'fas fa-city');
+        $this->addOrderBy($viewName, ['ciudad'], 'name');
+        $this->addOrderBy($viewName, ['idprovincia'], 'province');
+        $this->addSearchFields($viewName, ['ciudad']);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewCountries($viewName = 'ListPais')
+    {
+        $this->addView($viewName, 'Pais', 'countries', 'fas fa-globe-americas');
+        $this->addOrderBy($viewName, ['codpais'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addOrderBy($viewName, ['codiso'], 'codiso');
+        $this->addSearchFields($viewName, ['nombre', 'codiso', 'codpais']);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewProvinces($viewName = 'ListProvincia')
+    {
+        $this->addView($viewName, 'Provincia', 'province', 'fas fa-map-signs');
+        $this->addOrderBy($viewName, ['provincia'], 'name');
+        $this->addOrderBy($viewName, ['codpais'], 'country');
+        $this->addSearchFields($viewName, ['provincia', 'codisoprov']);
     }
 }

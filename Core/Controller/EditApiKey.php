@@ -116,7 +116,7 @@ class EditApiKey extends EditController
      *
      * @return bool
      */
-    private function addResourcesWith($state = false)
+    protected function addResourcesWith($state = false)
     {
         $idApiKey = $this->request->get('code', '');
         $resources = $this->getResources();
@@ -143,7 +143,7 @@ class EditApiKey extends EditController
      *
      * @return array
      */
-    private function getResources(): array
+    protected function getResources(): array
     {
         $resources = [];
 

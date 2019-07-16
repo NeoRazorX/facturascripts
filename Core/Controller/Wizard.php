@@ -201,6 +201,7 @@ class Wizard extends Controller
      */
     private function initModels()
     {
+        new Model\AttachedFile();
         new Model\Diario();
         new Model\IdentificadorFiscal();
         new Model\FormaPago();

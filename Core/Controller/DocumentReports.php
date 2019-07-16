@@ -224,7 +224,7 @@ class DocumentReports extends Controller
      *
      * @return string
      */
-    private function getDateSQL($format)
+    protected function getDateSQL($format)
     {
         $concat = [];
         $options = explode('-', $format);
@@ -263,7 +263,7 @@ class DocumentReports extends Controller
      * @param string $step
      * @param string $format
      */
-    private function getStepFormat(&$step, &$format)
+    protected function getStepFormat(&$step, &$format)
     {
         $dateDiff1 = $this->sources[0]->dateTo->diff($this->sources[0]->dateFrom);
         $dateDiff2 = $this->sources[1]->dateTo->diff($this->sources[1]->dateFrom);
@@ -287,7 +287,7 @@ class DocumentReports extends Controller
      *
      * @return DataBaseWhere[]
      */
-    private function getWhere($source)
+    protected function getWhere($source)
     {
         $where = [
             new DataBaseWhere('fecha', $source->dateFrom->format('d-m-Y'), '>='),
@@ -310,7 +310,7 @@ class DocumentReports extends Controller
      *
      * @return array
      */
-    private function populateTable(&$source, $step, $format)
+    protected function populateTable(&$source, $step, $format)
     {
         // Init data
         $result = [];
@@ -341,7 +341,7 @@ class DocumentReports extends Controller
      * @param int                   $index
      * @param DocumentReportsSource $source
      */
-    private function setDefaultToSource($index, &$source)
+    protected function setDefaultToSource($index, &$source)
     {
         $source->source = $this->request->get('source' . $index, $source->source);
         $source->dateFrom = new \DateTime($this->request->get('date-from' . $index, date('01-m-Y')));
