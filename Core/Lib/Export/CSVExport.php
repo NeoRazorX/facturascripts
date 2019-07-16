@@ -145,15 +145,23 @@ class CSVExport implements ExportInterface
      */
     public function generateTablePage($headers, $rows)
     {
-        /// Generate the headers line
+        /// fix headers
+        foreach ($headers as $key => $value) {
+            $headers[$key] = $this->delimiter . $value . $this->delimiter;
+        }
+        /// generate the headers line
         $this->csv[] = \implode($this->separator, $headers);
 
-        /// Generate the data lines
+        /// generate the data lines
         $body = [];
         foreach ($rows as $row) {
+            /// fix row
+            foreach ($row as $key => $value) {
+                $row[$key] = $this->delimiter . $value . $this->delimiter;
+            }
+
             $body[] = \implode($this->separator, $row);
         }
-
         $this->csv[] = \implode(PHP_EOL, $body);
     }
 
@@ -238,7 +246,7 @@ class CSVExport implements ExportInterface
     public function writeSheet($tableData, $sheetHeaders)
     {
         $header = [];
-        foreach ($sheetHeaders as $key => $value) {
+        foreach (\array_keys($sheetHeaders) as $key) {
             $header[] = $key;
         }
         $this->csv[] = \implode($this->separator, $header);
