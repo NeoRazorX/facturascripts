@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListPais extends ExtendedController\ListController
 {
-
     /**
      * Returns basic page attributes
      *
@@ -40,6 +40,7 @@ class ListPais extends ExtendedController\ListController
         $data['menu'] = 'admin';
         $data['title'] = 'countries';
         $data['icon'] = 'fas fa-globe-americas';
+
         return $data;
     }
 
@@ -61,5 +62,11 @@ class ListPais extends ExtendedController\ListController
         $this->addOrderBy('ListProvincia', ['codpais'], 'alfa-code-3', 1);
         $this->addOrderBy('ListProvincia', ['codpostal2d'], 'postalcode');
         $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
+
+        /// Cities
+        $this->addView('ListCity', 'City', 'Ciudades', 'fas fa-city');
+        $this->addOrderBy('ListCity', ['ciudad'], 'city');
+        $this->addOrderBy('ListCity', ['idprovincia'], 'province');
+        $this->addSearchFields('ListCity', ['ciudad']);
     }
 }
