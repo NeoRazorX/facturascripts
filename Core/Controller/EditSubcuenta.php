@@ -62,7 +62,7 @@ class EditSubcuenta extends EditController
      * 
      * @param string $viewName
      */
-    protected function createAccountingView($viewName = 'ListPartida')
+    protected function createDepartureView($viewName = 'ListPartida')
     {
         $this->addListView($viewName, 'Partida', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->searchFields[] = 'concepto';
@@ -79,7 +79,7 @@ class EditSubcuenta extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createAccountingView();
+        $this->createDepartureView();
     }
 
     /**
