@@ -82,7 +82,7 @@ class EditFormaPago extends EditController
      *
      * @return array
      */
-    private function autocompleteWithFilter($filterField)
+    protected function autocompleteWithFilter($filterField)
     {
         $results = [];
         $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', $filterField]);

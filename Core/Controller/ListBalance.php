@@ -52,7 +52,7 @@ class ListBalance extends ListController
      * @param string $viewName
      * @param string $viewTitle
      */
-    private function addViewBalance($viewName, $viewTitle)
+    protected function addViewBalance($viewName, $viewTitle)
     {
         $this->addView($viewName, 'Balance', $viewTitle);
         $fields = [

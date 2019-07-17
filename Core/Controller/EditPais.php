@@ -63,6 +63,7 @@ class EditPais extends EditController
     {
         $this->addListView($viewName, 'Provincia', 'provinces');
         $this->views[$viewName]->addOrderBy(['provincia'], 'name', 1);
+        $this->views[$viewName]->searchFields = ['provincia'];
 
         /// disable column
         $this->views[$viewName]->disableColumn('country');
@@ -88,7 +89,7 @@ class EditPais extends EditController
     {
         switch ($viewName) {
             case 'ListProvincia':
-                $codpais = $this->getViewModelValue('EditPais', 'codpais');
+                $codpais = $this->getViewModelValue($this->getMainViewName(), 'codpais');
                 $where = [new DataBaseWhere('codpais', $codpais)];
                 $view->loadData('', $where);
                 break;

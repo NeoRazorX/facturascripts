@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Model;
 use ParseCsv\Csv;
+use SimpleXMLElement;
 
 /**
  * Description of AccountingPlanImport
@@ -39,28 +40,28 @@ class AccountingPlanImport
      *
      * @var DataBase
      */
-    private $dataBase;
+    protected $dataBase;
 
     /**
      * Exercise related to the accounting plan.
      *
      * @var Model\Ejercicio
      */
-    private $ejercicio;
+    protected $ejercicio;
 
     /**
      * System translator.
      *
      * @var Translator
      */
-    private $i18n;
+    protected $i18n;
 
     /**
      * Manage the log of the entire application.
      *
      * @var MiniLog
      */
-    private $miniLog;
+    protected $miniLog;
 
     public function __construct()
     {
@@ -96,6 +97,7 @@ class AccountingPlanImport
 
         try {
             $this->processCsvData($filePath);
+            $this->updateExercise();
 
             // confirm data
             $this->dataBase->commit();
@@ -140,6 +142,7 @@ class AccountingPlanImport
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
             $this->importSubcuenta($data->subcuenta);
+            $this->updateExercise();
 
             // confirm data
             $this->dataBase->commit();
@@ -165,7 +168,7 @@ class AccountingPlanImport
      *
      * @return bool
      */
-    private function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
+    protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
     {
         $account = new Model\Cuenta();
         $account->disableAditionalTest();
@@ -211,7 +214,7 @@ class AccountingPlanImport
      *
      * @return bool
      */
-    private function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
+    protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
     {
         $subaccount = new Model\Subcuenta();
         $subaccount->disableAditionalTest();
@@ -251,9 +254,9 @@ class AccountingPlanImport
      *
      * @param string $filePath
      *
-     * @return \SimpleXMLElement|array
+     * @return SimpleXMLElement|array
      */
-    private function getData(string $filePath)
+    protected function getData(string $filePath)
     {
         if (file_exists($filePath)) {
             return simplexml_load_string(file_get_contents($filePath));
@@ -265,9 +268,9 @@ class AccountingPlanImport
     /**
      * insert Cuenta of accounting plan
      *
-     * @param \SimpleXMLElement $data
+     * @param SimpleXMLElement $data
      */
-    private function importCuenta($data)
+    protected function importCuenta($data)
     {
         foreach ($data as $xmlAccount) {
             $accountElement = (array) $xmlAccount;
@@ -278,9 +281,9 @@ class AccountingPlanImport
     /**
      * insert Epigrafe of accounting plan
      *
-     * @param \SimpleXMLElement $data
+     * @param SimpleXMLElement $data
      */
-    private function importEpigrafe($data)
+    protected function importEpigrafe($data)
     {
         foreach ($data as $xmlEpigrafeElement) {
             $epigrafeElement = (array) $xmlEpigrafeElement;
@@ -291,9 +294,9 @@ class AccountingPlanImport
     /**
      * Insert Groups of accounting plan
      *
-     * @param \SimpleXMLElement $data
+     * @param SimpleXMLElement $data
      */
-    private function importEpigrafeGroup($data)
+    protected function importEpigrafeGroup($data)
     {
         foreach ($data as $xmlEpigrafeGroup) {
             $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
@@ -304,9 +307,9 @@ class AccountingPlanImport
     /**
      * Import subaccounts of accounting plan
      *
-     * @param \SimpleXMLElement $data
+     * @param SimpleXMLElement $data
      */
-    private function importSubcuenta($data)
+    protected function importSubcuenta($data)
     {
         foreach ($data as $xmlSubaccountElement) {
             $subaccountElement = (array) $xmlSubaccountElement;
@@ -319,7 +322,7 @@ class AccountingPlanImport
      *
      * @param string $filePath
      */
-    private function processCsvData(string $filePath)
+    protected function processCsvData(string $filePath)
     {
         $csv = new Csv();
         $csv->auto($filePath);
@@ -372,7 +375,7 @@ class AccountingPlanImport
      *
      * @return string
      */
-    private function searchParent(array &$accountCodes, string $account): string
+    protected function searchParent(array &$accountCodes, string $account): string
     {
         $parentCode = '';
         foreach ($accountCodes as $code) {
@@ -385,5 +388,19 @@ class AccountingPlanImport
         }
 
         return $parentCode;
+    }
+
+    /**
+     * Updated exercise subaccount length.
+     */
+    protected function updateExercise()
+    {
+        $subAccountModel = new Model\Subcuenta();
+        $where = [new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio)];
+        foreach ($subAccountModel->all($where) as $subAccount) {
+            $this->ejercicio->longsubcuenta = strlen($subAccount->codsubcuenta);
+            $this->ejercicio->save();
+            break;
+        }
     }
 }

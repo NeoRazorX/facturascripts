@@ -98,7 +98,7 @@ class EditUser extends EditController
      *
      * @return array
      */
-    private function getUserPages($user)
+    protected function getUserPages($user)
     {
         $pageList = [];
         if ($user->admin) {
@@ -153,7 +153,7 @@ class EditUser extends EditController
     /**
      * Load a list of pages where user has access that can be setted as homepage.
      */
-    private function loadHomepageValues()
+    protected function loadHomepageValues()
     {
         if (!$this->views['EditUser']->model->exists()) {
             $this->views['EditUser']->disableColumn('homepage');
@@ -168,7 +168,7 @@ class EditUser extends EditController
     /**
      * Load the available language values from translator.
      */
-    private function loadLanguageValues()
+    protected function loadLanguageValues()
     {
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
         $langs = [];

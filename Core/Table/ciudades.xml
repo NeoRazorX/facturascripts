@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : ciudades.xml
+    Author     : Frank Aguirre
+    Description:
+        Estructura de la tabla ciudades.
+-->
+<table>
+    <column>
+        <name>ciudad</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codeid</name>
+        <type>character varying(5)</type>
+    </column>
+    <column>
+        <name>idciudad</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('ciudades_idciudad_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idprovincia</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>ciudades_pkey</name>
+        <type>PRIMARY KEY (idciudad)</type>
+    </constraint>
+    <constraint>
+        <name>ca_ciudades_provincias</name>
+        <type>FOREIGN KEY (idprovincia) REFERENCES provincias (idprovincia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_ciudad_idprovincia</name>
+        <type>UNIQUE (ciudad, idprovincia)</type>
+    </constraint>
+</table>
