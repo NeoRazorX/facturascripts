@@ -62,11 +62,9 @@ class EditSubcuenta extends EditController
      * 
      * @param string $viewName
      */
-    protected function createAccountingView($viewName = 'ListAsiento')
+    protected function createAccountingView($viewName = 'ListPartida')
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['numero'], 'number', 2);
-        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
+        $this->addListView($viewName, 'Partida', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->searchFields[] = 'concepto';
 
         /// disable columns
@@ -93,13 +91,13 @@ class EditSubcuenta extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'ListAsiento':
+            case 'ListPartida':
                 /// needed dependency
                 new Partida();
 
                 $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
-                $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
-                $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
+                $inSQL = 'SELECT idpartida FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
+                $where = [new DataBaseWhere('idpartida', $inSQL, 'IN')];
                 $view->loadData('', $where);
                 break;
 
