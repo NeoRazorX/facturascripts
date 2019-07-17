@@ -5,6 +5,6 @@
  * @package FacturaScripts\Dinamic\Model
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ApiKey extends \FacturaScripts\Plugins\atecresacorefs\Model\ApiKey
+class ApiKey extends \FacturaScripts\Core\Model\ApiKey
 {
 }
