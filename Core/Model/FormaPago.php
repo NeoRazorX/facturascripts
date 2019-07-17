@@ -67,6 +67,13 @@ class FormaPago extends Base\ModelClass
     public $idempresa;
 
     /**
+     * Indicate if pay or not
+     *
+     * @var bool
+     */
+    public $pagado;
+
+    /**
      * Expiration period.
      *
      * @var int

@@ -45,6 +45,9 @@
             <column name="domiciled" title="domiciled" numcolumns="2" order="100">
                 <widget type="checkbox" fieldname="domiciliado"></widget>
             </column>
+            <column name="paid" order="110">
+                <widget type="checkbox" fieldname="pagado" />
+            </column>
         </group>
         <group name="data3" numcolumns="12">
             <column name="company" titleurl="ListEmpresa" numcolumns="2" order="100">
