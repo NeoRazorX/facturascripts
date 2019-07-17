@@ -43,13 +43,16 @@
                 <values title="years">years</values>
             </widget>
         </column>
-        <column name="domiciled" display="center" order="140">
+        <column name="paid" display="center" order="140">
+            <widget type="checkbox" fieldname="pagado" />
+        </column>
+        <column name="domiciled" display="center" order="150">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="plazovencimiento">0</option>
+            <option color="success" fieldname="pagado">1</option>
         </row>
     </rows>
 </view>

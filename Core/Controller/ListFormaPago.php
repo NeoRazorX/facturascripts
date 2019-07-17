@@ -94,6 +94,7 @@ class ListFormaPago extends ListController
 
         /// filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
+        $this->addFilterCheckbox($viewName, 'pagado', 'paid', 'pagado');
         $this->addFilterCheckbox($viewName, 'domiciliado', 'domiciled', 'domiciliado');
     }
 }
