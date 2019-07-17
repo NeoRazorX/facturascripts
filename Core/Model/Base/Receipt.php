@@ -173,6 +173,7 @@ abstract class Receipt extends ModelOnChangeClass
         $formaPago = new FormaPago();
         if ($formaPago->loadFromCode($codpago)) {
             $this->codpago = $codpago;
+            $this->pagado = $formaPago->pagado;
             $this->vencimiento = $formaPago->getExpiration($this->fecha);
         }
     }
