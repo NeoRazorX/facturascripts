@@ -25,27 +25,32 @@
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
-            <column name="country" numcolumns="3" order="100">
+            <column name="country" numcolumns="2" order="100">
                 <widget type="select" fieldname="codpais" onclick="EditPais" icon="fas fa-globe-americas" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="company" numcolumns="3" order="110">
+            <column name="company" numcolumns="2" order="110">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="warehouse" numcolumns="3" order="120">
+            <column name="warehouse" numcolumns="2" order="120">
                 <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="serie" numcolumns="3" order="130">
+            <column name="serie-invoice" numcolumns="2" order="130">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="3" order="140">
+            <column name="serie-credit-invoice" numcolumns="2" order="130">
+                <widget type="select" fieldname="codserierectificativa" onclick="EditSerie" required="true">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="140">
                 <widget type="select" fieldname="tipoidfiscal" icon="far fa-id-card" required="true">
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
                 </widget>
