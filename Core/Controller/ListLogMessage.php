@@ -71,8 +71,7 @@ class ListLogMessage extends ListController
         $this->addOrderBy($name, ['date'], 'date');
 
         /// filters
-        $this->addFilterDatePicker($name, 'fromdate', 'from-date', 'date', '>=');
-        $this->addFilterDatePicker($name, 'untildate', 'until-date', 'date', '<=');
+        $this->addFilterPeriod($name, 'date', 'period', 'date');
 
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
         $this->addFilterSelect($name, 'pluginname', 'plugin', 'pluginname', $plugins);
@@ -94,6 +93,8 @@ class ListLogMessage extends ListController
         /// filters
         $users = $this->codeModel->all('users', 'nick', 'nick');
         $this->addFilterSelect($name, 'nick', 'user', 'nick', $users);
+        
+        $this->addFilterPeriod($name, 'date', 'period', 'date');
 
         /// settings
         $this->setSettings($name, 'btnNew', false);
@@ -118,11 +119,10 @@ class ListLogMessage extends ListController
         $this->addFilterAutocomplete($name, 'nick', 'user', 'nick', 'users');
         $this->addFilterAutocomplete($name, 'ip', 'ip', 'ip', 'logs');
 
+        $this->addFilterPeriod($name, 'time', 'period', 'time');
+
         $uris = $this->codeModel->all('logs', 'uri', 'uri');
         $this->addFilterSelect($name, 'url', 'url', 'uri', $uris);
-
-        $this->addFilterDatePicker($name, 'fromdate', 'from-date', 'time', '>=');
-        $this->addFilterDatePicker($name, 'untildate', 'until-date', 'time', '<=');
 
         /// settings
         $this->setSettings($name, 'btnNew', false);
