@@ -3,6 +3,7 @@
         "coddivisa": "COP",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "IVA19"
+        "codimpuesto": "IVA19",
+        "tipoidfiscal": "NIT"
     }
 }

@@ -3,6 +3,7 @@
         "coddivisa": "ARS",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "AR21"
+        "codimpuesto": "AR21",
+        "tipoidfiscal": "CUIT"
     }
 }
