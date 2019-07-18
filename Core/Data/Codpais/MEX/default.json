@@ -3,6 +3,7 @@
         "coddivisa": "MXN",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "002"
+        "codimpuesto": "002",
+        "tipoidfiscal": "RFC"
     }
 }

@@ -3,6 +3,7 @@
         "coddivisa": "UYU",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "IVA22"
+        "codimpuesto": "IVA22",
+        "tipoidfiscal": "RUT"
     }
 }
