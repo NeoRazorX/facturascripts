@@ -28,7 +28,6 @@ use FacturaScripts\Core\Model\Base\ModelView;
  */
 class PartidaImpuesto extends ModelView
 {
-
     /**
      * Reset the values of all model view properties.
      */
@@ -63,8 +62,7 @@ class PartidaImpuesto extends ModelView
             'baseimponible' => 'partidas.baseimponible',
             'iva' => 'partidas.iva',
             'recargo' => 'partidas.recargo',
-            'codcuentaesp' => 'subcuentas.codcuentaesp',
-            'codimpuesto' => 'subcuentas.codimpuesto'
+            'codcuentaesp' => 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)'
         ];
     }
 
@@ -73,11 +71,10 @@ class PartidaImpuesto extends ModelView
      */
     protected function getSQLFrom(): string
     {
-        return 'asientos '
+        return 'asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-            . ' AND subcuentas.codimpuesto IS NOT NULL'
-            . ' AND subcuentas.codcuentaesp IS NOT NULL';
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta';
     }
 
     /**
@@ -88,7 +85,8 @@ class PartidaImpuesto extends ModelView
         return [
             'asientos',
             'partidas',
-            'subcuentas'
+            'subcuentas',
+            'cuentas'
         ];
     }
 
