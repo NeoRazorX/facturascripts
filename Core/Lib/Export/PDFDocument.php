@@ -276,6 +276,11 @@ class PDFDocument extends PDFCore
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
         }
 
+        /// rectified invoice?
+        if (isset($model->codigorect) && !empty($model->codigorect)) {
+            array_unshift($tableData, ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect]);
+        }
+
         $tableOptions = [
             'width' => $this->tableWidth,
             'showHeadings' => 0,
