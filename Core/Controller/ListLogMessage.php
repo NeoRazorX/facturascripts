@@ -60,72 +60,72 @@ class ListLogMessage extends ListController
     /**
      * Create view to view all information about crons.
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createCronJobView($name = 'ListCronJob')
+    protected function createCronJobView($viewName = 'ListCronJob')
     {
-        $this->addView($name, 'CronJob', 'crons', 'fas fa-cogs');
-        $this->addSearchFields($name, ['jobname', 'pluginname']);
-        $this->addOrderBy($name, ['jobname'], 'job-name');
-        $this->addOrderBy($name, ['pluginname'], 'plugin');
-        $this->addOrderBy($name, ['date'], 'date');
+        $this->addView($viewName, 'CronJob', 'crons', 'fas fa-cogs');
+        $this->addSearchFields($viewName, ['jobname', 'pluginname']);
+        $this->addOrderBy($viewName, ['jobname'], 'job-name');
+        $this->addOrderBy($viewName, ['pluginname'], 'plugin');
+        $this->addOrderBy($viewName, ['date'], 'date');
 
         /// filters
-        $this->addFilterPeriod($name, 'date', 'period', 'date');
-
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
-        $this->addFilterSelect($name, 'pluginname', 'plugin', 'pluginname', $plugins);
+        $this->addFilterSelect($viewName, 'pluginname', 'plugin', 'pluginname', $plugins);
+
+        $this->addFilterPeriod($viewName, 'date', 'period', 'date');
 
         /// settings
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createEmailSentView($name = 'ListEmailSent')
+    protected function createEmailSentView($viewName = 'ListEmailSent')
     {
-        $this->addView($name, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->addOrderBy($name, ['date'], 'date', 2);
-        $this->addSearchFields($name, ['addressee', 'body', 'subject']);
+        $this->addView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->addOrderBy($viewName, ['date'], 'date', 2);
+        $this->addSearchFields($viewName, ['addressee', 'body', 'subject']);
 
         /// filters
         $users = $this->codeModel->all('users', 'nick', 'nick');
-        $this->addFilterSelect($name, 'nick', 'user', 'nick', $users);
-        
-        $this->addFilterPeriod($name, 'date', 'period', 'date');
+        $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
+
+        $this->addFilterPeriod($viewName, 'date', 'period', 'date');
 
         /// settings
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
      * Create view to get information about all logs.
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createLogMessageView($name = 'ListLogMessage')
+    protected function createLogMessageView($viewName = 'ListLogMessage')
     {
-        $this->addView($name, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
-        $this->addSearchFields($name, ['message', 'uri']);
-        $this->addOrderBy($name, ['time'], 'date', 2);
-        $this->addOrderBy($name, ['level'], 'level');
+        $this->addView($viewName, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
+        $this->addSearchFields($viewName, ['message', 'uri']);
+        $this->addOrderBy($viewName, ['time'], 'date', 2);
+        $this->addOrderBy($viewName, ['level'], 'level');
 
         /// filters
         $levels = $this->codeModel->all('logs', 'level', 'level');
-        $this->addFilterSelect($name, 'level', 'level', 'level', $levels);
+        $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
 
-        $this->addFilterAutocomplete($name, 'nick', 'user', 'nick', 'users');
-        $this->addFilterAutocomplete($name, 'ip', 'ip', 'ip', 'logs');
-
-        $this->addFilterPeriod($name, 'time', 'period', 'time');
+        $this->addFilterAutocomplete($viewName, 'nick', 'user', 'nick', 'users');
+        $this->addFilterAutocomplete($viewName, 'ip', 'ip', 'ip', 'logs');
 
         $uris = $this->codeModel->all('logs', 'uri', 'uri');
-        $this->addFilterSelect($name, 'url', 'url', 'uri', $uris);
+        $this->addFilterSelect($viewName, 'url', 'url', 'uri', $uris);
+
+        $this->addFilterPeriod($viewName, 'time', 'period', 'time');
 
         /// settings
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
