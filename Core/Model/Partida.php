@@ -303,6 +303,18 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        return $this->getAsiento()->url($type, $list);
+    }
+
+    /**
      * This mehtod is called before this record is save (update) in the database
      * when some field value is changed.
      * 
@@ -367,7 +379,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    private function testErrorInData(): bool
+    protected function testErrorInData(): bool
     {
         if (empty($this->idasiento) || empty($this->codsubcuenta)) {
             return true;
@@ -379,17 +391,5 @@ class Partida extends Base\ModelOnChangeClass
         }
 
         return empty($this->idsubcuenta);
-    }
-
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $edit = 'EditAsiento')
-    {
-        return $this->getAsiento()->url();
     }
 }

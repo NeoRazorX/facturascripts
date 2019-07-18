@@ -62,13 +62,14 @@ class EditSubcuenta extends EditController
      * 
      * @param string $viewName
      */
-    protected function createDepartureView($viewName = 'ListPartida')
+    protected function createDepartureView($viewName = 'ListPartidaAsiento')
     {
-        $this->addListView($viewName, 'Partida', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'ModelView\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->searchFields[] = 'concepto';
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
 
-        /// disable columns
-        $this->views[$viewName]->disableColumn('exercise');
+        /// disable column
+        $this->views[$viewName]->disableColumn('subaccount');
     }
 
     /**
@@ -91,10 +92,7 @@ class EditSubcuenta extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'ListPartida':
-                /// needed dependency
-                new Partida();
-
+            case 'ListPartidaAsiento':
                 $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
                 $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);

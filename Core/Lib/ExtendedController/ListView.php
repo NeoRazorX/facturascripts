@@ -149,7 +149,7 @@ class ListView extends BaseView
      */
     public function btnNewUrl()
     {
-        $url = $this->model->url('new');
+        $url = empty($this->model) ? '' : $this->model->url('new');
         $params = [];
         foreach (DataBaseWhere::getFieldsFilter($this->where) as $key => $value) {
             if ($value !== false) {
