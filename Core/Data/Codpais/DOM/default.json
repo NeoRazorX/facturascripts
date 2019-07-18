@@ -3,6 +3,7 @@
         "coddivisa": "DOP",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "ITBIS18"
+        "codimpuesto": "ITBIS18",
+        "tipoidfiscal": "RNC"
     }
 }

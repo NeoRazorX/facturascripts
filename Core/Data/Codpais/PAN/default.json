@@ -3,6 +3,7 @@
         "coddivisa": "PAB",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "ITBMS"
+        "codimpuesto": "ITBMS",
+        "tipoidfiscal": "RUC"
     }
 }
