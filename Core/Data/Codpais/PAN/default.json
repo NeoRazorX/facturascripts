@@ -1,9 +1,9 @@
 {
     "default": {
         "coddivisa": "PAB",
+        "codimpuesto": "ITBMS",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "ITBMS",
         "tipoidfiscal": "RUC"
     }
 }

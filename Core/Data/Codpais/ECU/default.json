@@ -1,9 +1,9 @@
 {
     "default": {
         "coddivisa": "USD",
+        "codimpuesto": "IVA12",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "IVA12",
         "tipoidfiscal": "RUC"
     }
 }

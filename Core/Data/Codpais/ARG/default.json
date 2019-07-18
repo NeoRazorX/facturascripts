@@ -1,9 +1,9 @@
 {
     "default": {
         "coddivisa": "ARS",
+        "codimpuesto": "AR21",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "AR21",
         "tipoidfiscal": "CUIT"
     }
 }

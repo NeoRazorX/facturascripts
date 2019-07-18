@@ -1,9 +1,9 @@
 {
     "default": {
         "coddivisa": "COP",
+        "codimpuesto": "IVA19",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "IVA19",
         "tipoidfiscal": "NIT"
     }
 }
