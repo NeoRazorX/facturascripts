@@ -96,8 +96,7 @@ class EditSubcuenta extends EditController
                 new Partida();
 
                 $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
-                $inSQL = 'SELECT idpartida FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
-                $where = [new DataBaseWhere('idpartida', $inSQL, 'IN')];
+                $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 break;
 

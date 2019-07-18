@@ -390,6 +390,6 @@ class Partida extends Base\ModelOnChangeClass
      */
     public function url(string $type = 'auto', string $edit = 'EditAsiento')
     {
-        return $edit . '?code=' . $this->getAsiento()->idasiento;
+        return $this->getAsiento()->url();
     }
 }
