@@ -32,7 +32,7 @@
                 <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="email" fieldname="email" icon="fas fa-at" />
+                <widget type="email" fieldname="email" icon="fas fa-envelope" />
             </column>
             <column name="is-admin" order="140">
                 <widget type="checkbox" fieldname="admin"/>

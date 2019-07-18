@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
             <column name="email" numcolumns="3" order="100">
-                <widget type="text" fieldname="email" icon="fas fa-at" />
+                <widget type="text" fieldname="email" icon="fas fa-envelope" />
             </column>
             <column name="password" numcolumns="3" order="100">
                 <widget type="password" fieldname="password" icon="fas fa-key" />

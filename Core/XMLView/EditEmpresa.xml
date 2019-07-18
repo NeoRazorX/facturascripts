@@ -76,7 +76,7 @@
                 <widget type="text" fieldname="fax"/>
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="text" fieldname="email" icon="fas fa-at" />
+                <widget type="text" fieldname="email" icon="fas fa-envelope" />
             </column>
             <column name="website" numcolumns="3" order="140">
                 <widget type="text" fieldname="web" />

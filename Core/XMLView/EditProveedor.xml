@@ -63,7 +63,7 @@
                 <widget type="tel" fieldname="fax" />
             </column>
             <column name="email" order="140">
-                <widget type="email" fieldname="email" icon="fas fa-at" />
+                <widget type="email" fieldname="email" icon="fas fa-envelope" />
             </column>
             <column name="website" order="150">
                 <widget type="url" fieldname="web" />

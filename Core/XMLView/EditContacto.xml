@@ -71,7 +71,7 @@
                 <widget type="text" fieldname="telefono2" icon="fas fa-mobile-alt" />
             </column>
             <column name="email" numcolumns="6" order="120">
-                <widget type="text" fieldname="email" icon="fas fa-at" />
+                <widget type="text" fieldname="email" icon="fas fa-envelope" />
             </column>
         </group>
         <group name="address" title="address" numcolumns="12">

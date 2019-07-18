@@ -59,7 +59,7 @@
                 <widget type="text" fieldname="fax" />
             </column>
             <column name="email" order="140">
-                <widget type="email" fieldname="email" icon="fas fa-at" />
+                <widget type="email" fieldname="email" icon="fas fa-envelope" />
             </column>
             <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" order="150">
                 <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
