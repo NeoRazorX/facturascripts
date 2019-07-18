@@ -68,6 +68,10 @@ class EditSettings extends ExtendedController\PanelController
         return $names;
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function checkPaymentMethod()
     {
         $appSettings = new AppSettings();
@@ -93,8 +97,13 @@ class EditSettings extends ExtendedController\PanelController
         /// assign no payment method
         $appSettings->set('default', 'codpago', null);
         $appSettings->save();
+        return false;
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function checkWarehouse()
     {
         $appSettings = new AppSettings();
@@ -120,6 +129,7 @@ class EditSettings extends ExtendedController\PanelController
         /// assign no warehouse
         $appSettings->set('default', 'codalmacen', null);
         $appSettings->save();
+        return false;
     }
 
     /**
@@ -178,7 +188,7 @@ class EditSettings extends ExtendedController\PanelController
 
             case 'testmail':
                 $emailTools = new EmailTools();
-                if ($emailTools->test()) {
+                if ($this->editAction() && $emailTools->test()) {
                     $this->miniLog->info($this->i18n->trans('mail-test-ok'));
                 } else {
                     $this->miniLog->error($this->i18n->trans('mail-test-error'));

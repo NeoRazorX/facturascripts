@@ -1,0 +1,1123 @@
+ciudad;codeid;idciudad;idprovincia
+Leticia;91001;1089;1
+El Encanto ;91263;1090;1
+La Chorrera ;91405;1091;1
+La Pedrera ;91407;1092;1
+La Victoria ;91430;1093;1
+Mirití - Paraná;91460;1094;1
+Puerto Alegría ;91530;1095;1
+Puerto Arica ;91536;1096;1
+Puerto Nariño ;91540;1097;1
+Puerto Santander ;91669;1098;1
+Tarapacá;91798;1099;1
+Medellín;5001;1;2
+Abejorral;5002;2;2
+Abriaquí;5004;3;2
+Alejandría;5021;4;2
+Amagá;5030;5;2
+Amalfi;5031;6;2
+Andes;5034;7;2
+Angelópolis;5036;8;2
+Angostura;5038;9;2
+Anorí;5040;10;2
+Santa Fé De Antioquia;5042;11;2
+Anzá;5044;12;2
+Apartadó;5045;13;2
+Arboletes;5051;14;2
+Argelia;5055;15;2
+Armenia;5059;16;2
+Barbosa;5079;17;2
+Belmira;5086;18;2
+Bello;5088;19;2
+Betania;5091;20;2
+Betulia;5093;21;2
+Ciudad Bolívar ;5101;22;2
+Briceño;5107;23;2
+Buriticá;5113;24;2
+Cáceres;5120;25;2
+Caicedo;5125;26;2
+Caldas;5129;27;2
+Campamento;5134;28;2
+Cañasgordas;5138;29;2
+Caracolí;5142;30;2
+Caramanta;5145;31;2
+Carepa;5147;32;2
+El Carmen De Viboral;5148;33;2
+Carolina;5150;34;2
+Caucasia;5154;35;2
+Chigorodó;5172;36;2
+Cisneros;5190;37;2
+Cocorná;5197;38;2
+Concepción;5206;39;2
+Concordia;5209;40;2
+Copacabana;5212;41;2
+Dabeiba;5234;42;2
+Donmatías;5237;43;2
+Ebéjico;5240;44;2
+El Bagre ;5250;45;2
+Entrerríos;5264;46;2
+Envigado;5266;47;2
+Fredonia;5282;48;2
+Frontino;5284;49;2
+Giraldo;5306;50;2
+Girardota;5308;51;2
+Gómez Plata ;5310;52;2
+Granada;5313;53;2
+Guadalupe;5315;54;2
+Guarne;5318;55;2
+Guatapé;5321;56;2
+Heliconia;5347;57;2
+Hispania;5353;58;2
+Itagüí;5360;59;2
+Ituango;5361;60;2
+Jardín;5364;61;2
+Jericó;5368;62;2
+La Ceja ;5376;63;2
+La Estrella ;5380;64;2
+La Pintada ;5390;65;2
+La Unión ;5400;66;2
+Liborina;5411;67;2
+Maceo;5425;68;2
+Marinilla;5440;69;2
+Montebello;5467;70;2
+Murindó;5475;71;2
+Mutatá;5480;72;2
+Nariño;5483;73;2
+Necoclí;5490;74;2
+Nechí;5495;75;2
+Olaya;5501;76;2
+Peñol;5541;77;2
+Peque;5543;78;2
+Pueblorrico;5576;79;2
+Puerto Berrío ;5579;80;2
+Puerto Nare ;5585;81;2
+Puerto Triunfo ;5591;82;2
+Remedios;5604;83;2
+Retiro;5607;84;2
+Rionegro;5615;85;2
+Sabanalarga;5628;86;2
+Sabaneta;5631;87;2
+Salgar;5642;88;2
+San Andrés De Cuerquía;5647;89;2
+San Carlos ;5649;90;2
+San Francisco ;5652;91;2
+San Jerónimo ;5656;92;2
+San José De La Montaña ;5658;93;2
+San Juan De Urabá;5659;94;2
+San Luis ;5660;95;2
+San Pedro De Los Milagros ;5664;96;2
+San Pedro De Urabá;5665;97;2
+San Rafael ;5667;98;2
+San Roque ;5670;99;2
+San Vicente Ferrer;5674;100;2
+Santa Bárbara ;5679;101;2
+Santa Rosa De Osos;5686;102;2
+Santo Domingo ;5690;103;2
+El Santuario ;5697;104;2
+Segovia;5736;105;2
+Sonsón;5756;106;2
+Sopetrán;5761;107;2
+Támesis;5789;108;2
+Tarazá;5790;109;2
+Tarso;5792;110;2
+Titiribí;5809;111;2
+Toledo;5819;112;2
+Turbo;5837;113;2
+Uramita;5842;114;2
+Urrao;5847;115;2
+Valdivia;5854;116;2
+Valparaíso;5856;117;2
+Vegachí;5858;118;2
+Venecia;5861;119;2
+Vigía Del Fuerte;5873;120;2
+Yalí;5885;121;2
+Yarumal;5887;122;2
+Yolombó;5890;123;2
+Yondó;5893;124;2
+Zaragoza;5895;125;2
+Arauca;81001;1048;3
+Arauquita;81065;1049;3
+Cravo Norte ;81220;1050;3
+Fortul;81300;1051;3
+Puerto Rondón ;81591;1052;3
+Saravena;81736;1053;3
+Tame;81794;1054;3
+Barranquilla;8001;126;4
+Baranoa;8078;127;4
+Campo De La Cruz;8137;128;4
+Candelaria;8141;129;4
+Galapa;8296;130;4
+Juan De Acosta;8372;131;4
+Luruaco;8421;132;4
+Malambo;8433;133;4
+Manatí;8436;134;4
+Palmar De Varela;8520;135;4
+Piojó;8549;136;4
+Polonuevo;8558;137;4
+Ponedera;8560;138;4
+Puerto Colombia ;8573;139;4
+Repelón;8606;140;4
+Sabanagrande;8634;141;4
+Sabanalarga;8638;142;4
+Santa Lucía ;8675;143;4
+Santo Tomás ;8685;144;4
+Soledad;8758;145;4
+Suan;8770;146;4
+Tubará;8832;147;4
+Usiacurí;8849;148;4
+Bogotá  D.c.;11001;149;5
+Cartagena De Indias;13001;150;6
+Achí;13006;151;6
+Altos Del Rosario;13030;152;6
+Arenal;13042;153;6
+Arjona;13052;154;6
+Arroyohondo;13062;155;6
+Barranco De Loba;13074;156;6
+Calamar;13140;157;6
+Cantagallo;13160;158;6
+Cicuco;13188;159;6
+Córdoba;13212;160;6
+Clemencia;13222;161;6
+El Carmen De Bolívar;13244;162;6
+El Guamo ;13248;163;6
+El Peñón ;13268;164;6
+Hatillo De Loba;13300;165;6
+Magangué;13430;166;6
+Mahates;13433;167;6
+Margarita;13440;168;6
+María La Baja;13442;169;6
+Montecristo;13458;170;6
+Mompós;13468;171;6
+Morales;13473;172;6
+Norosí;13490;173;6
+Pinillos;13549;174;6
+Regidor;13580;175;6
+Río Viejo ;13600;176;6
+San Cristóbal ;13620;177;6
+San Estanislao ;13647;178;6
+San Fernando ;13650;179;6
+San Jacinto ;13654;180;6
+San Jacinto Del Cauca;13655;181;6
+San Juan Nepomuceno;13657;182;6
+San Martín De Loba;13667;183;6
+San Pablo ;13670;184;6
+Santa Catalina ;13673;185;6
+Santa Rosa ;13683;186;6
+Santa Rosa Del Sur;13688;187;6
+Simití;13744;188;6
+Soplaviento;13760;189;6
+Talaigua Nuevo ;13780;190;6
+Tiquisio;13810;191;6
+Turbaco;13836;192;6
+Turbaná;13838;193;6
+Villanueva;13873;194;6
+Zambrano;13894;195;6
+Nuevo Colón ;15494;256;7
+Oicatá;15500;257;7
+Otanche;15507;258;7
+Pachavita;15511;259;7
+Páez;15514;260;7
+Paipa;15516;261;7
+Pajarito;15518;262;7
+Panqueba;15522;263;7
+Pauna;15531;264;7
+Paya;15533;265;7
+Paz De Río;15537;266;7
+Pesca;15542;267;7
+Pisba;15550;268;7
+Puerto Boyacá ;15572;269;7
+Quípama;15580;270;7
+Ramiriquí;15599;271;7
+Ráquira;15600;272;7
+Rondón;15621;273;7
+Saboyá;15632;274;7
+Sáchica;15638;275;7
+Samacá;15646;276;7
+San Eduardo ;15660;277;7
+San José De Pare;15664;278;7
+San Luis De Gaceno;15667;279;7
+San Mateo ;15673;280;7
+San Miguel De Sema;15676;281;7
+San Pablo De Borbur;15681;282;7
+Santana;15686;283;7
+Santa María ;15690;284;7
+Santa Rosa De Viterbo;15693;285;7
+Santa Sofía ;15696;286;7
+Sativanorte;15720;287;7
+Sativasur;15723;288;7
+Siachoque;15740;289;7
+Soatá;15753;290;7
+Socotá;15755;291;7
+Socha;15757;292;7
+Sogamoso;15759;293;7
+Somondoco;15761;294;7
+Sora;15762;295;7
+Sotaquirá;15763;296;7
+Soracá;15764;297;7
+Susacón;15774;298;7
+Sutamarchán;15776;299;7
+Sutatenza;15778;300;7
+Tasco;15790;301;7
+Tenza;15798;302;7
+Tibaná;15804;303;7
+Tibasosa;15806;304;7
+Tinjacá;15808;305;7
+Tipacoque;15810;306;7
+Toca;15814;307;7
+Togüí;15816;308;7
+Tópaga;15820;309;7
+Tota;15822;310;7
+Tununguá;15832;311;7
+Turmequé;15835;312;7
+Tuta;15837;313;7
+Tutazá;15839;314;7
+Úmbita;15842;315;7
+Ventaquemada;15861;316;7
+Viracachá;15879;317;7
+Zetaquira;15897;318;7
+Tunja;15001;196;7
+Almeida;15022;197;7
+Aquitania;15047;198;7
+Arcabuco;15051;199;7
+Belén;15087;200;7
+Berbeo;15090;201;7
+Betéitiva;15092;202;7
+Boavita;15097;203;7
+Boyacá;15104;204;7
+Briceño;15106;205;7
+Buenavista;15109;206;7
+Busbanzá;15114;207;7
+Caldas;15131;208;7
+Campohermoso;15135;209;7
+Cerinza;15162;210;7
+Chinavita;15172;211;7
+Chiquinquirá;15176;212;7
+Chiscas;15180;213;7
+Chita;15183;214;7
+Chitaraque;15185;215;7
+Chivatá;15187;216;7
+Ciénega;15189;217;7
+Cómbita;15204;218;7
+Coper;15212;219;7
+Corrales;15215;220;7
+Covarachía;15218;221;7
+Cubará;15223;222;7
+Cucaita;15224;223;7
+Cuítiva;15226;224;7
+Chíquiza;15232;225;7
+Chivor;15236;226;7
+Duitama;15238;227;7
+El Cocuy ;15244;228;7
+El Espino ;15248;229;7
+Firavitoba;15272;230;7
+Floresta;15276;231;7
+Gachantivá;15293;232;7
+Gámeza;15296;233;7
+Garagoa;15299;234;7
+Guacamayas;15317;235;7
+Guateque;15322;236;7
+Guayatá;15325;237;7
+Güicán De La Sierra;15332;238;7
+Iza;15362;239;7
+Jenesano;15367;240;7
+Jericó;15368;241;7
+Labranzagrande;15377;242;7
+La Capilla ;15380;243;7
+La Victoria ;15401;244;7
+La Uvita ;15403;245;7
+Villa De Leyva;15407;246;7
+Macanal;15425;247;7
+Maripí;15442;248;7
+Miraflores;15455;249;7
+Mongua;15464;250;7
+Monguí;15466;251;7
+Moniquirá;15469;252;7
+Motavita;15476;253;7
+Muzo;15480;254;7
+Nobsa;15491;255;7
+Manizales;17001;319;8
+Aguadas;17013;320;8
+Anserma;17042;321;8
+Aranzazu;17050;322;8
+Belalcázar;17088;323;8
+Chinchiná;17174;324;8
+Filadelfia;17272;325;8
+La Dorada ;17380;326;8
+La Merced ;17388;327;8
+Manzanares;17433;328;8
+Marmato;17442;329;8
+Marquetalia;17444;330;8
+Marulanda;17446;331;8
+Neira;17486;332;8
+Norcasia;17495;333;8
+Pácora;17513;334;8
+Palestina;17524;335;8
+Pensilvania;17541;336;8
+Riosucio;17614;337;8
+Risaralda;17616;338;8
+Salamina;17653;339;8
+Samaná;17662;340;8
+San José ;17665;341;8
+Supía;17777;342;8
+Victoria;17867;343;8
+Villamaría;17873;344;8
+Viterbo;17877;345;8
+Florencia;18001;346;9
+Albania;18029;347;9
+Belén De Los Andaquíes;18094;348;9
+Cartagena Del Chairá;18150;349;9
+Curillo;18205;350;9
+El Doncello ;18247;351;9
+El Paujíl ;18256;352;9
+La Montañita ;18410;353;9
+Milán;18460;354;9
+Morelia;18479;355;9
+Puerto Rico ;18592;356;9
+San José Del Fragua;18610;357;9
+San Vicente Del Caguán;18753;358;9
+Solano;18756;359;9
+Solita;18785;360;9
+Valparaíso;18860;361;9
+Yopal;85001;1055;10
+Aguazul;85010;1056;10
+Chámeza;85015;1057;10
+Hato Corozal ;85125;1058;10
+La Salina ;85136;1059;10
+Maní;85139;1060;10
+Monterrey;85162;1061;10
+Nunchía;85225;1062;10
+Orocué;85230;1063;10
+Paz De Ariporo;85250;1064;10
+Pore;85263;1065;10
+Recetor;85279;1066;10
+Sabanalarga;85300;1067;10
+Sácama;85315;1068;10
+San Luis De Palenque;85325;1069;10
+Támara;85400;1070;10
+Tauramena;85410;1071;10
+Trinidad;85430;1072;10
+Villanueva;85440;1073;10
+Popayán;19001;362;11
+Almaguer;19022;363;11
+Argelia;19050;364;11
+Balboa;19075;365;11
+Bolívar;19100;366;11
+Buenos Aires ;19110;367;11
+Cajibío;19130;368;11
+Caldono;19137;369;11
+Caloto;19142;370;11
+Corinto;19212;371;11
+El Tambo ;19256;372;11
+Florencia;19290;373;11
+Guachené;19300;374;11
+Guapí;19318;375;11
+Inzá;19355;376;11
+Jambaló;19364;377;11
+La Sierra ;19392;378;11
+La Vega ;19397;379;11
+López De Micay;19418;380;11
+Mercaderes;19450;381;11
+Miranda;19455;382;11
+Morales;19473;383;11
+Padilla;19513;384;11
+Páez;19517;385;11
+Patía;19532;386;11
+Piamonte;19533;387;11
+Piendamó - Tunía;19548;388;11
+Puerto Tejada ;19573;389;11
+Puracé;19585;390;11
+Rosas;19622;391;11
+San Sebastián ;19693;392;11
+Santander De Quilichao;19698;393;11
+Santa Rosa ;19701;394;11
+Silvia;19743;395;11
+Sotara;19760;396;11
+Suárez;19780;397;11
+Sucre;19785;398;11
+Timbío;19807;399;11
+Timbiquí;19809;400;11
+Toribío;19821;401;11
+Totoró;19824;402;11
+Villa Rica ;19845;403;11
+Valledupar;20001;404;12
+Aguachica;20011;405;12
+Agustín Codazzi ;20013;406;12
+Astrea;20032;407;12
+Becerril;20045;408;12
+Bosconia;20060;409;12
+Chimichagua;20175;410;12
+Chiriguaná;20178;411;12
+Curumaní;20228;412;12
+El Copey ;20238;413;12
+El Paso ;20250;414;12
+Gamarra;20295;415;12
+González;20310;416;12
+La Gloria ;20383;417;12
+La Jagua De Ibirico;20400;418;12
+Manaure Balcón Del Cesar;20443;419;12
+Pailitas;20517;420;12
+Pelaya;20550;421;12
+Pueblo Bello ;20570;422;12
+Río De Oro;20614;423;12
+La Paz ;20621;424;12
+San Alberto ;20710;425;12
+San Diego ;20750;426;12
+San Martín ;20770;427;12
+Tamalameque;20787;428;12
+Quibdó;27001;575;13
+Acandí;27006;576;13
+Alto Baudó ;27025;577;13
+Atrato;27050;578;13
+Bagadó;27073;579;13
+Bahía Solano ;27075;580;13
+Bajo Baudó ;27077;581;13
+Bojayá;27099;582;13
+El Cantón Del San Pablo ;27135;583;13
+Carmen Del Darién;27150;584;13
+Cértegui;27160;585;13
+Condoto;27205;586;13
+El Carmen De Atrato;27245;587;13
+El Litoral Del San Juan ;27250;588;13
+Istmina;27361;589;13
+Juradó;27372;590;13
+Lloró;27413;591;13
+Medio Atrato ;27425;592;13
+Medio Baudó ;27430;593;13
+Medio San Juan;27450;594;13
+Nóvita;27491;595;13
+Nuquí;27495;596;13
+Río Iró ;27580;597;13
+Río Quito ;27600;598;13
+Riosucio;27615;599;13
+San José Del Palmar;27660;600;13
+Sipí;27745;601;13
+Tadó;27787;602;13
+Unguía;27800;603;13
+Unión Panamericana ;27810;604;13
+Montería;23001;429;14
+Ayapel;23068;430;14
+Buenavista;23079;431;14
+Canalete;23090;432;14
+Cereté;23162;433;14
+Chimá;23168;434;14
+Chinú;23182;435;14
+Ciénaga De Oro;23189;436;14
+Cotorra;23300;437;14
+La Apartada ;23350;438;14
+Lorica;23417;439;14
+Los Córdobas ;23419;440;14
+Momil;23464;441;14
+Montelíbano;23466;442;14
+Moñitos;23500;443;14
+Planeta Rica ;23555;444;14
+Pueblo Nuevo ;23570;445;14
+Puerto Escondido ;23574;446;14
+Puerto Libertador ;23580;447;14
+Purísima De La Concepción;23586;448;14
+Sahagún;23660;449;14
+San Andrés De Sotavento;23670;450;14
+San Antero ;23672;451;14
+San Bernardo Del Viento;23675;452;14
+San Carlos ;23678;453;14
+San José De Uré;23682;454;14
+San Pelayo ;23686;455;14
+Tierralta;23807;456;14
+Tuchín;23815;457;14
+Valencia;23855;458;14
+Machetá;25426;512;15
+Madrid;25430;513;15
+Manta;25436;514;15
+Medina;25438;515;15
+Mosquera;25473;516;15
+Nariño;25483;517;15
+Nemocón;25486;518;15
+Nilo;25488;519;15
+Nimaima;25489;520;15
+Nocaima;25491;521;15
+Venecia;25506;522;15
+Pacho;25513;523;15
+Paime;25518;524;15
+Pandi;25524;525;15
+Paratebueno;25530;526;15
+Pasca;25535;527;15
+Puerto Salgar ;25572;528;15
+Pulí;25580;529;15
+Quebradanegra;25592;530;15
+Quetame;25594;531;15
+Quipile;25596;532;15
+Apulo;25599;533;15
+Ricaurte;25612;534;15
+San Antonio Del Tequendama;25645;535;15
+San Bernardo ;25649;536;15
+San Cayetano ;25653;537;15
+San Francisco ;25658;538;15
+San Juan De Rioseco;25662;539;15
+Sasaima;25718;540;15
+Sesquilé;25736;541;15
+Sibaté;25740;542;15
+Silvania;25743;543;15
+Simijaca;25745;544;15
+Soacha;25754;545;15
+Sopó;25758;546;15
+Subachoque;25769;547;15
+Suesca;25772;548;15
+Supatá;25777;549;15
+Susa;25779;550;15
+Sutatausa;25781;551;15
+Tabio;25785;552;15
+Tausa;25793;553;15
+Tena;25797;554;15
+Tenjo;25799;555;15
+Tibacuy;25805;556;15
+Tibirita;25807;557;15
+Tocaima;25815;558;15
+Tocancipá;25817;559;15
+Topaipí;25823;560;15
+Ubalá;25839;561;15
+Ubaque;25841;562;15
+Villa De San Diego De Ubaté;25843;563;15
+Une;25845;564;15
+Útica;25851;565;15
+Vergara;25862;566;15
+Vianí;25867;567;15
+Villagómez;25871;568;15
+Villapinzón;25873;569;15
+Villeta;25875;570;15
+Viotá;25878;571;15
+Yacopí;25885;572;15
+Zipacón;25898;573;15
+Zipaquirá;25899;574;15
+Agua De Dios;25001;459;15
+Albán;25019;460;15
+Anapoima;25035;461;15
+Anolaima;25040;462;15
+Arbeláez;25053;463;15
+Beltrán;25086;464;15
+Bituima;25095;465;15
+Bojacá;25099;466;15
+Cabrera;25120;467;15
+Cachipay;25123;468;15
+Cajicá;25126;469;15
+Caparrapí;25148;470;15
+Cáqueza;25151;471;15
+Carmen De Carupa;25154;472;15
+Chaguaní;25168;473;15
+Chía;25175;474;15
+Chipaque;25178;475;15
+Choachí;25181;476;15
+Chocontá;25183;477;15
+Cogua;25200;478;15
+Cota;25214;479;15
+Cucunubá;25224;480;15
+El Colegio ;25245;481;15
+El Peñón ;25258;482;15
+El Rosal ;25260;483;15
+Facatativá;25269;484;15
+Fómeque;25279;485;15
+Fosca;25281;486;15
+Funza;25286;487;15
+Fúquene;25288;488;15
+Fusagasugá;25290;489;15
+Gachalá;25293;490;15
+Gachancipá;25295;491;15
+Gachetá;25297;492;15
+Gama;25299;493;15
+Girardot;25307;494;15
+Granada;25312;495;15
+Guachetá;25317;496;15
+Guaduas;25320;497;15
+Guasca;25322;498;15
+Guataquí;25324;499;15
+Guatavita;25326;500;15
+Guayabal De Síquima;25328;501;15
+Guayabetal;25335;502;15
+Gutiérrez;25339;503;15
+Jerusalén;25368;504;15
+Junín;25372;505;15
+La Calera ;25377;506;15
+La Mesa ;25386;507;15
+La Palma ;25394;508;15
+La Peña ;25398;509;15
+La Vega ;25402;510;15
+Lenguazaque;25407;511;15
+Inírida;94001;1100;16
+Barranco Minas ;94343;1101;16
+Mapiripana;94663;1102;16
+San Felipe ;94883;1103;16
+Puerto Colombia ;94884;1104;16
+La Guadalupe ;94885;1105;16
+Cacahual;94886;1106;16
+Pana Pana ;94887;1107;16
+Morichal;94888;1108;16
+San José Del Guaviare;95001;1109;17
+Calamar;95015;1110;17
+El Retorno ;95025;1111;17
+Miraflores;95200;1112;17
+Neiva;41001;605;18
+Acevedo;41006;606;18
+Agrado;41013;607;18
+Aipe;41016;608;18
+Algeciras;41020;609;18
+Altamira;41026;610;18
+Baraya;41078;611;18
+Campoalegre;41132;612;18
+Colombia;41206;613;18
+Elías;41244;614;18
+Garzón;41298;615;18
+Gigante;41306;616;18
+Guadalupe;41319;617;18
+Hobo;41349;618;18
+Íquira;41357;619;18
+Isnos;41359;620;18
+La Argentina ;41378;621;18
+La Plata ;41396;622;18
+Nátaga;41483;623;18
+Oporapa;41503;624;18
+Paicol;41518;625;18
+Palermo;41524;626;18
+Palestina;41530;627;18
+Pital;41548;628;18
+Pitalito;41551;629;18
+Rivera;41615;630;18
+Saladoblanco;41660;631;18
+San Agustín ;41668;632;18
+Santa María ;41676;633;18
+Suaza;41770;634;18
+Tarqui;41791;635;18
+Tesalia;41797;636;18
+Tello;41799;637;18
+Teruel;41801;638;18
+Timaná;41807;639;18
+Villavieja;41872;640;18
+Yaguará;41885;641;18
+Riohacha;44001;642;19
+Albania;44035;643;19
+Barrancas;44078;644;19
+Dibulla;44090;645;19
+Distracción;44098;646;19
+El Molino ;44110;647;19
+Fonseca;44279;648;19
+Hatonuevo;44378;649;19
+La Jagua Del Pilar;44420;650;19
+Maicao;44430;651;19
+Manaure;44560;652;19
+San Juan Del Cesar;44650;653;19
+Uribia;44847;654;19
+Urumita;44855;655;19
+Villanueva;44874;656;19
+Santa Marta ;47001;657;20
+Algarrobo;47030;658;20
+Aracataca;47053;659;20
+Ariguaní;47058;660;20
+Cerro De San Antonio;47161;661;20
+Chivolo;47170;662;20
+Ciénaga;47189;663;20
+Concordia;47205;664;20
+El Banco ;47245;665;20
+El Piñón ;47258;666;20
+El Retén ;47268;667;20
+Fundación;47288;668;20
+Guamal;47318;669;20
+Nueva Granada ;47460;670;20
+Pedraza;47541;671;20
+Pijiño Del Carmen;47545;672;20
+Pivijay;47551;673;20
+Plato;47555;674;20
+Puebloviejo;47570;675;20
+Remolino;47605;676;20
+Sabanas De San Ángel;47660;677;20
+Salamina;47675;678;20
+San Sebastián De Buenavista;47692;679;20
+San Zenón ;47703;680;20
+Santa Ana ;47707;681;20
+Santa Bárbara De Pinto;47720;682;20
+Sitionuevo;47745;683;20
+Tenerife;47798;684;20
+Zapayán;47960;685;20
+Zona Bananera ;47980;686;20
+Villavicencio;50001;687;21
+Acacías;50006;688;21
+Barranca De Upía;50110;689;21
+Cabuyaro;50124;690;21
+Castilla La Nueva;50150;691;21
+Cubarral;50223;692;21
+Cumaral;50226;693;21
+El Calvario ;50245;694;21
+El Castillo ;50251;695;21
+El Dorado ;50270;696;21
+Fuente De Oro;50287;697;21
+Granada;50313;698;21
+Guamal;50318;699;21
+Mapiripán;50325;700;21
+Mesetas;50330;701;21
+La Macarena ;50350;702;21
+Uribe;50370;703;21
+Lejanías;50400;704;21
+Puerto Concordia ;50450;705;21
+Puerto Gaitán ;50568;706;21
+Puerto López ;50573;707;21
+Puerto Lleras ;50577;708;21
+Puerto Rico ;50590;709;21
+Restrepo;50606;710;21
+San Carlos De Guaroa;50680;711;21
+San Juan De Arama;50683;712;21
+San Juanito ;50686;713;21
+San Martín ;50689;714;21
+Vistahermosa;50711;715;21
+San Bernardo ;52685;768;22
+San Lorenzo ;52687;769;22
+San Pablo ;52693;770;22
+San Pedro De Cartago;52694;771;22
+Santa Bárbara ;52696;772;22
+Santacruz;52699;773;22
+Sapuyes;52720;774;22
+Taminango;52786;775;22
+Tangua;52788;776;22
+San Andrés De Tumaco;52835;777;22
+Túquerres;52838;778;22
+Yacuanquer;52885;779;22
+Pasto;52001;716;22
+Albán;52019;717;22
+Aldana;52022;718;22
+Ancuyá;52036;719;22
+Arboleda;52051;720;22
+Barbacoas;52079;721;22
+Belén;52083;722;22
+Buesaco;52110;723;22
+Colón;52203;724;22
+Consacá;52207;725;22
+Contadero;52210;726;22
+Córdoba;52215;727;22
+Cuaspúd;52224;728;22
+Cumbal;52227;729;22
+Cumbitara;52233;730;22
+Chachagüí;52240;731;22
+El Charco ;52250;732;22
+El Peñol ;52254;733;22
+El Rosario ;52256;734;22
+El Tablón De Gómez;52258;735;22
+El Tambo ;52260;736;22
+Funes;52287;737;22
+Guachucal;52317;738;22
+Guaitarilla;52320;739;22
+Gualmatán;52323;740;22
+Iles;52352;741;22
+Imués;52354;742;22
+Ipiales;52356;743;22
+La Cruz ;52378;744;22
+La Florida ;52381;745;22
+La Llanada ;52385;746;22
+La Tola ;52390;747;22
+La Unión ;52399;748;22
+Leiva;52405;749;22
+Linares;52411;750;22
+Los Andes ;52418;751;22
+Magüí;52427;752;22
+Mallama;52435;753;22
+Mosquera;52473;754;22
+Nariño;52480;755;22
+Olaya Herrera ;52490;756;22
+Ospina;52506;757;22
+Francisco Pizarro ;52520;758;22
+Policarpa;52540;759;22
+Potosí;52560;760;22
+Providencia;52565;761;22
+Puerres;52573;762;22
+Pupiales;52585;763;22
+Ricaurte;52612;764;22
+Roberto Payán ;52621;765;22
+Samaniego;52678;766;22
+Sandoná;52683;767;22
+San José De Cúcuta;54001;780;23
+Ábrego;54003;781;23
+Arboledas;54051;782;23
+Bochalema;54099;783;23
+Bucarasica;54109;784;23
+Cácota;54125;785;23
+Cáchira;54128;786;23
+Chinácota;54172;787;23
+Chitagá;54174;788;23
+Convención;54206;789;23
+Cucutilla;54223;790;23
+Durania;54239;791;23
+El Carmen ;54245;792;23
+El Tarra ;54250;793;23
+El Zulia ;54261;794;23
+Gramalote;54313;795;23
+Hacarí;54344;796;23
+Herrán;54347;797;23
+Labateca;54377;798;23
+La Esperanza ;54385;799;23
+La Playa ;54398;800;23
+Los Patios ;54405;801;23
+Lourdes;54418;802;23
+Mutiscua;54480;803;23
+Ocaña;54498;804;23
+Pamplona;54518;805;23
+Pamplonita;54520;806;23
+Puerto Santander ;54553;807;23
+Ragonvalia;54599;808;23
+Salazar;54660;809;23
+San Calixto ;54670;810;23
+San Cayetano ;54673;811;23
+Santiago;54680;812;23
+Sardinata;54720;813;23
+Silos;54743;814;23
+Teorama;54800;815;23
+Tibú;54810;816;23
+Toledo;54820;817;23
+Villa Caro ;54871;818;23
+Villa Del Rosario;54874;819;23
+Mocoa;86001;1074;24
+Colón;86219;1075;24
+Orito;86320;1076;24
+Puerto Asís ;86568;1077;24
+Puerto Caicedo ;86569;1078;24
+Puerto Guzmán ;86571;1079;24
+Puerto Leguízamo ;86573;1080;24
+Sibundoy;86749;1081;24
+San Francisco ;86755;1082;24
+San Miguel ;86757;1083;24
+Santiago;86760;1084;24
+Valle Del Guamuez;86865;1085;24
+Villagarzón;86885;1086;24
+Armenia;63001;820;25
+Buenavista;63111;821;25
+Calarcá;63130;822;25
+Circasia;63190;823;25
+Córdoba;63212;824;25
+Filandia;63272;825;25
+Génova;63302;826;25
+La Tebaida ;63401;827;25
+Montenegro;63470;828;25
+Pijao;63548;829;25
+Quimbaya;63594;830;25
+Salento;63690;831;25
+Pereira;66001;832;26
+Apía;66045;833;26
+Balboa;66075;834;26
+Belén De Umbría;66088;835;26
+Dosquebradas;66170;836;26
+Guática;66318;837;26
+La Celia ;66383;838;26
+La Virginia ;66400;839;26
+Marsella;66440;840;26
+Mistrató;66456;841;26
+Pueblo Rico ;66572;842;26
+Quinchía;66594;843;26
+Santa Rosa De Cabal;66682;844;26
+Santuario;66687;845;26
+San Andrés ;88001;1087;27
+Providencia;88564;1088;27
+Bucaramanga;68001;846;28
+Aguada;68013;847;28
+Albania;68020;848;28
+Aratoca;68051;849;28
+Barbosa;68077;850;28
+Barichara;68079;851;28
+Barrancabermeja;68081;852;28
+Betulia;68092;853;28
+Bolívar;68101;854;28
+Cabrera;68121;855;28
+California;68132;856;28
+Capitanejo;68147;857;28
+Carcasí;68152;858;28
+Cepitá;68160;859;28
+Cerrito;68162;860;28
+Charalá;68167;861;28
+Charta;68169;862;28
+Chima;68176;863;28
+Chipatá;68179;864;28
+Cimitarra;68190;865;28
+Concepción;68207;866;28
+Confines;68209;867;28
+Contratación;68211;868;28
+Coromoro;68217;869;28
+Curití;68229;870;28
+El Carmen De Chucurí;68235;871;28
+El Guacamayo ;68245;872;28
+El Peñón ;68250;873;28
+El Playón ;68255;874;28
+Encino;68264;875;28
+Enciso;68266;876;28
+Florián;68271;877;28
+Floridablanca;68276;878;28
+Galán;68296;879;28
+Gámbita;68298;880;28
+Girón;68307;881;28
+Guaca;68318;882;28
+Guadalupe;68320;883;28
+Guapotá;68322;884;28
+Guavatá;68324;885;28
+Güepsa;68327;886;28
+Hato;68344;887;28
+Jesús María ;68368;888;28
+Jordán;68370;889;28
+La Belleza ;68377;890;28
+Landázuri;68385;891;28
+La Paz ;68397;892;28
+Lebrija;68406;893;28
+Los Santos ;68418;894;28
+Macaravita;68425;895;28
+Málaga;68432;896;28
+Matanza;68444;897;28
+Mogotes;68464;898;28
+Molagavita;68468;899;28
+Ocamonte;68498;900;28
+Oiba;68500;901;28
+Onzaga;68502;902;28
+Palmar;68522;903;28
+Palmas Del Socorro;68524;904;28
+Páramo;68533;905;28
+Piedecuesta;68547;906;28
+Pinchote;68549;907;28
+Puente Nacional ;68572;908;28
+Puerto Parra ;68573;909;28
+Puerto Wilches ;68575;910;28
+Rionegro;68615;911;28
+Sabana De Torres;68655;912;28
+San Andrés ;68669;913;28
+San Benito ;68673;914;28
+San Gil ;68679;915;28
+San Joaquín ;68682;916;28
+San José De Miranda;68684;917;28
+San Miguel ;68686;918;28
+San Vicente De Chucurí;68689;919;28
+Santa Bárbara ;68705;920;28
+Santa Helena Del Opón;68720;921;28
+Simacota;68745;922;28
+Socorro;68755;923;28
+Suaita;68770;924;28
+Sucre;68773;925;28
+Suratá;68780;926;28
+Tona;68820;927;28
+Valle De San José;68855;928;28
+Vélez;68861;929;28
+Vetas;68867;930;28
+Villanueva;68872;931;28
+Zapatoca;68895;932;28
+Sincelejo;70001;933;29
+Buenavista;70110;934;29
+Caimito;70124;935;29
+Colosó;70204;936;29
+Corozal;70215;937;29
+Coveñas;70221;938;29
+Chalán;70230;939;29
+El Roble ;70233;940;29
+Galeras;70235;941;29
+Guaranda;70265;942;29
+La Unión ;70400;943;29
+Los Palmitos ;70418;944;29
+Majagual;70429;945;29
+Morroa;70473;946;29
+Ovejas;70508;947;29
+Palmito;70523;948;29
+Sampués;70670;949;29
+San Benito Abad;70678;950;29
+San Juan De Betulia;70702;951;29
+San Marcos ;70708;952;29
+San Onofre ;70713;953;29
+San Pedro ;70717;954;29
+San Luis De Sincé;70742;955;29
+Sucre;70771;956;29
+Santiago De Tolú;70820;957;29
+Tolú Viejo ;70823;958;29
+Ibagué;73001;959;30
+Alpujarra;73024;960;30
+Alvarado;73026;961;30
+Ambalema;73030;962;30
+Anzoátegui;73043;963;30
+Armero;73055;964;30
+Ataco;73067;965;30
+Cajamarca;73124;966;30
+Carmen De Apicalá;73148;967;30
+Casabianca;73152;968;30
+Chaparral;73168;969;30
+Coello;73200;970;30
+Coyaima;73217;971;30
+Cunday;73226;972;30
+Dolores;73236;973;30
+Espinal;73268;974;30
+Falan;73270;975;30
+Flandes;73275;976;30
+Fresno;73283;977;30
+Guamo;73319;978;30
+Herveo;73347;979;30
+Honda;73349;980;30
+Icononzo;73352;981;30
+Lérida;73408;982;30
+Líbano;73411;983;30
+San Sebastián De Mariquita;73443;984;30
+Melgar;73449;985;30
+Murillo;73461;986;30
+Natagaima;73483;987;30
+Ortega;73504;988;30
+Palocabildo;73520;989;30
+Piedras;73547;990;30
+Planadas;73555;991;30
+Prado;73563;992;30
+Purificación;73585;993;30
+Rioblanco;73616;994;30
+Roncesvalles;73622;995;30
+Rovira;73624;996;30
+Saldaña;73671;997;30
+San Antonio ;73675;998;30
+San Luis ;73678;999;30
+Santa Isabel ;73686;1000;30
+Suárez;73770;1001;30
+Valle De San Juan;73854;1002;30
+Venadillo;73861;1003;30
+Villahermosa;73870;1004;30
+Villarrica;73873;1005;30
+Florida;76275;1024;31
+Ginebra;76306;1025;31
+Guacarí;76318;1026;31
+Jamundí;76364;1027;31
+La Cumbre ;76377;1028;31
+La Unión ;76400;1029;31
+La Victoria ;76403;1030;31
+Obando;76497;1031;31
+Palmira;76520;1032;31
+Pradera;76563;1033;31
+Restrepo;76606;1034;31
+Riofrío;76616;1035;31
+Roldanillo;76622;1036;31
+San Pedro ;76670;1037;31
+Sevilla;76736;1038;31
+Toro;76823;1039;31
+Trujillo;76828;1040;31
+Tuluá;76834;1041;31
+Ulloa;76845;1042;31
+Versalles;76863;1043;31
+Vijes;76869;1044;31
+Yotoco;76890;1045;31
+Yumbo;76892;1046;31
+Zarzal;76895;1047;31
+Cali;76001;1006;31
+Alcalá;76020;1007;31
+Andalucía;76036;1008;31
+Ansermanuevo;76041;1009;31
+Argelia;76054;1010;31
+Bolívar;76100;1011;31
+Buenaventura;76109;1012;31
+Guadalajara De Buga;76111;1013;31
+Bugalagrande;76113;1014;31
+Caicedonia;76122;1015;31
+Calima;76126;1016;31
+Candelaria;76130;1017;31
+Cartago;76147;1018;31
+Dagua;76233;1019;31
+El Águila ;76243;1020;31
+El Cairo ;76246;1021;31
+El Cerrito ;76248;1022;31
+El Dovio ;76250;1023;31
+Mitú;97001;1113;32
+Carurú;97161;1114;32
+Pacoa;97511;1115;32
+Taraira;97666;1116;32
+Papunahua;97777;1117;32
+Yavaraté;97889;1118;32
+Puerto Carreño ;99001;1119;33
+La Primavera ;99524;1120;33
+Santa Rosalía ;99624;1121;33
+Cumaribo;99773;1122;33
