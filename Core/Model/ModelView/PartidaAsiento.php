@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\ModelView;
 
 use FacturaScripts\Core\Model\Base\ModelView;
 use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Partida;
 
 /**
  * Description of PartidaAsiento
@@ -37,6 +38,9 @@ class PartidaAsiento extends ModelView
     {
         parent::__construct($data);
         $this->setMasterModel(new Asiento());
+
+        /// needed dependency
+        new Partida();
     }
 
     /**
