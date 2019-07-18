@@ -88,6 +88,8 @@ class EditEmailSent extends EditController
         ];
         $this->addButton($mainView, $newButton);
 
+        $this->addListView('ListEmailSent', 'EmailSent', 'emails', 'fas fa-paper-plane');
+
         /// settings
         $this->setSettings($mainView, 'btnNew', false);
     }
@@ -101,6 +103,27 @@ class EditEmailSent extends EditController
 
             default:
                 parent::execAfterAction($action);
+        }
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListEmailSent':
+                $addressee = $this->getViewModelValue($this->getMainViewName(), 'addressee');
+                $where = [new DataBaseWhere('addressee', $addressee)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
         }
     }
 }
