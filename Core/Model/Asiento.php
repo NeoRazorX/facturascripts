@@ -146,7 +146,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         /// TODO: Check if accounting entry have VAT Accounts
         $regularization = new RegularizacionImpuesto();
         if ($regularization->getFechaInside($this->fecha)) {
-            self::$miniLog->alert(self::$i18n->trans('acounting-within-regularization', ['%tax%' => FS_IVA]));
+            self::$miniLog->alert(self::$i18n->trans('acounting-within-regularization'));
             return false;
         }
 
