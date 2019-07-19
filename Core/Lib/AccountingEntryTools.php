@@ -1,0 +1,293 @@
+<?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace FacturaScripts\Core\Lib;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Lib\ExtendedController\GridView;
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Subcuenta;
+use FacturaScripts\Dinamic\Model\SubcuentaSaldo;
+
+/**
+ * A set of tools to recalculate accounting entries.
+ *
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ */
+class AccountingEntryTools {
+
+    /**
+     * Load data and balances from subaccount
+     *
+     * @param string $exercise
+     * @param string $codeSubAccount
+     *
+     * @return array
+     */
+    public function getAccountData(string $exercise, string $codeSubAccount): array
+    {
+        $result = [
+            'subaccount' => $codeSubAccount,
+            'description' => '',
+            'codevat' => '',
+            'balance' => 0.00,
+            'detail' => [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+        ];
+
+        if (empty($exercise) || empty($codeSubAccount)) {
+            return $result;
+        }
+
+        $where = [
+            new DataBaseWhere('codsubcuenta', $codeSubAccount),
+            new DataBaseWhere('codejercicio', $exercise)
+        ];
+
+        $subAccount = new Subcuenta();
+        if ($subAccount->loadFromCode(null, $where)) {
+            $balance = new SubcuentaSaldo();
+            $result['description'] = $subAccount->descripcion;
+            $result['codevat'] = false;  // TODO: Calculate if subaccount belong to tax group
+            $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
+            $result['balance'] = DivisaTools::format($result['balance']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Calculate data document
+     *
+     * @param GridView
+     * @param array $data
+     *
+     * @return array
+     */
+    public function recalculate($view, &$data): array
+    {
+        $result = [
+            'total' => 0.00,
+            'unbalance' => 0.00,
+            'lines' => [],
+            'subaccount' => [],
+            'vat' => []
+        ];
+
+        if (isset($data['lines'])) {
+            // Prepare lines data
+            $lines = $view->processFormLines($data['lines']);
+
+            // Recalculate lines data and amounts
+            $totalCredit = $totalDebit = 0.00;
+            $result['lines'] = $this->recalculateLines($lines, $totalCredit, $totalDebit);
+            $this->calculateAmounts($result, $totalCredit, $totalDebit);
+
+            // If only change subaccount, search for subaccount data
+            if (count($data['changes']) === 1 && $data['changes'][0][1] === 'codsubcuenta') {
+                $index = $data['changes'][0][0];
+                $line = &$result['lines'][$index];
+                $result['subaccount'] = $this->getAccountData($data['document']['codejercicio'], $line['codsubcuenta']);
+                $result['vat'] = $this->recalculateVatRegister($line, $data['document'], $result['subaccount']['codevat'], $result['unbalance']);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Calculate unbalance and total imports
+     *
+     * @param array $data
+     * @param float $credit
+     * @param float $debit
+     */
+    protected function calculateAmounts(array &$data, float $credit, float $debit)
+    {
+        $unbalance = round(($credit - $debit), (int) FS_NF0);
+        $index = count($data['lines']) - 1;
+        $line = &$data['lines'][$index];
+
+        if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
+            // if the sub-account is the same as the previous offsetting
+            if ($line['codsubcuenta'] === $data['lines'][$index - 1]['codcontrapartida']) {
+                $field = $unbalance < 0 ? 'debe' : 'haber';
+                $line[$field] = abs($unbalance);
+                $unbalance = 0.00;
+            }
+        }
+
+        $data['unbalance'] = $unbalance;
+        $data['total'] = ($credit > $debit) ? round($credit, (int) FS_NF0) : round($debit, (int) FS_NF0);
+    }
+    
+    /**
+     * Auto complete data for new account line
+     *
+     * @param array $line
+     * @param array $previousLine
+     */
+    protected function checkEmptyValues(array &$line, array $previousLine)
+    {
+        if (empty($line['concepto'])) {
+            $line['concepto'] = $previousLine['concepto'];
+        }
+
+        if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
+            // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
+            $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
+        }
+    }
+    
+    /**
+     * Get VAT information for a sub-account
+     *
+     * @param string $exercise
+     * @param string $codeSubAccount
+     *
+     * @return array
+     */
+    protected function getAccountVatID($exercise, $codeSubAccount): array
+    {
+        $result = ['group' => '', 'code' => '', 'description' => '', 'id' => '', 'surcharge' => false];
+        if (empty($exercise) || empty($codeSubAccount)) {
+            return $result;
+        }
+
+        $where = [
+            new DataBaseWhere('codsubcuenta', $codeSubAccount),
+            new DataBaseWhere('codejercicio', $exercise)
+        ];
+
+        $subAccount = new Subcuenta();
+        if ($subAccount->loadFromCode(null, $where)) {
+            $result['group'] = $subAccount->getSpecialAccountCode();
+            switch ($result['group']) {
+                case AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT:
+                    $client = new Cliente();
+                    $this->setBusinessData($client, $codeSubAccount, $result);
+                    break;
+
+                case AccountingAccounts::SPECIAL_CREDITOR_ACCOUNT:
+                case AccountingAccounts::SPECIAL_SUPPLIER_ACCOUNT:
+                    $supplier = new Proveedor();
+                    $this->setBusinessData($supplier, $codeSubAccount, $result);
+                    break;
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Calculate data lines and credit/debit imports
+     *
+     * @param array $lines
+     * @param float $totalCredit
+     * @param float $totalDebit
+     *
+     * @return array
+     */
+    protected function recalculateLines(array $lines, float &$totalCredit, float &$totalDebit): array
+    {
+        // Work variables
+        $result = [];
+        $previous = null;
+        $totalCredit = 0.00;
+        $totalDebit = 0.00;
+
+        // Check lines data
+        foreach ($lines as $item) {
+            // check empty imports
+            if (empty($item['debe'])) {
+                $item['debe'] = 0.00;
+            }
+            if (empty($item['haber'])) {
+                $item['haber'] = 0.00;
+            }
+
+            // copy previous values to empty fields
+            if (!empty($previous)) {
+                $this->checkEmptyValues($item, $previous);
+            }
+            $previous = $item;
+
+            // Acumulate imports
+            $totalCredit += $item['debe'];
+            $totalDebit += $item['haber'];
+
+            $result[] = $item;
+        }
+        return $result;
+    }
+    
+    /**
+     * Calculate Vat Register data
+     *
+     * @param array  $line
+     * @param array  $document
+     * @param string $codevat
+     * @param float  $base
+     *
+     * @return array
+     */
+    protected function recalculateVatRegister(array &$line, array $document, string $codevat, float $base): array
+    {
+        $result = [];
+        if (empty($codevat)) {
+            $line['cifnif'] = null;
+            $line['documento'] = null;
+            $line['baseimponible'] = null;
+            $line['iva'] = null;
+            $line['recargo'] = null;
+            return $result;
+        }
+
+        $vat = new Impuesto();
+        if ($vat->loadFromCode($codevat)) {
+            $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
+            $line['documento'] = $document['documento'];
+            $line['cifnif'] = $result['id'];
+            $line['iva'] = $vat->iva;
+            $line['recargo'] = $result['surcharge'] ? $vat->recargo : 0.00;
+            $line['baseimponible'] = ($result['group'] === AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT) ? ($base * -1) : $base;
+        }
+        return $result;
+    }    
+    
+    /**
+     * 
+     * @param Cliente|Proveedor $model
+     * @param string $codeSubAccount
+     * @param array $values
+     */
+    private function setBusinessData($model, $codeSubAccount, &$values)
+    {
+        $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
+        $supplier = new Proveedor();
+        if ($supplier->loadFromCode(null, $where)) {
+            $values['code'] = $supplier->codproveedor;
+            $values['description'] = $supplier->nombre;
+            $values['id'] = $supplier->cifnif;
+            $values['surcharge'] = ($model->regimeniva == RegimenIVA::TAX_SYSTEM_SURCHARGE);
+        }        
+    }
+}

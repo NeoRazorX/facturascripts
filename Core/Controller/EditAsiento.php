@@ -20,9 +20,10 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Partida;
+use FacturaScripts\Core\Lib\AccountingEntryTools;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -34,6 +35,7 @@ class EditAsiento extends EditController
 {
 
     /**
+     * Returns the class name of the model to use in the editView.
      * 
      * @return string
      */
@@ -69,67 +71,35 @@ class EditAsiento extends EditController
     }
 
     /**
-     * Calculate unbalance and total imports
-     *
-     * @param array $data
-     * @param float $credit
-     * @param float $debit
+     * Clone source document
+     * 
+     * @return bool
+     * @throws Exception
      */
-    protected function calculateAmounts(array &$data, float $credit, float $debit)
-    {
-        $unbalance = round(($credit - $debit), (int) FS_NF0);
-        $index = count($data['lines']) - 1;
-        $line = &$data['lines'][$index];
+    protected function cloneDocument()
+    {        
+        $sourceCode = $this->request->get('code');
 
-        if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
-            // if the sub-account is the same as the previous offsetting
-            if ($line['codsubcuenta'] === $data['lines'][$index - 1]['codcontrapartida']) {
-                $field = $unbalance < 0 ? 'debe' : 'haber';
-                $line[$field] = abs($unbalance);
-                $unbalance = 0.00;
-            }
+        // prepare source document structure
+        $accounting = new Asiento();
+        if (!$accounting->loadFromCode($sourceCode)) {
+            return true;  // continue default view load
         }
 
-        $data['unbalance'] = $unbalance;
-        $data['total'] = ($credit > $debit) ? round($credit, (int) FS_NF0) : round($debit, (int) FS_NF0);
-    }
+        $entryModel = new Partida();
+        $entries = $entryModel->all([new DataBaseWhere('idasiento', $accounting->idasiento)]);
 
-    /**
-     * Auto complete data for new account line
-     *
-     * @param array $line
-     * @param array $previousLine
-     */
-    protected function checkEmptyValues(array &$line, array $previousLine)
-    {
-        if (empty($line['concepto'])) {
-            $line['concepto'] = $previousLine['concepto'];
-        }
-
-        if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
-            // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
-            $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
-        }
-    }
-
-    protected function cloneDocument(&$data): string
-    {
-        // init document
-        $accounting = new Model\Asiento();
-        $accounting->loadFromData($data, ['action', 'activetab']);
-
-        // init line document
-        $entryModel = new Model\Partida();
-        $entries = $entryModel->all([new DataBaseWhere('idasiento', $data['idasiento'])]);
-
+        // init target document data
+        $accounting->idasiento = null;
+        $accounting->fecha = date('d-m-Y');
+        $accounting->numero = $accounting->newCode('numero');
+         
         // start transaction
         $this->dataBase->beginTransaction();
 
         // main save process
+        $cloneOk = true;
         try {
-            $accounting->idasiento = null;
-            $accounting->fecha = date('d-m-Y');
-            $accounting->numero = $accounting->newCode('numero');
             if (!$accounting->save()) {
                 throw new Exception(self::$i18n->trans('clone-document-error'));
             }
@@ -142,21 +112,26 @@ class EditAsiento extends EditController
                 }
             }
 
-            // confirm data
-            $this->dataBase->commit();
-            $result = $accounting->url('type') . '&action=save-ok';
+            $this->dataBase->commit();            
         } catch (Exception $exp) {
             self::$miniLog->alert($exp->getMessage());
-            $result = '';
+            $cloneOk = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();
             }
         }
 
-        return $result;
+        // if all ok then redirect to new record
+        if ($cloneOk) {
+            $this->setTemplate(false);
+            $this->redirect($accounting->url('type') . '&action=save-ok');
+            return false;
+        }
+        
+        return true;  // refresh view
     }
-
+    
     /**
      * Load views
      */
@@ -180,234 +155,25 @@ class EditAsiento extends EditController
     {
         switch ($action) {
             case 'account-data':
-                $this->setTemplate(false);
-                $subaccount = $this->request->get('codsubcuenta', '');
-                $exercise = $this->request->get('codejercicio', '');
-                $result = $this->getAccountData($exercise, $subaccount);
-                $this->response->setContent(json_encode($result));
+                $this->getAccountData();
                 return false;
 
             case 'clone':
-                $data = $this->request->request->all();
-                $result = $this->cloneDocument($data);
-                if (!empty($result)) {
-                    $this->setTemplate(false);
-                    $this->redirect($result);
-                    return false;
-                }
-                return true;
+                return $this->cloneDocument();
 
             case 'lock':
-                return true; // TODO: Uncomplete
+                return true; // TODO: Block/Unblock edit data of accounting entry
 
             case 'recalculate-document':
-                $this->setTemplate(false);
-                $data = $this->request->request->all();
-                $result = $this->recalculateDocument($data);
-                $this->response->setContent(json_encode($result));
+                $this->recalculateDocument();
                 return false;
 
             case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
                 return true;
 
             default:
                 return parent::execPreviousAction($action);
         }
-    }
-
-    /**
-     * Load data and balances from subaccount
-     *
-     * @param string $exercise
-     * @param string $codeSubAccount
-     *
-     * @return array
-     */
-    protected function getAccountData(string $exercise, string $codeSubAccount): array
-    {
-        $result = [
-            'subaccount' => $codeSubAccount,
-            'description' => '',
-            'codevat' => '',
-            'balance' => 0.00,
-            'detail' => [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
-        ];
-
-        if (empty($exercise) || empty($codeSubAccount)) {
-            return $result;
-        }
-
-        $where = [
-            new DataBaseWhere('codsubcuenta', $codeSubAccount),
-            new DataBaseWhere('codejercicio', $exercise)
-        ];
-
-        $subAccount = new Model\Subcuenta();
-        if ($subAccount->loadFromCode(null, $where)) {
-            $balance = new Model\SubcuentaSaldo();
-            $result['description'] = $subAccount->descripcion;
-            $result['codevat'] = ($subAccount->codimpuesto === null) ? '' : $subAccount->codimpuesto;
-            $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
-            $result['balance'] = DivisaTools::format($result['balance']);
-        }
-
-        // Return account data
-        return $result;
-    }
-
-    /**
-     * Get VAT information for a sub-account
-     *
-     * @param string $exercise
-     * @param string $codeSubAccount
-     *
-     * @return array
-     */
-    protected function getAccountVatID($exercise, $codeSubAccount): array
-    {
-        $result = ['group' => '', 'code' => '', 'description' => '', 'id' => '', 'surcharge' => false];
-        if (empty($exercise) || empty($codeSubAccount)) {
-            return $result;
-        }
-
-        $where = [
-            new DataBaseWhere('codsubcuenta', $codeSubAccount),
-            new DataBaseWhere('codejercicio', $exercise)
-        ];
-
-        $subAccount = new Model\Subcuenta();
-        if ($subAccount->loadFromCode(null, $where)) {
-            $result['group'] = $subAccount->getSpecialAccountCode();
-            switch ($result['group']) {
-                case 'CLIENT':
-                    $this->searchVatDataFromClient($codeSubAccount, $result);
-                    break;
-
-                case 'ACREED':
-                case 'PROVEE':
-                    $this->searchVatDataFromSupplier($codeSubAccount, $result);
-                    break;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Calculate data document
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function recalculateDocument(&$data): array
-    {
-        $result = [
-            'total' => 0.00,
-            'unbalance' => 0.00,
-            'lines' => [],
-            'subaccount' => [],
-            'vat' => []
-        ];
-
-        if (isset($data['lines'])) {
-            // Prepare lines data
-            $lines = $this->views['EditAsiento']->processFormLines($data['lines']);
-
-            // Recalculate lines data and amounts
-            $totalCredit = $totalDebit = 0.00;
-            $result['lines'] = $this->recalculateLines($lines, $totalCredit, $totalDebit);
-            $this->calculateAmounts($result, $totalCredit, $totalDebit);
-
-            // If only change subaccount, search for subaccount data
-            if (count($data['changes']) === 1 && $data['changes'][0][1] === 'codsubcuenta') {
-                $index = $data['changes'][0][0];
-                $line = &$result['lines'][$index];
-                $result['subaccount'] = $this->getAccountData($data['document']['codejercicio'], $line['codsubcuenta']);
-
-                $result['vat'] = $this->recalculateVatRegister(
-                    $line, $data['document'], $result['subaccount']['codevat'], $result['unbalance']
-                );
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Calculate data lines and credit/debit imports
-     *
-     * @param array $lines
-     * @param float $totalCredit
-     * @param float $totalDebit
-     *
-     * @return array
-     */
-    protected function recalculateLines(array $lines, float &$totalCredit, float &$totalDebit): array
-    {
-        // Work variables
-        $result = [];
-        $previous = null;
-        $totalCredit = 0.00;
-        $totalDebit = 0.00;
-
-        // Check lines data
-        foreach ($lines as $item) {
-            // check empty imports
-            if (empty($item['debe'])) {
-                $item['debe'] = 0.00;
-            }
-            if (empty($item['haber'])) {
-                $item['haber'] = 0.00;
-            }
-
-            // copy previous values to empty fields
-            if (!empty($previous)) {
-                $this->checkEmptyValues($item, $previous);
-            }
-            $previous = $item;
-
-            // Acumulate imports
-            $totalCredit += $item['debe'];
-            $totalDebit += $item['haber'];
-
-            $result[] = $item;
-        }
-        return $result;
-    }
-
-    /**
-     * Calculate Vat Register data
-     *
-     * @param array  $line
-     * @param array  $document
-     * @param string $codevat
-     * @param float  $base
-     *
-     * @return array
-     */
-    protected function recalculateVatRegister(array &$line, array $document, string $codevat, float $base): array
-    {
-        $result = [];
-        if (empty($codevat)) {
-            $line['cifnif'] = null;
-            $line['documento'] = null;
-            $line['baseimponible'] = null;
-            $line['iva'] = null;
-            $line['recargo'] = null;
-            return $result;
-        }
-
-        $vat = new Model\Impuesto();
-        if ($vat->loadFromCode($codevat)) {
-            $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
-            $line['documento'] = $document['documento'];
-            $line['cifnif'] = $result['id'];
-            $line['iva'] = $vat->iva;
-            $line['recargo'] = $result['surcharge'] ? $vat->recargo : 0.00;
-            $line['baseimponible'] = ($result['group'] === 'CLIENT') ? ($base * -1) : $base;
-        }
-        return $result;
     }
 
     /**
@@ -421,7 +187,7 @@ class EditAsiento extends EditController
     {
         $finalResults = [];
         $idasiento = $this->request->get('code');
-        $accounting = new Model\Asiento();
+        $accounting = new Asiento();
         $where = [new DataBaseWhere('idasiento', $idasiento),];
 
         if ($accounting->loadFromCode('', $where)) {
@@ -437,38 +203,30 @@ class EditAsiento extends EditController
     }
 
     /**
-     * Search for VAT Data into Client model
-     *
-     * @param string $codeSubAccount
-     * @param array  $values
+     * Get account data from request data
      */
-    protected function searchVatDataFromClient($codeSubAccount, &$values)
+    private function getAccountData()
     {
-        $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
-        $client = new Model\Cliente();
-        if ($client->loadFromCode(null, $where)) {
-            $values['code'] = $client->codcliente;
-            $values['description'] = $client->nombre;
-            $values['id'] = $client->cifnif;
-            $values['surcharge'] = ($client->regimeniva == 'Recargo');
-        }
-    }
+        $this->setTemplate(false);
+        $subaccount = $this->request->get('codsubcuenta', '');
+        $exercise = $this->request->get('codejercicio', '');
 
+        $tools = new AccountingEntryTools();
+        $data = $tools->getAccountData($exercise, $subaccount);
+        $this->response->setContent(json_encode($data));        
+    }
+    
     /**
-     * Search for VAT Data into Supplier model
-     *
-     * @param string $codeSubAccount
-     * @param array  $values
+     * Recalculate document amounts
      */
-    protected function searchVatDataFromSupplier($codeSubAccount, &$values)
+    private function recalculateDocument()
     {
-        $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
-        $supplier = new Model\Proveedor();
-        if ($supplier->loadFromCode(null, $where)) {
-            $values['code'] = $supplier->codproveedor;
-            $values['description'] = $supplier->nombre;
-            $values['id'] = $supplier->cifnif;
-            $values['surcharge'] = ($this->empresa->regimeniva == 'Recargo');
-        }
+        $this->setTemplate(false);
+        $data = $this->request->request->all();
+
+        $tools = new AccountingEntryTools();
+        $this->response->setContent(
+            json_encode($tools->recalculate($this->views['EditAsiento'], $data))
+        );        
     }
 }
