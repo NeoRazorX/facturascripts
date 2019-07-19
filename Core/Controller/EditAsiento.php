@@ -77,7 +77,7 @@ class EditAsiento extends EditController
      * @throws Exception
      */
     protected function cloneDocument()
-    {        
+    {
         $sourceCode = $this->request->get('code');
 
         // prepare source document structure
@@ -93,7 +93,7 @@ class EditAsiento extends EditController
         $accounting->idasiento = null;
         $accounting->fecha = date('d-m-Y');
         $accounting->numero = $accounting->newCode('numero');
-         
+
         // start transaction
         $this->dataBase->beginTransaction();
 
@@ -112,7 +112,7 @@ class EditAsiento extends EditController
                 }
             }
 
-            $this->dataBase->commit();            
+            $this->dataBase->commit();
         } catch (Exception $exp) {
             self::$miniLog->alert($exp->getMessage());
             $cloneOk = false;
@@ -128,10 +128,10 @@ class EditAsiento extends EditController
             $this->redirect($accounting->url('type') . '&action=save-ok');
             return false;
         }
-        
+
         return true;  // refresh view
     }
-    
+
     /**
      * Load views
      */
@@ -213,9 +213,9 @@ class EditAsiento extends EditController
 
         $tools = new AccountingEntryTools();
         $data = $tools->getAccountData($exercise, $subaccount);
-        $this->response->setContent(json_encode($data));        
+        $this->response->setContent(json_encode($data));
     }
-    
+
     /**
      * Recalculate document amounts
      */
@@ -227,6 +227,6 @@ class EditAsiento extends EditController
         $tools = new AccountingEntryTools();
         $this->response->setContent(
             json_encode($tools->recalculate($this->views['EditAsiento'], $data))
-        );        
+        );
     }
 }

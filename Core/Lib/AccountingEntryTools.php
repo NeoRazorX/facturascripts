@@ -34,7 +34,8 @@ use FacturaScripts\Dinamic\Model\SubcuentaSaldo;
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class AccountingEntryTools {
+class AccountingEntryTools
+{
 
     /**
      * Load data and balances from subaccount
@@ -139,7 +140,7 @@ class AccountingEntryTools {
         $data['unbalance'] = $unbalance;
         $data['total'] = ($credit > $debit) ? round($credit, (int) FS_NF0) : round($debit, (int) FS_NF0);
     }
-    
+
     /**
      * Auto complete data for new account line
      *
@@ -157,7 +158,7 @@ class AccountingEntryTools {
             $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
         }
     }
-    
+
     /**
      * Get VAT information for a sub-account
      *
@@ -196,7 +197,7 @@ class AccountingEntryTools {
         }
         return $result;
     }
-    
+
     /**
      * Calculate data lines and credit/debit imports
      *
@@ -238,7 +239,7 @@ class AccountingEntryTools {
         }
         return $result;
     }
-    
+
     /**
      * Calculate Vat Register data
      *
@@ -271,8 +272,8 @@ class AccountingEntryTools {
             $line['baseimponible'] = ($result['group'] === AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT) ? ($base * -1) : $base;
         }
         return $result;
-    }    
-    
+    }
+
     /**
      * 
      * @param Cliente|Proveedor $model
@@ -288,6 +289,6 @@ class AccountingEntryTools {
             $values['description'] = $supplier->nombre;
             $values['id'] = $supplier->cifnif;
             $values['surcharge'] = ($model->regimeniva == RegimenIVA::TAX_SYSTEM_SURCHARGE);
-        }        
+        }
     }
 }

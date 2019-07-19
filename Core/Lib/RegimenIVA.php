@@ -29,7 +29,7 @@ class RegimenIVA
     const TAX_SYSTEM_EXEMPT = 'Exento';
     const TAX_SYSTEM_GENERAL = 'General';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
-    
+
     /**
      * Returns all the available options
      *

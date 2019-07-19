@@ -267,16 +267,16 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
             while (!empty($asientos)) {
                 if (!$this->renumberAccountingEntries($asientos, $number)) {
                     self::$miniLog->alert(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
-                    return false;                    
+                    return false;
                 }
                 $offset += 1000;
-                $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);                
+                $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             }
         }
 
         return true;
     }
-    
+
     /**
      *
      * @param string $date
@@ -395,8 +395,8 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         return empty($sql) || self::$dataBase->exec($sql);
-    }    
-    
+    }
+
     /**
      * Insert the model data in the database.
      *
@@ -408,5 +408,5 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     {
         $this->numero = $this->newCode('numero');
         return parent::saveInsert($values);
-    }    
+    }
 }

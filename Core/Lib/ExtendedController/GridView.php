@@ -429,13 +429,13 @@ class GridView extends EditView
      * @param int $documentFieldValue
      * @param array $data
      * @return bool
-     */    
+     */
     private function saveLines($documentFieldKey, $documentFieldValue, &$data)
-    {   
+    {
         // load old data, if exits
         $field = $this->detailModel->primaryColumn();
         $this->detailModel->loadFromCode($data[$field]);
-        
+
         // set new data from user form
         $this->detailModel->loadFromData($data);
 
@@ -443,7 +443,7 @@ class GridView extends EditView
         if (empty($this->detailModel->primaryColumnValue())) {
             $this->detailModel->{$documentFieldKey} = $documentFieldValue;
         }
-        
+
         return $this->detailModel->save();
     }
 }
