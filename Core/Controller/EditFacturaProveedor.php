@@ -91,13 +91,23 @@ class EditFacturaProveedor extends PurchaseDocumentController
         $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
 
         /// buttons
-        $newButton = [
-            'action' => 'generate-receipts',
+        $generateButton = [
+            'action' => 'generate-accounting',
+            'confirm' => 'true',
             'icon' => 'fas fa-magic',
-            'label' => 'generate-receipts',
+            'label' => 'generate-accounting-entry',
             'type' => 'action',
         ];
-        $this->addButton($viewName, $newButton);
+        $this->addButton($viewName, $generateButton);
+
+        $payButton = [
+            'action' => 'paid',
+            'confirm' => 'true',
+            'icon' => 'fas fa-check',
+            'label' => 'paid',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $payButton);
 
         /// disable column
         $this->views[$viewName]->disableColumn('invoice');
@@ -137,6 +147,9 @@ class EditFacturaProveedor extends PurchaseDocumentController
             case 'new-refund':
                 $this->newRefundAction();
                 break;
+
+            case 'paid':
+                return $this->paidAction();
         }
 
         return parent::execPreviousAction($action);
@@ -218,12 +231,16 @@ class EditFacturaProveedor extends PurchaseDocumentController
         }
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function newRefundAction()
     {
         $invoice = new FacturaProveedor();
         if (!$invoice->loadFromCode($this->request->request->get('idfactura'))) {
             $this->miniLog->warning($this->i18n->trans('record-not-found'));
-            return;
+            return false;
         }
 
         $lines = [];
@@ -250,15 +267,49 @@ class EditFacturaProveedor extends PurchaseDocumentController
                 if ($doc->save()) {
                     $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
                     $this->redirect($doc->url());
-                    continue;
+                    return true;
                 }
-
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
             }
-
-            return;
         }
 
         $this->miniLog->error($this->i18n->trans('record-save-error'));
+        return false;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function paidAction()
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return true;
+        }
+
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+        if (!is_array($codes) || empty($model)) {
+            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            return true;
+        }
+
+        foreach ($codes as $code) {
+            if (!$model->loadFromCode($code)) {
+                $this->miniLog->error($this->i18n->trans('record-not-found'));
+                continue;
+            }
+
+            $model->nick = $this->user->nick;
+            $model->pagado = true;
+            if (!$model->save()) {
+                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                return true;
+            }
+        }
+
+        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $model->clear();
+        return true;
     }
 }

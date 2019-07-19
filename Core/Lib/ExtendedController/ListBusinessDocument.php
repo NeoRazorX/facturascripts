@@ -295,6 +295,7 @@ abstract class ListBusinessDocument extends ListController
                 continue;
             }
 
+            $model->nick = $this->user->nick;
             $model->pagado = true;
             if (!$model->save()) {
                 $this->miniLog->error($this->i18n->trans('record-save-error'));
