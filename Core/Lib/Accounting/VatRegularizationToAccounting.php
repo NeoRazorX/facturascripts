@@ -23,6 +23,7 @@ use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
 use FacturaScripts\Dinamic\Model\Subcuenta;
+use FacturaScripts\Core\Lib\SubAccountTools;
 
 /**
  * Class for the accounting of tax regularizations
@@ -46,6 +47,12 @@ class VatRegularizationToAccounting extends AccountingClass
      */
     protected $subtotals;
 
+    /**
+     *
+     * @var SubAccountTools
+     */
+    private $subAccountTools;
+    
     /**
      * Sub-account on which the item is accounting
      *
@@ -79,6 +86,7 @@ class VatRegularizationToAccounting extends AccountingClass
             return;
         }
 
+        $this->subAccountTools = new SubAccountTools();
         $this->subaccount = new Subcuenta();
         $this->subtotals = $this->getSubtotals();
         $this->debit = 0.00;
@@ -116,12 +124,15 @@ class VatRegularizationToAccounting extends AccountingClass
      */
     protected function addAccountingTaxLines($accountEntry): bool
     {
+        $inputTaxGroup = $this->subAccountTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_INPUT);
+        $outputTaxGroup = $this->subAccountTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_OUTPUT);
+        
         foreach ($this->subtotals as $row) {
             $amount = $row->cuotaiva + $row->cuotarecargo;
             $this->subaccount->idsubcuenta = $row->idsubcuenta;
             $this->subaccount->codsubcuenta = $row->codsubcuenta;
 
-            if (in_array($row->codcuentaesp, ['IVAREX', 'IVAREP', 'IVARUE', 'IVARRE'])) {
+            if (in_array($row->codcuentaesp, $outputTaxGroup)) {
                 if (!$this->addBasicLine($accountEntry, $this->subaccount, true, $amount)) {
                     return false;
                 }
@@ -129,7 +140,7 @@ class VatRegularizationToAccounting extends AccountingClass
                 continue;
             }
 
-            if (in_array($row->codcuentaesp, ['IVASEX', 'IVASIM', 'IVASOP', 'IVASUE'])) {
+            if (in_array($row->codcuentaesp, $inputTaxGroup)) {
                 if (!$this->addBasicLine($accountEntry, $this->subaccount, false, $amount)) {
                     return false;
                 }
@@ -165,15 +176,16 @@ class VatRegularizationToAccounting extends AccountingClass
      */
     protected function getSubtotals()
     {
+        $field = 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)';
         $where = [
             new DataBaseWhere('asientos.codejercicio', $this->document->codejercicio),
             new DataBaseWhere('asientos.fecha', $this->document->fechainicio, '>='),
             new DataBaseWhere('asientos.fecha', $this->document->fechafin, '<='),
-            new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE,IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
+            $this->subAccountTools->whereForSpecialAccounts($field, SubAccountTools::SPECIAL_GROUP_TAX_ALL)
         ];
 
         $orderby = [
-            'subcuentas.codcuentaesp' => 'ASC',
+            $field => 'ASC',
             'partidas.iva' => 'ASC',
             'partidas.recargo' => 'ASC'
         ];
