@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
@@ -31,105 +33,129 @@ use FacturaScripts\Dinamic\Model\ReciboProveedor;
 class ReceiptGenerator
 {
 
+    const MAX_RECEIPTS = 100;
+    const PARTIAL_AMOUNT_MULTIPLIER = 1.5;
+
+    /**
+     *
+     * @var Translator
+     */
+    protected $i18n;
+
+    /**
+     *
+     * @var MiniLog
+     */
+    protected $miniLog;
+
+    public function __construct()
+    {
+        $this->i18n = new Translator();
+        $this->miniLog = new MiniLog();
+    }
+
     /**
      * 
      * @param FacturaCliente|FacturaProveedor $invoice
+     * @param int                             $number
+     *
+     * @return bool
      */
-    public function generate(&$invoice)
+    public function generate($invoice, $number = 0)
     {
         switch ($invoice->modelClassName()) {
             case 'FacturaCliente':
-                $this->generateReciboCliente($invoice);
-                break;
+                return empty($number) ? $this->updateCustomerReceipts($invoice) : $this->generateCustomerReceipts($invoice, $number);
 
             case 'FacturaProveedor':
-                $this->generateReciboProveedor($invoice);
-                break;
+                return empty($number) ? $this->updateSupplierReceipts($invoice) : $this->generateSupplierReceipts($invoice, $number);
         }
+
+        return false;
     }
 
     /**
      * 
      * @param FacturaCliente $invoice
+     * @param int            $number
+     *
+     * @return bool
      */
-    protected function generateReciboCliente(&$invoice)
+    protected function generateCustomerReceipts($invoice, $number)
     {
         /// check current invoice receipts
         $receipts = $invoice->getReceipts();
 
-        /// calculate pending amount
-        $amount = $this->getPendingAmount($receipts, $invoice->total);
+        /// calculate outstanding amount
+        $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            return;
+            $this->miniLog->warning($this->i18n->trans('no-outstanding-amount'));
+            return false;
         }
 
-        /// try to update open receipts
+        /// calculate new receipt number
         $newNum = 1;
         foreach ($receipts as $receipt) {
-            if ($receipt->pagado === false) {
-                $receipt->importe = $amount;
-                $receipt->save();
-                return;
-            }
-
-            if ($receipt->numero == $newNum) {
-                $newNum++;
+            if ($receipt->numero >= $newNum) {
+                $newNum = 1 + $receipt->numero;
             }
         }
 
-        /// create new receipt
-        $newReceipt = new ReciboCliente();
-        $newReceipt->codcliente = $invoice->codcliente;
-        $newReceipt->coddivisa = $invoice->coddivisa;
-        $newReceipt->idempresa = $invoice->idempresa;
-        $newReceipt->idfactura = $invoice->idfactura;
-        $newReceipt->importe = $amount;
-        $newReceipt->nick = $invoice->nick;
-        $newReceipt->numero = $newNum;
-        $newReceipt->setPaymentMethod($invoice->codpago);
-        $newReceipt->save();
+        /// create new receipts
+        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
+        while (round($amount, FS_NF0) > 0 || $newNum > self::MAX_RECEIPTS) {
+            $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
+            if (!$this->newCustomerReceipt($invoice, $newNum, $receiptAmount)) {
+                return false;
+            }
+
+            $amount -= $receiptAmount;
+            $newNum++;
+        }
+
+        return true;
     }
 
     /**
      * 
      * @param FacturaProveedor $invoice
+     * @param int              $number
+     *
+     * @return bool
      */
-    protected function generateReciboProveedor(&$invoice)
+    protected function generateSupplierReceipts($invoice, $number)
     {
         /// check current invoice receipts
         $receipts = $invoice->getReceipts();
 
-        /// calculate pending amount
-        $amount = $this->getPendingAmount($receipts, $invoice->total);
+        /// calculate outstanding amount
+        $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            return;
+            $this->miniLog->warning($this->i18n->trans('no-outstanding-amount'));
+            return false;
         }
 
-        /// try to update open receipts
+        /// calculate new receipt number
         $newNum = 1;
         foreach ($receipts as $receipt) {
-            if ($receipt->pagado === false) {
-                $receipt->importe = $amount;
-                $receipt->save();
-                return;
-            }
-
-            if ($receipt->numero == $newNum) {
-                $newNum++;
+            if ($receipt->numero >= $newNum) {
+                $newNum = 1 + $receipt->numero;
             }
         }
 
-        /// create new receipt
-        $newReceipt = new ReciboProveedor();
-        $newReceipt->codproveedor = $invoice->codproveedor;
-        $newReceipt->coddivisa = $invoice->coddivisa;
-        $newReceipt->idempresa = $invoice->idempresa;
-        $newReceipt->idfactura = $invoice->idfactura;
-        $newReceipt->importe = $amount;
-        $newReceipt->nick = $invoice->nick;
-        $newReceipt->numero = $newNum;
-        $newReceipt->setPaymentMethod($invoice->codpago);
-        $newReceipt->save();
+        /// create new receipts
+        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
+        while (round($amount, FS_NF0) > 0 || $newNum > self::MAX_RECEIPTS) {
+            $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
+            if (!$this->newSupplierReceipt($invoice, $newNum, $receiptAmount)) {
+                return false;
+            }
+
+            $amount -= $receiptAmount;
+            $newNum++;
+        }
+
+        return true;
     }
 
     /**
@@ -139,15 +165,123 @@ class ReceiptGenerator
      *
      * @return float
      */
-    protected function getPendingAmount($receipts, $amount)
+    protected function getOutstandingAmount($receipts, $amount)
     {
         $pending = $amount;
         foreach ($receipts as $receipt) {
-            if ($receipt->pagado) {
-                $pending -= $receipt->importe;
-            }
+            $pending -= $receipt->importe;
         }
 
         return $pending;
+    }
+
+    /**
+     * 
+     * @param FacturaCliente $invoice
+     * @param int            $number
+     * @param float          $amount
+     *
+     * @return bool
+     */
+    protected function newCustomerReceipt($invoice, $number, $amount)
+    {
+        $newReceipt = new ReciboCliente();
+        $newReceipt->codcliente = $invoice->codcliente;
+        $newReceipt->coddivisa = $invoice->coddivisa;
+        $newReceipt->idempresa = $invoice->idempresa;
+        $newReceipt->idfactura = $invoice->idfactura;
+        $newReceipt->importe = $amount;
+        $newReceipt->nick = $invoice->nick;
+        $newReceipt->numero = $number;
+        $newReceipt->setPaymentMethod($invoice->codpago);
+        return $newReceipt->save();
+    }
+
+    /**
+     * 
+     * @param FacturaProveedor $invoice
+     * @param int              $number
+     * @param float            $amount
+     *
+     * @return bool
+     */
+    protected function newSupplierReceipt($invoice, $number, $amount)
+    {
+        $newReceipt = new ReciboProveedor();
+        $newReceipt->codproveedor = $invoice->codproveedor;
+        $newReceipt->coddivisa = $invoice->coddivisa;
+        $newReceipt->idempresa = $invoice->idempresa;
+        $newReceipt->idfactura = $invoice->idfactura;
+        $newReceipt->importe = $amount;
+        $newReceipt->nick = $invoice->nick;
+        $newReceipt->numero = $number;
+        $newReceipt->setPaymentMethod($invoice->codpago);
+        return $newReceipt->save();
+    }
+
+    /**
+     * 
+     * @param FacturaCliente $invoice
+     *
+     * @return bool
+     */
+    protected function updateCustomerReceipts($invoice)
+    {
+        /// check current invoice receipts
+        $receipts = $invoice->getReceipts();
+
+        /// calculate outstanding amount
+        $amount = $this->getOutstandingAmount($receipts, $invoice->total);
+
+        /// calculate new receipt number
+        $newNum = 1;
+        foreach ($receipts as $receipt) {
+            /// try to update open receipts
+            if ($receipt->pagado === false) {
+                $receipt->importe += $amount;
+                $receipt->save();
+                return true;
+            }
+
+            if ($receipt->numero >= $newNum) {
+                $newNum = 1 + $receipt->numero;
+            }
+        }
+
+        /// create new receipt
+        return $this->newCustomerReceipt($invoice, $newNum, $amount);
+    }
+
+    /**
+     * 
+     * @param FacturaProveedor $invoice
+     *
+     * @return bool
+     */
+    protected function updateSupplierReceipts($invoice)
+    {
+        /// check current invoice receipts
+        $receipts = $invoice->getReceipts();
+
+        /// calculate outstanding amount
+        $amount = $this->getOutstandingAmount($receipts, $invoice->total);
+
+        /// calculate new receipt number
+        $newNum = 1;
+        foreach ($receipts as $receipt) {
+            /// try to update open receipts
+            if ($receipt->pagado === false) {
+                $receipt->importe += $amount;
+                $receipt->save();
+                return true;
+            }
+
+            if ($receipt->numero >= $newNum) {
+                $newNum = 1 + $receipt->numero;
+            }
+        }
+
+        /// create new receipt
+        return $this->newSupplierReceipt($invoice, $newNum, $amount);
     }
 }

@@ -99,7 +99,7 @@ class EditFacturaCliente extends SalesDocumentController
         $this->addButton($viewName, $newButton);
 
         /// settings
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
     }
 
     /**
@@ -179,9 +179,14 @@ class EditFacturaCliente extends SalesDocumentController
         }
 
         $generator = new ReceiptGenerator();
-        $generator->generate($invoice);
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-        return true;
+        $number = (int) $this->request->request->get('number', '0');
+        if ($generator->generate($invoice, $number)) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return true;
+        }
+
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        return false;
     }
 
     /**

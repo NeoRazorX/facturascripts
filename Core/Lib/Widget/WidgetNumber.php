@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,14 +46,14 @@ class WidgetNumber extends BaseWidget
     /**
      * Indicates the min value
      *
-     * @var int
+     * @var string
      */
     protected $min;
 
     /**
      * Indicates the max value
      *
-     * @var int
+     * @var string
      */
     protected $max;
 
@@ -76,8 +76,8 @@ class WidgetNumber extends BaseWidget
 
         parent::__construct($data);
         $this->decimal = (int) ($data['decimal'] ?? FS_NF0);
-        $this->min = $data['min'] ?? 0;
-        $this->max = $data['max'] ?? 0;
+        $this->min = $data['min'] ?? '';
+        $this->max = $data['max'] ?? '';
         $this->step = $data['step'] ?? 'any';
     }
 
@@ -111,9 +111,21 @@ class WidgetNumber extends BaseWidget
     protected function inputHtmlExtraParams()
     {
         $step = ' step="' . $this->step . '"';
-        $min = ($this->min > 0) ? ' min="' . $this->min . '"' : '';
-        $max = ($this->max > 0) ? ' max="' . $this->max . '"' : '';
+        $min = $this->min !== '' ? ' min="' . $this->min . '"' : '';
+        $max = $this->max !== '' ? ' max="' . $this->max . '"' : '';
         return $min . $max . $step . parent::inputHtmlExtraParams();
+    }
+
+    /**
+     * 
+     * @param object $model
+     */
+    protected function setValue($model)
+    {
+        parent::setValue($model);
+        if (null === $this->value && $this->required) {
+            $this->value = empty($this->min) ? 0 : (float) $this->min;
+        }
     }
 
     /**
