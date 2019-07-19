@@ -88,6 +88,7 @@ class EditFacturaCliente extends SalesDocumentController
     protected function createReceiptsView($viewName = 'ListReciboCliente')
     {
         $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
+        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
 
         /// buttons
         $newButton = [
