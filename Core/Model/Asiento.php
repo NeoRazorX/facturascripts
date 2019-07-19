@@ -253,7 +253,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $where = empty($codjercicio) ? [] : [new DataBaseWhere('codejercicio', $codjercicio)];
 
         foreach ($ejercicio->all($where) as $eje) {
-            if ($ejercicio->isOpened() === false) {
+            if ($eje->isOpened() === false) {
                 continue;
             }
 
@@ -265,29 +265,18 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
             $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             while (!empty($asientos)) {
-                $sql2 = '';
-                foreach ($asientos as $col) {
-                    if (self::$dataBase->var2str($col['numero']) !== self::$dataBase->var2str($number)) {
-                        $sql2 .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
-                            . ' WHERE idasiento = ' . self::$dataBase->var2str($col['idasiento']) . ';';
-                    }
-
-                    ++$number;
-                }
-
-                if (!empty($sql2) && !self::$dataBase->exec($sql2)) {
+                if (!$this->renumberAccountingEntries($asientos, $number)) {
                     self::$miniLog->alert(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
-                    return false;
+                    return false;                    
                 }
-
                 $offset += 1000;
-                $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
+                $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);                
             }
         }
 
         return true;
     }
-
+    
     /**
      *
      * @param string $date
@@ -387,6 +376,28 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
+     * Update accounting entry number for
+     * 
+     * @param Asiento[] $entries
+     * @param int $number
+     * @return bool
+     */
+    protected function renumberAccountingEntries($entries, &$number)
+    {
+        $sql = '';
+        foreach ($entries as $row) {
+            if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) {
+                $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
+                    . ' WHERE idasiento = ' . self::$dataBase->var2str($row['idasiento']) . ';';
+            }
+
+            ++$number;
+        }
+
+        return empty($sql) || self::$dataBase->exec($sql);
+    }    
+    
+    /**
      * Insert the model data in the database.
      *
      * @param array $values
@@ -397,5 +408,5 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     {
         $this->numero = $this->newCode('numero');
         return parent::saveInsert($values);
-    }
+    }    
 }
