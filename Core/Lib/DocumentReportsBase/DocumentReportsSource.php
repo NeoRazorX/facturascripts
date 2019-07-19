@@ -91,7 +91,7 @@ class DocumentReportsSource
 
             case 'customer-invoices':
                 return Model\FacturaCliente::tableName();
-                
+
             case 'supplier-estimations':
                 return Model\PresupuestoProveedor::tableName();
 

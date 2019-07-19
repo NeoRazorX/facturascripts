@@ -52,7 +52,7 @@ class VatRegularizationToAccounting extends AccountingClass
      * @var SubAccountTools
      */
     private $subAccountTools;
-    
+
     /**
      * Sub-account on which the item is accounting
      *
@@ -126,7 +126,7 @@ class VatRegularizationToAccounting extends AccountingClass
     {
         $inputTaxGroup = $this->subAccountTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_INPUT);
         $outputTaxGroup = $this->subAccountTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_OUTPUT);
-        
+
         foreach ($this->subtotals as $row) {
             $amount = $row->cuotaiva + $row->cuotarecargo;
             $this->subaccount->idsubcuenta = $row->idsubcuenta;

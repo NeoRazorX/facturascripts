@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Subcuenta;
+
 // use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -29,7 +30,8 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class SubAccountTools {
+class SubAccountTools
+{
 
     const SPECIAL_GROUP_TAX_ALL = 0;     // All tax special codes
     const SPECIAL_GROUP_TAX_INPUT = 1;   // Only input tax special codes
@@ -46,6 +48,7 @@ class SubAccountTools {
      *      codejercicio: fiscal year filter.
      * @return array
      */
+
     public static function autocompleteAction($keys): array
     {
         // prepare working data

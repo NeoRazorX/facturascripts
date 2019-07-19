@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\Base\ModelView;
  */
 class PartidaImpuesto extends ModelView
 {
+
     /**
      * Reset the values of all model view properties.
      */
