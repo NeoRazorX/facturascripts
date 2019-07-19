@@ -380,4 +380,16 @@ class Partida extends Base\ModelOnChangeClass
 
         return empty($this->idsubcuenta);
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $edit = 'EditAsiento')
+    {
+        return $this->getAsiento()->url();
+    }
 }
