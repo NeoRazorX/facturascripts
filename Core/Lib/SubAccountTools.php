@@ -23,32 +23,42 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
-// use FacturaScripts\Dinamic\Model\Impuesto;
-
 /**
  * Set of tools for the management of accounting sub-accounts
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class SubAccountTools
 {
 
-    const SPECIAL_GROUP_TAX_ALL = 0;     // All tax special codes
-    const SPECIAL_GROUP_TAX_INPUT = 1;   // Only input tax special codes
-    const SPECIAL_GROUP_TAX_OUTPUT = 2;  // Only output tax special codes
+    /**
+     * All tax special codes
+     */
+    const SPECIAL_GROUP_TAX_ALL = 0;
 
     /**
-     * Returns a list of sub-accounts for the exercise and search term informed
-     *
+     * Only input tax special codes
+     */
+    const SPECIAL_GROUP_TAX_INPUT = 1;
+
+    /**
+     * Only output tax special codes
+     */
+    const SPECIAL_GROUP_TAX_OUTPUT = 2;
+
+    /**
+     * Returns a list of sub-accounts for the exercise and search term informed.
+     * 
      * @param array $keys
      *      source: source table name. default 'subcuentas'.
      *      fieldcode: source field name. default 'codsubcuenta'.
      *      fieldtitle: source field title. default 'descripcion'.
      *      term: user key filter.
      *      codejercicio: fiscal year filter.
+     *
      * @return array
      */
-
     public static function autocompleteAction($keys): array
     {
         // prepare working data
@@ -84,6 +94,7 @@ class SubAccountTools
      * Indicates whether the special account type belongs to the group of input tax accounts.
      *
      * @param string $specialAccount
+     *
      * @return bool
      */
     public function isInputTax($specialAccount)
@@ -95,6 +106,7 @@ class SubAccountTools
      * Indicates whether the special account type belongs to the group of output tax accounts.
      *
      * @param string $specialAccount
+     *
      * @return bool
      */
     public function isOutputTax($specialAccount)
@@ -106,6 +118,7 @@ class SubAccountTools
      * Get array of specials Tax code accounts for selected group.
      *
      * @param int $group
+     *
      * @return array
      */
     public function specialAccountsForGroup(int $group): array
@@ -120,6 +133,8 @@ class SubAccountTools
             case self::SPECIAL_GROUP_TAX_OUTPUT:
                 return ['IVAREX', 'IVAREP', 'IVARUE', 'IVARRE'];
         }
+
+        return [];
     }
 
     /**
@@ -127,7 +142,8 @@ class SubAccountTools
      * for the indicated group.
      *
      * @param string $field
-     * @param int $group
+     * @param int    $group
+     *
      * @return DataBaseWhere
      */
     public function whereForSpecialAccounts(string $field, int $group)

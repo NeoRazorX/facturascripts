@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\GridView;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -33,6 +32,7 @@ use FacturaScripts\Dinamic\Model\SubcuentaSaldo;
  * A set of tools to recalculate accounting entries.
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class AccountingEntryTools
 {
@@ -79,8 +79,8 @@ class AccountingEntryTools
     /**
      * Calculate data document
      *
-     * @param GridView
-     * @param array $data
+     * @param GridView $view
+     * @param array    $data
      *
      * @return array
      */
@@ -277,8 +277,8 @@ class AccountingEntryTools
     /**
      * 
      * @param Cliente|Proveedor $model
-     * @param string $codeSubAccount
-     * @param array $values
+     * @param string            $codeSubAccount
+     * @param array             $values
      */
     private function setBusinessData($model, $codeSubAccount, &$values)
     {
