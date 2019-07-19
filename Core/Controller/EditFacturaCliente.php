@@ -99,6 +99,9 @@ class EditFacturaCliente extends SalesDocumentController
         ];
         $this->addButton($viewName, $newButton);
 
+        /// disable column
+        $this->views[$viewName]->disableColumn('invoice');
+
         /// settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
     }
