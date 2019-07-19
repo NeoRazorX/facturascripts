@@ -208,7 +208,6 @@ class EditAsiento extends EditController
                 return false;
 
             case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
                 return true;
 
             default:
