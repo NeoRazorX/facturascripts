@@ -177,7 +177,7 @@ class EditApiKey extends EditController
             case 'EditApiAccess':
                 $idApiKey = $this->getViewModelValue($this->getMainViewName(), 'id');
                 $where = [new DataBaseWhere('idapikey', $idApiKey)];
-                $view->loadData('', $where, ['resource' => 'ASC'], 0, 0);
+                $view->loadData('', $where, ['resource' => 'ASC']);
                 if (!$this->views[$this->active]->model->exists()) {
                     $this->views[$this->active]->model->nick = $this->user->nick;
                 }
