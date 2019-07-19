@@ -50,9 +50,8 @@ class PartidaImpuestoResumen extends ModelView
     {
         return [
             'codejercicio' => 'asientos.codejercicio',
-            'codcuentaesp' => 'subcuentas.codcuentaesp',
+            'codcuentaesp' => 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)',
             'descripcion' => 'cuentasesp.descripcion',
-            'codimpuesto' => 'subcuentas.codimpuesto',
             'idsubcuenta' => 'partidas.idsubcuenta',
             'codsubcuenta' => 'partidas.codsubcuenta',
             'iva' => 'partidas.iva',
@@ -69,10 +68,12 @@ class PartidaImpuestoResumen extends ModelView
     protected function getGroupFields(): string
     {
         return 'asientos.codejercicio,'
-            . 'subcuentas.codcuentaesp,'
-            . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
-            . 'partidas.idsubcuenta, partidas.codsubcuenta,'
-            . 'partidas.iva, partidas.recargo';
+            . 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp),'
+            . 'cuentasesp.descripcion,'
+            . 'partidas.idsubcuenta,'
+            . 'partidas.codsubcuenta,'
+            . 'partidas.iva,'
+            . 'partidas.recargo';
     }
 
     /**
@@ -83,9 +84,8 @@ class PartidaImpuestoResumen extends ModelView
         return 'asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-            . ' AND subcuentas.codimpuesto IS NOT NULL'
-            . ' AND subcuentas.codcuentaesp IS NOT NULL'
-            . ' LEFT JOIN cuentasesp ON cuentasesp.codcuentaesp = subcuentas.codcuentaesp';
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+            . ' LEFT JOIN cuentasesp ON cuentasesp.codcuentaesp = COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)';
     }
 
     /**
@@ -96,7 +96,9 @@ class PartidaImpuestoResumen extends ModelView
         return [
             'asientos',
             'partidas',
-            'subcuentas'
+            'subcuentas',
+            'cuentas',
+            'cuentasesp'
         ];
     }
 

@@ -38,11 +38,6 @@
                 <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="taxes" order="150">
-            <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
-                <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
-            </widget>
-        </column>
         <column name="balance" order="160" display="right">
             <widget type="money" fieldname="saldo" />
         </column>
