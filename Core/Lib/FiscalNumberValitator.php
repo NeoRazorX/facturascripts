@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use Skilla\ValidatorCifNifNie\Generator;
 use Skilla\ValidatorCifNifNie\Validator;
 
@@ -40,6 +41,12 @@ class FiscalNumberValitator
      */
     public static function validate($type, $number)
     {
+        /// does this fiscal identifier need validation?
+        $fiscalId = new IdentificadorFiscal();
+        if (!empty($type) && $fiscalId->loadFromCode($type) && !$fiscalId->validar) {
+            return true;
+        }
+
         $upperNumber = \strtoupper($number);
         $validator = new Validator(new Generator());
 

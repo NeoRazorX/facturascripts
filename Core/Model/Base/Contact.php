@@ -147,7 +147,7 @@ abstract class Contact extends ModelClass
 
         $fiscalNumberValidator = new FiscalNumberValitator();
         if (!empty($this->cifnif) && !$fiscalNumberValidator->validate($this->tipoidfiscal, $this->cifnif)) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-fiscal-number', ['%number%' => $this->cifnif]));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]));
             return false;
         }
 

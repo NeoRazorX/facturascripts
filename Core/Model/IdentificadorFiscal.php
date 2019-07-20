@@ -42,6 +42,18 @@ class IdentificadorFiscal extends Base\ModelClass
 
     /**
      *
+     * @var bool
+     */
+    public $validar;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->validar = false;
+    }
+
+    /**
+     *
      * @return string
      */
     public static function primaryColumn()
