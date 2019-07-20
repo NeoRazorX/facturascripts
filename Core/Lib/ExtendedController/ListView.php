@@ -227,6 +227,11 @@ class ListView extends BaseView
         $this->where = array_merge($where, $this->where);
         $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
 
+        /// avoid overflow
+        if ($this->offset > $this->count) {
+            $this->offset = 0;
+        }
+
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
