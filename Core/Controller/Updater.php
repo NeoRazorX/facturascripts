@@ -135,6 +135,7 @@ class Updater extends Controller
                 break;
 
             case 'post-update':
+                $this->cache->clear();
                 $this->updaterItems = $this->getUpdateItems();
                 $this->initNewModels();
                 break;
