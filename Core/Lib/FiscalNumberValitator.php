@@ -40,20 +40,23 @@ class FiscalNumberValitator
      */
     public static function validate($type, $number)
     {
+        $upperNumber = \strtoupper($number);
         $validator = new Validator(new Generator());
 
         switch (\strtolower($type)) {
             case 'cif':
-                return $validator->isValidCIF($number);
+                return $validator->isValidCIF($upperNumber);
 
             case 'dni':
-                return $validator->isValidDNI($number);
+                return $validator->isValidDNI($upperNumber);
 
             case 'nie':
-                return $validator->isValidNIE($number);
+                return $validator->isValidNIE($upperNumber);
 
             case 'nif':
-                return $validator->isValidNIF($number);
+                return $validator->isValidNIF($upperNumber) || $validator->isValidDNI($upperNumber);
         }
+
+        return true;
     }
 }

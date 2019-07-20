@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\FiscalNumberValitator;
 
 /**
  * Description of Contact
@@ -141,6 +142,12 @@ abstract class Contact extends ModelClass
 
         if (empty($this->nombre)) {
             self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]));
+            return false;
+        }
+
+        $fiscalNumberValidator = new FiscalNumberValitator();
+        if (!empty($this->cifnif) && !$fiscalNumberValidator->validate($this->tipoidfiscal, $this->cifnif)) {
+            self::$miniLog->alert(self::$i18n->trans('not-valid-fiscal-number', ['%number%' => $this->cifnif]));
             return false;
         }
 

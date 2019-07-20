@@ -320,7 +320,8 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'insert':
-                if ($this->insertAction()) {
+                if ($this->insertAction() || !empty($this->views[$this->active]->model->primaryColumnValue())) {
+                    /// wee need to clear model in these scenarios
                     $this->views[$this->active]->model->clear();
                 }
                 break;
