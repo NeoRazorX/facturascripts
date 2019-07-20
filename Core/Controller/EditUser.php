@@ -136,7 +136,7 @@ class EditUser extends EditController
             case 'EditRoleUser':
                 $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
-                $view->loadData('', $where, ['id' => 'DESC'], 0, 0);
+                $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
             case 'EditUser':

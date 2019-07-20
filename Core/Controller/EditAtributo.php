@@ -77,9 +77,9 @@ class EditAtributo extends EditController
     {
         switch ($viewName) {
             case 'EditAtributoValor':
-                $codatributo = $this->getViewModelValue('EditAtributo', 'codatributo');
+                $codatributo = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
                 $where = [new DataBaseWhere('codatributo', $codatributo)];
-                $view->loadData('', $where, ['id' => 'DESC'], 0, 0);
+                $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
             default:

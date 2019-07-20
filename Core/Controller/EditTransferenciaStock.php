@@ -84,7 +84,7 @@ class EditTransferenciaStock extends EditController
             case 'EditLineaTransferenciaStock':
                 $idtransferencia = $this->getViewModelValue('EditTransferenciaStock', 'idtrans');
                 $where = [new DataBaseWhere('idtrans', $idtransferencia)];
-                $view->loadData('', $where, ['idlinea' => 'DESC'], 0, 0);
+                $view->loadData('', $where, ['idlinea' => 'DESC']);
                 break;
         }
     }

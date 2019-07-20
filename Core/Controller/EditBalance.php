@@ -76,16 +76,15 @@ class EditBalance extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditBalance':
-                parent::loadData($viewName, $view);
-                break;
-
             case 'EditBalanceCuenta':
             case 'EditBalanceCuentaA':
-                $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
+                $codbalance = $this->getViewModelValue($this->getMainViewName(), 'codbalance');
                 $where = [new DataBaseWhere('codbalance', $codbalance)];
-                $view->loadData('', $where, ['id' => 'DESC'], 0, 0);
+                $view->loadData('', $where, ['id' => 'DESC']);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
         }
     }
 }
