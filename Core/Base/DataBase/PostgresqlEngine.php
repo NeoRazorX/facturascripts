@@ -222,13 +222,12 @@ class PostgresqlEngine extends DataBaseEngine
     public function listTables($link)
     {
         $tables = [];
-        $sql = 'SELECT tablename'
-            . ' FROM pg_catalog.pg_tables'
+        $sql = 'SELECT tablename FROM pg_catalog.pg_tables'
             . " WHERE schemaname NOT IN ('pg_catalog','information_schema')"
             . ' ORDER BY tablename ASC;';
 
-        foreach ($aux as $a) {
-            $tables[] = $a['tablename'];
+        foreach ($this->select($link, $sql) as $row) {
+            $tables[] = $row['tablename'];
         }
 
         return $tables;
