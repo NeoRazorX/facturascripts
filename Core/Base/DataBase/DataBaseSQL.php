@@ -161,15 +161,6 @@ interface DataBaseSQL
     public function sqlLastValue();
 
     /**
-     * SQL statement to create a sequence
-     *
-     * @param string $seqName
-     *
-     * @return string
-     */
-    public function sqlSequenceExists($seqName);
-
-    /**
      * Generates the SQL to establish the given restrictions.
      *
      * @param array $xmlCons

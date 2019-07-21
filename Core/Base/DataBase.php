@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
-use FacturaScripts\Core\Base\DataBase\Mysql;
-use FacturaScripts\Core\Base\DataBase\Postgresql;
+use FacturaScripts\Core\Base\DataBase\MysqlEngine;
+use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
 
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
@@ -69,11 +69,11 @@ class DataBase
 
             switch (strtolower(FS_DB_TYPE)) {
                 case 'postgresql':
-                    self::$engine = new Postgresql();
+                    self::$engine = new PostgresqlEngine();
                     break;
 
                 default:
-                    self::$engine = new Mysql();
+                    self::$engine = new MysqlEngine();
                     break;
             }
         }

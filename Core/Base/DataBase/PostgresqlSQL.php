@@ -271,18 +271,6 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to check a sequence
-     *
-     * @param string $seqName
-     *
-     * @return string
-     */
-    public function sqlSequenceExists($seqName)
-    {
-        return "SELECT '" . $seqName . "' FROM pg_class where relname = '" . $seqName . "';";
-    }
-
-    /**
      * Generates the needed SQL to establish the given constraints
      *
      * @param array $xmlCons

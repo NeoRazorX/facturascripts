@@ -251,18 +251,6 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to check a sequence
-     *
-     * @param string $seqName
-     *
-     * @return string
-     */
-    public function sqlSequenceExists($seqName)
-    {
-        return $seqName;
-    }
-
-    /**
      * Generates the needed SQL to establish the given constraints
      *
      * @param array $xmlCons

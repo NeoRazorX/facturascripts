@@ -35,16 +35,6 @@ interface DataBaseEngine
     public function beginTransaction($link);
 
     /**
-     * Checks if a sequence exists
-     *
-     * @param \mysqli|resource $link
-     * @param string           $tableName
-     * @param string           $default
-     * @param string           $colname
-     */
-    public function checkSequence($link, $tableName, $default, $colname);
-
-    /**
      * Closes the connection to the database
      *
      * @param \mysqli|resource $link

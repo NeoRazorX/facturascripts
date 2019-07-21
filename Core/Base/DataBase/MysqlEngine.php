@@ -28,7 +28,7 @@ use mysqli;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Mysql implements DataBaseEngine
+class MysqlEngine implements DataBaseEngine
 {
 
     /**
@@ -43,14 +43,14 @@ class Mysql implements DataBaseEngine
      *
      * @var string
      */
-    private $lastErrorMsg;
+    private $lastErrorMsg = '';
 
     /**
      * Open transaction list.
      *
      * @var array
      */
-    private $transactions;
+    private $transactions = [];
 
     /**
      * Link to the SQL statements for the connected database.
@@ -65,8 +65,6 @@ class Mysql implements DataBaseEngine
     public function __construct()
     {
         $this->i18n = new Translator();
-        $this->lastErrorMsg = '';
-        $this->transactions = [];
         $this->utilsSQL = new MysqlSQL();
     }
 
@@ -93,22 +91,6 @@ class Mysql implements DataBaseEngine
         }
 
         return $result;
-    }
-
-    /**
-     * With the default field in a table it checks whether it refers to a
-     * sequence and if a sequence exists. If it can't find it, i will create one.
-     *
-     * @param \mysqli $link
-     * @param string  $tableName
-     * @param string  $default
-     * @param string  $colname
-     *
-     * @return bool
-     */
-    public function checkSequence($link, $tableName, $default, $colname)
-    {
-        return true;
     }
 
     /**
@@ -236,7 +218,7 @@ class Mysql implements DataBaseEngine
      */
     public function errorMessage($link)
     {
-        return ($link->error !== '') ? $link->error : $this->lastErrorMsg;
+        return empty($link->error) ? $this->lastErrorMsg : $link->error;
     }
 
     /**
@@ -269,8 +251,8 @@ class Mysql implements DataBaseEngine
                 } while ($more);
             }
             $result = ($link->errno === 0);
-        } catch (Exception $e) {
-            $this->lastErrorMsg = $e->getMessage();
+        } catch (Exception $err) {
+            $this->lastErrorMsg = $err->getMessage();
             $result = false;
         }
 
@@ -320,16 +302,11 @@ class Mysql implements DataBaseEngine
      */
     public function listTables($link)
     {
-        $aux = $this->select($link, 'SHOW TABLES;');
-        if (empty($aux)) {
-            return [];
-        }
-
         $tables = [];
-        foreach ($aux as $a) {
+        foreach ($this->select($link, 'SHOW TABLES;') as $row) {
             $key = 'Tables_in_' . FS_DB_NAME;
-            if (isset($a[$key])) {
-                $tables[] = $a[$key];
+            if (isset($row[$key])) {
+                $tables[] = $row[$key];
             }
         }
 
@@ -374,8 +351,8 @@ class Mysql implements DataBaseEngine
                 }
                 $aux->free();
             }
-        } catch (Exception $e) {
-            $this->lastErrorMsg = $e->getMessage();
+        } catch (Exception $err) {
+            $this->lastErrorMsg = $err->getMessage();
             $result = [];
         }
 
