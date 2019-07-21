@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
-use FacturaScripts\Core\Base\Translator;
 use mysqli;
 
 /**
@@ -28,22 +27,8 @@ use mysqli;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class MysqlEngine implements DataBaseEngine
+class MysqlEngine extends DataBaseEngine
 {
-
-    /**
-     * Contains the translator.
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * Last error message.
-     *
-     * @var string
-     */
-    private $lastErrorMsg = '';
 
     /**
      * Open transaction list.
@@ -64,7 +49,7 @@ class MysqlEngine implements DataBaseEngine
      */
     public function __construct()
     {
-        $this->i18n = new Translator();
+        parent::__construct();
         $this->utilsSQL = new MysqlSQL();
     }
 
@@ -200,16 +185,6 @@ class MysqlEngine implements DataBaseEngine
     }
 
     /**
-     * Returns the date format from the database engine.
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return 'Y-m-d';
-    }
-
-    /**
      * Returns the last run statement error.
      *
      * @param \mysqli $link
@@ -257,18 +232,6 @@ class MysqlEngine implements DataBaseEngine
         }
 
         return $result;
-    }
-
-    /**
-     * Indicates the operator for the database engine.
-     *
-     * @param string $operator
-     *
-     * @return string
-     */
-    public function getOperator($operator)
-    {
-        return $operator;
     }
 
     /**

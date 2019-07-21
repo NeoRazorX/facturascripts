@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
-use FacturaScripts\Core\Base\Translator;
 
 /**
  * Class to connect with PostgreSQL.
@@ -27,22 +26,8 @@ use FacturaScripts\Core\Base\Translator;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class PostgresqlEngine implements DataBaseEngine
+class PostgresqlEngine extends DataBaseEngine
 {
-
-    /**
-     * Contains the translator
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * Last error message
-     *
-     * @var string
-     */
-    private $lastErrorMsg = '';
 
     /**
      * Link to the SQL statements for the connected database
@@ -56,7 +41,7 @@ class PostgresqlEngine implements DataBaseEngine
      */
     public function __construct()
     {
-        $this->i18n = new Translator();
+        parent::__construct();
         $this->utilsSQL = new PostgresqlSQL();
     }
 
@@ -115,19 +100,6 @@ class PostgresqlEngine implements DataBaseEngine
     }
 
     /**
-     * Compares the data types from a numeric column. Returns true if they are equal
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    public function compareDataTypes($dbType, $xmlType)
-    {
-        return $dbType === $xmlType;
-    }
-
-    /**
      * Connects to the database
      *
      * @param string $error
@@ -151,16 +123,6 @@ class PostgresqlEngine implements DataBaseEngine
         /// set datestyle
         $this->exec($result, 'SET DATESTYLE TO ISO, YMD;');
         return $result;
-    }
-
-    /**
-     * Returns the date format from the database engine
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return 'Y-m-d';
     }
 
     /**
