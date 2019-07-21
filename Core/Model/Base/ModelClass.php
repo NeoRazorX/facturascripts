@@ -58,13 +58,10 @@ abstract class ModelClass extends ModelCore
     public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
     {
         $modelList = [];
+        $class = $this->modelName();
         $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . $this->getOrderBy($order);
-        $data = self::$dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            $class = $this->modelName();
-            foreach ($data as $d) {
-                $modelList[] = new $class($d);
-            }
+        foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
+            $modelList[] = new $class($row);
         }
 
         return $modelList;
@@ -161,13 +158,9 @@ abstract class ModelClass extends ModelCore
      */
     public function get($code)
     {
-        $data = $this->getRecord($code);
-        if (empty($data)) {
-            return false;
-        }
-
         $class = $this->modelName();
-        return new $class($data[0]);
+        $data = $this->getRecord($code);
+        return empty($data) ? false : new $class($data[0]);
     }
 
     /**

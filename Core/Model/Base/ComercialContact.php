@@ -78,7 +78,7 @@ abstract class ComercialContact extends Contact
     /**
      * True -> the customer no longer buys us or we do not want anything with him.
      *
-     * @var boolean
+     * @var bool
      */
     public $debaja;
 
