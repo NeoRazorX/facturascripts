@@ -40,7 +40,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Link to the SQL statements for the connected database.
      *
-     * @var DataBaseSQL;
+     * @var DataBaseQueries
      */
     private $utilsSQL;
 
@@ -50,7 +50,7 @@ class MysqlEngine extends DataBaseEngine
     public function __construct()
     {
         parent::__construct();
-        $this->utilsSQL = new MysqlSQL();
+        $this->utilsSQL = new MysqlQueries();
     }
 
     /**
@@ -237,7 +237,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Returns the link to the SQL class from the engine.
      *
-     * @return DataBaseSQL
+     * @return DataBaseQueries
      */
     public function getSQL()
     {

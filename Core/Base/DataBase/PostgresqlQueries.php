@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Base\DataBase;
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class PostgresqlSQL implements DataBaseSQL
+class PostgresqlQueries implements DataBaseQueries
 {
 
     /**
@@ -86,7 +86,7 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        $action = ($colData['default'] !== '') ? ' SET DEFAULT ' . $colData['default'] : ' DROP DEFAULT';
+        $action = empty($colData['default']) ? ' DROP DEFAULT' : ' SET DEFAULT ' . $colData['default'];
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
     }
 
@@ -100,7 +100,7 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintNull($tableName, $colData)
     {
-        $action = ($colData['null'] === 'YES') ? ' DROP ' : ' SET ';
+        $action = $colData['null'] === 'YES' ? ' DROP ' : ' SET ';
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';
     }
 
@@ -126,15 +126,13 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlColumns($tableName)
     {
-        $sql = 'SELECT column_name as name, data_type as type,'
+        return 'SELECT column_name as name, data_type as type,'
             . 'character_maximum_length, column_default as default,'
             . 'is_nullable'
             . ' FROM information_schema.columns'
             . " WHERE table_catalog = '" . FS_DB_NAME . "'"
             . " AND table_name = '" . $tableName . "'"
             . ' ORDER BY 1 ASC;';
-
-        return $sql;
     }
 
     /**
@@ -146,13 +144,11 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlConstraints($tableName)
     {
-        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
+        return 'SELECT tc.constraint_type as type, tc.constraint_name as name'
             . ' FROM information_schema.table_constraints AS tc'
             . " WHERE tc.table_name = '" . $tableName . "'"
             . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
             . ' ORDER BY 1 DESC, 2 ASC;';
-
-        return $sql;
     }
 
     /**
@@ -164,7 +160,7 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlConstraintsExtended($tableName)
     {
-        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
+        return 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
             . 'kcu.column_name,'
             . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
             . 'rc.update_rule AS on_update, rc.delete_rule AS on_delete'
@@ -184,8 +180,6 @@ class PostgresqlSQL implements DataBaseSQL
             . " WHERE tc.table_name = '" . $tableName . "'"
             . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
             . ' ORDER BY 1 DESC, 2 ASC;';
-
-        return $sql;
     }
 
     /**
@@ -217,10 +211,8 @@ class PostgresqlSQL implements DataBaseSQL
             }
         }
 
-        $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
+        return 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
             . $this->sqlTableConstraints($constraints) . ');';
-
-        return $sql;
     }
 
     /**

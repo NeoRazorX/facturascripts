@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Base\DataBase;
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class MysqlSQL implements DataBaseSQL
+class MysqlQueries implements DataBaseQueries
 {
 
     /**
@@ -78,7 +78,7 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        return ($colData['type'] !== 'serial') ? $this->sqlAlterModifyColumn($tableName, $colData) : '';
+        return $colData['type'] === 'serial' ? '' : $this->sqlAlterModifyColumn($tableName, $colData);
     }
 
     /**
@@ -131,12 +131,10 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlConstraints($tableName)
     {
-        $sql = 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
+        return 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
             . ' FROM information_schema.table_constraints '
             . ' WHERE table_schema = schema()'
             . " AND table_name = '" . $tableName . "';";
-
-        return $sql;
     }
 
     /**
@@ -148,7 +146,7 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlConstraintsExtended($tableName)
     {
-        $sql = 'SELECT t1.constraint_name as name,'
+        return 'SELECT t1.constraint_name as name,'
             . ' t1.constraint_type as type,'
             . ' t2.column_name,'
             . ' t2.referenced_table_name AS foreign_table_name,'
@@ -166,8 +164,6 @@ class MysqlSQL implements DataBaseSQL
             . ' WHERE t1.table_schema = SCHEMA()'
             . " AND t1.table_name = '" . $tableName . "'"
             . ' ORDER BY type DESC, name ASC;';
-
-        return $sql;
     }
 
     /**
@@ -278,7 +274,6 @@ class MysqlSQL implements DataBaseSQL
     {
         $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
         $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
-
         return str_replace($search, $replace, $sql);
     }
 

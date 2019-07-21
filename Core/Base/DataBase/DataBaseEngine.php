@@ -28,13 +28,14 @@ use FacturaScripts\Core\Base\Translator;
  */
 abstract class DataBaseEngine
 {
+
     /**
      * Contains the translator.
      *
      * @var Translator
      */
     protected $i18n;
-    
+
     /**
      * Last error message.
      *
@@ -106,7 +107,7 @@ abstract class DataBaseEngine
     /**
      * Returns the link to the engine's SQL class
      *
-     * @return DataBaseSQL
+     * @return DataBaseQueries
      */
     abstract public function getSQL();
 
@@ -149,7 +150,7 @@ abstract class DataBaseEngine
      * @return string
      */
     abstract public function version($link);
-    
+
     public function __construct()
     {
         $this->i18n = new Translator();

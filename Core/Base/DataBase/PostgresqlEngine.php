@@ -32,7 +32,7 @@ class PostgresqlEngine extends DataBaseEngine
     /**
      * Link to the SQL statements for the connected database
      *
-     * @var DataBaseSQL;
+     * @var DataBaseQueries
      */
     private $utilsSQL;
 
@@ -42,7 +42,7 @@ class PostgresqlEngine extends DataBaseEngine
     public function __construct()
     {
         parent::__construct();
-        $this->utilsSQL = new PostgresqlSQL();
+        $this->utilsSQL = new PostgresqlQueries();
     }
 
     /**
@@ -184,7 +184,7 @@ class PostgresqlEngine extends DataBaseEngine
     /**
      * Returns the link to the SQL class from the engine
      *
-     * @return DataBaseSQL
+     * @return DataBaseQueries
      */
     public function getSQL()
     {

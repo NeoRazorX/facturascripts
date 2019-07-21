@@ -52,9 +52,9 @@ class DataBaseTools
     private static $miniLog;
 
     /**
-     * The DataBaseSQL object.
+     * The DataBaseQueries object.
      *
-     * @var DataBaseSQL
+     * @var DataBaseQueries
      */
     private static $sql;
 
