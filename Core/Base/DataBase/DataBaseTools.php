@@ -213,30 +213,23 @@ class DataBaseTools
     private function compareColumns($tableName, $xmlCols, $dbCols)
     {
         $result = '';
-        foreach ($xmlCols as $xml_col) {
-            if (strtolower($xml_col['type']) === 'integer') {
-                /**
-                 * The integer type used in columns can be changed in the control panel tab
-                 */
-                $xml_col['type'] = FS_DB_INTEGER;
-            }
-
-            $column = $this->searchInArray($dbCols, 'name', $xml_col['name']);
+        foreach ($xmlCols as $xmlCol) {
+            $column = $this->searchInArray($dbCols, 'name', $xmlCol['name']);
             if (empty($column)) {
-                $result .= self::$sql->sqlAlterAddColumn($tableName, $xml_col);
+                $result .= self::$sql->sqlAlterAddColumn($tableName, $xmlCol);
                 continue;
             }
 
-            if (!$this->compareDataTypes($column['type'], $xml_col['type'])) {
-                $result .= self::$sql->sqlAlterModifyColumn($tableName, $xml_col);
+            if (!$this->compareDataTypes($column['type'], $xmlCol['type'])) {
+                $result .= self::$sql->sqlAlterModifyColumn($tableName, $xmlCol);
             }
 
-            if ($column['default'] === null && $xml_col['default'] !== '') {
-                $result .= self::$sql->sqlAlterColumnDefault($tableName, $xml_col);
+            if ($column['default'] === null && $xmlCol['default'] !== '') {
+                $result .= self::$sql->sqlAlterColumnDefault($tableName, $xmlCol);
             }
 
-            if ($column['is_nullable'] !== $xml_col['null']) {
-                $result .= self::$sql->sqlAlterColumnNull($tableName, $xml_col);
+            if ($column['is_nullable'] !== $xmlCol['null']) {
+                $result .= self::$sql->sqlAlterColumnNull($tableName, $xmlCol);
             }
         }
 
@@ -257,25 +250,25 @@ class DataBaseTools
     {
         $result = '';
 
-        foreach ($dbCons as $db_con) {
-            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
-                $column = $this->searchInArray($xmlCons, 'name', $db_con['name']);
+        foreach ($dbCons as $dbCon) {
+            if (strpos('PRIMARY;UNIQUE', $dbCon['name']) === false) {
+                $column = $this->searchInArray($xmlCons, 'name', $dbCon['name']);
                 if (empty($column)) {
-                    $result .= self::$sql->sqlDropConstraint($tableName, $db_con);
+                    $result .= self::$sql->sqlDropConstraint($tableName, $dbCon);
                 }
             }
         }
 
         if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
-            foreach ($xmlCons as $xml_con) {
+            foreach ($xmlCons as $xmlCon) {
                 /// exclude primary keys on mysql because of fail
-                if (strpos($xml_con['constraint'], 'PRIMARY') === 0 && strtolower(FS_DB_TYPE) === 'mysql') {
+                if (strpos($xmlCon['constraint'], 'PRIMARY') === 0 && strtolower(FS_DB_TYPE) === 'mysql') {
                     continue;
                 }
 
-                $column = $this->searchInArray($dbCons, 'name', $xml_con['name']);
+                $column = $this->searchInArray($dbCons, 'name', $xmlCon['name']);
                 if (empty($column)) {
-                    $result .= self::$sql->sqlAddConstraint($tableName, $xml_con['name'], $xml_con['constraint']);
+                    $result .= self::$sql->sqlAddConstraint($tableName, $xmlCon['name'], $xmlCon['constraint']);
                 }
             }
         }

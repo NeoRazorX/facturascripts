@@ -254,7 +254,6 @@ class AppInstaller
             fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 604800) . ");\n");
             fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
             fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
-            fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
             fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
             $fields = [

@@ -311,18 +311,12 @@ class MysqlQueries implements DataBaseQueries
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['type']) === false ? strtolower($colData['type']) : FS_DB_INTEGER;
-        switch (true) {
-            case $type === 'serial':
-            case stripos($colData['default'], 'nextval(') !== false:
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
+        switch ($colData['type']) {
+            case 'serial':
+                return ' INTEGER NOT NULL AUTO_INCREMENT';
 
             default:
-                $contraints = $this->getConstraints($colData);
-                break;
+                return ' ' . $colData['type'] . $this->getConstraints($colData);
         }
-
-        return ' ' . $type . $contraints;
     }
 }
