@@ -330,7 +330,7 @@ class DataBase
     /**
      * Returns the last ID assigned when doing an INSERT in the database.
      *
-     * @return integer|bool
+     * @return int|bool
      */
     public function lastval()
     {
