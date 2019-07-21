@@ -343,7 +343,7 @@ abstract class ModelClass extends ModelCore
             if ($this->primaryColumnValue() === null) {
                 $this->{static::primaryColumn()} = self::$dataBase->lastval();
             } else {
-                self::$dataBase->updateSequence(static::tableName(), static::primaryColumn());
+                self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
             }
 
             EventManager::trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);

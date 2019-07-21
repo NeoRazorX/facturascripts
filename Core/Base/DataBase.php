@@ -421,11 +421,11 @@ class DataBase
     /**
      * 
      * @param string $tableName
-     * @param string $colName
+     * @param array  $fields
      */
-    public function updateSequence($tableName, $colName)
+    public function updateSequence($tableName, $fields)
     {
-        self::$engine->updateSequence(self::$link, $tableName, $colName);
+        self::$engine->updateSequence(self::$link, $tableName, $fields);
     }
 
     /**

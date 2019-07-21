@@ -232,11 +232,11 @@ class DataBaseTools
             }
 
             if ($column['default'] === null && $xml_col['default'] !== '') {
-                $result .= self::$sql->sqlAlterConstraintDefault($tableName, $xml_col);
+                $result .= self::$sql->sqlAlterColumnDefault($tableName, $xml_col);
             }
 
             if ($column['is_nullable'] !== $xml_col['null']) {
-                $result .= self::$sql->sqlAlterConstraintNull($tableName, $xml_col);
+                $result .= self::$sql->sqlAlterColumnNull($tableName, $xml_col);
             }
         }
 

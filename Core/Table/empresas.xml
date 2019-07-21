@@ -50,7 +50,6 @@
         <name>idempresa</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('empresas_idempresa_seq'::regclass)</default>
     </column>
     <column>
         <name>idlogo</name>

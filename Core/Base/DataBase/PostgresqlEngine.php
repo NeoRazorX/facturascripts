@@ -263,12 +263,16 @@ class PostgresqlEngine extends DataBaseEngine
      * 
      * @param resource $link
      * @param string   $tableName
-     * @param string   $colName
+     * @param array    $fields
      */
-    public function updateSequence($link, $tableName, $colName)
+    public function updateSequence($link, $tableName, $fields)
     {
-        $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
-        $this->exec($link, $sql);
+        foreach ($fields as $colName => $field) {
+            if ($field['type'] === 'serial') {
+                $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
+                $this->exec($link, $sql);
+            }
+        }
     }
 
     /**

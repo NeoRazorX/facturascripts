@@ -80,7 +80,6 @@
         <name>idpartida</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('partidas_idpartida_seq'::regclass)</default>
     </column>
     <column>
         <name>idsubcuenta</name>

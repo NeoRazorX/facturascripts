@@ -14,7 +14,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('formatos_documentos_seq'::regclass)</default>
     </column>
     <column>
         <name>idempresa</name>

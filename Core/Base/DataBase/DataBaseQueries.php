@@ -65,7 +65,7 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData);
+    public function sqlAlterColumnDefault($tableName, $colData);
 
     /**
      * SQL statement to alter a given table column's null constraint
@@ -75,7 +75,7 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlAlterConstraintNull($tableName, $colData);
+    public function sqlAlterColumnNull($tableName, $colData);
 
     /**
      * SQL statement to alter a given table column's definition

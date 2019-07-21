@@ -21,7 +21,6 @@
         <name>idcomision</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('comisiones_idcomision_seq'::regclass)</default>
     </column>
     <column>
         <name>idempresa</name>

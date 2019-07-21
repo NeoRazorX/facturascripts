@@ -195,9 +195,9 @@ abstract class DataBaseEngine
      * 
      * @param mixed  $link
      * @param string $tableName
-     * @param string $colName
+     * @param array  $fields
      */
-    public function updateSequence($link, $tableName, $colName)
+    public function updateSequence($link, $tableName, $fields)
     {
         ;
     }

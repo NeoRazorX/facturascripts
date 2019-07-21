@@ -73,7 +73,6 @@
         <name>idpedido</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('pedidosprov_idpedido_seq'::regclass)</default>
     </column>
     <column>
         <name>irpf</name>

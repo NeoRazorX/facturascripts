@@ -24,7 +24,6 @@
         <name>idfile</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('attached_files_idfile_seq'::regclass)</default>
     </column>
     <column>
         <name>mimetype</name>

@@ -40,7 +40,6 @@
         <name>idrecibo</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('recibospagosprov_idrecibo_seq'::regclass)</default>
     </column>
     <column>
         <name>importe</name>

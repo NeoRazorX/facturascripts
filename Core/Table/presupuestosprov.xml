@@ -73,7 +73,6 @@
         <name>idpresupuesto</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('presupuestosprov_idpresupuesto_seq'::regclass)</default>
     </column>
     <column>
         <name>irpf</name>

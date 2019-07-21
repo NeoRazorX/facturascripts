@@ -76,7 +76,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData)
+    public function sqlAlterColumnDefault($tableName, $colData)
     {
         return $colData['type'] === 'serial' ? '' : $this->sqlAlterModifyColumn($tableName, $colData);
     }
@@ -89,7 +89,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlAlterConstraintNull($tableName, $colData)
+    public function sqlAlterColumnNull($tableName, $colData)
     {
         return $this->sqlAlterModifyColumn($tableName, $colData);
     }

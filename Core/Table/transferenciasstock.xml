@@ -24,7 +24,6 @@
         <name>idtrans</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('transferenciasstock_id_seq'::regclass)</default>
     </column>
     <column>
         <name>nick</name>

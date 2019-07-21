@@ -65,7 +65,9 @@ class PostgresqlQueries implements DataBaseQueries
     {
         $sql = 'ALTER TABLE ' . $tableName . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
 
-        if ($colData['default'] !== '') {
+        if ($colData['type'] === 'serial') {
+            $sql .= " DEFAULT nextval('" . $tableName . "_" . $colData['name'] . "_seq'::regclass)";
+        } elseif ($colData['default'] !== '') {
             $sql .= ' DEFAULT ' . $colData['default'];
         }
 
@@ -84,8 +86,12 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData)
+    public function sqlAlterColumnDefault($tableName, $colData)
     {
+        if ($colData['type'] === 'serial') {
+            return '';
+        }
+
         $action = empty($colData['default']) ? ' DROP DEFAULT' : ' SET DEFAULT ' . $colData['default'];
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
     }
@@ -98,7 +104,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlAlterConstraintNull($tableName, $colData)
+    public function sqlAlterColumnNull($tableName, $colData)
     {
         $action = $colData['null'] === 'YES' ? ' DROP ' : ' SET ';
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';

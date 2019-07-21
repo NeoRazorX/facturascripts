@@ -23,7 +23,6 @@
         <name>idprovincia</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('provincias_idprovincia_seq'::regclass)</default>
     </column>
     <column>
         <name>provincia</name>

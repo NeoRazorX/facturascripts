@@ -11,7 +11,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('doctransformations_id_seq'::regclass)</default>
     </column>
     <column>
         <name>iddoc1</name>

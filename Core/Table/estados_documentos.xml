@@ -26,7 +26,6 @@
         <name>idestado</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('estados_documentos_idestado_seq'::regclass)</default>
     </column>
     <column>
         <name>nombre</name>

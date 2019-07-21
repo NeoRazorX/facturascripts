@@ -34,7 +34,6 @@
         <name>idlinea</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('lineaspedidosprov_idlinea_seq'::regclass)</default>
     </column>
     <column>
         <name>idpedido</name>

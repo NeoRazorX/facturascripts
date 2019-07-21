@@ -28,7 +28,6 @@
         <name>idcuenta</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('cuentas_idcuenta_seq'::regclass)</default>
     </column>
     <column>
         <name>parent_codcuenta</name>

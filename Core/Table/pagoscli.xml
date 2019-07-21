@@ -39,7 +39,6 @@
         <name>idpago</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('pagoscli_idpago_seq'::regclass)</default>
     </column>
     <column>
         <name>idrecibo</name>
