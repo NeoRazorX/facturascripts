@@ -57,7 +57,7 @@ class DataBase
      *
      * @var array
      */
-    private static $tables;
+    private static $tables = [];
 
     /**
      * DataBase constructor and prepare the class to use it.
@@ -66,21 +66,14 @@ class DataBase
     {
         if (self::$link === null) {
             self::$miniLog = new MiniLog();
-            self::$tables = [];
 
             switch (strtolower(FS_DB_TYPE)) {
-                case 'mysql':
-                    self::$engine = new Mysql();
-                    break;
-
                 case 'postgresql':
                     self::$engine = new Postgresql();
                     break;
 
                 default:
-                    self::$engine = null;
-                    $i18n = new Translator();
-                    self::$miniLog->critical($i18n->trans('db-type-not-recognized'));
+                    self::$engine = new Mysql();
                     break;
             }
         }
@@ -188,7 +181,7 @@ class DataBase
      */
     public function escapeString($str)
     {
-        return (null === self::$engine) ? $str : self::$engine->escapeString(self::$link, $str);
+        return self::$engine->escapeString(self::$link, $str);
     }
 
     /**
@@ -247,11 +240,9 @@ class DataBase
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
-        if (is_array($data) && !empty($data)) {
-            foreach ($data as $dataCol) {
-                $column = self::$engine->columnFromData($dataCol);
-                $result[$column['name']] = $column;
-            }
+        foreach ($data as $row) {
+            $column = self::$engine->columnFromData($row);
+            $result[$column['name']] = $column;
         }
 
         return $result;
@@ -267,12 +258,7 @@ class DataBase
      */
     public function getConstraints($tableName, $extended = false)
     {
-        if ($extended) {
-            $sql = self::$engine->getSQL()->sqlConstraintsExtended($tableName);
-        } else {
-            $sql = self::$engine->getSQL()->sqlConstraints($tableName);
-        }
-
+        $sql = $extended ? self::$engine->getSQL()->sqlConstraintsExtended($tableName) : self::$engine->getSQL()->sqlConstraints($tableName);
         $data = $this->select($sql);
         return $data ? array_values($data) : [];
     }
@@ -298,10 +284,8 @@ class DataBase
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
-        if (is_array($data) && !empty($data)) {
-            foreach ($data as $row) {
-                $result[] = ['name' => $row['Key_name']];
-            }
+        foreach ($data as $row) {
+            $result[] = ['name' => $row['Key_name']];
         }
 
         return $result;
@@ -351,7 +335,7 @@ class DataBase
     public function lastval()
     {
         $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
-        return $aux ? $aux[0]['num'] : false;
+        return empty($aux) ? false : $aux[0]['num'];
     }
 
     /**
