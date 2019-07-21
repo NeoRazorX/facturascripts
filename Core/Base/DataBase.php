@@ -402,18 +402,6 @@ class DataBase
     }
 
     /**
-     * Returns the SQL needed to convert the column to integer.
-     *
-     * @param string $colName
-     *
-     * @return string
-     */
-    public function sql2Int($colName)
-    {
-        return self::$engine->getSQL()->sql2Int($colName);
-    }
-
-    /**
      * Returns True if the table exists, False otherwise.
      *
      * @param string $tableName
@@ -428,6 +416,16 @@ class DataBase
         }
 
         return in_array($tableName, $list, false);
+    }
+
+    /**
+     * 
+     * @param string $tableName
+     * @param string $colName
+     */
+    public function updateSequence($tableName, $colName)
+    {
+        self::$engine->updateSequence(self::$link, $tableName, $colName);
     }
 
     /**

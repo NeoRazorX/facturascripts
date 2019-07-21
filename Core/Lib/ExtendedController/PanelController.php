@@ -366,17 +366,10 @@ abstract class PanelController extends BaseController
             return false;
         }
 
-        // empty primary key?
-        if (empty($this->views[$this->active]->model->primaryColumnValue())) {
-            $model = $this->views[$this->active]->model;
-            // assign a new value
-            $this->views[$this->active]->model->{$model->primaryColumn()} = $model->newCode();
-        }
-
         // save in database
         if ($this->views[$this->active]->model->save()) {
             /// redir to new model url only if this is the first view
-            if ($this->active === array_keys($this->views)[0]) {
+            if ($this->active === $this->getMainViewName()) {
                 $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
             }
 

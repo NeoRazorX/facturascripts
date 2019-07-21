@@ -260,6 +260,18 @@ class PostgresqlEngine extends DataBaseEngine
     }
 
     /**
+     * 
+     * @param resource $link
+     * @param string   $tableName
+     * @param string   $colName
+     */
+    public function updateSequence($link, $tableName, $colName)
+    {
+        $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
+        $this->exec($link, $sql);
+    }
+
+    /**
      * Return the used engine and the version.
      *
      * @param resource $link

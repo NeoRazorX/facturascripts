@@ -190,4 +190,15 @@ abstract class DataBaseEngine
     {
         return $operator;
     }
+
+    /**
+     * 
+     * @param mixed  $link
+     * @param string $tableName
+     * @param string $colName
+     */
+    public function updateSequence($link, $tableName, $colName)
+    {
+        ;
+    }
 }
