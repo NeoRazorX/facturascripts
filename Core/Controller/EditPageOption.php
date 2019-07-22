@@ -169,7 +169,7 @@ class EditPageOption extends Controller
             new DataBaseWhere('name', $this->selectedViewName)
         ];
 
-        $where[] = empty($nick) ? new DataBaseWhere('nick', 'null', 'IS') : new DataBaseWhere('nick', $nick);
+        $where[] = empty($nick) ? new DataBaseWhere('nick', null, 'IS') : new DataBaseWhere('nick', $nick);
         $rows = $this->model->all($where, [], 0, 1);
         if ($rows[0] && $rows[0]->delete()) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
@@ -188,7 +188,7 @@ class EditPageOption extends Controller
         $where = [
             new DataBaseWhere('name', $this->selectedViewName),
             new DataBaseWhere('nick', $this->selectedUser),
-            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
         ];
 
         if (!$this->model->loadFromCode('', $where, $orderby)) {

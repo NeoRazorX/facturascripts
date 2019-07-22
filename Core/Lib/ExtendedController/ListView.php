@@ -299,7 +299,7 @@ class ListView extends BaseView
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
-            $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'LIKE');
+            $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'XLIKE');
         }
 
         /// select saved filter

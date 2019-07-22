@@ -431,7 +431,7 @@ abstract class BaseView
         return [
             new DataBaseWhere('name', $viewName),
             new DataBaseWhere('nick', $user->nick),
-            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
         ];
     }
 }
