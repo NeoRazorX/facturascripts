@@ -170,7 +170,7 @@ class RegularizacionImpuesto extends Base\ModelClass
             . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
 
         $data = self::$dataBase->select($sql);
-        return empty($data) ? false : new self($data[0]);
+        return empty($data) ? false : new static($data[0]);
     }
 
     /**

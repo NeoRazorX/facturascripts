@@ -64,13 +64,12 @@ class BalanceCuentaA extends Base\ModelClass
      *
      * @param string $cod
      *
-     * @return self[]
+     * @return static[]
      */
     public function allFromCodbalance($cod)
     {
-        $balance = new self();
         $where = [new DataBaseWhere('codbalance', $cod)];
-        return $balance->all($where, ['codcuenta' => 'ASC'], 0, 0);
+        return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
     }
 
     /**
@@ -149,7 +148,7 @@ class BalanceCuentaA extends Base\ModelClass
      *
      * @param string $cod
      *
-     * @return self[]
+     * @return static[]
      */
     public function searchByCodbalance($cod)
     {
@@ -157,11 +156,8 @@ class BalanceCuentaA extends Base\ModelClass
         $sql = 'SELECT * FROM ' . static::tableName()
             . " WHERE codbalance LIKE '" . Utils::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $b) {
-                $balist[] = new self($b);
-            }
+        foreach (self::$dataBase->select($sql) as $row) {
+            $balist[] = new static($row);
         }
 
         return $balist;

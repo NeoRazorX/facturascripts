@@ -324,7 +324,7 @@ class Ejercicio extends Base\ModelClass
 
         /// for non-default companies we try to use range from 0001 to 9999
         if ($this->idempresa != AppSettings::get('default', 'idempresa')) {
-            $new = new self();
+            $new = new static();
             for ($num = 1; $num < 1000; $num++) {
                 $code = sprintf('%04s', (int) $num);
                 if (!$new->loadFromCode($code)) {
