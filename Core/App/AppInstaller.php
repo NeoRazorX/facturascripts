@@ -255,8 +255,8 @@ class AppInstaller
             fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
             fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
             fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
-            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8mb4');\n");
-            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8mb4_general_ci');\n");
+            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
+            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
 
             $fields = [
                 'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user',
