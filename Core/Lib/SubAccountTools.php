@@ -89,6 +89,20 @@ class SubAccountTools
         // return subaccount list
         return $results;
     }
+    
+    /**
+     * Indicates whether the subaccount has associated taxes.
+     * 
+     * @param Subcuenta|string $subAccount
+     * @return bool
+     */
+    public function hasTax($subAccount)
+    {        
+        $specialAccount = $subAccount instanceof Subcuenta 
+            ? $subAccount->getSpecialAccountCode()
+            : $subAccount;
+        return $this->isInputTax($specialAccount) || $this->isOutputTax($specialAccount);
+    }    
 
     /**
      * Indicates whether the special account type belongs to the group of input tax accounts.
@@ -113,7 +127,7 @@ class SubAccountTools
     {
         return in_array($specialAccount, $this->specialAccountsForGroup(self::SPECIAL_GROUP_TAX_OUTPUT));
     }
-
+    
     /**
      * Get array of specials Tax code accounts for selected group.
      *

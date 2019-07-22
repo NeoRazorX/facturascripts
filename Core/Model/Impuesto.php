@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -98,6 +99,18 @@ class Impuesto extends Base\ModelClass
     }
 
     /**
+     * Gets the input tax accounting subaccount indicated.
+     * If it does not exist, the default tax is returned.
+     * 
+     * @param string $subAccount
+     * @return self
+     */
+    public function inputVatFromSubAccount($subAccount)
+    {
+        return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
+    }
+    
+    /**
      * Returns True if this is the default tax.
      *
      * @return bool
@@ -117,6 +130,18 @@ class Impuesto extends Base\ModelClass
         return 'codimpuesto';
     }
 
+    /**
+     * Gets the output tax accounting subaccount indicated.
+     * If it does not exist, the default tax is returned.
+     * 
+     * @param string $subAccount
+     * @return self
+     */
+    public function outputVatFromSubAccount($subAccount)
+    {
+        return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
+    }
+    
     /**
      * Returns the name of the table that uses this model.
      *
@@ -144,5 +169,23 @@ class Impuesto extends Base\ModelClass
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
         $this->descripcion = Utils::noHtml($this->descripcion);
         return parent::test();
+    }
+    
+    /**
+     * 
+     * @param string $field
+     * @param string $subAccount
+     * @return self
+     */
+    private function getVatFromSubAccount($field, $subAccount)
+    {
+        $result = new Impuesto();
+        $where = [ new DataBaseWhere($field, $subAccount) ];
+        if ($result->loadFromCode('', $where)) {
+            return $result;
+        }
+        
+        $result->loadFromCode(AppSettings::get('default', 'codimpuesto'));
+        return $result;        
     }
 }

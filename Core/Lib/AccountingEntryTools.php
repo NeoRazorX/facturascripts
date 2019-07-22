@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\GridView;
+use FacturaScripts\Core\Lib\SubAccountTools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Impuesto;
@@ -36,7 +37,24 @@ use FacturaScripts\Dinamic\Model\SubcuentaSaldo;
  */
 class AccountingEntryTools
 {
+    private const TYPE_TAX_NONE = 0;
+    private const TYPE_TAX_INPUT = 1;
+    private const TYPE_TAX_OUTPUT = 2;
 
+    /**
+     *
+     * @var SubAccountTools 
+     */
+    protected $subAccountTools;
+
+    /**
+     * Class constructor
+     */
+    public function __construct()
+    {
+        $this->subAccountTools = new SubAccountTools();
+    }
+    
     /**
      * Load data and balances from subaccount
      *
@@ -50,7 +68,7 @@ class AccountingEntryTools
         $result = [
             'subaccount' => $codeSubAccount,
             'description' => '',
-            'codevat' => '',
+            'specialaccount' => '',
             'balance' => 0.00,
             'detail' => [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
         ];
@@ -66,9 +84,11 @@ class AccountingEntryTools
 
         $subAccount = new Subcuenta();
         if ($subAccount->loadFromCode(null, $where)) {
+            $result['description'] = $subAccount->descripcion;  
+            $result['specialaccount'] = $subAccount->getSpecialAccountCode();
+            $result['hasvat'] = $this->subAccountTools->hasTax($result['specialaccount']);
+
             $balance = new SubcuentaSaldo();
-            $result['description'] = $subAccount->descripcion;
-            $result['codevat'] = false;  // TODO: Calculate if subaccount belong to tax group
             $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
             $result['balance'] = DivisaTools::format($result['balance']);
         }
@@ -90,7 +110,7 @@ class AccountingEntryTools
             'total' => 0.00,
             'unbalance' => 0.00,
             'lines' => [],
-            'subaccount' => [],
+            'subaccount' => [],            
             'vat' => []
         ];
 
@@ -108,10 +128,11 @@ class AccountingEntryTools
                 $index = $data['changes'][0][0];
                 $line = &$result['lines'][$index];
                 $result['subaccount'] = $this->getAccountData($data['document']['codejercicio'], $line['codsubcuenta']);
-                $result['vat'] = $this->recalculateVatRegister($line, $data['document'], $result['subaccount']['codevat'], $result['unbalance']);
+                $result['vat'] = $this->recalculateVatRegister($line, $data['document'], $result['subaccount']['specialaccount'], $result['unbalance']);
             }
         }
 
+        $result['hasvat'] = !empty($result['vat']);
         return $result;
     }
 
@@ -241,36 +262,61 @@ class AccountingEntryTools
     }
 
     /**
+     * 
+     * @param string $specialAccount
+     * @return int
+     */
+    private function getTypeVat($specialAccount)
+    {
+        if (empty($specialAccount)) {
+            return self::TYPE_TAX_NONE;
+        }
+        
+        if ($this->subAccountTools->isInputTax($specialAccount)) {
+            return self::TYPE_TAX_INPUT;
+        }
+        
+        if ($this->subAccountTools->isOutputTax($specialAccount)) {
+            return self::TYPE_TAX_OUTPUT;
+        }
+        
+        return self::TYPE_TAX_NONE;
+    }
+    
+    /**
      * Calculate Vat Register data
      *
      * @param array  $line
      * @param array  $document
-     * @param string $codevat
+     * @param string $specialAccount
      * @param float  $base
      *
      * @return array
      */
-    protected function recalculateVatRegister(array &$line, array $document, string $codevat, float $base): array
+    protected function recalculateVatRegister(array &$line, array $document, string $specialAccount, float $base): array
     {
-        $result = [];
-        if (empty($codevat)) {
+        $typeVat = $this->getTypeVat($specialAccount);
+        if ($typeVat === self::TYPE_TAX_NONE) {
             $line['cifnif'] = null;
             $line['documento'] = null;
             $line['baseimponible'] = null;
             $line['iva'] = null;
             $line['recargo'] = null;
-            return $result;
+            return [];
         }
-
-        $vat = new Impuesto();
-        if ($vat->loadFromCode($codevat)) {
-            $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
-            $line['documento'] = $document['documento'];
-            $line['cifnif'] = $result['id'];
-            $line['iva'] = $vat->iva;
-            $line['recargo'] = $result['surcharge'] ? $vat->recargo : 0.00;
-            $line['baseimponible'] = ($result['group'] === AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT) ? ($base * -1) : $base;
-        }
+        
+        $vatModel = new Impuesto();
+        $vat = $typeVat == self::TYPE_TAX_INPUT 
+            ? $vatModel->inputVatFromSubAccount($line['codsubcuenta'])
+            : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
+            
+        $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
+        
+        $line['documento'] = $document['documento'];
+        $line['cifnif'] = $result['id'];
+        $line['iva'] = $vat->iva;
+        $line['recargo'] = $result['surcharge'] ? $vat->recargo : 0.00;
+        $line['baseimponible'] = ($result['group'] === AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT) ? ($base * -1) : $base;
         return $result;
     }
 
