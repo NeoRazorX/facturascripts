@@ -118,8 +118,7 @@ class DataBaseWhere
     public function getSQLWhereItem($applyOperation = false, $prefix = ''): string
     {
         $fields = explode('|', $this->fields);
-        $value = $this->getValue($this->value);
-        $result = $this->applyValueToFields($value, $fields);
+        $result = $this->applyValueToFields($this->value, $fields);
         if ($result === '') {
             return '';
         }
@@ -182,8 +181,8 @@ class DataBaseWhere
     /**
      * Apply one value to a field list.
      *
-     * @param string $value
-     * @param array  $fields
+     * @param mixed $value
+     * @param array $fields
      *
      * @return string
      */
@@ -193,15 +192,15 @@ class DataBaseWhere
         foreach ($fields as $field) {
             $union = empty($result) ? '' : ' OR ';
             if ($this->operator !== 'XLIKE') {
-                $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $value;
+                $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValue($value);
                 continue;
             }
 
             /// in XLIKE opertator we must break words before search
             $result .= $union . '(';
             $union2 = '';
-            foreach (explode(' ', Utils::noHtml($value)) as $query) {
-                $result .= $union2 . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValueFromOperatorLike($query);
+            foreach (explode(' ', $value) as $query) {
+                $result .= $union2 . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator('LIKE') . ' ' . $this->getValueFromOperatorLike($query);
                 $union2 = ' AND ';
             }
             $result .= ')';
