@@ -239,7 +239,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     {
         return 'numero';
     }
-
+    
     /**
      * Re-number the accounting entries of the open exercises.
      * 
@@ -253,7 +253,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $where = empty($codjercicio) ? [] : [new DataBaseWhere('codejercicio', $codjercicio)];
 
         foreach ($ejercicio->all($where) as $eje) {
-            if ($eje->isOpened() === false) {
+            if ($this->exerciseClose($eje)) {
                 continue;
             }
 
@@ -365,6 +365,16 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         return false;
     }
 
+    /**
+     * 
+     * @param Ejercicio $exercise
+     * @return bool
+     */
+    private function exerciseClose($exercise)
+    {
+        return $exercise->isOpened() === false;
+    }
+    
     /**
      * Check if exists error in accounting entry
      *

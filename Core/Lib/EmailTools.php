@@ -65,6 +65,7 @@ class EmailTools
             foreach ($files as $file) {
                 $mail->addAttachment($file->getPathname(), $file->getClientOriginalName());
             }
+            return;
         }
 
         $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $files);

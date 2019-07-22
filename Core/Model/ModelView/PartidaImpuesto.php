@@ -29,6 +29,12 @@ use FacturaScripts\Core\Model\Base\ModelView;
 class PartidaImpuesto extends ModelView
 {
 
+    public $baseimponible;
+    public $cuotaiva;
+    public $cuotarecargo;
+    public $iva;
+    public $recargo;
+    
     /**
      * Reset the values of all model view properties.
      */
