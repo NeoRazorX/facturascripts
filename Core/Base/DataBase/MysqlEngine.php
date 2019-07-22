@@ -64,7 +64,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Starts an SQL transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -81,7 +81,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Disconnect from the database.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -110,7 +110,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Commits changes in a SQL transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -166,7 +166,7 @@ class MysqlEngine extends DataBaseEngine
             return null;
         }
 
-        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int) FS_DB_PORT);
+        $result = new mysqli(\FS_DB_HOST, \FS_DB_USER, \FS_DB_PASS, \FS_DB_NAME, (int) \FS_DB_PORT);
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
@@ -177,7 +177,7 @@ class MysqlEngine extends DataBaseEngine
         $result->autocommit(false);
 
         /// disable foreign keys
-        if (!FS_DB_FOREIGN_KEYS) {
+        if (!\FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -187,7 +187,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Returns the last run statement error.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return string
      */
@@ -199,8 +199,8 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Escapes quotes from a text string.
      *
-     * @param \mysqli $link
-     * @param string  $str
+     * @param mysqli $link
+     * @param string $str
      *
      * @return string
      */
@@ -212,8 +212,8 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Runs SQL statement in the database (inserts, updates or deletes).
      *
-     * @param \mysqli $link
-     * @param string  $sql
+     * @param mysqli $link
+     * @param string $sql
      *
      * @return bool
      */
@@ -247,7 +247,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Indicates if the connection has an active transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -259,7 +259,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Returns an array with the database table names.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return array
      */
@@ -267,7 +267,7 @@ class MysqlEngine extends DataBaseEngine
     {
         $tables = [];
         foreach ($this->select($link, 'SHOW TABLES;') as $row) {
-            $key = 'Tables_in_' . FS_DB_NAME;
+            $key = 'Tables_in_' . \FS_DB_NAME;
             if (isset($row[$key])) {
                 $tables[] = $row[$key];
             }
@@ -279,7 +279,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Rolls back a transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -297,8 +297,8 @@ class MysqlEngine extends DataBaseEngine
      * Runs a SELECT SQL statement, and returns an array with the results,
      * or an empty array when it fails.
      *
-     * @param \mysqli $link
-     * @param string  $sql
+     * @param mysqli $link
+     * @param string $sql
      *
      * @return array
      */
@@ -325,7 +325,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Returns the database engine and its version.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return string
      */
@@ -379,7 +379,7 @@ class MysqlEngine extends DataBaseEngine
     /**
      * Delete from the list the specified transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      */
     private function unsetTransaction($link)
     {

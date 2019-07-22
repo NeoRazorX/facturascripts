@@ -67,9 +67,9 @@ class VisualItemLoadEngine
     {
         $model->name = $name;
 
-        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
-        if (FS_DEBUG && !file_exists($fileName)) {
-            $fileName = FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
+        $fileName = \FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
+        if (\FS_DEBUG && !file_exists($fileName)) {
+            $fileName = \FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
         }
 
         if (!file_exists($fileName)) {

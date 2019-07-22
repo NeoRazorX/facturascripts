@@ -73,10 +73,10 @@ class PluginDeploy
         $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
-                FileManager::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
+                FileManager::delTree(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
             }
 
-            $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
+            $this->createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
 
             /// examine the plugins
             foreach (array_reverse($enabledPlugins) as $pluginName) {
@@ -86,7 +86,7 @@ class PluginDeploy
             }
 
             /// examine the core
-            if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . $folder)) {
+            if (file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . $folder)) {
                 $this->linkFiles($folder);
             }
         }
@@ -102,7 +102,7 @@ class PluginDeploy
         $menuManager->init();
         $pageNames = [];
 
-        $files = FileManager::scanFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
+        $files = FileManager::scanFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
         foreach ($files as $fileName) {
             if (substr($fileName, -4) !== '.php') {
                 continue;
@@ -113,7 +113,7 @@ class PluginDeploy
 
             if (!class_exists($controllerNamespace)) {
                 /// we force the loading of the file because at this point the autoloader will not find it
-                require FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $controllerName . '.php';
+                require \FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $controllerName . '.php';
             }
 
             try {
@@ -155,7 +155,7 @@ class PluginDeploy
 
     private function getClassType(string $fileName, string $folder, string $place, string $pluginName): string
     {
-        $path = FS_FOLDER . DIRECTORY_SEPARATOR . $place;
+        $path = \FS_FOLDER . DIRECTORY_SEPARATOR . $place;
         $path .= empty($pluginName) ? DIRECTORY_SEPARATOR . $folder : DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . $folder;
 
         $txt = file_get_contents($path . DIRECTORY_SEPARATOR . $fileName);
@@ -175,13 +175,13 @@ class PluginDeploy
      */
     private function linkFiles(string $folder, string $place = 'Core', string $pluginName = '')
     {
-        $path = FS_FOLDER . DIRECTORY_SEPARATOR . $place;
+        $path = \FS_FOLDER . DIRECTORY_SEPARATOR . $place;
         $path .= empty($pluginName) ? DIRECTORY_SEPARATOR . $folder : DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . $folder;
 
         foreach (FileManager::scanFolder($path, true) as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
-                $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
+                $this->createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
             } elseif ($infoFile['filename'] === '' || !is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
                 continue;
             } elseif (isset($infoFile['extension']) && $infoFile['extension'] === 'php') {
@@ -226,7 +226,7 @@ class PluginDeploy
             . ' */' . "\n"
             . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
 
-        file_put_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName, $txt);
+        file_put_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName, $txt);
         $this->fileList[$folder][$fileName] = $fileName;
     }
 
@@ -243,7 +243,7 @@ class PluginDeploy
             return;
         }
 
-        $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName;
+        $path = \FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName;
         copy($filePath, $path);
         $this->fileList[$folder][$fileName] = $fileName;
     }

@@ -59,7 +59,7 @@ class EditSettings extends ExtendedController\PanelController
     private function allSettingsXMLViews()
     {
         $names = [];
-        foreach (FileManager::scanFolder(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
+        foreach (FileManager::scanFolder(\FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
             if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }

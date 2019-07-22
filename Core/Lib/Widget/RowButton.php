@@ -137,7 +137,7 @@ class RowButton extends VisualItem
      */
     protected function asset($url)
     {
-        $path = FS_ROUTE . '/';
+        $path = \FS_ROUTE . '/';
         if (substr($url, 0, strlen($path)) == $path) {
             return $url;
         }

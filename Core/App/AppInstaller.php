@@ -175,7 +175,7 @@ class AppInstaller
     {
         $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
         $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
-        return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
+        return file_exists(\FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
 
     /**
@@ -217,7 +217,7 @@ class AppInstaller
     {
         /// HTML template variables
         $templateVars = [
-            'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
+            'license' => file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => $this->randomString(8),
             'timezones' => $this->getTimezoneList()
         ];
@@ -237,8 +237,8 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
-        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
+        $contentFile = FileManager::extractFromMarkers(\FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
+        return FileManager::insertWithMarkers($contentFile, \FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
 
     /**
@@ -248,7 +248,7 @@ class AppInstaller
      */
     private function saveInstall()
     {
-        $file = fopen(FS_FOLDER . '/config.php', 'wb');
+        $file = fopen(\FS_FOLDER . '/config.php', 'wb');
         if (\is_resource($file)) {
             fwrite($file, "<?php\n");
             fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 604800) . ");\n");
@@ -310,7 +310,7 @@ class AppInstaller
             $errors = true;
         }
 
-        if (!is_writable(FS_FOLDER)) {
+        if (!is_writable(\FS_FOLDER)) {
             $this->miniLog->critical($this->i18n->trans('folder-not-writable'));
             $errors = true;
         }

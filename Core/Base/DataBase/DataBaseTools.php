@@ -259,10 +259,10 @@ class DataBaseTools
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
+        if (!empty($xmlCons) && !$deleteOnly && \FS_DB_FOREIGN_KEYS) {
             foreach ($xmlCons as $xmlCon) {
                 /// exclude primary keys on mysql because of fail
-                if (strpos($xmlCon['constraint'], 'PRIMARY') === 0 && strtolower(FS_DB_TYPE) === 'mysql') {
+                if (strpos($xmlCon['constraint'], 'PRIMARY') === 0 && strtolower(\FS_DB_TYPE) === 'mysql') {
                     continue;
                 }
 
@@ -291,7 +291,7 @@ class DataBaseTools
         $xml = strtolower($xmlType);
 
         $result = (
-            FS_DB_TYPE_CHECK ||
+            \FS_DB_TYPE_CHECK ||
             self::$dataBase->getEngine()->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
@@ -312,9 +312,9 @@ class DataBaseTools
      */
     private function getXmlTableLocation($tableName)
     {
-        $fileName = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
-        if (FS_DEBUG && !file_exists($fileName)) {
-            $fileName = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+        $fileName = \FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (\FS_DEBUG && !file_exists($fileName)) {
+            $fileName = \FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
         }
 
         return $fileName;

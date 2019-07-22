@@ -130,7 +130,7 @@ class AutocompleteFilter extends BaseFilter
      */
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
+        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
     }
 
     /**

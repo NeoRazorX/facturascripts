@@ -113,7 +113,8 @@ class PostgresqlEngine extends DataBaseEngine
             return null;
         }
 
-        $string = 'host=' . FS_DB_HOST . ' dbname=' . FS_DB_NAME . ' port=' . FS_DB_PORT . ' user=' . FS_DB_USER . ' password=' . FS_DB_PASS;
+        $string = 'host=' . \FS_DB_HOST . ' dbname=' . \FS_DB_NAME . ' port=' . \FS_DB_PORT
+            . ' user=' . \FS_DB_USER . ' password=' . \FS_DB_PASS;
         $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();

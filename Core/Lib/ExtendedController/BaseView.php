@@ -163,7 +163,7 @@ abstract class BaseView
     /**
      * Loads view data.
      */
-    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
+    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT);
 
     /**
      * Process form data.
@@ -323,13 +323,13 @@ abstract class BaseView
             $pages[$key1] = [
                 'active' => ($key2 == $this->offset),
                 'num' => $key1 + 1,
-                'offset' => $key1 * FS_ITEM_LIMIT,
+                'offset' => $key1 * \FS_ITEM_LIMIT,
             ];
             if ($key2 == $this->offset) {
                 $current = $key1;
             }
             $key1++;
-            $key2 += FS_ITEM_LIMIT;
+            $key2 += \FS_ITEM_LIMIT;
         }
 
         /// now descarting pages

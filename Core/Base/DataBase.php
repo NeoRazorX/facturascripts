@@ -67,7 +67,7 @@ class DataBase
         if (self::$link === null) {
             self::$miniLog = new MiniLog();
 
-            switch (strtolower(FS_DB_TYPE)) {
+            switch (strtolower(\FS_DB_TYPE)) {
                 case 'postgresql':
                     self::$engine = new PostgresqlEngine();
                     break;
@@ -374,7 +374,7 @@ class DataBase
      *
      * @return array
      */
-    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
+    public function selectLimit($sql, $limit = \FS_ITEM_LIMIT, $offset = 0)
     {
         if (!$this->connected()) {
             return [];

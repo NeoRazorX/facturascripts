@@ -139,7 +139,7 @@ class User extends Base\ModelClass
         parent::clear();
         $this->enabled = true;
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
-        $this->langcode = FS_LANG;
+        $this->langcode = \FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
     }
 
@@ -160,7 +160,7 @@ class User extends Base\ModelClass
 
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,langcode,homepage,level)'
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
-            . "',TRUE,TRUE,'1','" . FS_LANG . "','Wizard','99');";
+            . "',TRUE,TRUE,'1','" . \FS_LANG . "','Wizard','99');";
     }
 
     /**

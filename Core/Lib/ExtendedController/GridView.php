@@ -126,7 +126,7 @@ class GridView extends EditView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT)
     {
         parent::loadData($code, $where, $order, $offset, $limit);
 
@@ -250,9 +250,9 @@ class GridView extends EditView
 
             // URL for refresh data
             $result['url'] = $this->model->url('edit') . '&action=save-ok';
-        } catch (Exception $e) {
+        } catch (Exception $err) {
             $result['error'] = true;
-            $result['message'] = $e->getMessage();
+            $result['message'] = $err->getMessage();
         } finally {
             if ($dataBase->inTransaction()) {
                 $dataBase->rollback();
@@ -263,9 +263,9 @@ class GridView extends EditView
 
     protected function assets()
     {
-        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
-        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/GridView.js');
+        AssetManager::add('css', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/GridView.js');
     }
 
     /**

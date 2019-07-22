@@ -55,7 +55,7 @@ class IPFilter
      */
     public function __construct()
     {
-        $this->filePath = FS_FOLDER . '/MyFiles/Cache/ip.list';
+        $this->filePath = \FS_FOLDER . '/MyFiles/Cache/ip.list';
         $this->ipList = [];
         $this->readFile();
     }

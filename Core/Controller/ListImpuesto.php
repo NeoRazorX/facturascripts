@@ -145,7 +145,7 @@ class ListImpuesto extends ListController
         foreach ($impuesto->all() as $imp) {
             $impZona = new ImpuestoZona();
             $impZona->codimpuesto = $imp->codimpuesto;
-            $impZona->codpais = FS_CODPAIS;
+            $impZona->codpais = \FS_CODPAIS;
             $impZona->codisopro = null;
             $impZona->codimpuestosel = $imp->codimpuesto;
             $impZona->prioridad = 1;

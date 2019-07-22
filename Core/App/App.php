@@ -132,7 +132,7 @@ abstract class App
         $this->uri = $uri;
 
         /// timezone
-        date_default_timezone_set(FS_TIMEZONE);
+        date_default_timezone_set(\FS_TIMEZONE);
 
         $this->miniLog->debug('URI: ' . $this->uri);
     }
