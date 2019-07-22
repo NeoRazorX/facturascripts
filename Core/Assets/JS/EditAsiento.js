@@ -24,6 +24,7 @@ var mainForm, accountDescription, accountBalance, total, unbalance, vatRegister;
 var vatModal, vatBody;
 var accountData = {"subaccount": ""};
 var accountGraph = null;
+
 /*
  * AMOUNT Functions Management
  */
@@ -76,13 +77,13 @@ function clearAccountData() {
  *
  * @param {json} data
  */
-function setAccountData(data) {
+function setAccountData(data) {        
     // Save subAccount data calculate
     accountData.subaccount = data.subaccount;
     // Update data labels and buttons
     accountDescription.textContent = data.description;
     accountBalance.textContent = data.balance;
-    vatRegister.prop("disabled", !data.codevat);
+    vatRegister.prop("disabled", !data.hasvat);
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
         dataset.data.lenght = 0; // Force delete old data
@@ -243,12 +244,12 @@ function customAfterChange(changes) {
  * Document Ready. Create and configure Objects.
  */
 $(document).ready(function () {
-    if (document.getElementById("document-lines")) {
+    if (document.querySelector("#document-lines")) {
         // Init Working variables
         mainForm = $("#formGridEditAsiento");
-        accountDescription = document.getElementById("account-description");
-        accountBalance = document.getElementById("account-balance");
-        unbalance = document.getElementById("unbalance");
+        accountDescription = document.querySelector("#account-description");        
+        accountBalance = document.querySelector("#account-balance");
+        unbalance = document.querySelector("#unbalance");
         total = $("#formGridEditAsiento input[name=importe]");
         vatRegister = $("#vat-register-btn");
         vatRegister.prop("disabled", true);
@@ -263,8 +264,9 @@ $(document).ready(function () {
         // Add control events to Grid Controller
         addEvent("afterChange", customAfterChange);
         addEvent("afterSelection", customAfterSelection);
+
         // Graphic bars
-        var ctx = document.getElementById("detail-balance");
+        var ctx = document.querySelector("#detail-balance");
         if (ctx) {
             ctx = ctx.getContext("2d");
             accountGraph = new Chart(ctx, {
