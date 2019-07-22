@@ -184,9 +184,11 @@ class MysqlQueries implements DataBaseQueries
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
+        $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';
+        $collate = defined('FS_MYSQL_COLLATE') ? FS_MYSQL_COLLATE : 'utf8_bin';
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
-            . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+            . 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset . ' COLLATE=' . $collate . ';';
     }
 
     /**
