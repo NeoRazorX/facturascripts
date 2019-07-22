@@ -163,16 +163,6 @@ class DataBase
     }
 
     /**
-     * Returns the date style of the database engine.
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return self::$engine->dateStyle();
-    }
-
-    /**
      * Escape the quotes from the text string.
      *
      * @param string $str
@@ -447,12 +437,12 @@ class DataBase
 
         /// If its a date
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date($this->dateStyle(), strtotime($val)) . "'";
+            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
         }
 
         /// It its a date time
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date($this->dateStyle() . ' H:i:s', strtotime($val)) . "'";
+            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";
