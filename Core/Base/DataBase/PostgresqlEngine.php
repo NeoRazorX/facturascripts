@@ -269,7 +269,8 @@ class PostgresqlEngine extends DataBaseEngine
     public function updateSequence($link, $tableName, $fields)
     {
         foreach ($fields as $colName => $field) {
-            if ($field['type'] === 'serial') {
+            /// serial type
+            if (stripos($field['default'], 'nextval(') !== false) {
                 $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
                 $this->exec($link, $sql);
             }

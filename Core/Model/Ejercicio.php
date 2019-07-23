@@ -353,7 +353,9 @@ class Ejercicio extends Base\ModelClass
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
-                self::$miniLog->alert(self::$i18n->trans('exercise-date-range-exists'));
+                self::$miniLog->alert(
+                    self::$i18n->trans('exercise-date-range-exists', ['%start%' => $this->fechainicio, '%end%' => $this->fechafin])
+                );
                 return false;
             }
         }
