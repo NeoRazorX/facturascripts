@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,7 +77,7 @@ function clearAccountData() {
  *
  * @param {json} data
  */
-function setAccountData(data) {        
+function setAccountData(data) {
     // Save subAccount data calculate
     accountData.subaccount = data.subaccount;
     // Update data labels and buttons
@@ -247,7 +247,7 @@ $(document).ready(function () {
     if (document.getElementById("document-lines")) {
         // Init Working variables
         mainForm = $("#formGridEditAsiento");
-        accountDescription = document.getElementById("account-description");        
+        accountDescription = document.getElementById("account-description");
         accountBalance = document.getElementById("account-balance");
         unbalance = document.getElementById("unbalance");
         total = $("#formGridEditAsiento input[name=importe]");

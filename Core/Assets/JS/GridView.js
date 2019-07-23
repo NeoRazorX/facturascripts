@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -265,7 +265,7 @@ function saveDocument(mainFormName) {
  */
 $(document).ready(function () {
     // Grid Data
-    var container = document.getElementById('document-lines');
+    var container = document.getElementById("document-lines");
     if (container) {
         // Prepare autocomplete columns
         configureAutocompleteColumns(documentLineData["columns"]);

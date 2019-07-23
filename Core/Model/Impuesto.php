@@ -103,13 +103,14 @@ class Impuesto extends Base\ModelClass
      * If it does not exist, the default tax is returned.
      * 
      * @param string $subAccount
+     *
      * @return self
      */
     public function inputVatFromSubAccount($subAccount)
     {
         return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
     }
-    
+
     /**
      * Returns True if this is the default tax.
      *
@@ -135,13 +136,14 @@ class Impuesto extends Base\ModelClass
      * If it does not exist, the default tax is returned.
      * 
      * @param string $subAccount
+     *
      * @return self
      */
     public function outputVatFromSubAccount($subAccount)
     {
         return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
     }
-    
+
     /**
      * Returns the name of the table that uses this model.
      *
@@ -170,22 +172,23 @@ class Impuesto extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
         return parent::test();
     }
-    
+
     /**
      * 
      * @param string $field
      * @param string $subAccount
-     * @return self
+     *
+     * @return static
      */
     private function getVatFromSubAccount($field, $subAccount)
     {
         $result = new Impuesto();
-        $where = [ new DataBaseWhere($field, $subAccount) ];
+        $where = [new DataBaseWhere($field, $subAccount)];
         if ($result->loadFromCode('', $where)) {
             return $result;
         }
-        
+
         $result->loadFromCode(AppSettings::get('default', 'codimpuesto'));
-        return $result;        
+        return $result;
     }
 }
