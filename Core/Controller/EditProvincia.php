@@ -51,7 +51,7 @@ class EditProvincia extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'province';
-        $data['icon'] = 'fas fa-globe';
+        $data['icon'] = 'fas fa-map-signs';
         return $data;
     }
 
