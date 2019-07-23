@@ -21,7 +21,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('pages_filters_id_seq'::regclass)</default>
     </column>
     <column>
         <name>name</name>

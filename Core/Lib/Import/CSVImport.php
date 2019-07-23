@@ -104,19 +104,19 @@ class CSVImport
     protected static function getTableFilePath(string $table): string
     {
         $codpais = AppSettings::get('default', 'codpais', 'ESP');
-        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
+        $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }
 
-        $lang = strtoupper(substr(FS_LANG, 0, 2));
-        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
+        $lang = strtoupper(substr(\FS_LANG, 0, 2));
+        $filePath = \FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }
 
         /// If everything else fails
-        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
+        $filePath = \FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }

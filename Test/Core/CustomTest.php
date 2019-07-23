@@ -99,7 +99,7 @@ class CustomTest extends TestCase
         $messages = $minilog->read();
         if (!empty($messages) && $this->getStatus() > 1) {
             array_unshift($messages, ['test' => get_called_class()]);
-            $filename = FS_FOLDER . DIRECTORY_SEPARATOR . 'MINILOG.json';
+            $filename = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MINILOG.json';
             $content = file_exists($filename) ? file_get_contents($filename) . "\n-----------\n" : '';
             $content .= json_encode($messages);
 

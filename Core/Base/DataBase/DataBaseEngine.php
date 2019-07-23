@@ -18,150 +18,187 @@
  */
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Base\Translator;
+
 /**
  * Interface for each of the compatible database engines
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-interface DataBaseEngine
+abstract class DataBaseEngine
 {
+
+    /**
+     * Contains the translator.
+     *
+     * @var Translator
+     */
+    protected $i18n;
+
+    /**
+     * Last error message.
+     *
+     * @var string
+     */
+    protected $lastErrorMsg = '';
 
     /**
      * Starts a transaction with the $link connection
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function beginTransaction($link);
-
-    /**
-     * Checks if a sequence exists
-     *
-     * @param \mysqli|resource $link
-     * @param string           $tableName
-     * @param string           $default
-     * @param string           $colname
-     */
-    public function checkSequence($link, $tableName, $default, $colname);
+    abstract public function beginTransaction($link);
 
     /**
      * Closes the connection to the database
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function close($link);
+    abstract public function close($link);
 
     /**
      * Converts the sqlColumns returned data to a working structure
      *
      * @param array $colData
      */
-    public function columnFromData($colData);
+    abstract public function columnFromData($colData);
 
     /**
      * Commits operations done in the connection since beginTransaction
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function commit($link);
-
-    /**
-     * Compares the columns set in the arrays
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     */
-    public function compareDataTypes($dbType, $xmlType);
+    abstract public function commit($link);
 
     /**
      * Connects to the database
      *
      * @param string $error
      */
-    public function connect(&$error);
-
-    /**
-     * Returns the database date format
-     */
-    public function dateStyle();
+    abstract public function connect(&$error);
 
     /**
      * Last generated error message in a database operation
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function errorMessage($link);
+    abstract public function errorMessage($link);
 
     /**
      * Escape the given string
      *
-     * @param \mysqli|resource $link
-     * @param string           $str
+     * @param mixed  $link
+     * @param string $str
      */
-    public function escapeString($link, $str);
+    abstract public function escapeString($link, $str);
 
     /**
      * Runs a DDL statement on the connection.
      * If there is no open transaction, it will create one and end it after the DDL
      *
-     * @param \mysqli|resource $link
-     * @param string           $sql
+     * @param mixed  $link
+     * @param string $sql
      *
      * @return bool
      */
-    public function exec($link, $sql);
-
-    /**
-     * Indicates the operator for the database engine
-     *
-     * @param string $operator
-     */
-    public function getOperator($operator);
+    abstract public function exec($link, $sql);
 
     /**
      * Returns the link to the engine's SQL class
      *
-     * @return DataBaseSQL
+     * @return DataBaseQueries
      */
-    public function getSQL();
+    abstract public function getSQL();
 
     /**
      * Indicates if the connection has an open transaction
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function inTransaction($link);
+    abstract public function inTransaction($link);
 
     /**
      * List the existing tables in the connection
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function listTables($link);
+    abstract public function listTables($link);
 
     /**
      * Rolls back operations done in the connection since beginTransaction
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      */
-    public function rollback($link);
+    abstract public function rollback($link);
 
     /**
      * Runs a database statement on the connection
      *
-     * @param \mysqli|resource $link
-     * @param string           $sql
+     * @param mixed  $link
+     * @param string $sql
      *
      * @return array
      */
-    public function select($link, $sql);
+    abstract public function select($link, $sql);
 
     /**
      * Database engine information
      *
-     * @param \mysqli|resource $link
+     * @param mixed $link
      *
      * @return string
      */
-    public function version($link);
+    abstract public function version($link);
+
+    public function __construct()
+    {
+        $this->i18n = new Translator();
+    }
+
+    /**
+     * Compares the data types from a numeric column. Returns true if they are equal
+     *
+     * @param string $dbType
+     * @param string $xmlType
+     *
+     * @return bool
+     */
+    public function compareDataTypes($dbType, $xmlType)
+    {
+        return $dbType === $xmlType;
+    }
+
+    /**
+     * Returns the date format from the database engine
+     *
+     * @return string
+     */
+    public function dateStyle()
+    {
+        return 'Y-m-d';
+    }
+
+    /**
+     * Indicates the operator for the database engine.
+     *
+     * @param string $operator
+     *
+     * @return string
+     */
+    public function getOperator($operator)
+    {
+        return $operator;
+    }
+
+    /**
+     * 
+     * @param mixed  $link
+     * @param string $tableName
+     * @param array  $fields
+     */
+    public function updateSequence($link, $tableName, $fields)
+    {
+        ;
+    }
 }

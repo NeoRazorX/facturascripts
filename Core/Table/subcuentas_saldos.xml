@@ -23,7 +23,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('subcuentas_saldos_id_seq'::regclass)</default>
     </column>
     <column>
         <name>idsubcuenta</name>

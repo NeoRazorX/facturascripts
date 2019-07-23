@@ -32,7 +32,6 @@
         <name>idvariante</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('variantes_idvariante_seq'::regclass)</default>
     </column>
     <column>
         <name>precio</name>

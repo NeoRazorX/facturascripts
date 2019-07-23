@@ -67,7 +67,7 @@ class EmailTools
             }
         }
 
-        $mail->addAttachment(FS_FOLDER . '/MyFiles/' . $files);
+        $mail->addAttachment(\FS_FOLDER . '/MyFiles/' . $files);
     }
 
     /**
@@ -256,8 +256,8 @@ class EmailTools
         /// Send Email
         if ($emailTools->send($mail)) {
             /// Remove upload files
-            if (!empty($data['fileName']) && file_exists(FS_FOLDER . '/MyFiles/' . $data['fileName'])) {
-                unlink(FS_FOLDER . '/MyFiles/' . $data['fileName']);
+            if (!empty($data['fileName']) && file_exists(\FS_FOLDER . '/MyFiles/' . $data['fileName'])) {
+                unlink(\FS_FOLDER . '/MyFiles/' . $data['fileName']);
             }
 
             $i18n = new i18n();

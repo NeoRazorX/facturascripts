@@ -97,7 +97,6 @@
         <name>idalbaran</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('albaranescli_idalbaran_seq'::regclass)</default>
     </column>
     <column>
         <name>idcontactoenv</name>

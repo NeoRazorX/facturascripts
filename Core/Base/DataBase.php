@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
-use FacturaScripts\Core\Base\DataBase\Mysql;
-use FacturaScripts\Core\Base\DataBase\Postgresql;
+use FacturaScripts\Core\Base\DataBase\MysqlEngine;
+use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
 
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
@@ -57,7 +57,7 @@ class DataBase
      *
      * @var array
      */
-    private static $tables;
+    private static $tables = [];
 
     /**
      * DataBase constructor and prepare the class to use it.
@@ -66,21 +66,14 @@ class DataBase
     {
         if (self::$link === null) {
             self::$miniLog = new MiniLog();
-            self::$tables = [];
 
-            switch (strtolower(FS_DB_TYPE)) {
-                case 'mysql':
-                    self::$engine = new Mysql();
-                    break;
-
+            switch (strtolower(\FS_DB_TYPE)) {
                 case 'postgresql':
-                    self::$engine = new Postgresql();
+                    self::$engine = new PostgresqlEngine();
                     break;
 
                 default:
-                    self::$engine = null;
-                    $i18n = new Translator();
-                    self::$miniLog->critical($i18n->trans('db-type-not-recognized'));
+                    self::$engine = new MysqlEngine();
                     break;
             }
         }
@@ -170,16 +163,6 @@ class DataBase
     }
 
     /**
-     * Returns the date style of the database engine.
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return self::$engine->dateStyle();
-    }
-
-    /**
      * Escape the quotes from the text string.
      *
      * @param string $str
@@ -188,7 +171,7 @@ class DataBase
      */
     public function escapeString($str)
     {
-        return (null === self::$engine) ? $str : self::$engine->escapeString(self::$link, $str);
+        return self::$engine->escapeString(self::$link, $str);
     }
 
     /**
@@ -247,11 +230,9 @@ class DataBase
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
-        if (is_array($data) && !empty($data)) {
-            foreach ($data as $dataCol) {
-                $column = self::$engine->columnFromData($dataCol);
-                $result[$column['name']] = $column;
-            }
+        foreach ($data as $row) {
+            $column = self::$engine->columnFromData($row);
+            $result[$column['name']] = $column;
         }
 
         return $result;
@@ -267,12 +248,7 @@ class DataBase
      */
     public function getConstraints($tableName, $extended = false)
     {
-        if ($extended) {
-            $sql = self::$engine->getSQL()->sqlConstraintsExtended($tableName);
-        } else {
-            $sql = self::$engine->getSQL()->sqlConstraints($tableName);
-        }
-
+        $sql = $extended ? self::$engine->getSQL()->sqlConstraintsExtended($tableName) : self::$engine->getSQL()->sqlConstraints($tableName);
         $data = $this->select($sql);
         return $data ? array_values($data) : [];
     }
@@ -298,10 +274,8 @@ class DataBase
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
-        if (is_array($data) && !empty($data)) {
-            foreach ($data as $row) {
-                $result[] = ['name' => $row['Key_name']];
-            }
+        foreach ($data as $row) {
+            $result[] = ['name' => $row['Key_name']];
         }
 
         return $result;
@@ -346,12 +320,12 @@ class DataBase
     /**
      * Returns the last ID assigned when doing an INSERT in the database.
      *
-     * @return integer|bool
+     * @return int|bool
      */
     public function lastval()
     {
         $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
-        return $aux ? $aux[0]['num'] : false;
+        return empty($aux) ? false : $aux[0]['num'];
     }
 
     /**
@@ -390,7 +364,7 @@ class DataBase
      *
      * @return array
      */
-    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
+    public function selectLimit($sql, $limit = \FS_ITEM_LIMIT, $offset = 0)
     {
         if (!$this->connected()) {
             return [];
@@ -418,18 +392,6 @@ class DataBase
     }
 
     /**
-     * Returns the SQL needed to convert the column to integer.
-     *
-     * @param string $colName
-     *
-     * @return string
-     */
-    public function sql2Int($colName)
-    {
-        return self::$engine->getSQL()->sql2Int($colName);
-    }
-
-    /**
      * Returns True if the table exists, False otherwise.
      *
      * @param string $tableName
@@ -444,6 +406,16 @@ class DataBase
         }
 
         return in_array($tableName, $list, false);
+    }
+
+    /**
+     * 
+     * @param string $tableName
+     * @param array  $fields
+     */
+    public function updateSequence($tableName, $fields)
+    {
+        self::$engine->updateSequence(self::$link, $tableName, $fields);
     }
 
     /**
@@ -465,12 +437,12 @@ class DataBase
 
         /// If its a date
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date($this->dateStyle(), strtotime($val)) . "'";
+            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
         }
 
         /// It its a date time
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date($this->dateStyle() . ' H:i:s', strtotime($val)) . "'";
+            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";

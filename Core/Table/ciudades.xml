@@ -19,7 +19,6 @@
         <name>idciudad</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('ciudades_idciudad_seq'::regclass)</default>
     </column>
     <column>
         <name>idprovincia</name>

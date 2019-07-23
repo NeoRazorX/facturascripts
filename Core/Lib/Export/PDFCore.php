@@ -278,7 +278,7 @@ class PDFCore
             $this->pdf = new Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
+            $this->pdf->tempPath = \FS_FOLDER . '/MyFiles/Cache';
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
 

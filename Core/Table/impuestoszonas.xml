@@ -27,7 +27,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('impuestoszonas_idimpuestozona_seq'::regclass)</default>
     </column>
     <column>
         <name>prioridad</name>

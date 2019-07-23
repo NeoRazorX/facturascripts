@@ -51,7 +51,7 @@ class IPFilterTest extends TestCase
         $this->object->setAttempt('192.168.1.1');
 
         /// leemos directamente del archivo para ver si hay algo
-        $data = file_get_contents(FS_FOLDER . '/MyFiles/Cache/ip.list');
+        $data = file_get_contents(\FS_FOLDER . '/MyFiles/Cache/ip.list');
         $this->assertNotEmpty($data);
     }
 

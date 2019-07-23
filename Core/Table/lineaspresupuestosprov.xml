@@ -34,7 +34,6 @@
         <name>idlinea</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('lineaspresupuestosprov_idlinea_seq'::regclass)</default>
     </column>
     <column>
         <name>idpresupuesto</name>

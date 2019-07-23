@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Base\DataBase;
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class MysqlSQL implements DataBaseSQL
+class MysqlQueries implements DataBaseQueries
 {
 
     /**
@@ -76,9 +76,9 @@ class MysqlSQL implements DataBaseSQL
      *
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData)
+    public function sqlAlterColumnDefault($tableName, $colData)
     {
-        return ($colData['type'] !== 'serial') ? $this->sqlAlterModifyColumn($tableName, $colData) : '';
+        return $colData['type'] === 'serial' ? '' : $this->sqlAlterModifyColumn($tableName, $colData);
     }
 
     /**
@@ -89,7 +89,7 @@ class MysqlSQL implements DataBaseSQL
      *
      * @return string
      */
-    public function sqlAlterConstraintNull($tableName, $colData)
+    public function sqlAlterColumnNull($tableName, $colData)
     {
         return $this->sqlAlterModifyColumn($tableName, $colData);
     }
@@ -131,12 +131,10 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlConstraints($tableName)
     {
-        $sql = 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
+        return 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
             . ' FROM information_schema.table_constraints '
             . ' WHERE table_schema = schema()'
             . " AND table_name = '" . $tableName . "';";
-
-        return $sql;
     }
 
     /**
@@ -148,7 +146,7 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlConstraintsExtended($tableName)
     {
-        $sql = 'SELECT t1.constraint_name as name,'
+        return 'SELECT t1.constraint_name as name,'
             . ' t1.constraint_type as type,'
             . ' t2.column_name,'
             . ' t2.referenced_table_name AS foreign_table_name,'
@@ -166,8 +164,6 @@ class MysqlSQL implements DataBaseSQL
             . ' WHERE t1.table_schema = SCHEMA()'
             . " AND t1.table_name = '" . $tableName . "'"
             . ' ORDER BY type DESC, name ASC;';
-
-        return $sql;
     }
 
     /**
@@ -188,9 +184,11 @@ class MysqlSQL implements DataBaseSQL
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
+        $charset = defined('FS_MYSQL_CHARSET') ? \FS_MYSQL_CHARSET : 'utf8';
+        $collate = defined('FS_MYSQL_COLLATE') ? \FS_MYSQL_COLLATE : 'utf8_bin';
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
-            . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+            . 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset . ' COLLATE=' . $collate . ';';
     }
 
     /**
@@ -251,18 +249,6 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to check a sequence
-     *
-     * @param string $seqName
-     *
-     * @return string
-     */
-    public function sqlSequenceExists($seqName)
-    {
-        return $seqName;
-    }
-
-    /**
      * Generates the needed SQL to establish the given constraints
      *
      * @param array $xmlCons
@@ -290,7 +276,6 @@ class MysqlSQL implements DataBaseSQL
     {
         $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
         $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
-
         return str_replace($search, $replace, $sql);
     }
 
@@ -328,18 +313,12 @@ class MysqlSQL implements DataBaseSQL
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['type']) === false ? strtolower($colData['type']) : FS_DB_INTEGER;
-        switch (true) {
-            case $type === 'serial':
-            case stripos($colData['default'], 'nextval(') !== false:
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
+        switch ($colData['type']) {
+            case 'serial':
+                return ' INTEGER NOT NULL AUTO_INCREMENT';
 
             default:
-                $contraints = $this->getConstraints($colData);
-                break;
+                return ' ' . $colData['type'] . $this->getConstraints($colData);
         }
-
-        return ' ' . $type . $contraints;
     }
 }

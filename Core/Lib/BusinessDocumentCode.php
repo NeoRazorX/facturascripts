@@ -71,7 +71,7 @@ class BusinessDocumentCode
         }
 
         /// find maximum number for this sequence data
-        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
+        $order = strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         foreach ($document->all($where, $order, 0, 1) as $lastDoc) {
             $lastNumber = (int) $lastDoc->numero;
             if ($lastNumber >= $sequence->numero) {

@@ -220,7 +220,7 @@ class ListView extends BaseView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = \FS_ITEM_LIMIT)
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
@@ -299,7 +299,7 @@ class ListView extends BaseView
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
-            $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'LIKE');
+            $this->where[] = new DataBaseWhere($fields, Utils::noHtml($this->query), 'XLIKE');
         }
 
         /// select saved filter
@@ -369,7 +369,7 @@ class ListView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
+        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
     }
 
     /**

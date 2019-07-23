@@ -101,7 +101,7 @@ abstract class BankAccount extends ModelClass
      *
      * @param string $iban
      *
-     * @return boolean
+     * @return bool
      */
     public function verificarIBAN(string $iban)
     {
@@ -145,7 +145,7 @@ abstract class BankAccount extends ModelClass
     /**
      * Check the reported bank details.
      *
-     * @return boolean
+     * @return bool
      */
     protected function testBankAccount()
     {

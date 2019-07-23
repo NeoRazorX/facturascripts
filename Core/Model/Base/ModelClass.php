@@ -53,18 +53,14 @@ abstract class ModelClass extends ModelCore
      * @param int   $offset
      * @param int   $limit
      *
-     * @return self[]
+     * @return static[]
      */
     public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
     {
         $modelList = [];
         $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . $this->getOrderBy($order);
-        $data = self::$dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            $class = $this->modelName();
-            foreach ($data as $d) {
-                $modelList[] = new $class($d);
-            }
+        foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
+            $modelList[] = new static($row);
         }
 
         return $modelList;
@@ -80,10 +76,10 @@ abstract class ModelClass extends ModelCore
     public function codeModelAll(string $fieldCode = '')
     {
         $results = [];
-        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
+        $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
-            . 'FROM ' . $this->tableName() . ' ORDER BY 2 ASC';
+            . 'FROM ' . static::tableName() . ' ORDER BY 2 ASC';
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
             $results[] = new CodeModel($d);
         }
@@ -101,10 +97,10 @@ abstract class ModelClass extends ModelCore
      */
     public function codeModelSearch(string $query, string $fieldCode = '')
     {
-        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
+        $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
         $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
-        return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
+        return CodeModel::all(static::tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**
@@ -157,17 +153,12 @@ abstract class ModelClass extends ModelCore
      *
      * @param string $code
      *
-     * @return self|false
+     * @return static|false
      */
     public function get($code)
     {
         $data = $this->getRecord($code);
-        if (empty($data)) {
-            return false;
-        }
-
-        $class = $this->modelName();
-        return new $class($data[0]);
+        return empty($data) ? false : new static($data[0]);
     }
 
     /**
@@ -208,7 +199,7 @@ abstract class ModelClass extends ModelCore
     {
         /// if not field value take PK Field
         if (empty($field)) {
-            $field = $this->primaryColumn();
+            $field = static::primaryColumn();
         }
 
         /// get fields list
@@ -218,7 +209,7 @@ abstract class ModelClass extends ModelCore
         if (!in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
             /// Set Where to Integers values only
             $where[] = new DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
-            $field = self::$dataBase->sql2Int($field);
+            $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
         }
 
         /// Search for new code value
@@ -236,7 +227,7 @@ abstract class ModelClass extends ModelCore
     public function primaryDescriptionColumn()
     {
         $fields = $this->getModelFields();
-        return isset($fields['descripcion']) ? 'descripcion' : $this->primaryColumn();
+        return isset($fields['descripcion']) ? 'descripcion' : static::primaryColumn();
     }
 
     /**
@@ -283,8 +274,8 @@ abstract class ModelClass extends ModelCore
 
         $return = true;
         foreach ($fields as $key => $value) {
-            if ($key == $this->primaryColumn()) {
-                continue;
+            if ($key == static::primaryColumn()) {
+                $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
                 self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
                 $return = false;
@@ -345,11 +336,12 @@ abstract class ModelClass extends ModelCore
             }
         }
 
-        $sql = 'INSERT INTO ' . static::tableName()
-            . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
+        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
         if (self::$dataBase->exec($sql)) {
             if ($this->primaryColumnValue() === null) {
                 $this->{static::primaryColumn()} = self::$dataBase->lastval();
+            } else {
+                self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
             }
 
             EventManager::trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);
@@ -376,7 +368,7 @@ abstract class ModelClass extends ModelCore
         $coma = ' SET';
 
         foreach ($this->getModelFields() as $field) {
-            if ($field['name'] !== $this->primaryColumn()) {
+            if ($field['name'] !== static::primaryColumn()) {
                 $fieldName = $field['name'];
                 $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
                 $sql .= $coma . ' ' . $fieldName . ' = ' . self::$dataBase->var2str($fieldValue);

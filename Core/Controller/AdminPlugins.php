@@ -107,7 +107,7 @@ class AdminPlugins extends Base\Controller
         }
 
         /// exclude hidden plugins
-        $hiddenPlugins = \explode(',', FS_HIDDEN_PLUGINS);
+        $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
         foreach ($installedPlugins as $key => $plugin) {
             if (\in_array($plugin['name'], $hiddenPlugins, false)) {
                 unset($installedPlugins[$key]);

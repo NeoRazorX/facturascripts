@@ -74,7 +74,6 @@
         <name>idcontacto</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('contactos_idcontacto_seq'::regclass)</default>
     </column>
     <column>
         <name>lastactivity</name>

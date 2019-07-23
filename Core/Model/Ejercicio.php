@@ -324,7 +324,7 @@ class Ejercicio extends Base\ModelClass
 
         /// for non-default companies we try to use range from 0001 to 9999
         if ($this->idempresa != AppSettings::get('default', 'idempresa')) {
-            $new = new self();
+            $new = new static();
             for ($num = 1; $num < 1000; $num++) {
                 $code = sprintf('%04s', (int) $num);
                 if (!$new->loadFromCode($code)) {
@@ -353,7 +353,9 @@ class Ejercicio extends Base\ModelClass
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
-                self::$miniLog->alert(self::$i18n->trans('exercise-date-range-exists'));
+                self::$miniLog->alert(
+                    self::$i18n->trans('exercise-date-range-exists', ['%start%' => $this->fechainicio, '%end%' => $this->fechafin])
+                );
                 return false;
             }
         }

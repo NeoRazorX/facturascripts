@@ -80,12 +80,12 @@ class AssetManager
         $txt = '';
         foreach (static::get($type) as $file) {
             $filePath = $file;
-            if (FS_ROUTE == substr($file, 0, strlen(FS_ROUTE))) {
-                $filePath = substr($file, strlen(FS_ROUTE) + 1);
+            if (\FS_ROUTE == substr($file, 0, strlen(\FS_ROUTE))) {
+                $filePath = substr($file, strlen(\FS_ROUTE) + 1);
             }
 
-            $content = file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
-            $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $filePath);
+            $content = file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
+            $txt .= static::fixCombineContent($content, \FS_ROUTE . DIRECTORY_SEPARATOR . $filePath);
         }
 
         return $txt;
@@ -132,14 +132,14 @@ class AssetManager
 
         /// find js file with $name name
         $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        if (file_exists(FS_FOLDER . $jsFile)) {
-            self::add('js', FS_ROUTE . $jsFile, 0);
+        if (file_exists(\FS_FOLDER . $jsFile)) {
+            self::add('js', \FS_ROUTE . $jsFile, 0);
         }
 
         /// find css file with $name name
         $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
-        if (file_exists(FS_FOLDER . $cssFile)) {
-            self::add('css', FS_ROUTE . $cssFile, 0);
+        if (file_exists(\FS_FOLDER . $cssFile)) {
+            self::add('css', \FS_ROUTE . $cssFile, 0);
         }
     }
 

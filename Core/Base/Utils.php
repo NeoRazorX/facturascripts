@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@ class Utils
      */
     public static function bin2str($val)
     {
-        return ($val === null) ? 'NULL' : "'" . base64_encode($val) . "'";
+        return $val === null ? 'NULL' : "'" . base64_encode($val) . "'";
     }
 
     /**
@@ -98,7 +98,7 @@ class Utils
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
         $final = ['<', '>', '"', "'"];
 
-        return ($txt === null) ? null : trim(str_replace($original, $final, $txt));
+        return $txt === null ? null : trim(str_replace($original, $final, $txt));
     }
 
     /**
@@ -127,11 +127,11 @@ class Utils
      *
      * @param string $str
      *
-     * @return integer
+     * @return int
      */
     public static function intval($str)
     {
-        return ($str === null) ? null : (int) $str;
+        return $str === null ? null : (int) $str;
     }
 
     /**
@@ -154,7 +154,7 @@ class Utils
             ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
         );
 
-        return ($txt === null) ? null : trim($newt);
+        return $txt === null ? null : trim($newt);
     }
 
     /**
@@ -179,7 +179,7 @@ class Utils
      */
     public static function str2bin($val)
     {
-        return ($val === null) ? null : base64_decode($val);
+        return $val === null ? null : base64_decode($val);
     }
 
     /**

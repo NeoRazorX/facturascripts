@@ -45,7 +45,6 @@
         <name>idregiva</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('regularizacionimpuestos_idregiva_seq'::regclass)</default>
     </column>
     <column>
         <name>idsubcuentaacr</name>

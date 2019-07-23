@@ -141,7 +141,7 @@ trait InvoiceTrait
 
     /**
      * 
-     * @return self[]
+     * @return static[]
      */
     public function getRefunds()
     {

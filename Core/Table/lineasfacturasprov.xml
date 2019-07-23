@@ -43,7 +43,6 @@
         <name>idlinea</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('lineasfacturasprov_idlinea_seq'::regclass)</default>
     </column>
     <column>
         <name>idproducto</name>
