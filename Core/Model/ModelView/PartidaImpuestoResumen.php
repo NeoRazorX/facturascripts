@@ -25,6 +25,13 @@ use FacturaScripts\Core\Model\Base\ModelView;
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * 
+ * @property float $baseimponible
+ * @property float $cuotaiva
+ * @property float $cuotarecargo
+ * @property float $iva
+ * @property float $recargo
+ * @property float $total
  */
 class PartidaImpuestoResumen extends ModelView
 {
@@ -49,14 +56,14 @@ class PartidaImpuestoResumen extends ModelView
     protected function getFields(): array
     {
         return [
-            'codejercicio' => 'asientos.codejercicio',
+            'baseimponible' => 'SUM(partidas.baseimponible)',
             'codcuentaesp' => 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)',
+            'codejercicio' => 'asientos.codejercicio',
+            'codsubcuenta' => 'partidas.codsubcuenta',
             'descripcion' => 'cuentasesp.descripcion',
             'idsubcuenta' => 'partidas.idsubcuenta',
-            'codsubcuenta' => 'partidas.codsubcuenta',
             'iva' => 'partidas.iva',
             'recargo' => 'partidas.recargo',
-            'baseimponible' => 'SUM(partidas.baseimponible)'
         ];
     }
 
@@ -110,7 +117,6 @@ class PartidaImpuestoResumen extends ModelView
     protected function loadFromData($data)
     {
         parent::loadFromData($data);
-
         $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
         $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
         $this->total = $this->baseimponible + $this->cuotaiva + $this->cuotarecargo;

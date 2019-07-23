@@ -37,9 +37,10 @@ use FacturaScripts\Dinamic\Model\SubcuentaSaldo;
  */
 class AccountingEntryTools
 {
-    private const TYPE_TAX_NONE = 0;
-    private const TYPE_TAX_INPUT = 1;
-    private const TYPE_TAX_OUTPUT = 2;
+
+    const TYPE_TAX_NONE = 0;
+    const TYPE_TAX_INPUT = 1;
+    const TYPE_TAX_OUTPUT = 2;
 
     /**
      *
@@ -54,7 +55,7 @@ class AccountingEntryTools
     {
         $this->subAccountTools = new SubAccountTools();
     }
-    
+
     /**
      * Load data and balances from subaccount
      *
@@ -84,7 +85,7 @@ class AccountingEntryTools
 
         $subAccount = new Subcuenta();
         if ($subAccount->loadFromCode(null, $where)) {
-            $result['description'] = $subAccount->descripcion;  
+            $result['description'] = $subAccount->descripcion;
             $result['specialaccount'] = $subAccount->getSpecialAccountCode();
             $result['hasvat'] = $this->subAccountTools->hasTax($result['specialaccount']);
 
@@ -110,7 +111,7 @@ class AccountingEntryTools
             'total' => 0.00,
             'unbalance' => 0.00,
             'lines' => [],
-            'subaccount' => [],            
+            'subaccount' => [],
             'vat' => []
         ];
 
@@ -271,18 +272,18 @@ class AccountingEntryTools
         if (empty($specialAccount)) {
             return self::TYPE_TAX_NONE;
         }
-        
+
         if ($this->subAccountTools->isInputTax($specialAccount)) {
             return self::TYPE_TAX_INPUT;
         }
-        
+
         if ($this->subAccountTools->isOutputTax($specialAccount)) {
             return self::TYPE_TAX_OUTPUT;
         }
-        
+
         return self::TYPE_TAX_NONE;
     }
-    
+
     /**
      * Calculate Vat Register data
      *
@@ -304,14 +305,12 @@ class AccountingEntryTools
             $line['recargo'] = null;
             return [];
         }
-        
+
         $vatModel = new Impuesto();
-        $vat = $typeVat == self::TYPE_TAX_INPUT 
-            ? $vatModel->inputVatFromSubAccount($line['codsubcuenta'])
-            : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
-            
+        $vat = $typeVat == self::TYPE_TAX_INPUT ? $vatModel->inputVatFromSubAccount($line['codsubcuenta']) : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
+
         $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
-        
+
         $line['documento'] = $document['documento'];
         $line['cifnif'] = $result['id'];
         $line['iva'] = $vat->iva;
