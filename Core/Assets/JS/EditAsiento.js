@@ -244,12 +244,12 @@ function customAfterChange(changes) {
  * Document Ready. Create and configure Objects.
  */
 $(document).ready(function () {
-    if (document.querySelector("#document-lines")) {
+    if (document.getElementById("document-lines")) {
         // Init Working variables
         mainForm = $("#formGridEditAsiento");
-        accountDescription = document.querySelector("#account-description");        
-        accountBalance = document.querySelector("#account-balance");
-        unbalance = document.querySelector("#unbalance");
+        accountDescription = document.getElementById("account-description");        
+        accountBalance = document.getElementById("account-balance");
+        unbalance = document.getElementById("unbalance");
         total = $("#formGridEditAsiento input[name=importe]");
         vatRegister = $("#vat-register-btn");
         vatRegister.prop("disabled", true);
@@ -266,7 +266,7 @@ $(document).ready(function () {
         addEvent("afterSelection", customAfterSelection);
 
         // Graphic bars
-        var ctx = document.querySelector("#detail-balance");
+        var ctx = document.getElementById("detail-balance");
         if (ctx) {
             ctx = ctx.getContext("2d");
             accountGraph = new Chart(ctx, {

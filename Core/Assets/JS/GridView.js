@@ -226,7 +226,7 @@ function eventBeforeChange(changes, source) {
  * @returns {Boolean}
  */
 function saveDocument(mainFormName) {
-    var submitButton = document.querySelector("#save-document");
+    var submitButton = document.getElementById("save-document");
     submitButton.disabled = true;
     try {
         var data = {
@@ -265,7 +265,7 @@ function saveDocument(mainFormName) {
  */
 $(document).ready(function () {
     // Grid Data
-    var container = document.querySelector('#document-lines');
+    var container = document.getElementById('document-lines');
     if (container) {
         // Prepare autocomplete columns
         configureAutocompleteColumns(documentLineData["columns"]);
