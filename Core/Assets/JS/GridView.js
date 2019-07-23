@@ -265,7 +265,7 @@ function saveDocument(mainFormName) {
  */
 $(document).ready(function () {
     // Grid Data
-    var container = document.getElementById("document-lines");
+    var container = document.getElementById('document-lines');
     if (container) {
         // Prepare autocomplete columns
         configureAutocompleteColumns(documentLineData["columns"]);
