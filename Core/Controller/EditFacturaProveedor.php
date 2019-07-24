@@ -92,10 +92,10 @@ class EditFacturaProveedor extends PurchaseDocumentController
 
         /// buttons
         $generateButton = [
-            'action' => 'generate-accounting',
+            'action' => 'generate-receipts',
             'confirm' => 'true',
             'icon' => 'fas fa-magic',
-            'label' => 'generate-accounting-entry',
+            'label' => 'generate-receipts',
             'type' => 'action',
         ];
         $this->addButton($viewName, $generateButton);

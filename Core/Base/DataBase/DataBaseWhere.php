@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Structure that defines a WHERE condition to filter the model data
@@ -80,6 +79,13 @@ class DataBaseWhere
         $this->operation = $operation;
         $this->operator = $operator;
         $this->value = $value;
+
+        /// check restrictions with null values
+        if (null === $value && $operator === '=') {
+            $this->operator = 'IS';
+        } elseif (null === $value && $operator === '!=') {
+            $this->operator = 'IS NOT';
+        }
     }
 
     /**

@@ -166,6 +166,15 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      * 
+     * @param string $date
+     */
+    public function setExpiration($date)
+    {
+        $this->vencimiento = $date;
+    }
+
+    /**
+     * 
      * @param string $codpago
      */
     public function setPaymentMethod($codpago)
@@ -174,7 +183,7 @@ abstract class Receipt extends ModelOnChangeClass
         if ($formaPago->loadFromCode($codpago)) {
             $this->codpago = $codpago;
             $this->pagado = $formaPago->pagado;
-            $this->vencimiento = $formaPago->getExpiration($this->fecha);
+            $this->setExpiration($formaPago->getExpiration($this->fecha));
         }
     }
 

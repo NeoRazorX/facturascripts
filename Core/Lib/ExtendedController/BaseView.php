@@ -268,27 +268,6 @@ abstract class BaseView
     }
 
     /**
-     * Gets the column by the column name from source group
-     *
-     * @param string $columnName
-     * @param array  $source
-     *
-     * @return ColumnItem
-     */
-    public function getColumnForName(string $columnName, &$source)
-    {
-        foreach ($source as $group) {
-            foreach ($group->columns as $key => $column) {
-                if ($key === $columnName) {
-                    return $column;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Returns the column configuration
      *
      * @return GroupItem[]
@@ -413,6 +392,27 @@ abstract class BaseView
     protected function assets()
     {
         ;
+    }
+
+    /**
+     * Gets the column by the column name from source group
+     *
+     * @param string $columnName
+     * @param array  $source
+     *
+     * @return ColumnItem
+     */
+    protected function getColumnForName(string $columnName, &$source)
+    {
+        foreach ($source as $group) {
+            foreach ($group->columns as $key => $column) {
+                if ($key === $columnName) {
+                    return $column;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
