@@ -71,13 +71,27 @@ class Atributo extends Base\ModelClass
      */
     public function test()
     {
-        $this->codatributo = empty($this->codatributo) ? (string) $this->newCode() : trim($this->codatributo);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
+        if (!empty($this->codatributo) && !preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
             self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']));
             return false;
         }
 
         $this->nombre = Utils::noHtml($this->nombre);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codatributo)) {
+            $this->codatributo = (string) $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

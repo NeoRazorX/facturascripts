@@ -74,9 +74,10 @@ class Role extends Base\ModelClass
      */
     public function test()
     {
-        $this->codrole = empty($this->codrole) ? (string) $this->newCode() : trim($this->codrole);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codrole, '%column%' => 'codrole', '%min%' => '1', '%max%' => '20']));
+        if (!empty($this->codrole) && !preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
+            self::$miniLog->alert(
+                self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codrole, '%column%' => 'codrole', '%min%' => '1', '%max%' => '20'])
+            );
             return false;
         }
 
@@ -95,5 +96,20 @@ class Role extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListUser?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codrole)) {
+            $this->codrole = (string) $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

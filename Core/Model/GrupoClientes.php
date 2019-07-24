@@ -110,9 +110,10 @@ class GrupoClientes extends Base\ModelClass
      */
     public function test()
     {
-        $this->codgrupo = empty($this->codgrupo) ? (string) $this->newCode() : trim($this->codgrupo);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6']));
+        if (!empty($this->codgrupo) && !preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
+            self::$miniLog->alert(
+                self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6'])
+            );
             return false;
         }
 
@@ -131,5 +132,20 @@ class GrupoClientes extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codgrupo)) {
+            $this->codgrupo = (string) $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

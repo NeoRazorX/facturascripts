@@ -216,10 +216,6 @@ class Empresa extends Base\Contact
         $this->provincia = Utils::noHtml($this->provincia);
         $this->web = Utils::noHtml($this->web);
 
-        if (empty($this->idempresa)) {
-            $this->idempresa = $this->newCode();
-        }
-
         return parent::test();
     }
 
@@ -256,6 +252,10 @@ class Empresa extends Base\Contact
      */
     protected function saveInsert(array $values = [])
     {
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->newCode();
+        }
+
         if (parent::saveInsert($values)) {
             $this->createPaymentMethods();
             $this->createWarehouse();
