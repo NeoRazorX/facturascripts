@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * A bank account of the company itself.
  *
@@ -48,6 +50,18 @@ class CuentaBanco extends Base\BankAccount
     public $idempresa;
 
     /**
+     *
+     * @var string
+     */
+    public $sufijosepa;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->sufijosepa = '000';
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -63,16 +77,6 @@ class CuentaBanco extends Base\BankAccount
     }
 
     /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
-    {
-        return 'codcuenta';
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -80,6 +84,16 @@ class CuentaBanco extends Base\BankAccount
     public static function tableName()
     {
         return 'cuentasbanco';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        $this->sufijosepa = Utils::noHtml($this->sufijosepa);
+        return parent::test();
     }
 
     /**

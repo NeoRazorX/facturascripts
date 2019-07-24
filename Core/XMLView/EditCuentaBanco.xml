@@ -22,8 +22,8 @@
 <view>
     <columns>
         <group name="bankaccount" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
+            <column name="code" display="none" order="100">
+                <widget type="text" fieldname="codcuenta"/>
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
@@ -32,23 +32,26 @@
                 <widget type="text" fieldname="swift"/>
             </column>
             <column name="iban" order="130">
-                <widget type="text" fieldname="iban" />
+                <widget type="text" fieldname="iban" maxlength="34" />
             </column>
         </group>
         <group name="extra" numcolumns="12">
-            <column name="company" numcolumns="2" order="100">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-                </widget>
+            <column name="sepa-suffix" numcolumns="2" order="100">
+                <widget type="text" fieldname="sufijosepa" maxlength="3" />
             </column>
-            <column name="subaccount" numcolumns="5" order="120">
+            <column name="subaccount" order="110">
                 <widget type="autocomplete" fieldname="codsubcuenta">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="expense-subaccount" numcolumns="5" order="130">
+            <column name="expense-subaccount" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentagasto">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="company" numcolumns="2" order="130">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
         </group>

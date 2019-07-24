@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,16 +24,18 @@ use FacturaScripts\Core\Base\Utils;
  * This class groups the data and bank calculation methods
  * for a generic use.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class BankAccount extends ModelClass
 {
 
+    const GROUP_LENGTH = 4;
+
     /**
      * Primary key. Varchar(10).
      *
-     * @var int
+     * @var string
      */
     public $codcuenta;
 
@@ -43,6 +45,12 @@ abstract class BankAccount extends ModelClass
      * @var string
      */
     public $descripcion;
+
+    /**
+     *
+     * @var bool
+     */
+    private $disableIbanTest = false;
 
     /**
      * Bank account international format.
@@ -61,23 +69,37 @@ abstract class BankAccount extends ModelClass
     /**
      * Returns the IBAN with or without spaces.
      *
-     * @param bool $espacios
+     * @param bool $spaced
      *
      * @return string
      */
-    public function getIban(bool $espacios = false)
+    public function getIban(bool $spaced = false)
     {
         $iban = str_replace(' ', '', $this->iban);
-        if ($espacios) {
-            $txt = '';
-            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
-                $txt .= substr($iban, $i, 4) . ' ';
-            }
-
-            return $txt;
+        $groups = [];
+        for ($num = 0; $num < strlen($iban); $num += self::GROUP_LENGTH) {
+            $groups[] = substr($iban, $num, self::GROUP_LENGTH);
         }
 
-        return $iban;
+        return $spaced ? implode(' ', $groups) : $iban;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codcuenta';
+    }
+
+    /**
+     * 
+     * @param bool $value
+     */
+    public function setDisableIbanTest($value)
+    {
+        $this->disableIbanTest = $value;
     }
 
     /**
@@ -87,13 +109,16 @@ abstract class BankAccount extends ModelClass
      */
     public function test()
     {
-        $this->descripcion = Utils::noHtml($this->descripcion);
-
-        if (!$this->testBankAccount()) {
-            self::$miniLog->warning(self::$i18n->trans('error-incorrect-bank-details'));
+        if (!empty($this->codcuenta) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcuenta)) {
+            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcuenta, '%column%' => 'codcuenta', '%min%' => '1', '%max%' => '10']));
+            return false;
         }
 
-        return parent::test();
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->iban = Utils::noHtml($this->iban);
+        $this->swift = Utils::noHtml($this->swift);
+
+        return parent::test() && $this->testBankAccount();
     }
 
     /**
@@ -103,7 +128,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    public function verificarIBAN(string $iban)
+    public function verifyIBAN(string $iban)
     {
         if (strlen($iban) != 24) {
             return false;
@@ -111,8 +136,7 @@ abstract class BankAccount extends ModelClass
 
         $codpais = substr($iban, 0, 2);
         $ccc = substr($iban, -20);
-
-        return $iban == $this->calcularIBAN($ccc, $codpais);
+        return $iban == $this->calculateIBAN($ccc, $codpais);
     }
 
     /**
@@ -123,7 +147,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return string
      */
-    private function calcularIBAN(string $ccc, string $codpais = '')
+    private function calculateIBAN(string $ccc, string $codpais = '')
     {
         $pais = substr($codpais, 0, 2);
         $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
@@ -134,12 +158,26 @@ abstract class BankAccount extends ModelClass
 
         $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
         $digitoControl = 98 - \bcmod($dividendo, '97');
-
         if (strlen($digitoControl) === 1) {
             $digitoControl = '0' . $digitoControl;
         }
 
         return $pais . $digitoControl . $ccc;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codcuenta)) {
+            $this->codcuenta = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 
     /**
@@ -149,6 +187,11 @@ abstract class BankAccount extends ModelClass
      */
     protected function testBankAccount()
     {
-        return empty($this->iban) || $this->verificarIBAN($this->iban);
+        if (empty($this->iban) || $this->disableIbanTest || $this->verifyIBAN($this->getIban())) {
+            return true;
+        }
+
+        self::$miniLog->alert(self::$i18n->trans('invalid-iban'));
+        return false;
     }
 }
