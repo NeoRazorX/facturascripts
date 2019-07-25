@@ -221,8 +221,7 @@ class PluginDeploy
         $txt = '<?php namespace ' . $newNamespace . ";\n\n"
             . '/**' . "\n"
             . ' * Class created by Core/Base/PluginManager' . "\n"
-            . ' * @package ' . $newNamespace . "\n"
-            . ' * @author Carlos García Gómez <carlos@facturascripts.com>' . "\n"
+            . ' * @author FacturaScripts <carlos@facturascripts.com>' . "\n"
             . ' */' . "\n"
             . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
 

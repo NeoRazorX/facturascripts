@@ -239,5 +239,10 @@ class AdminPlugins extends Base\Controller
             $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
             unlink($uploadFile->getPathname());
         }
+
+        if ($this->pluginManager->deploymentRequired()) {
+            $this->miniLog->notice($this->i18n->trans('reloading'));
+            $this->redirect($this->url(), 3);
+        }
     }
 }

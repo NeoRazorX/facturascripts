@@ -19,9 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Class to manage the actions with folders and files
- *
- * @package FacturaScripts\Core\Base
+ * Class to manage the actions with folders and files.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>

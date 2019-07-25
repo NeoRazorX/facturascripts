@@ -23,9 +23,7 @@ use FacturaScripts\Core\Base\Cache\FileCache;
 use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
 
 /**
- * Class Cache
- *
- * @package FacturaScripts\Core\Base
+ * Cache management class.
  */
 class Cache
 {

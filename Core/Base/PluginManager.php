@@ -23,8 +23,6 @@ use ZipArchive;
 /**
  * FacturaScripts plugins manager.
  *
- * @package FacturaScripts\Core\Base
- *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PluginManager
@@ -44,6 +42,13 @@ class PluginManager
      * Plugin path folder.
      */
     const PLUGIN_PATH = \FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR;
+
+    /**
+     * Indicates if a deployment is necessary.
+     *
+     * @var bool
+     */
+    private static $deploymentRequired = false;
 
     /**
      * List of active plugins.
@@ -104,9 +109,20 @@ class PluginManager
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function deploymentRequired()
+    {
+        return self::$deploymentRequired;
+    }
+
+    /**
      * Disable the indicated plugin.
      *
      * @param string $pluginName
+     *
+     * @return bool
      */
     public function disable(string $pluginName)
     {
@@ -120,22 +136,24 @@ class PluginManager
             $this->save();
             $this->deploy(true, true);
             self::$minilog->notice(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
-            break;
+            return true;
         }
+
+        return false;
     }
 
     /**
      * Activate the indicated plugin.
      *
      * @param string $pluginName
+     *
+     * @return bool
      */
     public function enable(string $pluginName)
     {
         /// is pluginName enabled?
-        foreach (self::$enabledPlugins as $value) {
-            if ($value['name'] === $pluginName) {
-                return;
-            }
+        if (in_array($pluginName, $this->enabledPlugins())) {
+            return true;
         }
 
         foreach ($this->installedPlugins() as $plugin) {
@@ -149,9 +167,11 @@ class PluginManager
                 $this->deploy(false, true);
                 $this->initPlugin($pluginName);
                 self::$minilog->notice(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+                return true;
             }
-            break;
         }
+
+        return false;
     }
 
     /**
@@ -193,7 +213,7 @@ class PluginManager
         /// get facturascripts.ini on plugin zip
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR);
         if (false === $zipIndex) {
-            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName]));
+            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]));
             return false;
         }
 
@@ -203,7 +223,11 @@ class PluginManager
         /// get plugin information
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
         if (!$info['compatible']) {
-            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName]));
+            self::$minilog->error(
+                self::$i18n->trans(
+                    'plugin-needs-fs-version', ['%pluginName%' => $zipName, '%minVersion%' => $info['min_version'], '%version%' => self::CORE_VERSION]
+                )
+            );
             return false;
         }
 
@@ -219,6 +243,11 @@ class PluginManager
         /// Rename folder Plugin
         if ($folderPluginZip[0] !== $info['name']) {
             rename(self::PLUGIN_PATH . $folderPluginZip[0], self::PLUGIN_PATH . $info['name']);
+        }
+
+        /// Deployment required?
+        if (in_array($info['name'], $this->enabledPlugins())) {
+            self::$deploymentRequired = true;
         }
 
         self::$minilog->notice(self::$i18n->trans('plugin-installed', ['%pluginName%' => $info['name']]));
@@ -257,7 +286,7 @@ class PluginManager
         }
 
         /// can't remove enabled plugins
-        if (in_array($pluginName, self::$enabledPlugins)) {
+        if (in_array($pluginName, $this->enabledPlugins())) {
             self::$minilog->error(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
             return false;
         }
