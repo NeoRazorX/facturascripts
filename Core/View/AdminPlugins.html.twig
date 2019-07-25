@@ -40,14 +40,12 @@
                         </a>
                     {% endif %}
                 </div>
-                {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-                    <div class="btn-group d-xs-none">
-                        <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
-                            <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">{{ i18n.trans('add') }}</span>
-                        </button>
-                    </div>
-                {% endif %}
+                <div class="btn-group d-xs-none">
+                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
+                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">{{ i18n.trans('add') }}</span>
+                    </button>
+                </div>
             </div>
             <div class="col text-right">
                 <h1 class="h3">
@@ -86,35 +84,33 @@
         </div>
     </div>
 
-    {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-        {# Modal for add new plugins #}
-        <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
-            <input type="hidden" name="action" value="upload" />
-            <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+    {# Modal for add new plugins #}
+    <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="upload" />
+        <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
+                            <input type="file" name="plugin[]" multiple="" accept="application/zip" required=""/>
+                            <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
-                                <input type="file" name="plugin[]" multiple="" accept="application/zip"/>
-                                <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
-                            <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
                     </div>
                 </div>
             </div>
-        </form>
-    {% endif %}
+        </div>
+    </form>
 {% endblock %}
 
 {% block javascripts %}

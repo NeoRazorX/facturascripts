@@ -200,6 +200,7 @@ class PluginManager
     public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
     {
         if (FS_DISABLE_ADD_PLUGINS) {
+            self::$minilog->alert(self::$i18n->trans('plugin-installation-disabled'));
             return false;
         }
 
@@ -282,6 +283,7 @@ class PluginManager
     public function remove(string $pluginName): bool
     {
         if (FS_DISABLE_RM_PLUGINS) {
+            self::$minilog->error(self::$i18n->trans('plugin-removal-disabled'));
             return false;
         }
 
