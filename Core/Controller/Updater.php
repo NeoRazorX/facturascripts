@@ -40,7 +40,14 @@ class Updater extends Controller
 {
 
     const CORE_PROJECT_ID = 1;
+    const CORE_ZIP_FOLDER = 'facturascripts';
     const UPDATE_CORE_URL = 'https://www.facturascripts.com/DownloadBuild';
+
+    /**
+     *
+     * @var PluginManager
+     */
+    private $pluginManager;
 
     /**
      *
@@ -68,7 +75,7 @@ class Updater extends Controller
      * 
      * @return float
      */
-    public function getVersion()
+    public function getCoreVersion()
     {
         return PluginManager::CORE_VERSION;
     }
@@ -82,6 +89,7 @@ class Updater extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->pluginManager = new PluginManager();
 
         /// Folders writables?
         $folders = FileManager::notWritableFolders();
@@ -142,9 +150,9 @@ class Updater extends Controller
 
             case 'update':
                 if ($this->update()) {
-                    $pluginManager = new PluginManager();
-                    $pluginManager->deploy(true, true);
-                    $this->redirect($this->getClassName() . '?action=post-update');
+                    $this->pluginManager->deploy(true, true);
+                    $this->miniLog->notice($this->i18n->trans('reloading'));
+                    $this->redirect($this->getClassName() . '?action=post-update', 3);
                 }
                 break;
 
@@ -154,6 +162,10 @@ class Updater extends Controller
         }
     }
 
+    /**
+     * 
+     * @return array
+     */
     private function getUpdateItems(): array
     {
         $cacheData = $this->cache->get('UPDATE_ITEMS');
@@ -171,25 +183,64 @@ class Updater extends Controller
         foreach ($json as $projectData) {
             if ($projectData['project'] === self::CORE_PROJECT_ID) {
                 $this->getUpdateItemsCore($items, $projectData);
+                continue;
             }
+
+            $this->getUpdateItemsPlugin($items, $projectData);
         }
 
         $this->cache->set('UPDATE_ITEMS', $items);
         return $items;
     }
 
+    /**
+     * 
+     * @param array $items
+     * @param array $projectData
+     */
     private function getUpdateItemsCore(array &$items, array $projectData)
     {
         foreach ($projectData['builds'] as $build) {
-            if ($build['stable'] && $build['version'] > PluginManager::CORE_VERSION) {
+            if ($build['stable'] && $build['version'] > $this->getCoreVersion()) {
+                $fileName = 'update-' . $projectData['project'] . '.zip';
                 $items[] = [
-                    'id' => 'CORE',
-                    'description' => 'Core component v' . $build['version'],
-                    'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip'),
-                    'filename' => 'update-core.zip',
+                    'id' => $projectData['project'],
+                    'name' => $projectData['name'],
+                    'description' => $this->i18n->trans('core-update', ['%version%' => $build['version']]),
+                    'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
+                    'filename' => $fileName,
                     'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version']
                 ];
                 break;
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param array $items
+     * @param array $pluginUpdate
+     */
+    private function getUpdateItemsPlugin(array &$items, array $pluginUpdate)
+    {
+        foreach ($this->pluginManager->installedPlugins() as $installed) {
+            if ($pluginUpdate['name'] != $installed['name']) {
+                continue;
+            }
+
+            foreach ($pluginUpdate['builds'] as $build) {
+                if ($build['stable'] && $build['version'] > $installed['version']) {
+                    $fileName = 'update-' . $pluginUpdate['project'] . '.zip';
+                    $items[] = [
+                        'id' => $pluginUpdate['project'],
+                        'name' => $pluginUpdate['name'],
+                        'description' => $this->i18n->trans('plugin-update', ['%pluginName%' => $pluginUpdate['name'], '%version%' => $build['version']]),
+                        'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
+                        'filename' => $fileName,
+                        'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version']
+                    ];
+                    break;
+                }
             }
         }
     }
@@ -209,19 +260,42 @@ class Updater extends Controller
      */
     private function update(): bool
     {
+        $idItem = $this->request->get('item', '');
+        $fileName = 'update-' . $idItem . '.zip';
+
         $zip = new ZipArchive();
-        $zipStatus = $zip->open(\FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip', ZipArchive::CHECKCONS);
+        $zipStatus = $zip->open(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName, ZipArchive::CHECKCONS);
         if ($zipStatus !== true) {
             $this->miniLog->critical('ZIP ERROR: ' . $zipStatus);
             return false;
         }
 
-        $zip->extractTo(\FS_FOLDER);
-        $zip->close();
-        unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . 'update-core.zip');
+        return $idItem == self::CORE_PROJECT_ID ? $this->updateCore($zip, $fileName) : $this->updatePlugin($zip, $fileName);
+    }
 
+    /**
+     * 
+     * @param ZipArchive $zip
+     * @param string     $fileName
+     *
+     * @return bool
+     */
+    private function updateCore($zip, $fileName): bool
+    {
+        /// extract zip content
+        if (!$zip->extractTo(\FS_FOLDER)) {
+            $this->miniLog->critical('ZIP EXTRACT ERROR: ' . $fileName);
+            $zip->close();
+            return false;
+        }
+
+        /// remove zip file
+        $zip->close();
+        unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
+
+        /// update folders
         foreach (['Core', 'node_modules', 'vendor'] as $folder) {
-            $origin = \FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts' . DIRECTORY_SEPARATOR . $folder;
+            $origin = \FS_FOLDER . DIRECTORY_SEPARATOR . self::CORE_ZIP_FOLDER . DIRECTORY_SEPARATOR . $folder;
             $dest = \FS_FOLDER . DIRECTORY_SEPARATOR . $folder;
             if (!file_exists($origin)) {
                 $this->miniLog->critical('COPY ERROR: ' . $origin);
@@ -235,7 +309,32 @@ class Updater extends Controller
             }
         }
 
-        FileManager::delTree(\FS_FOLDER . DIRECTORY_SEPARATOR . 'facturascripts');
+        /// update files
+        $origin = \FS_FOLDER . DIRECTORY_SEPARATOR . self::CORE_ZIP_FOLDER . DIRECTORY_SEPARATOR . 'index.php';
+        $dest = \FS_FOLDER . DIRECTORY_SEPARATOR . 'index.php';
+        copy($dest, $origin);
+
+        /// remove zip folder
+        FileManager::delTree(\FS_FOLDER . DIRECTORY_SEPARATOR . self::CORE_ZIP_FOLDER);
         return true;
+    }
+
+    /**
+     * 
+     * @param ZipArchive $zip
+     * @param string     $fileName
+     *
+     * @return bool
+     */
+    private function updatePlugin($zip, $fileName): bool
+    {
+        $zip->close();
+
+        /// use plugin manager to update
+        $return = $this->pluginManager->install($fileName);
+
+        /// remove zip file
+        unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
+        return $return;
     }
 }
