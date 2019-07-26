@@ -52,7 +52,7 @@
                     </thead>
                     <tbody>
                         {% for item in fsc.updaterItems %}
-                            <tr class="{{ item.downloaded ? 'table-success' : 'table-info' }}">
+                            <tr class="{{ item.stable ? 'table-success' : 'table-warning' }}">
                                 <td>{{ item.name }}</td>
                                 <td>{{ item.description }}</td>
                                 <td class="text-right">
@@ -60,9 +60,13 @@
                                         <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
                                             <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
                                         </a>
-                                    {% else %}
+                                    {% elseif item.stable %}
                                         <a href="{{ fsc.url() }}?action=download&item={{ item.id }}" class="btn btn-sm btn-secondary">
                                             <i class="fas fa-cloud-download-alt fa-fw" aria-hidden="true"></i> {{ i18n.trans('download') }}
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-flask fa-fw" aria-hidden="true"></i> {{ i18n.trans('beta') }}
                                         </a>
                                     {% endif %}
                                 </td>

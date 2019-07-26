@@ -212,14 +212,17 @@ class PluginManager
         }
 
         /// get facturascripts.ini on plugin zip
-        $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR);
+        $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         if (false === $zipIndex) {
             self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]));
             return false;
         }
 
         $pathINI = $zipFile->getNameIndex($zipIndex);
-        $folderPluginZip = explode('/', $pathINI);
+        if (dirname($pathINI) === '.') {
+            self::$minilog->error('ZIP error: no folder');
+            return false;
+        }
 
         /// get plugin information
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
@@ -242,6 +245,7 @@ class PluginManager
         $zipFile->close();
 
         /// Rename folder Plugin
+        $folderPluginZip = explode('/', $pathINI);
         if ($folderPluginZip[0] !== $info['name']) {
             rename(self::PLUGIN_PATH . $folderPluginZip[0], self::PLUGIN_PATH . $info['name']);
         }

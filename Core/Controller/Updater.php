@@ -186,7 +186,12 @@ class Updater extends Controller
                 continue;
             }
 
-            $this->getUpdateItemsPlugin($items, $projectData);
+            foreach ($this->pluginManager->installedPlugins() as $installed) {
+                if ($projectData['name'] === $installed['name']) {
+                    $this->getUpdateItemsPlugin($items, $projectData, $installed['version']);
+                    break;
+                }
+            }
         }
 
         $this->cache->set('UPDATE_ITEMS', $items);
@@ -200,19 +205,35 @@ class Updater extends Controller
      */
     private function getUpdateItemsCore(array &$items, array $projectData)
     {
+        $beta = [];
+        $fileName = 'update-' . $projectData['project'] . '.zip';
         foreach ($projectData['builds'] as $build) {
-            if ($build['stable'] && $build['version'] > $this->getCoreVersion()) {
-                $fileName = 'update-' . $projectData['project'] . '.zip';
-                $items[] = [
-                    'id' => $projectData['project'],
-                    'name' => $projectData['name'],
-                    'description' => $this->i18n->trans('core-update', ['%version%' => $build['version']]),
-                    'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
-                    'filename' => $fileName,
-                    'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version']
-                ];
-                break;
+            if ($build['version'] <= $this->getCoreVersion()) {
+                continue;
             }
+
+            $item = [
+                'description' => $this->i18n->trans('core-update', ['%version%' => $build['version']]),
+                'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
+                'filename' => $fileName,
+                'id' => $projectData['project'],
+                'name' => $projectData['name'],
+                'stable' => $build['stable'],
+                'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version']
+            ];
+
+            if ($build['stable']) {
+                $items[] = $item;
+                return;
+            }
+
+            if (empty($beta) && $build['beta']) {
+                $beta = $item;
+            }
+        }
+
+        if (!empty($beta)) {
+            $items[] = $beta;
         }
     }
 
@@ -220,28 +241,39 @@ class Updater extends Controller
      * 
      * @param array $items
      * @param array $pluginUpdate
+     * @param float $installedVersion
      */
-    private function getUpdateItemsPlugin(array &$items, array $pluginUpdate)
+    private function getUpdateItemsPlugin(array &$items, array $pluginUpdate, $installedVersion)
     {
-        foreach ($this->pluginManager->installedPlugins() as $installed) {
-            if ($pluginUpdate['name'] != $installed['name']) {
+        $beta = [];
+        $fileName = 'update-' . $pluginUpdate['project'] . '.zip';
+        foreach ($pluginUpdate['builds'] as $build) {
+            if ($build['version'] <= $installedVersion) {
                 continue;
             }
 
-            foreach ($pluginUpdate['builds'] as $build) {
-                if ($build['stable'] && $build['version'] > $installed['version']) {
-                    $fileName = 'update-' . $pluginUpdate['project'] . '.zip';
-                    $items[] = [
-                        'id' => $pluginUpdate['project'],
-                        'name' => $pluginUpdate['name'],
-                        'description' => $this->i18n->trans('plugin-update', ['%pluginName%' => $pluginUpdate['name'], '%version%' => $build['version']]),
-                        'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
-                        'filename' => $fileName,
-                        'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version']
-                    ];
-                    break;
-                }
+            $item = [
+                'description' => $this->i18n->trans('plugin-update', ['%pluginName%' => $pluginUpdate['name'], '%version%' => $build['version']]),
+                'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
+                'filename' => $fileName,
+                'id' => $pluginUpdate['project'],
+                'name' => $pluginUpdate['name'],
+                'stable' => $build['stable'],
+                'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version']
+            ];
+
+            if ($build['stable']) {
+                $items[] = $item;
+                return;
             }
+
+            if (empty($beta) && $build['beta']) {
+                $beta = $item;
+            }
+        }
+
+        if (!empty($beta)) {
+            $items[] = $beta;
         }
     }
 

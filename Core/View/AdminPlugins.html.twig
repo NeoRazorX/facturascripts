@@ -159,7 +159,7 @@
                     <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
                         <td>{{ plugin.name }}</td>
                         <td class="text-right">v{{ plugin.version }}</td>
-                        <td>{{ plugin.description }}</td>
+                        <td>{{ plugin.description | nl2br }}</td>
                         <td class="text-center">
                             {% if plugin.installed %}
                                 <i class="fas fa-box-open fa-fw" aria-hidden="true"></i>
@@ -205,7 +205,7 @@
                         {% else %}
                             <td class="text-right">v{{ plugin.version }}</td>
                         {% endif %}
-                        <td>{{ plugin.description }}</td>
+                        <td>{{ plugin.description | nl2br }}</td>
                         <td class="text-right">
                             <span class="btn-group d-xs-none">
                                 {% if plugin.enabled %}
