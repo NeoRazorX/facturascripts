@@ -134,22 +134,23 @@ class MysqlEngine extends DataBaseEngine
      */
     public function compareDataTypes($dbType, $xmlType)
     {
-        $result = (
-            ($dbType === $xmlType) ||
-            ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
-            (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
-            (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
-            );
-
-        if (!$result) {
-            $result = $this->compareDataTypeNumeric($dbType, $xmlType);
+        if (parent::compareDataTypes($dbType, $xmlType)) {
+            return true;
+        } else if ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
+            return true;
+        } else if (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER') {
+            return true;
+        } else if (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
+            return true;
+        } else if (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
+            /// check length
+            return (substr($dbType, 8, -1) == substr($xmlType, 18, -1));
+        } else if (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
+            /// check length
+            return (substr($dbType, 5, -1) == substr($xmlType, 18, -1));
         }
 
-        if (!$result) {
-            $result = $this->compareDataTypeChar($dbType, $xmlType);
-        }
-
-        return $result;
+        return false;
     }
 
     /**
@@ -332,38 +333,6 @@ class MysqlEngine extends DataBaseEngine
     public function version($link)
     {
         return 'MYSQL ' . $link->server_version;
-    }
-
-    /**
-     * Compares the data types from an alphanumeric column.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeChar($dbType, $xmlType)
-    {
-        $result = 0 === strpos($xmlType, 'character varying(');
-        if ($result) {
-            $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
-        }
-
-        return $result;
-    }
-
-    /**
-     * Compares the data types from a numeric column.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeNumeric($dbType, $xmlType)
-    {
-        return (0 === strpos($dbType, 'int(') && $xmlType === 'INTEGER') ||
-            (0 === strpos($dbType, 'double') && $xmlType === 'double precision');
     }
 
     /**

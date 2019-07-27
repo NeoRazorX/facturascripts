@@ -166,7 +166,7 @@ abstract class DataBaseEngine
      */
     public function compareDataTypes($dbType, $xmlType)
     {
-        return $dbType === $xmlType;
+        return \FS_DB_TYPE_CHECK === false || $dbType === $xmlType || strtolower($xmlType) == 'serial' || substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time';
     }
 
     /**

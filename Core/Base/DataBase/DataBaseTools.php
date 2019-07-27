@@ -277,8 +277,7 @@ class DataBaseTools
     }
 
     /**
-     * Compares data types from a column.
-     * Returns True if they are the same.
+     * Compares data types from a column. Returns True if they are the same.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -287,20 +286,7 @@ class DataBaseTools
      */
     private function compareDataTypes($dbType, $xmlType)
     {
-        $db0 = strtolower($dbType);
-        $xml = strtolower($xmlType);
-
-        $result = (
-            \FS_DB_TYPE_CHECK ||
-            self::$dataBase->getEngine()->compareDataTypes($db0, $xml) ||
-            ($xml === 'serial') ||
-            (
-            strpos($db0, 'time') === 0 &&
-            strpos($xml, 'time') === 0
-            )
-            );
-
-        return $result;
+        return self::$dataBase->getEngine()->compareDataTypes($dbType, $xmlType);
     }
 
     /**
