@@ -205,26 +205,13 @@ class PluginManager
         }
 
         $zipFile = new ZipArchive();
-        $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
-        if (true !== $result) {
-            self::$minilog->error('ZIP error: ' . $result);
+        if (!$this->testZipFile($zipFile, $zipPath, $zipName)) {
             return false;
         }
 
-        /// get facturascripts.ini on plugin zip
+        /// get the facturascripts.ini file inside the zip
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
-        if (false === $zipIndex) {
-            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]));
-            return false;
-        }
-
         $pathINI = $zipFile->getNameIndex($zipIndex);
-        if (dirname($pathINI) === '.') {
-            self::$minilog->error('ZIP error: no folder');
-            return false;
-        }
-
-        /// get plugin information
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
         if (!$info['compatible']) {
             self::$minilog->error(
@@ -241,7 +228,12 @@ class PluginManager
         }
 
         /// Extract new version
-        $zipFile->extractTo(self::PLUGIN_PATH);
+        if (!$zipFile->extractTo(self::PLUGIN_PATH)) {
+            self::$minilog->error('ZIP EXTRACT ERROR: ' . $zipName);
+            $zipFile->close();
+            return false;
+        }
+
         $zipFile->close();
 
         /// Rename folder Plugin
@@ -437,5 +429,54 @@ class PluginManager
     {
         $content = json_encode(self::$enabledPlugins);
         return file_put_contents(self::PLUGIN_LIST_FILE, $content) !== false;
+    }
+
+    /**
+     * 
+     * @param ZipArchive $zipFile
+     * @param string     $zipPath
+     * @param string     $zipName
+     *
+     * @return bool
+     */
+    private function testZipFile(&$zipFile, $zipPath, $zipName): bool
+    {
+        $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
+        if (true !== $result) {
+            self::$minilog->error('ZIP error: ' . $result);
+            return false;
+        }
+
+        /// get the facturascripts.ini file inside the zip
+        $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
+        if (false === $zipIndex) {
+            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]));
+            return false;
+        }
+
+        /// the zip must contain the plugin folder
+        $pathINI = $zipFile->getNameIndex($zipIndex);
+        if (count(explode('/', $pathINI)) !== 2) {
+            self::$minilog->error(self::$i18n->trans('zip-error-wrong-structure'));
+            return false;
+        }
+
+        /// get folders inside the zip file
+        $folders = [];
+        for ($index = 0; $index < $zipFile->numFiles; $index++) {
+            $data = $zipFile->statIndex($index);
+            $path = explode('/', $data['name']);
+            if (count($path) > 1) {
+                $folders[$path[0]] = $path[0];
+            }
+        }
+
+        //// the zip must contain a single plugin
+        if (count($folders) != 1) {
+            self::$minilog->error(self::$i18n->trans('zip-error-wrong-structure'));
+            return false;
+        }
+
+        return true;
     }
 }
