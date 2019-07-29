@@ -981,5 +981,6 @@
     "yes": "se",
     "yesterday": "yesterday",
     "your": "your",
-    "zip-code": "Cap"
+    "zip-code": "Cap",
+    "zip-error-wrong-structure": "zip-error-wrong-structure"
 }

@@ -981,5 +981,6 @@
     "yes": "Bai",
     "yesterday": "Atzo",
     "your": "Zure",
-    "zip-code": "Posta Kodea"
+    "zip-code": "Posta Kodea",
+    "zip-error-wrong-structure": "zip-error-wrong-structure"
 }

@@ -981,5 +981,6 @@
     "yes": "Si",
     "yesterday": "Ayer",
     "your": "Suyo",
-    "zip-code": "Código Postal"
+    "zip-code": "Código Postal",
+    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
 }

@@ -207,7 +207,7 @@
     "conversion-rate-not-0": "A taxa de conversión non pode ser 0.",
     "convert-into-customer": "Convertir en cliente",
     "convert-into-supplier": "Convertir en provedor",
-    "core-update": "core-update",
+    "core-update": "Actualización do núcleo á versión %version%",
     "cost-price": "Prezo de custo",
     "countries": "Países",
     "country": "País",
@@ -702,7 +702,7 @@
     "plugin-needs-fs-version": "O plugin %pluginName% precisa FacturaScripts %minVersion% pero ten instalado FacturaScripts %version%",
     "plugin-not-compatible": "O Plugin %pluginName% non é compatible con FacturaScripts 2018.",
     "plugin-removal-disabled": "A eliminación de plugins está desactivada neste servidor",
-    "plugin-update": "plugin-update",
+    "plugin-update": "Actualización do plugin %pluginName% á versión %version%",
     "plugins": "Plugins",
     "points": "puntos",
     "port": "Porto",
@@ -981,5 +981,6 @@
     "yes": "Si",
     "yesterday": "Onte",
     "your": "seu",
-    "zip-code": "Código postal"
+    "zip-code": "Código postal",
+    "zip-error-wrong-structure": "zip-error-wrong-structure"
 }

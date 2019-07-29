@@ -981,5 +981,6 @@
     "yes": "Sí",
     "yesterday": "Ahir",
     "your": "El vostre",
-    "zip-code": "Codi Postal"
+    "zip-code": "Codi Postal",
+    "zip-error-wrong-structure": "zip-error-wrong-structure"
 }

@@ -981,5 +981,6 @@
     "yes": "Yes",
     "yesterday": "Yesterday",
     "your": "Your",
-    "zip-code": "Zip code"
+    "zip-code": "Zip code",
+    "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin."
 }

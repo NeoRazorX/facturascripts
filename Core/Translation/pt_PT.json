@@ -981,5 +981,6 @@
     "yes": "sim",
     "yesterday": "yesterday",
     "your": "your",
-    "zip-code": "Código postal"
+    "zip-code": "Código postal",
+    "zip-error-wrong-structure": "zip-error-wrong-structure"
 }
