@@ -65,7 +65,7 @@ class EditSubcuenta extends EditController
     {
         $this->addListView($viewName, 'ModelView\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->searchFields[] = 'concepto';
-        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
 
         /// disable column
         $this->views[$viewName]->disableColumn('subaccount');

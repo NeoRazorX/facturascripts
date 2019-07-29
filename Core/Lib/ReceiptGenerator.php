@@ -172,7 +172,7 @@ class ReceiptGenerator
             $pending -= $receipt->importe;
         }
 
-        return $pending;
+        return round($pending, FS_NF0);
     }
 
     /**

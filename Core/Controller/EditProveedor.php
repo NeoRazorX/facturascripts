@@ -141,6 +141,10 @@ class EditProveedor extends ComercialContactController
                 break;
 
             case 'EditCuentaBancoProveedor':
+                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+                $view->loadData('', $where, ['codcuenta' => 'DESC']);
+                break;
+
             case 'ListAlbaranProveedor':
             case 'ListContacto':
             case 'ListFacturaProveedor':
