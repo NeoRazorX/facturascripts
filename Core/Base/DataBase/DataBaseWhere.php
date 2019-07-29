@@ -197,19 +197,25 @@ class DataBaseWhere
         $result = '';
         foreach ($fields as $field) {
             $union = empty($result) ? '' : ' OR ';
-            if ($this->operator !== 'XLIKE') {
-                $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValue($value);
-                continue;
-            }
+            switch ($this->operator) {
+                case 'LIKE':
+                    $result .= $union . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValueFromOperatorLike($value);
+                    break;
 
-            /// in XLIKE opertator we must break words before search
-            $result .= $union . '(';
-            $union2 = '';
-            foreach (explode(' ', $value) as $query) {
-                $result .= $union2 . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator('LIKE') . ' ' . $this->getValueFromOperatorLike($query);
-                $union2 = ' AND ';
+                case 'XLIKE':
+                    $result .= $union . '(';
+                    $union2 = '';
+                    foreach (explode(' ', $value) as $query) {
+                        $result .= $union2 . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator('LIKE') . ' ' . $this->getValueFromOperatorLike($query);
+                        $union2 = ' AND ';
+                    }
+                    $result .= ')';
+                    break;
+
+                default:
+                    $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValue($value);
+                    break;
             }
-            $result .= ')';
         }
 
         return $result;

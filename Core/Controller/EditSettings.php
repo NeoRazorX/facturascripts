@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Dinamic\Lib\EmailTools;
 use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
  * Controller to edit main settings
@@ -133,6 +134,31 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function checkTax()
+    {
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+
+        /// find current default tax
+        $taxModel = new Impuesto();
+        $codimpuesto = $appSettings->get('default', 'codimpuesto');
+        if ($taxModel->loadFromCode($codimpuesto)) {
+            return true;
+        }
+
+        foreach ($taxModel->all() as $tax) {
+            $appSettings->set('default', 'codimpuesto', $tax->codimpuesto);
+            $appSettings->save();
+            break;
+        }
+
+        return false;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -172,6 +198,7 @@ class EditSettings extends ExtendedController\PanelController
         /// check warehouse-company and payment-method-company relations
         $this->checkPaymentMethod();
         $this->checkWarehouse();
+        $this->checkTax();
         return true;
     }
 

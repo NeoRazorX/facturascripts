@@ -110,8 +110,8 @@
                 <widget type="number" fieldname="item_limit" required="true" />
             </column>
         </group>
-        <group name="api" title="api" numcolumns="12" icon="fas fa-universal-access">
-            <column name="enable-api" numcolumns="3" order="120">
+        <group name="api" title="api" numcolumns="12" icon="fas fa-laptop-code">
+            <column name="enable-api" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="enable_api"/>
             </column>
         </group>
