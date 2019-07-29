@@ -23,4 +23,8 @@
         <name>paises_pkey</name>
         <type>PRIMARY KEY (codpais)</type>
     </constraint>
+    <constraint>
+        <name>uniq_codiso_paises</name>
+        <type>UNIQUE (codiso)</type>
+    </constraint>
 </table>

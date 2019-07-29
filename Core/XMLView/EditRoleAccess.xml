@@ -45,15 +45,15 @@
     <rows>
         <row type="footer">
             <group name="footer_actions" footer="specials-actions">
-                <button type="modal" label="add" color="info" action="add-rol-access" icon="fas fa-user-plus" />
+                <button type="modal" label="add" color="info" action="add-rol-access" icon="fas fa-folder-plus" />
             </group>
         </row>
     </rows>
     <modals>
-        <group name="add-rol-access" icon="fas fa-user-plus">
+        <group name="add-rol-access" title="rules" icon="fas fa-folder-plus">
             <column name="select-menu" title="menu">
-                <widget type="select" fieldname="menu">
-                    <values source="pages" fieldcode="menu" fieldtitle="menu" translate="true"></values>
+                <widget type="select" fieldname="menu" translate="true">
+                    <values source="pages" fieldcode="menu" fieldtitle="menu"></values>
                 </widget>
             </column>
         </group>

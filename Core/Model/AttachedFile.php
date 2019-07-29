@@ -184,7 +184,7 @@ class AttachedFile extends Base\ModelClass
             return false;
         }
 
-        if (null === $this->idfile) {
+        if (empty($this->idfile)) {
             $this->idfile = $this->newCode();
         }
 
