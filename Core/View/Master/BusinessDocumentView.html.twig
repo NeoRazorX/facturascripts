@@ -68,13 +68,10 @@
         {% for field in fsc.getCustomFields() %}
             {{ _self.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(currentView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
         {% endfor %}
+        {{ _self.customSelect('doc_codpago', 'codpago', currentView.model.codpago, currentView.getSelectValues('FormaPago')) }}
+        {{ _self.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, currentView.getSelectValues('Divisa')) }}
         <div class="col">
             <div class="input-group">
-                <span class="input-group-prepend">
-                    <span class="input-group-text">
-                        {{ currentView.model.coddivisa }}
-                    </span>
-                </span>
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
                 <div class="input-group-append">
                     {% if currentView.settings.btnSave %}
@@ -166,7 +163,7 @@
             <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
         {% endfor %}
     {% else %}
-        <div class="col-sm-2 mb-2">
+        <div class="col mb-2">
             <select id="{{ id }}" name="{{ name }}" class="form-control">
                 {% for key, option in allValues %}
                     <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
@@ -179,7 +176,7 @@
 {% endmacro %}
 
 {% macro customInput(id, name, value, type = "text", icon = NULL, attributes = NULL) %}
-    <div class="col-sm-2 mb-2">
+    <div class="col mb-2">
         {% if icon %}
             <div class="input-group">
                 <span class="input-group-prepend">
