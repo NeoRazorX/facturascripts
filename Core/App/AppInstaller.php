@@ -219,7 +219,8 @@ class AppInstaller
         $templateVars = [
             'license' => file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => $this->randomString(8),
-            'timezones' => $this->getTimezoneList()
+            'timezones' => $this->getTimezoneList(),
+            'version' => PluginManager::CORE_VERSION
         ];
 
         /// Load the template engine
