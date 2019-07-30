@@ -45,7 +45,7 @@
         <column name="invoice" order="110">
             <widget type="text" fieldname="factura" />
         </column>
-        <column name="number" order="120">
+        <column name="accounting-entry" order="120">
             <widget type="text" fieldname="numero" />
         </column>
         <column name="document" order="130" display="none">

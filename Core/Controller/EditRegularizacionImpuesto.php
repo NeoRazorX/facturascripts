@@ -256,7 +256,7 @@ class EditRegularizacionImpuesto extends EditController
      * Load data of PartidaImpuesto if master view has data.
      *
      * @param BaseView $view
-     * @param int $group
+     * @param int      $group
      */
     protected function getListPartidaImpuesto($view, $group)
     {
@@ -291,15 +291,18 @@ class EditRegularizacionImpuesto extends EditController
      * Get DataBaseWhere filter for tax group
      *
      * @param int $group
+     *
      * @return DataBaseWhere[]
      */
     protected function getPartidaImpuestoWhere($group)
     {
         $subAccountTools = new SubAccountTools();
+        $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
         $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
         $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
         $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
         return [
+            new DataBaseWhere('asientos.idasiento', $idasiento, '!='),
             new DataBaseWhere('asientos.codejercicio', $exercise),
             new DataBaseWhere('asientos.fecha', $startDate, '>='),
             new DataBaseWhere('asientos.fecha', $endDate, '<='),
