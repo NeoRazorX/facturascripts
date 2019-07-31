@@ -101,7 +101,10 @@ class DownloadTools
             case 303:
                 list($header) = explode("\r\n\r\n", $data, 2);
                 $matches = [];
-                preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+                if (1 !== preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches)) {
+                    break;
+                }
+
                 $url = trim(str_replace($matches[1], "", $matches[0]));
                 $url_parsed = parse_url($url);
                 if (isset($url_parsed)) {
