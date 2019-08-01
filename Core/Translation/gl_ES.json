@@ -332,6 +332,7 @@
     "email-not-configured": "Email non configurado",
     "email-not-sent": "Non enviado",
     "email-sent": "Enviado por Mail",
+    "email-signature": "email-signature",
     "email-to": "Correo para",
     "emails-sent": "Emails enviados",
     "employee": "Empregado",
@@ -358,6 +359,7 @@
     "error-to-innodb": "Error oa convertir a táboa a InnoDB.",
     "error-updating-product-stock": "Erro ao actualizar o stock do elemento!",
     "errors": "Erros",
+    "es_EC": "es_EC",
     "estimation": "Orzamento",
     "estimations": "Orzamentos",
     "exempt": "Exento",
@@ -982,5 +984,5 @@
     "yesterday": "Onte",
     "your": "seu",
     "zip-code": "Código postal",
-    "zip-error-wrong-structure": "zip-error-wrong-structure"
+    "zip-error-wrong-structure": "A estructura do zip é incorreta. Debe conter a carpeta do plugin e só un plugin."
 }

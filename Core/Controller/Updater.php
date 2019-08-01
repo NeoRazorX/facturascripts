@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Diario;
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use FacturaScripts\Dinamic\Model\LiquidacionComision;
+use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -174,7 +175,7 @@ class Updater extends Controller
         }
 
         $downloader = new DownloadTools();
-        $json = json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
+        $json = json_decode($downloader->getContents(self::UPDATE_CORE_URL, 3), true);
         if (empty($json)) {
             return [];
         }
@@ -282,6 +283,7 @@ class Updater extends Controller
         new AttachedFile();
         new Diario();
         new IdentificadorFiscal();
+        new Retencion();
         new LiquidacionComision();
     }
 
