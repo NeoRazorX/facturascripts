@@ -25,7 +25,7 @@
             <column name="date" numcolumns="4" order="110">
                 <widget type="date" fieldname="date" required="true" readonly="true" />
             </column>
-            <column name="from" numcolumns="4" order="110">
+            <column name="nick" numcolumns="4" order="110">
                 <widget type="text" fieldname="nick" required="true" readonly="true" />
             </column>
             <column name="to" numcolumns="4" order="120">

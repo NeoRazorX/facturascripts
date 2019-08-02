@@ -35,4 +35,8 @@
         <name>emails_sent_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
+    <constraint>
+        <name>emails_sent_user</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
 </table>

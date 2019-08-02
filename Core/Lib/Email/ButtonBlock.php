@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
@@ -15,23 +15,46 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace FacturaScripts\Core\Lib\Email;
+
+/**
+ * Description of ButtonBlock
  *
- * @author Raúl Jiménez         <raljopa@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
--->
-<view>
-    <columns>
-        <column name="user" order="100">
-            <widget type="text" fieldname="nick" />
-        </column>
-        <column name="to" order="110">
-            <widget type="text" fieldname="addressee" />
-        </column>
-        <column name="subject" order="120">
-            <widget type="text" fieldname="subject" />
-        </column>
-        <column name="date" display="right" order="130">
-            <widget type="datetime" fieldname="date" />
-        </column>
-    </columns>
-</view>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
+class ButtonBlock extends BaseBlock
+{
+
+    /**
+     *
+     * @var string
+     */
+    protected $label;
+
+    /**
+     *
+     * @var string
+     */
+    protected $link;
+
+    /**
+     * 
+     * @param string $label
+     * @param string $link
+     */
+    public function __construct(string $label, string $link)
+    {
+        $this->label = $label;
+        $this->link = $link;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function render(): string
+    {
+        return '<a class="btn" href="' . $this->link . '">' . $this->label . '</a>';
+    }
+}

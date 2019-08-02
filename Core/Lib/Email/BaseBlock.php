@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
@@ -15,23 +15,15 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace FacturaScripts\Core\Lib\Email;
+
+/**
+ * Description of BaseBlock
  *
- * @author Raúl Jiménez         <raljopa@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
--->
-<view>
-    <columns>
-        <column name="user" order="100">
-            <widget type="text" fieldname="nick" />
-        </column>
-        <column name="to" order="110">
-            <widget type="text" fieldname="addressee" />
-        </column>
-        <column name="subject" order="120">
-            <widget type="text" fieldname="subject" />
-        </column>
-        <column name="date" display="right" order="130">
-            <widget type="datetime" fieldname="date" />
-        </column>
-    </columns>
-</view>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
+abstract class BaseBlock
+{
+    abstract public function render();
+}
