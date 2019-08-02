@@ -195,6 +195,20 @@ class NewMail
      * 
      * @return array
      */
+    public function getAttachmentNames()
+    {
+        $names = [];
+        foreach ($this->mail->getAttachments() as $attach) {
+            $names[] = $attach[1];
+        }
+
+        return $names;
+    }
+
+    /**
+     * 
+     * @return array
+     */
     public function getBCCAddresses(): array
     {
         $addresses = [];

@@ -63,10 +63,10 @@ class SendMail extends Controller
     public function getPageData()
     {
         $data = parent::getPageData();
-        $data['menu'] = 'reports';
-        $data['showonmenu'] = false;
+        $data['menu'] = 'sales';
         $data['title'] = 'send-mail';
         $data['icon'] = 'fas fa-envelope';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -157,6 +157,7 @@ class SendMail extends Controller
             default:
                 $this->removeOld();
                 $this->setEmailAddress();
+                $this->setAttachment();
                 break;
         }
     }
@@ -174,6 +175,9 @@ class SendMail extends Controller
         return explode(',', $string);
     }
 
+    /**
+     * 
+     */
     protected function redirAfter()
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
@@ -242,13 +246,13 @@ class SendMail extends Controller
             $this->newMail->addBCC($email);
         }
 
-        $fileName = $this->request->get('fileName', '');
-        $this->newMail->addAttachment(\FS_FOLDER . '/MyFiles/' . $fileName, $fileName);
+        $this->setAttachment();
         foreach ($this->request->files->get('uploads', []) as $file) {
             $this->newMail->addAttachment($file->getPathname(), $file->getClientOriginalName());
         }
 
         if ($this->newMail->send()) {
+            $fileName = $this->request->get('fileName', '');
             if (\file_exists(\FS_FOLDER . '/MyFiles/' . $fileName)) {
                 unlink(\FS_FOLDER . '/MyFiles/' . $fileName);
             }
@@ -257,6 +261,12 @@ class SendMail extends Controller
         }
 
         return false;
+    }
+
+    protected function setAttachment()
+    {
+        $fileName = $this->request->get('fileName', '');
+        $this->newMail->addAttachment(\FS_FOLDER . '/MyFiles/' . $fileName, $fileName);
     }
 
     protected function setEmailAddress()
