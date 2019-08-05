@@ -60,6 +60,11 @@
         <type>character varying(255)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>codalmacen</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
     <constraint>
         <name>users_pkey</name>
         <type>PRIMARY KEY (nick)</type>

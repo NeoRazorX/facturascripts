@@ -132,6 +132,13 @@ class User extends Base\ModelClass
     public $password;
 
     /**
+     * warehouse code
+     *
+     * @var string
+     */
+    public $codalmacen;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -244,7 +251,7 @@ class User extends Base\ModelClass
 
     /**
      * Updates last ip address and last activity property.
-     * 
+     *
      * @param string $ipAddress
      */
     public function updateActivity($ipAddress)
@@ -286,7 +293,7 @@ class User extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
