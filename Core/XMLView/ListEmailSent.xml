@@ -30,8 +30,16 @@
         <column name="subject" order="120">
             <widget type="text" fieldname="subject" />
         </column>
-        <column name="date" display="right" order="130">
+        <column name="opened" display="center" order="130">
+            <widget type="checkbox" fieldname="opened" />
+        </column>
+        <column name="date" display="right" order="140">
             <widget type="datetime" fieldname="date" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="opened">1</option>
+        </row>
+    </rows>
 </view>

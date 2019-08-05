@@ -112,13 +112,16 @@
             <column name="level" numcolumns="2" order="140">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
             </column>
-            <column name="verified" numcolumns="4" order="150">
-                <widget type="checkbox" fieldname="verificado" />
-            </column>
-            <column name="is-person" numcolumns="4" order="160">
+            <column name="is-person" numcolumns="3" order="150">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
-            <column name="allow-marketing" numcolumns="4" order="170">
+            <column name="verified" numcolumns="3" order="160">
+                <widget type="checkbox" fieldname="verificado" />
+            </column>
+            <column name="accept-privacy-policy" numcolumns="3" order="170">
+                <widget type="checkbox" fieldname="aceptaprivacidad" />
+            </column>
+            <column name="allow-marketing" numcolumns="3" order="180">
                 <widget type="checkbox" fieldname="admitemarketing" />
             </column>
         </group>

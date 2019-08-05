@@ -33,6 +33,13 @@ class Contacto extends Base\Contact
     use Base\ModelTrait;
 
     /**
+     * True if contact accepts the privacy policy.
+     *
+     * @var bool
+     */
+    public $aceptaprivacidad;
+
+    /**
      * True if it supports marketing, but False.
      *
      * @var bool

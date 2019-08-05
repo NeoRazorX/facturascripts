@@ -93,8 +93,8 @@ class ListLogMessage extends ListController
         /// filters
         $users = $this->codeModel->all('users', 'nick', 'nick');
         $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
-
         $this->addFilterPeriod($viewName, 'date', 'period', 'date');
+        $this->addFilterCheckbox($viewName, 'opened');
 
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
