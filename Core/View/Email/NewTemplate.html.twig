@@ -4,16 +4,18 @@
         <title>{{ title }}</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
+        <style type="text/css">
             {% block css %}
                 #body {
                     background-color: #E8EAED;
+                    color: black;
                 }
                 .container {
                     background-color: #FBFBFC;
                     border-radius: 5px;
+                    color: black;
                     font-size: 1em;
-                    padding: 20px 10px 30px 10px;
+                    padding: 10px;
                 }
                 .company {
                     color: #3D67AC;
@@ -22,7 +24,28 @@
                 }
                 .footer {
                     font-size: 10px;
-                    padding: 20px 10px 30px 10px;
+                    color: black;
+                    padding: 10px;
+                }
+                .btn {
+                    border-radius: 5px;
+                    background-color: #2E7EFA;
+                    color: #ffffff;
+                }
+                .btn a {
+                    padding: 10px;
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 14px;
+                    border-radius: 5px;
+                    background-color: #2E7EFA;
+                    color: #ffffff; 
+                    text-decoration: none;
+                    font-weight: bold;
+                    display: inline-block;
+                }
+                .company a {
+                    color: #3D67AC;
+                    text-decoration: none;
                 }
                 .text-center {
                     text-align: center;

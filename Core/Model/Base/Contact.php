@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Lib\FiscalNumberValitator;
+use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
 
 /**
  * Description of Contact

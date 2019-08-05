@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Controller;
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\AccountingEntryTools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
-use FacturaScripts\Core\Lib\AccountingEntryTools;
 
 /**
  * Controller to edit a single item from the Asiento model

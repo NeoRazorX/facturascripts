@@ -47,6 +47,6 @@ class TextBlock extends BaseBlock
      */
     public function render(): string
     {
-        return nl2br($this->text);
+        return '<p>' . nl2br($this->text) . '</p>';
     }
 }

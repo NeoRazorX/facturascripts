@@ -55,6 +55,6 @@ class ButtonBlock extends BaseBlock
      */
     public function render(): string
     {
-        return '<a class="btn" href="' . $this->link . '">' . $this->label . '</a>';
+        return '<span class="btn"><a href="' . $this->link . '">' . $this->label . '</a></span>';
     }
 }
