@@ -428,9 +428,9 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
     {
-        return parent::url($type, 'ListCliente?activetab=List');
+        return parent::url($type, $list);
     }
 
     /**
