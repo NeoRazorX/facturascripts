@@ -60,6 +60,11 @@
                     <values></values>
                 </widget>
             </column>
+            <column name="warehouse" titleurl="ListAlmacen" numcolumns="3" order="140">
+                <widget type="select" fieldname="codalmacen" icon="fas fa-warehouse" onclick="EditAlmacen">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
+            </column> 
         </group>
         <group name="registry" numcolumns="12">
             <column name="last-activity" order="100">

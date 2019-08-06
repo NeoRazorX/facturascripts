@@ -5,7 +5,7 @@
     Description:
         Structure for the users table.
 -->
-<table>
+<table>   
     <column>
         <name>admin</name>
         <type>boolean</type>
@@ -76,5 +76,9 @@
     <constraint>
         <name>ca_users_company</name>
         <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_users_almacenes</name>
+        <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>
