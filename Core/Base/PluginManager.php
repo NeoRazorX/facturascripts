@@ -109,7 +109,7 @@ class PluginManager
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function deploymentRequired()
@@ -135,7 +135,7 @@ class PluginManager
             $this->disableByDependecy($pluginName);
             $this->save();
             $this->deploy(true, true);
-            self::$minilog->notice(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
+            self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
             return true;
         }
 
@@ -166,7 +166,7 @@ class PluginManager
                 $this->save();
                 $this->deploy(false, true);
                 $this->initPlugin($pluginName);
-                self::$minilog->notice(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+                self::$minilog->info(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
                 return true;
             }
         }
@@ -200,7 +200,7 @@ class PluginManager
     public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
     {
         if (FS_DISABLE_ADD_PLUGINS) {
-            self::$minilog->alert(self::$i18n->trans('plugin-installation-disabled'));
+            self::$minilog->warning(self::$i18n->trans('plugin-installation-disabled'));
             return false;
         }
 
@@ -247,7 +247,7 @@ class PluginManager
             self::$deploymentRequired = true;
         }
 
-        self::$minilog->notice(self::$i18n->trans('plugin-installed', ['%pluginName%' => $info['name']]));
+        self::$minilog->info(self::$i18n->trans('plugin-installed', ['%pluginName%' => $info['name']]));
         return true;
     }
 
@@ -292,11 +292,11 @@ class PluginManager
         $pluginPath = self::PLUGIN_PATH . $pluginName;
         if (is_dir($pluginPath) || is_file($pluginPath)) {
             FileManager::delTree($pluginPath);
-            self::$minilog->notice(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
+            self::$minilog->info(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
             return true;
         }
 
-        self::$minilog->notice(self::$i18n->trans('plugin-delete-error', ['%pluginName%' => $pluginName]));
+        self::$minilog->info(self::$i18n->trans('plugin-delete-error', ['%pluginName%' => $pluginName]));
         return false;
     }
 
@@ -391,7 +391,7 @@ class PluginManager
     }
 
     /**
-     * 
+     *
      * @param string $pluginName
      */
     private function initPlugin(string $pluginName)
@@ -432,7 +432,7 @@ class PluginManager
     }
 
     /**
-     * 
+     *
      * @param ZipArchive $zipFile
      * @param string     $zipPath
      * @param string     $zipName

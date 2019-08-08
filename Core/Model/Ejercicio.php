@@ -135,14 +135,14 @@ class Ejercicio extends Base\ModelClass
 
         if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
-                self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
+                self::$miniLog->warning(self::$i18n->trans('date-out-of-rage-selected-better'));
             }
 
             return $this->fechafin;
         }
 
         if ($showError) {
-            self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
+            self::$miniLog->warning(self::$i18n->trans('date-out-of-rage-selected-better'));
         }
 
         return $this->fechainicio;
@@ -280,16 +280,16 @@ class Ejercicio extends Base\ModelClass
         $this->nombre = Utils::noHtml($this->nombre);
 
         if (empty($this->idempresa)) {
-            self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'idempresa', '%tableName%' => static::tableName()]));
+            self::$miniLog->warning(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'idempresa', '%tableName%' => static::tableName()]));
         } elseif (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
-            self::$miniLog->alert(self::$i18n->trans('start-date-later-end-date', $params));
+            self::$miniLog->warning(self::$i18n->trans('start-date-later-end-date', $params));
         } elseif (strtotime($this->fechainicio) < 1) {
-            self::$miniLog->alert(self::$i18n->trans('date-invalid'));
+            self::$miniLog->warning(self::$i18n->trans('date-invalid'));
         } else {
             return parent::test();
         }
@@ -308,7 +308,7 @@ class Ejercicio extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $date
      *
      * @return bool
@@ -345,7 +345,7 @@ class Ejercicio extends Base\ModelClass
      * Insert the model data in the database.
      *
      * @param array $values
-     * 
+     *
      * @return bool
      */
     protected function saveInsert(array $values = [])
@@ -353,7 +353,7 @@ class Ejercicio extends Base\ModelClass
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
-                self::$miniLog->alert(
+                self::$miniLog->warning(
                     self::$i18n->trans('exercise-date-range-exists', ['%start%' => $this->fechainicio, '%end%' => $this->fechafin])
                 );
                 return false;

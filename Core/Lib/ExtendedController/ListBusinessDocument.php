@@ -29,7 +29,7 @@ abstract class ListBusinessDocument extends ListController
 {
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function addButtonApproveDocument($viewName)
@@ -45,7 +45,7 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function addButtonGroupDocument($viewName)
@@ -102,13 +102,13 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function approveDocumentAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return true;
         }
 
@@ -138,7 +138,7 @@ abstract class ListBusinessDocument extends ListController
             }
         }
 
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
         $model->clear();
         return true;
     }
@@ -272,13 +272,13 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function paidAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return true;
         }
 
@@ -303,7 +303,7 @@ abstract class ListBusinessDocument extends ListController
             }
         }
 
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
         $model->clear();
         return true;
     }

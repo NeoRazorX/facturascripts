@@ -208,7 +208,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return Asiento
      */
     public function getAsiento()
@@ -219,7 +219,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $codsubcuenta
      *
      * @return Subcuenta
@@ -290,12 +290,12 @@ class Partida extends Base\ModelOnChangeClass
         $this->documento = Utils::noHtml($this->documento);
 
         if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
         if ($this->testErrorInData()) {
-            self::$miniLog->alert(self::$i18n->trans('accounting-data-missing'));
+            self::$miniLog->warning(self::$i18n->trans('accounting-data-missing'));
             return false;
         }
 
@@ -303,7 +303,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *
@@ -317,7 +317,7 @@ class Partida extends Base\ModelOnChangeClass
     /**
      * This mehtod is called before this record is save (update) in the database
      * when some field value is changed.
-     * 
+     *
      * @param string $field
      *
      * @return bool
@@ -365,7 +365,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = array())

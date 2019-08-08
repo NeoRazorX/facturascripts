@@ -133,7 +133,7 @@ class Empresa extends Base\Contact
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-company'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-company'));
             return false;
         }
 

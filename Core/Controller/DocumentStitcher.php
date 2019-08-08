@@ -57,7 +57,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Fix escaped html from description.
-     * 
+     *
      * @param string $description
      *
      * @return string
@@ -69,7 +69,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns avaliable status to group this model.
-     * 
+     *
      * @return array
      */
     public function getAvaliableStatus()
@@ -89,7 +89,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns default quantity avaliable from this line.
-     * 
+     *
      * @param Model\Base\BusinessDocumentLine $line
      *
      * @return int|float
@@ -156,7 +156,7 @@ class DocumentStitcher extends Controller
         // duplicated request?
         $token = $this->request->request->get('multireqtoken', '');
         if (!empty($token) && $this->multiRequestProtection->tokenExist($token)) {
-            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
             return false;
         }
 
@@ -167,7 +167,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
+     *
      * @param Model\Base\TransformerDocument $newDoc
      *
      * @return bool
@@ -186,7 +186,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
+     *
      * @param BusinessDocumentGenerator $generator
      * @param int                       $idestado
      */
@@ -212,14 +212,14 @@ class DocumentStitcher extends Controller
         /// redir to new document
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             break;
         }
     }
 
     /**
      * Generates a new document with this data.
-     * 
+     *
      * @param int $idestado
      */
     protected function generateNewDocument($idestado)
@@ -262,7 +262,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns documents keys.
-     * 
+     *
      * @return array
      */
     protected function getCodes()
@@ -278,7 +278,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns the name of the new class to generate from this status.
-     * 
+     *
      * @param int $idestado
      *
      * @return string
@@ -292,7 +292,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns model name.
-     * 
+     *
      * @return string
      */
     protected function getModelName()

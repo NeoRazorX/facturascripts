@@ -52,7 +52,6 @@ class APCAdapter implements AdaptorInterface
     {
         $this->i18n = new Translator();
         $this->minilog = new MiniLog();
-        $this->minilog->debug($this->i18n->trans('using-apc'));
     }
 
     /**
@@ -62,7 +61,6 @@ class APCAdapter implements AdaptorInterface
      */
     public function clear()
     {
-        $this->minilog->debug($this->i18n->trans('apc-clear'));
         /**
          * If cache_type is "user", the user cache will be cleared;
          * otherwise, the system cache (cached files) will be cleared.
@@ -82,7 +80,6 @@ class APCAdapter implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('apc-delete-key-item', ['%item%' => $key]));
         return apc_delete(\FS_CACHE_PREFIX . $key) || !apc_exists([\FS_CACHE_PREFIX . $key]);
     }
 
@@ -95,7 +92,6 @@ class APCAdapter implements AdaptorInterface
      */
     public function get($key)
     {
-        $this->minilog->debug($this->i18n->trans('apc-get-key-item', ['%item%' => $key]));
         if (apc_exists([\FS_CACHE_PREFIX . $key])) {
             $result = apc_fetch(\FS_CACHE_PREFIX . $key);
             return $result === false ? null : $result;
@@ -115,7 +111,6 @@ class APCAdapter implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        $this->minilog->debug($this->i18n->trans('apc-set-key-item', ['%item%' => $key]));
         return (bool) apc_store(\FS_CACHE_PREFIX . $key, $content, $expire);
     }
 }

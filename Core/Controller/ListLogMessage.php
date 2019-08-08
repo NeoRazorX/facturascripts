@@ -59,7 +59,7 @@ class ListLogMessage extends ListController
 
     /**
      * Create view to view all information about crons.
-     * 
+     *
      * @param string $viewName
      */
     protected function createCronJobView($viewName = 'ListCronJob')
@@ -81,7 +81,7 @@ class ListLogMessage extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createEmailSentView($viewName = 'ListEmailSent')
@@ -102,7 +102,7 @@ class ListLogMessage extends ListController
 
     /**
      * Create view to get information about all logs.
-     * 
+     *
      * @param string $viewName
      */
     protected function createLogMessageView($viewName = 'ListLogMessage')
@@ -175,10 +175,10 @@ class ListLogMessage extends ListController
             $this->dataBase->commit();
 
             if ($counter > 0) {
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                $this->miniLog->info($this->i18n->trans('record-deleted-correctly'));
             }
         } catch (Exception $exc) {
-            $this->miniLog->alert($exc->getMessage());
+            $this->miniLog->warning($exc->getMessage());
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();

@@ -35,7 +35,7 @@ class EditApiKey extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -130,7 +130,7 @@ class EditApiKey extends EditController
             $this->dataBase->commit();
         } catch (Exception $e) {
             $this->dataBase->rollback();
-            $this->miniLog->notice($e->getMessage());
+            $this->miniLog->info($e->getMessage());
         }
 
         return true;

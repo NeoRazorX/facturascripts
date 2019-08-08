@@ -48,7 +48,7 @@ class MiniLogTest extends TestCase
     {
         $level = ['emergency'];
         $this->object->clear();
-        $this->object->emergency('emergency');
+        $this->object->critical('emergency');
         $data = $this->object->read($level);
 
         $this->assertEquals(1, count($data));
@@ -64,7 +64,7 @@ class MiniLogTest extends TestCase
     {
         $level = ['alert'];
         $this->object->clear();
-        $this->object->alert('alert');
+        $this->object->warning('alert');
         $data = $this->object->read($level);
 
         $this->assertEquals(1, count($data));
@@ -128,7 +128,7 @@ class MiniLogTest extends TestCase
     {
         $level = ['notice'];
         $this->object->clear();
-        $this->object->notice('notice');
+        $this->object->info('notice');
         $data = $this->object->read($level);
 
         $this->assertEquals(1, count($data));
@@ -160,7 +160,6 @@ class MiniLogTest extends TestCase
     {
         $level = ['debug'];
         $this->object->clear();
-        $this->object->debug('debug');
         $data = $this->object->read($level);
 
         $this->assertEquals(1, count($data));

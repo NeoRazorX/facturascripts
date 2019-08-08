@@ -34,10 +34,10 @@ class DownloadTools
 
     /**
      * Downloads and returns url content with curl or file_get_contents.
-     * 
+     *
      * @param string $url
      * @param int    $timeout
-     * 
+     *
      * @return string
      */
     public function getContents(string $url, int $timeout = self::TIMEOUT)
@@ -72,7 +72,7 @@ class DownloadTools
             /// save in log
             $error = curl_error($ch) === '' ? 'ERROR ' . $httpCode : curl_error($ch);
             $minilog = new MiniLog();
-            $minilog->alert($error . ' - ' . $url);
+            $minilog->warning($error . ' - ' . $url);
 
             curl_close($ch);
             return 'ERROR';
@@ -83,10 +83,10 @@ class DownloadTools
 
     /**
      * Alternative function when followlocation fails.
-     * 
+     *
      * @param resource $ch
      * @param int      $redirects
-     * 
+     *
      * @return string
      */
     private function curlRedirectExec(&$ch, &$redirects)
@@ -126,11 +126,11 @@ class DownloadTools
 
     /**
      * Downloads file from selected url.
-     * 
+     *
      * @param string $url
      * @param string $filename
      * @param int    $timeout
-     * 
+     *
      * @return bool
      */
     public function download(string $url, string $filename, int $timeout = self::TIMEOUT): bool

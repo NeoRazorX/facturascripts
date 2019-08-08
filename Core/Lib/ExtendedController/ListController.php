@@ -262,7 +262,7 @@ abstract class ListController extends BaseController
     {
         $idfilter = $this->request->request->get('loadfilter', 0);
         if ($this->views[$this->active]->deletePageFilter($idfilter)) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-deleted-correctly'));
             $this->request->request->remove('loadfilter');
             return;
         }
@@ -400,7 +400,7 @@ abstract class ListController extends BaseController
         $view = $this->views[$this->active];
         $idFilter = $view->savePageFilter($this->request, $this->user);
         if (!empty($idFilter)) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
 
             /// load filters in request
             $this->request->request->set('loadfilter', $idFilter);

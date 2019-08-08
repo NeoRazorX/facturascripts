@@ -61,7 +61,7 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createAccountsView($viewName = 'ListAsiento')
@@ -82,7 +82,7 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createReceiptsView($viewName = 'ListReciboCliente')
@@ -128,7 +128,7 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool
@@ -156,7 +156,7 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function generateAccountingAction()
@@ -175,7 +175,7 @@ class EditFacturaCliente extends SalesDocumentController
         }
 
         if ($invoice->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             return true;
         }
 
@@ -184,7 +184,7 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function generateReceiptsAction()
@@ -198,7 +198,7 @@ class EditFacturaCliente extends SalesDocumentController
         $generator = new ReceiptGenerator();
         $number = (int) $this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             return true;
         }
 
@@ -232,7 +232,7 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function newRefundAction()
@@ -264,7 +264,7 @@ class EditFacturaCliente extends SalesDocumentController
                 $doc->idfacturarect = $invoice->idfactura;
                 $doc->observaciones = $this->request->request->get('observaciones');
                 if ($doc->save()) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
                     $this->redirect($doc->url());
                     return true;
                 }
@@ -276,13 +276,13 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function paidAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return true;
         }
 
@@ -307,7 +307,7 @@ class EditFacturaCliente extends SalesDocumentController
             }
         }
 
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
         $model->clear();
         return true;
     }

@@ -68,9 +68,9 @@ abstract class ModelClass extends ModelCore
 
     /**
      * Allows to use this model as source in CodeModel special model.
-     * 
+     *
      * @param string $fieldCode
-     * 
+     *
      * @return CodeModel[]
      */
     public function codeModelAll(string $fieldCode = '')
@@ -89,7 +89,7 @@ abstract class ModelClass extends ModelCore
 
     /**
      * Allows to use this model as source in CodeModel special model.
-     * 
+     *
      * @param string $query
      * @param string $fieldCode
      *
@@ -277,7 +277,7 @@ abstract class ModelClass extends ModelCore
             if ($key == static::primaryColumn()) {
                 $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
-                self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
+                self::$miniLog->warning(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
                 $return = false;
             }
         }

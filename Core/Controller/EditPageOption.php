@@ -172,15 +172,15 @@ class EditPageOption extends Controller
         $where[] = empty($nick) ? new DataBaseWhere('nick', null, 'IS') : new DataBaseWhere('nick', $nick);
         $rows = $this->model->all($where, [], 0, 1);
         if ($rows[0] && $rows[0]->delete()) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-deleted-correctly'));
             $this->loadPageOptions();
         } else {
-            $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
+            $this->miniLog->warning($this->i18n->trans('default-not-deletable'));
         }
     }
 
     /**
-     * 
+     *
      */
     protected function loadPageOptions()
     {
@@ -234,10 +234,10 @@ class EditPageOption extends Controller
         }
 
         if ($this->model->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             return;
         }
 
-        $this->miniLog->alert($this->i18n->trans('data-save-error'));
+        $this->miniLog->warning($this->i18n->trans('data-save-error'));
     }
 }

@@ -87,7 +87,7 @@ class AccountingPlanImport
         }
 
         if (!file_exists($filePath)) {
-            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
+            $this->miniLog->warning($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
             return false;
         }
 
@@ -102,7 +102,7 @@ class AccountingPlanImport
             // confirm data
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            $this->miniLog->alert($exp->getMessage());
+            $this->miniLog->warning($exp->getMessage());
             $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -147,7 +147,7 @@ class AccountingPlanImport
             // confirm data
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            $this->miniLog->alert($exp->getMessage());
+            $this->miniLog->warning($exp->getMessage());
             $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -189,7 +189,7 @@ class AccountingPlanImport
             ];
             $parent = new Model\Cuenta();
             if (!$parent->loadFromCode('', $whereParent)) {
-                $this->miniLog->alert($this->i18n->trans('parent-error'));
+                $this->miniLog->warning($this->i18n->trans('parent-error'));
                 return false;
             }
 

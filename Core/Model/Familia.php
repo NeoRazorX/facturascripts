@@ -104,11 +104,11 @@ class Familia extends Base\ModelClass
         $this->descripcion = Utils::noHtml($this->descripcion);
 
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']));
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 100) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']));
         } elseif ($this->madre === $this->codfamilia) {
-            self::$miniLog->alert(self::$i18n->trans('parent-family-cant-be-child'));
+            self::$miniLog->warning(self::$i18n->trans('parent-family-cant-be-child'));
         } else {
             return parent::test();
         }

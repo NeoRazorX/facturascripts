@@ -227,13 +227,13 @@ abstract class PanelController extends BaseController
     protected function editAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
             return false;
         }
 
@@ -261,7 +261,7 @@ abstract class PanelController extends BaseController
 
         // save in database
         if ($this->views[$this->active]->model->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             return true;
         }
 
@@ -287,7 +287,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
                 break;
         }
     }
@@ -343,19 +343,19 @@ abstract class PanelController extends BaseController
 
     /**
      * Runs data insert action.
-     * 
+     *
      * @return bool
      */
     protected function insertAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
             return false;
         }
 
@@ -374,7 +374,7 @@ abstract class PanelController extends BaseController
             }
 
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             return true;
         }
 

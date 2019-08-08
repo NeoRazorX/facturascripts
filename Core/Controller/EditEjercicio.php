@@ -59,7 +59,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createAccountingView($viewName = 'ListCuenta')
@@ -74,7 +74,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createSubAccountingView($viewName = 'ListSubcuenta')
@@ -124,7 +124,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool
@@ -147,14 +147,14 @@ class EditEjercicio extends EditController
 
     /**
      * Export AccountingPlan to CSV file.
-     * 
+     *
      * @return bool
      */
     protected function exportAccountingPlan()
     {
         $code = $this->request->get('code', '');
         if (empty($code)) {
-            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            $this->miniLog->warning($this->i18n->trans('exercise-not-found'));
             return false;
         }
 
@@ -175,13 +175,13 @@ class EditEjercicio extends EditController
     {
         $code = $this->request->request->get('codejercicio', '');
         if (empty($code)) {
-            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            $this->miniLog->warning($this->i18n->trans('exercise-not-found'));
             return false;
         }
 
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
-            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+            $this->miniLog->warning($this->i18n->trans('file-not-found', ['%fileName%' => '']));
             return false;
         }
 
@@ -190,7 +190,7 @@ class EditEjercicio extends EditController
             case 'application/xml':
             case 'text/xml':
                 if ($accountingPlanImport->importXML($uploadFile->getPathname(), $code)) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
                 } else {
                     $this->miniLog->error($this->i18n->trans('record-save-error'));
                 }
@@ -199,7 +199,7 @@ class EditEjercicio extends EditController
             case 'text/csv':
             case 'text/plain':
                 if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $code)) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
                 } else {
                     $this->miniLog->error($this->i18n->trans('record-save-error'));
                 }

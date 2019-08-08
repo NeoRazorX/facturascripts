@@ -102,7 +102,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $cuenta = $this->getSpecialAccount('COMPRA');
         if (!$cuenta->exists()) {
-            $this->miniLog->alert($this->i18n->trans('purchases-account-not-found'));
+            $this->miniLog->warning($this->i18n->trans('purchases-account-not-found'));
             return false;
         }
 
@@ -114,7 +114,7 @@ class InvoiceToAccounting extends AccountingClass
             return $line->save();
         }
 
-        $this->miniLog->alert($this->i18n->trans('purchases-subaccount-not-found'));
+        $this->miniLog->warning($this->i18n->trans('purchases-subaccount-not-found'));
         return false;
     }
 
@@ -128,7 +128,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $cuenta = $this->getSpecialAccount('VENTAS');
         if (!$cuenta->exists()) {
-            $this->miniLog->alert($this->i18n->trans('sales-account-not-found'));
+            $this->miniLog->warning($this->i18n->trans('sales-account-not-found'));
             return false;
         }
 
@@ -140,7 +140,7 @@ class InvoiceToAccounting extends AccountingClass
             return $line->save();
         }
 
-        $this->miniLog->alert($this->i18n->trans('sales-subaccount-not-found'));
+        $this->miniLog->warning($this->i18n->trans('sales-subaccount-not-found'));
         return false;
     }
 
@@ -161,13 +161,13 @@ class InvoiceToAccounting extends AccountingClass
 
         $retention = new Retencion();
         if (!$retention->loadFromPercentage($percentaje)) {
-            $this->miniLog->alert($this->i18n->trans('irpf-code-not-found'));
+            $this->miniLog->warning($this->i18n->trans('irpf-code-not-found'));
             return false;
         }
 
         $subaccount = $this->getIRPFPurchaseAccount($retention);
         if (!$subaccount->exists()) {
-            $this->miniLog->alert($this->i18n->trans('irpfpr-subaccount-not-found'));
+            $this->miniLog->warning($this->i18n->trans('irpfpr-subaccount-not-found'));
             return false;
         }
 
@@ -189,7 +189,7 @@ class InvoiceToAccounting extends AccountingClass
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxSupportedAccount($tax);
             if (!$subaccount->exists()) {
-                $this->miniLog->alert($this->i18n->trans('ivasop-account-not-found'));
+                $this->miniLog->warning($this->i18n->trans('ivasop-account-not-found'));
                 return false;
             }
 
@@ -218,13 +218,13 @@ class InvoiceToAccounting extends AccountingClass
 
         $retention = new Retencion();
         if (!$retention->loadFromPercentage($percentaje)) {
-            $this->miniLog->alert($this->i18n->trans('irpf-code-not-found'));
+            $this->miniLog->warning($this->i18n->trans('irpf-code-not-found'));
             return false;
         }
 
         $subaccount = $this->getIRPFSalesAccount($retention);
         if (!$subaccount->exists()) {
-            $this->miniLog->alert($this->i18n->trans('irpf-subaccount-not-found'));
+            $this->miniLog->warning($this->i18n->trans('irpf-subaccount-not-found'));
             return false;
         }
 
@@ -246,7 +246,7 @@ class InvoiceToAccounting extends AccountingClass
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxImpactedAccount($tax);
             if (!$subaccount->exists()) {
-                $this->miniLog->alert($this->i18n->trans('ivarep-subaccount-not-found'));
+                $this->miniLog->warning($this->i18n->trans('ivarep-subaccount-not-found'));
                 return false;
             }
 

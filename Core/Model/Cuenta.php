@@ -90,7 +90,7 @@ class Cuenta extends Base\ModelClass
     public $parent_idcuenta;
 
     /**
-     * 
+     *
      * @return Cuenta[]
      */
     public function getChildren()
@@ -100,7 +100,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Cuenta
      */
     public function getParent()
@@ -111,7 +111,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Subcuenta[]
      */
     public function getSubcuentas()
@@ -153,7 +153,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -181,7 +181,7 @@ class Cuenta extends Base\ModelClass
         $this->codcuenta = trim($this->codcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
@@ -193,7 +193,7 @@ class Cuenta extends Base\ModelClass
         if (!empty($this->parent_idcuenta) && !self::$disableAditionTest) {
             $parent = $this->getParent();
             if ($parent->codejercicio != $this->codejercicio || $parent->idcuenta == $this->idcuenta) {
-                self::$miniLog->alert(self::$i18n->trans('account-parent-error'));
+                self::$miniLog->warning(self::$i18n->trans('account-parent-error'));
                 return false;
             }
         }
@@ -214,7 +214,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     private function completeParentData()

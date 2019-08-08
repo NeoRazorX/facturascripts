@@ -190,7 +190,6 @@ class AppController extends App
 
         /// If we found a controller, load it
         if (class_exists($controllerName)) {
-            $this->miniLog->debug($this->i18n->trans('loading-controller', ['%controllerName%' => $controllerName]));
             $this->menuManager->setUser($this->user);
             $permissions = new ControllerPermissions($this->user, $pageName);
 
@@ -291,7 +290,6 @@ class AppController extends App
                 EventManager::trigger('App:User:Login', $user);
                 $this->updateCookies($user, true);
                 $this->ipFilter->clear();
-                $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
                 return $user;
             }
 
@@ -301,7 +299,7 @@ class AppController extends App
         }
 
         $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
+        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
         return false;
     }
 
@@ -322,7 +320,6 @@ class AppController extends App
         if ($user->loadFromCode($cookieNick) && $user->enabled) {
             if ($user->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                 $this->updateCookies($user);
-                $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
                 return $user;
             }
 
@@ -331,7 +328,7 @@ class AppController extends App
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
+        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
         return false;
     }
 
@@ -362,6 +359,5 @@ class AppController extends App
     {
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
-        $this->miniLog->debug($this->i18n->trans('logout-ok'));
     }
 }

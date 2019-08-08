@@ -73,7 +73,7 @@ class Updater extends Controller
 
     /**
      * Returns FacturaScripts core version.
-     * 
+     *
      * @return float
      */
     public function getCoreVersion()
@@ -82,7 +82,7 @@ class Updater extends Controller
     }
 
     /**
-     * 
+     *
      * @param Response              $response
      * @param User                  $user
      * @param ControllerPermissions $permissions
@@ -95,9 +95,9 @@ class Updater extends Controller
         /// Folders writables?
         $folders = FileManager::notWritableFolders();
         if (!empty($folders)) {
-            $this->miniLog->alert($this->i18n->trans('folder-not-writable'));
+            $this->miniLog->warning($this->i18n->trans('folder-not-writable'));
             foreach ($folders as $folder) {
-                $this->miniLog->alert($folder);
+                $this->miniLog->warning($folder);
             }
             return;
         }
@@ -132,7 +132,7 @@ class Updater extends Controller
 
     /**
      * Execute selected action.
-     * 
+     *
      * @param string $action
      */
     private function execAction(string $action)
@@ -152,7 +152,7 @@ class Updater extends Controller
             case 'update':
                 if ($this->update()) {
                     $this->pluginManager->deploy(true, true);
-                    $this->miniLog->notice($this->i18n->trans('reloading'));
+                    $this->miniLog->info($this->i18n->trans('reloading'));
                     $this->redirect($this->getClassName() . '?action=post-update', 3);
                 }
                 break;
@@ -164,7 +164,7 @@ class Updater extends Controller
     }
 
     /**
-     * 
+     *
      * @return array
      */
     private function getUpdateItems(): array
@@ -200,7 +200,7 @@ class Updater extends Controller
     }
 
     /**
-     * 
+     *
      * @param array $items
      * @param array $projectData
      */
@@ -239,7 +239,7 @@ class Updater extends Controller
     }
 
     /**
-     * 
+     *
      * @param array $items
      * @param array $pluginUpdate
      * @param float $installedVersion
@@ -289,7 +289,7 @@ class Updater extends Controller
 
     /**
      * Extract zip file and update all files.
-     * 
+     *
      * @return bool
      */
     private function update(): bool
@@ -308,7 +308,7 @@ class Updater extends Controller
     }
 
     /**
-     * 
+     *
      * @param ZipArchive $zip
      * @param string     $fileName
      *
@@ -354,7 +354,7 @@ class Updater extends Controller
     }
 
     /**
-     * 
+     *
      * @param ZipArchive $zip
      * @param string     $fileName
      *

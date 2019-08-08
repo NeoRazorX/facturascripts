@@ -101,13 +101,13 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
     public function delete()
     {
         if ($this->bloquear) {
-            self::$miniLog->alert(self::$i18n->trans('locked'));
+            self::$miniLog->warning(self::$i18n->trans('locked'));
             return false;
         }
 
@@ -125,13 +125,13 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
     public function save()
     {
         if ($this->bloquear) {
-            self::$miniLog->alert(self::$i18n->trans('locked'));
+            self::$miniLog->warning(self::$i18n->trans('locked'));
             return false;
         }
 
@@ -177,7 +177,7 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *

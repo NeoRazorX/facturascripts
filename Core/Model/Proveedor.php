@@ -64,7 +64,7 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param string $query
      * @param string $fieldcode
      *
@@ -139,7 +139,7 @@ class Proveedor extends Base\ComercialContact
     public function test()
     {
         if (!empty($this->codproveedor) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
-            self::$miniLog->alert(
+            self::$miniLog->warning(
                 self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10'])
             );
             return false;
@@ -149,7 +149,7 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

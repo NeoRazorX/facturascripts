@@ -41,7 +41,7 @@ class AdminPlugins extends Base\Controller
     public $pluginManager;
 
     /**
-     * 
+     *
      * @return array
      */
     public function getAllPlugins()
@@ -142,7 +142,7 @@ class AdminPlugins extends Base\Controller
     private function disablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
@@ -160,7 +160,7 @@ class AdminPlugins extends Base\Controller
     private function enablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
@@ -170,7 +170,7 @@ class AdminPlugins extends Base\Controller
 
     /**
      * Execute main actions.
-     * 
+     *
      * @param string $action
      */
     private function execAction($action)
@@ -210,7 +210,7 @@ class AdminPlugins extends Base\Controller
     private function removePlugin($pluginName)
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-delete'));
             return false;
         }
 
@@ -241,7 +241,7 @@ class AdminPlugins extends Base\Controller
         }
 
         if ($this->pluginManager->deploymentRequired()) {
-            $this->miniLog->notice($this->i18n->trans('reloading'));
+            $this->miniLog->info($this->i18n->trans('reloading'));
             $this->redirect($this->url(), 3);
         }
     }

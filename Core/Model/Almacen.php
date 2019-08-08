@@ -62,13 +62,13 @@ class Almacen extends Base\Address
 
     /**
      * Removed warehouse from database.
-     * 
+     *
      * @return bool
      */
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-warehouse'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-warehouse'));
             return false;
         }
 
@@ -76,7 +76,7 @@ class Almacen extends Base\Address
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
@@ -134,7 +134,7 @@ class Almacen extends Base\Address
     public function test()
     {
         if (!empty($this->codalmacen) && !preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']));
             return false;
         }
 
@@ -144,7 +144,7 @@ class Almacen extends Base\Address
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

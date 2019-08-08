@@ -44,13 +44,13 @@ class AppCron extends App
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             $startTime = new \DateTime();
-            $this->miniLog->notice($this->i18n->trans('starting-cron'));
+            $this->miniLog->info($this->i18n->trans('starting-cron'));
 
             $this->runPlugins();
 
             $endTime = new \DateTime();
             $executionTime = $startTime->diff($endTime);
-            $this->miniLog->notice($this->i18n->trans('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]));
+            $this->miniLog->info($this->i18n->trans('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]));
             return true;
         }
 
@@ -66,7 +66,7 @@ class AppCron extends App
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             $cronClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Cron';
             if (class_exists($cronClass)) {
-                $this->miniLog->notice($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
+                $this->miniLog->info($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
                 $cron = new $cronClass($pluginName);
                 $cron->run();
             }

@@ -133,7 +133,7 @@ class EmailTools
 
     /**
      * Create new PHPMailer connection with stored settings.
-     * 
+     *
      * @param string $fromName
      *
      * @return PHPMailer
@@ -206,7 +206,7 @@ class EmailTools
 
         $i18n = new i18n();
         $miniLog = new MiniLog();
-        $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+        $miniLog->warning($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
         return false;
     }
 
@@ -264,7 +264,7 @@ class EmailTools
 
             $i18n = new i18n();
             $miniLog = new MiniLog();
-            $miniLog->notice($i18n->trans('send-mail-ok'));
+            $miniLog->info($i18n->trans('send-mail-ok'));
             return true;
         }
 

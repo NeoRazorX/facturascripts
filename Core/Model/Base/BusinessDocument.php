@@ -308,7 +308,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function paid()
@@ -375,7 +375,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function subjectColumnValue()
@@ -401,7 +401,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         /// check total
         if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+            self::$miniLog->warning(self::$i18n->trans('bad-total-error'));
             return false;
         }
 
@@ -437,7 +437,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     /**
      * Sets fields to be watched.
-     * 
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
@@ -451,7 +451,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     /**
      * Sets warehouse and company for this document.
-     * 
+     *
      * @param string $codalmacen
      *
      * @return bool

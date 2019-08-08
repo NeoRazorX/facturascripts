@@ -75,8 +75,6 @@ class FileCache implements AdaptorInterface
         if (!FileManager::createFolder($dir, true)) {
             $this->minilog->critical($this->i18n->trans('cant-create-folder', ['%folderName%' => $dir]));
         }
-        $this->minilog->debug($this->i18n->trans('using-filecache'));
-        $this->minilog->debug($this->i18n->trans('cache-dir', ['%folderName%' => $dir]));
     }
 
     /**
@@ -86,7 +84,6 @@ class FileCache implements AdaptorInterface
      */
     public function clear()
     {
-        $this->minilog->debug($this->i18n->trans('filecache-clear'));
         foreach (scandir(self::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
             if (substr($fileName, -4) === '.php') {
                 unlink(self::$config['cache_path'] . '/' . $fileName);
@@ -105,7 +102,6 @@ class FileCache implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('filecache-delete-key-item', ['%item%' => $key]));
         $ruta = $this->getRoute($key);
         if (file_exists($ruta)) {
             return unlink($ruta);
@@ -123,7 +119,6 @@ class FileCache implements AdaptorInterface
      */
     public function get($key)
     {
-        $this->minilog->debug($this->i18n->trans('filecache-get-key-item', ['%item%' => $key]));
         $file = $this->getRoute($key);
         if (!$this->fileExpired($file)) {
             $content = file_get_contents($file);
@@ -149,7 +144,6 @@ class FileCache implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        $this->minilog->debug($this->i18n->trans('filecache-set-key-item', ['%item%' => $key]));
         if ($expire < self::$config['expires']) {
             self::$config['expires'] = $expire;
         }

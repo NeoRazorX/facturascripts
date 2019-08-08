@@ -128,7 +128,7 @@ class PageFilter extends Base\ModelClass
     {
         $this->description = Utils::noHtml($this->description);
         if (empty($this->description)) {
-            self::$miniLog->alert(self::$i18n->trans('description-error'));
+            self::$miniLog->warning(self::$i18n->trans('description-error'));
             return false;
         }
         return parent::test();

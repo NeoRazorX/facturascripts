@@ -262,7 +262,7 @@ abstract class BaseController extends Base\Controller
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-delete'));
             return false;
         }
 
@@ -286,12 +286,12 @@ abstract class BaseController extends Base\Controller
 
             $model->clear();
             if ($numDeletes > 0) {
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                $this->miniLog->info($this->i18n->trans('record-deleted-correctly'));
                 return true;
             }
         } elseif ($model->loadFromCode($codes) && $model->delete()) {
             // deleting a single row
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-deleted-correctly'));
             $model->clear();
             return true;
         }

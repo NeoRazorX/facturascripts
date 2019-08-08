@@ -95,7 +95,7 @@ class EditLiquidacionComision extends EditController
             /// confirm changes
             $this->dataBase->commit();
 
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
         } catch (Exception $exc) {
             $this->dataBase->rollback();
             $this->miniLog->error($exc->getMessage());
@@ -186,7 +186,7 @@ class EditLiquidacionComision extends EditController
     protected function generateInvoice()
     {
         if ($this->views[$this->getMainViewName()]->model->generateInvoice()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
             return true;
         }
 

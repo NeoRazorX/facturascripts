@@ -193,7 +193,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Impuesto
      */
     public function getImpuesto()
@@ -207,7 +207,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Variante[]
      */
     public function getVariants()
@@ -237,7 +237,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return float
      */
     public function priceWithTax()
@@ -256,7 +256,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -265,7 +265,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param float $price
      */
     public function setPriceWithTax($price)
@@ -304,7 +304,7 @@ class Producto extends Base\ModelClass
         $this->observaciones = Utils::noHtml($this->observaciones);
         $this->referencia = Utils::noHtml($this->referencia);
         if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            self::$mwarninginiLog->warning(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
             return false;
         }
 
@@ -352,7 +352,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

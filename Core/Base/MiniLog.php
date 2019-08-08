@@ -34,20 +34,6 @@ class MiniLog
     private static $dataLog = [];
 
     /**
-     * Action must be taken immediately.
-     *
-     * Example: Entire website down, dataBase unavailable, etc. This should
-     * trigger the SMS alerts and wake you up.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function alert($message, array $context = [])
-    {
-        $this->log('alert', $message, $context);
-    }
-
-    /**
      * Clean the log.
      */
     public function clear()
@@ -66,28 +52,6 @@ class MiniLog
     public function critical($message, array $context = [])
     {
         $this->log('critical', $message, $context);
-    }
-
-    /**
-     * Detailed debug information.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function debug($message, array $context = [])
-    {
-        $this->log('debug', $message, $context);
-    }
-
-    /**
-     * System is unusable.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function emergency($message, array $context = [])
-    {
-        $this->log('emergency', $message, $context);
     }
 
     /**
@@ -113,17 +77,6 @@ class MiniLog
     public function info($message, array $context = [])
     {
         $this->log('info', $message, $context);
-    }
-
-    /**
-     * Normal but significant events.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function notice($message, array $context = [])
-    {
-        $this->log('notice', $message, $context);
     }
 
     /**

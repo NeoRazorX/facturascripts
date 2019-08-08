@@ -133,7 +133,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $email
      * @param string $name
      */
@@ -144,7 +144,7 @@ class NewMail
 
     /**
      * Add attachments to the email.
-     * 
+     *
      * @param string $path
      * @param string $name
      */
@@ -154,7 +154,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $email
      * @param string $name
      */
@@ -164,7 +164,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $email
      * @param string $name
      */
@@ -174,7 +174,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param BaseBlock $block
      */
     public function addFooterBlock($block)
@@ -183,7 +183,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param BaseBlock $block
      */
     public function addMainBlock($block)
@@ -192,7 +192,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getAttachmentNames()
@@ -206,7 +206,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getBCCAddresses(): array
@@ -220,7 +220,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getCCAddresses(): array
@@ -234,7 +234,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getToAddresses(): array
@@ -248,13 +248,13 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function send(): bool
     {
         if (empty(AppSettings::get('email', 'host'))) {
-            $this->miniLog->alert($this->i18n->trans('email-not-configured'));
+            $this->miniLog->warning($this->i18n->trans('email-not-configured'));
             return false;
         }
 
@@ -286,7 +286,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getFooterBlocks(): array
@@ -295,7 +295,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getMainBlocks(): array
@@ -304,7 +304,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return string
      */
     private function renderHTML(): string

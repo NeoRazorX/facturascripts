@@ -56,13 +56,13 @@ class Pais extends Base\ModelClass
 
     /**
      * Removed country from database.
-     * 
+     *
      * @return bool
      */
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-country'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-country'));
             return false;
         }
 
@@ -118,7 +118,7 @@ class Pais extends Base\ModelClass
     {
         $this->codpais = trim($this->codpais);
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']));
             return false;
         }
 

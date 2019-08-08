@@ -73,7 +73,6 @@ class MemcacheAdapter implements AdaptorInterface
             self::$memcache = new \Memcache();
             if (self::$memcache->connect(\FS_CACHE_HOST, (int) \FS_CACHE_PORT)) {
                 self::$connected = true;
-                $this->minilog->debug($this->i18n->trans('using-memcache'));
             } else {
                 $this->minilog->error($this->i18n->trans('error-connecting-memcache'));
             }
@@ -87,7 +86,6 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function clear()
     {
-        $this->minilog->debug($this->i18n->trans('memcache-clear'));
         if (self::$connected) {
             return self::$memcache->flush();
         }
@@ -104,7 +102,6 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', ['%item%' => $key]));
         if (self::$connected) {
             return self::$memcache->delete(\FS_CACHE_PREFIX . $key);
         }
@@ -122,7 +119,6 @@ class MemcacheAdapter implements AdaptorInterface
     public function get($key)
     {
         if (self::$connected) {
-            $this->minilog->debug($this->i18n->trans('memcache-get-key-item', ['%item%' => $key]));
 
             /**
              * Memcache::get() returns false if key is not found.
@@ -161,7 +157,6 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-set-key-item', ['%item%' => $key]));
         if (self::$connected) {
             return self::$memcache->set(\FS_CACHE_PREFIX . $key, $content, 0, $expire);
         }

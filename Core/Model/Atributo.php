@@ -72,7 +72,7 @@ class Atributo extends Base\ModelClass
     public function test()
     {
         if (!empty($this->codatributo) && !preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']));
             return false;
         }
 
@@ -81,7 +81,7 @@ class Atributo extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

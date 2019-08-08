@@ -36,7 +36,7 @@ class EditAsiento extends EditController
 
     /**
      * Returns the class name of the model to use in the editView.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -72,7 +72,7 @@ class EditAsiento extends EditController
 
     /**
      * Clone source document
-     * 
+     *
      * @return bool
      * @throws Exception
      */
@@ -114,7 +114,7 @@ class EditAsiento extends EditController
 
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            self::$miniLog->alert($exp->getMessage());
+            self::$miniLog->warning($exp->getMessage());
             $cloneOk = false;
         } finally {
             if ($this->dataBase->inTransaction()) {

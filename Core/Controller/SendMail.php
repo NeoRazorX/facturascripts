@@ -85,7 +85,7 @@ class SendMail extends Controller
 
         /// Check if the email is configurate
         if (AppSettings::get('email', 'host', '') == "") {
-            $this->miniLog->alert($this->i18n->trans('email-not-configured'));
+            $this->miniLog->warning($this->i18n->trans('email-not-configured'));
         }
 
         $action = $this->request->get('action', '');
@@ -146,7 +146,7 @@ class SendMail extends Controller
 
             case 'send':
                 if ($this->send()) {
-                    $this->miniLog->notice($this->i18n->trans('send-mail-ok'));
+                    $this->miniLog->info($this->i18n->trans('send-mail-ok'));
                     $this->updateFemail();
                     $this->redirAfter();
                     break;
@@ -176,7 +176,7 @@ class SendMail extends Controller
     }
 
     /**
-     * 
+     *
      */
     protected function redirAfter()
     {
@@ -188,7 +188,7 @@ class SendMail extends Controller
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
-            $this->miniLog->notice($this->i18n->trans('reloading'));
+            $this->miniLog->info($this->i18n->trans('reloading'));
             $this->redirect($model->url(), 3);
         }
     }
@@ -227,7 +227,7 @@ class SendMail extends Controller
 
     /**
      * Send and email with data posted from form.
-     * 
+     *
      * @return bool
      */
     protected function send()
@@ -316,7 +316,7 @@ class SendMail extends Controller
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
             $model->femail = date('d-m-Y');
             if (!$model->save()) {
-                $this->miniLog->alert($this->i18n->trans('error-saving-data'));
+                $this->miniLog->warning($this->i18n->trans('error-saving-data'));
             }
         }
     }

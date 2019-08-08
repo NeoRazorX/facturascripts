@@ -106,7 +106,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $query
      * @param string $fieldcode
      *
@@ -135,7 +135,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function description()
@@ -146,7 +146,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -198,7 +198,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -207,7 +207,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function save()
@@ -232,14 +232,14 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function test()
     {
         $this->referencia = Utils::noHtml($this->referencia);
         if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
             return false;
         }
 
@@ -248,7 +248,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *
@@ -272,7 +272,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $description
      * @param int    $idatributoval1
      * @param int    $idatributoval2

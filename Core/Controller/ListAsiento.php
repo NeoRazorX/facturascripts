@@ -54,7 +54,7 @@ class ListAsiento extends ListController
 
     /**
      * Add accounting entries tab
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewAccountEntries($viewName = 'ListAsiento')
@@ -93,7 +93,7 @@ class ListAsiento extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewConcepts($viewName = 'ListConceptoPartida')
@@ -105,7 +105,7 @@ class ListAsiento extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewJournals($viewName = 'ListDiario')
@@ -129,7 +129,7 @@ class ListAsiento extends ListController
             case 'renumber':
                 $codejercicio = $this->request->request->get('exercise');
                 if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
-                    $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
+                    $this->miniLog->info($this->i18n->trans('renumber-accounting-ok'));
                 }
                 return true;
         }
