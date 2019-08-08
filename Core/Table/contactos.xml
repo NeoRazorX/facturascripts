@@ -76,6 +76,11 @@
         <type>date</type>
     </column>
     <column>
+        <name>habilitado</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
         <name>idcontacto</name>
         <type>serial</type>
         <null>NO</null>

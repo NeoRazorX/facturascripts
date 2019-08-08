@@ -64,6 +64,7 @@
     </columns>
     <rows>
         <row type="status">
+            <option color="danger" fieldname="habilitado">0</option>
             <option color="success" fieldname="verificado">1</option>
             <option color="info" fieldname="personafisica">0</option>
         </row>

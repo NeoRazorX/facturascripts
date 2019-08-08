@@ -131,6 +131,12 @@ class Contacto extends Base\Contact
     public $empresa;
 
     /**
+     *
+     * @var bool
+     */
+    public $habilitado;
+
+    /**
      * Primary key.
      *
      * @var int
@@ -221,8 +227,10 @@ class Contacto extends Base\Contact
     public function clear()
     {
         parent::clear();
+        $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
         $this->codpais = AppSettings::get('default', 'codpais');
+        $this->habilitado = true;
         $this->level = 1;
         $this->puntos = 0;
         $this->verificado = false;
@@ -354,7 +362,6 @@ class Contacto extends Base\Contact
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
         $this->logkey = Utils::randomString(99);
-
         return $this->logkey;
     }
 
