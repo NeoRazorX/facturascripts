@@ -446,4 +446,19 @@ class GridView extends EditView
 
         return $this->detailModel->save();
     }
+
+    public function export(&$exportManager)
+    {
+        parent::export($exportManager);
+        $headers = $this->gridData['headers'];
+        $formattedRows = [];
+        foreach ($this->gridData['rows'] as $row) {
+            $formattedRow = [];
+            foreach ($this->gridData['columns'] as $column) {
+                $formattedRow[] = isset($row[$column['data']]) ? $row[$column['data']] : '';
+            }
+            $formattedRows[] = array_combine($headers, $formattedRow);
+        }
+        $exportManager->generateTablePage($headers, $formattedRows);
+    }
 }
