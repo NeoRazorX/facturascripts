@@ -6,6 +6,11 @@
 -->
 <table>
     <column>
+        <name>aceptaprivacidad</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>admitemarketing</name>
         <type>boolean</type>
         <default>false</default>

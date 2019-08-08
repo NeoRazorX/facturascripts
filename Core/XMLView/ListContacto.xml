@@ -63,8 +63,8 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="verificado">
-            <option color="success">1</option>
+        <row type="status">
+            <option color="success" fieldname="verificado">1</option>
             <option color="info" fieldname="personafisica">0</option>
         </row>
     </rows>

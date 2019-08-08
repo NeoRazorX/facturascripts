@@ -67,6 +67,12 @@ class EmailSent extends Base\ModelClass
     public $nick;
 
     /**
+     *
+     * @var bool
+     */
+    public $opened;
+
+    /**
      * Subject of email
      *
      * @var string
@@ -80,6 +86,7 @@ class EmailSent extends Base\ModelClass
     {
         parent::clear();
         $this->date = date('d-m-Y H:i:s');
+        $this->opened = false;
     }
 
     /**
