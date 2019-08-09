@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\WidgetAutocomplete;
 use FacturaScripts\Dinamic\Lib\Widget\WidgetSelect;
@@ -86,6 +87,25 @@ class GridView extends EditView
 
         // custom template
         $this->template = self::GRIDVIEW_TEMPLATE;
+    }
+
+    /**
+     * 
+     * @param ExportManager $exportManager
+     */
+    public function export(&$exportManager)
+    {
+        parent::export($exportManager);
+        $headers = $this->gridData['headers'];
+        $formattedRows = [];
+        foreach ($this->gridData['rows'] as $row) {
+            $formattedRow = [];
+            foreach ($this->gridData['columns'] as $column) {
+                $formattedRow[] = isset($row[$column['data']]) ? $row[$column['data']] : '';
+            }
+            $formattedRows[] = array_combine($headers, $formattedRow);
+        }
+        $exportManager->generateTablePage($headers, $formattedRows);
     }
 
     /**
@@ -445,20 +465,5 @@ class GridView extends EditView
         }
 
         return $this->detailModel->save();
-    }
-
-    public function export(&$exportManager)
-    {
-        parent::export($exportManager);
-        $headers = $this->gridData['headers'];
-        $formattedRows = [];
-        foreach ($this->gridData['rows'] as $row) {
-            $formattedRow = [];
-            foreach ($this->gridData['columns'] as $column) {
-                $formattedRow[] = isset($row[$column['data']]) ? $row[$column['data']] : '';
-            }
-            $formattedRows[] = array_combine($headers, $formattedRow);
-        }
-        $exportManager->generateTablePage($headers, $formattedRows);
     }
 }
