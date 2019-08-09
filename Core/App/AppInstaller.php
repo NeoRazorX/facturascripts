@@ -75,7 +75,7 @@ class AppInstaller
         if ($installed && !empty($this->request->get('unattended', ''))) {
             echo 'OK';
         } elseif ($installed) {
-            header('Location: ' . $this->getUri());
+            $this->render('Installer/Redir.html.twig');
         } elseif ('TRUE' === $this->request->get('phpinfo', '')) {
             /** @noinspection ForgottenDebugOutputInspection */
             phpinfo();
@@ -212,8 +212,10 @@ class AppInstaller
 
     /**
      * Renders HTML.
+     * 
+     * @param string $template
      */
-    private function render()
+    private function render($template = 'Installer/Install.html.twig')
     {
         /// HTML template variables
         $templateVars = [
@@ -227,7 +229,7 @@ class AppInstaller
         $webRender = new WebRender();
 
         /// Generate and return the HTML
-        $response = new Response($webRender->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
+        $response = new Response($webRender->render($template, $templateVars), Response::HTTP_OK);
         $response->send();
     }
 
