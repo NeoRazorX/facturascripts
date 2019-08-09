@@ -14,5 +14,11 @@ composer install
 npm install
 ```
 
-## Documentation / Issues / Feedback
-https://www.facturascripts.com
+## Documentation
+https://www.facturascripts.com/doc
+
+## Issues / Feedback
+https://www.facturascripts.com/contacto
+
+## Translations
+https://www.facturascripts.com/traducciones
