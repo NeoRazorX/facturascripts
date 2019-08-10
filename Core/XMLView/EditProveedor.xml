@@ -27,10 +27,10 @@
                 <widget type="text" fieldname="codproveedor" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" />
             </column>
             <column name="name" numcolumns="3" order="110" description="desc-provider-name">
-                <widget type="text" fieldname="nombre" required="true"/>
+                <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="business-name" numcolumns="3" order="120" description="desc-provider-business-name">
-                <widget type="text" fieldname="razonsocial" />
+                <widget type="text" fieldname="razonsocial" maxlength="100" />
             </column>
             <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
@@ -54,19 +54,19 @@
                 </widget>
             </column>
             <column name="phone" order="110">
-                <widget type="tel" fieldname="telefono1" icon="fas fa-phone" />
+                <widget type="tel" fieldname="telefono1" maxlength="30" icon="fas fa-phone" />
             </column>
             <column name="phone2" order="120">
-                <widget type="tel" fieldname="telefono2" icon="fas fa-mobile-alt" />
+                <widget type="tel" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt" />
             </column>
             <column name="fax" display="none" order="130">
-                <widget type="tel" fieldname="fax" />
+                <widget type="tel" fieldname="fax" maxlength="30" icon="fas fa-fax" />
             </column>
             <column name="email" order="140">
-                <widget type="email" fieldname="email" icon="fas fa-envelope" />
+                <widget type="email" fieldname="email" maxlength="100" icon="fas fa-envelope" />
             </column>
             <column name="website" order="150">
-                <widget type="url" fieldname="web" />
+                <widget type="link" fieldname="web" maxlength="100" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
@@ -86,7 +86,7 @@
                 </widget>
             </column>
             <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="130">
-                <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
+                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
             </column>
             <column name="vat-regime" numcolumns="3" order="140">
                 <widget type="select" fieldname="regimeniva" required="true">

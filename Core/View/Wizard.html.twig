@@ -64,17 +64,17 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombrecorto, 'text', i18n.trans('company'), 'fas fa-building', {'required': ''}) }}
+                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombrecorto, 'text', i18n.trans('company'), 'fas fa-building', {'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group">
-                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'required': ''}) }}
+                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('postal-code')) }}
+                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('postal-code'), NULL, {'maxlength': '10'}) }}
                     </div>
                 </div>
                 <div class="col-sm-4">

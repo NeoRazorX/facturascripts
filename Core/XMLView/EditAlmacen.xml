@@ -26,10 +26,10 @@
                 <widget type="text" fieldname="codalmacen" icon="fas fa-hashtag" maxlength="4" readonly="dinamic" />
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
             <column name="phone" numcolumns="2" order="120">
-                <widget type="text" fieldname="telefono" icon="fas fa-phone" />
+                <widget type="text" fieldname="telefono" maxlength="30" icon="fas fa-phone" />
             </column>
             <column name="company" numcolumns="2" order="130">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
@@ -39,7 +39,7 @@
         </group>
         <group name="contact-data" title="contact-data" numcolumns="12">
             <column name="address" numcolumns="6" order="100">
-                <widget type="text" fieldname="direccion" icon="fas fa-map-marked" />
+                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" />
             </column>
             <column name="postalcode" numcolumns="3" order="110">
                 <widget type="text" fieldname="codpostal" maxlength="10" />

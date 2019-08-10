@@ -45,7 +45,7 @@
                 </widget>
             </column>
             <column name="business-name" title="name-or-business-name" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
             <column name="fiscal-number" order="120">
                 <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />

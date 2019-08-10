@@ -46,7 +46,7 @@
     </column>
     <column>
         <name>telefono</name>
-        <type>character varying(50)</type>
+        <type>character varying(30)</type>
     </column>
     <constraint>
         <name>almacenes_pkey</name>
