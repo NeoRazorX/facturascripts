@@ -62,7 +62,7 @@ class EditProducto extends EditController
     {
         parent::createViews();
         $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-project-diagram');
-        $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-tasks');
+        $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-dolly');
     }
 
     protected function loadCustomStockWidget()
