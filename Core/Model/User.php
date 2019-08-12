@@ -30,6 +30,7 @@ class User extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\PasswordTrait;
 
     const DEFAULT_LEVEL = 2;
 
@@ -104,32 +105,11 @@ class User extends Base\ModelClass
     public $logkey;
 
     /**
-     * New password.
-     *
-     * @var string
-     */
-    public $newPassword;
-
-    /**
-     * Repeated new password.
-     *
-     * @var string
-     */
-    public $newPassword2;
-
-    /**
      * Primary key. Varchar (50).
      *
      * @var string
      */
     public $nick;
-
-    /**
-     * Password hashed with password_hash()
-     *
-     * @var string
-     */
-    public $password;
 
     /**
      * Reset the values of all model properties.
@@ -189,16 +169,6 @@ class User extends Base\ModelClass
     }
 
     /**
-     * Asigns the new password to the user.
-     *
-     * @param string $value
-     */
-    public function setPassword($value)
-    {
-        $this->password = password_hash($value, PASSWORD_DEFAULT);
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -230,16 +200,7 @@ class User extends Base\ModelClass
             return false;
         }
 
-        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
-            if ($this->newPassword !== $this->newPassword2) {
-                self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
-                return false;
-            }
-
-            $this->setPassword($this->newPassword);
-        }
-
-        return parent::test();
+        return $this->testPassword() && parent::test();
     }
 
     /**
@@ -263,26 +224,6 @@ class User extends Base\ModelClass
     public function verifyLogkey($value)
     {
         return $this->logkey === $value;
-    }
-
-    /**
-     * Verifies password. It also rehash the password if needed.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyPassword($value)
-    {
-        if (password_verify($value, $this->password)) {
-            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
-                $this->setPassword($value);
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     /**
