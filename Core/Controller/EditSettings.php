@@ -22,7 +22,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Dinamic\Lib\EmailTools;
+use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
@@ -214,8 +214,8 @@ class EditSettings extends ExtendedController\PanelController
                 break;
 
             case 'testmail':
-                $emailTools = new EmailTools();
-                if ($this->editAction() && $emailTools->test()) {
+                $email = new NewMail();
+                if ($this->editAction() && $email->test()) {
                     $this->miniLog->info($this->i18n->trans('mail-test-ok'));
                 } else {
                     $this->miniLog->error($this->i18n->trans('mail-test-error'));

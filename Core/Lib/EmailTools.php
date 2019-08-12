@@ -176,11 +176,19 @@ class EmailTools
      */
     public function send($mail)
     {
+        $i18n = new i18n();
+        $miniLog = new MiniLog();
+
         if (null === $this->getSetting('host')) {
             return false;
         }
 
-        if ($mail->smtpConnect($this->smtpOptions()) && $mail->send()) {
+        if ($this->getSetting('mailer') === 'smtp' && !$mail->smtpConnect($this->smtpOptions())) {
+            $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+            return false;
+        }
+
+        if ($mail->send()) {
             /// get all email address
             $addresses = [];
             foreach ($mail->getToAddresses() as $addr) {
@@ -204,8 +212,6 @@ class EmailTools
             return true;
         }
 
-        $i18n = new i18n();
-        $miniLog = new MiniLog();
         $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
         return false;
     }
@@ -278,13 +284,13 @@ class EmailTools
      */
     public function test()
     {
-        if (self::$settings['mailer'] === 'smtp') {
-            $mail = $this->newMail();
+        switch ($this->getSetting('mailer')) {
+            case 'smtp':
+                return $this->newMail()->smtpConnect($this->smtpOptions());
 
-            return $mail->smtpConnect($this->smtpOptions());
+            default:
+                return true;
         }
-
-        return true;
     }
 
     /**

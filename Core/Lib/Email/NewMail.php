@@ -262,7 +262,12 @@ class NewMail
         $this->mail->Subject = $this->title;
         $this->mail->msgHTML($this->renderHTML());
 
-        if ($this->mail->smtpConnect($this->smtpOptions()) && $this->mail->send()) {
+        if ('smtp' === AppSettings::get('email', 'mailer') && !$this->mail->smtpConnect($this->smtpOptions())) {
+            $this->miniLog->warning($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
+            return false;
+        }
+
+        if ($this->mail->send()) {
             $this->saveMailSent();
             return true;
         }
@@ -278,11 +283,13 @@ class NewMail
      */
     public function test(): bool
     {
-        if (AppSettings::get('email', 'mailer') === 'smtp') {
-            return $this->mail->smtpConnect($this->smtpOptions());
-        }
+        switch (AppSettings::get('email', 'mailer', '')) {
+            case 'smtp':
+                return $this->mail->smtpConnect($this->smtpOptions());
 
-        return true;
+            default:
+                return true;
+        }
     }
 
     /**
