@@ -49,7 +49,7 @@ class CSVImport
             $sql .= $sep . '(';
             $sep2 = '';
             foreach ($row as $value) {
-                $sql .= $sep2 . self::valueToSql($dataBase, $value);
+                $sql .= $sep2 . static::valueToSql($dataBase, $value);
                 $sep2 = ', ';
             }
 

@@ -34,21 +34,21 @@ class ExportManager
      *
      * @var mixed
      */
-    private static $engine;
+    protected static $engine;
 
     /**
      * Option list.
      *
      * @var array
      */
-    private static $options;
+    protected static $options;
 
     /**
      * ExportManager constructor.
      */
     public function __construct()
     {
-        self::init();
+        static::init();
     }
 
     /**
@@ -60,8 +60,8 @@ class ExportManager
      */
     public static function addOption($key, $description, $icon)
     {
-        self::init();
-        self::$options[$key] = ['description' => $description, 'icon' => $icon];
+        static::init();
+        static::$options[$key] = ['description' => $description, 'icon' => $icon];
     }
 
     /**
@@ -71,7 +71,7 @@ class ExportManager
      */
     public function defaultOption()
     {
-        foreach (array_keys(self::$options) as $key) {
+        foreach (array_keys(static::$options) as $key) {
             return $key;
         }
 
@@ -85,7 +85,7 @@ class ExportManager
      */
     public function generateBusinessDocPage($model)
     {
-        self::$engine->generateBusinessDocPage($model);
+        static::$engine->generateBusinessDocPage($model);
     }
 
     /**
@@ -100,7 +100,7 @@ class ExportManager
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
-        self::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
+        static::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
     }
 
     /**
@@ -112,7 +112,7 @@ class ExportManager
      */
     public function generateModelPage($model, $columns, $title = '')
     {
-        self::$engine->generateModelPage($model, $columns, $title);
+        static::$engine->generateModelPage($model, $columns, $title);
     }
 
     /**
@@ -129,7 +129,7 @@ class ExportManager
             $fixedHeaders[$value] = $value;
         }
 
-        self::$engine->generateTablePage($fixedHeaders, $rows);
+        static::$engine->generateTablePage($fixedHeaders, $rows);
     }
 
     /**
@@ -141,8 +141,8 @@ class ExportManager
     {
         /// calls to the appropiate engine to generate the doc
         $className = $this->getExportClassName($option);
-        self::$engine = new $className();
-        self::$engine->newDoc();
+        static::$engine = new $className();
+        static::$engine->newDoc();
     }
 
     /**
@@ -152,7 +152,7 @@ class ExportManager
      */
     public function options()
     {
-        return self::$options;
+        return static::$options;
     }
 
     /**
@@ -162,7 +162,7 @@ class ExportManager
      */
     public function show(Response &$response)
     {
-        self::$engine->show($response);
+        static::$engine->show($response);
     }
 
     /**
@@ -174,12 +174,12 @@ class ExportManager
      */
     private function getExportClassName($option)
     {
-        $className = 'FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
-        if (!class_exists($className)) {
-            $className = 'FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
+        $className = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
+        if (class_exists($className)) {
+            return $className;
         }
 
-        return $className;
+        return '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
     }
 
     /**
@@ -187,8 +187,8 @@ class ExportManager
      */
     protected static function init()
     {
-        if (self::$options === null) {
-            self::$options = [
+        if (static::$options === null) {
+            static::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
                 'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-csv'],
