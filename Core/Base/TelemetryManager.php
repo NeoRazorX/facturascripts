@@ -36,6 +36,7 @@ class TelemetryManager
 {
 
     const TELEMETRY_URL = 'https://www.facturascripts.com/Telemetry';
+    const UPDATE_INTERVAL = 86400;
 
     /**
      *
@@ -51,6 +52,12 @@ class TelemetryManager
 
     /**
      *
+     * @var int
+     */
+    private $lastupdate;
+
+    /**
+     *
      * @var string
      */
     private $signkey;
@@ -58,7 +65,8 @@ class TelemetryManager
     public function __construct()
     {
         $this->appSettings = new AppSettings();
-        $this->idinstall = $this->appSettings->get('default', 'telemetryinstall');
+        $this->idinstall = (int) $this->appSettings->get('default', 'telemetryinstall');
+        $this->lastupdate = (int) $this->appSettings->get('default', 'telemetrylastu');
         $this->signkey = $this->appSettings->get('default', 'telemetrykey');
     }
 
@@ -68,10 +76,9 @@ class TelemetryManager
      */
     public function install(): bool
     {
-        $downloader = new DownloadTools();
         $params = $this->collectData();
         $params['action'] = 'install';
-        $json = $downloader->getContents(self::TELEMETRY_URL . '?' . http_build_query($params));
+        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
         $data = json_decode($json, true);
         if ($data['idinstall']) {
             $this->idinstall = $data['idinstall'];
@@ -90,6 +97,41 @@ class TelemetryManager
     public function ready(): bool
     {
         return empty($this->idinstall) ? false : true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function update(): bool
+    {
+        if (false === $this->ready() || time() - $this->lastupdate < self::UPDATE_INTERVAL) {
+            return false;
+        }
+
+        $params = $this->collectData();
+        $params['action'] = 'update';
+        $params['idinstall'] = $this->idinstall;
+        $this->calculateHash($params);
+
+        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
+        $data = json_decode($json, true);
+        if ($data['ok']) {
+            $this->save();
+            return true;
+        }
+
+        $this->save();
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $data
+     */
+    private function calculateHash(array &$data)
+    {
+        $data['hash'] = sha1($data['randomnum'] . $this->signkey);
     }
 
     /**
@@ -114,13 +156,25 @@ class TelemetryManager
             'numvariants' => $variant->count(),
             'phpversion' => (float) PHP_VERSION,
             'pluginlist' => implode(',', $pluginManager->enabledPlugins()),
+            'randomnum' => mt_rand(),
         ];
+    }
+
+    /**
+     * 
+     * @return DownloadTools
+     */
+    private function getDownloader()
+    {
+        return new DownloadTools();
     }
 
     private function save()
     {
+        $this->lastupdate = time();
         $this->appSettings->set('default', 'telemetryinstall', $this->idinstall);
         $this->appSettings->set('default', 'telemetrykey', $this->signkey);
+        $this->appSettings->set('default', 'telemetrylastu', $this->lastupdate);
         $this->appSettings->save();
     }
 }

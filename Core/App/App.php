@@ -18,7 +18,13 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Cache;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\MiniLogSave;
+use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Lib\IPFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,21 +40,21 @@ abstract class App
     /**
      * Cache access manager.
      *
-     * @var Base\Cache
+     * @var Cache
      */
     protected $cache;
 
     /**
      * Database access manager.
      *
-     * @var Base\DataBase
+     * @var DataBase
      */
     protected $dataBase;
 
     /**
      * Translation engine.
      *
-     * @var Base\Translator
+     * @var Translator
      */
     protected $i18n;
 
@@ -62,14 +68,14 @@ abstract class App
     /**
      * App log manager.
      *
-     * @var Base\MiniLog
+     * @var MiniLog
      */
     protected $miniLog;
 
     /**
      * Plugin manager.
      *
-     * @var Base\PluginManager
+     * @var PluginManager
      */
     protected $pluginManager;
 
@@ -117,16 +123,16 @@ abstract class App
     {
         $this->request = Request::createFromGlobals();
         if ($this->request->cookies->get('fsLang')) {
-            $this->i18n = new Base\Translator($this->request->cookies->get('fsLang'));
+            $this->i18n = new Translator($this->request->cookies->get('fsLang'));
         } else {
-            $this->i18n = new Base\Translator();
+            $this->i18n = new Translator();
         }
 
-        $this->cache = new Base\Cache();
-        $this->dataBase = new Base\DataBase();
+        $this->cache = new Cache();
+        $this->dataBase = new DataBase();
         $this->ipFilter = new IPFilter();
-        $this->miniLog = new Base\MiniLog();
-        $this->pluginManager = new Base\PluginManager();
+        $this->miniLog = new MiniLog();
+        $this->pluginManager = new PluginManager();
         $this->response = new Response();
         $this->settings = new AppSettings();
         $this->uri = $uri;
@@ -160,7 +166,13 @@ abstract class App
      */
     public function close(string $nick = '')
     {
-        new Base\MiniLogSave($this->ipFilter->getClientIp() ?? '', $nick, $this->uri);
+        /// send telemetry (if configured)
+        $telemetry = new TelemetryManager();
+        $telemetry->update();
+
+        /// save log
+        new MiniLogSave($this->ipFilter->getClientIp() ?? '', $nick, $this->uri);
+
         $this->dataBase->close();
     }
 
