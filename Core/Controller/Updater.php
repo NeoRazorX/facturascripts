@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Diario;
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
@@ -49,6 +50,12 @@ class Updater extends Controller
      * @var PluginManager
      */
     private $pluginManager;
+
+    /**
+     *
+     * @var TelemetryManager
+     */
+    public $telemetryManager;
 
     /**
      *
@@ -91,6 +98,7 @@ class Updater extends Controller
     {
         parent::privateCore($response, $user, $permissions);
         $this->pluginManager = new PluginManager();
+        $this->telemetryManager = new TelemetryManager();
 
         /// Folders writables?
         $folders = FileManager::notWritableFolders();
@@ -147,6 +155,10 @@ class Updater extends Controller
                 $this->cache->clear();
                 $this->updaterItems = $this->getUpdateItems();
                 $this->initNewModels();
+                break;
+            
+            case 'register':
+                $this->telemetryManager->install();
                 break;
 
             case 'update':
