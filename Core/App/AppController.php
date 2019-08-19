@@ -301,7 +301,7 @@ class AppController extends App
         }
 
         $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
+        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
         return false;
     }
 
@@ -331,7 +331,7 @@ class AppController extends App
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
+        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
         return false;
     }
 

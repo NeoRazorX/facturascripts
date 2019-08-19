@@ -100,7 +100,7 @@ class AgenciaTransporte extends Base\ModelClass
     public function test()
     {
         if (!empty($this->codtrans) && !preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']));
             return false;
         }
 

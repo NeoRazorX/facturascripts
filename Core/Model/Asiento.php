@@ -146,7 +146,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         /// TODO: Check if accounting entry have VAT Accounts
         $regularization = new RegularizacionImpuesto();
         if ($regularization->getFechaInside($this->fecha)) {
-            self::$miniLog->alert(self::$i18n->trans('acounting-within-regularization'));
+            self::$miniLog->warning(self::$i18n->trans('acounting-within-regularization'));
             return false;
         }
 
@@ -266,7 +266,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
             $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             while (!empty($asientos)) {
                 if (!$this->renumberAccountingEntries($asientos, $number)) {
-                    self::$miniLog->alert(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
+                    self::$miniLog->warning(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
                     return false;
                 }
                 $offset += 1000;
@@ -318,7 +318,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $this->documento = Utils::noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
@@ -327,7 +327,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         if ($this->testErrorInData()) {
-            self::$miniLog->alert(self::$i18n->trans('accounting-data-missing'));
+            self::$miniLog->warning(self::$i18n->trans('accounting-data-missing'));
             return false;
         }
 

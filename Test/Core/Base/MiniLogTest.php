@@ -42,38 +42,6 @@ class MiniLogTest extends TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::emergency
-     */
-    public function testEmergency()
-    {
-        $level = ['emergency'];
-        $this->object->clear();
-        $this->object->emergency('emergency');
-        $data = $this->object->read($level);
-
-        $this->assertEquals(1, count($data));
-        $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'emergency');
-        $this->assertEmpty($data[0]['context']);
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::alert
-     */
-    public function testAlert()
-    {
-        $level = ['alert'];
-        $this->object->clear();
-        $this->object->alert('alert');
-        $data = $this->object->read($level);
-
-        $this->assertEquals(1, count($data));
-        $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'alert');
-        $this->assertEmpty($data[0]['context']);
-    }
-
-    /**
      * @covers \FacturaScripts\Core\Base\MiniLog::critical
      */
     public function testCritical()
@@ -86,6 +54,22 @@ class MiniLogTest extends TestCase
         $this->assertEquals(1, count($data));
         $this->assertEquals($data[0]['level'], $level[0]);
         $this->assertEquals($data[0]['message'], 'critical');
+        $this->assertEmpty($data[0]['context']);
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Base\MiniLog::debug
+     */
+    public function testDebug()
+    {
+        $level = ['debug'];
+        $this->object->clear();
+        $this->object->debug('debug');
+        $data = $this->object->read($level);
+
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'debug');
         $this->assertEmpty($data[0]['context']);
     }
 
@@ -134,38 +118,6 @@ class MiniLogTest extends TestCase
         $this->assertEquals(1, count($data));
         $this->assertEquals($data[0]['level'], $level[0]);
         $this->assertEquals($data[0]['message'], 'notice');
-        $this->assertEmpty($data[0]['context']);
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::info
-     */
-    public function testInfo()
-    {
-        $level = ['info'];
-        $this->object->clear();
-        $this->object->info('info');
-        $data = $this->object->read($level);
-
-        $this->assertEquals(1, count($data));
-        $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'info');
-        $this->assertEmpty($data[0]['context']);
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::debug
-     */
-    public function testDebug()
-    {
-        $level = ['debug'];
-        $this->object->clear();
-        $this->object->debug('debug');
-        $data = $this->object->read($level);
-
-        $this->assertEquals(1, count($data));
-        $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'debug');
         $this->assertEmpty($data[0]['context']);
     }
 

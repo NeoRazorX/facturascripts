@@ -103,9 +103,9 @@ class Updater extends Controller
         /// Folders writables?
         $folders = FileManager::notWritableFolders();
         if (!empty($folders)) {
-            $this->miniLog->alert($this->i18n->trans('folder-not-writable'));
+            $this->miniLog->warning($this->i18n->trans('folder-not-writable'));
             foreach ($folders as $folder) {
-                $this->miniLog->alert($folder);
+                $this->miniLog->warning($folder);
             }
             return;
         }
@@ -131,7 +131,7 @@ class Updater extends Controller
 
             $downloader = new DownloadTools();
             if ($downloader->download($item['url'], \FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
-                $this->miniLog->info($this->i18n->trans('download-completed'));
+                $this->miniLog->notice($this->i18n->trans('download-completed'));
                 $this->updaterItems[$key]['downloaded'] = true;
                 $this->cache->clear();
             }

@@ -178,7 +178,7 @@ class ListLogMessage extends ListController
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             }
         } catch (Exception $exc) {
-            $this->miniLog->alert($exc->getMessage());
+            $this->miniLog->error($exc->getMessage());
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();

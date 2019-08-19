@@ -290,12 +290,12 @@ class Partida extends Base\ModelOnChangeClass
         $this->documento = Utils::noHtml($this->documento);
 
         if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
         if ($this->testErrorInData()) {
-            self::$miniLog->alert(self::$i18n->trans('accounting-data-missing'));
+            self::$miniLog->warning(self::$i18n->trans('accounting-data-missing'));
             return false;
         }
 

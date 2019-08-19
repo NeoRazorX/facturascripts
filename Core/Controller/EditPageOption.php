@@ -175,7 +175,7 @@ class EditPageOption extends Controller
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             $this->loadPageOptions();
         } else {
-            $this->miniLog->alert($this->i18n->trans('default-not-deletable'));
+            $this->miniLog->warning($this->i18n->trans('default-not-deletable'));
         }
     }
 
@@ -238,6 +238,6 @@ class EditPageOption extends Controller
             return;
         }
 
-        $this->miniLog->alert($this->i18n->trans('data-save-error'));
+        $this->miniLog->error($this->i18n->trans('data-save-error'));
     }
 }

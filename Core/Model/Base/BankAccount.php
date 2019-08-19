@@ -110,7 +110,7 @@ abstract class BankAccount extends ModelClass
     public function test()
     {
         if (!empty($this->codcuenta) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcuenta)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcuenta, '%column%' => 'codcuenta', '%min%' => '1', '%max%' => '10']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcuenta, '%column%' => 'codcuenta', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 
@@ -191,7 +191,7 @@ abstract class BankAccount extends ModelClass
             return true;
         }
 
-        self::$miniLog->alert(self::$i18n->trans('invalid-iban'));
+        self::$miniLog->error(self::$i18n->trans('invalid-iban'));
         return false;
     }
 }

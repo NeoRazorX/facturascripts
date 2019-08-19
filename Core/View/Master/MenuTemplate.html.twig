@@ -116,10 +116,9 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+                            {{ show_message(log, ['error', 'critical'], 'danger') }}
                             {{ show_message(log, ['warning'], 'warning') }}
                             {{ show_message(log, ['notice'], 'success') }}
-                            {{ show_message(log, ['info'], 'info') }}
                         </div>
                     </div>
                 </div>

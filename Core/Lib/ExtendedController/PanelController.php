@@ -227,13 +227,13 @@ abstract class PanelController extends BaseController
     protected function editAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
             return false;
         }
 
@@ -349,13 +349,13 @@ abstract class PanelController extends BaseController
     protected function insertAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->miniLog->alert($this->i18n->trans('duplicated-request'));
+            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
             return false;
         }
 

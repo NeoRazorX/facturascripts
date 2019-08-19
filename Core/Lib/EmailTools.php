@@ -184,7 +184,7 @@ class EmailTools
         }
 
         if ($this->getSetting('mailer') === 'smtp' && !$mail->smtpConnect($this->smtpOptions())) {
-            $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+            $miniLog->error($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
             return false;
         }
 
@@ -212,7 +212,7 @@ class EmailTools
             return true;
         }
 
-        $miniLog->alert($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+        $miniLog->error($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
         return false;
     }
 

@@ -102,7 +102,7 @@ class AppInstaller
 
         $dbType = $this->request->request->get('fs_db_type');
         if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
-            $this->miniLog->alert($this->i18n->trans('database-name-must-be-lowercase'));
+            $this->miniLog->warning($this->i18n->trans('database-name-must-be-lowercase'));
             return false;
         }
 

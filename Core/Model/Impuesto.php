@@ -91,7 +91,7 @@ class Impuesto extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-tax'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-tax'));
             return false;
         }
 
@@ -163,7 +163,7 @@ class Impuesto extends Base\ModelClass
     {
         $this->codimpuesto = trim($this->codimpuesto);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 

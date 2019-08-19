@@ -282,7 +282,7 @@ class EditFacturaCliente extends SalesDocumentController
     protected function paidAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return true;
         }
 

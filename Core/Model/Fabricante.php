@@ -76,9 +76,9 @@ class Fabricante extends Base\ModelClass
         $this->nombre = Utils::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfabricante)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
         } else {
             return parent::test();
         }

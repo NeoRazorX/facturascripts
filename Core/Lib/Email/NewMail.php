@@ -254,7 +254,7 @@ class NewMail
     public function send(): bool
     {
         if (empty(AppSettings::get('email', 'host'))) {
-            $this->miniLog->alert($this->i18n->trans('email-not-configured'));
+            $this->miniLog->warning($this->i18n->trans('email-not-configured'));
             return false;
         }
 
@@ -263,7 +263,7 @@ class NewMail
         $this->mail->msgHTML($this->renderHTML());
 
         if ('smtp' === AppSettings::get('email', 'mailer') && !$this->mail->smtpConnect($this->smtpOptions())) {
-            $this->miniLog->warning($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
+            $this->miniLog->error($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
             return false;
         }
 
@@ -272,7 +272,7 @@ class NewMail
             return true;
         }
 
-        $this->miniLog->warning($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
+        $this->miniLog->error($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
         return false;
     }
 

@@ -52,7 +52,7 @@ class ListApiKey extends ListController
     protected function createViews()
     {
         if (!AppSettings::get('default', 'enable_api', '')) {
-            $this->miniLog->info($this->i18n->trans('api-disabled'));
+            $this->miniLog->notice($this->i18n->trans('api-disabled'));
         }
 
         $viewName = 'ListApiKey';

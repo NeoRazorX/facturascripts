@@ -142,7 +142,7 @@ class EditContacto extends EditController
             case 'convert-into-customer':
                 $customer = $this->views['EditContacto']->model->getCustomer();
                 if ($customer->exists()) {
-                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
                     $this->redirect($customer->url() . '&action=save-ok');
                     break;
                 }
@@ -153,7 +153,7 @@ class EditContacto extends EditController
             case 'convert-into-supplier':
                 $supplier = $this->views['EditContacto']->model->getSupplier();
                 if ($supplier->exists()) {
-                    $this->miniLog->info($this->i18n->trans('record-updated-correctly'));
+                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
                     $this->redirect($supplier->url() . '&action=save-ok');
                     break;
                 }

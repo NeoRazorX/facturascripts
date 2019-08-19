@@ -136,7 +136,7 @@ class User extends Base\ModelClass
         new Page();
         new Empresa();
 
-        self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
+        self::$miniLog->notice(self::$i18n->trans('created-default-admin-account'));
 
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,langcode,homepage,level)'
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
@@ -196,7 +196,7 @@ class User extends Base\ModelClass
 
         $this->nick = trim($this->nick);
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
             return false;
         }
 

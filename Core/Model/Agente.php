@@ -153,7 +153,7 @@ class Agente extends Base\Contact
     {
         $this->cargo = Utils::noHtml($this->cargo);
         if (!empty($this->codagente) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 

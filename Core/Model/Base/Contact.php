@@ -141,18 +141,18 @@ abstract class Contact extends ModelClass
         $this->telefono2 = Utils::noHtml($this->telefono2);
 
         if (empty($this->nombre)) {
-            self::$miniLog->alert(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]));
+            self::$miniLog->warning(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]));
             return false;
         }
 
         $fiscalNumberValidator = new FiscalNumberValitator();
         if (!empty($this->cifnif) && !$fiscalNumberValidator->validate($this->tipoidfiscal, $this->cifnif)) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]));
+            self::$miniLog->warning(self::$i18n->trans('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]));
             return false;
         }
 
         if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-email', ['%email%' => $this->email]));
+            self::$miniLog->warning(self::$i18n->trans('not-valid-email', ['%email%' => $this->email]));
             return false;
         }
 

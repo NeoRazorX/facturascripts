@@ -118,7 +118,7 @@ class AttachedFile extends Base\ModelClass
     {
         $fullPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
         if (file_exists($fullPath) && !unlink($fullPath)) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-file', ['%fileName%' => $this->path]));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-file', ['%fileName%' => $this->path]));
             return false;
         }
 
@@ -180,7 +180,7 @@ class AttachedFile extends Base\ModelClass
     public function test()
     {
         if (!file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path)) {
-            self::$miniLog->alert(self::$i18n->trans('file-not-found'));
+            self::$miniLog->warning(self::$i18n->trans('file-not-found'));
             return false;
         }
 

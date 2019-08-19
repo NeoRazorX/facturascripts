@@ -161,7 +161,7 @@ class Tarifa extends Base\ModelClass
     {
         $this->codtarifa = trim($this->codtarifa);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']));
             return false;
         }
 

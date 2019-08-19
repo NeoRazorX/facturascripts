@@ -401,7 +401,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         /// check total
         if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+            self::$miniLog->error(self::$i18n->trans('bad-total-error'));
             return false;
         }
 

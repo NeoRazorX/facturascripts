@@ -154,7 +154,7 @@ class EditEjercicio extends EditController
     {
         $code = $this->request->get('code', '');
         if (empty($code)) {
-            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
             return false;
         }
 
@@ -175,13 +175,13 @@ class EditEjercicio extends EditController
     {
         $code = $this->request->request->get('codejercicio', '');
         if (empty($code)) {
-            $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
             return false;
         }
 
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
-            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+            $this->miniLog->warning($this->i18n->trans('file-not-found', ['%fileName%' => '']));
             return false;
         }
 

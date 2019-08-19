@@ -200,7 +200,7 @@ class PluginManager
     public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
     {
         if (FS_DISABLE_ADD_PLUGINS) {
-            self::$minilog->alert(self::$i18n->trans('plugin-installation-disabled'));
+            self::$minilog->warning(self::$i18n->trans('plugin-installation-disabled'));
             return false;
         }
 
@@ -340,7 +340,7 @@ class PluginManager
     {
         foreach (self::$enabledPlugins as $key => $value) {
             if (in_array($pluginDisabled, $value['require'])) {
-                self::$minilog->info(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $value['name']]));
+                self::$minilog->notice(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $value['name']]));
                 unset(self::$enabledPlugins[$key]);
                 $this->disableByDependecy($value['name']);
             }
