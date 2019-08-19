@@ -35,21 +35,6 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
 {
 
     /**
-     * App log manager
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
-
-    /**
-     * DataBaseCollector constructor.
-     */
-    public function __construct()
-    {
-        $this->miniLog = new MiniLog(DataBase::CHANNEL);
-    }
-
-    /**
      * Called by the DebugBar when data needs to be collected
      *
      * @return array Collected data
@@ -58,7 +43,8 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
     {
         $queries = [];
         $totalExecTime = 0;
-        foreach ($this->miniLog->read(['debug']) as $log) {
+        $miniLog = new MiniLog(DataBase::CHANNEL);
+        foreach ($miniLog->read(MiniLog::ALL_LEVELS) as $log) {
             $queries[] = [
                 'sql' => $log['message'],
                 'duration' => 0,

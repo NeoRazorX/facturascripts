@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,25 +16,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
 -->
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
+            <column name="code" display="none" order="0">
                 <widget type="text" fieldname="id" icon="fas fa-hashtag" required="true" />
             </column>
-            <column name="time" numcolumns="4" order="110">
+            <column name="time" order="100">
                 <widget type="text" fieldname="time" required="true" readonly="true" />
             </column>
-            <column name="level" numcolumns="2" order="120">
+            <column name="channel" order="110">
+                <widget type="text" fieldname="channel" readonly="true" />
+            </column>
+            <column name="level" order="120">
                 <widget type="text" fieldname="level" required="true" readonly="true" />
             </column>
-            <column name="user" numcolumns="2" order="130">
-                <widget type="text" fieldname="nick" required="true" readonly="true" />
+            <column name="user" order="130">
+                <widget type="text" fieldname="nick" readonly="true" />
             </column>
-            <column name="ip" numcolumns="2" order="140">
-                <widget type="text" fieldname="ip" required="true" readonly="true" />
+            <column name="ip" order="140">
+                <widget type="text" fieldname="ip" readonly="true" />
             </column>
             <column name="message" numcolumns="12" order="150">
                 <widget type="textarea" fieldname="message" required="true" readonly="true" />

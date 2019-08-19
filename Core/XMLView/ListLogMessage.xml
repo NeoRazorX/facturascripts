@@ -21,14 +21,17 @@
 -->
 <view>
     <columns>
-        <column name="code" order="100">
+        <column name="code" display="none" order="0">
             <widget type="text" fieldname="id" onclick="EditLogMessage" />
         </column>
-        <column name="level" display="center" order="110">
-            <widget type="text" fieldname="level" />
-        </column>
-        <column name="message" order="120">
+        <column name="message" order="100">
             <widget type="textarea" fieldname="message" />
+        </column>
+        <column name="channel" order="110">
+            <widget type="text" fieldname="channel" />
+        </column>
+        <column name="level" order="120">
+            <widget type="text" fieldname="level" />
         </column>
         <column name="user" order="130">
             <widget type="text" fieldname="nick" />
@@ -45,13 +48,11 @@
     </columns>
     <rows>
         <row type="status" fieldname="level">
-            <option color="info">info</option>
+            <option color="seccondary">debug</option>
             <option color="success">notice</option>
             <option color="warning">warning</option>
             <option color="danger">error</option>
-            <option color="danger">critical</option>
-            <option color="danger">alert</option>
-            <option color="danger">emergency</option>
+            <option color="dark">critical</option>
         </row>
         <row type="actions">
             <button type="action" label="delete-all" color="warning" action="delete-selected-filters" icon="fas fa-trash-alt" confirm="true" />

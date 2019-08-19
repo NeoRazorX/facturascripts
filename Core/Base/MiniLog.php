@@ -26,6 +26,8 @@ namespace FacturaScripts\Core\Base;
 class MiniLog
 {
 
+    const ALL_LEVELS = ['critical', 'debug', 'error', 'notice', 'warning'];
+
     /**
      *
      * @var string
@@ -105,16 +107,21 @@ class MiniLog
 
     /**
      * Returns specified level messages or all.
-     *
+     * 
      * @param array $levels
+     * @param bool  $allChannels
      *
      * @return array
      */
-    public function read(array $levels = ['notice', 'warning', 'error', 'critical'])
+    public function read(array $levels = ['notice', 'warning', 'error', 'critical'], bool $allChannels = false): array
     {
         $messages = [];
         foreach (self::$dataLog as $data) {
-            if ($data['message'] !== '' && $data['channel'] === $this->channel && in_array($data['level'], $levels, false)) {
+            if ($data['channel'] !== $this->channel && false === $allChannels) {
+                continue;
+            }
+
+            if ($data['message'] !== '' && in_array($data['level'], $levels, false)) {
                 $messages[] = $data;
             }
         }
