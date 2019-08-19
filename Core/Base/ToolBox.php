@@ -69,11 +69,13 @@ class ToolBox
 
     /**
      * 
+     * @param string $channel
+     *
      * @return Translate2Log
      */
-    public static function i18nLog()
+    public static function i18nLog(string $channel = '')
     {
-        return new Translate2Log();
+        return new Translate2Log($channel);
     }
 
     /**
@@ -87,11 +89,13 @@ class ToolBox
 
     /**
      * 
+     * @param string $channel
+     *
      * @return MiniLog
      */
-    public static function miniLog()
+    public static function miniLog(string $channel = '')
     {
-        return new MiniLog();
+        return new MiniLog($channel);
     }
 
     /**

@@ -27,11 +27,26 @@ class MiniLog
 {
 
     /**
+     *
+     * @var string
+     */
+    private $channel;
+
+    /**
      * Contains the log data.
      *
      * @var array
      */
     private static $dataLog = [];
+
+    /**
+     * 
+     * @param string $channel
+     */
+    public function __construct(string $channel = '')
+    {
+        $this->channel = $channel;
+    }
 
     /**
      * Clean the log.
@@ -99,23 +114,12 @@ class MiniLog
     {
         $messages = [];
         foreach (self::$dataLog as $data) {
-            if (in_array($data['level'], $levels, false) && $data['message'] !== '') {
+            if ($data['message'] !== '' && $data['channel'] === $this->channel && in_array($data['level'], $levels, false)) {
                 $messages[] = $data;
             }
         }
 
         return $messages;
-    }
-
-    /**
-     * SQL history.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function sql(string $message, array $context = [])
-    {
-        $this->log('sql', $message, $context);
     }
 
     /**
@@ -142,6 +146,7 @@ class MiniLog
     protected function log(string $level, string $message, array $context = [])
     {
         self::$dataLog[] = [
+            'channel' => $this->channel,
             'context' => $context,
             'level' => $level,
             'message' => $message,

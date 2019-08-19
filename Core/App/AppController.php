@@ -87,7 +87,7 @@ class AppController extends App
         $this->debugBar = new StandardDebugBar();
         if (\FS_DEBUG) {
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
-            $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
+            $this->debugBar->addCollector(new DataBaseCollector());
             $this->debugBar->addCollector(new TranslationCollector($this->i18n));
         }
 

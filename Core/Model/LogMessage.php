@@ -31,6 +31,12 @@ class LogMessage extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
+     *
+     * @var string
+     */
+    public $channel;
+
+    /**
      * Primary key.
      *
      * @var string
@@ -114,6 +120,7 @@ class LogMessage extends Base\ModelClass
      */
     public function test()
     {
+        $this->channel = Utils::noHtml($this->channel);
         $this->message = Utils::noHtml($this->message);
         $this->uri = Utils::noHtml($this->uri);
 

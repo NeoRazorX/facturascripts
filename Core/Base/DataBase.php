@@ -31,6 +31,8 @@ use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
 class DataBase
 {
 
+    const CHANNEL = 'database';
+
     /**
      * Link to the database engine selected in the configuration.
      *
@@ -65,7 +67,7 @@ class DataBase
     public function __construct()
     {
         if (self::$link === null) {
-            self::$miniLog = new MiniLog();
+            self::$miniLog = new MiniLog(self::CHANNEL);
 
             switch (strtolower(\FS_DB_TYPE)) {
                 case 'postgresql':
@@ -90,7 +92,7 @@ class DataBase
             return true;
         }
 
-        self::$miniLog->sql('Begin Transaction');
+        self::$miniLog->debug('Begin Transaction');
         return self::$engine->beginTransaction(self::$link);
     }
 
@@ -125,7 +127,7 @@ class DataBase
     {
         $result = self::$engine->commit(self::$link);
         if ($result) {
-            self::$miniLog->sql('Commit Transaction');
+            self::$miniLog->debug('Commit Transaction');
         }
 
         return $result;
@@ -196,7 +198,7 @@ class DataBase
             $this->beginTransaction();
 
             /// adds the sql query to the history
-            self::$miniLog->sql($sql);
+            self::$miniLog->debug($sql);
 
             /// execute sql
             $result = self::$engine->exec(self::$link, $sql);
@@ -335,7 +337,7 @@ class DataBase
      */
     public function rollback()
     {
-        self::$miniLog->sql('Rollback Transaction');
+        self::$miniLog->debug('Rollback Transaction');
         return self::$engine->rollback(self::$link);
     }
 
@@ -376,7 +378,7 @@ class DataBase
         }
 
         /// add the sql query to the history
-        self::$miniLog->sql($sql);
+        self::$miniLog->debug($sql);
         $result = self::$engine->select(self::$link, $sql);
         if (!empty($result)) {
             return $result;

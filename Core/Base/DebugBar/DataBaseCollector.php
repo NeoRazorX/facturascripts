@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base\DebugBar;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 
 /**
@@ -42,12 +43,10 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
 
     /**
      * DataBaseCollector constructor.
-     *
-     * @param MiniLog $miniLog
      */
-    public function __construct($miniLog)
+    public function __construct()
     {
-        $this->miniLog = $miniLog;
+        $this->miniLog = new MiniLog(DataBase::CHANNEL);
     }
 
     /**
@@ -59,7 +58,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
     {
         $queries = [];
         $totalExecTime = 0;
-        foreach ($this->miniLog->read(['sql']) as $log) {
+        foreach ($this->miniLog->read(['debug']) as $log) {
             $queries[] = [
                 'sql' => $log['message'],
                 'duration' => 0,

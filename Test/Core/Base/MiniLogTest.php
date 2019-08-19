@@ -121,22 +121,6 @@ class MiniLogTest extends TestCase
         $this->assertEmpty($data[0]['context']);
     }
 
-    /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::sql
-     */
-    public function testSql()
-    {
-        $level = ['sql'];
-        $this->object->clear();
-        $this->object->sql('sql');
-        $data = $this->object->read($level);
-
-        $this->assertEquals(1, count($data));
-        $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'sql');
-        $this->assertEmpty($data[0]['context']);
-    }
-
     public function testClear()
     {
         $this->object->sql('sql');
