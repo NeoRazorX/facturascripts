@@ -766,6 +766,8 @@
     "refresh": "Refresh",
     "refresh-page": "Refresh page",
     "refunds": "Refunds",
+    "register-installation": "Register installation",
+    "register-installation-p": "Register your installation to be able to update paid or private plugins.",
     "register-symbol": "#",
     "reloading": "Reloading...",
     "renew": "Renew",
