@@ -18,8 +18,12 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\MenuItem;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Dinamic\Model\Page;
+use FacturaScripts\Dinamic\Model\RoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Manage the use of the Facturascripts menu.
@@ -47,21 +51,21 @@ class MenuManager
     /**
      * Stores active page to use when reload.
      *
-     * @var Model\Page
+     * @var Page
      */
     private static $menuPageActive;
 
     /**
      * Controller associated with the page
      *
-     * @var Model\Page
+     * @var Page
      */
     private static $pageModel;
 
     /**
      * User for whom the menu has been created.
      *
-     * @var Model\User|false
+     * @var User|false
      */
     private static $user = false;
 
@@ -81,7 +85,7 @@ class MenuManager
     public function init()
     {
         if (self::$pageModel === null) {
-            self::$pageModel = new Model\Page();
+            self::$pageModel = new Page();
         }
 
         if (self::$user !== false && self::$menu === null) {
@@ -115,7 +119,7 @@ class MenuManager
     }
 
     /**
-     * Mark menu and menuitem as selected, and updates the data in the Model\Page
+     * Mark menu and menuitem as selected, and updates the data in the Page
      * model based on the data in the getPageData() of the controller.
      *
      * @param array $pageData
@@ -125,7 +129,7 @@ class MenuManager
         $pageModel = self::$pageModel->get($pageData['name']);
         if ($pageModel === false) {
             $pageData['ordernum'] = 100;
-            $pageModel = new Model\Page($pageData);
+            $pageModel = new Page($pageData);
             $pageModel->save();
         } elseif ($this->pageNeedSave($pageModel, $pageData)) {
             $pageModel->menu = $pageData['menu'];
@@ -146,7 +150,7 @@ class MenuManager
     /**
      * Assign the user to load their menu.
      *
-     * @param Model\User|false $user
+     * @param User|false $user
      */
     public function setUser($user)
     {
@@ -159,13 +163,13 @@ class MenuManager
      *
      * @param string $nick
      *
-     * @return Model\RoleAccess[]
+     * @return RoleAccess[]
      */
     private function getUserAccess($nick)
     {
         $access = [];
-        $roleUserModel = new Model\RoleUser();
-        $filter = [new DataBase\DataBaseWhere('nick', $nick)];
+        $roleUserModel = new RoleUser();
+        $filter = [new DataBaseWhere('nick', $nick)];
         foreach ($roleUserModel->all($filter) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $access[] = $roleAccess;
@@ -178,11 +182,11 @@ class MenuManager
     /**
      * Load the list of pages for the user.
      *
-     * @return Model\Page[]
+     * @return Page[]
      */
     private function loadPages()
     {
-        $where = [new DataBase\DataBaseWhere('showonmenu', true)];
+        $where = [new DataBaseWhere('showonmenu', true)];
         $order = [
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
@@ -217,7 +221,7 @@ class MenuManager
     private function loadUserMenu()
     {
         $result = [];
-        $menuValue = '';
+        $menuValue = null;
         $submenuValue = null;
         $menuItem = null;
         $i18n = new Translator();
@@ -225,7 +229,7 @@ class MenuManager
         /// We load the list of pages for the user
         $pages = $this->loadPages();
         foreach ($pages as $page) {
-            if ($page->menu === '') {
+            if (empty($page->menu)) {
                 continue;
             }
 
@@ -255,8 +259,8 @@ class MenuManager
     /**
      * Returns if the page should be saved.
      *
-     * @param Model\Page $pageModel
-     * @param array      $pageData
+     * @param Page  $pageModel
+     * @param array $pageData
      *
      * @return bool
      */
@@ -272,7 +276,7 @@ class MenuManager
     /**
      * Set the active menu.
      *
-     * @param Model\Page $pageModel
+     * @param Page $pageModel
      */
     private function setActiveMenu($pageModel)
     {
@@ -289,7 +293,7 @@ class MenuManager
      * Assign active menu item.
      *
      * @param MenuItem[] $menu
-     * @param Model\Page $pageModel
+     * @param Page       $pageModel
      */
     private function setActiveMenuItem(&$menu, $pageModel)
     {

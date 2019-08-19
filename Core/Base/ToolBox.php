@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Dinamic\Lib\IPFilter as DinamicIPFilter;
+
 /**
  * Description of ToolBox
  *
@@ -25,6 +28,15 @@ namespace FacturaScripts\Core\Base;
  */
 class ToolBox
 {
+
+    /**
+     * 
+     * @return AppSettings
+     */
+    public function appSettings()
+    {
+        return new AppSettings();
+    }
 
     /**
      * 
@@ -46,11 +58,13 @@ class ToolBox
 
     /**
      * 
+     * @param string $langcode
+     *
      * @return Translator
      */
-    public static function i18n()
+    public static function i18n(string $langcode = '')
     {
-        return new Translator();
+        return new Translator($langcode);
     }
 
     /**
@@ -60,6 +74,15 @@ class ToolBox
     public static function i18nLog()
     {
         return new Translate2Log();
+    }
+
+    /**
+     * 
+     * @return DinamicIPFilter
+     */
+    public static function ipFilter()
+    {
+        return new DinamicIPFilter();
     }
 
     /**

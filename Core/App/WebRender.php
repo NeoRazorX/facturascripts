@@ -37,13 +37,6 @@ class WebRender
 {
 
     /**
-     * Translation engine.
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
      * FALSE if FacturaScripts is not installed already.
      *
      * @var bool
@@ -56,13 +49,6 @@ class WebRender
      * @var FilesystemLoader
      */
     private $loader;
-
-    /**
-     * App log manager.
-     *
-     * @var MiniLog
-     */
-    private $miniLog;
 
     /**
      * Plugin manager.
@@ -82,10 +68,8 @@ class WebRender
             $this->installed = false;
         }
 
-        $this->i18n = new Translator();
         $path = FS_DEBUG ? \FS_FOLDER . '/Core/View' : \FS_FOLDER . '/Dinamic/View';
         $this->loader = new FilesystemLoader($path);
-        $this->miniLog = new MiniLog();
         $this->pluginManager = new PluginManager();
     }
 
@@ -153,8 +137,8 @@ class WebRender
     public function render($template, $params = [])
     {
         $templateVars = [
-            'i18n' => $this->i18n,
-            'log' => $this->miniLog,
+            'i18n' => new Translator(),
+            'log' => new MiniLog(),
         ];
         foreach ($params as $key => $value) {
             $templateVars[$key] = $value;

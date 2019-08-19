@@ -50,7 +50,7 @@ class Translator
      *
      * @var array
      */
-    private static $missingStrings;
+    private static $missingStrings = [];
 
     /**
      * The Symfony translator.
@@ -64,23 +64,24 @@ class Translator
      *
      * @var array
      */
-    private static $usedStrings;
+    private static $usedStrings = [];
 
     /**
      * Translator's constructor.
      *
-     * @param string $lang
+     * @param string $langcode
      */
-    public function __construct($lang = \FS_LANG)
+    public function __construct(string $langcode = '')
     {
+        $lang = empty($langcode) ? \FS_LANG : $langcode;
+
         if (self::$translator === null) {
             self::$defaultLang = $lang;
-            self::$missingStrings = [];
-            self::$usedStrings = [];
             self::$translator = new symfonyTranslator($lang);
-
             self::$translator->addLoader('json', new JsonFileLoader());
             $this->locateFiles($lang);
+        } elseif ($lang !== self::$defaultLang) {
+            $this->setLangCode($lang);
         }
     }
 
@@ -92,7 +93,7 @@ class Translator
      *
      * @return string
      */
-    public function trans($txt, array $parameters = [])
+    public function trans(string $txt, array $parameters = []): string
     {
         return empty($txt) ? '' : $this->customTrans(self::$defaultLang, $txt, $parameters);
     }
@@ -106,7 +107,7 @@ class Translator
      *
      * @return string
      */
-    public function customTrans($lang, $txt, array $parameters = [])
+    public function customTrans(string $lang, string $txt, array $parameters = []): string
     {
         if (!in_array($lang, self::$languages)) {
             $this->locateFiles($lang);
@@ -132,7 +133,7 @@ class Translator
      *
      * @param string $lang
      */
-    private function locateFiles($lang)
+    private function locateFiles(string $lang)
     {
         self::$languages[] = $lang;
 
@@ -153,7 +154,7 @@ class Translator
      *
      * @return array
      */
-    public function getAvailableLanguages()
+    public function getAvailableLanguages(): array
     {
         $languages = [];
         $dir = \FS_FOLDER . '/Core/Translation';
@@ -172,7 +173,7 @@ class Translator
      *
      * @return string
      */
-    public function getLangCode()
+    public function getLangCode(): string
     {
         return self::$defaultLang;
     }
@@ -182,7 +183,7 @@ class Translator
      * 
      * @param string $lang
      */
-    public function setLangCode($lang)
+    public function setLangCode(string $lang)
     {
         self::$defaultLang = $this->firstMatch($lang);
     }
