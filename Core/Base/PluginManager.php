@@ -58,28 +58,12 @@ class PluginManager
     private static $enabledPlugins;
 
     /**
-     * System translator.
-     *
-     * @var Translator
-     */
-    private static $i18n;
-
-    /**
-     * Manage the log of the entire application.
-     *
-     * @var MiniLog
-     */
-    private static $minilog;
-
-    /**
      * PluginManager constructor.
      */
     public function __construct()
     {
         if (self::$enabledPlugins === null) {
             self::$enabledPlugins = $this->loadFromFile();
-            self::$i18n = new Translator();
-            self::$minilog = new MiniLog();
         }
 
         if (!defined('FS_DISABLE_ADD_PLUGINS')) {
@@ -135,7 +119,7 @@ class PluginManager
             $this->disableByDependecy($pluginName);
             $this->save();
             $this->deploy(true, true);
-            self::$minilog->notice(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $pluginName]));
+            $this->toolBox()->i18nLog()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
             return true;
         }
 
@@ -166,7 +150,7 @@ class PluginManager
                 $this->save();
                 $this->deploy(false, true);
                 $this->initPlugin($pluginName);
-                self::$minilog->notice(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+                $this->toolBox()->i18nLog()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
                 return true;
             }
         }
@@ -200,7 +184,7 @@ class PluginManager
     public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
     {
         if (FS_DISABLE_ADD_PLUGINS) {
-            self::$minilog->warning(self::$i18n->trans('plugin-installation-disabled'));
+            $this->toolBox()->i18nLog()->warning('plugin-installation-disabled');
             return false;
         }
 
@@ -214,22 +198,20 @@ class PluginManager
         $pathINI = $zipFile->getNameIndex($zipIndex);
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
         if (!$info['compatible']) {
-            self::$minilog->error(
-                self::$i18n->trans(
-                    'plugin-needs-fs-version', ['%pluginName%' => $zipName, '%minVersion%' => $info['min_version'], '%version%' => self::CORE_VERSION]
-                )
+            $this->toolBox()->i18nLog()->error(
+                'plugin-needs-fs-version', ['%pluginName%' => $zipName, '%minVersion%' => $info['min_version'], '%version%' => self::CORE_VERSION]
             );
             return false;
         }
 
         /// Removing previous version
         if (is_dir(self::PLUGIN_PATH . $info['name'])) {
-            FileManager::delTree(self::PLUGIN_PATH . $info['name']);
+            $this->toolBox()->fileManager()->delTree(self::PLUGIN_PATH . $info['name']);
         }
 
         /// Extract new version
         if (!$zipFile->extractTo(self::PLUGIN_PATH)) {
-            self::$minilog->error('ZIP EXTRACT ERROR: ' . $zipName);
+            $this->toolBox()->miniLog()->error('ZIP EXTRACT ERROR: ' . $zipName);
             $zipFile->close();
             return false;
         }
@@ -247,7 +229,7 @@ class PluginManager
             self::$deploymentRequired = true;
         }
 
-        self::$minilog->notice(self::$i18n->trans('plugin-installed', ['%pluginName%' => $info['name']]));
+        $this->toolBox()->i18nLog()->notice('plugin-installed', ['%pluginName%' => $info['name']]);
         return true;
     }
 
@@ -260,7 +242,7 @@ class PluginManager
     {
         $plugins = [];
 
-        foreach (FileManager::scanFolder(self::PLUGIN_PATH, false) as $folder) {
+        foreach ($this->toolBox()->fileManager()->scanFolder(self::PLUGIN_PATH, false) as $folder) {
             $iniPath = self::PLUGIN_PATH . $folder . DIRECTORY_SEPARATOR . 'facturascripts.ini';
             $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);
@@ -279,24 +261,24 @@ class PluginManager
     public function remove(string $pluginName): bool
     {
         if (FS_DISABLE_RM_PLUGINS) {
-            self::$minilog->error(self::$i18n->trans('plugin-removal-disabled'));
+            $this->toolBox()->i18nLog()->warning('plugin-removal-disabled');
             return false;
         }
 
         /// can't remove enabled plugins
         if (in_array($pluginName, $this->enabledPlugins())) {
-            self::$minilog->error(self::$i18n->trans('plugin-enabled', ['%pluginName%' => $pluginName]));
+            $this->toolBox()->i18nLog()->warning('plugin-enabled', ['%pluginName%' => $pluginName]);
             return false;
         }
 
         $pluginPath = self::PLUGIN_PATH . $pluginName;
         if (is_dir($pluginPath) || is_file($pluginPath)) {
-            FileManager::delTree($pluginPath);
-            self::$minilog->notice(self::$i18n->trans('plugin-deleted', ['%pluginName%' => $pluginName]));
+            $this->toolBox()->fileManager()->delTree($pluginPath);
+            $this->toolBox()->i18nLog()->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
             return true;
         }
 
-        self::$minilog->notice(self::$i18n->trans('plugin-delete-error', ['%pluginName%' => $pluginName]));
+        $this->toolBox()->i18nLog()->error('plugin-delete-error', ['%pluginName%' => $pluginName]);
         return false;
     }
 
@@ -323,7 +305,7 @@ class PluginManager
             }
 
             if (!$found) {
-                self::$minilog->warning(self::$i18n->trans('plugin-needed', ['%pluginName%' => $req]));
+                $this->toolBox()->i18nLog()->warning('plugin-needed', ['%pluginName%' => $req]);
                 return false;
             }
         }
@@ -340,7 +322,7 @@ class PluginManager
     {
         foreach (self::$enabledPlugins as $key => $value) {
             if (in_array($pluginDisabled, $value['require'])) {
-                self::$minilog->notice(self::$i18n->trans('plugin-disabled', ['%pluginName%' => $value['name']]));
+                $this->toolBox()->i18nLog()->warning('plugin-disabled', ['%pluginName%' => $value['name']]);
                 unset(self::$enabledPlugins[$key]);
                 $this->disableByDependecy($value['name']);
             }
@@ -379,9 +361,9 @@ class PluginManager
 
             if ($info['min_version'] >= 2018 && $info['min_version'] <= self::CORE_VERSION) {
                 $info['compatible'] = true;
-                $info['description'] = ('Incompatible' === $info['description']) ? self::$i18n->trans('compatible') : $info['description'];
+                $info['description'] = ('Incompatible' === $info['description']) ? $this->toolBox()->i18n()->trans('compatible') : $info['description'];
             } else {
-                $info['description'] = self::$i18n->trans('incompatible-with-facturascripts', ['%version%' => self::CORE_VERSION]);
+                $info['description'] = $this->toolBox()->i18n()->trans('incompatible-with-facturascripts', ['%version%' => self::CORE_VERSION]);
             }
 
             $info['enabled'] = in_array($info['name'], $this->enabledPlugins());
@@ -443,21 +425,21 @@ class PluginManager
     {
         $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
         if (true !== $result) {
-            self::$minilog->error('ZIP error: ' . $result);
+            $this->toolBox()->miniLog()->error('ZIP error: ' . $result);
             return false;
         }
 
         /// get the facturascripts.ini file inside the zip
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         if (false === $zipIndex) {
-            self::$minilog->error(self::$i18n->trans('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]));
+            $this->toolBox()->i18nLog()->error('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]);
             return false;
         }
 
         /// the zip must contain the plugin folder
         $pathINI = $zipFile->getNameIndex($zipIndex);
         if (count(explode('/', $pathINI)) !== 2) {
-            self::$minilog->error(self::$i18n->trans('zip-error-wrong-structure'));
+            $this->toolBox()->i18nLog()->error('zip-error-wrong-structure');
             return false;
         }
 
@@ -473,10 +455,19 @@ class PluginManager
 
         //// the zip must contain a single plugin
         if (count($folders) != 1) {
-            self::$minilog->error(self::$i18n->trans('zip-error-wrong-structure'));
+            $this->toolBox()->i18nLog()->error('zip-error-wrong-structure');
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }
