@@ -19,8 +19,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase as db;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 
 /**
  * This class group all method for DataBase, tools like check/generate table, compare constraints/columns, ...
@@ -38,20 +37,6 @@ class DataBaseTools
     private static $dataBase;
 
     /**
-     * System translator.
-     *
-     * @var Translator
-     */
-    private static $i18n;
-
-    /**
-     * Manage the log of the entire application.
-     *
-     * @var MiniLog
-     */
-    private static $miniLog;
-
-    /**
      * The DataBaseQueries object.
      *
      * @var DataBaseQueries
@@ -65,8 +50,6 @@ class DataBaseTools
     {
         if (!isset(self::$dataBase)) {
             self::$dataBase = new db();
-            self::$i18n = new Translator();
-            self::$miniLog = new MiniLog();
             self::$sql = self::$dataBase->getEngine()->getSQL();
         }
     }
@@ -90,7 +73,7 @@ class DataBaseTools
         $sql2 = $this->compareConstraints($tableName, $xmlCons, $dbCons, true);
         if ($sql2 !== '') {
             if (!self::$dataBase->exec($sql2)) {
-                self::$miniLog->critical(self::$i18n->trans('check-table', ['%tableName%' => $tableName]));
+                $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => $tableName]);
             }
 
             /// leemos de nuevo las restricciones
@@ -134,13 +117,13 @@ class DataBaseTools
     {
         $filename = $this->getXmlTableLocation($tableName);
         if (!file_exists($filename)) {
-            self::$miniLog->critical(self::$i18n->trans('file-not-found', ['%fileName%' => $filename]));
+            $this->toolBox()->i18nLog()->critical('file-not-found', ['%fileName%' => $filename]);
             return false;
         }
 
         $xml = simplexml_load_string(file_get_contents($filename, true));
         if (false === $xml) {
-            self::$miniLog->critical(self::$i18n->trans('error-reading-file', ['%fileName%' => $filename]));
+            $this->toolBox()->i18nLog()->critical('error-reading-file', ['%fileName%' => $filename]);
             return false;
         }
 
@@ -300,7 +283,7 @@ class DataBaseTools
     {
         $fileName = \FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
         if (\FS_DEBUG && !file_exists($fileName)) {
-            $fileName = \FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+            return \FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
         }
 
         return $fileName;
@@ -326,5 +309,14 @@ class DataBaseTools
         }
 
         return $result;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }

@@ -43,13 +43,13 @@ class FileCache implements AdaptorInterface
      */
     public function __construct()
     {
-        if (!isset(static::$config)) {
-            static::$config = [
+        if (!isset(self::$config)) {
+            self::$config = [
                 'cache_path' => \FS_FOLDER . '/MyFiles/Cache/FileCache',
                 'expires' => 3600,
             ];
 
-            $dir = static::$config['cache_path'];
+            $dir = self::$config['cache_path'];
             if (!$this->toolBox()->fileManager()->createFolder($dir, true)) {
                 $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $dir]);
             }
@@ -63,9 +63,9 @@ class FileCache implements AdaptorInterface
      */
     public function clear()
     {
-        foreach (scandir(static::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
+        foreach (scandir(self::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
             if (substr($fileName, -4) === '.php') {
-                unlink(static::$config['cache_path'] . '/' . $fileName);
+                unlink(self::$config['cache_path'] . '/' . $fileName);
             }
         }
 
@@ -124,8 +124,8 @@ class FileCache implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        if ($expire < static::$config['expires']) {
-            static::$config['expires'] = $expire;
+        if ($expire < self::$config['expires']) {
+            self::$config['expires'] = $expire;
         }
 
         $destFileName = $this->getRoute($key);
@@ -150,7 +150,7 @@ class FileCache implements AdaptorInterface
      */
     private function getRoute($key)
     {
-        return static::$config['cache_path'] . '/' . md5($key) . '.php';
+        return self::$config['cache_path'] . '/' . md5($key) . '.php';
     }
 
     /**
@@ -163,7 +163,7 @@ class FileCache implements AdaptorInterface
     private function fileExpired($file)
     {
         if (file_exists($file)) {
-            return time() > (filemtime($file) + static::$config['expires']);
+            return time() > (filemtime($file) + self::$config['expires']);
         }
 
         return true;

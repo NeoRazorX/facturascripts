@@ -71,7 +71,7 @@ class DownloadTools
 
             /// save in log
             $error = curl_error($ch) === '' ? 'ERROR ' . $httpCode : curl_error($ch);
-            $this->getMiniLog()->warning($error . ' - ' . $url);
+            $this->miniLog()->warning($error . ' - ' . $url);
 
             curl_close($ch);
             return 'ERROR';
@@ -140,7 +140,7 @@ class DownloadTools
                 return true;
             }
         } catch (Exception $exc) {
-            $this->getMiniLog()->error($exc->getMessage() . ' - ' . $url);
+            $this->miniLog()->error($exc->getMessage() . ' - ' . $url);
         }
 
         return false;
@@ -150,8 +150,8 @@ class DownloadTools
      * 
      * @return MiniLog
      */
-    protected function getMiniLog()
+    private function miniLog()
     {
-        return $minilog = new MiniLog();
+        return new MiniLog();
     }
 }

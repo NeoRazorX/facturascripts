@@ -51,12 +51,12 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function __construct()
     {
-        if (!isset(static::$memcache)) {
-            static::$connected = false;
+        if (!isset(self::$memcache)) {
+            self::$connected = false;
 
-            static::$memcache = new Memcache();
-            if (static::$memcache->connect(\FS_CACHE_HOST, (int) \FS_CACHE_PORT)) {
-                static::$connected = true;
+            self::$memcache = new Memcache();
+            if (self::$memcache->connect(\FS_CACHE_HOST, (int) \FS_CACHE_PORT)) {
+                self::$connected = true;
             } else {
                 $this->toolBox()->i18nLog()->error('error-connecting-memcache');
             }
@@ -70,8 +70,8 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function clear()
     {
-        if (static::$connected) {
-            return static::$memcache->flush();
+        if (self::$connected) {
+            return self::$memcache->flush();
         }
 
         return false;
@@ -86,8 +86,8 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function delete($key)
     {
-        if (static::$connected) {
-            return static::$memcache->delete(\FS_CACHE_PREFIX . $key);
+        if (self::$connected) {
+            return self::$memcache->delete(\FS_CACHE_PREFIX . $key);
         }
 
         return false;
@@ -102,13 +102,13 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function get($key)
     {
-        if (static::$connected) {
+        if (self::$connected) {
             /**
              * Memcache::get() returns false if key is not found.
              * To distinguish this case from when it is stored false, whe must use $falgs.
              */
             $flags = false;
-            $data = static::$memcache->get(\FS_CACHE_PREFIX . $key, $flags);
+            $data = self::$memcache->get(\FS_CACHE_PREFIX . $key, $flags);
             if (false === $data && false === $flags) {
                 return null;
             }
@@ -126,7 +126,7 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function isConnected()
     {
-        return static::$connected;
+        return self::$connected;
     }
 
     /**
@@ -140,8 +140,8 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        if (static::$connected) {
-            return static::$memcache->set(\FS_CACHE_PREFIX . $key, $content, 0, $expire);
+        if (self::$connected) {
+            return self::$memcache->set(\FS_CACHE_PREFIX . $key, $content, 0, $expire);
         }
 
         return false;

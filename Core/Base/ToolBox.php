@@ -55,11 +55,11 @@ class ToolBox
 
     /**
      * 
-     * @return TranslateLog
+     * @return Translate2Log
      */
     public static function i18nLog()
     {
-        return new TranslateLog();
+        return new Translate2Log();
     }
 
     /**

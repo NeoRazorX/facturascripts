@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class TranslateLog extends MiniLog
+class Translate2Log extends MiniLog
 {
 
     /**
