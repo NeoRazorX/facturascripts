@@ -49,7 +49,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function critical($message, array $context = [])
+    public function critical(string $message, array $context = [])
     {
         $this->log('critical', $message, $context);
     }
@@ -60,7 +60,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function debug($message, array $context = [])
+    public function debug(string $message, array $context = [])
     {
         $this->log('debug', $message, $context);
     }
@@ -72,7 +72,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function error($message, array $context = [])
+    public function error(string $message, array $context = [])
     {
         $this->log('error', $message, $context);
     }
@@ -83,7 +83,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function notice($message, array $context = [])
+    public function notice(string $message, array $context = [])
     {
         $this->log('notice', $message, $context);
     }
@@ -113,7 +113,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function sql($message, array $context = [])
+    public function sql(string $message, array $context = [])
     {
         $this->log('sql', $message, $context);
     }
@@ -127,7 +127,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function warning($message, array $context = [])
+    public function warning(string $message, array $context = [])
     {
         $this->log('warning', $message, $context);
     }
@@ -139,7 +139,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    private function log($level, $message, array $context = [])
+    protected function log(string $level, string $message, array $context = [])
     {
         self::$dataLog[] = [
             'context' => $context,

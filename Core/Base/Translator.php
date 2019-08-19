@@ -224,7 +224,7 @@ class Translator
 
         // If not, check with all available languages
         $finalKey = null;
-        foreach ($this->getAvailableLanguages() as $key => $language) {
+        foreach (array_keys($this->getAvailableLanguages()) as $key) {
             if ($key === $langCode) {
                 return $key;
             }
