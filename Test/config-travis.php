@@ -28,7 +28,7 @@ define('FS_DB_PASS', '');
 define('FS_DB_PORT', '3306');
 define('FS_DB_TYPE', 'mysql');
 define('FS_DB_TYPE_CHECK', true);
-define('FS_DB_USER', 'travis');
+define('FS_DB_USER', 'root');
 define('FS_DEBUG', true);
 define('FS_DISABLE_ADD_PLUGINS', false);
 define('FS_DISABLE_RM_PLUGINS', false);
