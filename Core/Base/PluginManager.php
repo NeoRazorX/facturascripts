@@ -206,12 +206,12 @@ class PluginManager
 
         /// Removing previous version
         if (is_dir(self::PLUGIN_PATH . $info['name'])) {
-            $this->toolBox()->fileManager()->delTree(self::PLUGIN_PATH . $info['name']);
+            $this->toolBox()->files()->delTree(self::PLUGIN_PATH . $info['name']);
         }
 
         /// Extract new version
         if (!$zipFile->extractTo(self::PLUGIN_PATH)) {
-            $this->toolBox()->miniLog()->error('ZIP EXTRACT ERROR: ' . $zipName);
+            $this->toolBox()->log()->error('ZIP EXTRACT ERROR: ' . $zipName);
             $zipFile->close();
             return false;
         }
@@ -242,7 +242,7 @@ class PluginManager
     {
         $plugins = [];
 
-        foreach ($this->toolBox()->fileManager()->scanFolder(self::PLUGIN_PATH, false) as $folder) {
+        foreach ($this->toolBox()->files()->scanFolder(self::PLUGIN_PATH, false) as $folder) {
             $iniPath = self::PLUGIN_PATH . $folder . DIRECTORY_SEPARATOR . 'facturascripts.ini';
             $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);
@@ -273,7 +273,7 @@ class PluginManager
 
         $pluginPath = self::PLUGIN_PATH . $pluginName;
         if (is_dir($pluginPath) || is_file($pluginPath)) {
-            $this->toolBox()->fileManager()->delTree($pluginPath);
+            $this->toolBox()->files()->delTree($pluginPath);
             $this->toolBox()->i18nLog()->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
             return true;
         }
@@ -425,7 +425,7 @@ class PluginManager
     {
         $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
         if (true !== $result) {
-            $this->toolBox()->miniLog()->error('ZIP error: ' . $result);
+            $this->toolBox()->log()->error('ZIP error: ' . $result);
             return false;
         }
 

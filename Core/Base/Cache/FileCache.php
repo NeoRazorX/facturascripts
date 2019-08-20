@@ -50,7 +50,7 @@ class FileCache implements AdaptorInterface
             ];
 
             $dir = self::$config['cache_path'];
-            if (!$this->toolBox()->fileManager()->createFolder($dir, true)) {
+            if (!$this->toolBox()->files()->createFolder($dir, true)) {
                 $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $dir]);
             }
         }

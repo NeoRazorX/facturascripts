@@ -120,7 +120,7 @@ class AppInstaller
     {
         // Check each needed folder to deploy
         foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
-            if (!$this->toolBox()->fileManager()->createFolder($folder)) {
+            if (!$this->toolBox()->files()->createFolder($folder)) {
                 $this->toolBox()->i18nLog()->critical('cant-create-folders', ['%folder%' => $folder]);
                 return false;
             }
@@ -209,7 +209,7 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $fileManager = $this->toolBox()->fileManager();
+        $fileManager = $this->toolBox()->files();
         $contentFile = $fileManager->extractFromMarkers(\FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
         return $fileManager->insertWithMarkers($contentFile, \FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
@@ -320,7 +320,7 @@ class AppInstaller
         }
 
         $this->toolBox()->i18nLog()->critical('cant-connect-database');
-        $this->toolBox()->miniLog()->critical((string) $connection->connect_errno . ': ' . $connection->connect_error);
+        $this->toolBox()->log()->critical((string) $connection->connect_errno . ': ' . $connection->connect_error);
         return false;
     }
 
@@ -351,7 +351,7 @@ class AppInstaller
 
         $this->toolBox()->i18nLog()->critical('cant-connect-database');
         if (is_resource($connection) && \pg_last_error($connection) !== false) {
-            $this->toolBox()->miniLog()->critical((string) \pg_last_error($connection));
+            $this->toolBox()->log()->critical((string) \pg_last_error($connection));
         }
 
         return false;

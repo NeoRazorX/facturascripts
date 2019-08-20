@@ -51,7 +51,7 @@ class ToolBox
      * 
      * @return FileManager
      */
-    public static function fileManager()
+    public static function files()
     {
         return new FileManager();
     }
@@ -93,7 +93,7 @@ class ToolBox
      *
      * @return MiniLog
      */
-    public static function miniLog(string $channel = '')
+    public static function log(string $channel = '')
     {
         return new MiniLog($channel);
     }
