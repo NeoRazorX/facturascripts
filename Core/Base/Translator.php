@@ -36,14 +36,14 @@ class Translator
      *
      * @var string
      */
-    private static $defaultLang;
+    private $defaultLang;
 
     /**
      * Loaded languages.
      *
      * @var array
      */
-    private static $languages;
+    private static $languages = [];
 
     /**
      * List of strings without translation.
@@ -73,15 +73,10 @@ class Translator
      */
     public function __construct(string $langcode = '')
     {
-        $lang = empty($langcode) ? \FS_LANG : $langcode;
-
+        $this->defaultLang = empty($langcode) ? \FS_LANG : $langcode;
         if (self::$translator === null) {
-            self::$defaultLang = $lang;
-            self::$translator = new symfonyTranslator($lang);
+            self::$translator = new symfonyTranslator($this->defaultLang);
             self::$translator->addLoader('json', new JsonFileLoader());
-            $this->locateFiles($lang);
-        } elseif ($lang !== self::$defaultLang) {
-            $this->setLangCode($lang);
         }
     }
 
@@ -95,7 +90,7 @@ class Translator
      */
     public function trans(string $txt, array $parameters = []): string
     {
-        return empty($txt) ? '' : $this->customTrans(self::$defaultLang, $txt, $parameters);
+        return empty($txt) ? '' : $this->customTrans($this->defaultLang, $txt, $parameters);
     }
 
     /**
@@ -175,7 +170,7 @@ class Translator
      */
     public function getLangCode(): string
     {
-        return self::$defaultLang;
+        return $this->defaultLang;
     }
 
     /**
@@ -185,7 +180,7 @@ class Translator
      */
     public function setLangCode(string $lang)
     {
-        self::$defaultLang = $this->firstMatch($lang);
+        $this->defaultLang = $this->firstMatch($lang);
     }
 
     /**

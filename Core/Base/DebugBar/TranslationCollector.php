@@ -35,28 +35,11 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
 {
 
     /**
-     * Translation engine
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
      * Array containing the translations
      *
      * @var array
      */
     protected $translations = [];
-
-    /**
-     * TranslationCollector constructor.
-     *
-     * @param Translator $i18n
-     */
-    public function __construct(&$i18n)
-    {
-        $this->i18n = $i18n;
-    }
 
     /**
      * Called by the DebugBar when data needs to be collected
@@ -65,7 +48,8 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
      */
     public function collect()
     {
-        foreach ($this->i18n->getMissingStrings() as $key => $value) {
+        $i18n = new Translator();
+        foreach ($i18n->getMissingStrings() as $key => $value) {
             $this->translations[] = [
                 'key' => $key,
                 'value' => $value,
