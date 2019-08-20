@@ -112,13 +112,13 @@
             {% endblock %}
             <br/>
             {% block messages %}
-                {% from 'Macro/Utils.html.twig' import message as show_message %}
+                {% from 'Macro/Utils.html.twig' import message as showMessage %}
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            {{ show_message(log, ['error', 'critical'], 'danger') }}
-                            {{ show_message(log, ['warning'], 'warning') }}
-                            {{ show_message(log, ['notice'], 'success') }}
+                            {{ showMessage(log, ['error', 'critical'], 'danger') }}
+                            {{ showMessage(log, ['warning'], 'warning') }}
+                            {{ showMessage(log, ['notice'], 'success') }}
                         </div>
                     </div>
                 </div>

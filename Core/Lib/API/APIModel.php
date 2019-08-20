@@ -48,16 +48,16 @@ class APIModel extends APIResourceClass
     public function doDELETE(): bool
     {
         if (empty($this->params) || !$this->model->loadFromCode($this->params[0])) {
-            $this->setError($this->i18n->trans('record-not-found'));
+            $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
             return false;
         }
 
         if ($this->model->delete()) {
-            $this->setOk($this->i18n->trans('record-deleted-correctly'), (array) $this->model);
+            $this->setOk($this->toolBox()->i18n()->trans('record-deleted-correctly'), (array) $this->model);
             return true;
         }
 
-        $this->setError($this->i18n->trans('record-deleted-error'));
+        $this->setError($this->toolBox()->i18n()->trans('record-deleted-error'));
         return false;
     }
 
@@ -89,7 +89,7 @@ class APIModel extends APIResourceClass
 
         /// record not found
         if (!$this->model->loadFromCode($this->params[0])) {
-            $this->setError($this->i18n->trans('record-not-found'));
+            $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
             return false;
         }
 
@@ -110,7 +110,7 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if ($this->model->loadFromCode($code)) {
-            $this->setError($this->i18n->trans('duplicate-record'), (array) $this->model);
+            $this->setError($this->toolBox()->i18n()->trans('duplicate-record'), (array) $this->model);
             return false;
         }
 
@@ -134,7 +134,7 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if (!$this->model->loadFromCode($code)) {
-            $this->setError($this->i18n->trans('record-not-found'));
+            $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
             return false;
         }
 
@@ -331,12 +331,12 @@ class APIModel extends APIResourceClass
     private function saveResource(): bool
     {
         if ($this->model->save()) {
-            $this->setOk($this->i18n->trans('record-updated-correctly'), (array) $this->model);
+            $this->setOk($this->toolBox()->i18n()->trans('record-updated-correctly'), (array) $this->model);
             return true;
         }
 
-        $message = $this->i18n->trans('record-save-error');
-        foreach ($this->miniLog->read() as $log) {
+        $message = $this->toolBox()->i18n()->trans('record-save-error');
+        foreach ($this->toolBox()->log()->readAll() as $log) {
             $message .= ' - ' . $log['message'];
         }
 

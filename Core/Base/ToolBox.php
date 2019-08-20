@@ -28,12 +28,12 @@ use FacturaScripts\Dinamic\Lib\IPFilter as DinamicIPFilter;
  */
 class ToolBox
 {
-
+    
     /**
      * 
      * @return AppSettings
      */
-    public function appSettings()
+    public static function appSettings()
     {
         return new AppSettings();
     }

@@ -55,10 +55,10 @@
     {% block fullBody %}
         <body>
             {% block messages %}
-                {% from 'Macro/Utils.html.twig' import message as show_message %}
-                {{ show_message(log, ['error', 'critical'], 'danger') }}
-                {{ show_message(log, ['warning'], 'warning') }}
-                {{ show_message(log, ['notice'], 'success') }}
+                {% from 'Macro/Utils.html.twig' import message as showMessage %}
+                {{ showMessage(log, ['error', 'critical'], 'danger') }}
+                {{ showMessage(log, ['warning'], 'warning') }}
+                {{ showMessage(log, ['notice'], 'success') }}
             {% endblock %}
             {% block body %}
             {% endblock %}

@@ -27,6 +27,7 @@ class MiniLog
 {
 
     const ALL_LEVELS = ['critical', 'debug', 'error', 'notice', 'warning'];
+    const DEFAULT_LEVELS = ['critical', 'error', 'notice', 'warning'];
 
     /**
      *
@@ -106,22 +107,36 @@ class MiniLog
     }
 
     /**
-     * Returns specified level messages or all.
+     * Returns specified level messages of this channel.
      * 
      * @param array $levels
-     * @param bool  $allChannels
      *
      * @return array
      */
-    public function read(array $levels = ['notice', 'warning', 'error', 'critical'], bool $allChannels = false): array
+    public function read(array $levels = self::DEFAULT_LEVELS): array
     {
         $messages = [];
         foreach (self::$dataLog as $data) {
-            if ($data['channel'] !== $this->channel && false === $allChannels) {
-                continue;
+            if ($data['channel'] === $this->channel && in_array($data['level'], $levels, false)) {
+                $messages[] = $data;
             }
+        }
 
-            if ($data['message'] !== '' && in_array($data['level'], $levels, false)) {
+        return $messages;
+    }
+
+    /**
+     * Returns specified level messages of all channels.
+     * 
+     * @param array $levels
+     *
+     * @return array
+     */
+    public function readAll(array $levels = self::DEFAULT_LEVELS): array
+    {
+        $messages = [];
+        foreach (self::$dataLog as $data) {
+            if (in_array($data['level'], $levels, false)) {
                 $messages[] = $data;
             }
         }
@@ -152,12 +167,14 @@ class MiniLog
      */
     protected function log(string $level, string $message, array $context = [])
     {
-        self::$dataLog[] = [
-            'channel' => $this->channel,
-            'context' => $context,
-            'level' => $level,
-            'message' => $message,
-            'time' => time(),
-        ];
+        if (!empty($message)) {
+            self::$dataLog[] = [
+                'channel' => $this->channel,
+                'context' => $context,
+                'level' => $level,
+                'message' => $message,
+                'time' => time(),
+            ];
+        }
     }
 }

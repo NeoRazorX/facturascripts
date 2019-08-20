@@ -19,8 +19,7 @@
 namespace FacturaScripts\Core\Lib\API\Base;
 
 use Exception;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,26 +33,12 @@ abstract class APIResourceClass
 {
 
     /**
-     * Translation engine.
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
      * Contains the HTTP method (GET, PUT, PATCH, POST, DELETE).
      * PUT, PATCH and POST used in the same way.
      *
      * @var string $method
      */
     protected $method;
-
-    /**
-     * App log manager.
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
 
     /**
      *
@@ -88,14 +73,10 @@ abstract class APIResourceClass
      *
      * @param Response   $response
      * @param Request    $request
-     * @param MiniLog    $miniLog
-     * @param Translator $i18n
      * @param array      $params
      */
-    public function __construct($response, $request, MiniLog $miniLog, Translator $i18n, array $params)
+    public function __construct($response, $request, array $params)
     {
-        $this->i18n = $i18n;
-        $this->miniLog = $miniLog;
         $this->params = $params;
         $this->request = $request;
         $this->response = $response;
@@ -216,6 +197,8 @@ abstract class APIResourceClass
      */
     protected function setOk(string $string, $data = null)
     {
+        $this->toolBox()->log('api')->notice($message);
+
         $res = ['ok' => $string];
         if ($data !== null) {
             $res['data'] = $data;
@@ -235,6 +218,8 @@ abstract class APIResourceClass
      */
     protected function setError(string $message, $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
+        $this->toolBox()->log('api')->error($message);
+
         $res = ['error' => $message];
         if ($data !== null) {
             $res['data'] = $data;
@@ -242,5 +227,14 @@ abstract class APIResourceClass
 
         $this->response->setContent(json_encode($res));
         $this->response->setStatusCode($status);
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

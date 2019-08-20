@@ -29,8 +29,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             {% for msg in messages %}
-                {{ msg.message | raw }}
-                {% if not loop.last %}<br/>{% endif %}
+                <div>{{ msg.message | raw }}</div>
             {% endfor %}
         </div>
     {% endif %}

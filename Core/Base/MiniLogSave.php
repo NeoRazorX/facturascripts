@@ -41,7 +41,7 @@ class MiniLogSave
     public function __construct(string $ip = '', string $nick = '', string $uri = '')
     {
         $miniLog = new MiniLog();
-        foreach ($miniLog->read($this->getActiveSettingsLog(), true) as $value) {
+        foreach ($miniLog->readAll($this->getActiveSettingsLog()) as $value) {
             $logMessage = new LogMessage();
             $logMessage->channel = $value['channel'];
             $logMessage->time = date('d-m-Y H:i:s', $value['time']);
