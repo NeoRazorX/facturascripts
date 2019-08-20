@@ -112,7 +112,7 @@
                                                         </span>
                                                         <select id="fs_lang" name="fs_lang" class="form-control">
                                                             {% for langCode, langName in i18n.getAvailableLanguages() %}
-                                                                {% if langCode == i18n.getLangCode() %}
+                                                                {% if langCode == i18n.getLang() %}
                                                                     <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                                                 {% else %}
                                                                     <option value="{{ langCode }}">{{ langName }}</option>

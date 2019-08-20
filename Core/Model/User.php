@@ -200,6 +200,11 @@ class User extends Base\ModelClass
             return false;
         }
 
+        if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            self::$miniLog->warning(self::$i18n->trans('not-valid-email', ['%email%' => $this->email]));
+            return false;
+        }
+
         return $this->testPassword() && parent::test();
     }
 
