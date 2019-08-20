@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * First aprox to persist data from logs.
  *
@@ -120,9 +118,10 @@ class LogMessage extends Base\ModelClass
      */
     public function test()
     {
-        $this->channel = Utils::noHtml($this->channel);
-        $this->message = Utils::noHtml($this->message);
-        $this->uri = Utils::noHtml($this->uri);
+        $utils = $this->toolBox()->utils();
+        $this->channel = $utils->noHtml($this->channel);
+        $this->message = $utils->noHtml($this->message);
+        $this->uri = $utils->noHtml($this->uri);
 
         return empty($this->message) ? false : parent::test();
     }

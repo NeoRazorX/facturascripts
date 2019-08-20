@@ -19,9 +19,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A province.
  *
@@ -73,7 +70,7 @@ class Provincia extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
     }
 
     /**
@@ -115,7 +112,7 @@ class Provincia extends Base\ModelClass
      */
     public function test()
     {
-        $this->provincia = Utils::noHtml($this->provincia);
+        $this->provincia = $this->toolBox()->utils()->noHtml($this->provincia);
         return parent::test();
     }
 

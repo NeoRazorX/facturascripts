@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-
 /**
  * A tax (VAT) that can be associated to tax, country, province, and.
  *
@@ -86,8 +84,8 @@ class ImpuestoZona extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
-        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
+        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
         $this->prioridad = 1;
     }
 

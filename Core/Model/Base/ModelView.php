@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 
 /**
  * The class from which all views of the model are inherited.
@@ -400,5 +401,14 @@ abstract class ModelView
     protected function setMasterModel($model)
     {
         $this->masterModel = $model;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

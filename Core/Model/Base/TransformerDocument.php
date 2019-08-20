@@ -250,7 +250,7 @@ abstract class TransformerDocument extends BusinessDocument
     protected function onChange($field)
     {
         if (!$this->editable && !$this->previousData['editable'] && $field != 'idestado') {
-            self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
+            $this->toolBox()->i18nLog()->warning('non-editable-document');
             return false;
         }
 

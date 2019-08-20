@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Accounting year. It is the period in which accounting entry, invoices, delivery notes are grouped ...
@@ -135,14 +133,14 @@ class Ejercicio extends Base\ModelClass
 
         if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
-                self::$miniLog->warning(self::$i18n->trans('date-out-of-rage-selected-better'));
+                $this->toolBox()->i18nLog()->warning('date-out-of-rage-selected-better');
             }
 
             return $this->fechafin;
         }
 
         if ($showError) {
-            self::$miniLog->warning(self::$i18n->trans('date-out-of-rage-selected-better'));
+            $this->toolBox()->i18nLog()->warning('date-out-of-rage-selected-better');
         }
 
         return $this->fechainicio;
@@ -277,19 +275,28 @@ class Ejercicio extends Base\ModelClass
     {
         /// TODO: Change dates verify to $this->inRange() call
         $this->codejercicio = trim($this->codejercicio);
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
 
         if (empty($this->idempresa)) {
-            self::$miniLog->warning(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'idempresa', '%tableName%' => static::tableName()]));
+            $this->toolBox()->i18nLog()->warning(
+                'field-can-not-be-null',
+                ['%fieldName%' => 'idempresa', '%tableName%' => static::tableName()]
+            );
         } elseif (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']
+            );
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-column-lenght',
+                ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
+            );
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
-            self::$miniLog->warning(self::$i18n->trans('start-date-later-end-date', $params));
+            $this->toolBox()->i18nLog()->warning('start-date-later-end-date', $params);
         } elseif (strtotime($this->fechainicio) < 1) {
-            self::$miniLog->warning(self::$i18n->trans('date-invalid'));
+            $this->toolBox()->i18nLog()->warning('date-invalid');
         } else {
             return parent::test();
         }
@@ -323,7 +330,7 @@ class Ejercicio extends Base\ModelClass
         $this->nombre = date('Y', $date2);
 
         /// for non-default companies we try to use range from 0001 to 9999
-        if ($this->idempresa != AppSettings::get('default', 'idempresa')) {
+        if ($this->idempresa != $this->toolBox()->appSettings()->get('default', 'idempresa')) {
             $new = new static();
             for ($num = 1; $num < 1000; $num++) {
                 $code = sprintf('%04s', (int) $num);
@@ -353,8 +360,8 @@ class Ejercicio extends Base\ModelClass
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
             if ($this->inRange($ejercicio->fechainicio) || $this->inRange($ejercicio->fechafin)) {
-                self::$miniLog->warning(
-                    self::$i18n->trans('exercise-date-range-exists', ['%start%' => $this->fechainicio, '%end%' => $this->fechafin])
+                $this->toolBox()->i18nLog()->warning(
+                    'exercise-date-range-exists', ['%start%' => $this->fechainicio, '%end%' => $this->fechafin]
                 );
                 return false;
             }

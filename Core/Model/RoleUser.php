@@ -125,12 +125,12 @@ class RoleUser extends Base\ModelClass
     public function test()
     {
         if (empty($this->nick)) {
-            self::$miniLog->warning(self::$i18n->trans('nick-is-empty'));
+            $this->toolBox()->i18nLog()->warning('nick-is-empty');
             return false;
         }
 
         if (empty($this->codrole)) {
-            self::$miniLog->warning(self::$i18n->trans('role-is-empty'));
+            $this->toolBox()->i18nLog()->warning('role-is-empty');
             return false;
         }
 

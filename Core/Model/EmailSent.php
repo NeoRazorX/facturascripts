@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Model EmailSent
  *
@@ -115,8 +113,9 @@ class EmailSent extends Base\ModelClass
      */
     public function test()
     {
-        $this->body = Utils::noHtml($this->body);
-        $this->subject = Utils::noHtml($this->subject);
+        $utils = $this->toolBox()->utils();
+        $this->body = $utils->noHtml($this->body);
+        $this->subject = $utils->noHtml($this->subject);
         return parent::test();
     }
 

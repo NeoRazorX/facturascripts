@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Stores the data of an article.
@@ -182,14 +180,14 @@ class Producto extends Base\ModelClass
         parent::clear();
         $this->actualizado = date('d-m-Y H:i:s');
         $this->bloqueado = false;
-        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
         $this->nostock = false;
         $this->precio = 0.0;
         $this->publico = false;
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = (bool) AppSettings::get('default', 'ventasinstock', false);
+        $this->ventasinstock = (bool) $this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
     }
 
     /**
@@ -300,11 +298,16 @@ class Producto extends Base\ModelClass
      */
     public function test()
     {
-        $this->descripcion = Utils::noHtml($this->descripcion);
-        $this->observaciones = Utils::noHtml($this->observaciones);
-        $this->referencia = Utils::noHtml($this->referencia);
+        $utils = $this->toolBox()->utils();
+        $this->descripcion = $utils->noHtml($this->descripcion);
+        $this->observaciones = $utils->noHtml($this->observaciones);
+        $this->referencia = $utils->noHtml($this->referencia);
+
         if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-column-lenght',
+                ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
+            );
             return false;
         }
 

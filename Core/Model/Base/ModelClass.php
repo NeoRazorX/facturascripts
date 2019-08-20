@@ -277,7 +277,7 @@ abstract class ModelClass extends ModelCore
             if ($key == static::primaryColumn()) {
                 $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
-                self::$miniLog->warning(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]));
+                $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
                 $return = false;
             }
         }

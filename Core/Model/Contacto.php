@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Description of crm_contacto
@@ -223,7 +221,7 @@ class Contacto extends Base\Contact
         parent::clear();
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
-        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
         $this->habilitado = true;
         $this->level = 1;
         $this->puntos = 0;
@@ -239,7 +237,7 @@ class Contacto extends Base\Contact
         $country = new Pais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
         if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
-            return Utils::fixHtml($country->nombre);
+            return $this->toolBox()->utils()->fixHtml($country->nombre);
         }
 
         return $this->codpais;
@@ -355,7 +353,7 @@ class Contacto extends Base\Contact
     {
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
-        $this->logkey = Utils::randomString(99);
+        $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;
     }
 
@@ -400,13 +398,14 @@ class Contacto extends Base\Contact
             $this->descripcion = $this->direccion ?? $this->fullName();
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
-        $this->apellidos = Utils::noHtml($this->apellidos);
-        $this->cargo = Utils::noHtml($this->cargo);
-        $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->direccion = Utils::noHtml($this->direccion);
-        $this->empresa = Utils::noHtml($this->empresa);
-        $this->provincia = Utils::noHtml($this->provincia);
+        $utils = $this->toolBox()->utils();
+        $this->descripcion = $utils->noHtml($this->descripcion);
+        $this->apellidos = $utils->noHtml($this->apellidos);
+        $this->cargo = $utils->noHtml($this->cargo);
+        $this->ciudad = $utils->noHtml($this->ciudad);
+        $this->direccion = $utils->noHtml($this->direccion);
+        $this->empresa = $utils->noHtml($this->empresa);
+        $this->provincia = $utils->noHtml($this->provincia);
 
         return $this->testPassword() && parent::test();
     }

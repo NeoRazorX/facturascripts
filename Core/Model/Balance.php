@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Defines which accounts must be used to generate the different accounting reports.
  *
@@ -142,15 +140,19 @@ class Balance extends Base\ModelClass
     public function test()
     {
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codbalance, '%column%' => 'codbalance', '%min%' => '1', '%max%' => '15']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codbalance, '%column%' => 'codbalance', '%min%' => '1', '%max%' => '15']
+            );
             return false;
         }
 
-        $this->descripcion1 = Utils::noHtml($this->descripcion1);
-        $this->descripcion2 = Utils::noHtml($this->descripcion2);
-        $this->descripcion3 = Utils::noHtml($this->descripcion3);
-        $this->descripcion4 = Utils::noHtml($this->descripcion4);
-        $this->descripcion4ba = Utils::noHtml($this->descripcion4ba);
+        $utils = $this->toolBox()->utils();
+        $this->descripcion1 = $utils->noHtml($this->descripcion1);
+        $this->descripcion2 = $utils->noHtml($this->descripcion2);
+        $this->descripcion3 = $utils->noHtml($this->descripcion3);
+        $this->descripcion4 = $utils->noHtml($this->descripcion4);
+        $this->descripcion4ba = $utils->noHtml($this->descripcion4ba);
         return parent::test();
     }
 }

@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Class to manage the data of retenciones table
@@ -116,16 +115,19 @@ class Retencion extends Base\ModelClass
     {
         $this->codretencion = trim($this->codretencion);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']
+            );
             return false;
         }
 
         $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
         $this->codsubcuentaacr = empty($this->codsubcuentaacr) ? null : $this->codsubcuentaacr;
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
-            self::$miniLog->warning(self::$i18n->trans('not-valid-percentage-retention'));
+            $this->toolBox()->i18nLog()->warning('not-valid-percentage-retention');
             return false;
         }
 

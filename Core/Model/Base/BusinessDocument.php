@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -235,12 +233,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function clear()
     {
         parent::clear();
-        $this->codalmacen = AppSettings::get('default', 'codalmacen');
-        $this->codpago = AppSettings::get('default', 'codpago');
-        $this->codserie = AppSettings::get('default', 'codserie');
+
+        $appSettings = $this->toolBox()->appSettings();
+        $this->codalmacen = $appSettings->get('default', 'codalmacen');
+        $this->codpago = $appSettings->get('default', 'codpago');
+        $this->codserie = $appSettings->get('default', 'codserie');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
+        $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->total = 0.0;
@@ -272,7 +272,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $newLine = $this->getNewLine();
 
         $variant = new Variante();
-        $where = [new DataBaseWhere('referencia', Utils::noHtml($reference))];
+        $where = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
         if ($variant->loadFromCode('', $where)) {
             $product = $variant->getProducto();
             $impuesto = $product->getImpuesto();
@@ -370,7 +370,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
-        self::$miniLog->warning(self::$i18n->trans('accounting-exercise-not-found'));
+        $this->toolBox()->i18nLog()->warning('accounting-exercise-not-found');
         return false;
     }
 
@@ -390,7 +390,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function test()
     {
-        $this->observaciones = Utils::noHtml($this->observaciones);
+        $utils = $this->toolBox()->utils();
+        $this->observaciones = $utils->noHtml($this->observaciones);
 
         /**
          * We use the euro as a bridge currency when adding, compare
@@ -400,8 +401,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
 
         /// check total
-        if (!Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
-            self::$miniLog->error(self::$i18n->trans('bad-total-error'));
+        if (!$utils->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+            $this->toolBox()->i18nLog()->error('bad-total-error');
             return false;
         }
 
@@ -420,7 +421,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         switch ($field) {
             case 'codalmacen':
             case 'idempresa':
-                self::$miniLog->warning(self::$i18n->trans('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']));
+                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']);
                 return false;
 
             case 'codejercicio':
@@ -465,7 +466,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
-        self::$miniLog->warning(self::$i18n->trans('warehouse-not-found'));
+        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
         return false;
     }
 }

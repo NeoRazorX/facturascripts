@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * The line of a accounting entry.
@@ -195,7 +193,7 @@ class Partida extends Base\ModelOnChangeClass
     {
         parent::clear();
         $this->baseimponible = 0.0;
-        $this->coddivisa = AppSettings::get('default', 'coddivisa');
+        $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->debe = 0.0;
         $this->debeme = 0.0;
         $this->haber = 0.0;
@@ -283,19 +281,20 @@ class Partida extends Base\ModelOnChangeClass
      */
     public function test(): bool
     {
-        $this->cifnif = Utils::noHtml($this->cifnif);
+        $utils = $this->toolBox()->utils();
+        $this->cifnif = $utils->noHtml($this->cifnif);
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->codcontrapartida = trim($this->codcontrapartida);
-        $this->concepto = Utils::noHtml($this->concepto);
-        $this->documento = Utils::noHtml($this->documento);
+        $this->concepto = $utils->noHtml($this->concepto);
+        $this->documento = $utils->noHtml($this->documento);
 
         if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
+            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
         if ($this->testErrorInData()) {
-            self::$miniLog->warning(self::$i18n->trans('accounting-data-missing'));
+            $this->toolBox()->i18nLog()->warning('accounting-data-missing');
             return false;
         }
 

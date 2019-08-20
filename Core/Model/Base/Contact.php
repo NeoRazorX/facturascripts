@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
 
 /**
@@ -110,7 +108,7 @@ abstract class Contact extends ModelClass
         parent::clear();
         $this->fechaalta = date('d-m-Y');
         $this->personafisica = true;
-        $this->tipoidfiscal = AppSettings::get('default', 'tipoidfiscal');
+        $this->tipoidfiscal = $this->toolBox()->appSettings()->get('default', 'tipoidfiscal');
     }
 
     /**
@@ -132,27 +130,28 @@ abstract class Contact extends ModelClass
      */
     public function test()
     {
-        $this->cifnif = Utils::noHtml($this->cifnif);
-        $this->email = Utils::noHtml(mb_strtolower($this->email, 'UTF8'));
-        $this->fax = Utils::noHtml($this->fax);
-        $this->nombre = Utils::noHtml($this->nombre);
-        $this->observaciones = Utils::noHtml($this->observaciones);
-        $this->telefono1 = Utils::noHtml($this->telefono1);
-        $this->telefono2 = Utils::noHtml($this->telefono2);
+        $utils = $this->toolBox()->utils();
+        $this->cifnif = $utils->noHtml($this->cifnif);
+        $this->email = $utils->noHtml(mb_strtolower($this->email, 'UTF8'));
+        $this->fax = $utils->noHtml($this->fax);
+        $this->nombre = $utils->noHtml($this->nombre);
+        $this->observaciones = $utils->noHtml($this->observaciones);
+        $this->telefono1 = $utils->noHtml($this->telefono1);
+        $this->telefono2 = $utils->noHtml($this->telefono2);
 
         if (empty($this->nombre)) {
-            self::$miniLog->warning(self::$i18n->trans('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]));
+            $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]);
             return false;
         }
 
         $fiscalNumberValidator = new FiscalNumberValitator();
         if (!empty($this->cifnif) && !$fiscalNumberValidator->validate($this->tipoidfiscal, $this->cifnif)) {
-            self::$miniLog->warning(self::$i18n->trans('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]));
+            $this->toolBox()->i18nLog()->warning('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]);
             return false;
         }
 
         if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            self::$miniLog->warning(self::$i18n->trans('not-valid-email', ['%email%' => $this->email]));
+            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             return false;
         }
 

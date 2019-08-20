@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
@@ -59,7 +57,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
         /// select default currency
         $divisa = new Divisa();
-        if ($divisa->loadFromCode(AppSettings::get('default', 'coddivisa'))) {
+        if ($divisa->loadFromCode($this->toolBox()->appSettings()->get('default', 'coddivisa'))) {
             $this->coddivisa = $divisa->coddivisa;
             $this->tasaconv = $divisa->tasaconvcompra;
         }
@@ -133,8 +131,9 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public function test()
     {
-        $this->nombre = Utils::noHtml($this->nombre);
-        $this->numproveedor = Utils::noHtml($this->numproveedor);
+        $utils = $this->toolBox()->utils();
+        $this->nombre = $utils->noHtml($this->nombre);
+        $this->numproveedor = $utils->noHtml($this->numproveedor);
 
         return parent::test();
     }

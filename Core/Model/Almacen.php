@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * The warehouse where the items are physically.
  *
@@ -68,7 +65,7 @@ class Almacen extends Base\Address
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-warehouse'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-warehouse');
             return false;
         }
 
@@ -93,7 +90,7 @@ class Almacen extends Base\Address
      */
     public function isDefault()
     {
-        return $this->codalmacen === AppSettings::get('default', 'codalmacen');
+        return $this->codalmacen === $this->toolBox()->appSettings()->get('default', 'codalmacen');
     }
 
     /**
@@ -134,12 +131,16 @@ class Almacen extends Base\Address
     public function test()
     {
         if (!empty($this->codalmacen) && !preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']
+            );
             return false;
         }
 
-        $this->nombre = Utils::noHtml($this->nombre);
-        $this->telefono = Utils::noHtml($this->telefono);
+        $utils = $this->toolBox()->utils();
+        $this->nombre = $utils->noHtml($this->nombre);
+        $this->telefono = $utils->noHtml($this->telefono);
         return parent::test();
     }
 

@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A series of invoicing or accounting, to have different numbering
  * in each series.
@@ -82,7 +79,7 @@ class Serie extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-serie'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-serie');
             return false;
         }
 
@@ -108,7 +105,7 @@ class Serie extends Base\ModelClass
      */
     public function isDefault()
     {
-        return $this->codserie === AppSettings::get('default', 'codserie');
+        return $this->codserie === $this->toolBox()->appSettings()->get('default', 'codserie');
     }
 
     /**
@@ -140,11 +137,14 @@ class Serie extends Base\ModelClass
     {
         $this->codserie = trim($this->codserie);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']
+            );
             return false;
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 }

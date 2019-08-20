@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A Value for an article attribute.
  *
@@ -98,7 +96,7 @@ class AtributoValor extends Base\ModelClass
      */
     public function test()
     {
-        $this->valor = Utils::noHtml($this->valor);
+        $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
 
         /// combine attribute name + value
         $attribute = new Atributo();

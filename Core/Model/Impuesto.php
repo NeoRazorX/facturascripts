@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * A tax (VAT) that can be associated to articles, delivery notes lines,
@@ -91,7 +89,7 @@ class Impuesto extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-tax'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-tax');
             return false;
         }
 
@@ -118,7 +116,7 @@ class Impuesto extends Base\ModelClass
      */
     public function isDefault()
     {
-        return $this->codimpuesto === AppSettings::get('default', 'codimpuesto');
+        return $this->codimpuesto === $this->toolBox()->appSettings()->get('default', 'codimpuesto');
     }
 
     /**
@@ -163,13 +161,16 @@ class Impuesto extends Base\ModelClass
     {
         $this->codimpuesto = trim($this->codimpuesto);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']
+            );
             return false;
         }
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 
@@ -188,7 +189,7 @@ class Impuesto extends Base\ModelClass
             return $result;
         }
 
-        $result->loadFromCode(AppSettings::get('default', 'codimpuesto'));
+        $result->loadFromCode($this->toolBox()->appSettings()->get('default', 'codimpuesto'));
         return $result;
     }
 }

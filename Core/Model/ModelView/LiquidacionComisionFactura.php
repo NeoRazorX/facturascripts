@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Model\ModelView;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\Base\ModelView;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 
@@ -75,8 +74,7 @@ class LiquidacionComisionFactura extends ModelView
             self::$dataBase->commit();
         } catch (Exception $exc) {
             self::$dataBase->rollback();
-            $miniLog = new MiniLog();
-            $miniLog->error($exc->getMessage());
+            $this->toolBox()->log()->error($exc->getMessage());
         }
     }
 

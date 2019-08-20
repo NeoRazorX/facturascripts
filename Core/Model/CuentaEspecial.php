@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Allows to relate special accounts (SALES, for example)
  * with the real account or sub-account.
@@ -83,11 +81,14 @@ class CuentaEspecial extends Base\ModelClass
     {
         $this->codcuentaesp = trim($this->codcuentaesp);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcuentaesp, '%column%' => 'codcuentaesp', '%min%' => '1', '%max%' => '6']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codcuentaesp, '%column%' => 'codcuentaesp', '%min%' => '1', '%max%' => '6']
+            );
             return false;
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 

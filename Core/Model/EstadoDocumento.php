@@ -19,8 +19,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A state associated with documents to distinguish them by groups.
  * For example: Earrings, Approved, ...
@@ -107,7 +105,7 @@ class EstadoDocumento extends Base\ModelClass
     public function delete()
     {
         if ($this->bloquear) {
-            self::$miniLog->warning(self::$i18n->trans('locked'));
+            $this->toolBox()->i18nLog()->warning('locked');
             return false;
         }
 
@@ -131,7 +129,7 @@ class EstadoDocumento extends Base\ModelClass
     public function save()
     {
         if ($this->bloquear) {
-            self::$miniLog->warning(self::$i18n->trans('locked'));
+            $this->toolBox()->i18nLog()->warning('locked');
             return false;
         }
 
@@ -167,7 +165,7 @@ class EstadoDocumento extends Base\ModelClass
      */
     public function test()
     {
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
 
         if (empty($this->tipodoc) || empty($this->nombre)) {
             return false;

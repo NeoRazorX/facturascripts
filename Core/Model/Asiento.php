@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * The accounting entry. It is related to an exercise and consists of games.
@@ -125,7 +123,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     public function clear()
     {
         parent::clear();
-        $this->idempresa = AppSettings::get('default', 'idempresa');
+        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $this->fecha = date('d-m-Y');
         $this->editable = true;
         $this->importe = 0.0;
@@ -146,7 +144,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         /// TODO: Check if accounting entry have VAT Accounts
         $regularization = new RegularizacionImpuesto();
         if ($regularization->getFechaInside($this->fecha)) {
-            self::$miniLog->warning(self::$i18n->trans('acounting-within-regularization'));
+            $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
             return false;
         }
 
@@ -266,7 +264,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
             $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             while (!empty($asientos)) {
                 if (!$this->renumberAccountingEntries($asientos, $number)) {
-                    self::$miniLog->warning(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
+                    $this->toolBox()->i18nLog()->warning('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]);
                     return false;
                 }
                 $offset += 1000;
@@ -314,11 +312,12 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      */
     public function test(): bool
     {
-        $this->concepto = Utils::noHtml($this->concepto);
-        $this->documento = Utils::noHtml($this->documento);
+        $utils = $this->toolBox()->utils();
+        $this->concepto = $utils->noHtml($this->concepto);
+        $this->documento = $utils->noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
+            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
@@ -327,7 +326,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         if ($this->testErrorInData()) {
-            self::$miniLog->warning(self::$i18n->trans('accounting-data-missing'));
+            $this->toolBox()->i18nLog()->warning('accounting-data-missing');
             return false;
         }
 
@@ -348,17 +347,17 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         if (!$exercise->isOpened()) {
-            self::$miniLog->warning(self::$i18n->trans('closed-exercise', ['%exerciseName%' => $exercise->nombre]));
+            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return true;
         }
 
         if ($this->idasiento === $exercise->idasientoapertura && !empty($exercise->idasientopyg)) {
-            self::$miniLog->warning(self::$i18n->trans('delete-aperture-error'));
+            $this->toolBox()->i18nLog()->warning('delete-aperture-error');
             return true;
         }
 
         if ($this->idasiento === $exercise->idasientopyg && !empty($exercise->idasientocierre)) {
-            self::$miniLog->warning(self::$i18n->trans('delete-pyg-error'));
+            $this->toolBox()->i18nLog()->warning('delete-pyg-error');
             return true;
         }
 

@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Personalize the numeration and code of sale and purchase documents.
  *
@@ -127,7 +125,7 @@ class SecuenciaDocumento extends Base\ModelClass
      */
     public function test()
     {
-        $this->patron = Utils::noHtml($this->patron);
+        $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
         return parent::test();
     }
 

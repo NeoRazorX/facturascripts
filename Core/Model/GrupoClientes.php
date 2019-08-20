@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A group of customers, which may be associated with a rate.
  *
@@ -111,13 +109,14 @@ class GrupoClientes extends Base\ModelClass
     public function test()
     {
         if (!empty($this->codgrupo) && !preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
-            self::$miniLog->warning(
-                self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6'])
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6']
             );
             return false;
         }
 
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         return parent::test();
     }
 

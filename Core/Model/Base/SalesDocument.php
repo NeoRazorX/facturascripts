@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -151,7 +149,7 @@ abstract class SalesDocument extends TransformerDocument
 
         /// select default currency
         $divisa = new Divisa();
-        if ($divisa->loadFromCode(AppSettings::get('default', 'coddivisa'))) {
+        if ($divisa->loadFromCode($this->toolBox()->appSettings()->get('default', 'coddivisa'))) {
             $this->coddivisa = $divisa->coddivisa;
             $this->tasaconv = $divisa->tasaconv;
         }
@@ -165,7 +163,7 @@ abstract class SalesDocument extends TransformerDocument
     {
         $country = new Pais();
         if ($country->loadFromCode($this->codpais)) {
-            return Utils::fixHtml($country->nombre);
+            return $this->toolBox()->utils()->fixHtml($country->nombre);
         }
 
         return $this->codpais;
@@ -233,14 +231,15 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function test()
     {
-        $this->apartado = Utils::noHtml($this->apartado);
-        $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->codigoenv = Utils::noHtml($this->codigoenv);
-        $this->codpostal = Utils::noHtml($this->codpostal);
-        $this->direccion = Utils::noHtml($this->direccion);
-        $this->nombrecliente = Utils::noHtml($this->nombrecliente);
-        $this->numero2 = Utils::noHtml($this->numero2);
-        $this->provincia = Utils::noHtml($this->provincia);
+        $utils = $this->toolBox()->utils();
+        $this->apartado = $utils->noHtml($this->apartado);
+        $this->ciudad = $utils->noHtml($this->ciudad);
+        $this->codigoenv = $utils->noHtml($this->codigoenv);
+        $this->codpostal = $utils->noHtml($this->codpostal);
+        $this->direccion = $utils->noHtml($this->direccion);
+        $this->nombrecliente = $utils->noHtml($this->nombrecliente);
+        $this->numero2 = $utils->noHtml($this->numero2);
+        $this->provincia = $utils->noHtml($this->provincia);
 
         if (null === $this->codagente) {
             $this->totalcomision = 0.0;

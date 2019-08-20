@@ -118,7 +118,7 @@ class AttachedFile extends Base\ModelClass
     {
         $fullPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
         if (file_exists($fullPath) && !unlink($fullPath)) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-file', ['%fileName%' => $this->path]));
+            $this->toolBox()->i18nLog()->warning('cant-delete-file', ['%fileName%' => $this->path]);
             return false;
         }
 
@@ -180,7 +180,7 @@ class AttachedFile extends Base\ModelClass
     public function test()
     {
         if (!file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path)) {
-            self::$miniLog->warning(self::$i18n->trans('file-not-found'));
+            $this->toolBox()->i18nLog()->warning('file-not-found');
             return false;
         }
 
@@ -210,7 +210,7 @@ class AttachedFile extends Base\ModelClass
         $this->filename = $this->path;
         $path = 'MyFiles' . DIRECTORY_SEPARATOR . date('Y' . DIRECTORY_SEPARATOR . 'm', strtotime($this->date));
         if (!FileManager::createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . $path, true)) {
-            self::$miniLog->critical(self::$i18n->trans('cant-create-folder', ['%folderName%' => \FS_FOLDER . DIRECTORY_SEPARATOR . $path]));
+            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => \FS_FOLDER . DIRECTORY_SEPARATOR . $path]);
             return false;
         }
 

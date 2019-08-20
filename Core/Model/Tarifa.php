@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A fee for the products.
  *
@@ -161,11 +159,14 @@ class Tarifa extends Base\ModelClass
     {
         $this->codtarifa = trim($this->codtarifa);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']
+            );
             return false;
         }
 
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         return parent::test();
     }
 }

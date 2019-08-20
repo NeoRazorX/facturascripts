@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Description of Address abstract class.
  *
@@ -77,7 +74,7 @@ abstract class Address extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
     }
 
     /**
@@ -87,10 +84,11 @@ abstract class Address extends ModelClass
      */
     public function test()
     {
-        $this->apartado = Utils::noHtml($this->apartado);
-        $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->direccion = Utils::noHtml($this->direccion);
-        $this->provincia = Utils::noHtml($this->provincia);
+        $utils = $this->toolBox()->utils();
+        $this->apartado = $utils->noHtml($this->apartado);
+        $this->ciudad = $utils->noHtml($this->ciudad);
+        $this->direccion = $utils->noHtml($this->direccion);
+        $this->provincia = $utils->noHtml($this->provincia);
 
         return parent::test();
     }

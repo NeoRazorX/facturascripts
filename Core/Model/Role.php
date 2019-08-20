@@ -19,8 +19,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Define a permission package to quickly assign users.
  *
@@ -75,13 +73,14 @@ class Role extends Base\ModelClass
     public function test()
     {
         if (!empty($this->codrole) && !preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
-            self::$miniLog->warning(
-                self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codrole, '%column%' => 'codrole', '%min%' => '1', '%max%' => '20'])
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codrole, '%column%' => 'codrole', '%min%' => '1', '%max%' => '20']
             );
             return false;
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 

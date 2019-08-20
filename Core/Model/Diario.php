@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A division of acounting entries in different journals
  *
@@ -72,9 +70,9 @@ class Diario extends Base\ModelClass
      */
     public function test()
     {
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']));
+            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
             return false;
         }
 

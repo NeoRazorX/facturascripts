@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
@@ -127,10 +125,12 @@ abstract class Receipt extends ModelOnChangeClass
     public function clear()
     {
         parent::clear();
-        $this->coddivisa = AppSettings::get('default', 'coddivisa');
-        $this->codpago = AppSettings::get('default', 'codpago');
+
+        $appSettings = $this->toolBox()->appSettings();
+        $this->coddivisa = $appSettings->get('default', 'coddivisa');
+        $this->codpago = $appSettings->get('default', 'codpago');
         $this->fecha = date('d-m-Y');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
+        $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->numero = 1;
@@ -193,7 +193,7 @@ abstract class Receipt extends ModelOnChangeClass
      */
     public function test()
     {
-        $this->observaciones = Utils::noHtml($this->observaciones);
+        $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
 
         /// check payment date
         if ($this->pagado === false) {

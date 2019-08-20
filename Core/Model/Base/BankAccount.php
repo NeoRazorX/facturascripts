@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * This class groups the data and bank calculation methods
  * for a generic use.
@@ -110,13 +108,17 @@ abstract class BankAccount extends ModelClass
     public function test()
     {
         if (!empty($this->codcuenta) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcuenta)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcuenta, '%column%' => 'codcuenta', '%min%' => '1', '%max%' => '10']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codcuenta, '%column%' => 'codcuenta', '%min%' => '1', '%max%' => '10']
+            );
             return false;
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
-        $this->iban = Utils::noHtml($this->iban);
-        $this->swift = Utils::noHtml($this->swift);
+        $utils = $this->toolBox()->utils();
+        $this->descripcion = $utils->noHtml($this->descripcion);
+        $this->iban = $utils->noHtml($this->iban);
+        $this->swift = $utils->noHtml($this->swift);
 
         return parent::test() && $this->testBankAccount();
     }
@@ -191,7 +193,7 @@ abstract class BankAccount extends ModelClass
             return true;
         }
 
-        self::$miniLog->error(self::$i18n->trans('invalid-iban'));
+        $this->toolBox()->i18nLog()->error('invalid-iban');
         return false;
     }
 }

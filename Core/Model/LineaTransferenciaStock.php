@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Transfers stock lines.
@@ -128,7 +127,7 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
      */
     public function test()
     {
-        $this->referencia = Utils::noHtml($this->referencia);
+        $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
         if (is_null($this->idproducto)) {
             $variant = $this->getVariant();
             $this->idproducto = $variant->idproducto;

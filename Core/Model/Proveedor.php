@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -60,7 +59,7 @@ class Proveedor extends Base\ComercialContact
     {
         parent::clear();
         $this->acreedor = false;
-        $this->codimpuestoportes = AppSettings::get('default', 'codimpuesto');
+        $this->codimpuestoportes = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
     }
 
     /**
@@ -139,8 +138,9 @@ class Proveedor extends Base\ComercialContact
     public function test()
     {
         if (!empty($this->codproveedor) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
-            self::$miniLog->warning(
-                self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10'])
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']
             );
             return false;
         }

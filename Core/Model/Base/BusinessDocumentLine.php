@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -235,10 +233,11 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->codimpuesto = null;
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $utils = $this->toolBox()->utils();
+        $this->descripcion = $utils->noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
         $this->pvptotal = $this->pvpsindto * (100 - $this->dtopor) / 100;
-        $this->referencia = Utils::noHtml($this->referencia);
+        $this->referencia = $utils->noHtml($this->referencia);
         return parent::test();
     }
 
@@ -291,7 +290,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     private function getDefaultTax()
     {
-        $codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
         $impuesto = new Impuesto();
         $impuesto->loadFromCode($codimpuesto);
         return $impuesto;
@@ -393,7 +392,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
             /// enough stock?
             if (!$producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
-                self::$miniLog->warning(self::$i18n->trans('not-enough-stock', ['%reference%' => $this->referencia]));
+                $this->toolBox()->i18nLog()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
                 return false;
             }
 
