@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
@@ -84,7 +83,7 @@ class SendMail extends Controller
         $this->newMail = new NewMail();
 
         /// Check if the email is configurate
-        if (AppSettings::get('email', 'host', '') == "") {
+        if ($this->toolBox()->appSettings()->get('email', 'host', '') == "") {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
         }
 

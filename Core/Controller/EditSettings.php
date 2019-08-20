@@ -18,12 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
-use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -60,7 +57,7 @@ class EditSettings extends ExtendedController\PanelController
     private function allSettingsXMLViews()
     {
         $names = [];
-        foreach (FileManager::scanFolder(\FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
+        foreach ($this->toolBox()->files()->scanFolder(\FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
             if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }
@@ -75,12 +72,11 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function checkPaymentMethod()
     {
-        $appSettings = new AppSettings();
-        $appSettings->reload();
+        $appSettings = $this->toolBox()->appSettings();
 
         $idempresa = $appSettings->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
-        $values = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
+        $values = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
         foreach ($values as $value) {
             if ($value->code == $appSettings->get('default', 'codpago')) {
                 /// perfect
@@ -107,12 +103,11 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function checkWarehouse()
     {
-        $appSettings = new AppSettings();
-        $appSettings->reload();
+        $appSettings = $this->toolBox()->appSettings();
 
         $idempresa = $appSettings->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
-        $values = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
+        $values = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
         foreach ($values as $value) {
             if ($value->code == $appSettings->get('default', 'codalmacen')) {
                 /// perfect
@@ -139,8 +134,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function checkTax()
     {
-        $appSettings = new AppSettings();
-        $appSettings->reload();
+        $appSettings = $this->toolBox()->appSettings();
 
         /// find current default tax
         $taxModel = new Impuesto();
@@ -195,7 +189,9 @@ class EditSettings extends ExtendedController\PanelController
             return false;
         }
 
-        /// check warehouse-company and payment-method-company relations
+        $this->toolBox()->appSettings()->reload();
+
+        /// check relations
         $this->checkPaymentMethod();
         $this->checkWarehouse();
         $this->checkTax();
@@ -264,9 +260,9 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function loadPaymentMethodValues($viewName)
     {
-        $idempresa = AppSettings::get('default', 'idempresa');
+        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
-        $methods = CodeModel::all('formaspago', 'codpago', 'descripcion', false, $where);
+        $methods = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
 
         $columnPayment = $this->views[$viewName]->columnForName('payment-method');
         if ($columnPayment) {
@@ -280,9 +276,9 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function loadWarehouseValues($viewName)
     {
-        $idempresa = AppSettings::get('default', 'idempresa');
+        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
-        $almacenes = CodeModel::all('almacenes', 'codalmacen', 'nombre', false, $where);
+        $almacenes = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
 
         $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
         if ($columnWarehouse) {

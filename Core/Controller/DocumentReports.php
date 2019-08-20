@@ -18,14 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\DocumentReportsBase\DocumentReportsFilterList;
 use FacturaScripts\Dinamic\Lib\DocumentReportsBase\DocumentReportsSource;
 use FacturaScripts\Dinamic\Model;
@@ -89,11 +84,13 @@ class DocumentReports extends Controller
             new DocumentReportsSource('supplier-invoices', '154,206,223'),
         ];
 
+        $appSettings = $this->toolBox()->appSettings();
+        $namespace = '\\FacturaScripts\\Dinamic\\Model\\';
         $this->filters = [
-            'employee' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fas fa-users'),
-            'serie' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Serie', AppSettings::get('default', 'codserie')),
-            'currency' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Divisa', AppSettings::get('default', 'coddivisa')),
-            'payment-method' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago'),
+            'employee' => new DocumentReportsFilterList($namespace . 'Agente', '', 'fas fa-users'),
+            'serie' => new DocumentReportsFilterList($namespace . 'Serie', $appSettings->get('default', 'codserie')),
+            'currency' => new DocumentReportsFilterList($namespace . 'Divisa', $appSettings->get('default', 'coddivisa')),
+            'payment-method' => new DocumentReportsFilterList($namespace . 'FormaPago'),
         ];
     }
 
@@ -312,7 +309,7 @@ class DocumentReports extends Controller
     {
         // Init data
         $result = [];
-        foreach (Utils::dateRange($source->dateFrom->format('d-m-Y'), $source->dateTo->format('d-m-Y'), $step, $format) as $index) {
+        foreach ($this->toolBox()->utils()->dateRange($source->dateFrom->format('d-m-Y'), $source->dateTo->format('d-m-Y'), $step, $format) as $index) {
             $result[$index] = 0;
         }
 

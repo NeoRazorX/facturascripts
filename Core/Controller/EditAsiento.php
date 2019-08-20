@@ -114,7 +114,7 @@ class EditAsiento extends EditController
 
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            self::$miniLog->error($exp->getMessage());
+            $this->toolBox()->log()->error($exp->getMessage());
             $cloneOk = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
