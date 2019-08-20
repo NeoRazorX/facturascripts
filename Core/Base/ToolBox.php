@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Lib\IPFilter as DinamicIPFilter;
  */
 class ToolBox
 {
-    
+
     /**
      * 
      * @return AppSettings
@@ -45,6 +45,15 @@ class ToolBox
     public static function cache()
     {
         return new Cache();
+    }
+
+    /**
+     * 
+     * @return DivisaTools
+     */
+    public static function coins()
+    {
+        return new DivisaTools();
     }
 
     /**
@@ -96,6 +105,15 @@ class ToolBox
     public static function log(string $channel = '')
     {
         return new MiniLog($channel);
+    }
+
+    /**
+     * 
+     * @return NumberTools
+     */
+    public static function numbers()
+    {
+        return new NumberTools();
     }
 
     /**

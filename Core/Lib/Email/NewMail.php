@@ -18,10 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\App\WebRender;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -62,12 +60,6 @@ class NewMail
 
     /**
      *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     *
      * @var PHPMailer
      */
     protected $mail;
@@ -77,12 +69,6 @@ class NewMail
      * @var BaseBlock[]
      */
     protected $mainBlocks = [];
-
-    /**
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
 
     /**
      *
@@ -110,25 +96,25 @@ class NewMail
 
     public function __construct()
     {
+        $appSettings = $this->toolBox()->appSettings();
+
         $this->empresa = new Empresa();
-        $this->empresa->loadFromCode(AppSettings::get('default', 'idempresa'));
+        $this->empresa->loadFromCode($appSettings->get('default', 'idempresa'));
 
         $this->fromName = $this->empresa->nombrecorto;
-        $this->i18n = new Translator();
 
         $this->mail = new PHPMailer();
         $this->mail->CharSet = 'UTF-8';
         $this->mail->WordWrap = 50;
-        $this->mail->Mailer = AppSettings::get('email', 'mailer');
+        $this->mail->Mailer = $appSettings->get('email', 'mailer');
         $this->mail->SMTPAuth = true;
-        $this->mail->SMTPSecure = AppSettings::get('email', 'enc');
-        $this->mail->Host = AppSettings::get('email', 'host');
-        $this->mail->Port = AppSettings::get('email', 'port');
-        $this->mail->Username = AppSettings::get('email', 'user') ? AppSettings::get('email', 'user') : AppSettings::get('email', 'email');
-        $this->mail->Password = AppSettings::get('email', 'password');
+        $this->mail->SMTPSecure = $appSettings->get('email', 'enc');
+        $this->mail->Host = $appSettings->get('email', 'host');
+        $this->mail->Port = $appSettings->get('email', 'port');
+        $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
+        $this->mail->Password = $appSettings->get('email', 'password');
 
-        $this->miniLog = new MiniLog();
-        $this->signature = AppSettings::get('email', 'signature', '');
+        $this->signature = $appSettings->get('email', 'signature', '');
         $this->template = self::DEFAULT_TEMPLATE;
     }
 
@@ -253,17 +239,18 @@ class NewMail
      */
     public function send(): bool
     {
-        if (empty(AppSettings::get('email', 'host'))) {
-            $this->miniLog->warning($this->i18n->trans('email-not-configured'));
+        $appSettings = $this->toolBox()->appSettings();
+        if (empty($appSettings->get('email', 'host'))) {
+            $this->toolBox()->i18nLog()->warning('email-not-configured');
             return false;
         }
 
-        $this->mail->setFrom(AppSettings::get('email', 'email'), $this->fromName);
+        $this->mail->setFrom($appSettings->get('email', 'email'), $this->fromName);
         $this->mail->Subject = $this->title;
         $this->mail->msgHTML($this->renderHTML());
 
-        if ('smtp' === AppSettings::get('email', 'mailer') && !$this->mail->smtpConnect($this->smtpOptions())) {
-            $this->miniLog->error($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
+        if ('smtp' === $appSettings->get('email', 'mailer') && !$this->mail->smtpConnect($this->smtpOptions())) {
+            $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
             return false;
         }
 
@@ -272,7 +259,7 @@ class NewMail
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('error', ['%error%' => $this->mail->ErrorInfo]));
+        $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
         return false;
     }
 
@@ -283,7 +270,7 @@ class NewMail
      */
     public function test(): bool
     {
-        switch (AppSettings::get('email', 'mailer', '')) {
+        switch ($this->toolBox()->appSettings()->get('email', 'mailer', '')) {
             case 'smtp':
                 return $this->mail->smtpConnect($this->smtpOptions());
 
@@ -314,7 +301,7 @@ class NewMail
      * 
      * @return string
      */
-    private function renderHTML(): string
+    protected function renderHTML(): string
     {
         $webRender = new WebRender();
         $webRender->loadPluginFolders();
@@ -328,7 +315,7 @@ class NewMail
         return $webRender->render('Email/' . $this->template, $params);
     }
 
-    private function saveMailSent()
+    protected function saveMailSent()
     {
         /// get all email address
         $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
@@ -349,9 +336,9 @@ class NewMail
      *
      * @return array
      */
-    private function smtpOptions(): array
+    protected function smtpOptions(): array
     {
-        if (AppSettings::get('email', 'lowsecure')) {
+        if ($this->toolBox()->appSettings()->get('email', 'lowsecure')) {
             return [
                 'ssl' => [
                     'verify_peer' => false,
@@ -362,5 +349,14 @@ class NewMail
         }
 
         return [];
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

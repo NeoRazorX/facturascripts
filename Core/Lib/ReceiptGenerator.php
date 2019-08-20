@@ -18,8 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
@@ -35,24 +34,6 @@ class ReceiptGenerator
 
     const MAX_RECEIPTS = 100;
     const PARTIAL_AMOUNT_MULTIPLIER = 1.5;
-
-    /**
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
-
-    public function __construct()
-    {
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
-    }
 
     /**
      * 
@@ -89,7 +70,7 @@ class ReceiptGenerator
         /// calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            $this->miniLog->warning($this->i18n->trans('no-outstanding-amount'));
+            $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
             return false;
         }
 
@@ -131,7 +112,7 @@ class ReceiptGenerator
         /// calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            $this->miniLog->warning($this->i18n->trans('no-outstanding-amount'));
+            $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
             return false;
         }
 
@@ -217,6 +198,15 @@ class ReceiptGenerator
         $newReceipt->numero = $number;
         $newReceipt->setPaymentMethod($invoice->codpago);
         return $newReceipt->save();
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 
     /**
