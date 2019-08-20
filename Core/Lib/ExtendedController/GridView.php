@@ -234,7 +234,7 @@ class GridView extends EditView
         try {
             // load master document data and test it's ok
             if (!$this->loadDocumentDataFromArray('code', $data['document'])) {
-                throw new Exception(self::$i18n->trans('parent-document-test-error'));
+                throw new Exception($this->toolBox()->i18n()->trans('parent-document-test-error'));
             }
 
             // load detail document data (old)
@@ -248,21 +248,21 @@ class GridView extends EditView
 
             // delete old lines not used
             if (!$this->deleteLinesOld($linesOld, $data['lines'])) {
-                throw new Exception(self::$i18n->trans('lines-delete-error'));
+                throw new Exception($this->toolBox()->i18n()->trans('lines-delete-error'));
             }
 
             // Proccess detail document data (new)
             $this->model->initTotals(); // Master Model must implement GridModelInterface
             foreach ($data['lines'] as $newLine) {
                 if (!$this->saveLines($documentFieldKey, $documentFieldValue, $newLine)) {
-                    throw new Exception(self::$i18n->trans('lines-save-error'));
+                    throw new Exception($this->toolBox()->i18n()->trans('lines-save-error'));
                 }
                 $this->model->accumulateAmounts($newLine); // Master Model must implement GridModelInterface
             }
 
             // save master document
             if (!$this->model->save()) {
-                throw new Exception(self::$i18n->trans('parent-document-save-error'));
+                throw new Exception($this->toolBox()->i18n()->trans('parent-document-save-error'));
             }
 
             // confirm save data into database
@@ -362,7 +362,7 @@ class GridView extends EditView
             } else {
                 $data['columns'][] = $item;
                 $data['colwidths'][] = $col->htmlWidth();
-                $data['headers'][] = self::$i18n->trans($col->title);
+                $data['headers'][] = $this->toolBox()->i18n()->trans($col->title);
             }
         }
 

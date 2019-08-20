@@ -28,9 +28,12 @@ class AppCron extends App
 
     public function render()
     {
-        foreach ($this->miniLog->read() as $log) {
-            $this->response->setContent($this->response->getContent() . $log["message"] . "\n");
+        $content = $this->response->getContent();
+        foreach ($this->toolBox()->log()->readAll() as $log) {
+            $content .= $log["message"] . "\n";
         }
+
+        $this->response->setContent($content);
         parent::render();
     }
 
@@ -44,13 +47,13 @@ class AppCron extends App
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             $startTime = new \DateTime();
-            $this->miniLog->notice($this->i18n->trans('starting-cron'));
+            $this->toolBox()->i18nLog()->notice('starting-cron');
 
             $this->runPlugins();
 
             $endTime = new \DateTime();
             $executionTime = $startTime->diff($endTime);
-            $this->miniLog->notice($this->i18n->trans('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]));
+            $this->toolBox()->i18nLog()->notice('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]);
             return true;
         }
 
@@ -66,7 +69,7 @@ class AppCron extends App
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             $cronClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Cron';
             if (class_exists($cronClass)) {
-                $this->miniLog->notice($this->i18n->trans('running-plugin-cron', ['%pluginName%' => $pluginName]));
+                $this->toolBox()->i18nLog()->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
                 $cron = new $cronClass($pluginName);
                 $cron->run();
             }

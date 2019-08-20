@@ -142,7 +142,7 @@ class AdminPlugins extends Base\Controller
     private function disablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
 
@@ -160,7 +160,7 @@ class AdminPlugins extends Base\Controller
     private function enablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
 
@@ -195,7 +195,7 @@ class AdminPlugins extends Base\Controller
             default:
                 /// For now, always deploy the contents of Dinamic, for testing purposes
                 $this->pluginManager->deploy(true, true);
-                $this->cache->clear();
+                $this->toolBox()->cache()->clear();
                 break;
         }
     }
@@ -210,7 +210,7 @@ class AdminPlugins extends Base\Controller
     private function removePlugin($pluginName)
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-delete'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return false;
         }
 
@@ -227,12 +227,12 @@ class AdminPlugins extends Base\Controller
     {
         foreach ($uploadFiles as $uploadFile) {
             if (!$uploadFile->isValid()) {
-                $this->miniLog->error($uploadFile->getErrorMessage());
+                $this->toolBox()->log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             if ($uploadFile->getMimeType() !== 'application/zip') {
-                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+                $this->toolBox()->i18nLog()->error('file-not-supported');
                 continue;
             }
 
@@ -241,7 +241,7 @@ class AdminPlugins extends Base\Controller
         }
 
         if ($this->pluginManager->deploymentRequired()) {
-            $this->miniLog->notice($this->i18n->trans('reloading'));
+            $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->url(), 3);
         }
     }

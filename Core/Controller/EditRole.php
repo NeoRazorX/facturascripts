@@ -70,7 +70,7 @@ class EditRole extends EditController
     {
         // add Pages to Rol
         if (!RoleAccess::addPagesToRole($codrole, $pages)) {
-            throw new Exception($this->i18n->trans('cancel-process'));
+            throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
         }
     }
 
@@ -113,7 +113,7 @@ class EditRole extends EditController
                     $this->dataBase->commit();
                 } catch (Exception $e) {
                     $this->dataBase->rollback();
-                    $this->miniLog->notice($e->getMessage());
+                    $this->toolBox()->log()->notice($e->getMessage());
                 }
                 return true;
 

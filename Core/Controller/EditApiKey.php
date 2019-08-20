@@ -70,7 +70,7 @@ class EditApiKey extends EditController
     {
         // add Pages to Rol
         if (!Model\ApiAccess::addResourcesToApiKey($idApiKey, $apiAccess, $state)) {
-            throw new \Exception($this->i18n->trans('cancel-process'));
+            throw new \Exception($this->toolBox()->i18n()->trans('cancel-process'));
         }
     }
 
@@ -128,9 +128,9 @@ class EditApiKey extends EditController
         try {
             $this->addResourcesToApiKey((int) $idApiKey, $resources, $state);
             $this->dataBase->commit();
-        } catch (Exception $e) {
+        } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->miniLog->notice($e->getMessage());
+            $this->toolBox()->log()->notice($exc->getMessage());
         }
 
         return true;
@@ -153,7 +153,7 @@ class EditApiKey extends EditController
                 continue;
             }
 
-            $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
+            $class = substr('\\FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
             $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
             if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
                 foreach ($APIClass->getResources() as $name => $data) {

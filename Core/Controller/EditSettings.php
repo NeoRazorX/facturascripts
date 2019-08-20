@@ -216,9 +216,9 @@ class EditSettings extends ExtendedController\PanelController
             case 'testmail':
                 $email = new NewMail();
                 if ($this->editAction() && $email->test()) {
-                    $this->miniLog->notice($this->i18n->trans('mail-test-ok'));
+                    $this->toolBox()->i18nLog()->notice('mail-test-ok');
                 } else {
-                    $this->miniLog->error($this->i18n->trans('mail-test-error'));
+                    $this->toolBox()->i18nLog()->error('mail-test-error');
                 }
                 break;
         }

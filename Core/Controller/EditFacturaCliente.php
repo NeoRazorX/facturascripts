@@ -163,23 +163,23 @@ class EditFacturaCliente extends SalesDocumentController
     {
         $invoice = new FacturaCliente();
         if (!$invoice->loadFromCode($this->request->query->get('code'))) {
-            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            $this->toolBox()->i18nLog()->warning('record-not-found');
             return false;
         }
 
         $generator = new InvoiceToAccounting();
         $generator->generate($invoice);
         if (empty($invoice->idasiento)) {
-            $this->miniLog->error($this->i18n->trans('record-save-error'));
+            $this->toolBox()->i18nLog()->error('record-save-error');
             return false;
         }
 
         if ($invoice->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return false;
     }
 
@@ -191,18 +191,18 @@ class EditFacturaCliente extends SalesDocumentController
     {
         $invoice = new FacturaCliente();
         if (!$invoice->loadFromCode($this->request->query->get('code'))) {
-            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            $this->toolBox()->i18nLog()->warning('record-not-found');
             return false;
         }
 
         $generator = new ReceiptGenerator();
         $number = (int) $this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return false;
     }
 
@@ -239,7 +239,7 @@ class EditFacturaCliente extends SalesDocumentController
     {
         $invoice = new FacturaCliente();
         if (!$invoice->loadFromCode($this->request->request->get('idfactura'))) {
-            $this->miniLog->warning($this->i18n->trans('record-not-found'));
+            $this->toolBox()->i18nLog()->warning('record-not-found');
             return false;
         }
 
@@ -264,14 +264,14 @@ class EditFacturaCliente extends SalesDocumentController
                 $doc->idfacturarect = $invoice->idfactura;
                 $doc->observaciones = $this->request->request->get('observaciones');
                 if ($doc->save()) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
                     $this->redirect($doc->url());
                     return true;
                 }
             }
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return false;
     }
 
@@ -282,32 +282,32 @@ class EditFacturaCliente extends SalesDocumentController
     protected function paidAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (!is_array($codes) || empty($model)) {
-            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         foreach ($codes as $code) {
             if (!$model->loadFromCode($code)) {
-                $this->miniLog->error($this->i18n->trans('record-not-found'));
+                $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $this->user->nick;
             $model->pagado = true;
             if (!$model->save()) {
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 return true;
             }
         }
 
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $model->clear();
         return true;
     }

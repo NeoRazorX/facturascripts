@@ -108,20 +108,20 @@ abstract class ListBusinessDocument extends ListController
     protected function approveDocumentAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (!is_array($codes) || empty($model)) {
-            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         foreach ($codes as $code) {
             if (!$model->loadFromCode($code)) {
-                $this->miniLog->error($this->i18n->trans('record-not-found'));
+                $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
 
@@ -132,13 +132,13 @@ abstract class ListBusinessDocument extends ListController
 
                 $model->idestado = $status->idestado;
                 if (!$model->save()) {
-                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                    $this->toolBox()->i18nLog()->error('record-save-error');
                     return true;
                 }
             }
         }
 
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $model->clear();
         return true;
     }
@@ -267,7 +267,7 @@ abstract class ListBusinessDocument extends ListController
             return false;
         }
 
-        $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+        $this->toolBox()->i18nLog()->warning('no-selected-item');
         return true;
     }
 
@@ -278,32 +278,32 @@ abstract class ListBusinessDocument extends ListController
     protected function paidAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (!is_array($codes) || empty($model)) {
-            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         foreach ($codes as $code) {
             if (!$model->loadFromCode($code)) {
-                $this->miniLog->error($this->i18n->trans('record-not-found'));
+                $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $this->user->nick;
             $model->pagado = true;
             if (!$model->save()) {
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 return true;
             }
         }
 
-        $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $model->clear();
         return true;
     }

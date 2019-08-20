@@ -85,7 +85,7 @@ class SendMail extends Controller
 
         /// Check if the email is configurate
         if (AppSettings::get('email', 'host', '') == "") {
-            $this->miniLog->warning($this->i18n->trans('email-not-configured'));
+            $this->toolBox()->i18nLog()->warning('email-not-configured');
         }
 
         $action = $this->request->get('action', '');
@@ -146,12 +146,12 @@ class SendMail extends Controller
 
             case 'send':
                 if ($this->send()) {
-                    $this->miniLog->notice($this->i18n->trans('send-mail-ok'));
+                    $this->toolBox()->i18nLog()->notice('send-mail-ok');
                     $this->updateFemail();
                     $this->redirAfter();
                     break;
                 }
-                $this->miniLog->error($this->i18n->trans('send-mail-error'));
+                $this->toolBox()->i18nLog()->error('send-mail-error');
                 break;
 
             default:
@@ -188,7 +188,7 @@ class SendMail extends Controller
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
-            $this->miniLog->notice($this->i18n->trans('reloading'));
+            $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($model->url(), 3);
         }
     }
@@ -316,7 +316,7 @@ class SendMail extends Controller
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
             $model->femail = date('d-m-Y');
             if (!$model->save()) {
-                $this->miniLog->error($this->i18n->trans('error-saving-data'));
+                $this->toolBox()->i18nLog()->error('error-saving-data');
             }
         }
     }

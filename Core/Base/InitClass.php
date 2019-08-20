@@ -27,47 +27,6 @@ abstract class InitClass
 {
 
     /**
-     * Cache object.
-     *
-     * @var Cache
-     */
-    protected static $cache;
-
-    /**
-     * Database object.
-     *
-     * @var DataBase
-     */
-    protected static $dataBase;
-
-    /**
-     * Translator object.
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
-     * MiniLog object.
-     *
-     * @var MiniLog
-     */
-    protected static $miniLog;
-
-    /**
-     * CronClass constructor.
-     */
-    public function __construct()
-    {
-        if (!isset(self::$cache)) {
-            self::$cache = new Cache();
-            self::$dataBase = new DataBase();
-            self::$i18n = new Translator();
-            self::$miniLog = new MiniLog();
-        }
-    }
-
-    /**
      * Code to load every time FacturaScripts starts.
      */
     abstract public function init();
@@ -76,4 +35,13 @@ abstract class InitClass
      * Code to load every time the plugin is enabled or updated.
      */
     abstract public function update();
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
+    }
 }

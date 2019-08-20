@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,15 +48,12 @@ abstract class PanelController extends BaseController
     /**
      * Starts all the objects and properties.
      *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
-     * @param string          $uri
+     * @param string $className
+     * @param string $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    public function __construct($className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
+        parent::__construct($className, $uri);
         $this->setTabsPosition('left');
     }
 
@@ -72,9 +69,9 @@ abstract class PanelController extends BaseController
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param User                       $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -227,20 +224,20 @@ abstract class PanelController extends BaseController
     protected function editAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
             return false;
         }
 
         // loads model data
         $code = $this->request->request->get('code', '');
         if (!$this->views[$this->active]->model->loadFromCode($code)) {
-            $this->miniLog->error($this->i18n->trans('record-not-found'));
+            $this->toolBox()->i18nLog()->error('record-not-found');
             return false;
         }
 
@@ -254,18 +251,18 @@ abstract class PanelController extends BaseController
             $this->views[$this->active]->model->{$pkColumn} = $code;
             // change in database
             if (!$this->views[$this->active]->model->changePrimaryColumnValue($this->views[$this->active]->newCode)) {
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 return false;
             }
         }
 
         // save in database
         if ($this->views[$this->active]->model->save()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return false;
     }
 
@@ -287,7 +284,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'save-ok':
-                $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                $this->toolBox()->i18nLog()->notice('record-updated-correctly');
                 break;
         }
     }
@@ -349,20 +346,20 @@ abstract class PanelController extends BaseController
     protected function insertAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
             return false;
         }
 
         // loads form data
         $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->exists()) {
-            $this->miniLog->error($this->i18n->trans('duplicate-record'));
+            $this->toolBox()->i18nLog()->error('duplicate-record');
             return false;
         }
 
@@ -374,11 +371,11 @@ abstract class PanelController extends BaseController
             }
 
             $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return false;
     }
 

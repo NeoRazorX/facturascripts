@@ -77,16 +77,13 @@ class DocumentReports extends Controller
     public $sources;
 
     /**
-     * Initializes all the objects and properties
-     *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
-     * @param string     $className
+     * 
+     * @param string $className
+     * @param string $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(string $className, string $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($className, $uri);
         $this->sources = [
             new DocumentReportsSource('customer-invoices', '181,225,174'),
             new DocumentReportsSource('supplier-invoices', '154,206,223'),
@@ -119,15 +116,16 @@ class DocumentReports extends Controller
      */
     public function getDocumentTypes()
     {
+        $i18n = $this->toolBox()->i18n();
         $types = [
-            'customer-estimations' => $this->i18n->trans('customer-estimations'),
-            'customer-orders' => $this->i18n->trans('customer-orders'),
-            'customer-delivery-notes' => $this->i18n->trans('customer-delivery-notes'),
-            'customer-invoices' => $this->i18n->trans('customer-invoices'),
-            'supplier-estimations' => $this->i18n->trans('supplier-estimations'),
-            'supplier-orders' => $this->i18n->trans('supplier-orders'),
-            'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
-            'supplier-invoices' => $this->i18n->trans('supplier-invoices'),
+            'customer-estimations' => $i18n->trans('customer-estimations'),
+            'customer-orders' => $i18n->trans('customer-orders'),
+            'customer-delivery-notes' => $i18n->trans('customer-delivery-notes'),
+            'customer-invoices' => $i18n->trans('customer-invoices'),
+            'supplier-estimations' => $i18n->trans('supplier-estimations'),
+            'supplier-orders' => $i18n->trans('supplier-orders'),
+            'supplier-delivery-notes' => $i18n->trans('supplier-delivery-notes'),
+            'supplier-invoices' => $i18n->trans('supplier-invoices'),
         ];
 
         asort($types);

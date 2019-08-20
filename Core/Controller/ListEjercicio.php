@@ -63,9 +63,9 @@ class ListEjercicio extends ListController
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectValues);
 
         $values = [
-            ['label' => $this->i18n->trans('all'), 'where' => []],
-            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
-            ['label' => $this->i18n->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
+            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []],
+            ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
+            ['label' => $this->toolBox()->i18n()->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
         ];
         $this->addFilterSelectWhere($viewName, 'status', $values);
     }

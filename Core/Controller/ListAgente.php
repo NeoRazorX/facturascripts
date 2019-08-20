@@ -72,9 +72,9 @@ class ListAgente extends ListController
         $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $selectValues);
 
         $values = [
-            ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $this->i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => $this->i18n->trans('all'), 'where' => []]
+            ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $this->toolBox()->i18n()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []]
         ];
         $this->addFilterSelectWhere($viewName, 'status', $values);
     }

@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\FileManager;
 
 /**
  * Description of PluginDeploy
@@ -34,31 +32,7 @@ class PluginDeploy
      *
      * @var array
      */
-    private $fileList;
-
-    /**
-     * System translator.
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * Manage the log of the entire application.
-     *
-     * @var Minilog
-     */
-    private $minilog;
-
-    /**
-     * PluginDeploy constructor.
-     */
-    public function __construct()
-    {
-        $this->fileList = [];
-        $this->i18n = new Translator();
-        $this->minilog = new MiniLog();
-    }
+    private $fileList = [];
 
     /**
      * Deploy all the necessary files in the Dinamic folder to be able to use plugins
@@ -70,10 +44,11 @@ class PluginDeploy
      */
     public function deploy(string $pluginPath, array $enabledPlugins, bool $clean = true)
     {
+        $fileManager = $this->toolBox()->files();
         $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
-                FileManager::delTree(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
+                $fileManager->delTree(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
             }
 
             $this->createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
@@ -97,19 +72,18 @@ class PluginDeploy
      */
     public function initControllers()
     {
-        $cache = new Cache();
         $menuManager = new MenuManager();
         $menuManager->init();
         $pageNames = [];
 
-        $files = FileManager::scanFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
+        $files = $this->toolBox()->files()->scanFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller', false);
         foreach ($files as $fileName) {
             if (substr($fileName, -4) !== '.php') {
                 continue;
             }
 
             $controllerName = substr($fileName, 0, -4);
-            $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
+            $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
             if (!class_exists($controllerNamespace)) {
                 /// we force the loading of the file because at this point the autoloader will not find it
@@ -117,11 +91,11 @@ class PluginDeploy
             }
 
             try {
-                $controller = new $controllerNamespace($cache, $this->i18n, $this->minilog, $controllerName);
+                $controller = new $controllerNamespace($controllerName);
                 $menuManager->selectPage($controller->getPageData());
                 $pageNames[] = $controllerName;
             } catch (Exception $exc) {
-                $this->minilog->critical($this->i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));
+                $this->toolBox()->i18nLog()->critical('cant-load-controller', ['%controllerName%' => $controllerName]);
             }
         }
 
@@ -129,8 +103,8 @@ class PluginDeploy
         $menuManager->reload();
 
         /// checks app homepage
-        if (!in_array(AppSettings::get('default', 'homepage', ''), $pageNames)) {
-            $appSettings = new AppSettings();
+        $appSettings = $this->toolBox()->appSettings();
+        if (!in_array($appSettings->get('default', 'homepage', ''), $pageNames)) {
             $appSettings->set('default', 'homepage', 'AdminPlugins');
             $appSettings->save();
         }
@@ -145,14 +119,23 @@ class PluginDeploy
      */
     private function createFolder(string $folder): bool
     {
-        if (!FileManager::createFolder($folder, true)) {
-            $this->minilog->critical($this->i18n->trans('cant-create-folder', ['%folderName%' => $folder]));
+        if (!$this->toolBox()->files()->createFolder($folder, true)) {
+            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $folder]);
             return false;
         }
 
         return true;
     }
 
+    /**
+     * 
+     * @param string $fileName
+     * @param string $folder
+     * @param string $place
+     * @param string $pluginName
+     *
+     * @return string
+     */
     private function getClassType(string $fileName, string $folder, string $place, string $pluginName): string
     {
         $path = \FS_FOLDER . DIRECTORY_SEPARATOR . $place;
@@ -178,7 +161,7 @@ class PluginDeploy
         $path = \FS_FOLDER . DIRECTORY_SEPARATOR . $place;
         $path .= empty($pluginName) ? DIRECTORY_SEPARATOR . $folder : DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR . $folder;
 
-        foreach (FileManager::scanFolder($path, true) as $fileName) {
+        foreach ($this->toolBox()->files()->scanFolder($path, true) as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
                 $this->createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
@@ -245,5 +228,14 @@ class PluginDeploy
         $path = \FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName;
         copy($filePath, $path);
         $this->fileList[$folder][$fileName] = $fileName;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }

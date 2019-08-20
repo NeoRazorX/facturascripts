@@ -264,7 +264,7 @@ class EmailTools
                 unlink(\FS_FOLDER . '/MyFiles/' . $data['fileName']);
             }
 
-            $this->toolBox()->i18nLog()->notice('send-mail-ok');
+            static::toolBox()->i18nLog()->notice('send-mail-ok');
             return true;
         }
 
@@ -341,7 +341,7 @@ class EmailTools
      * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected static function toolBox()
     {
         return new ToolBox();
     }

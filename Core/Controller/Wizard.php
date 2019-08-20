@@ -82,7 +82,7 @@ class Wizard extends Controller
     public function getSelectValues($modelName)
     {
         $values = [];
-        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
         $model = new $modelName();
 
         $order = [$model->primaryDescriptionColumn() => 'ASC'];
@@ -142,8 +142,8 @@ class Wizard extends Controller
             return $this->addPagesToRole($role->codrole);
         }
 
-        $role->codrole = \mb_strtolower($this->i18n->trans('agents'), 'UTF8');
-        $role->descripcion = $this->i18n->trans('agents');
+        $role->codrole = \mb_strtolower($this->toolBox()->i18n()->trans('agents'), 'UTF8');
+        $role->descripcion = $this->toolBox()->i18n()->trans('agents');
         if ($role->save()) {
             return $this->addPagesToRole($role->codrole);
         }
@@ -172,13 +172,13 @@ class Wizard extends Controller
             $pages = $page->all($where, [], 0, 0);
             // add Pages to Rol
             if (!$roleAccess->addPagesToRole($codrole, $pages)) {
-                throw new Exception($this->i18n->trans('cancel-process'));
+                throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
             }
             $this->dataBase->commit();
             return true;
         } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->miniLog->error($exc->getMessage());
+            $this->toolBox()->log()->error($exc->getMessage());
             return false;
         }
     }
@@ -299,7 +299,7 @@ class Wizard extends Controller
     private function saveEmail(string $email): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->miniLog->warning($this->i18n->trans('not-valid-email', ['%email%' => $email]));
+            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $email]);
             return false;
         }
 
@@ -320,7 +320,7 @@ class Wizard extends Controller
 
         $repeatPass = $this->request->request->get('repassword', '');
         if ($pass !== $repeatPass) {
-            $this->miniLog->warning($this->i18n->trans('different-passwords', ['%userNick%' => $this->user->nick]));
+            $this->toolBox()->i18nLog()->warning('different-passwords', ['%userNick%' => $this->user->nick]);
             return false;
         }
 

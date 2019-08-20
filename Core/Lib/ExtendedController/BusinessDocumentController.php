@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 
 /**
@@ -63,15 +62,12 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Starts all the objects and properties.
      *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
      * @param string          $className
      * @param string          $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    public function __construct($className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
+        parent::__construct($className, $uri);
         $this->documentTools = new BusinessDocumentTools();
     }
 
@@ -207,7 +203,7 @@ abstract class BusinessDocumentController extends PanelController
                 /// data not found?
                 $action = $this->request->request->get('action', '');
                 if (!empty($code) && !$view->model->exists() && '' === $action) {
-                    $this->miniLog->warning($this->i18n->trans('record-not-found'));
+                    $this->toolBox()->i18nLog()->warning('record-not-found');
                 }
                 break;
         }
@@ -247,13 +243,13 @@ abstract class BusinessDocumentController extends PanelController
     {
         $this->setTemplate(false);
         if (!$this->permissions->allowUpdate) {
-            $this->response->setContent($this->i18n->trans('not-allowed-modify'));
+            $this->response->setContent($this->toolBox()->i18n()->trans('not-allowed-modify'));
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->response->setContent($this->i18n->trans('duplicated-request'));
+            $this->response->setContent($this->toolBox()->i18n()->trans('duplicated-request'));
             return false;
         }
 
@@ -276,7 +272,7 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function saveDocumentError($message)
     {
-        foreach ($this->miniLog->read() as $msg) {
+        foreach ($this->toolBox()->log()->readAll() as $msg) {
             $message .= "\n" . $msg['message'];
         }
 
@@ -346,7 +342,7 @@ abstract class BusinessDocumentController extends PanelController
 
                 $found = true;
                 if (!$this->updateLine($oldLine, $newLine)) {
-                    $this->miniLog->warning('ERROR IN LINE: ' . $oldLine->idlinea);
+                    $this->toolBox()->log()->warning('ERROR IN LINE: ' . $oldLine->idlinea);
                     return false;
                 }
                 break;
@@ -372,7 +368,7 @@ abstract class BusinessDocumentController extends PanelController
                     continue;
                 }
 
-                $this->miniLog->warning('ERROR IN NEW LINE');
+                $this->toolBox()->log()->warning('ERROR IN NEW LINE');
                 return false;
             }
         }
