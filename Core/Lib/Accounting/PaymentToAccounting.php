@@ -61,7 +61,7 @@ class PaymentToAccounting extends AccountingClass
                 $this->receipt = $this->document->getReceipt();
                 $this->exercise->idempresa = $this->receipt->idempresa;
                 if (!$this->exercise->loadFromDate($this->document->fecha)) {
-                    $this->miniLog->warning($this->i18n->trans('closed-exercise', ['%exerciseName%' => $this->exercise->codejercicio]));
+                    $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->exercise->codejercicio]);
                     return;
                 }
                 break;
@@ -94,11 +94,11 @@ class PaymentToAccounting extends AccountingClass
 
         /// Create account entry header
         $accountEntry = new Asiento();
-        $concept = $this->i18n->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
+        $concept = $this->toolBox()->i18n()->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
         $this->setCommonData($accountEntry, $concept);
         $accountEntry->importe += $this->document->gastos;
         if (!$accountEntry->save()) {
-            $this->miniLog->warning('accounting-entry-error');
+            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return false;
         }
 
@@ -112,7 +112,7 @@ class PaymentToAccounting extends AccountingClass
 
         /// Add Expense Amount Line
         if ($this->document->gastos != 0) {
-            $concept2 = $this->i18n->trans('receipt-expense-account', ['%document%' => $accountEntry->documento]);
+            $concept2 = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accountEntry->documento]);
             $this->setCommonDataLine($line, $customerSubaccount, $paymentSubaccount, $concept2);
             $line->haber = $this->document->gastos;
             $line->save();
@@ -145,10 +145,10 @@ class PaymentToAccounting extends AccountingClass
 
         /// Create account entry header
         $accountEntry = new Asiento();
-        $concept = $this->i18n->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
+        $concept = $this->toolBox()->i18n()->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
         $this->setCommonData($accountEntry, $concept);
         if (!$accountEntry->save()) {
-            $this->miniLog->warning('accounting-entry-error');
+            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return false;
         }
 

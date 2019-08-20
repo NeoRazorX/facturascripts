@@ -21,8 +21,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model;
 use ParseCsv\Csv;
 use SimpleXMLElement;
@@ -49,26 +48,10 @@ class AccountingPlanImport
      */
     protected $ejercicio;
 
-    /**
-     * System translator.
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     * Manage the log of the entire application.
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
-
     public function __construct()
     {
         $this->dataBase = new DataBase();
         $this->ejercicio = new Model\Ejercicio();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
     }
 
     /**
@@ -82,12 +65,12 @@ class AccountingPlanImport
     public function importCSV(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
+            $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
 
         if (!file_exists($filePath)) {
-            $this->miniLog->warning($this->i18n->trans('file-not-found', ['%fileName%' => $filePath]));
+            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
             return false;
         }
 
@@ -102,7 +85,7 @@ class AccountingPlanImport
             // confirm data
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            $this->miniLog->error($exp->getMessage());
+            $this->toolBox()->log()->error($exp->getMessage());
             $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -124,7 +107,7 @@ class AccountingPlanImport
     public function importXML(string $filePath, string $codejercicio)
     {
         if (!$this->ejercicio->loadFromCode($codejercicio)) {
-            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
+            $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
 
@@ -147,7 +130,7 @@ class AccountingPlanImport
             // confirm data
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            $this->miniLog->error($exp->getMessage());
+            $this->toolBox()->log()->error($exp->getMessage());
             $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -189,7 +172,7 @@ class AccountingPlanImport
             ];
             $parent = new Model\Cuenta();
             if (!$parent->loadFromCode('', $whereParent)) {
-                $this->miniLog->error($this->i18n->trans('parent-error'));
+                $this->toolBox()->i18nLog()->error('parent-error');
                 return false;
             }
 
@@ -236,7 +219,7 @@ class AccountingPlanImport
 
         /// the account exist?
         if (!$account->loadFromCode('', $whereAccount)) {
-            $this->miniLog->error($this->i18n->trans('error', ['%error%' => 'account "' . $parentCode . '" not found']));
+            $this->toolBox()->i18nLog()->error('error', ['%error%' => 'account "' . $parentCode . '" not found']);
             return false;
         }
 
@@ -388,6 +371,15 @@ class AccountingPlanImport
         }
 
         return $parentCode;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 
     /**

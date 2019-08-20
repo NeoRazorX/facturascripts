@@ -79,13 +79,13 @@ class InvoiceToAccounting extends AccountingClass
     {
         $customer = new Cliente();
         if (!$customer->loadFromCode($this->document->codcliente)) {
-            $this->miniLog->warning($this->i18n->trans('customer-not-found'));
+            $this->toolBox()->i18nLog()->warning('customer-not-found');
             return false;
         }
 
         $subaccount = $this->getCustomerAccount($customer);
         if (!$subaccount->exists()) {
-            $this->miniLog->warning($this->i18n->trans('customer-account-not-found'));
+            $this->toolBox()->i18nLog()->warning('customer-account-not-found');
             return false;
         }
 
@@ -102,7 +102,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $cuenta = $this->getSpecialAccount('COMPRA');
         if (!$cuenta->exists()) {
-            $this->miniLog->warning($this->i18n->trans('purchases-account-not-found'));
+            $this->toolBox()->i18nLog()->warning('purchases-account-not-found');
             return false;
         }
 
@@ -114,7 +114,7 @@ class InvoiceToAccounting extends AccountingClass
             return $line->save();
         }
 
-        $this->miniLog->warning($this->i18n->trans('purchases-subaccount-not-found'));
+        $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
         return false;
     }
 
@@ -128,7 +128,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $cuenta = $this->getSpecialAccount('VENTAS');
         if (!$cuenta->exists()) {
-            $this->miniLog->warning($this->i18n->trans('sales-account-not-found'));
+            $this->toolBox()->i18nLog()->warning('sales-account-not-found');
             return false;
         }
 
@@ -140,7 +140,7 @@ class InvoiceToAccounting extends AccountingClass
             return $line->save();
         }
 
-        $this->miniLog->warning($this->i18n->trans('sales-subaccount-not-found'));
+        $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
         return false;
     }
 
@@ -161,13 +161,13 @@ class InvoiceToAccounting extends AccountingClass
 
         $retention = new Retencion();
         if (!$retention->loadFromPercentage($percentaje)) {
-            $this->miniLog->warning($this->i18n->trans('irpf-code-not-found'));
+            $this->toolBox()->i18nLog()->warning('irpf-code-not-found');
             return false;
         }
 
         $subaccount = $this->getIRPFPurchaseAccount($retention);
         if (!$subaccount->exists()) {
-            $this->miniLog->warning($this->i18n->trans('irpfpr-subaccount-not-found'));
+            $this->toolBox()->i18nLog()->warning('irpfpr-subaccount-not-found');
             return false;
         }
 
@@ -189,7 +189,7 @@ class InvoiceToAccounting extends AccountingClass
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxSupportedAccount($tax);
             if (!$subaccount->exists()) {
-                $this->miniLog->warning($this->i18n->trans('ivasop-account-not-found'));
+                $this->toolBox()->i18nLog()->warning('ivasop-account-not-found');
                 return false;
             }
 
@@ -218,13 +218,13 @@ class InvoiceToAccounting extends AccountingClass
 
         $retention = new Retencion();
         if (!$retention->loadFromPercentage($percentaje)) {
-            $this->miniLog->warning($this->i18n->trans('irpf-code-not-found'));
+            $this->toolBox()->i18nLog()->warning('irpf-code-not-found');
             return false;
         }
 
         $subaccount = $this->getIRPFSalesAccount($retention);
         if (!$subaccount->exists()) {
-            $this->miniLog->warning($this->i18n->trans('irpf-subaccount-not-found'));
+            $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
             return false;
         }
 
@@ -246,7 +246,7 @@ class InvoiceToAccounting extends AccountingClass
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxImpactedAccount($tax);
             if (!$subaccount->exists()) {
-                $this->miniLog->warning($this->i18n->trans('ivarep-subaccount-not-found'));
+                $this->toolBox()->i18nLog()->warning('ivarep-subaccount-not-found');
                 return false;
             }
 
@@ -268,13 +268,13 @@ class InvoiceToAccounting extends AccountingClass
     {
         $supplier = new Proveedor();
         if (!$supplier->loadFromCode($this->document->codproveedor)) {
-            $this->miniLog->warning($this->i18n->trans('supplier-not-found'));
+            $this->toolBox()->i18nLog()->warning('supplier-not-found');
             return false;
         }
 
         $subaccount = $this->getSupplierAccount($supplier);
         if (!$subaccount->exists()) {
-            $this->miniLog->warning($this->i18n->trans('supplier-account-not-found'));
+            $this->toolBox()->i18nLog()->warning('supplier-account-not-found');
             return false;
         }
 
@@ -293,12 +293,12 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
-            $this->miniLog->warning($this->i18n->trans('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]));
+            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
         }
 
         if (!$this->loadSubtotals()) {
-            $this->miniLog->warning('invoice-subtotals-error');
+            $this->toolBox()->i18nLog()->warning('invoice-subtotals-error');
             return false;
         }
 
@@ -322,9 +322,9 @@ class InvoiceToAccounting extends AccountingClass
     protected function purchaseAccountingEntry()
     {
         $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry, $this->i18n->trans('supplier-invoice') . ' ' . $this->document->codigo);
+        $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('supplier-invoice') . ' ' . $this->document->codigo);
         if (!$accountEntry->save()) {
-            $this->miniLog->warning('accounting-entry-error');
+            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
         }
 
@@ -336,7 +336,7 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        $this->miniLog->warning('accounting-lines-error');
+        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
         $accountEntry->delete();
     }
 
@@ -346,9 +346,9 @@ class InvoiceToAccounting extends AccountingClass
     protected function salesAccountingEntry()
     {
         $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry, $this->i18n->trans('customer-invoice') . ' ' . $this->document->codigo);
+        $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('customer-invoice') . ' ' . $this->document->codigo);
         if (!$accountEntry->save()) {
-            $this->miniLog->warning('accounting-entry-error');
+            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
         }
 
@@ -360,7 +360,7 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        $this->miniLog->warning('accounting-lines-error');
+        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
         $accountEntry->delete();
     }
 

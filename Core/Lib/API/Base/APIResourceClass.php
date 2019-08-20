@@ -192,14 +192,14 @@ abstract class APIResourceClass
      * Return a order confirmation. For example for a DELETE order.
      * Can return an array with additional information.
      *
-     * @param string $string is an informative text of the confirmation message
+     * @param string $message is an informative text of the confirmation message
      * @param array  $data with additional information.
      */
-    protected function setOk(string $string, $data = null)
+    protected function setOk(string $message, $data = null)
     {
         $this->toolBox()->log('api')->notice($message);
 
-        $res = ['ok' => $string];
+        $res = ['ok' => $message];
         if ($data !== null) {
             $res['data'] = $data;
         }
