@@ -142,13 +142,16 @@ class DivisaTools extends NumberTools
      */
     public static function transform($amount, $coddivisa1, $coddivisa2)
     {
-        $divisa = new Divisa();
-        $divisa->loadFromCode($coddivisa1);
+        if($coddivisa1 != $coddivisa2) {
+            $divisa1 = new Divisa();
+            $divisa1->loadFromCode($coddivisa1);
 
-        $amountInEuro = $amount * $divisa->tasaconv;
+            $divisa2 = new Divisa();
+            $divisa2->loadFromCode($coddivisa2);
 
-        $divisa->loadFromCode($coddivisa2);
-
-        return $amountInEuro * $divisa->tasaconv;
+            return $amount / $divisa1->tasaconv * $divisa2->tasaconv;
+        }
+        
+        return $amount;
     }
 }
