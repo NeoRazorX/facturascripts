@@ -207,9 +207,9 @@ class Cuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
     {
-        return parent::url($type, 'ListCuenta?activetab=List');
+        return parent::url($type, $list);
     }
 
     /**

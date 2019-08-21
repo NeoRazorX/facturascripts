@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
+use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor as LineaAlbaran;
 
 /**
  * Delivery note or purchase order. Represents the reception
@@ -43,11 +43,11 @@ class AlbaranProveedor extends Base\PurchaseDocument
     /**
      * Returns the lines associated with the delivery note.
      *
-     * @return LineaAlbaranProveedor[]
+     * @return LineaAlbaran[]
      */
     public function getLines()
     {
-        $lineaModel = new LineaAlbaranProveedor();
+        $lineaModel = new LineaAlbaran();
         $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
@@ -59,11 +59,11 @@ class AlbaranProveedor extends Base\PurchaseDocument
      * 
      * @param array $data
      *
-     * @return LineaAlbaranProveedor
+     * @return LineaAlbaran
      */
     public function getNewLine(array $data = [])
     {
-        $newLine = new LineaAlbaranProveedor($data);
+        $newLine = new LineaAlbaran($data);
         $newLine->idalbaran = $this->idalbaran;
         if (empty($data)) {
             $newLine->irpf = $this->irpf;

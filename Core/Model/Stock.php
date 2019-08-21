@@ -193,7 +193,10 @@ class Stock extends Base\ModelClass
     public function transferTo(string $toWarehouse, float $qty): bool
     {
         $destination = new Stock();
-        $where = [new DataBaseWhere('codalmacen', $toWarehouse), new DataBaseWhere('referencia', $this->referencia)];
+        $where = [
+            new DataBaseWhere('codalmacen', $toWarehouse),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
         if ($destination->loadFromCode('', $where)) {
             $destination->cantidad += $qty;
         } else {
