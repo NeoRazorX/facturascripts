@@ -31,6 +31,7 @@ class CodeModel
 {
 
     const ALL_LIMIT = 500;
+    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
 
     /**
@@ -89,8 +90,8 @@ class CodeModel
         }
 
         /// is a table or a model?
-        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
-            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+        $modelClass = self::MODEL_NAMESPACE . $tableName;
+        if (class_exists($modelClass)) {
             $model = new $modelClass();
             return $model->codeModelAll($fieldCode);
         }
@@ -120,8 +121,8 @@ class CodeModel
     public static function search($tableName, $fieldCode, $fieldDescription, $query)
     {
         /// is a table or a model?
-        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
-            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+        $modelClass = self::MODEL_NAMESPACE . $tableName;
+        if (class_exists($modelClass)) {
             $model = new $modelClass();
             return $model->codeModelSearch($query, $fieldCode);
         }
@@ -144,8 +145,8 @@ class CodeModel
     public function get($tableName, $fieldCode, $code, $fieldDescription)
     {
         /// is a table or a model?
-        if (class_exists("FacturaScripts\\Dinamic\\Model\\" . $tableName)) {
-            $modelClass = "FacturaScripts\\Dinamic\\Model\\" . $tableName;
+        $modelClass = self::MODEL_NAMESPACE . $tableName;
+        if (class_exists($modelClass)) {
             $model = new $modelClass();
             $where = [new DataBaseWhere($fieldCode, $code)];
             if ($model->loadFromCode('', $where)) {

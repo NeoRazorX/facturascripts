@@ -137,8 +137,8 @@ class Comision extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListAgente?activetab=List')
     {
-        return parent::url($type, 'ListAgente?activetab=' . $list);
+        return parent::url($type, $list);
     }
 }

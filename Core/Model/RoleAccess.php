@@ -98,8 +98,13 @@ class RoleAccess extends Base\ModelClass
         return true;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependencies
         new Role();
         new User();
 

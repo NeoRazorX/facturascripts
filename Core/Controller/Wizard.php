@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\App\AppRouter;
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -37,12 +36,6 @@ class Wizard extends Controller
 {
 
     const ITEM_SELECT_LIMIT = 500;
-
-    /**
-     *
-     * @var AppSettings
-     */
-    private $appSettings;
 
     /**
      *
@@ -82,7 +75,7 @@ class Wizard extends Controller
     public function getSelectValues($modelName)
     {
         $values = [];
-        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
         $model = new $modelName();
 
         $order = [$model->primaryDescriptionColumn() => 'ASC'];
@@ -103,7 +96,6 @@ class Wizard extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->appSettings = new AppSettings();
 
         // Show message if user and password are admin
         if ($this->user->nick === 'admin' && $this->user->verifyPassword('admin')) {
@@ -142,8 +134,8 @@ class Wizard extends Controller
             return $this->addPagesToRole($role->codrole);
         }
 
-        $role->codrole = \mb_strtolower($this->i18n->trans('agents'), 'UTF8');
-        $role->descripcion = $this->i18n->trans('agents');
+        $role->codrole = \mb_strtolower($this->toolBox()->i18n()->trans('agents'), 'UTF8');
+        $role->descripcion = $this->toolBox()->i18n()->trans('agents');
         if ($role->save()) {
             return $this->addPagesToRole($role->codrole);
         }
@@ -161,7 +153,9 @@ class Wizard extends Controller
     private function addPagesToRole($codrole): bool
     {
         $roleAccess = new Model\RoleAccess();
+
         $this->dataBase->beginTransaction();
+
         try {
             $page = new Model\Page();
             /// All pages not in admin menu and not yet enabled
@@ -172,15 +166,17 @@ class Wizard extends Controller
             $pages = $page->all($where, [], 0, 0);
             // add Pages to Rol
             if (!$roleAccess->addPagesToRole($codrole, $pages)) {
-                throw new Exception($this->i18n->trans('cancel-process'));
+                throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
             }
+
             $this->dataBase->commit();
-            return true;
         } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->miniLog->error($exc->getMessage());
+            $this->toolBox()->log()->error($exc->getMessage());
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -188,11 +184,13 @@ class Wizard extends Controller
      */
     private function enableLogs()
     {
-        $types = ['error', 'critical', 'alert', 'emergency'];
-        $appSettings = new AppSettings();
+        $appSettings = $this->toolBox()->appSettings();
+
+        $types = ['critical', 'error', 'warning'];
         foreach ($types as $type) {
             $appSettings->set('log', $type, 'true');
         }
+
         $appSettings->save();
     }
 
@@ -226,15 +224,17 @@ class Wizard extends Controller
             return;
         }
 
+        $appSettings = $this->toolBox()->appSettings();
+
         $fileContent = file_get_contents($filePath);
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
-                $this->appSettings->set($group, $key, $value);
+                $appSettings->set($group, $key, $value);
             }
         }
 
-        $this->appSettings->save();
+        $appSettings->save();
     }
 
     /**
@@ -244,6 +244,8 @@ class Wizard extends Controller
      */
     private function saveAddress(string $codpais)
     {
+        $appSettings = $this->toolBox()->appSettings();
+
         $this->empresa->ciudad = $this->request->request->get('ciudad', '');
         $this->empresa->codpais = $codpais;
         $this->empresa->codpostal = $this->request->request->get('codpostal', '');
@@ -268,9 +270,9 @@ class Wizard extends Controller
             $almacen->provincia = $this->empresa->provincia;
             $almacen->save();
 
-            $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
-            $this->appSettings->set('default', 'idempresa', $this->empresa->idempresa);
-            $this->appSettings->save();
+            $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+            $appSettings->set('default', 'idempresa', $this->empresa->idempresa);
+            $appSettings->save();
             return;
         }
 
@@ -285,9 +287,9 @@ class Wizard extends Controller
         $almacen->provincia = $this->empresa->provincia;
         $almacen->save();
 
-        $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
-        $this->appSettings->set('default', 'idempresa', $this->empresa->idempresa);
-        $this->appSettings->save();
+        $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+        $appSettings->set('default', 'idempresa', $this->empresa->idempresa);
+        $appSettings->save();
     }
 
     /**
@@ -298,11 +300,6 @@ class Wizard extends Controller
      */
     private function saveEmail(string $email): bool
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->miniLog->warning($this->i18n->trans('not-valid-email', ['%email%' => $email]));
-            return false;
-        }
-
         $this->user->email = $email;
         return $this->user->save();
     }
@@ -314,17 +311,8 @@ class Wizard extends Controller
      */
     private function saveNewPassword(string $pass): bool
     {
-        if ($pass === '') {
-            return true;
-        }
-
-        $repeatPass = $this->request->request->get('repassword', '');
-        if ($pass !== $repeatPass) {
-            $this->miniLog->warning($this->i18n->trans('different-passwords', ['%userNick%' => $this->user->nick]));
-            return false;
-        }
-
-        $this->user->setPassword($pass);
+        $this->user->newPassword = $pass;
+        $this->user->newPassword2 = $this->request->request->get('repassword', '');
         return $this->user->save();
     }
 
@@ -335,9 +323,12 @@ class Wizard extends Controller
     private function saveStep1(string $codpais)
     {
         $this->preSetAppSettings($codpais);
-        $this->appSettings->set('default', 'codpais', $codpais);
-        $this->appSettings->set('default', 'homepage', 'AdminPlugins');
-        $this->appSettings->save();
+
+        $appSettings = $this->toolBox()->appSettings();
+        $appSettings->set('default', 'codpais', $codpais);
+        $appSettings->set('default', 'homepage', 'AdminPlugins');
+        $appSettings->save();
+
         $this->initModels();
         $this->saveAddress($codpais);
 

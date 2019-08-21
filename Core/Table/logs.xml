@@ -7,6 +7,10 @@
 -->
 <table>
     <column>
+        <name>channel</name>
+        <type>character varying(40)</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>

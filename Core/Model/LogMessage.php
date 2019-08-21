@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,17 +18,22 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * First aprox to persist data from logs.
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class LogMessage extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+
+    /**
+     *
+     * @var string
+     */
+    public $channel;
 
     /**
      * Primary key.
@@ -114,8 +119,10 @@ class LogMessage extends Base\ModelClass
      */
     public function test()
     {
-        $this->message = Utils::noHtml($this->message);
-        $this->uri = Utils::noHtml($this->uri);
+        $utils = $this->toolBox()->utils();
+        $this->channel = $utils->noHtml($this->channel);
+        $this->message = $utils->noHtml($this->message);
+        $this->uri = $utils->noHtml($this->uri);
 
         return empty($this->message) ? false : parent::test();
     }

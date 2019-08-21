@@ -90,7 +90,7 @@ abstract class EditController extends PanelController
                 /// data not found?
                 $action = $this->request->request->get('action', '');
                 if (!empty($code) && !$view->model->exists() && '' === $action) {
-                    $this->miniLog->warning($this->i18n->trans('record-not-found'));
+                    $this->toolBox()->i18nLog()->warning('record-not-found');
                 }
                 break;
         }

@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -113,7 +111,7 @@ class BusinessDocumentView extends BaseView
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
-                $item['numericFormat'] = DivisaTools::gridMoneyFormat();
+                $item['numericFormat'] = $this->toolBox()->coins()->gridMoneyFormat();
             } elseif ($item['type'] === 'autocomplete') {
                 $item['source'] = $col->widget->getDataSource();
                 $item['strict'] = false;
@@ -122,14 +120,14 @@ class BusinessDocumentView extends BaseView
             }
 
             $data['columns'][] = $item;
-            $data['headers'][] = self::$i18n->trans($col->title);
+            $data['headers'][] = $this->toolBox()->i18n()->trans($col->title);
         }
 
         $fixColumns = ['descripcion', 'referencia'];
         foreach ($this->lines as $line) {
             $lineArray = [];
-            foreach ($line->getModelFields() as $key => $field) {
-                $lineArray[$key] = in_array($key, $fixColumns) ? Utils::fixHtml($line->{$key}) : $line->{$key};
+            foreach (array_keys($line->getModelFields()) as $key) {
+                $lineArray[$key] = in_array($key, $fixColumns) ? $this->toolBox()->utils()->fixHtml($line->{$key}) : $line->{$key};
             }
             $data['rows'][] = $lineArray;
         }
@@ -196,8 +194,15 @@ class BusinessDocumentView extends BaseView
         $newLines = [];
         $order = count($formLines);
         foreach ($formLines as $line) {
-            $line['orden'] = $order;
-            $newLines[] = $line;
+            if (is_array($line)) {
+                $line['orden'] = $order;
+                $newLines[] = $line;
+                $order--;
+                continue;
+            }
+
+            /// empty line
+            $newLines[] = ['orden' => $order];
             $order--;
         }
 

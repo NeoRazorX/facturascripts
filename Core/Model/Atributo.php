@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Un atributo para artículos.
  *
@@ -72,11 +70,14 @@ class Atributo extends Base\ModelClass
     public function test()
     {
         if (!empty($this->codatributo) && !preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']
+            );
             return false;
         }
 
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         return parent::test();
     }
 

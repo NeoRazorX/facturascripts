@@ -98,14 +98,14 @@ class MegaSearch extends Base\Controller
             }
 
             /// Does the page title coincide with the search $query?
-            $translation = mb_strtolower($this->i18n->trans($page->title), 'UTF8');
+            $translation = mb_strtolower($this->toolBox()->i18n()->trans($page->title), 'UTF8');
             if (stripos($page->title, $this->query) !== false || stripos($translation, $this->query) !== false) {
                 $results[] = [
                     'icon' => $page->icon,
                     'link' => $page->url(),
-                    'menu' => $this->i18n->trans($page->menu),
-                    'submenu' => $this->i18n->trans($page->submenu),
-                    'title' => $this->i18n->trans($page->title),
+                    'menu' => $this->toolBox()->i18n()->trans($page->menu),
+                    'submenu' => $this->toolBox()->i18n()->trans($page->submenu),
+                    'title' => $this->toolBox()->i18n()->trans($page->title),
                 ];
             }
 

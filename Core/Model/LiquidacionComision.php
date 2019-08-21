@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 
 /**
@@ -126,7 +125,7 @@ class LiquidacionComision extends Base\ModelClass
         $agent = $this->getAgent();
         $contact = $agent->getContact();
         if (empty($contact->codproveedor)) {
-            self::$miniLog->warning(self::$i18n->trans('agent-dont-have-associated-supplier'));
+            $this->toolBox()->i18nLog()->warning('agent-dont-have-associated-supplier');
             return false;
         }
 
@@ -147,7 +146,7 @@ class LiquidacionComision extends Base\ModelClass
             $product = $agent->getProduct();
             $newLine = $product->exists() ? $invoice->getNewProductLine($product->referencia) : $invoice->getNewLine();
             $newLine->cantidad = 1;
-            $newLine->descripcion = self::$i18n->trans('commission-settlement', ['%code%' => $this->idliquidacion]);
+            $newLine->descripcion = $this->toolBox()->i18n()->trans('commission-settlement', ['%code%' => $this->idliquidacion]);
             $newLine->pvpunitario = $this->total;
             $newLine->save();
 
@@ -217,7 +216,7 @@ class LiquidacionComision extends Base\ModelClass
      */
     public function test()
     {
-        $this->observaciones = Utils::noHtml($this->observaciones);
+        $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
         return parent::test();
     }
 

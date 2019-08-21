@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A predefined concept for a line item (the line of an accounting entry).
  *
@@ -81,8 +79,7 @@ class ConceptoPartida extends Base\ModelClass
      */
     public function test()
     {
-        $this->concepto = Utils::noHtml($this->concepto);
-
+        $this->concepto = $this->toolBox()->utils()->noHtml($this->concepto);
         return parent::test();
     }
 
@@ -94,8 +91,8 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List')
     {
-        return parent::url($type, 'ListAsiento?activetab=' . $list);
+        return parent::url($type, $list);
     }
 }

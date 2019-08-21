@@ -142,23 +142,23 @@ class EditContacto extends EditController
             case 'convert-into-customer':
                 $customer = $this->views['EditContacto']->model->getCustomer();
                 if ($customer->exists()) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
                     $this->redirect($customer->url() . '&action=save-ok');
                     break;
                 }
 
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
             case 'convert-into-supplier':
                 $supplier = $this->views['EditContacto']->model->getSupplier();
                 if ($supplier->exists()) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
                     $this->redirect($supplier->url() . '&action=save-ok');
                     break;
                 }
 
-                $this->miniLog->error($this->i18n->trans('record-save-error'));
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
             default:

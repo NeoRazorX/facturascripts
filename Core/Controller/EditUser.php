@@ -82,7 +82,7 @@ class EditUser extends EditController
 
         // Are we changing user language?
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
-            $this->i18n->setLangCode($this->views['EditUser']->model->langcode);
+            $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);
 
             $expire = time() + \FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
@@ -172,7 +172,7 @@ class EditUser extends EditController
     {
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
         $langs = [];
-        foreach ($this->i18n->getAvailableLanguages() as $key => $value) {
+        foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
             $langs[] = ['value' => $key, 'title' => $value];
         }
 

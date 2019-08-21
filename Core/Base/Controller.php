@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -34,13 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
-
-    /**
-     * Cache access manager.
-     *
-     * @var Cache
-     */
-    protected $cache;
 
     /**
      * Name of the class of the controller (although its in inheritance from this class,
@@ -67,6 +59,7 @@ class Controller
     /**
      * Translator engine.
      *
+     * @deprecated since version 2018.09
      * @var Translator
      */
     protected $i18n;
@@ -74,6 +67,7 @@ class Controller
     /**
      * App log manager.
      *
+     * @deprecated since version 2018.09
      * @var MiniLog
      */
     protected $miniLog;
@@ -136,27 +130,23 @@ class Controller
     /**
      * Initialize all objects and properties.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
-     * @param string     $className
-     * @param string     $uri
+     * @param string $className
+     * @param string $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    public function __construct(string $className, string $uri = '')
     {
-        $this->cache = &$cache;
         $this->className = $className;
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
-        $this->i18n = &$i18n;
-        $this->miniLog = &$miniLog;
+        $this->i18n = $this->toolBox()->i18n();
+        $this->miniLog = $this->toolBox()->log();
         $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $this->className : $this->i18n->trans($pageData['title']);
+        $this->title = empty($pageData) ? $this->className : $this->toolBox()->i18n()->trans($pageData['title']);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
@@ -167,7 +157,7 @@ class Controller
      *
      * @return string
      */
-    protected function getClassName()
+    protected function getClassName(): string
     {
         return $this->className;
     }
@@ -239,7 +229,7 @@ class Controller
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
 
-        $idempresa = AppSettings::get('default', 'idempresa');
+        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $this->empresa->loadFromCode($idempresa);
     }
 
@@ -278,5 +268,14 @@ class Controller
     public function url()
     {
         return $this->className;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

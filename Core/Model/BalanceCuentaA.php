@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Abbreviated detail of a balance.
@@ -131,7 +130,7 @@ class BalanceCuentaA extends Base\ModelClass
         } else {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-               WHERE codcuenta LIKE '" . Utils::noHtml($this->codcuenta) . "%'"
+               WHERE codcuenta LIKE '" . $this->toolBox()->utils()->noHtml($this->codcuenta) . "%'"
                 . ' AND codejercicio = ' . self::$dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = self::$dataBase->select($sql);
         }
@@ -154,7 +153,7 @@ class BalanceCuentaA extends Base\ModelClass
     {
         $balist = [];
         $sql = 'SELECT * FROM ' . static::tableName()
-            . " WHERE codbalance LIKE '" . Utils::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
+            . " WHERE codbalance LIKE '" . $this->toolBox()->utils()->noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         foreach (self::$dataBase->select($sql) as $row) {
             $balist[] = new static($row);
@@ -179,7 +178,7 @@ class BalanceCuentaA extends Base\ModelClass
      */
     public function test()
     {
-        $this->desccuenta = Utils::noHtml($this->desccuenta);
+        $this->desccuenta = $this->toolBox()->utils()->noHtml($this->desccuenta);
         return parent::test();
     }
 }

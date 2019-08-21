@@ -31,32 +31,11 @@ abstract class CronClass
 {
 
     /**
-     * Cache object.
-     *
-     * @var Cache
-     */
-    protected static $cache;
-
-    /**
      * Database object.
      *
      * @var DataBase
      */
-    protected static $dataBase;
-
-    /**
-     * Translator object.
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
-     * MiniLog object.
-     *
-     * @var MiniLog
-     */
-    protected static $miniLog;
+    protected $dataBase;
 
     /**
      *
@@ -78,13 +57,8 @@ abstract class CronClass
      */
     public function __construct(string $pluginName)
     {
+        $this->dataBase = new DataBase();
         $this->pluginName = $pluginName;
-        if (!isset(self::$cache)) {
-            self::$cache = new Cache();
-            self::$dataBase = new DataBase();
-            self::$i18n = new Translator();
-            self::$miniLog = new MiniLog();
-        }
     }
 
     /**
@@ -141,7 +115,16 @@ abstract class CronClass
         $cronJob->date = date('d-m-Y H:i:s');
         $cronJob->done = true;
         if (!$cronJob->save()) {
-            self::$miniLog->error(self::$i18n->trans('record-save-error'));
+            $this->toolBox()->i18nLog('cron')->error('record-save-error');
         }
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

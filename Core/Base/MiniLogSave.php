@@ -32,15 +32,6 @@ class MiniLogSave
 {
 
     /**
-     * Type of logs 
-     *
-     * @var array
-     */
-    const TYPES_LOG = ['info', 'notice', 'warning', 'error',
-        'critical', 'alert', 'emergency'
-    ];
-
-    /**
      * Read the data from MiniLog and storage in Log table.
      * 
      * @param string $ip
@@ -50,11 +41,12 @@ class MiniLogSave
     public function __construct(string $ip = '', string $nick = '', string $uri = '')
     {
         $miniLog = new MiniLog();
-        foreach ($miniLog->read($this->getActiveSettingsLog()) as $value) {
+        foreach ($miniLog->readAll($this->getActiveSettingsLog()) as $value) {
             $logMessage = new LogMessage();
-            $logMessage->time = date('d-m-Y H:i:s', $value["time"]);
-            $logMessage->level = $value["level"];
-            $logMessage->message = $value["message"];
+            $logMessage->channel = $value['channel'];
+            $logMessage->time = date('d-m-Y H:i:s', $value['time']);
+            $logMessage->level = $value['level'];
+            $logMessage->message = $value['message'];
             $logMessage->ip = empty($ip) ? null : $ip;
             $logMessage->nick = empty($nick) ? null : $nick;
             $logMessage->uri = empty($uri) ? null : $uri;
@@ -70,7 +62,7 @@ class MiniLogSave
     private function getActiveSettingsLog(): array
     {
         $types = [];
-        foreach (self::TYPES_LOG as $value) {
+        foreach (MiniLog::ALL_LEVELS as $value) {
             if (AppSettings::get('log', $value, 'false') == 'true') {
                 $types[] = $value;
             }

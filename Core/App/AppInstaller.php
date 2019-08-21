@@ -18,10 +18,8 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,20 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppInstaller
 {
-
-    /**
-     * Translation engine.
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * App log manager.
-     *
-     * @var MiniLog
-     */
-    private $miniLog;
 
     /**
      * Request on which we can get data.
@@ -60,10 +44,7 @@ class AppInstaller
     public function __construct()
     {
         $this->request = Request::createFromGlobals();
-
         define('FS_LANG', $this->request->get('fs_lang', $this->getUserLanguage()));
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
 
         $installed = false;
         if (!$this->searchErrors() && $this->request->getMethod() === 'POST') {
@@ -102,7 +83,7 @@ class AppInstaller
 
         $dbType = $this->request->request->get('fs_db_type');
         if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
-            $this->miniLog->warning($this->i18n->trans('database-name-must-be-lowercase'));
+            $this->toolBox()->i18nLog()->warning('database-name-must-be-lowercase');
             return false;
         }
 
@@ -112,7 +93,7 @@ class AppInstaller
                     return $this->testMysql($dbData);
                 }
 
-                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => 'mysqli']));
+                $this->toolBox()->i18nLog()->critical('php-extension-not-found', ['%extension%' => 'mysqli']);
                 break;
 
             case 'postgresql':
@@ -120,11 +101,11 @@ class AppInstaller
                     return $this->testPostgreSql($dbData);
                 }
 
-                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => 'postgresql']));
+                $this->toolBox()->i18nLog()->critical('php-extension-not-found', ['%extension%' => 'postgresql']);
                 break;
 
             default:
-                $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
+                $this->toolBox()->i18nLog()->critical('cant-connect-database');
         }
 
         return false;
@@ -139,8 +120,8 @@ class AppInstaller
     {
         // Check each needed folder to deploy
         foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
-            if (!FileManager::createFolder($folder)) {
-                $this->miniLog->critical($this->i18n->trans('cant-create-folders', ['%folder%' => $folder]));
+            if (!$this->toolBox()->files()->createFolder($folder)) {
+                $this->toolBox()->i18nLog()->critical('cant-create-folders', ['%folder%' => $folder]);
                 return false;
             }
         }
@@ -199,18 +180,6 @@ class AppInstaller
     }
 
     /**
-     * Return a random string
-     *
-     * @param int $length
-     *
-     * @return bool|string
-     */
-    private function randomString($length = 20)
-    {
-        return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
-    }
-
-    /**
      * Renders HTML.
      * 
      * @param string $template
@@ -220,7 +189,7 @@ class AppInstaller
         /// HTML template variables
         $templateVars = [
             'license' => file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
-            'memcache_prefix' => $this->randomString(8),
+            'memcache_prefix' => $this->toolBox()->utils()->randomString(8),
             'timezones' => $this->getTimezoneList(),
             'version' => PluginManager::CORE_VERSION
         ];
@@ -240,8 +209,9 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $contentFile = FileManager::extractFromMarkers(\FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
-        return FileManager::insertWithMarkers($contentFile, \FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
+        $fileManager = $this->toolBox()->files();
+        $contentFile = $fileManager->extractFromMarkers(\FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
+        return $fileManager->insertWithMarkers($contentFile, \FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
 
     /**
@@ -283,7 +253,7 @@ class AppInstaller
             return true;
         }
 
-        $this->miniLog->critical($this->i18n->trans('cant-save-install'));
+        $this->toolBox()->i18nLog()->critical('cant-save-install');
         return false;
     }
 
@@ -297,24 +267,24 @@ class AppInstaller
         $errors = false;
 
         if ((float) '3,1' >= (float) '3.1') {
-            $this->miniLog->critical($this->i18n->trans('wrong-decimal-separator'));
+            $this->toolBox()->i18nLog()->critical('wrong-decimal-separator');
             $errors = true;
         }
 
         foreach (['bcmath', 'curl', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
             if (!extension_loaded($extension)) {
-                $this->miniLog->critical($this->i18n->trans('php-extension-not-found', ['%extension%' => $extension]));
+                $this->toolBox()->i18nLog()->critical('php-extension-not-found', ['%extension%' => $extension]);
                 $errors = true;
             }
         }
 
         if (function_exists('apache_get_modules') && !in_array('mod_rewrite', apache_get_modules())) {
-            $this->miniLog->critical($this->i18n->trans('apache-module-not-found', ['%module%' => 'mod_rewrite']));
+            $this->toolBox()->i18nLog()->critical('apache-module-not-found', ['%module%' => 'mod_rewrite']);
             $errors = true;
         }
 
         if (!is_writable(\FS_FOLDER)) {
-            $this->miniLog->critical($this->i18n->trans('folder-not-writable'));
+            $this->toolBox()->i18nLog()->critical('folder-not-writable');
             $errors = true;
         }
 
@@ -349,8 +319,8 @@ class AppInstaller
             }
         }
 
-        $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
-        $this->miniLog->critical((string) $connection->connect_errno . ': ' . $connection->connect_error);
+        $this->toolBox()->i18nLog()->critical('cant-connect-database');
+        $this->toolBox()->log()->critical((string) $connection->connect_errno . ': ' . $connection->connect_error);
         return false;
     }
 
@@ -379,11 +349,20 @@ class AppInstaller
             }
         }
 
-        $this->miniLog->critical($this->i18n->trans('cant-connect-database'));
+        $this->toolBox()->i18nLog()->critical('cant-connect-database');
         if (is_resource($connection) && \pg_last_error($connection) !== false) {
-            $this->miniLog->critical((string) \pg_last_error($connection));
+            $this->toolBox()->log()->critical((string) \pg_last_error($connection));
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }

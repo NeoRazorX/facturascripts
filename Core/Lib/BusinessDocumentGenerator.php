@@ -100,14 +100,14 @@ class BusinessDocumentGenerator
     /**
      * Clone the lines from the prototype document, to new document.
      *
-     * @param BusinessDocument $prototype
-     * @param mixed            $newDoc
-     * @param array            $lines
-     * @param array            $quantity
+     * @param BusinessDocument       $prototype
+     * @param BusinessDocument       $newDoc
+     * @param BusinessDocumentLine[] $lines
+     * @param array                  $quantity
      *
      * @return bool
      */
-    private function cloneLines(BusinessDocument $prototype, $newDoc, $lines, $quantity)
+    private function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, $lines, $quantity)
     {
         $docTrans = new DocTransformation();
         foreach ($lines as $line) {
@@ -123,7 +123,7 @@ class BusinessDocumentGenerator
                 $arrayLine['cantidad'] = $quantity[$line->primaryColumnValue()];
             }
 
-            if ($arrayLine['cantidad'] == 0) {
+            if ($arrayLine['cantidad'] == 0 && $line->cantidad != 0) {
                 continue;
             }
 

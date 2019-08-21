@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Class to store log information when a plugin is executed from cron.
  *
@@ -110,8 +108,9 @@ class CronJob extends Base\ModelClass
      */
     public function test()
     {
-        $this->jobname = Utils::noHtml($this->jobname);
-        $this->pluginname = Utils::noHtml($this->pluginname);
+        $utils = $this->toolBox()->utils();
+        $this->jobname = $utils->noHtml($this->jobname);
+        $this->pluginname = $utils->noHtml($this->pluginname);
         return parent::test();
     }
 

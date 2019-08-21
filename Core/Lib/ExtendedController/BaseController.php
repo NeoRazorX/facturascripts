@@ -92,15 +92,12 @@ abstract class BaseController extends Base\Controller
     /**
      * Initializes all the objects and properties.
      *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
-     * @param string          $uri
+     * @param string $className
+     * @param string $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    public function __construct($className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
+        parent::__construct($className, $uri);
         $activeTabGet = $this->request->query->get('activetab', '');
         $this->active = $this->request->request->get('activetab', $activeTabGet);
         $this->codeModel = new CodeModel();
@@ -130,7 +127,7 @@ abstract class BaseController extends Base\Controller
     public function addCustomView($viewName, $view)
     {
         if ($viewName !== $view->getViewName()) {
-            $this->miniLog->error('$viewName must be equals to $view->name');
+            $this->toolBox()->log()->error('$viewName must be equals to $view->name');
             return;
         }
 
@@ -248,7 +245,7 @@ abstract class BaseController extends Base\Controller
         if (empty($results) && '0' == $data['strict']) {
             $results[] = ['key' => $data['term'], 'value' => $data['term']];
         } elseif (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-data')];
+            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
         }
 
         return $results;
@@ -262,7 +259,7 @@ abstract class BaseController extends Base\Controller
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->warning($this->i18n->trans('not-allowed-delete'));
+            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return false;
         }
 
@@ -271,7 +268,7 @@ abstract class BaseController extends Base\Controller
 
         if (empty($codes)) {
             // no selected item
-            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return false;
         } elseif (is_array($codes)) {
             // deleting multiples rows
@@ -286,17 +283,17 @@ abstract class BaseController extends Base\Controller
 
             $model->clear();
             if ($numDeletes > 0) {
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
                 return true;
             }
         } elseif ($model->loadFromCode($codes) && $model->delete()) {
             // deleting a single row
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
             $model->clear();
             return true;
         }
 
-        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+        $this->toolBox()->i18nLog()->warning('record-deleted-error');
         $model->clear();
         return false;
     }
@@ -315,7 +312,7 @@ abstract class BaseController extends Base\Controller
         $column = $this->views[$viewName]->columnForField($fieldName);
         if (!empty($column)) {
             foreach ($column->widget->values as $value) {
-                $result[] = ['key' => $this->i18n->trans($value['title']), 'value' => $value['value']];
+                $result[] = ['key' => $this->toolBox()->i18n()->trans($value['title']), 'value' => $value['value']];
             }
         }
         return $result;
@@ -331,8 +328,8 @@ abstract class BaseController extends Base\Controller
     protected function requestGet($keys): array
     {
         $result = [];
-        foreach ($keys as $value) {
-            $result[$value] = $this->request->get($value);
+        foreach ($keys as $key) {
+            $result[$key] = $this->request->get($key);
         }
         return $result;
     }

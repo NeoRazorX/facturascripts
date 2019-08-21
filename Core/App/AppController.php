@@ -24,7 +24,6 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
-use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;
@@ -87,8 +86,8 @@ class AppController extends App
         $this->debugBar = new StandardDebugBar();
         if (\FS_DEBUG) {
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
-            $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
-            $this->debugBar->addCollector(new TranslationCollector($this->i18n));
+            $this->debugBar->addCollector(new DataBaseCollector());
+            $this->debugBar->addCollector(new TranslationCollector());
         }
 
         $this->menuManager = new MenuManager();
@@ -169,7 +168,7 @@ class AppController extends App
             return $this->user->homepage;
         }
 
-        return $this->settings->get('default', 'homepage', 'Wizard');
+        return $this->toolBox()->appSettings()->get('default', 'homepage', 'Wizard');
     }
 
     /**
@@ -190,12 +189,12 @@ class AppController extends App
 
         /// If we found a controller, load it
         if (class_exists($controllerName)) {
-            $this->miniLog->debug($this->i18n->trans('loading-controller', ['%controllerName%' => $controllerName]));
+            $this->toolBox()->i18nLog()->debug('loading-controller', ['%controllerName%' => $controllerName]);
             $this->menuManager->setUser($this->user);
             $permissions = new ControllerPermissions($this->user, $pageName);
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName, $this->uri);
+                $this->controller = new $controllerName($pageName, $this->uri);
                 if ($this->user === false) {
                     $this->controller->publicCore($this->response);
                     $template = $this->controller->getTemplate();
@@ -209,13 +208,13 @@ class AppController extends App
 
                 $httpStatus = Response::HTTP_OK;
             } catch (Exception $exc) {
-                $this->miniLog->critical($exc->getMessage());
+                $this->toolBox()->log()->critical($exc->getMessage());
                 $this->debugBar['exceptions']->addException($exc);
                 $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
                 $template = 'Error/ControllerError.html.twig';
             }
         } else {
-            $this->miniLog->critical($this->i18n->trans('controller-not-found'));
+            $this->toolBox()->i18nLog()->critical('controller-not-found');
         }
 
         $this->response->setStatusCode($httpStatus);
@@ -240,7 +239,7 @@ class AppController extends App
     {
         /// HTML template variables
         $templateVars = [
-            'appSettings' => $this->settings,
+            'appSettings' => $this->toolBox()->appSettings(),
             'assetManager' => new AssetManager(),
             'controllerName' => $controllerName,
             'debugBarRender' => false,
@@ -257,7 +256,7 @@ class AppController extends App
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
             /// add log data to the debugBar
-            foreach ($this->miniLog->read(['debug']) as $msg) {
+            foreach ($this->toolBox()->log()->read(['debug']) as $msg) {
                 $this->debugBar['messages']->info($msg['message']);
             }
             $this->debugBar['messages']->info('END');
@@ -266,7 +265,7 @@ class AppController extends App
         try {
             $this->response->setContent($webRender->render($template, $templateVars));
         } catch (Exception $exc) {
-            $this->miniLog->critical($exc->getMessage());
+            $this->toolBox()->log()->critical($exc->getMessage());
             $this->debugBar['exceptions']->addException($exc);
             $this->response->setContent($webRender->render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -286,22 +285,23 @@ class AppController extends App
             return $this->cookieAuth($user);
         }
 
+        $ipFilter = $this->toolBox()->ipFilter();
         if ($user->loadFromCode($nick) && $user->enabled) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
-                EventManager::trigger('App:User:Login', $user);
+                $this->toolBox()->events()->trigger('App:User:Login', $user);
                 $this->updateCookies($user, true);
-                $this->ipFilter->clear();
-                $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
+                $ipFilter->clear();
+                $this->toolBox()->i18nLog()->debug('login-ok', ['%nick%' => $nick]);
                 return $user;
             }
 
-            $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
-            $this->miniLog->warning($this->i18n->trans('login-password-fail'));
+            $ipFilter->setAttempt($ipFilter->getClientIp());
+            $this->toolBox()->i18nLog()->warning('login-password-fail');
             return false;
         }
 
-        $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
-        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
+        $ipFilter->setAttempt($ipFilter->getClientIp());
+        $this->toolBox()->i18nLog()->warning('login-user-not-found', ['%nick%' => $nick]);
         return false;
     }
 
@@ -322,16 +322,16 @@ class AppController extends App
         if ($user->loadFromCode($cookieNick) && $user->enabled) {
             if ($user->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                 $this->updateCookies($user);
-                $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
+                $this->toolBox()->i18nLog()->debug('login-ok', ['%nick%' => $cookieNick]);
                 return $user;
             }
 
-            $this->miniLog->warning($this->i18n->trans('login-cookie-fail'));
+            $this->toolBox()->i18nLog()->warning('login-cookie-fail');
             $this->response->headers->clearCookie('fsNick');
             return false;
         }
 
-        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
+        $this->toolBox()->i18nLog()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
         return false;
     }
 
@@ -344,7 +344,7 @@ class AppController extends App
     private function updateCookies(User &$user, bool $force = false)
     {
         if ($force || \time() - \strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
-            $user->updateActivity($this->ipFilter->getClientIp());
+            $user->updateActivity($this->toolBox()->ipFilter()->getClientIp());
             $user->save();
 
             $expire = \time() + \FS_COOKIES_EXPIRE;
@@ -362,6 +362,6 @@ class AppController extends App
     {
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
-        $this->miniLog->debug($this->i18n->trans('logout-ok'));
+        $this->toolBox()->i18nLog()->debug('logout-ok');
     }
 }

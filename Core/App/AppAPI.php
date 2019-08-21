@@ -161,7 +161,7 @@ class AppAPI extends App
             // The name of the class will be the same as that of the file without the php extension.
             // Classes will be descendants of Base/APIResourceClass.
             $class = substr('\\FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
-            $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
+            $APIClass = new $class($this->response, $this->request, []);
             if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
                 // getResources obtains an associative array of arrays generated
                 // with setResource ('name'). These arrays keep the name of the class
@@ -225,7 +225,7 @@ class AppAPI extends App
      */
     private function isDisabled(): bool
     {
-        return $this->settings->get('default', 'enable_api', false) == false;
+        return $this->toolBox()->appSettings()->get('default', 'enable_api', false) == false;
     }
 
     /**
@@ -258,7 +258,7 @@ class AppAPI extends App
         }
 
         try {
-            $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $this->miniLog, $this->i18n, $params);
+            $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $params);
             return $APIClass->processResource($map[$resourceName]['Name']);
         } catch (Exception $exc) {
             $this->fatalError('API-ERROR: ' . $exc->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

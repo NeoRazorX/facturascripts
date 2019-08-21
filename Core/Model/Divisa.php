@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A currency with its symbol and its conversion rate with respect to the euro.
  *
@@ -93,7 +90,7 @@ class Divisa extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-currency'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-currency');
             return false;
         }
 
@@ -107,7 +104,7 @@ class Divisa extends Base\ModelClass
      */
     public function isDefault()
     {
-        return $this->coddivisa === AppSettings::get('default', 'coddivisa');
+        return $this->coddivisa === $this->toolBox()->appSettings()->get('default', 'coddivisa');
     }
 
     /**
@@ -137,15 +134,22 @@ class Divisa extends Base\ModelClass
      */
     public function test()
     {
-        $this->descripcion = Utils::noHtml($this->descripcion);
-        $this->simbolo = Utils::noHtml($this->simbolo);
+        $utils = $this->toolBox()->utils();
+        $this->descripcion = $utils->noHtml($this->descripcion);
+        $this->simbolo = $utils->noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']
+            );
         } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codiso, '%column%' => 'codiso', '%min%' => '1', '%max%' => '5']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codiso, '%column%' => 'codiso', '%min%' => '1', '%max%' => '5']
+            );
         } elseif ($this->tasaconv === 0.0 || $this->tasaconvcompra === 0.0) {
-            self::$miniLog->warning(self::$i18n->trans('conversion-rate-not-0'));
+            $this->toolBox()->i18nLog()->warning('conversion-rate-not-0');
         } else {
             return parent::test();
         }

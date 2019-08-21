@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * The agent/employee is the one associated with a delivery note, invoice o box.
  * Each user can be associated with an agent, an an agent can
@@ -151,9 +149,13 @@ class Agente extends Base\Contact
      */
     public function test()
     {
-        $this->cargo = Utils::noHtml($this->cargo);
+        $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
+
         if (!empty($this->codagente) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']
+            );
             return false;
         }
 

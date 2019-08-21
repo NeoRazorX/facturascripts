@@ -101,20 +101,20 @@ class EditAsiento extends EditController
         $cloneOk = true;
         try {
             if (!$accounting->save()) {
-                throw new Exception(self::$i18n->trans('clone-document-error'));
+                throw new Exception($this->toolBox()->i18n()->trans('clone-document-error'));
             }
 
             foreach ($entries as $line) {
                 $line->idpartida = null;
                 $line->idasiento = $accounting->idasiento;
                 if (!$line->save()) {
-                    throw new Exception(self::$i18n->trans('clone-line-document-error'));
+                    throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
                 }
             }
 
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            self::$miniLog->error($exp->getMessage());
+            $this->toolBox()->log()->error($exp->getMessage());
             $cloneOk = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -192,7 +192,7 @@ class EditAsiento extends EditController
 
         if ($accounting->loadFromCode('', $where)) {
             $search = ['%document%', '%date%', '%date-entry%', '%month%'];
-            $replace = [$accounting->documento, date('d-m-Y'), $accounting->fecha, $this->i18n->trans(date('F', strtotime($accounting->fecha)))];
+            $replace = [$accounting->documento, date('d-m-Y'), $accounting->fecha, $this->toolBox()->i18n()->trans(date('F', strtotime($accounting->fecha)))];
             foreach ($results as $result) {
                 $finalValue = array('key' => str_replace($search, $replace, $result['key']), 'value' => $result['value']);
                 $finalResults[] = $finalValue;

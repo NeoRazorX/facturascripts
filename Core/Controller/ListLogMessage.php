@@ -164,7 +164,7 @@ class ListLogMessage extends ListController
             $counter = 0;
             foreach ($allFilteredLogs as $log) {
                 if (!$log->delete()) {
-                    $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+                    $this->toolBox()->i18nLog()->warning('record-deleted-error');
                     break;
                 }
 
@@ -175,10 +175,10 @@ class ListLogMessage extends ListController
             $this->dataBase->commit();
 
             if ($counter > 0) {
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
             }
         } catch (Exception $exc) {
-            $this->miniLog->error($exc->getMessage());
+            $this->toolBox()->log()->error($exc->getMessage());
         } finally {
             if ($this->dataBase->inTransaction()) {
                 $this->dataBase->rollback();

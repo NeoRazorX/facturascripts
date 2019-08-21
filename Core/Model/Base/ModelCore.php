@@ -18,11 +18,9 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 
 /**
@@ -35,18 +33,11 @@ abstract class ModelCore
 {
 
     /**
-     * It allows to connect and interact with the cache system.
-     *
-     * @var Cache
-     */
-    protected static $cache;
-
-    /**
      * List of already tested tables.
      *
      * @var array
      */
-    private static $checkedTables;
+    private static $checkedTables = [];
 
     /**
      * It provides direct access to the database.
@@ -54,20 +45,6 @@ abstract class ModelCore
      * @var DataBase
      */
     protected static $dataBase;
-
-    /**
-     * Multi-language translator.
-     *
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
-     * Manage the log of all controllers, models and database.
-     *
-     * @var MiniLog
-     */
-    protected static $miniLog;
 
     /**
      * Returns the list of fields in the table.
@@ -105,22 +82,19 @@ abstract class ModelCore
      */
     public function __construct(array $data = [])
     {
-        if (self::$cache === null) {
-            self::$cache = new Cache();
+        if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
-            self::$i18n = new Translator();
-            self::$miniLog = new MiniLog();
 
-            self::$checkedTables = self::$cache->get('fs_checked_tables');
-            if (self::$checkedTables === null || self::$checkedTables === false) {
-                self::$checkedTables = [];
+            $tables = $this->toolBox()->cache()->get('fs_checked_tables');
+            if (is_array($tables) && !empty($tables)) {
+                self::$checkedTables = $tables;
             }
         }
 
         if (static::tableName() !== '' && !in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-            self::$miniLog->debug(self::$i18n->trans('table-checked', ['%tableName%' => static::tableName()]));
+            $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
             self::$checkedTables[] = static::tableName();
-            self::$cache->set('fs_checked_tables', self::$checkedTables);
+            $this->toolBox()->cache()->set('fs_checked_tables', self::$checkedTables);
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
@@ -247,7 +221,7 @@ abstract class ModelCore
         $xmlCons = [];
 
         if (!$dbTools->getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
-            self::$miniLog->critical(self::$i18n->trans('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']));
+            $this->toolBox()->i18nLog()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
             return false;
         }
 
@@ -260,8 +234,8 @@ abstract class ModelCore
         }
 
         if ($sql !== '' && !self::$dataBase->exec($sql)) {
-            self::$miniLog->critical(self::$i18n->trans('check-table', ['%tableName%' => static::tableName()]));
-            self::$cache->clear();
+            $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
+            $this->toolBox()->cache()->clear();
             return false;
         }
 
@@ -323,5 +297,14 @@ abstract class ModelCore
         }
 
         return $field['is_nullable'] === 'NO' ? 0 : null;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

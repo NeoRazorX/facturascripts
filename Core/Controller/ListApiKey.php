@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -51,8 +50,8 @@ class ListApiKey extends ListController
      */
     protected function createViews()
     {
-        if (!AppSettings::get('default', 'enable_api', '')) {
-            $this->miniLog->notice($this->i18n->trans('api-disabled'));
+        if (!$this->toolBox()->appSettings()->get('default', 'enable_api', '')) {
+            $this->toolBox()->i18nLog()->notice('api-disabled');
         }
 
         $viewName = 'ListApiKey';

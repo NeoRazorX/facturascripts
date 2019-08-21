@@ -135,7 +135,7 @@ class AccountingReports extends Controller
         }
 
         if (empty($pages)) {
-            $this->miniLog->warning($this->i18n->trans('no-data'));
+            $this->toolBox()->i18nLog()->warning('no-data');
             return;
         }
 

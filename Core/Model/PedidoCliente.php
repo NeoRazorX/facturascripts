@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaPedidoCliente;
+use FacturaScripts\Dinamic\Model\LineaPedidoCliente as LineaPedido;
 
 /**
  * Customer order.
@@ -49,11 +49,11 @@ class PedidoCliente extends Base\SalesDocument
     /**
      * Returns the lines associated with the order.
      *
-     * @return LineaPedidoCliente[]
+     * @return LineaPedido[]
      */
     public function getLines()
     {
-        $lineaModel = new LineaPedidoCliente();
+        $lineaModel = new LineaPedido();
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
@@ -65,19 +65,17 @@ class PedidoCliente extends Base\SalesDocument
      * 
      * @param array $data
      *
-     * @return LineaPedidoCliente
+     * @return LineaPedido
      */
     public function getNewLine(array $data = [])
     {
-        $newLine = new LineaPedidoCliente($data);
+        $newLine = new LineaPedido();
         $newLine->idpedido = $this->idpedido;
-        if (empty($data)) {
-            $newLine->irpf = $this->irpf;
-        }
+        $newLine->irpf = $this->irpf;
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $status = $this->getStatus();
-        $newLine->actualizastock = $status->actualizastock;
-
+        $exclude = ['actualizastock', 'idlinea', 'idpedido'];
+        $newLine->loadFromData($data, $exclude);
         return $newLine;
     }
 

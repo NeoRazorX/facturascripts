@@ -162,7 +162,7 @@ class VatRegularizationToAccounting extends AccountingClass
         }
 
         if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
-            $this->miniLog->warning($this->i18n->trans('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]));
+            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
         }
 
@@ -214,9 +214,9 @@ class VatRegularizationToAccounting extends AccountingClass
     protected function vatAccountingEntry()
     {
         $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry, $this->i18n->trans('vat-regularization') . ' ' . $this->document->periodo);
+        $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('vat-regularization') . ' ' . $this->document->periodo);
         if (!$accountEntry->save()) {
-            $this->miniLog->warning('accounting-entry-error');
+            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
         }
 
@@ -227,7 +227,7 @@ class VatRegularizationToAccounting extends AccountingClass
             return;
         }
 
-        $this->miniLog->warning('accounting-lines-error');
+        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
         $accountEntry->delete();
     }
 }

@@ -18,14 +18,11 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\MiniLogSave;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
-use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Dinamic\Lib\IPFilter;
+use FacturaScripts\Core\Base\ToolBox;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -38,39 +35,11 @@ abstract class App
 {
 
     /**
-     * Cache access manager.
-     *
-     * @var Cache
-     */
-    protected $cache;
-
-    /**
      * Database access manager.
      *
      * @var DataBase
      */
     protected $dataBase;
-
-    /**
-     * Translation engine.
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     * IP filter.
-     *
-     * @var IPFilter
-     */
-    protected $ipFilter;
-
-    /**
-     * App log manager.
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
 
     /**
      * Plugin manager.
@@ -92,13 +61,6 @@ abstract class App
      * @var Response
      */
     protected $response;
-
-    /**
-     * Stored defaut configuration with the application settings.
-     *
-     * @var AppSettings
-     */
-    protected $settings;
 
     /**
      * Requested Uri
@@ -123,24 +85,18 @@ abstract class App
     {
         $this->request = Request::createFromGlobals();
         if ($this->request->cookies->get('fsLang')) {
-            $this->i18n = new Translator($this->request->cookies->get('fsLang'));
-        } else {
-            $this->i18n = new Translator();
+            $this->toolBox()->i18n()->setDefaultLang($this->request->cookies->get('fsLang'));
         }
 
-        $this->cache = new Cache();
         $this->dataBase = new DataBase();
-        $this->ipFilter = new IPFilter();
-        $this->miniLog = new MiniLog();
         $this->pluginManager = new PluginManager();
         $this->response = new Response();
-        $this->settings = new AppSettings();
         $this->uri = $uri;
 
         /// timezone
         date_default_timezone_set(\FS_TIMEZONE);
 
-        $this->miniLog->debug('URI: ' . $this->uri);
+        $this->toolBox()->log()->debug('URI: ' . $this->uri);
     }
 
     /**
@@ -151,7 +107,7 @@ abstract class App
     public function connect()
     {
         if ($this->dataBase->connect()) {
-            $this->settings->load();
+            $this->toolBox()->appSettings()->load();
             $this->loadPlugins();
             return true;
         }
@@ -171,7 +127,7 @@ abstract class App
         $telemetry->update();
 
         /// save log
-        new MiniLogSave($this->ipFilter->getClientIp() ?? '', $nick, $this->uri);
+        new MiniLogSave($this->toolBox()->ipFilter()->getClientIp() ?? '', $nick, $this->uri);
 
         $this->dataBase->close();
     }
@@ -204,7 +160,8 @@ abstract class App
      */
     protected function isIPBanned()
     {
-        return $this->ipFilter->isBanned($this->ipFilter->getClientIp());
+        $ipFilter = $this->toolBox()->ipFilter();
+        return $ipFilter->isBanned($ipFilter->getClientIp());
     }
 
     /**
@@ -219,5 +176,14 @@ abstract class App
                 $initObject->init();
             }
         }
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

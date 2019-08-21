@@ -49,6 +49,8 @@ trait PasswordTrait
 
     abstract public static function primaryColumnValue();
 
+    abstract protected function toolBox();
+
     /**
      * Asigns the new password to the user.
      *
@@ -87,7 +89,7 @@ trait PasswordTrait
     {
         if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
             if ($this->newPassword !== $this->newPassword2) {
-                self::$miniLog->warning(self::$i18n->trans('different-passwords', ['%userNick%' => $this->primaryColumnValue()]));
+                $this->toolBox()->i18nLog()->warning('different-passwords', ['%userNick%' => $this->primaryColumnValue()]);
                 return false;
             }
 

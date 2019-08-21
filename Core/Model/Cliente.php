@@ -202,7 +202,10 @@ class Cliente extends Base\ComercialContact
     public function test()
     {
         if (!empty($this->codcliente) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']
+            );
             return false;
         }
 

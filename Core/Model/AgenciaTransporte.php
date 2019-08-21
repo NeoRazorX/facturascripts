@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Merchandise transport agency.
  *
@@ -100,13 +98,17 @@ class AgenciaTransporte extends Base\ModelClass
     public function test()
     {
         if (!empty($this->codtrans) && !preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']
+            );
             return false;
         }
 
-        $this->nombre = Utils::noHtml($this->nombre);
-        $this->telefono = Utils::noHtml($this->telefono);
-        $this->web = Utils::noHtml($this->web);
+        $utils = $this->toolBox()->utils();
+        $this->nombre = $utils->noHtml($this->nombre);
+        $this->telefono = $utils->noHtml($this->telefono);
+        $this->web = $utils->noHtml($this->web);
         return parent::test();
     }
 

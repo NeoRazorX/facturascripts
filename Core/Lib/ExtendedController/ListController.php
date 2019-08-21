@@ -37,15 +37,12 @@ abstract class ListController extends BaseController
     /**
      * Initializes all the objects and properties.
      *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
      * @param string          $className
      * @param string          $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className, $uri = '')
+    public function __construct($className, $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className, $uri);
+        parent::__construct($className, $uri);
         $this->setTemplate('Master/ListController');
     }
 
@@ -262,12 +259,12 @@ abstract class ListController extends BaseController
     {
         $idfilter = $this->request->request->get('loadfilter', 0);
         if ($this->views[$this->active]->deletePageFilter($idfilter)) {
-            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
             $this->request->request->remove('loadfilter');
             return;
         }
 
-        $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+        $this->toolBox()->i18nLog()->warning('record-deleted-error');
     }
 
     /**
@@ -385,7 +382,7 @@ abstract class ListController extends BaseController
         $result = [];
         foreach ($view->getColumns() as $col) {
             if (!$col->hidden()) {
-                $result[] = $this->i18n->trans($col->title);
+                $result[] = $this->toolBox()->i18n()->trans($col->title);
             }
         }
 
@@ -400,7 +397,7 @@ abstract class ListController extends BaseController
         $view = $this->views[$this->active];
         $idFilter = $view->savePageFilter($this->request, $this->user);
         if (!empty($idFilter)) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
 
             /// load filters in request
             $this->request->request->set('loadfilter', $idFilter);

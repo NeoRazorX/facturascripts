@@ -118,11 +118,11 @@ class ListFormatoDocumento extends ListController
     {
         return [
             ['code' => null, 'description' => '------'],
-            ['code' => -2, 'description' => $this->i18n->trans('book')],
-            ['code' => -1, 'description' => $this->i18n->trans('subtract')],
-            ['code' => 0, 'description' => $this->i18n->trans('do-nothing')],
-            ['code' => 1, 'description' => $this->i18n->trans('add')],
-            ['code' => 2, 'description' => $this->i18n->trans('foresee')],
+            ['code' => -2, 'description' => $this->toolBox()->i18n()->trans('book')],
+            ['code' => -1, 'description' => $this->toolBox()->i18n()->trans('subtract')],
+            ['code' => 0, 'description' => $this->toolBox()->i18n()->trans('do-nothing')],
+            ['code' => 1, 'description' => $this->toolBox()->i18n()->trans('add')],
+            ['code' => 2, 'description' => $this->toolBox()->i18n()->trans('foresee')],
         ];
     }
 }

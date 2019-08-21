@@ -19,8 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\App\WebRender;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator as i18n;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -176,15 +175,12 @@ class EmailTools
      */
     public function send($mail)
     {
-        $i18n = new i18n();
-        $miniLog = new MiniLog();
-
         if (null === $this->getSetting('host')) {
             return false;
         }
 
         if ($this->getSetting('mailer') === 'smtp' && !$mail->smtpConnect($this->smtpOptions())) {
-            $miniLog->error($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+            $this->toolBox()->i18nLog()->error('error', ['%error%' => $mail->ErrorInfo]);
             return false;
         }
 
@@ -212,7 +208,7 @@ class EmailTools
             return true;
         }
 
-        $miniLog->error($i18n->trans('error', ['%error%' => $mail->ErrorInfo]));
+        $this->toolBox()->i18nLog()->error('error', ['%error%' => $mail->ErrorInfo]);
         return false;
     }
 
@@ -268,9 +264,7 @@ class EmailTools
                 unlink(\FS_FOLDER . '/MyFiles/' . $data['fileName']);
             }
 
-            $i18n = new i18n();
-            $miniLog = new MiniLog();
-            $miniLog->notice($i18n->trans('send-mail-ok'));
+            static::toolBox()->i18nLog()->notice('send-mail-ok');
             return true;
         }
 
@@ -300,7 +294,7 @@ class EmailTools
      *
      * @return array
      */
-    private function getEmails(string $emails): array
+    protected function getEmails(string $emails): array
     {
         if (empty($emails)) {
             return [];
@@ -317,7 +311,7 @@ class EmailTools
      *
      * @return mixed
      */
-    private function getSetting(string $key)
+    protected function getSetting(string $key)
     {
         return isset(self::$settings[$key]) ? self::$settings[$key] : null;
     }
@@ -327,7 +321,7 @@ class EmailTools
      *
      * @return array
      */
-    private function smtpOptions()
+    protected function smtpOptions()
     {
         $SMTPOptions = [];
         if (isset(self::$settings['lowsecure']) && self::$settings['lowsecure']) {
@@ -341,5 +335,14 @@ class EmailTools
         }
 
         return $SMTPOptions;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected static function toolBox()
+    {
+        return new ToolBox();
     }
 }

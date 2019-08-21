@@ -156,7 +156,7 @@ class DocumentStitcher extends Controller
         // duplicated request?
         $token = $this->request->request->get('multireqtoken', '');
         if (!empty($token) && $this->multiRequestProtection->tokenExist($token)) {
-            $this->miniLog->warning($this->i18n->trans('duplicated-request'));
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
             return false;
         }
 
@@ -176,7 +176,7 @@ class DocumentStitcher extends Controller
     {
         foreach ($this->documents as $doc) {
             if ($doc->coddivisa != $newDoc->coddivisa || $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
-                $this->miniLog->warning($this->i18n->trans('incompatible-document', ['%code%' => $newDoc->codigo]));
+                $this->toolBox()->i18nLog()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
                 return false;
             }
         }
@@ -212,7 +212,7 @@ class DocumentStitcher extends Controller
         /// redir to new document
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             break;
         }
     }
@@ -253,7 +253,7 @@ class DocumentStitcher extends Controller
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
         if (!$generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
-            $this->miniLog->error($this->i18n->trans('record-save-error'));
+            $this->toolBox()->i18nLog()->error('record-save-error');
             return;
         }
 
@@ -306,7 +306,7 @@ class DocumentStitcher extends Controller
      */
     protected function loadDocuments()
     {
-        $modelClass = 'FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
             if ($doc->loadFromCode($code)) {

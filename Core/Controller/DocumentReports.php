@@ -18,14 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\DocumentReportsBase\DocumentReportsFilterList;
 use FacturaScripts\Dinamic\Lib\DocumentReportsBase\DocumentReportsSource;
 use FacturaScripts\Dinamic\Model;
@@ -77,26 +72,25 @@ class DocumentReports extends Controller
     public $sources;
 
     /**
-     * Initializes all the objects and properties
-     *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
-     * @param string     $className
+     * 
+     * @param string $className
+     * @param string $uri
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function __construct(string $className, string $uri = '')
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        parent::__construct($className, $uri);
         $this->sources = [
             new DocumentReportsSource('customer-invoices', '181,225,174'),
             new DocumentReportsSource('supplier-invoices', '154,206,223'),
         ];
 
+        $appSettings = $this->toolBox()->appSettings();
+        $namespace = '\\FacturaScripts\\Dinamic\\Model\\';
         $this->filters = [
-            'employee' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fas fa-users'),
-            'serie' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Serie', AppSettings::get('default', 'codserie')),
-            'currency' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Divisa', AppSettings::get('default', 'coddivisa')),
-            'payment-method' => new DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago'),
+            'employee' => new DocumentReportsFilterList($namespace . 'Agente', '', 'fas fa-users'),
+            'serie' => new DocumentReportsFilterList($namespace . 'Serie', $appSettings->get('default', 'codserie')),
+            'currency' => new DocumentReportsFilterList($namespace . 'Divisa', $appSettings->get('default', 'coddivisa')),
+            'payment-method' => new DocumentReportsFilterList($namespace . 'FormaPago'),
         ];
     }
 
@@ -119,15 +113,16 @@ class DocumentReports extends Controller
      */
     public function getDocumentTypes()
     {
+        $i18n = $this->toolBox()->i18n();
         $types = [
-            'customer-estimations' => $this->i18n->trans('customer-estimations'),
-            'customer-orders' => $this->i18n->trans('customer-orders'),
-            'customer-delivery-notes' => $this->i18n->trans('customer-delivery-notes'),
-            'customer-invoices' => $this->i18n->trans('customer-invoices'),
-            'supplier-estimations' => $this->i18n->trans('supplier-estimations'),
-            'supplier-orders' => $this->i18n->trans('supplier-orders'),
-            'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
-            'supplier-invoices' => $this->i18n->trans('supplier-invoices'),
+            'customer-estimations' => $i18n->trans('customer-estimations'),
+            'customer-orders' => $i18n->trans('customer-orders'),
+            'customer-delivery-notes' => $i18n->trans('customer-delivery-notes'),
+            'customer-invoices' => $i18n->trans('customer-invoices'),
+            'supplier-estimations' => $i18n->trans('supplier-estimations'),
+            'supplier-orders' => $i18n->trans('supplier-orders'),
+            'supplier-delivery-notes' => $i18n->trans('supplier-delivery-notes'),
+            'supplier-invoices' => $i18n->trans('supplier-invoices'),
         ];
 
         asort($types);
@@ -314,7 +309,7 @@ class DocumentReports extends Controller
     {
         // Init data
         $result = [];
-        foreach (Utils::dateRange($source->dateFrom->format('d-m-Y'), $source->dateTo->format('d-m-Y'), $step, $format) as $index) {
+        foreach ($this->toolBox()->utils()->dateRange($source->dateFrom->format('d-m-Y'), $source->dateTo->format('d-m-Y'), $step, $format) as $index) {
             $result[$index] = 0;
         }
 

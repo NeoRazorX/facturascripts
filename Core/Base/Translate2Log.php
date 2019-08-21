@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,29 +19,41 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of InitClass
+ * Description of TranslateLog
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-abstract class InitClass
+class Translate2Log extends MiniLog
 {
 
     /**
-     * Code to load every time FacturaScripts starts.
+     *
+     * @var Translator
      */
-    abstract public function init();
-
-    /**
-     * Code to load every time the plugin is enabled or updated.
-     */
-    abstract public function update();
+    private static $i18n;
 
     /**
      * 
-     * @return ToolBox
+     * @return Translator
      */
-    protected function toolBox()
+    protected function i18n()
     {
-        return new ToolBox();
+        if (!isset(self::$i18n)) {
+            self::$i18n = new Translator();
+        }
+
+        return self::$i18n;
+    }
+
+    /**
+     * 
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     */
+    protected function log(string $level, string $message, array $context = [])
+    {
+        $translation = $this->i18n()->trans($message, $context);
+        parent::log($level, $translation);
     }
 }

@@ -116,14 +116,14 @@ class ListView extends BaseView
         $key1 = strtolower(implode('|', $fields)) . '_asc';
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => static::$i18n->trans($label),
+            'label' => $this->toolBox()->i18n()->trans($label),
             'type' => 'ASC',
         ];
 
         $key2 = strtolower(implode('|', $fields)) . '_desc';
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => static::$i18n->trans($label),
+            'label' => $this->toolBox()->i18n()->trans($label),
             'type' => 'DESC',
         ];
 
@@ -172,11 +172,7 @@ class ListView extends BaseView
         $pageFilter = new PageFilter();
         if ($pageFilter->loadFromCode($idfilter) && $pageFilter->delete()) {
             /// remove form the list
-            foreach ($this->pageFilters as $key => $pfil) {
-                if ($pfil->id == $idfilter) {
-                    unset($this->pageFilters[$key]);
-                }
-            }
+            unset($this->pageFilters[$idfilter]);
 
             return true;
         }
@@ -251,7 +247,9 @@ class ListView extends BaseView
         $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
         $where = $this->getPageWhere($user);
         $pageFilter = new PageFilter();
-        $this->pageFilters = $pageFilter->all($where, $orderby);
+        foreach ($pageFilter->all($where, $orderby) as $filter) {
+            $this->pageFilters[$filter->id] = $filter;
+        }
     }
 
     /**

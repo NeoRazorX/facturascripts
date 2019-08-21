@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Visual filter configuration of the FacturaScripts views,
  * each PageFilter corresponds to a view or tab filter.
@@ -126,11 +124,12 @@ class PageFilter extends Base\ModelClass
 
     public function test()
     {
-        $this->description = Utils::noHtml($this->description);
+        $this->description = $this->toolBox()->utils()->noHtml($this->description);
         if (empty($this->description)) {
-            self::$miniLog->warning(self::$i18n->trans('description-error'));
+            $this->toolBox()->i18nLog()->warning('description-error');
             return false;
         }
+
         return parent::test();
     }
 

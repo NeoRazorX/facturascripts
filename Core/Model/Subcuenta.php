@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Detail level of an accounting plan. It is related to a single account.
@@ -240,21 +239,24 @@ class Subcuenta extends Base\ModelClass
     {
         $this->codcuenta = trim($this->codcuenta);
         $this->codsubcuenta = trim($this->codsubcuenta);
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-column-lenght',
+                ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']
+            );
             return false;
         }
 
         if (!self::$disableAditionTest) {
             if (!$this->testErrorInLengthSubAccount()) {
-                self::$miniLog->warning(self::$i18n->trans('account-length-error'));
+                $this->toolBox()->i18nLog()->warning('account-length-error');
                 return false;
             }
 
             $this->idcuenta = $this->getIdAccount();
             if (empty($this->idcuenta)) {
-                self::$miniLog->warning(self::$i18n->trans('account-data-error'));
+                $this->toolBox()->i18nLog()->warning('account-data-error');
                 return false;
             }
         }
@@ -295,13 +297,13 @@ class Subcuenta extends Base\ModelClass
             if ($inTransaction === false) {
                 self::$dataBase->commit();
             }
-        } catch (\Exception $e) {
-            self::$miniLog->error($e->getMessage());
+        } catch (\Exception $exc) {
+            $this->toolBox()->log()->error($exc->getMessage());
             return false;
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
                 self::$dataBase->rollback();
-                self::$miniLog->warning(self::$i18n->trans('update-account-balance-error'));
+                $this->toolBox()->i18nLog()->warning('update-account-balance-error');
                 return false;
             }
         }
@@ -317,9 +319,9 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
     {
-        return parent::url($type, 'ListCuenta?activetab=List');
+        return parent::url($type, $list);
     }
 
     /**

@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Define method and attributes of table variantes.
  *
@@ -116,7 +114,7 @@ class Variante extends Base\ModelClass
     {
         $results = [];
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
-        $find = Utils::noHtml(mb_strtolower($query, 'UTF8'));
+        $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2"
             . " FROM " . self::tableName() . " v"
@@ -153,7 +151,7 @@ class Variante extends Base\ModelClass
     {
         $product = $this->getProducto();
         if ($this->referencia == $product->referencia) {
-            self::$miniLog->warning(self::$i18n->trans('you-cant-delete-primary-variant'));
+            $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
             return false;
         }
 
@@ -237,13 +235,17 @@ class Variante extends Base\ModelClass
      */
     public function test()
     {
-        $this->referencia = Utils::noHtml($this->referencia);
+        $utils = $this->toolBox()->utils();
+        $this->referencia = $utils->noHtml($this->referencia);
         if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-column-lenght',
+                ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
+            );
             return false;
         }
 
-        $this->codbarras = Utils::noHtml($this->codbarras);
+        $this->codbarras = $utils->noHtml($this->codbarras);
         return parent::test();
     }
 

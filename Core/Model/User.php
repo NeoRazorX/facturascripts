@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Usuario de FacturaScripts.
  *
@@ -118,7 +115,7 @@ class User extends Base\ModelClass
     {
         parent::clear();
         $this->enabled = true;
-        $this->idempresa = AppSettings::get('default', 'idempresa', 1);
+        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
         $this->langcode = \FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
     }
@@ -136,7 +133,7 @@ class User extends Base\ModelClass
         new Page();
         new Empresa();
 
-        self::$miniLog->notice(self::$i18n->trans('created-default-admin-account'));
+        $this->toolBox()->i18nLog()->notice('created-default-admin-account');
 
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,langcode,homepage,level)'
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
@@ -154,7 +151,7 @@ class User extends Base\ModelClass
     public function newLogkey($ipAddress)
     {
         $this->updateActivity($ipAddress);
-        $this->logkey = Utils::randomString(99);
+        $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;
     }
 
@@ -196,7 +193,15 @@ class User extends Base\ModelClass
 
         $this->nick = trim($this->nick);
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
+            );
+            return false;
+        }
+
+        if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             return false;
         }
 

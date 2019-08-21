@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A country, for example Spain.
  *
@@ -62,7 +59,7 @@ class Pais extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-country'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-country');
             return false;
         }
 
@@ -76,7 +73,7 @@ class Pais extends Base\ModelClass
      */
     public function isDefault()
     {
-        return $this->codpais === AppSettings::get('default', 'codpais');
+        return $this->codpais === $this->toolBox()->appSettings()->get('default', 'codpais');
     }
 
     /**
@@ -118,11 +115,14 @@ class Pais extends Base\ModelClass
     {
         $this->codpais = trim($this->codpais);
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']
+            );
             return false;
         }
 
-        $this->nombre = Utils::noHtml($this->nombre);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         return parent::test();
     }
 }

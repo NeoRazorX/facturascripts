@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
@@ -42,30 +40,6 @@ abstract class AccountingClass extends AccountingAccounts
     protected $document;
 
     /**
-     * Multi-language translator.
-     *
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     * Manage the log of all controllers, models and database.
-     *
-     * @var MiniLog
-     */
-    protected $miniLog;
-
-    /**
-     * Class constructor and initializate auxiliar model class.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
-    }
-
-    /**
      * Method to launch the accounting process
      *
      * @param ModelClass $model
@@ -73,7 +47,7 @@ abstract class AccountingClass extends AccountingAccounts
     public function generate($model)
     {
         $this->document = $model;
-        $this->exercise->idempresa = $model->idempresa ?? AppSettings::get('default', 'idempresa');
+        $this->exercise->idempresa = $model->idempresa ?? $this->toolBox()->appSettings()->get('default', 'idempresa');
     }
 
     /**
@@ -145,5 +119,14 @@ abstract class AccountingClass extends AccountingAccounts
             $line->haber = $total;
         }
         return $line;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -121,7 +119,7 @@ class Empresa extends Base\Contact
     public function clear()
     {
         parent::clear();
-        $this->codpais = AppSettings::get('default', 'codpais');
+        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
         $this->regimeniva = RegimenIVA::defaultValue();
     }
 
@@ -133,7 +131,7 @@ class Empresa extends Base\Contact
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-company'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-company');
             return false;
         }
 
@@ -167,7 +165,7 @@ class Empresa extends Base\Contact
      */
     public function isDefault()
     {
-        return $this->idempresa === (int) AppSettings::get('default', 'idempresa');
+        return $this->idempresa === (int) $this->toolBox()->appSettings()->get('default', 'idempresa');
     }
 
     /**
@@ -207,14 +205,15 @@ class Empresa extends Base\Contact
      */
     public function test()
     {
-        $this->administrador = Utils::noHtml($this->administrador);
-        $this->apartado = Utils::noHtml($this->apartado);
-        $this->ciudad = Utils::noHtml($this->ciudad);
-        $this->codpostal = Utils::noHtml($this->codpostal);
-        $this->direccion = Utils::noHtml($this->direccion);
-        $this->nombrecorto = Utils::noHtml($this->nombrecorto);
-        $this->provincia = Utils::noHtml($this->provincia);
-        $this->web = Utils::noHtml($this->web);
+        $utils = $this->toolBox()->utils();
+        $this->administrador = $utils->noHtml($this->administrador);
+        $this->apartado = $utils->noHtml($this->apartado);
+        $this->ciudad = $utils->noHtml($this->ciudad);
+        $this->codpostal = $utils->noHtml($this->codpostal);
+        $this->direccion = $utils->noHtml($this->direccion);
+        $this->nombrecorto = $utils->noHtml($this->nombrecorto);
+        $this->provincia = $utils->noHtml($this->provincia);
+        $this->web = $utils->noHtml($this->web);
 
         return parent::test();
     }
@@ -223,7 +222,7 @@ class Empresa extends Base\Contact
     {
         $formaPago = new FormaPago();
         $formaPago->codpago = $formaPago->newCode();
-        $formaPago->descripcion = self::$i18n->trans('default');
+        $formaPago->descripcion = $this->toolBox()->i18n()->trans('default');
         $formaPago->idempresa = $this->idempresa;
         $formaPago->save();
     }

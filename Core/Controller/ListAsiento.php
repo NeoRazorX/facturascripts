@@ -129,7 +129,7 @@ class ListAsiento extends ListController
             case 'renumber':
                 $codejercicio = $this->request->request->get('exercise');
                 if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
-                    $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
+                    $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
                 }
                 return true;
         }

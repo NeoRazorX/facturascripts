@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Element of the third level of the accounting plan.
@@ -179,9 +178,9 @@ class Cuenta extends Base\ModelClass
     public function test()
     {
         $this->codcuenta = trim($this->codcuenta);
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
+            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
@@ -193,7 +192,7 @@ class Cuenta extends Base\ModelClass
         if (!empty($this->parent_idcuenta) && !self::$disableAditionTest) {
             $parent = $this->getParent();
             if ($parent->codejercicio != $this->codejercicio || $parent->idcuenta == $this->idcuenta) {
-                self::$miniLog->warning(self::$i18n->trans('account-parent-error'));
+                $this->toolBox()->i18nLog()->warning('account-parent-error');
                 return false;
             }
         }
@@ -208,9 +207,9 @@ class Cuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
     {
-        return parent::url($type, 'ListCuenta?activetab=List');
+        return parent::url($type, $list);
     }
 
     /**

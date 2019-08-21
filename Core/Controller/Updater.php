@@ -103,9 +103,9 @@ class Updater extends Controller
         /// Folders writables?
         $folders = FileManager::notWritableFolders();
         if (!empty($folders)) {
-            $this->miniLog->warning($this->i18n->trans('folder-not-writable'));
+            $this->toolBox()->i18nLog()->warning('folder-not-writable');
             foreach ($folders as $folder) {
-                $this->miniLog->warning($folder);
+                $this->toolBox()->log()->warning($folder);
             }
             return;
         }
@@ -131,9 +131,9 @@ class Updater extends Controller
 
             $downloader = new DownloadTools();
             if ($downloader->download($item['url'], \FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
-                $this->miniLog->notice($this->i18n->trans('download-completed'));
+                $this->toolBox()->i18nLog()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
-                $this->cache->clear();
+                $this->toolBox()->cache()->clear();
             }
         }
     }
@@ -152,11 +152,11 @@ class Updater extends Controller
                 break;
 
             case 'post-update':
-                $this->cache->clear();
+                $this->toolBox()->cache()->clear();
                 $this->updaterItems = $this->getUpdateItems();
                 $this->initNewModels();
                 break;
-            
+
             case 'register':
                 $this->telemetryManager->install();
                 break;
@@ -164,7 +164,7 @@ class Updater extends Controller
             case 'update':
                 if ($this->update()) {
                     $this->pluginManager->deploy(true, true);
-                    $this->miniLog->notice($this->i18n->trans('reloading'));
+                    $this->toolBox()->i18nLog()->notice('reloading');
                     $this->redirect($this->getClassName() . '?action=post-update', 3);
                 }
                 break;
@@ -181,7 +181,7 @@ class Updater extends Controller
      */
     private function getUpdateItems(): array
     {
-        $cacheData = $this->cache->get('UPDATE_ITEMS');
+        $cacheData = $this->toolBox()->cache()->get('UPDATE_ITEMS');
         if (is_array($cacheData)) {
             return $cacheData;
         }
@@ -207,7 +207,7 @@ class Updater extends Controller
             }
         }
 
-        $this->cache->set('UPDATE_ITEMS', $items);
+        $this->toolBox()->cache()->set('UPDATE_ITEMS', $items);
         return $items;
     }
 
@@ -226,7 +226,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => $this->i18n->trans('core-update', ['%version%' => $build['version']]),
+                'description' => $this->toolBox()->i18n()->trans('core-update', ['%version%' => $build['version']]),
                 'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
                 'filename' => $fileName,
                 'id' => $projectData['project'],
@@ -266,7 +266,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => $this->i18n->trans('plugin-update', ['%pluginName%' => $pluginUpdate['name'], '%version%' => $build['version']]),
+                'description' => $this->toolBox()->i18n()->trans('plugin-update', ['%pluginName%' => $pluginUpdate['name'], '%version%' => $build['version']]),
                 'downloaded' => file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
                 'filename' => $fileName,
                 'id' => $pluginUpdate['project'],
@@ -312,7 +312,7 @@ class Updater extends Controller
         $zip = new ZipArchive();
         $zipStatus = $zip->open(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName, ZipArchive::CHECKCONS);
         if ($zipStatus !== true) {
-            $this->miniLog->critical('ZIP ERROR: ' . $zipStatus);
+            $this->toolBox()->log()->critical('ZIP ERROR: ' . $zipStatus);
             return false;
         }
 
@@ -330,7 +330,7 @@ class Updater extends Controller
     {
         /// extract zip content
         if (!$zip->extractTo(\FS_FOLDER)) {
-            $this->miniLog->critical('ZIP EXTRACT ERROR: ' . $fileName);
+            $this->toolBox()->log()->critical('ZIP EXTRACT ERROR: ' . $fileName);
             $zip->close();
             return false;
         }
@@ -344,13 +344,13 @@ class Updater extends Controller
             $origin = \FS_FOLDER . DIRECTORY_SEPARATOR . self::CORE_ZIP_FOLDER . DIRECTORY_SEPARATOR . $folder;
             $dest = \FS_FOLDER . DIRECTORY_SEPARATOR . $folder;
             if (!file_exists($origin)) {
-                $this->miniLog->critical('COPY ERROR: ' . $origin);
+                $this->toolBox()->log()->critical('COPY ERROR: ' . $origin);
                 return false;
             }
 
             FileManager::delTree($dest);
             if (!FileManager::recurseCopy($origin, $dest)) {
-                $this->miniLog->critical('COPY ERROR2: ' . $origin);
+                $this->toolBox()->log()->critical('COPY ERROR2: ' . $origin);
                 return false;
             }
         }

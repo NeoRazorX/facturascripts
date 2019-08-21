@@ -74,7 +74,7 @@ class EditLiquidacionComision extends EditController
         $data = $this->request->request->all();
         $docs = $this->getInvoicesFromDataForm($data);
         if (empty($docs)) {
-            $this->miniLog->warning($this->i18n->trans('no-selected-item'));
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return;
         }
 
@@ -95,10 +95,10 @@ class EditLiquidacionComision extends EditController
             /// confirm changes
             $this->dataBase->commit();
 
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->miniLog->error($exc->getMessage());
+            $this->toolBox()->log()->error($exc->getMessage());
         }
     }
 
@@ -186,11 +186,11 @@ class EditLiquidacionComision extends EditController
     protected function generateInvoice()
     {
         if ($this->views[$this->getMainViewName()]->model->generateInvoice()) {
-            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->miniLog->error($this->i18n->trans('record-save-error'));
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return false;
     }
 

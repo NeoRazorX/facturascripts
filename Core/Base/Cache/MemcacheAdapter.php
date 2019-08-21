@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
  */
 namespace FacturaScripts\Core\Base\Cache;
 
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
+use Memcache;
 
 /**
  * Class to connect and interact with memcache.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class MemcacheAdapter implements AdaptorInterface
 {
@@ -39,25 +39,11 @@ class MemcacheAdapter implements AdaptorInterface
     private static $connected;
 
     /**
-     * Translator object
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
      * Memcache object
      *
-     * @var \Memcache
+     * @var Memcache
      */
     private static $memcache;
-
-    /**
-     * MiniLog object
-     *
-     * @var MiniLog
-     */
-    private $minilog;
 
     /**
      * MemcacheAdaptor constructor.
@@ -65,17 +51,14 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function __construct()
     {
-        $this->minilog = new MiniLog();
-        $this->i18n = new Translator();
+        if (!isset(self::$memcache)) {
+            self::$connected = false;
 
-        self::$connected = false;
-        if (self::$memcache === null) {
-            self::$memcache = new \Memcache();
+            self::$memcache = new Memcache();
             if (self::$memcache->connect(\FS_CACHE_HOST, (int) \FS_CACHE_PORT)) {
                 self::$connected = true;
-                $this->minilog->debug($this->i18n->trans('using-memcache'));
             } else {
-                $this->minilog->error($this->i18n->trans('error-connecting-memcache'));
+                $this->toolBox()->i18nLog()->error('error-connecting-memcache');
             }
         }
     }
@@ -87,7 +70,6 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function clear()
     {
-        $this->minilog->debug($this->i18n->trans('memcache-clear'));
         if (self::$connected) {
             return self::$memcache->flush();
         }
@@ -104,7 +86,6 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', ['%item%' => $key]));
         if (self::$connected) {
             return self::$memcache->delete(\FS_CACHE_PREFIX . $key);
         }
@@ -122,8 +103,6 @@ class MemcacheAdapter implements AdaptorInterface
     public function get($key)
     {
         if (self::$connected) {
-            $this->minilog->debug($this->i18n->trans('memcache-get-key-item', ['%item%' => $key]));
-
             /**
              * Memcache::get() returns false if key is not found.
              * To distinguish this case from when it is stored false, whe must use $falgs.
@@ -161,11 +140,19 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-set-key-item', ['%item%' => $key]));
         if (self::$connected) {
             return self::$memcache->set(\FS_CACHE_PREFIX . $key, $content, 0, $expire);
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }

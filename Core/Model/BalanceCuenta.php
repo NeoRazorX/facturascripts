@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Detail of a balance.
  *
@@ -96,7 +94,7 @@ class BalanceCuenta extends Base\ModelClass
      */
     public function test()
     {
-        $this->desccuenta = Utils::noHtml($this->desccuenta);
+        $this->desccuenta = $this->toolBox()->utils()->noHtml($this->desccuenta);
         return parent::test();
     }
 }

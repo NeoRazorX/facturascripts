@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * The head of transfer.
@@ -130,15 +129,15 @@ class TransferenciaStock extends Base\ModelClass
      */
     public function test()
     {
-        $this->observaciones = Utils::noHtml($this->observaciones);
+        $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
 
         if ($this->codalmacenorigen == $this->codalmacendestino) {
-            self::$miniLog->warning(self::$i18n->trans('warehouse-cant-be-same'));
+            $this->toolBox()->i18nLog()->warning('warehouse-cant-be-same');
             return false;
         }
 
         if ($this->getIdempresa($this->codalmacendestino) !== $this->getIdempresa($this->codalmacenorigen)) {
-            self::$miniLog->warning(self::$i18n->trans('warehouse-must-be-same-business'));
+            $this->toolBox()->i18nLog()->warning('warehouse-must-be-same-business');
             return false;
         }
 
@@ -152,9 +151,9 @@ class TransferenciaStock extends Base\ModelClass
      * 
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListAlmacen?activetab=List')
     {
-        return parent::url($type, 'ListAlmacen?activetab=List');
+        return parent::url($type, $list);
     }
 
     /**

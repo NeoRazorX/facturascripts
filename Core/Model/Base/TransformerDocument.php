@@ -31,6 +31,8 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 abstract class TransformerDocument extends BusinessDocument
 {
 
+    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
+
     /**
      *
      * @var bool
@@ -78,7 +80,7 @@ abstract class TransformerDocument extends BusinessDocument
                 continue;
             }
 
-            $newModelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $docTrans->model2;
+            $newModelClass = self::MODEL_NAMESPACE . $docTrans->model2;
             $newModel = new $newModelClass();
             if ($newModel->loadFromCode($docTrans->iddoc2)) {
                 $children[] = $newModel;
@@ -206,7 +208,7 @@ abstract class TransformerDocument extends BusinessDocument
                 continue;
             }
 
-            $newModelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $docTrans->model1;
+            $newModelClass = self::MODEL_NAMESPACE . $docTrans->model1;
             $newModel = new $newModelClass();
             if ($newModel->loadFromCode($docTrans->iddoc1)) {
                 $parents[] = $newModel;
@@ -250,7 +252,7 @@ abstract class TransformerDocument extends BusinessDocument
     protected function onChange($field)
     {
         if (!$this->editable && !$this->previousData['editable'] && $field != 'idestado') {
-            self::$miniLog->warning(self::$i18n->trans('non-editable-document'));
+            $this->toolBox()->i18nLog()->warning('non-editable-document');
             return false;
         }
 

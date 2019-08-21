@@ -154,7 +154,7 @@ class EditEjercicio extends EditController
     {
         $code = $this->request->get('code', '');
         if (empty($code)) {
-            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
+            $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
 
@@ -175,13 +175,13 @@ class EditEjercicio extends EditController
     {
         $code = $this->request->request->get('codejercicio', '');
         if (empty($code)) {
-            $this->miniLog->error($this->i18n->trans('exercise-not-found'));
+            $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
 
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
-            $this->miniLog->warning($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => '']);
             return false;
         }
 
@@ -190,23 +190,23 @@ class EditEjercicio extends EditController
             case 'application/xml':
             case 'text/xml':
                 if ($accountingPlanImport->importXML($uploadFile->getPathname(), $code)) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
                 } else {
-                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                    $this->toolBox()->i18nLog()->error('record-save-error');
                 }
                 break;
 
             case 'text/csv':
             case 'text/plain':
                 if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $code)) {
-                    $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
                 } else {
-                    $this->miniLog->error($this->i18n->trans('record-save-error'));
+                    $this->toolBox()->i18nLog()->error('record-save-error');
                 }
                 break;
 
             default:
-                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+                $this->toolBox()->i18nLog()->error('file-not-supported');
         }
 
         return true;

@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Payment method of an invoice, delivery note, order or estimation.
  *
@@ -106,7 +103,7 @@ class FormaPago extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-payment-method'));
+            $this->toolBox()->i18nLog()->warning('cant-delete-default-payment-method');
             return false;
         }
 
@@ -144,7 +141,7 @@ class FormaPago extends Base\ModelClass
      */
     public function isDefault()
     {
-        return $this->codpago === AppSettings::get('default', 'codpago');
+        return $this->codpago === $this->toolBox()->appSettings()->get('default', 'codpago');
     }
 
     /**
@@ -176,14 +173,17 @@ class FormaPago extends Base\ModelClass
     {
         $this->codpago = trim($this->codpago);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codpago)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']
+            );
             return false;
         } elseif ($this->plazovencimiento < 0) {
-            self::$miniLog->warning(self::$i18n->trans('number-expiration-invalid'));
+            $this->toolBox()->i18nLog()->warning('number-expiration-invalid');
             return false;
         }
 
-        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 }

@@ -97,7 +97,7 @@ class EditFormaPago extends EditController
         }
 
         if (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-value')];
+            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-value')];
         }
         return $results;
     }

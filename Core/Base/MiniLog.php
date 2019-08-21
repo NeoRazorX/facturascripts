@@ -26,12 +26,30 @@ namespace FacturaScripts\Core\Base;
 class MiniLog
 {
 
+    const ALL_LEVELS = ['critical', 'debug', 'error', 'notice', 'warning'];
+    const DEFAULT_LEVELS = ['critical', 'error', 'notice', 'warning'];
+
+    /**
+     *
+     * @var string
+     */
+    private $channel;
+
     /**
      * Contains the log data.
      *
      * @var array
      */
     private static $dataLog = [];
+
+    /**
+     * 
+     * @param string $channel
+     */
+    public function __construct(string $channel = '')
+    {
+        $this->channel = $channel;
+    }
 
     /**
      * Clean the log.
@@ -49,7 +67,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function critical($message, array $context = [])
+    public function critical(string $message, array $context = [])
     {
         $this->log('critical', $message, $context);
     }
@@ -60,7 +78,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function debug($message, array $context = [])
+    public function debug(string $message, array $context = [])
     {
         $this->log('debug', $message, $context);
     }
@@ -72,7 +90,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function error($message, array $context = [])
+    public function error(string $message, array $context = [])
     {
         $this->log('error', $message, $context);
     }
@@ -83,23 +101,23 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function notice($message, array $context = [])
+    public function notice(string $message, array $context = [])
     {
         $this->log('notice', $message, $context);
     }
 
     /**
-     * Returns specified level messages or all.
-     *
+     * Returns specified level messages of this channel.
+     * 
      * @param array $levels
      *
      * @return array
      */
-    public function read(array $levels = ['notice', 'warning', 'error', 'critical'])
+    public function read(array $levels = self::DEFAULT_LEVELS): array
     {
         $messages = [];
         foreach (self::$dataLog as $data) {
-            if (in_array($data['level'], $levels, false) && $data['message'] !== '') {
+            if ($data['channel'] === $this->channel && in_array($data['level'], $levels, false)) {
                 $messages[] = $data;
             }
         }
@@ -108,14 +126,22 @@ class MiniLog
     }
 
     /**
-     * SQL history.
+     * Returns specified level messages of all channels.
+     * 
+     * @param array $levels
      *
-     * @param string $message
-     * @param array  $context
+     * @return array
      */
-    public function sql($message, array $context = [])
+    public function readAll(array $levels = self::DEFAULT_LEVELS): array
     {
-        $this->log('sql', $message, $context);
+        $messages = [];
+        foreach (self::$dataLog as $data) {
+            if (in_array($data['level'], $levels, false)) {
+                $messages[] = $data;
+            }
+        }
+
+        return $messages;
     }
 
     /**
@@ -127,7 +153,7 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    public function warning($message, array $context = [])
+    public function warning(string $message, array $context = [])
     {
         $this->log('warning', $message, $context);
     }
@@ -139,13 +165,16 @@ class MiniLog
      * @param string $message
      * @param array  $context
      */
-    private function log($level, $message, array $context = [])
+    protected function log(string $level, string $message, array $context = [])
     {
-        self::$dataLog[] = [
-            'context' => $context,
-            'level' => $level,
-            'message' => $message,
-            'time' => time(),
-        ];
+        if (!empty($message)) {
+            self::$dataLog[] = [
+                'channel' => $this->channel,
+                'context' => $context,
+                'level' => $level,
+                'message' => $message,
+                'time' => time(),
+            ];
+        }
     }
 }

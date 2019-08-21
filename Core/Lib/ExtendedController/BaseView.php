@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -62,20 +62,6 @@ abstract class BaseView
      * @var string
      */
     public $icon;
-
-    /**
-     * Contains the translator.
-     *
-     * @var Base\Translator
-     */
-    protected static $i18n;
-
-    /**
-     * App log manager.
-     *
-     * @var Base\MiniLog
-     */
-    protected static $miniLog;
 
     /**
      *
@@ -180,15 +166,10 @@ abstract class BaseView
      */
     public function __construct($name, $title, $modelName, $icon)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Base\Translator();
-            static::$miniLog = new Base\MiniLog();
-        }
-
         if (class_exists($modelName)) {
             $this->model = new $modelName();
         } else {
-            static::$miniLog->critical(static::$i18n->trans('model-not-found', ['%model%' => $modelName]));
+            $this->toolBox()->i18nLog()->critical('model-not-found', ['%model%' => $modelName]);
         }
 
         $this->icon = $icon;
@@ -203,7 +184,7 @@ abstract class BaseView
             'btnUndo' => true,
         ];
         $this->template = 'Master/BaseView.html.twig';
-        $this->title = static::$i18n->trans($title);
+        $this->title = $this->toolBox()->i18n()->trans($title);
         $this->assets();
     }
 
@@ -433,5 +414,14 @@ abstract class BaseView
             new DataBaseWhere('nick', $user->nick),
             new DataBaseWhere('nick', null, 'IS', 'OR'),
         ];
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,14 @@
  */
 namespace FacturaScripts\Core\Base\Cache;
 
-use FacturaScripts\Core\Base\FileManager;
-use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\ToolBox;
 
 /**
  * Simple file cache
  * This class is great for those who can't use apc or memcached in their projects.
  *
- * @author Emilio Cobos (emiliocobos.net) <ecoal95@gmail.com> and github contributors
- * @author Carlos García Gómez <carlos@facturascripts.com>
- *
- * @version 1.0.1
- *
- * @link http://emiliocobos.net/php-cache/
+ * @author Emilio Cobos (emiliocobos.net)   <ecoal95@gmail.com> and github contributors
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
  *
  */
 class FileCache implements AdaptorInterface
@@ -45,38 +39,21 @@ class FileCache implements AdaptorInterface
     private static $config;
 
     /**
-     * Translator object
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * MiniLog object
-     *
-     * @var MiniLog
-     */
-    private $minilog;
-
-    /**
      * FileCache constructor.
      */
     public function __construct()
     {
-        self::$config = [
-            'cache_path' => \FS_FOLDER . '/MyFiles/Cache/FileCache',
-            'expires' => 3600,
-        ];
+        if (!isset(self::$config)) {
+            self::$config = [
+                'cache_path' => \FS_FOLDER . '/MyFiles/Cache/FileCache',
+                'expires' => 3600,
+            ];
 
-        $this->i18n = new Translator();
-        $this->minilog = new MiniLog();
-
-        $dir = self::$config['cache_path'];
-        if (!FileManager::createFolder($dir, true)) {
-            $this->minilog->critical($this->i18n->trans('cant-create-folder', ['%folderName%' => $dir]));
+            $dir = self::$config['cache_path'];
+            if (!$this->toolBox()->files()->createFolder($dir, true)) {
+                $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $dir]);
+            }
         }
-        $this->minilog->debug($this->i18n->trans('using-filecache'));
-        $this->minilog->debug($this->i18n->trans('cache-dir', ['%folderName%' => $dir]));
     }
 
     /**
@@ -86,7 +63,6 @@ class FileCache implements AdaptorInterface
      */
     public function clear()
     {
-        $this->minilog->debug($this->i18n->trans('filecache-clear'));
         foreach (scandir(self::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
             if (substr($fileName, -4) === '.php') {
                 unlink(self::$config['cache_path'] . '/' . $fileName);
@@ -105,10 +81,9 @@ class FileCache implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('filecache-delete-key-item', ['%item%' => $key]));
-        $ruta = $this->getRoute($key);
-        if (file_exists($ruta)) {
-            return unlink($ruta);
+        $route = $this->getRoute($key);
+        if (file_exists($route)) {
+            return unlink($route);
         }
 
         return true;
@@ -123,10 +98,10 @@ class FileCache implements AdaptorInterface
      */
     public function get($key)
     {
-        $this->minilog->debug($this->i18n->trans('filecache-get-key-item', ['%item%' => $key]));
         $file = $this->getRoute($key);
         if (!$this->fileExpired($file)) {
             $content = file_get_contents($file);
+
             /**
              * Perhaps it's possible to exploit the unserialize via: file_get_contents(...).
              * Documentation can be found here:
@@ -149,12 +124,12 @@ class FileCache implements AdaptorInterface
      */
     public function set($key, $content, $expire)
     {
-        $this->minilog->debug($this->i18n->trans('filecache-set-key-item', ['%item%' => $key]));
         if ($expire < self::$config['expires']) {
             self::$config['expires'] = $expire;
         }
 
         $destFileName = $this->getRoute($key);
+
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $tempFileName = str_replace('.php', uniqid('-', true) . '.php', $destFileName);
         $ret = @file_put_contents($tempFileName, serialize($content));
@@ -192,5 +167,14 @@ class FileCache implements AdaptorInterface
         }
 
         return true;
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }

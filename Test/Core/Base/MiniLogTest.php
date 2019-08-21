@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,17 @@ class MiniLogTest extends TestCase
      */
     protected function setUp()
     {
-        $this->object = new MiniLog();
+        $this->object = new MiniLog('test');
+    }
+
+    /**
+     * @covers \FacturaScripts\Core\Base\MiniLog::clear
+     */
+    public function testClear()
+    {
+        $this->object->notice('sql');
+        $this->object->clear();
+        $this->assertEmpty($this->object->read());
     }
 
     /**
@@ -90,22 +100,6 @@ class MiniLogTest extends TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::warning
-     */
-    public function testWarning()
-    {
-        $level = ['warning'];
-        $this->object->clear();
-        $this->object->warning('warning');
-        $data = $this->object->read($level);
-
-        $this->assertEquals(1, count($data));
-        $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'warning');
-        $this->assertEmpty($data[0]['context']);
-    }
-
-    /**
      * @covers \FacturaScripts\Core\Base\MiniLog::notice
      */
     public function testNotice()
@@ -122,25 +116,18 @@ class MiniLogTest extends TestCase
     }
 
     /**
-     * @covers \FacturaScripts\Core\Base\MiniLog::sql
+     * @covers \FacturaScripts\Core\Base\MiniLog::warning
      */
-    public function testSql()
+    public function testWarning()
     {
-        $level = ['sql'];
+        $level = ['warning'];
         $this->object->clear();
-        $this->object->sql('sql');
+        $this->object->warning('warning');
         $data = $this->object->read($level);
 
         $this->assertEquals(1, count($data));
         $this->assertEquals($data[0]['level'], $level[0]);
-        $this->assertEquals($data[0]['message'], 'sql');
+        $this->assertEquals($data[0]['message'], 'warning');
         $this->assertEmpty($data[0]['context']);
-    }
-
-    public function testClear()
-    {
-        $this->object->sql('sql');
-        $this->object->clear();
-        $this->assertEmpty($this->object->read());
     }
 }

@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A bank account of the company itself.
  *
@@ -92,7 +90,7 @@ class CuentaBanco extends Base\BankAccount
      */
     public function test()
     {
-        $this->sufijosepa = Utils::noHtml($this->sufijosepa);
+        $this->sufijosepa = $this->toolBox()->utils()->noHtml($this->sufijosepa);
         return parent::test();
     }
 

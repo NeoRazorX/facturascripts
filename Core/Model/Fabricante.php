@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * A manufacturer of products.
  *
@@ -72,13 +70,20 @@ class Fabricante extends Base\ModelClass
      */
     public function test()
     {
-        $this->codfabricante = Utils::noHtml($this->codfabricante);
-        $this->nombre = Utils::noHtml($this->nombre);
+        $utils = $this->toolBox()->utils();
+        $this->codfabricante = $utils->noHtml($this->codfabricante);
+        $this->nombre = $utils->noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfabricante)) {
-            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']));
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']
+            );
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']));
+            $this->toolBox()->i18nLog()->warning(
+                'invalid-column-lenght',
+                ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
+            );
         } else {
             return parent::test();
         }
