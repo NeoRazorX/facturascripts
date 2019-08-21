@@ -70,15 +70,13 @@ class FacturaCliente extends Base\SalesDocument
      */
     public function getNewLine(array $data = [])
     {
-        $newLine = new LineaFactura($data);
+        $newLine = new LineaFactura();
         $newLine->idfactura = $this->idfactura;
-        if (empty($data)) {
-            $newLine->irpf = $this->irpf;
-        }
+        $newLine->irpf = $this->irpf;
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $status = $this->getStatus();
-        $newLine->actualizastock = $status->actualizastock;
-
+        $exclude = ['actualizastock', 'idlinea', 'idfactura'];
+        $newLine->loadFromData($data, $exclude);
         return $newLine;
     }
 

@@ -62,15 +62,13 @@ class PresupuestoProveedor extends Base\PurchaseDocument
      */
     public function getNewLine(array $data = [])
     {
-        $newLine = new LineaPresupuesto($data);
+        $newLine = new LineaPresupuesto();
         $newLine->idpresupuesto = $this->idpresupuesto;
-        if (empty($data)) {
-            $newLine->irpf = $this->irpf;
-        }
+        $newLine->irpf = $this->irpf;
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $status = $this->getStatus();
-        $newLine->actualizastock = $status->actualizastock;
-
+        $exclude = ['actualizastock', 'idlinea', 'idpresupuesto'];
+        $newLine->loadFromData($data, $exclude);
         return $newLine;
     }
 

@@ -63,15 +63,13 @@ class AlbaranCliente extends Base\SalesDocument
      */
     public function getNewLine(array $data = [])
     {
-        $newLine = new LineaAlbaran($data);
+        $newLine = new LineaAlbaran();
         $newLine->idalbaran = $this->idalbaran;
-        if (empty($data)) {
-            $newLine->irpf = $this->irpf;
-        }
+        $newLine->irpf = $this->irpf;
+        $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $status = $this->getStatus();
-        $newLine->actualizastock = $status->actualizastock;
-
+        $exclude = ['actualizastock', 'idlinea', 'idalbaran'];
+        $newLine->loadFromData($data, $exclude);
         return $newLine;
     }
 
