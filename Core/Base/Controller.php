@@ -57,6 +57,22 @@ class Controller
     public $empresa;
 
     /**
+     * Translator engine.
+     *
+     * @deprecated since version 2018.09
+     * @var Translator
+     */
+    protected $i18n;
+
+    /**
+     * App log manager.
+     *
+     * @deprecated since version 2018.09
+     * @var MiniLog
+     */
+    protected $miniLog;
+
+    /**
      *
      * @var MultiRequestProtection
      */
@@ -122,6 +138,8 @@ class Controller
         $this->className = $className;
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
+        $this->i18n = $this->toolBox()->i18n();
+        $this->miniLog = $this->toolBox()->log();
         $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
