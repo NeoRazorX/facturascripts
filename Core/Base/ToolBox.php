@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Dinamic\Lib\IPFilter as DinamicIPFilter;
+use FacturaScripts\Dinamic\Lib\IPFilter;
 
 /**
  * Description of ToolBox
@@ -58,6 +58,15 @@ class ToolBox
 
     /**
      * 
+     * @return EventManager
+     */
+    public static function events()
+    {
+        return new EventManager();
+    }
+
+    /**
+     * 
      * @return FileManager
      */
     public static function files()
@@ -89,11 +98,11 @@ class ToolBox
 
     /**
      * 
-     * @return DinamicIPFilter
+     * @return IPFilter
      */
     public static function ipFilter()
     {
-        return new DinamicIPFilter();
+        return new IPFilter();
     }
 
     /**

@@ -37,7 +37,7 @@ abstract class ModelCore
      *
      * @var array
      */
-    private static $checkedTables;
+    private static $checkedTables = [];
 
     /**
      * It provides direct access to the database.
@@ -85,9 +85,9 @@ abstract class ModelCore
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
 
-            self::$checkedTables = $this->toolBox()->cache()->get('fs_checked_tables');
-            if (empty(self::$checkedTables)) {
-                self::$checkedTables = [];
+            $tables = $this->toolBox()->cache()->get('fs_checked_tables');
+            if (is_array($tables) && !empty($tables)) {
+                self::$checkedTables = $tables;
             }
         }
 

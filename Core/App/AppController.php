@@ -24,7 +24,6 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
-use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;
@@ -289,7 +288,7 @@ class AppController extends App
         $ipFilter = $this->toolBox()->ipFilter();
         if ($user->loadFromCode($nick) && $user->enabled) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
-                EventManager::trigger('App:User:Login', $user);
+                $this->toolBox()->events()->trigger('App:User:Login', $user);
                 $this->updateCookies($user, true);
                 $ipFilter->clear();
                 $this->toolBox()->i18nLog()->debug('login-ok', ['%nick%' => $nick]);

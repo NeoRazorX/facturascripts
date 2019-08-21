@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\EventManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -128,7 +127,7 @@ abstract class ModelClass extends ModelCore
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
-            EventManager::trigger('Model:' . $this->modelClassName() . ':delete', $this);
+            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':delete', $this);
             return true;
         }
 
@@ -321,8 +320,9 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveInsert(array $values = [])
     {
-        EventManager::trigger('Model:' . $this->modelClassName() . ':saveInsert:before', $this);
-        EventManager::trigger('Model:' . $this->modelClassName() . ':save:before', $this);
+        $eventManager = $this->toolBox()->events();
+        $eventManager->trigger('Model:' . $this->modelClassName() . ':saveInsert:before', $this);
+        $eventManager->trigger('Model:' . $this->modelClassName() . ':save:before', $this);
 
         $insertFields = [];
         $insertValues = [];
@@ -344,8 +344,8 @@ abstract class ModelClass extends ModelCore
                 self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
             }
 
-            EventManager::trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);
-            EventManager::trigger('Model:' . $this->modelClassName() . ':save', $this);
+            $eventManager->trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);
+            $eventManager->trigger('Model:' . $this->modelClassName() . ':save', $this);
             return true;
         }
 
@@ -361,8 +361,9 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveUpdate(array $values = [])
     {
-        EventManager::trigger('Model:' . $this->modelClassName() . ':saveUpdate:before', $this);
-        EventManager::trigger('Model:' . $this->modelClassName() . ':save:before', $this);
+        $eventManager = $this->toolBox()->events();
+        $eventManager->trigger('Model:' . $this->modelClassName() . ':saveUpdate:before', $this);
+        $eventManager->trigger('Model:' . $this->modelClassName() . ':save:before', $this);
 
         $sql = 'UPDATE ' . static::tableName();
         $coma = ' SET';
@@ -378,8 +379,8 @@ abstract class ModelClass extends ModelCore
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
         if (self::$dataBase->exec($sql)) {
-            EventManager::trigger('Model:' . $this->modelClassName() . ':saveUpdate', $this);
-            EventManager::trigger('Model:' . $this->modelClassName() . ':save', $this);
+            $eventManager->trigger('Model:' . $this->modelClassName() . ':saveUpdate', $this);
+            $eventManager->trigger('Model:' . $this->modelClassName() . ':save', $this);
             return true;
         }
 
