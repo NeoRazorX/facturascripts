@@ -355,10 +355,6 @@ abstract class BusinessDocumentController extends PanelController
 
         /// add new lines
         foreach (array_reverse($newLines) as $fLine) {
-            if (empty($fLine['referencia']) && empty($fLine['descripcion'])) {
-                continue;
-            }
-
             if (empty($fLine['idlinea'])) {
                 $newDocLine = $view->model->getNewLine($fLine);
                 if ($newDocLine->save()) {
