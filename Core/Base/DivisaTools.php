@@ -131,4 +131,24 @@ class DivisaTools extends NumberTools
 
         return ['pattern' => $moneyFormat];
     }
+
+    /**
+     * Convert the amount to corresponding value of coddivisa2
+     *
+     * @param float $amount
+     * @param string $coddivisa1
+     * @param float $coddivisa2
+     * @return float
+     */
+    public static function transform($amount, $coddivisa1, $coddivisa2)
+    {
+        $divisa = new Divisa();
+        $divisa->loadFromCode($coddivisa1);
+
+        $amountInEuro = $amount * $divisa->tasaconv;
+
+        $divisa->loadFromCode($coddivisa2);
+
+        return $amountInEuro * $divisa->tasaconv;
+    }
 }
